@@ -5,49 +5,57 @@ const getTheme = (mode: 'light' | 'dark') => {
         palette: {
             mode,
             background: {
-                default: mode === 'dark' ? '#0f172a' : '#f8fafc',
-                paper: mode === 'dark' ? '#1e293b' : '#ffffff',
+                default: mode === 'dark' ? '#020617' : '#f8fafc', // Slate 950
+                paper: mode === 'dark' ? '#070f20' : '#ffffff',   // Deeper Slate 900
             },
             text: {
-                primary: mode === 'dark' ? '#e2e8f0' : '#1e293b',
+                primary: mode === 'dark' ? '#f8fafc' : '#0f172a',
                 secondary: mode === 'dark' ? '#94a3b8' : '#64748b',
             },
             primary: {
                 main: '#3b82f6', // Bright blue
+                light: '#60a5fa',
+                dark: '#2563eb',
             },
             secondary: {
                 main: '#10b981', // Emerald
             },
+            divider: mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.08)',
             error: {
-                main: '#ef4444',
+                main: '#f43f5e', // Rose 500
             },
             warning: {
-                main: '#f59e0b',
+                main: '#f59e0b', // Amber 500
             },
             success: {
-                main: '#10b981',
+                main: '#10b981', // Emerald 500
             },
+            action: {
+                hover: mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.04)',
+            }
         },
         typography: {
-            fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-            h1: { fontWeight: 700 },
-            h2: { fontWeight: 700 },
-            h3: { fontWeight: 600 },
-            h4: { fontWeight: 600 },
+            fontFamily: '"Inter", "system-ui", "-apple-system", sans-serif',
+            h1: { fontWeight: 800, letterSpacing: '-0.025em' },
+            h2: { fontWeight: 800, letterSpacing: '-0.02em' },
+            h3: { fontWeight: 700, letterSpacing: '-0.01em' },
+            h4: { fontWeight: 700, letterSpacing: '-0.01em' },
             h5: { fontWeight: 600 },
             h6: { fontWeight: 600 },
-            subtitle1: { letterSpacing: '0.025em' },
+            subtitle1: { letterSpacing: '0.01em', fontWeight: 500 },
             body1: { lineHeight: 1.6 },
+            caption: { letterSpacing: '0.01em', fontWeight: 500 },
         },
         components: {
             MuiCard: {
                 styleOverrides: {
                     root: {
-                        borderRadius: 12,
+                        borderRadius: 16, // Softer but premium
                         boxShadow: mode === 'dark'
-                            ? '0 4px 6px -1px rgba(0, 0, 0, 0.5)'
+                            ? '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4)'
                             : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                         backgroundImage: 'none',
+                        border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)',
                     },
                 },
             },
@@ -61,25 +69,26 @@ const getTheme = (mode: 'light' | 'dark') => {
             MuiCssBaseline: {
                 styleOverrides: {
                     body: {
-                        scrollbarColor: mode === 'dark' ? '#334155 #0f172a' : '#cbd5e1 #f8fafc',
+                        scrollbarColor: mode === 'dark' ? '#1e293b #020617' : '#cbd5e1 #f8fafc',
                         '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
                             backgroundColor: 'transparent',
                             width: 8,
                         },
                         '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
                             borderRadius: 8,
-                            backgroundColor: mode === 'dark' ? '#334155' : '#cbd5e1',
+                            backgroundColor: mode === 'dark' ? '#1e293b' : '#cbd5e1',
                             minHeight: 24,
+                            border: `2px solid ${mode === 'dark' ? '#020617' : '#f8fafc'}`,
                         },
-                        '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
-                            backgroundColor: mode === 'dark' ? '#475569' : '#94a3b8',
+                        '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+                            backgroundColor: mode === 'dark' ? '#334155' : '#94a3b8',
                         },
                     },
                 },
             },
         },
         shape: {
-            borderRadius: 8,
+            borderRadius: 12,
         },
     });
 

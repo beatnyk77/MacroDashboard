@@ -1,7 +1,8 @@
 import React from 'react';
-import { Card, Box, Typography, useTheme, SxProps, Theme } from '@mui/material';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Card, Box, Typography, useTheme, SxProps, Theme, Tooltip } from '@mui/material';
+import { TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
 import { Sparkline } from './Sparkline';
+import { Skeleton } from '@mui/material';
 
 interface MetricCardProps {
     label: string;
@@ -19,10 +20,10 @@ interface MetricCardProps {
     lastUpdated?: string | Date;
     isLoading?: boolean;
     sx?: SxProps<Theme>;
+    source?: string;
+    frequency?: string;
+    zScoreWindow?: string;
 }
-
-import { Skeleton } from '@mui/material';
-
 
 export const MetricCard: React.FC<MetricCardProps> = ({
     label,
@@ -34,7 +35,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     prefix = '',
     lastUpdated,
     isLoading,
-    sx
+    sx,
+    source = 'FRED',
+    frequency = 'Daily',
+    zScoreWindow = '252-Day Rolling'
 }) => {
     const theme = useTheme();
 
@@ -47,33 +51,40 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         }
     };
 
-    // Calculate hours since update
     const getStaleness = () => {
         if (!lastUpdated) return { isStale: false, label: '' };
-
         const updateDate = new Date(lastUpdated);
         const now = new Date();
         const diffMs = now.getTime() - updateDate.getTime();
         const diffHours = diffMs / (1000 * 60 * 60);
 
         let timeLabel = '';
-        if (diffHours < 1) timeLabel = '<1h ago';
+        if (diffHours < 1) timeLabel = 'Just now';
+        else if (diffHours < 2) timeLabel = '1h ago';
         else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
+        else if (diffHours < 48) timeLabel = 'Yesterday';
         else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
 
         return {
             isStale: diffHours > 24,
-            label: `Updated ${timeLabel}`
+            label: `Refreshed ${timeLabel}`
         };
     };
 
-    const { isStale, label: timeLabel } = getStaleness();
+    const isStaleFlag = (lastUpdated: any) => {
+        if (!lastUpdated) return false;
+        const diff = new Date().getTime() - new Date(lastUpdated).getTime();
+        return diff > (1000 * 60 * 60 * 24);
+    };
+
+    const isStale = isStaleFlag(lastUpdated);
+    const { label: timeLabel } = getStaleness();
 
     const getDeltaIcon = () => {
         if (!delta) return null;
-        if (delta.trend === 'up') return <TrendingUp size={14} />;
-        if (delta.trend === 'down') return <TrendingDown size={14} />;
-        return <Minus size={14} />;
+        if (delta.trend === 'up') return <TrendingUp size={12} />;
+        if (delta.trend === 'down') return <TrendingDown size={12} />;
+        return <Minus size={12} />;
     };
 
     const getDeltaColor = () => {
@@ -84,80 +95,140 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     };
 
     return (
-        <Card sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', ...sx }}>
-            {/* Status indicator dot or Stale Badge */}
-            {isStale ? (
+        <Card
+            sx={{
+                p: 2.5,
+                height: 200, // Fixed height to prevent layout shifts
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                '&:hover': {
+                    borderColor: 'primary.main',
+                    boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
+                    transform: 'translateY(-2px)',
+                },
+                ...sx
+            }}
+        >
+            {isStale && (
                 <Box
                     sx={{
                         position: 'absolute',
-                        top: 12,
-                        right: 12,
+                        top: 0,
+                        right: 0,
                         bgcolor: 'error.main',
                         color: 'white',
-                        fontSize: '0.65rem',
-                        fontWeight: 700,
-                        px: 0.8,
-                        py: 0.25,
-                        borderRadius: 1,
-                        textTransform: 'uppercase'
+                        fontSize: '0.6rem',
+                        fontWeight: 900,
+                        px: 1,
+                        py: 0.5,
+                        borderBottomLeftRadius: 4,
+                        letterSpacing: '0.05em',
+                        zIndex: 1
                     }}
                 >
                     STALE
                 </Box>
-            ) : status !== 'neutral' && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 12,
-                        right: 12,
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        bgcolor: getStatusColor(),
-                        boxShadow: `0 0 8px ${getStatusColor()}80`
-                    }}
-                />
             )}
 
-            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 1, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>
-                {label}
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.12em',
+                        fontSize: '0.65rem',
+                        opacity: 0.8
+                    }}
+                >
+                    {label}
+                </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, mb: 2 }}>
+                <Tooltip
+                    title={
+                        <Box sx={{ p: 0.5 }}>
+                            <Typography variant="caption" display="block"><b>Source:</b> {source}</Typography>
+                            <Typography variant="caption" display="block"><b>Frequency:</b> {frequency}</Typography>
+                            <Typography variant="caption" display="block"><b>Z-Score Calc:</b> {zScoreWindow}</Typography>
+                        </Box>
+                    }
+                    arrow
+                    placement="top"
+                >
+                    <Box sx={{ opacity: 0.4, '&:hover': { opacity: 1 }, cursor: 'help' }}>
+                        <Info size={14} />
+                    </Box>
+                </Tooltip>
+            </Box>
+
+            <Box sx={{ mb: 1.5, minHeight: 48 }}>
                 {isLoading ? (
-                    <Skeleton variant="text" width="60%" height={40} />
+                    <Skeleton variant="text" width="80%" height={48} sx={{ borderRadius: 1 }} />
                 ) : (
-                    <>
-                        <Typography variant="h4" component="div" sx={{ fontWeight: 700, lineHeight: 1 }}>
-                            {prefix}{value}{suffix}
+                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
+                        <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em', color: 'text.primary' }}>
+                            {prefix}{typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value}{suffix}
                         </Typography>
                         {delta && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5, color: getDeltaColor() }}>
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                px: 1,
+                                py: 0.3,
+                                borderRadius: 1,
+                                bgcolor: `${theme.palette.mode === 'dark' ? '#fff' : '#000'}08`,
+                                border: '1px solid',
+                                borderColor: `${getDeltaColor()}30`,
+                                color: getDeltaColor()
+                            }}>
                                 {getDeltaIcon()}
-                                <Typography variant="caption" sx={{ fontWeight: 600 }}>{delta.value}</Typography>
-                                <Typography variant="caption" color="text.secondary">{delta.period}</Typography>
+                                <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.7rem' }}>{delta.value}</Typography>
                             </Box>
                         )}
-                    </>
+                    </Box>
                 )}
             </Box>
 
-            <Box sx={{ mt: 'auto', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+            <Box sx={{ mt: 'auto' }}>
                 {isLoading ? (
-                    <Skeleton variant="rectangular" width="100%" height={32} />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <Skeleton variant="rectangular" width="100%" height={32} sx={{ borderRadius: 1 }} />
+                        <Skeleton variant="text" width="40%" height={16} />
+                    </Box>
                 ) : (
-                    <>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                         {history && history.length > 0 && (
-                            <Box sx={{ flexGrow: 1, mr: 2 }}>
+                            <Box sx={{ height: 32, opacity: 0.8 }}>
                                 <Sparkline data={history} color={getStatusColor()} height={32} />
                             </Box>
                         )}
-                        {timeLabel && (
-                            <Typography variant="caption" color={isStale ? 'error.main' : 'text.disabled'} sx={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="caption" sx={{
+                                color: isStale ? 'error.main' : 'text.disabled',
+                                fontSize: '0.65rem',
+                                fontWeight: 700
+                            }}>
                                 {timeLabel}
                             </Typography>
-                        )}
-                    </>
+                            {status !== 'neutral' && !isStale && (
+                                <Box sx={{
+                                    width: 8,
+                                    height: 8,
+                                    borderRadius: '50%',
+                                    bgcolor: getStatusColor(),
+                                    boxShadow: `0 0 8px ${getStatusColor()}60`
+                                }} />
+                            )}
+                        </Box>
+                    </Box>
                 )}
             </Box>
         </Card>

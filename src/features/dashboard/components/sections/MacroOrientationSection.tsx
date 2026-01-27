@@ -1,47 +1,49 @@
-import React from 'react';
-import { Grid } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useRegime } from '@/hooks/useRegime';
-import { useLatestMetric } from '@/hooks/useLatestMetric';
 
 export const MacroOrientationSection: React.FC = () => {
     const { data: regimeData, isLoading: regimeLoading } = useRegime();
-    // Breadth still comes from generic metrics or future computed table
-    const { data: breadth, isLoading: breadthLoading } = useLatestMetric('breadth');
 
     return (
-        <div style={{ marginBottom: 32 }}>
-            <SectionHeader title="Macro Orientation" subtitle="Key signals defining the current economic regime" />
-            <Grid container spacing={2}>
+        <Box sx={{ mb: 6 }}>
+            <SectionHeader
+                title="Current Regime"
+                subtitle={`${regimeData?.regimeLabel || 'Neutral'} - ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`}
+            />
+            <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <MetricCard
-                        label="Macro Pulse"
-                        value={regimeData?.pulseScore.toFixed(0) || '-'}
-                        status={regimeData?.pulseScore && regimeData.pulseScore < 40 ? 'danger' : 'safe'}
-                        isLoading={regimeLoading}
-                    />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <MetricCard
-                        label="Current Regime"
-                        value={regimeData?.regime || 'Uncertain'}
+                        label="Regime Label"
+                        value={regimeData?.regimeLabel || 'Unknown'}
                         status="neutral"
                         isLoading={regimeLoading}
+                        lastUpdated={regimeData?.timestamp}
+                        sx={{ borderLeft: '4px solid', borderLeftColor: 'primary.main' }}
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <MetricCard
-                        label="Risk Breadth"
-                        value={breadth?.value.toFixed(0) || '-'}
-                        delta={breadth?.delta ? { value: `${breadth.delta}`, period: breadth.deltaPeriod, trend: breadth.delta > 0 ? 'up' : 'down' } : undefined}
-                        status={breadth?.status}
-                        history={breadth?.history}
+                        label="Pulse Score"
+                        value={regimeData?.pulseScore !== undefined ? regimeData.pulseScore.toFixed(1) : '-'}
+                        status={regimeData?.pulseScore && regimeData.pulseScore < 40 ? 'danger' : 'safe'}
+                        isLoading={regimeLoading}
+                        lastUpdated={regimeData?.timestamp}
+                        suffix="/100"
+                    />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <MetricCard
+                        label="Signal Breadth"
+                        value={regimeData?.signalBreadth !== undefined ? regimeData.signalBreadth.toFixed(0) : '-'}
+                        status={regimeData?.signalBreadth && regimeData.signalBreadth > 70 ? 'safe' : 'warning'}
                         suffix="%"
-                        isLoading={breadthLoading}
+                        isLoading={regimeLoading}
+                        lastUpdated={regimeData?.timestamp}
                     />
                 </Grid>
             </Grid>
-        </div>
+        </Box>
     );
 };

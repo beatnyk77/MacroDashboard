@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface RegimeData {
-    regime: string;
+    id: string;
+    regimeLabel: string;
     pulseScore: number;
     signalBreadth: number;
     timestamp: string;
@@ -10,19 +11,23 @@ export interface RegimeData {
 
 export function useRegime() {
     return useQuery({
-        queryKey: ['regime_latest'],
+        queryKey: ['regime-latest'],
         queryFn: async (): Promise<RegimeData | null> => {
             const { data, error } = await supabase
                 .from('regime_snapshots')
-                .select('regime_label, pulse_score, signal_breadth, timestamp')
+                .select('*')
                 .order('timestamp', { ascending: false })
                 .limit(1)
                 .single();
 
-            if (error || !data) return null;
+            if (error || !data) {
+                console.warn('Could not fetch latest regime snapshot');
+                return null;
+            }
 
             return {
-                regime: data.regime_label,
+                id: data.id,
+                regimeLabel: data.regime_label,
                 pulseScore: Number(data.pulse_score),
                 signalBreadth: Number(data.signal_breadth),
                 timestamp: data.timestamp

@@ -1,5 +1,4 @@
-import React from 'react';
-import { Grid } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import { RatioCard } from '@/components/RatioCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
@@ -7,44 +6,46 @@ import { useGoldRatios } from '@/hooks/useGoldRatios';
 export const HardAssetValuationSection: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
 
+    const getRatio = (name: string) => ratios?.find(r => r.ratio_name === name);
+
     return (
-        <div style={{ marginBottom: 32 }}>
+        <Box sx={{ mb: 6 }}>
             <SectionHeader title="Hard Asset Valuation" subtitle="Currency and equity pricing relative to gold anchor" />
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <RatioCard
                         primaryLabel="M2 / Gold"
                         subtitle="Fiat quantity per unit of hard money"
-                        value={ratios?.m2Gold.value || 0}
-                        zScore={ratios?.m2Gold.zScore || 0}
-                        percentile={ratios?.m2Gold.percentile || 0}
-                        history={ratios?.history.map(h => ({ date: h.date, value: h.m2 }))}
+                        value={getRatio('M2/Gold')?.current_value || '-'}
+                        zScore={getRatio('M2/Gold')?.z_score}
+                        percentile={getRatio('M2/Gold')?.percentile}
                         isLoading={isLoading}
+                        lastUpdated={getRatio('M2/Gold')?.last_updated}
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <RatioCard
                         primaryLabel="S&P 500 / Gold"
                         subtitle="Equity index priced in gold terms"
-                        value={ratios?.spxGold.value || 0}
-                        zScore={ratios?.spxGold.zScore || 0}
-                        percentile={ratios?.spxGold.percentile || 0}
-                        history={ratios?.history.map(h => ({ date: h.date, value: h.spx }))}
+                        value={getRatio('SPX/Gold')?.current_value || '-'}
+                        zScore={getRatio('SPX/Gold')?.z_score}
+                        percentile={getRatio('SPX/Gold')?.percentile}
                         isLoading={isLoading}
+                        lastUpdated={getRatio('SPX/Gold')?.last_updated}
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <RatioCard
-                        primaryLabel="US Debt / Gold"
+                        primaryLabel="Debt / Gold"
                         subtitle="Public debt burden in real terms"
-                        value={0} // TODO: Add to view
-                        zScore={0}
-                        percentile={0}
-                        history={[]}
+                        value={getRatio('DEBT/Gold')?.current_value || '-'}
+                        zScore={getRatio('DEBT/Gold')?.z_score}
+                        percentile={getRatio('DEBT/Gold')?.percentile}
                         isLoading={isLoading}
+                        lastUpdated={getRatio('DEBT/Gold')?.last_updated}
                     />
                 </Grid>
             </Grid>
-        </div>
+        </Box>
     );
 };

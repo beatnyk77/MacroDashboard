@@ -11,6 +11,9 @@ export interface MetricData {
     lastUpdated: string;
     zScore?: number;
     percentile?: number;
+    source?: string;
+    frequency?: string;
+    methodology?: string;
 }
 
 export function useLatestMetric(metricId: string) {
@@ -20,7 +23,10 @@ export function useLatestMetric(metricId: string) {
             // 1. Fetch latest state from view
             const { data: latest, error: latestError } = await supabase
                 .from('vw_latest_metrics')
-                .select('*')
+                .select(`
+                    *,
+                    data_sources(name)
+                `)
                 .eq('metric_id', metricId)
                 .single();
 
@@ -38,7 +44,6 @@ export function useLatestMetric(metricId: string) {
                 .limit(20);
 
             // Map staleness_flag to status
-            // fresh -> safe, lagged -> warning, very_lagged -> danger
             const statusMap: Record<string, 'safe' | 'warning' | 'danger' | 'neutral'> = {
                 'fresh': 'safe',
                 'lagged': 'warning',
@@ -54,7 +59,10 @@ export function useLatestMetric(metricId: string) {
                 status: statusMap[latest.staleness_flag] || 'neutral',
                 lastUpdated: latest.as_of_date,
                 zScore: latest.z_score,
-                percentile: latest.percentile
+                percentile: latest.percentile,
+                source: (latest.data_sources as any)?.name || 'Internal Analytics',
+                frequency: latest.native_frequency,
+                methodology: 'Rolling 252-day Z-Score'
             };
         },
         staleTime: 1000 * 60 * 5, // 5 min

@@ -5,125 +5,159 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+/**
+ * Fetch with exponential backoff retry logic
+ */
+async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
+  let lastError: Error | null = null;
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      if (i > 0) {
+        const delay = Math.pow(2, i) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        console.log(`Retry ${i}/${maxRetries} for ${url}...`);
+      }
+      const response = await fetch(url, options);
+      if (response.ok) return response;
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    } catch (error: any) {
+      lastError = error;
+      console.warn(`Attempt ${i + 1} failed: ${error.message}`);
+    }
+  }
+  throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const fredApiKey = Deno.env.get('FRED_API_KEY');
 
-    // 1. Get Source ID for FRED
-    const { data: sourceData, error: sourceError } = await supabaseClient
+    if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // 1. Resolve FRED source_id
+    const { data: source, error: sourceError } = await supabase
       .from('data_sources')
       .select('id')
       .eq('name', 'FRED')
-      .single()
+      .single();
 
-    if (sourceError || !sourceData) {
-      throw new Error('FRED data source not found in database')
-    }
-    const sourceId = sourceData.id
+    if (sourceError || !source) throw new Error('FRED data source not found');
+    const sourceId = source.id;
 
-    // 2. Fetch FRED metrics
-    // The metric 'id' in our table IS the FRED series ID (e.g. 'US_GDP') or maps to it?
-    // In our schema: id is TEXT PRIMARY KEY (e.g. US_M2). 
-    // We probably need a 'source_metric_id' or just use 'id' if they match.
-    // Let's assume 'id' usually matches FRED series ID, OR we should store the FRED series ID in metadata?
-    // Looking at schema: metrics(id, name, ...). 
-    // Let's assume for now that metrics.id IS the FRED series ID, or we need to look it up.
-    // Wait, typical pattern: metrics.id = 'US_M2', FRED ID = 'M2SL'.
-    // The schema didn't have a specific 'external_id' column. 
-    // Let's assume we store the external FRED ID in a metadata field or just rely on 'id' being the FRED ID for now.
-    // *Correction*: The previous code used `metric_key`. My new schema dropped `metric_key`.
-    // I should check if I should add `external_id` or `source_metric_id` to schema. 
-    // FOR NOW: I will check if `metadata->>'fred_id'` exists, or fallback to `id`.
-
-    const { data: metrics, error: metricsError } = await supabaseClient
+    // 2. Identify target metrics from FRED
+    const { data: metrics, error: metricsError } = await supabase
       .from('metrics')
-      .select('id, native_frequency, metadata') // Querying metadata for mapping
+      .select('id, metadata')
       .eq('source_id', sourceId)
-      .eq('is_active', true)
+      .eq('is_active', true);
 
-    if (metricsError) throw metricsError
+    if (metricsError) throw metricsError;
     if (!metrics || metrics.length === 0) {
-      return new Response(JSON.stringify({ message: 'No active FRED metrics found' }), {
+      return new Response(JSON.stringify({ message: 'No active FRED metrics' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+      });
     }
 
-    const fredApiKey = Deno.env.get('FRED_API_KEY')
-    if (!fredApiKey) {
-      throw new Error('FRED_API_KEY not set')
-    }
+    // 3. Identify target metrics from FRED (anything with fred_id in metadata)
+    const targetMetrics = metrics.filter((m: any) => (m.metadata as any)?.fred_id);
 
-    const results = []
+    const summary: any = {
+      total_attempted: targetMetrics.length,
+      success_count: 0,
+      error_count: 0,
+      details: []
+    };
 
-    // 3. Loop and fetch
-    for (const metric of metrics) {
-      // Use metadata.fred_id if available, otherwise use metric.id
-      // Safely access metadata properties
-      const metadata = metric.metadata as { fred_id?: string } | null;
-      const fredSeriesId = metadata?.fred_id || metric.id
+    for (const metric of targetMetrics) {
+      const fredId = (metric.metadata as any).fred_id;
 
-      // Limit to last 100 points for incremental updates
-      const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredSeriesId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`
-
-      console.log(`Fetching ${fredSeriesId} for metric ${metric.id}...`)
       try {
-        const response = await fetch(url)
-        const data = await response.json()
+        // A. Get latest date in DB to skip if current
+        const { data: latestObs } = await supabase
+          .from('metric_observations')
+          .select('as_of_date')
+          .eq('metric_id', metric.id)
+          .order('as_of_date', { ascending: false })
+          .limit(1)
+          .single();
 
-        if (data.error_code) {
-          console.error(`Error fetching ${fredSeriesId}:`, data.error_message)
-          results.push({ metric: metric.id, status: 'error', error: data.error_message })
-          continue
+        const lastDate = latestObs?.as_of_date;
+
+        // B. Fetch from FRED (limit to 30 for efficiency if incremental)
+        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=30`;
+
+        const response = await fetchWithRetry(fredUrl);
+        const data = await response.json();
+
+        if (!data.observations || !Array.isArray(data.observations)) {
+          throw new Error(`Invalid response from FRED for ${fredId}`);
         }
 
-        const observations = data.observations.map((obs: any) => ({
-          metric_id: metric.id,
-          as_of_date: obs.date, // Map to new schema column
-          value: parseFloat(obs.value),
-          // Default computed fields handled by DB or compute job? 
-          // For now, we insert raw values. Z-scores are computed by separate job or view.
-        })).filter((o: any) => !isNaN(o.value))
+        // C. Normalize and filter
+        const observations = data.observations
+          .map((obs: any) => ({
+            metric_id: metric.id,
+            as_of_date: obs.date,
+            value: parseFloat(obs.value),
+            last_updated_at: new Date().toISOString()
+          }))
+          .filter((obs: any) => {
+            const isValid = !isNaN(obs.value);
+            const isNewer = !lastDate || obs.as_of_date > lastDate;
+            return isValid && isNewer;
+          });
 
-        if (observations.length > 0) {
-          // 4. Upsert values to metric_observations
-          const { error: upsertError } = await supabaseClient
-            .from('metric_observations')
-            .upsert(observations, { onConflict: 'metric_id, as_of_date' })
-
-          if (upsertError) {
-            console.error(`Error upserting ${metric.id}:`, upsertError)
-            results.push({ metric: metric.id, status: 'db_error', error: upsertError.message })
-          } else {
-            // Staleness is computed by view, no manual update needed on parent table
-            results.push({ metric: metric.id, status: 'success', count: observations.length })
-          }
-        } else {
-          results.push({ metric: metric.id, status: 'no_data' })
+        if (observations.length === 0) {
+          summary.details.push({ metric: metric.id, status: 'skipped', message: 'Already up to date' });
+          continue;
         }
-      } catch (fetchError: any) {
-        console.error(`Network error for ${metric.id}:`, fetchError)
-        results.push({ metric: metric.id, status: 'network_error', error: fetchError.message || String(fetchError) })
+
+        // D. Idempotent UPSERT
+        const { error: upsertError } = await supabase
+          .from('metric_observations')
+          .upsert(observations, { onConflict: 'metric_id, as_of_date' });
+
+        if (upsertError) throw upsertError;
+
+        summary.success_count++;
+        summary.details.push({
+          metric: metric.id,
+          fred_id: fredId,
+          status: 'success',
+          inserted: observations.length
+        });
+
+      } catch (err: any) {
+        summary.error_count++;
+        summary.details.push({
+          metric: metric.id,
+          fred_id: fredId,
+          status: 'error',
+          error: err.message
+        });
+        console.error(`Error processing ${metric.id} (${fredId}):`, err);
       }
-
-      // Basic rate limiting (500ms delay)
-      await new Promise(resolve => setTimeout(resolve, 500))
     }
 
-    return new Response(JSON.stringify({ results }), {
+    return new Response(JSON.stringify(summary), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+      status: summary.error_count === summary.total_attempted ? 500 : 200
+    });
 
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message || String(error) }), {
+    console.error('Master ingestion error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
-    })
+    });
   }
-})
+});
+

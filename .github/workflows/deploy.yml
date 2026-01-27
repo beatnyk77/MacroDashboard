@@ -25,13 +25,12 @@ jobs:
     - name: Lint
       run: npm run lint
       
-    # - name: Test # Uncomment when tests are added
-    #   run: npm test
+    - name: Test
+      run: npm test
 
     - name: Build
       run: npm run build
       env:
-        # Mock env vars for build if needed (Vite replaces them at build time)
         VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
         VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
@@ -40,6 +39,7 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
