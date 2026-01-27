@@ -1,37 +1,55 @@
 import React from 'react';
-import { Grid } from '@mui/material';
+import { Grid, Box, Typography } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
-import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 
 export const GoldValuationStrip: React.FC = () => {
-    const { data: goldSilver } = useLatestMetric('gold_silver');
-    const { data: goldOil } = useLatestMetric('gold_oil');
+    const { data: gold, isLoading: goldLoading } = useLatestMetric('GOLD_PRICE_USD');
+    const { data: spx, isLoading: spxLoading } = useLatestMetric('SPX_INDEX');
 
     return (
-        <div style={{ marginBottom: 32 }}>
-            <SectionHeader title="Hard Asset Valuation" subtitle="Inter-market ratios" />
-            <Grid container spacing={2}>
+        <Box sx={{
+            position: 'sticky',
+            bottom: 0,
+            zIndex: 1000,
+            bgcolor: 'background.paper',
+            borderTop: 1,
+            borderColor: 'divider',
+            p: 2,
+            px: 3,
+            mx: -2,
+            boxShadow: '0 -4px 12px rgba(0,0,0,0.1)'
+        }}>
+            <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} md={2}>
+                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'block' }}>
+                        Macro Anchors
+                    </Typography>
+                </Grid>
                 <Grid item xs={6} md={3}>
                     <MetricCard
-                        label="Gold / Silver"
-                        value={goldSilver?.value.toFixed(1) || '-'}
-                        delta={goldSilver?.delta ? { value: `${goldSilver.delta}`, period: goldSilver.deltaPeriod, trend: goldSilver.delta > 0 ? 'up' : 'down' } : undefined}
-                        status={goldSilver?.status}
-                        history={goldSilver?.history}
+                        label="Gold / USD"
+                        value={gold?.value.toFixed(1) || '-'}
+                        delta={gold?.delta !== null ? { value: `${gold?.delta?.toFixed(1)}`, period: gold?.deltaPeriod || 'daily', trend: gold?.trend || 'neutral' } : undefined}
+                        status={gold?.status}
+                        history={gold?.history}
+                        prefix="$"
+                        sx={{ border: 'none', boxShadow: 'none', bgcolor: 'transparent' }}
+                        isLoading={goldLoading}
                     />
                 </Grid>
                 <Grid item xs={6} md={3}>
                     <MetricCard
-                        label="Gold / Oil"
-                        value={goldOil?.value.toFixed(1) || '-'}
-                        delta={goldOil?.delta ? { value: `${goldOil.delta}`, period: goldOil.deltaPeriod, trend: goldOil.delta > 0 ? 'up' : 'down' } : undefined}
-                        status={'neutral'}
-                        history={goldOil?.history}
+                        label="S&P 500"
+                        value={spx?.value.toFixed(0) || '-'}
+                        delta={spx?.delta !== null ? { value: `${spx?.delta?.toFixed(1)}`, period: spx?.deltaPeriod || 'daily', trend: spx?.trend || 'neutral' } : undefined}
+                        status={spx?.status}
+                        history={spx?.history}
+                        sx={{ border: 'none', boxShadow: 'none', bgcolor: 'transparent' }}
+                        isLoading={spxLoading}
                     />
                 </Grid>
-                {/* Placeholder for future ratios */}
             </Grid>
-        </div>
+        </Box>
     );
 };

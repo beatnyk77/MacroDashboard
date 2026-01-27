@@ -6,9 +6,9 @@ import { useRegime } from '@/hooks/useRegime';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 
 export const MacroOrientationSection: React.FC = () => {
-    const { data: regimeData } = useRegime();
+    const { data: regimeData, isLoading: regimeLoading } = useRegime();
     // Breadth still comes from generic metrics or future computed table
-    const { data: breadth } = useLatestMetric('breadth');
+    const { data: breadth, isLoading: breadthLoading } = useLatestMetric('breadth');
 
     return (
         <div style={{ marginBottom: 32 }}>
@@ -18,17 +18,16 @@ export const MacroOrientationSection: React.FC = () => {
                     <MetricCard
                         label="Macro Pulse"
                         value={regimeData?.pulseScore.toFixed(0) || '-'}
-                        // Delta logic requires historical snapshots, simple view for now
                         status={regimeData?.pulseScore && regimeData.pulseScore < 40 ? 'danger' : 'safe'}
+                        isLoading={regimeLoading}
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <MetricCard
-                        label="Regime Probability"
+                        label="Current Regime"
                         value={regimeData?.regime || 'Uncertain'}
                         status="neutral"
-                        suffix=""
-                    // Subtitle/Caption could be added to MetricCard to show last updated
+                        isLoading={regimeLoading}
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -39,6 +38,7 @@ export const MacroOrientationSection: React.FC = () => {
                         status={breadth?.status}
                         history={breadth?.history}
                         suffix="%"
+                        isLoading={breadthLoading}
                     />
                 </Grid>
             </Grid>

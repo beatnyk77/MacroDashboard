@@ -17,8 +17,12 @@ interface MetricCardProps {
     suffix?: string;
     prefix?: string;
     lastUpdated?: string | Date;
+    isLoading?: boolean;
     sx?: SxProps<Theme>;
 }
+
+import { Skeleton } from '@mui/material';
+
 
 export const MetricCard: React.FC<MetricCardProps> = ({
     label,
@@ -29,6 +33,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     suffix = '',
     prefix = '',
     lastUpdated,
+    isLoading,
     sx
 }) => {
     const theme = useTheme();
@@ -119,28 +124,40 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, mb: 2 }}>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 700, lineHeight: 1 }}>
-                    {prefix}{value}{suffix}
-                </Typography>
-                {delta && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5, color: getDeltaColor() }}>
-                        {getDeltaIcon()}
-                        <Typography variant="caption" sx={{ fontWeight: 600 }}>{delta.value}</Typography>
-                        <Typography variant="caption" color="text.secondary">{delta.period}</Typography>
-                    </Box>
+                {isLoading ? (
+                    <Skeleton variant="text" width="60%" height={40} />
+                ) : (
+                    <>
+                        <Typography variant="h4" component="div" sx={{ fontWeight: 700, lineHeight: 1 }}>
+                            {prefix}{value}{suffix}
+                        </Typography>
+                        {delta && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5, color: getDeltaColor() }}>
+                                {getDeltaIcon()}
+                                <Typography variant="caption" sx={{ fontWeight: 600 }}>{delta.value}</Typography>
+                                <Typography variant="caption" color="text.secondary">{delta.period}</Typography>
+                            </Box>
+                        )}
+                    </>
                 )}
             </Box>
 
             <Box sx={{ mt: 'auto', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                {history && history.length > 0 && (
-                    <Box sx={{ flexGrow: 1, mr: 2 }}>
-                        <Sparkline data={history} color={getStatusColor()} height={32} />
-                    </Box>
-                )}
-                {timeLabel && (
-                    <Typography variant="caption" color={isStale ? 'error.main' : 'text.disabled'} sx={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
-                        {timeLabel}
-                    </Typography>
+                {isLoading ? (
+                    <Skeleton variant="rectangular" width="100%" height={32} />
+                ) : (
+                    <>
+                        {history && history.length > 0 && (
+                            <Box sx={{ flexGrow: 1, mr: 2 }}>
+                                <Sparkline data={history} color={getStatusColor()} height={32} />
+                            </Box>
+                        )}
+                        {timeLabel && (
+                            <Typography variant="caption" color={isStale ? 'error.main' : 'text.disabled'} sx={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+                                {timeLabel}
+                            </Typography>
+                        )}
+                    </>
                 )}
             </Box>
         </Card>

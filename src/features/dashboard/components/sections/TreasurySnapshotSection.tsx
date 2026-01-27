@@ -6,10 +6,9 @@ import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { Sparkline } from '@/components/Sparkline';
 
 export const TreasurySnapshotSection: React.FC = () => {
-    const { data: netSupply } = useLatestMetric('net_supply');
+    const { data: debt, isLoading: debtLoading } = useLatestMetric('TOTAL_PUBLIC_DEBT');
 
-    // Stub data for refinancing cliff since we don't have a metric for it yet in the hook (specifically logic)
-    // Or usage of Sparkline as a generic chart
+    // ... (refinancingData remains as stub for now per plan)
     const refinancingData = [
         { date: '2024', value: 800 },
         { date: '2025', value: 1200 },
@@ -24,13 +23,14 @@ export const TreasurySnapshotSection: React.FC = () => {
             <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
                     <MetricCard
-                        label="Net Supply (QoQ)"
-                        value={netSupply?.value.toFixed(0) || '-'}
-                        delta={netSupply?.delta ? { value: `${netSupply.delta}`, period: netSupply.deltaPeriod, trend: netSupply.delta > 0 ? 'up' : 'down' } : undefined}
-                        status={netSupply?.status}
-                        history={netSupply?.history}
+                        label="Total Public Debt"
+                        value={debt?.value.toFixed(0) || '-'}
+                        delta={debt?.delta !== null ? { value: `${debt?.delta.toFixed(0)}`, period: debt?.deltaPeriod || 'daily', trend: debt?.trend || 'neutral' } : undefined}
+                        status={debt?.status}
+                        history={debt?.history}
                         prefix="$"
                         suffix="B"
+                        isLoading={debtLoading}
                     />
                 </Grid>
                 <Grid item xs={12} md={8}>

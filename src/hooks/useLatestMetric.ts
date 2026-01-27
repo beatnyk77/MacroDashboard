@@ -5,88 +5,56 @@ export interface MetricData {
     value: number;
     delta: number | null;
     deltaPeriod: string;
+    trend: 'up' | 'down' | 'neutral';
     history: { date: string; value: number }[];
     status: 'safe' | 'warning' | 'danger' | 'neutral';
     lastUpdated: string;
+    zScore?: number;
+    percentile?: number;
 }
 
-export function useLatestMetric(metricKey: string) {
+export function useLatestMetric(metricId: string) {
     return useQuery({
-        queryKey: ['metric', metricKey],
+        queryKey: ['metric', metricId],
         queryFn: async (): Promise<MetricData | null> => {
-            // 1. Get metric ID from key
-            const { data: metric, error: metricError } = await supabase
-                .from('metrics')
-                .select('id, native_frequency, display_frequency, staleness_threshold_hours')
-                // Note: Schema uses 'metric_key' as unique identifier column, but our frontend passes 'metricKey'
-                // We need to match existing keys 'M2SL', 'TOTAL_PUBLIC_DEBT' etc.
-                // The frontend currently passes keys like 'm2', 'pulse' which might NEEd MAPPING.
-                // Let's query by metric_key.
-                .eq('metric_key', metricKey.toUpperCase()) // Attempt upper case match? 
-                // Wait, existing keys seeded are 'M2SL', 'CPIAUCSL'. Frontend uses 'm2'.
-                // I need a mapping layer or update frontend keys. 
-                // Let's assumes we update frontend to use real keys eventually, 
-                // OR we map 'm2' -> 'M2SL' here.
+            // 1. Fetch latest state from view
+            const { data: latest, error: latestError } = await supabase
+                .from('vw_latest_metrics')
+                .select('*')
+                .eq('metric_id', metricId)
                 .single();
 
-            // For now, let's try to map common names to real keys or just pass through
-            let lookupKey = metricKey;
-            const KEY_MAP: Record<string, string> = {
-                'm2': 'M2SL',
-                'gold_reserves': 'TI00000', // Need real code for this
-                'net_supply': 'TOTAL_PUBLIC_DEBT', // Proxy for now? M4 plan said 'Net Supply' is calculated.
-                // If it's a computed metric, we might need a separate API or dedicated query.
-                // Let's handle direct simple metrics first.
-            };
-
-            if (KEY_MAP[metricKey]) lookupKey = KEY_MAP[metricKey];
-
-            // Re-query with potential mapped key
-            const { data: realMetric, error: realMetricError } = await supabase
-                .from('metrics')
-                .select('id, native_frequency')
-                .eq('metric_key', lookupKey)
-                .single();
-
-            if (realMetricError || !realMetric) {
-                // Return null or stub if not found (graceful degradation)
-                console.warn(`Metric ${metricKey} (${lookupKey}) not found in DB`);
+            if (latestError || !latest) {
+                console.warn(`Metric ${metricId} not found in vw_latest_metrics`);
                 return null;
             }
 
-            // 2. Get values for this metric
-            const { data: values, error: valuesError } = await supabase
-                .from('metric_values')
-                .select('date, value')
-                .eq('metric_id', realMetric.id)
-                .order('date', { ascending: false })
-                .limit(13); // Get 1 year + 1 month for trend
+            // 2. Fetch history for the sparkline
+            const { data: history } = await supabase
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', metricId)
+                .order('as_of_date', { ascending: false })
+                .limit(20);
 
-            if (valuesError || !values || values.length === 0) return null;
-
-            const latest = values[0];
-            const prev = values[1]; // Simple 1-period delta
-            // Ideally we find delta based on 'deltaPeriod' (e.g. YoY = index 12)
-
-            let delta = 0;
-            let deltaPeriod = 'MoM';
-
-            // Simple logic: if monthly, compare to 1 month ago. If daily, 1 day ago.
-            // Improvement: Logic based on normalized frequency
-            if (values.length > 1) {
-                delta = latest.value - prev.value;
-            }
-
-            // Calculate status based on simple rules or Z-score if available
-            // For now: neutral
+            // Map staleness_flag to status
+            // fresh -> safe, lagged -> warning, very_lagged -> danger
+            const statusMap: Record<string, 'safe' | 'warning' | 'danger' | 'neutral'> = {
+                'fresh': 'safe',
+                'lagged': 'warning',
+                'very_lagged': 'danger'
+            };
 
             return {
                 value: Number(latest.value),
-                delta: delta,
-                deltaPeriod,
-                history: values.map(v => ({ date: String(v.date), value: Number(v.value) })).reverse(), // Recharts wants ascending
-                status: 'neutral',
-                lastUpdated: latest.date as string
+                delta: latest.delta_mom || latest.delta_wow || 0,
+                deltaPeriod: latest.display_frequency === 'daily' ? 'WoW' : 'MoM',
+                trend: (latest.delta_mom || latest.delta_wow || 0) > 0 ? 'up' : 'down',
+                history: (history || []).map(h => ({ date: String(h.as_of_date), value: Number(h.value) })).reverse(),
+                status: statusMap[latest.staleness_flag] || 'neutral',
+                lastUpdated: latest.as_of_date,
+                zScore: latest.z_score,
+                percentile: latest.percentile
             };
         },
         staleTime: 1000 * 60 * 5, // 5 min
