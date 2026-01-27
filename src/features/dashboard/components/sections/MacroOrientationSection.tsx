@@ -2,11 +2,12 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
 import { SectionHeader } from '@/components/SectionHeader';
+import { useRegime } from '@/hooks/useRegime';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 
 export const MacroOrientationSection: React.FC = () => {
-    const { data: pulse } = useLatestMetric('pulse');
-    const { data: regime } = useLatestMetric('regime');
+    const { data: regimeData } = useRegime();
+    // Breadth still comes from generic metrics or future computed table
     const { data: breadth } = useLatestMetric('breadth');
 
     return (
@@ -16,20 +17,18 @@ export const MacroOrientationSection: React.FC = () => {
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Macro Pulse"
-                        value={pulse?.value.toFixed(1) || '-'}
-                        delta={pulse?.delta ? { value: `${pulse.delta}%`, period: pulse.deltaPeriod, trend: pulse.delta > 0 ? 'up' : 'down' } : undefined}
-                        status={pulse?.status}
-                        history={pulse?.history}
+                        value={regimeData?.pulseScore.toFixed(0) || '-'}
+                        // Delta logic requires historical snapshots, simple view for now
+                        status={regimeData?.pulseScore && regimeData.pulseScore < 40 ? 'danger' : 'safe'}
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Regime Probability"
-                        value={regime?.value ? `${(regime.value * 100).toFixed(0)}%` : '-'}
-                        delta={regime?.delta ? { value: `${(regime.delta * 100).toFixed(0)}%`, period: regime.deltaPeriod, trend: regime.delta > 0 ? 'up' : 'down' } : undefined}
-                        status={regime?.status}
-                        history={regime?.history}
-                        suffix=" Inf. Boom"
+                        value={regimeData?.regime || 'Uncertain'}
+                        status="neutral"
+                        suffix=""
+                    // Subtitle/Caption could be added to MetricCard to show last updated
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
