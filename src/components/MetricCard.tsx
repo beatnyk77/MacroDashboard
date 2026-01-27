@@ -6,6 +6,7 @@ import { Skeleton } from '@mui/material';
 
 interface MetricCardProps {
     label: string;
+    sublabel?: string;
     value: string | number;
     delta?: {
         value: string;
@@ -27,6 +28,7 @@ interface MetricCardProps {
 
 export const MetricCard: React.FC<MetricCardProps> = ({
     label,
+    sublabel,
     value,
     delta,
     status = 'neutral',
@@ -137,19 +139,37 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             )}
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.12em',
-                        fontSize: '0.65rem',
-                        opacity: 0.8
-                    }}
-                >
-                    {label}
-                </Typography>
+                <Box>
+                    <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.12em',
+                            fontSize: '0.65rem',
+                            opacity: 0.8
+                        }}
+                    >
+                        {label}
+                    </Typography>
+
+                    {sublabel && (
+                        <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{
+                                display: 'block',
+                                fontSize: '0.6rem',
+                                opacity: 0.6,
+                                mt: 0.2
+                            }}
+                        >
+                            {sublabel}
+                        </Typography>
+                    )}
+                </Box>
+
 
                 <Tooltip
                     title={
@@ -231,6 +251,6 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                     </Box>
                 )}
             </Box>
-        </Card>
+        </Card >
     );
 };

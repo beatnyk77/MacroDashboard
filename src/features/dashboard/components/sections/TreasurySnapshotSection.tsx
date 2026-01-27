@@ -1,17 +1,24 @@
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, Typography } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { useG20Sovereign } from '@/hooks/useG20Sovereign';
 
 export const TreasurySnapshotSection: React.FC = () => {
     const { data: debt, isLoading: debtLoading } = useLatestMetric('UST_DEBT_TOTAL');
     const { data: netSupply, isLoading: netSupplyLoading } = useLatestMetric('UST_NET_ISSUANCE_M');
     const { data: refi, isLoading: refiLoading } = useLatestMetric('UST_MATURITY_12M_PCT');
+    const { data: g20, isLoading: g20Loading } = useG20Sovereign();
 
     return (
         <Box sx={{ mb: 6 }}>
-            <SectionHeader title="Treasury Snapshot" subtitle="Supply dynamics and debt maturity profile" />
-            <Grid container spacing={3}>
+            <SectionHeader title="Sovereign & Treasury Stress" subtitle="US Treasury dynamics and G20 sovereign risk monitors" />
+
+            {/* US Treasury Row */}
+            <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                US Treasury Market
+            </Typography>
+            <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Total Public Debt"
@@ -51,6 +58,59 @@ export const TreasurySnapshotSection: React.FC = () => {
                     />
                 </Grid>
             </Grid>
+
+            {/* G20 Sovereign Risk Row */}
+            <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                G20 Sovereign Aggregates (IMF)
+            </Typography>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={3}>
+                    <MetricCard
+                        label="G20 Debt/GDP"
+                        value={g20?.debt_gdp_current?.toFixed(1) || '-'}
+                        delta={g20?.debt_gdp_delta ? { value: g20.debt_gdp_delta.toFixed(1), period: 'YoY', trend: g20.debt_gdp_delta > 0 ? 'up' : 'down' } : undefined}
+                        status={g20?.debt_gdp_current && g20.debt_gdp_current > 100 ? 'danger' : 'neutral'}
+                        suffix="%"
+                        isLoading={g20Loading}
+                        lastUpdated={g20?.last_computed_at}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                    <MetricCard
+                        label="G20 Inflation (YoY)"
+                        value={g20?.inflation_current?.toFixed(1) || '-'}
+                        delta={g20?.inflation_delta ? { value: g20.inflation_delta.toFixed(1), period: 'YoY', trend: g20.inflation_delta > 0 ? 'up' : 'down' } : undefined}
+                        status={g20?.inflation_current && g20.inflation_current > 5 ? 'warning' : 'safe'}
+                        suffix="%"
+                        isLoading={g20Loading}
+                        lastUpdated={g20?.last_computed_at}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                    <MetricCard
+                        label="Global Real Rate Proxy"
+                        sublabel="(Fed Funds - G20 CPI)"
+                        value={g20?.real_rate_current?.toFixed(2) || '-'}
+                        status={g20?.real_rate_current && g20.real_rate_current > 2 ? 'warning' : 'neutral'}
+                        suffix="%"
+                        isLoading={g20Loading}
+                        lastUpdated={g20?.last_computed_at}
+                    />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                    <MetricCard
+                        label="Interest Burden"
+                        sublabel="(Interest / Revenue)"
+                        value={g20?.interest_burden_current?.toFixed(1) || '-'}
+                        delta={g20?.interest_burden_delta ? { value: g20.interest_burden_delta.toFixed(1), period: 'YoY', trend: g20.interest_burden_delta > 0 ? 'up' : 'down' } : undefined}
+                        status={g20?.interest_burden_current && g20.interest_burden_current > 15 ? 'danger' : 'safe'}
+                        suffix="%"
+                        isLoading={g20Loading}
+                        lastUpdated={g20?.last_computed_at}
+                    />
+                </Grid>
+            </Grid>
         </Box>
     );
 };
+
