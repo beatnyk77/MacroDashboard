@@ -27,6 +27,7 @@ interface MetricCardProps {
     description?: string;
     methodology?: string;
     stats?: { label: string; value: string | number; color?: string }[];
+    chartType?: 'line' | 'bar';
 }
 
 export const MetricCard: React.FC<MetricCardProps> = ({
@@ -46,7 +47,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     zScoreWindow = 'Rolling 252D',
     description,
     methodology,
-    stats = []
+    stats = [],
+    chartType = 'line'
 }) => {
     const theme = useTheme();
 
@@ -74,8 +76,11 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
         else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
 
+        // Reporting cadence awareness
+        const maxStaleHours = frequency?.toLowerCase() === 'monthly' ? 32 * 24 : 48;
+
         return {
-            isStale: diffHours > 48, // Loosened for non-daily metrics
+            isStale: diffHours > maxStaleHours,
             label: `Refreshed ${timeLabel}`
         };
     };
@@ -236,7 +241,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                     { label: 'Window', value: zScoreWindow },
                     ...stats
                 ],
-                history
+                history,
+                chartType
             }}
         >
             {cardContent}

@@ -19,6 +19,7 @@ interface RatioCardProps {
     description?: string;
     methodology?: string;
     stats?: { label: string; value: string | number; color?: string }[];
+    chartType?: 'line' | 'bar';
 }
 
 const getZScoreColor = (z: number) => {
@@ -40,7 +41,8 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     frequency = 'Daily',
     description,
     methodology,
-    stats = []
+    stats = [],
+    chartType = 'line'
 }) => {
     const theme = useTheme();
 
@@ -52,7 +54,8 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     const isStaleFlag = (lastUpdated: any) => {
         if (!lastUpdated) return false;
         const diff = new Date().getTime() - new Date(lastUpdated).getTime();
-        return diff > (1000 * 60 * 60 * 24);
+        const maxStaleMs = frequency?.toLowerCase() === 'monthly' ? 32 * 24 * 60 * 60 * 1000 : 2 * 24 * 60 * 60 * 1000;
+        return diff > maxStaleMs;
     };
 
     const getStalenessLabel = () => {
@@ -231,7 +234,8 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                     { label: 'Frequency', value: frequency },
                     ...stats
                 ],
-                history: history
+                history: history,
+                chartType
             }}
         >
             {cardContent}

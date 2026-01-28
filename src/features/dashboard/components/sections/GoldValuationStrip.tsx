@@ -72,7 +72,7 @@ export const GoldValuationStrip: React.FC = () => {
                 {[
                     { label: 'M2/GOLD', data: m2Gold, name: 'M2/Gold' },
                     { label: 'SPX/GOLD', data: spxGold, name: 'SPX/Gold' },
-                    { label: 'DEBT/GOLD (Bn)', data: debtGold, name: 'DEBT/Gold' },
+                    { label: 'DEBT/GOLD', data: debtGold, name: 'DEBT/Gold' },
                     { label: 'GOLD/SILVER', data: goldSilver, name: 'Gold/Silver' }
                 ].map((item, idx) => (
                     <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

@@ -55,6 +55,15 @@ export const TreasurySnapshotSection: React.FC = () => {
                         isLoading={refiLoading}
                         lastUpdated={refi?.lastUpdated}
                         sx={{ borderRight: '4px solid', borderRightColor: refi?.value && refi.value > 30 ? 'warning.main' : 'success.main' }}
+                        chartType="bar"
+                        description="Tracks the percentage of total US marketable debt maturing within the next 12 months. Higher values indicate increased sensitivity to interest rate fluctuations during debt roll-overs."
+                        methodology="Calculated as (Total Marketable Debt maturing in <12M / Total Marketable Debt). Data sourced from the US Treasury Monthly Statement of the Public Debt (MSPD)."
+                        source="US Treasury FiscalData"
+                        stats={[
+                            { label: 'Long-term Median', value: '28.4%' },
+                            { label: 'All-time High', value: '34.2% (2023)' },
+                            { label: 'All-time Low', value: '18.1% (2011)' }
+                        ]}
                     />
                 </Grid>
             </Grid>

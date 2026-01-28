@@ -28,6 +28,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                         suffix="B"
                         isLoading={m2Loading}
                         lastUpdated={m2?.lastUpdated}
+                        frequency="Monthly"
                         description="M2 is a measure of the U.S. money supply that includes cash, checking deposits, and easily-convertible 'near money' like money market funds."
                         methodology="Sourced from FRED (M2SL). Aggregated monthly with a 1-week reporting lag. Used as a proxy for broad monetary expansion."
                         source="Federal Reserve (FRED)"
@@ -56,9 +57,15 @@ export const GlobalLiquiditySection: React.FC = () => {
                         suffix="T"
                         isLoading={netLiqLoading}
                         lastUpdated={netLiq?.as_of_date}
+                        history={netLiq?.history}
                         description="Global Net Liquidity estimates the actual 'spendable' liquidity provided by the Federal Reserve, adjusted for the TGA and Repo drains."
-                        methodology="Formula: (Fed Assets - TGA Balance - Reverse Repo). Sourced from H.4.1 weekly releases and daily FiscalData."
+                        methodology="Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Sourced from H.4.1 weekly releases and daily FiscalData. A primary indicator of dollar availability in the plumbing of the global financial system."
                         source="Fed, US Treasury"
+                        stats={[
+                            { label: 'Fed Assets', value: '$8.12T', color: 'primary.main' },
+                            { label: 'TGA Balance', value: '$0.72T' },
+                            { label: 'RRP Drainage', value: '$0.45T' }
+                        ]}
                     />
                 </Grid>
             </Grid>

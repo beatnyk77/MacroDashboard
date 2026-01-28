@@ -9,6 +9,7 @@ export interface NetLiquidityData {
     delta: number;
     delta_pct: number;
     alarm_status: string;
+    history?: { date: string; value: number }[];
 }
 
 export function useNetLiquidity() {
@@ -19,22 +20,28 @@ export function useNetLiquidity() {
                 .from('vw_net_liquidity')
                 .select('*')
                 .order('as_of_date', { ascending: false })
-                .limit(1)
-                .single();
+                .limit(90);
 
-            if (error || !data) {
+            if (error || !data || data.length === 0) {
                 console.warn('Could not fetch net liquidity');
                 return null;
             }
 
+            const latest = data[0];
+            const history = data.map(d => ({
+                date: d.as_of_date,
+                value: Number(d.value)
+            })).reverse();
+
             return {
-                as_of_date: data.as_of_date,
-                current_value: Number(data.value),
-                z_score: Number(data.z_score),
-                percentile: Number(data.percentile),
-                delta: Number(data.delta),
-                delta_pct: Number(data.delta_pct),
-                alarm_status: data.alarm_status
+                as_of_date: latest.as_of_date,
+                current_value: Number(latest.value),
+                z_score: Number(latest.z_score),
+                percentile: Number(latest.percentile),
+                delta: Number(latest.delta),
+                delta_pct: Number(latest.delta_pct),
+                alarm_status: latest.alarm_status,
+                history: history
             };
         },
         staleTime: 1000 * 60 * 60, // 1h

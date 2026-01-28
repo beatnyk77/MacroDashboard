@@ -82,14 +82,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                        <Box sx={{ textAlign: 'right', display: { xs: 'none', md: 'block' } }}>
-                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.6rem', fontWeight: 700, opacity: 0.6 }}>
-                                MARKET PULSE
-                            </Typography>
-                            <Typography variant="caption" sx={{ fontFamily: 'monospace', fontWeight: 700, color: 'text.primary', fontSize: '0.75rem' }}>
-                                SPX 4920 • 10Y 4.12% • DXY 103.5
-                            </Typography>
-                        </Box>
                     </Box>
                 </Toolbar>
             </AppBar>

@@ -21,6 +21,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         percentile={getRatio('M2/Gold')?.percentile}
                         isLoading={isLoading}
                         lastUpdated={getRatio('M2/Gold')?.last_updated}
+                        frequency="Monthly"
                         description="The M2/Gold ratio measures the expansion of fiat money relative to a fixed hard asset anchor. It is a primary indicator of monetary debasement."
                         methodology="Calculated as (US M2 Money Stock / Gold Price USD). Z-score is derived from a 25-year rolling window to normalize current valuations against historical debasement cycles."
                         source="FRED, LBMA"

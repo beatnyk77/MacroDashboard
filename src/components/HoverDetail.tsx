@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { X, Info, Clock, Layers } from 'lucide-react';
 import { Sparkline } from '@/components/Sparkline';
+import { BarChart as ReBarChart, Bar, XAxis, Tooltip as ReTooltip, ResponsiveContainer } from 'recharts';
 
 interface HoverDetailProps {
     title: string;
@@ -24,6 +25,7 @@ interface HoverDetailProps {
         history?: { date: string; value: number }[];
         methodology?: string;
         source?: string;
+        chartType?: 'line' | 'bar';
     };
 }
 
@@ -140,9 +142,22 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                                         <Clock size={16} color={theme.palette.primary.main} />
                                         <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.secondary' }}>RECENT TREND (90D)</Typography>
                                     </Box>
-                                    <Box sx={{ height: 120, width: '100%', mt: 2, p: 2, bgcolor: 'rgba(0,0,0,0.2)', borderRadius: 1 }}>
+                                    <Box sx={{ height: 200, width: '100%', mt: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', borderRadius: 1, border: '1px solid rgba(255,255,255,0.05)' }}>
                                         {detailContent.history && detailContent.history.length > 0 ? (
-                                            <Sparkline data={detailContent.history} height={80} />
+                                            detailContent.chartType === 'bar' ? (
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <ReBarChart data={detailContent.history}>
+                                                        <XAxis dataKey="date" hide />
+                                                        <ReTooltip
+                                                            contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '4px' }}
+                                                            itemStyle={{ color: theme.palette.primary.main, fontWeight: 700 }}
+                                                        />
+                                                        <Bar dataKey="value" fill={theme.palette.primary.main} radius={[2, 2, 0, 0]} />
+                                                    </ReBarChart>
+                                                </ResponsiveContainer>
+                                            ) : (
+                                                <Sparkline data={detailContent.history} height={160} />
+                                            )
                                         ) : (
                                             <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <Typography variant="caption" color="text.disabled">Historical data loading...</Typography>
