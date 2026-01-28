@@ -1,39 +1,43 @@
-import { useMemo } from 'react';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { useMemo, Suspense, lazy } from 'react';
+import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import getTheme from '@/theme';
 import { GlobalLayout } from '@/layout/GlobalLayout';
-import { Dashboard } from '@/features/dashboard/pages/Dashboard';
-import { MetricsMethodologyPage } from '@/pages/MetricsMethodologyPage';
-
-// Mock dashboard component for now to avoid compilation errors if not created yet
-// Ideally we create GlobalLayout and Dashboard next. 
-// But since I'm creating files in parallel/sequence, I'll assume they will exist.
-// If not, I can create placeholders in this step or subsequent steps.
-// For safety, I will implement lazy imports or just standard imports assuming the user will see me create them in the next tool calls.
-// I will create GlobalLayout and Dashboard immediately after this.
-
+import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+// Lazy load heavy page components
+const Dashboard = lazy(() => import('@/features/dashboard/pages/Dashboard').then(module => ({ default: module.Dashboard })));
+const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
+
+const LoadingFallback = () => (
+    <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+        <CircularProgress color="primary" size={24} />
+    </Box>
+);
+
 function App() {
-    // TODO: Add state for theme toggle
     const theme = useMemo(() => getTheme('dark'), []);
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <BrowserRouter>
-                    <GlobalLayout>
-                        <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/methodology" element={<MetricsMethodologyPage />} />
-                        </Routes>
-                    </GlobalLayout>
-                </BrowserRouter>
-            </ThemeProvider>
-        </QueryClientProvider>
+        <GlobalErrorBoundary>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <BrowserRouter>
+                        <GlobalLayout>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <Routes>
+                                    <Route path="/" element={<Dashboard />} />
+                                    <Route path="/methodology" element={<MetricsMethodologyPage />} />
+                                </Routes>
+                            </Suspense>
+                        </GlobalLayout>
+                    </BrowserRouter>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </GlobalErrorBoundary>
     );
 }
 

@@ -3,6 +3,7 @@ import { Box, AppBar, Toolbar, Typography, Container, Chip, useTheme } from '@mu
 import { Activity } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
+import { MobileNav } from '@/components/MobileNav';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -138,7 +139,11 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 </Box>
             </Box>
 
+
+            // ... existing code ...
+
             <SocialShareMode />
+            <MobileNav />
         </Box>
     );
 };
