@@ -58,7 +58,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                         }}>
                             <Activity color={regimeColor} size={28} style={{ filter: `drop-shadow(0 0 8px ${regimeColor}40)` }} />
                             <Typography variant="h5" component="div" sx={{ fontWeight: 800, letterSpacing: '-0.04em', display: { xs: 'none', sm: 'block' } }}>
-                                MacroPulse<Typography component="span" variant="h5" color="primary" sx={{ fontWeight: 800 }}>.ai</Typography>
+                                Graphi<Typography component="span" variant="h5" sx={{ fontWeight: 800, color: '#3b82f6' }}>Questor</Typography>
                             </Typography>
                         </Box>
 
@@ -114,7 +114,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 backgroundColor: 'rgba(2, 6, 23, 0.4)'
             }}>
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                    © {new Date().getFullYear()} MacroPulse Intelligence • Terminal v0.8.2
+                    GraphiQuestor.com – Institutional Macro Intelligence Terminal | Data from FRED, US Treasury &amp; IMF
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 4 }}>
                     {[

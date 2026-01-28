@@ -90,6 +90,7 @@ Deno.serve(async (req: Request) => {
           .single();
 
         const lastDate = latestObs?.as_of_date;
+        console.log(`[FRED] ${fredId}: Last DB date = ${lastDate || 'none'}`);
 
         // B. Fetch from FRED (limit to 30 for efficiency if incremental)
         const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=30`;
@@ -100,6 +101,8 @@ Deno.serve(async (req: Request) => {
         if (!data.observations || !Array.isArray(data.observations)) {
           throw new Error(`Invalid response from FRED for ${fredId}`);
         }
+
+        console.log(`[FRED] ${fredId}: Received ${data.observations.length} observations from API`);
 
         // C. Normalize and filter
         const observations = data.observations
@@ -112,10 +115,13 @@ Deno.serve(async (req: Request) => {
           .filter((obs: any) => {
             const isValid = !isNaN(obs.value);
             const isNewer = !lastDate || obs.as_of_date > lastDate;
+            if (!isValid) console.log(`[FRED] ${fredId}: Skipping invalid value for ${obs.as_of_date}`);
+            if (!isNewer && isValid) console.log(`[FRED] ${fredId}: Skipping already-current date ${obs.as_of_date}`);
             return isValid && isNewer;
           });
 
         if (observations.length === 0) {
+          console.log(`[FRED] ${fredId}: Already up to date, skipping upsert`);
           summary.details.push({ metric: metric.id, status: 'skipped', message: 'Already up to date' });
           continue;
         }

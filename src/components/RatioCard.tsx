@@ -36,7 +36,12 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     frequency = 'Daily'
 }) => {
     const theme = useTheme();
-    const formattedValue = typeof value === 'number' ? value.toFixed(2) : value;
+
+    // Check if value is null, undefined, or placeholder
+    const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
+        (typeof value === 'number' && isNaN(value));
+
+    const formattedValue = isNullValue ? 'No data' : (typeof value === 'number' ? value.toFixed(2) : value);
 
     const isStaleFlag = (lastUpdated: any) => {
         if (!lastUpdated) return false;
@@ -157,6 +162,12 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             <Box sx={{ mb: 2, minHeight: 40 }}>
                 {isLoading ? (
                     <Skeleton variant="text" width="60%" height={40} />
+                ) : isNullValue ? (
+                    <Tooltip title="Check ingestion logs for issues" arrow placement="top">
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
+                            No data
+                        </Typography>
+                    </Tooltip>
                 ) : (
                     <Typography variant="h3" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.04em' }}>
                         {formattedValue}

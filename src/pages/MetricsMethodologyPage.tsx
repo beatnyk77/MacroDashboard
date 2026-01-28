@@ -4,17 +4,41 @@ import { Container, Typography, Paper, Table, TableBody, TableCell, TableContain
 interface MetricInfo {
     category: string;
     metric: string;
+    metricId: string;
     source: string;
     frequency: string;
     tier: 'Core' | 'Secondary';
 }
 
 const metrics: MetricInfo[] = [
-    { category: 'Liquidity', metric: 'Fed Net Liquidity', source: 'FRED (WALCL - TGA - RRP)', frequency: 'Weekly', tier: 'Core' },
-    { category: 'Liquidity', metric: 'Global Liquidity Index', source: 'Bloomberg / Custom', frequency: 'Daily', tier: 'Core' },
-    { category: 'Rates', metric: '10y-2y Spread', source: 'FRED (T10Y2Y)', frequency: 'Daily', tier: 'Core' },
-    { category: 'Rates', metric: 'SOFR Spread', source: 'New York Fed', frequency: 'Daily', tier: 'Secondary' },
-    { category: 'Safe Assets', metric: 'Gold vs Real Rates', source: 'FRED / COMEX', frequency: 'Daily', tier: 'Core' },
+    // Liquidity & Rates
+    { category: 'Rates', metric: 'SOFR (Secured Overnight Financing Rate)', metricId: 'SOFR', source: 'FRED', frequency: 'Daily', tier: 'Core' },
+    { category: 'Rates', metric: 'Fed Funds Rate', metricId: 'FEDFUNDS', source: 'FRED', frequency: 'Daily', tier: 'Core' },
+    { category: 'Liquidity', metric: 'US M2 Money Supply', metricId: 'US_M2', source: 'FRED (M2SL)', frequency: 'Weekly', tier: 'Core' },
+
+    // Gold & Precious Metals
+    { category: 'Safe Assets', metric: 'Gold Price (USD/oz)', metricId: 'GOLD_PRICE_USD', source: 'FRED (GOLDAMGBD228NLBM)', frequency: 'Daily', tier: 'Core' },
+    { category: 'Safe Assets', metric: 'M2/Gold Ratio', metricId: 'M2_GOLD_RATIO', source: 'Computed', frequency: 'Daily', tier: 'Core' },
+    { category: 'Safe Assets', metric: 'SPX/Gold Ratio', metricId: 'SPX_GOLD_RATIO', source: 'Computed', frequency: 'Daily', tier: 'Secondary' },
+
+    // Equity Markets
+    { category: 'Equities', metric: 'S&P 500 Index', metricId: 'SPX_INDEX', source: 'FRED (SP500)', frequency: 'Daily', tier: 'Core' },
+
+    // Treasury & Sovereign
+    { category: 'Sovereign', metric: 'US Debt Outstanding', metricId: 'UST_DEBT_OUTSTANDING', source: 'US Treasury FiscalData', frequency: 'Daily', tier: 'Core' },
+    { category: 'Sovereign', metric: 'G20 Debt/GDP', metricId: 'G20_DEBT_GDP_PCT', source: 'IMF WEO', frequency: 'Quarterly', tier: 'Core' },
+
+    // BRICS Tracker
+    { category: 'BRICS', metric: 'BRICS+ Gold Holdings (tonnes)', metricId: 'BRICS_GOLD_HOLDINGS_TONNES', source: 'IMF / WGC', frequency: 'Quarterly', tier: 'Core' },
+    { category: 'BRICS', metric: 'BRICS+ USD Reserve Share (%)', metricId: 'BRICS_USD_RESERVE_SHARE_PCT', source: 'IMF COFER', frequency: 'Quarterly', tier: 'Core' },
+    { category: 'BRICS', metric: 'BRICS+ GDP (PPP, $T)', metricId: 'BRICS_GDP_PPP_TN', source: 'IMF WEO', frequency: 'Annual', tier: 'Secondary' },
+    { category: 'BRICS', metric: 'BRICS+ Debt/GDP (%)', metricId: 'BRICS_DEBT_GDP_PCT', source: 'IMF WEO', frequency: 'Annual', tier: 'Secondary' },
+
+    // De-Dollarization
+    { category: 'De-Dollarization', metric: 'Global USD Reserve Share (%)', metricId: 'GLOBAL_USD_SHARE_PCT', source: 'IMF COFER', frequency: 'Quarterly', tier: 'Core' },
+    { category: 'De-Dollarization', metric: 'Global EUR Reserve Share (%)', metricId: 'GLOBAL_EUR_SHARE_PCT', source: 'IMF COFER', frequency: 'Quarterly', tier: 'Secondary' },
+    { category: 'De-Dollarization', metric: 'Global RMB Reserve Share (%)', metricId: 'GLOBAL_RMB_SHARE_PCT', source: 'IMF COFER', frequency: 'Quarterly', tier: 'Core' },
+    { category: 'De-Dollarization', metric: 'Global Gold Reserve Share (%)', metricId: 'GLOBAL_GOLD_SHARE_PCT', source: 'IMF COFER', frequency: 'Quarterly', tier: 'Core' },
 ];
 
 export const MetricsMethodologyPage: React.FC = () => {
@@ -24,13 +48,13 @@ export const MetricsMethodologyPage: React.FC = () => {
                 Data Methodology
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" paragraph>
-                Transparency is key. Below are the sources, calculation methods, and update frequencies for all metrics tracked on this dashboard.
+                GraphiQuestor provides institutional-grade macro intelligence for policy planners, central banks, sovereign wealth funds, and investment professionals. Below are the sources, calculation methods, and update frequencies for all metrics tracked.
             </Typography>
 
             <TableContainer component={Paper} variant="outlined" sx={{ mt: 4 }}>
                 <Table>
                     <TableHead>
-                        <TableRow>
+                        <TableRow sx={{ bgcolor: 'rgba(255,255,255,0.02)' }}>
                             <TableCell><Typography variant="subtitle2" fontWeight={700}>Category</Typography></TableCell>
                             <TableCell><Typography variant="subtitle2" fontWeight={700}>Metric</Typography></TableCell>
                             <TableCell><Typography variant="subtitle2" fontWeight={700}>Source</Typography></TableCell>
@@ -40,10 +64,10 @@ export const MetricsMethodologyPage: React.FC = () => {
                     </TableHead>
                     <TableBody>
                         {metrics.map((row) => (
-                            <TableRow key={row.metric} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableRow key={row.metricId} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' } }}>
                                 <TableCell>{row.category}</TableCell>
                                 <TableCell>{row.metric}</TableCell>
-                                <TableCell>{row.source}</TableCell>
+                                <TableCell><Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.source}</Typography></TableCell>
                                 <TableCell>{row.frequency}</TableCell>
                                 <TableCell>
                                     <Chip
@@ -82,6 +106,21 @@ export const MetricsMethodologyPage: React.FC = () => {
                             <strong>Neutral / Mixed:</strong> Default state when signals are conflicting or within normal bounds.
                         </Typography>
                     </li>
+                </ul>
+            </Box>
+
+            <Box sx={{ mt: 6 }}>
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
+                    Data Sources
+                </Typography>
+                <Typography variant="body1" paragraph>
+                    GraphiQuestor aggregates data from trusted institutional sources:
+                </Typography>
+                <ul>
+                    <li><Typography variant="body2"><strong>FRED</strong> – Federal Reserve Economic Data (St. Louis Fed)</Typography></li>
+                    <li><Typography variant="body2"><strong>US Treasury FiscalData</strong> – Debt, auctions, and maturity profiles</Typography></li>
+                    <li><Typography variant="body2"><strong>IMF</strong> – COFER (Currency Composition of Official Foreign Exchange Reserves), WEO (World Economic Outlook)</Typography></li>
+                    <li><Typography variant="body2"><strong>World Gold Council</strong> – Central bank gold holdings</Typography></li>
                 </ul>
             </Box>
         </Container>

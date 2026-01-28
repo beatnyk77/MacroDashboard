@@ -66,5 +66,7 @@ export function useLatestMetric(metricId: string) {
             };
         },
         staleTime: 1000 * 60 * 5, // 5 min
+        refetchOnWindowFocus: true, // Refetch when user returns to tab
+        refetchOnMount: true, // Refetch on component mount
     });
 }

@@ -44,6 +44,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
     const theme = useTheme();
 
+    // Check if value is null, undefined, or placeholder
+    const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
+        (typeof value === 'number' && isNaN(value));
+
     const getStatusColor = () => {
         switch (status) {
             case 'safe': return theme.palette.success.main;
@@ -191,6 +195,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             <Box sx={{ mb: 1.5, minHeight: 48 }}>
                 {isLoading ? (
                     <Skeleton variant="text" width="80%" height={48} sx={{ borderRadius: 1 }} />
+                ) : isNullValue ? (
+                    <Tooltip title="Check ingestion logs for issues" arrow placement="top">
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
+                            No data
+                        </Typography>
+                    </Tooltip>
                 ) : (
                     <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
                         <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em', color: 'text.primary' }}>
