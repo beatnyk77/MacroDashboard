@@ -1,7 +1,8 @@
 import React from 'react';
-import { Card, Typography, Box, Skeleton, Tooltip, useTheme } from '@mui/material';
+import { Card, Typography, Box, Skeleton, useTheme, Button } from '@mui/material';
 import { Sparkline } from '@/components/Sparkline';
-import { Info } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { HoverDetail } from '@/components/HoverDetail';
 
 interface RatioCardProps {
     primaryLabel: string;
@@ -15,6 +16,9 @@ interface RatioCardProps {
     isLoading?: boolean;
     source?: string;
     frequency?: string;
+    description?: string;
+    methodology?: string;
+    stats?: { label: string; value: string | number; color?: string }[];
 }
 
 const getZScoreColor = (z: number) => {
@@ -33,11 +37,13 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     lastUpdated,
     isLoading,
     source = 'Composite Data',
-    frequency = 'Daily'
+    frequency = 'Daily',
+    description,
+    methodology,
+    stats = []
 }) => {
     const theme = useTheme();
 
-    // Check if value is null, undefined, or placeholder
     const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
         (typeof value === 'number' && isNaN(value));
 
@@ -64,11 +70,11 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     const isStale = isStaleFlag(lastUpdated);
     const timeLabel = getStalenessLabel();
 
-    return (
+    const cardContent = (
         <Card
             sx={{
                 p: 2.5,
-                height: 250, // Fixed height for consistency
+                height: 250,
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
@@ -120,21 +126,6 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         >
                             {primaryLabel}
                         </Typography>
-                        <Tooltip
-                            title={
-                                <Box sx={{ p: 0.5 }}>
-                                    <Typography variant="caption" display="block"><b>Source:</b> {source}</Typography>
-                                    <Typography variant="caption" display="block"><b>Freq:</b> {frequency}</Typography>
-                                    <Typography variant="caption" display="block"><b>Method:</b> Rolling Z-Score</Typography>
-                                </Box>
-                            }
-                            arrow
-                            placement="top"
-                        >
-                            <Box sx={{ opacity: 0.3, '&:hover': { opacity: 1 }, cursor: 'help' }}>
-                                <Info size={12} />
-                            </Box>
-                        </Tooltip>
                     </Box>
 
                     {!isLoading && zScore !== undefined && (
@@ -163,11 +154,9 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 {isLoading ? (
                     <Skeleton variant="text" width="60%" height={40} />
                 ) : isNullValue ? (
-                    <Tooltip title="Check ingestion logs for issues" arrow placement="top">
-                        <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
-                            No data
-                        </Typography>
-                    </Tooltip>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
+                        No data
+                    </Typography>
                 ) : (
                     <Typography variant="h3" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.04em' }}>
                         {formattedValue}
@@ -190,31 +179,62 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                                 bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
                                 height: '100%',
                                 borderRadius: 'inherit',
-                                boxShadow: `0 0 10px ${percentile > 90 || percentile < 10 ? theme.palette.warning.main : theme.palette.primary.main}40`
                             }} />
                         </Box>
                     </Box>
                 )}
             </Box>
 
-            <Box sx={{ mt: 'auto' }}>
-                {isLoading ? (
-                    <Skeleton variant="rectangular" width="100%" height={32} sx={{ borderRadius: 1 }} />
-                ) : (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                        {history && history.length > 0 && (
-                            <Box sx={{ height: 32, opacity: 0.8 }}>
-                                <Sparkline data={history} height={32} color={theme.palette.text.disabled} />
-                            </Box>
-                        )}
-                        {timeLabel && (
-                            <Typography variant="caption" sx={{ color: isStale ? 'error.main' : 'text.disabled', fontSize: '0.65rem', fontWeight: 600 }}>
-                                Updated {timeLabel}
-                            </Typography>
-                        )}
-                    </Box>
-                )}
+            <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                    {history && history.length > 0 && (
+                        <Box sx={{ height: 32, opacity: 0.6 }}>
+                            <Sparkline data={history} height={32} color={theme.palette.text.disabled} />
+                        </Box>
+                    )}
+                    {timeLabel && (
+                        <Typography variant="caption" sx={{ color: isStale ? 'error.main' : 'text.disabled', fontSize: '0.6rem', fontWeight: 600 }}>
+                            Updated {timeLabel}
+                        </Typography>
+                    )}
+                </Box>
+                <Button
+                    size="small"
+                    variant="text"
+                    sx={{
+                        fontSize: '0.6rem',
+                        fontWeight: 900,
+                        minWidth: 'auto',
+                        p: 0,
+                        opacity: 0.5,
+                        '&:hover': { opacity: 1, bgcolor: 'transparent' }
+                    }}
+                    startIcon={<ExternalLink size={10} />}
+                >
+                    DETAILS
+                </Button>
             </Box>
         </Card>
+    );
+
+    return (
+        <HoverDetail
+            title={primaryLabel}
+            subtitle={subtitle}
+            detailContent={{
+                description,
+                methodology,
+                source,
+                stats: [
+                    { label: 'Z-Score', value: zScore?.toFixed(2) || 'N/A', color: zScore ? getZScoreColor(zScore) : undefined },
+                    { label: 'Percentile', value: (percentile !== undefined ? percentile.toFixed(1) + '%' : 'N/A') },
+                    { label: 'Frequency', value: frequency },
+                    ...stats
+                ],
+                history: history
+            }}
+        >
+            {cardContent}
+        </HoverDetail>
     );
 };

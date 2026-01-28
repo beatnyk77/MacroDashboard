@@ -1,4 +1,4 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient } from '@supabase/supabase-js'
 import { sendSlackAlert } from '../_shared/slack.ts'
 
 const corsHeaders = {

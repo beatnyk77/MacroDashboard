@@ -28,6 +28,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                         suffix="B"
                         isLoading={m2Loading}
                         lastUpdated={m2?.lastUpdated}
+                        description="M2 is a measure of the U.S. money supply that includes cash, checking deposits, and easily-convertible 'near money' like money market funds."
+                        methodology="Sourced from FRED (M2SL). Aggregated monthly with a 1-week reporting lag. Used as a proxy for broad monetary expansion."
+                        source="Federal Reserve (FRED)"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -39,6 +42,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                         percentile={m2Gold?.percentile}
                         isLoading={ratiosLoading}
                         lastUpdated={m2Gold?.last_updated}
+                        description="Measures fiat currency quantity per ounce of gold. A rising ratio indicates monetary expansion exceeding gold supply growth."
+                        methodology="M2SL / Gold (LBMA). Z-Score uses a 9125-day (25Y) rolling sample to provide generational context."
+                        source="FRED, LBMA"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -50,6 +56,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                         suffix="T"
                         isLoading={netLiqLoading}
                         lastUpdated={netLiq?.as_of_date}
+                        description="Global Net Liquidity estimates the actual 'spendable' liquidity provided by the Federal Reserve, adjusted for the TGA and Repo drains."
+                        methodology="Formula: (Fed Assets - TGA Balance - Reverse Repo). Sourced from H.4.1 weekly releases and daily FiscalData."
+                        source="Fed, US Treasury"
                     />
                 </Grid>
             </Grid>

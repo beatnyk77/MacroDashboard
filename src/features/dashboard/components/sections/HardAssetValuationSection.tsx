@@ -21,6 +21,9 @@ export const HardAssetValuationSection: React.FC = () => {
                         percentile={getRatio('M2/Gold')?.percentile}
                         isLoading={isLoading}
                         lastUpdated={getRatio('M2/Gold')?.last_updated}
+                        description="The M2/Gold ratio measures the expansion of fiat money relative to a fixed hard asset anchor. It is a primary indicator of monetary debasement."
+                        methodology="Calculated as (US M2 Money Stock / Gold Price USD). Z-score is derived from a 25-year rolling window to normalize current valuations against historical debasement cycles."
+                        source="FRED, LBMA"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -32,6 +35,9 @@ export const HardAssetValuationSection: React.FC = () => {
                         percentile={getRatio('SPX/Gold')?.percentile}
                         isLoading={isLoading}
                         lastUpdated={getRatio('SPX/Gold')?.last_updated}
+                        description="The S&P 500 priced in Gold reveals the true 'hard money' purchasing power of US equities, removing the noise of currency inflation."
+                        methodology="Calculated as (S&P 500 Index / Gold Price USD). High ratios suggest equity overvaluation or gold undervaluation."
+                        source="FRED, Yahoo Finance"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -43,6 +49,9 @@ export const HardAssetValuationSection: React.FC = () => {
                         percentile={getRatio('DEBT/Gold')?.percentile}
                         isLoading={isLoading}
                         lastUpdated={getRatio('DEBT/Gold')?.last_updated}
+                        description="This ratio tracks the US national debt burden in real terms (Gold). It indicates the sustainability of fiscal expansion relative to sound money."
+                        methodology="Calculated as (Total US Public Debt / Gold Price USD), normalized to billions. Tracks the 'Gold cover' required to offset national liabilities."
+                        source="US Treasury FiscalData"
                     />
                 </Grid>
             </Grid>

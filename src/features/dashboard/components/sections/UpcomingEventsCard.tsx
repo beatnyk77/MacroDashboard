@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Skeleton } from '@mui/material';
 import { Calendar } from 'lucide-react';
 import { useMacroEvents } from '@/hooks/useMacroEvents';
+import { HoverDetail } from '@/components/HoverDetail';
 
 
 export const UpcomingEventsCard: React.FC = () => {
@@ -40,49 +41,65 @@ export const UpcomingEventsCard: React.FC = () => {
                     </TableHead>
                     <TableBody>
                         {events.map((event, idx) => (
-                            <TableRow key={idx}>
-                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', pl: 0 }}>
-                                    {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                    {event.event_name}
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 800, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'primary.light' }}>
-                                    {event.consensus_value || '-'}
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 900, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: event.actual_value ? 'text.primary' : 'text.disabled' }}>
-                                    {event.actual_value || 'TBD'}
-                                </TableCell>
-                                <TableCell sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)', pr: 0 }}>
-                                    {event.actual_value ? (
-                                        <Chip
-                                            label="SURPRISE"
-                                            size="small"
-                                            sx={{
-                                                height: 16,
-                                                fontSize: '0.55rem',
-                                                fontWeight: 900,
-                                                bgcolor: 'success.main',
-                                                color: 'white',
-                                                borderRadius: 0.5
-                                            }}
-                                        />
-                                    ) : (
-                                        <Chip
-                                            label={event.impact_level.toUpperCase()}
-                                            size="small"
-                                            sx={{
-                                                height: 16,
-                                                fontSize: '0.6rem',
-                                                fontWeight: 900,
-                                                bgcolor: event.impact_level === 'high' ? 'error.main' : 'warning.main',
-                                                color: 'white',
-                                                borderRadius: 0.5
-                                            }}
-                                        />
-                                    )}
-                                </TableCell>
-                            </TableRow>
+                            <HoverDetail
+                                key={idx}
+                                title={event.event_name}
+                                subtitle={`${new Date(event.event_date).toLocaleDateString()} | Impact: ${event.impact_level.toUpperCase()}`}
+                                detailContent={{
+                                    description: `Scheduled macro release for ${event.event_name}. High impact events usually trigger volatility in the DXY and Gold markets.`,
+                                    stats: [
+                                        { label: 'Consensus', value: event.consensus_value || 'N/A' },
+                                        { label: 'Previous', value: event.previous_value || 'N/A' },
+                                        { label: 'Impact', value: event.impact_level.toUpperCase(), color: event.impact_level === 'high' ? '#f43f5e' : '#eab308' }
+                                    ],
+                                    methodology: "Data sourced from global economic calendars. Consensus represents the median analyst expectation prior to release.",
+                                    source: "Macro Economic Calendar"
+                                }}
+                            >
+                                <TableRow sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.02)', cursor: 'pointer' } }}>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', pl: 0 }}>
+                                        {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        {event.event_name}
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: 800, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'primary.light' }}>
+                                        {event.consensus_value || '-'}
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: event.actual_value ? 'text.primary' : 'text.disabled' }}>
+                                        {event.actual_value || 'TBD'}
+                                    </TableCell>
+                                    <TableCell sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)', pr: 0 }}>
+                                        {event.actual_value ? (
+                                            <Chip
+                                                label="SURPRISE"
+                                                size="small"
+                                                sx={{
+                                                    height: 16,
+                                                    fontSize: '0.55rem',
+                                                    fontWeight: 900,
+                                                    bgcolor: 'success.main',
+                                                    color: 'white',
+                                                    borderRadius: 0.5
+                                                }}
+                                            />
+                                        ) : (
+                                            <Chip
+                                                label={event.impact_level.toUpperCase()}
+                                                size="small"
+                                                sx={{
+                                                    height: 16,
+                                                    fontSize: '0.6rem',
+                                                    fontWeight: 900,
+                                                    bgcolor: event.impact_level === 'high' ? 'error.main' : 'warning.main',
+                                                    color: 'white',
+                                                    borderRadius: 0.5
+                                                }}
+                                            />
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            </HoverDetail>
                         ))}
                     </TableBody>
                 </Table>
