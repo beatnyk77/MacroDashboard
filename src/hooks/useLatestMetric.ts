@@ -23,10 +23,7 @@ export function useLatestMetric(metricId: string) {
             // 1. Fetch latest state from view
             const { data: latest, error: latestError } = await supabase
                 .from('vw_latest_metrics')
-                .select(`
-                    *,
-                    data_sources(name)
-                `)
+                .select('*')
                 .eq('metric_id', metricId)
                 .single();
 
@@ -60,7 +57,7 @@ export function useLatestMetric(metricId: string) {
                 lastUpdated: latest.as_of_date,
                 zScore: latest.z_score,
                 percentile: latest.percentile,
-                source: (latest.data_sources as any)?.name || 'Internal Analytics',
+                source: latest.source_name || 'Internal Analytics',
                 frequency: latest.native_frequency,
                 methodology: 'Rolling 252-day Z-Score'
             };
