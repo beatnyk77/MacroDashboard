@@ -8,6 +8,10 @@ export const MarketPulseTicker: React.FC = () => {
     const { data: liqData } = useNetLiquidity();
 
     const items = [...(pulseData || [])];
+
+    // Add additional signals if they exist in pulseData or from specific metrics
+    // The useMarketPulse likely returns the standard 8. Let's add more or filter carefully.
+
     if (liqData) {
         items.push({
             id: 'NET_LIQUIDITY',

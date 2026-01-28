@@ -1,4 +1,5 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { sendSlackAlert } from '../_shared/slack.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -96,6 +97,7 @@ Deno.serve(async (req: Request) => {
 
     } catch (error: any) {
         console.error('Master Error:', error.message)
+        await sendSlackAlert(`GraphiQuestor ingestion failed: ingest-market-pulse - ${error.message}`);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }

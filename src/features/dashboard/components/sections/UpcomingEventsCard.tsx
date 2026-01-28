@@ -1,27 +1,14 @@
 import React from 'react';
-import { Box, Typography, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip } from '@mui/material';
+import { Box, Typography, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Skeleton } from '@mui/material';
 import { Calendar } from 'lucide-react';
+import { useMacroEvents } from '@/hooks/useMacroEvents';
 
-interface MacroEvent {
-    date: string;
-    event: string;
-    consensus: string;
-    previous: string;
-    impact: 'High' | 'Medium' | 'Low';
-}
-
-const UPCOMING_EVENTS: MacroEvent[] = [
-    { date: 'Jan 28', event: 'FOMC Rate Decision', consensus: '3.50% - 3.75%', previous: '3.75%', impact: 'High' },
-    { date: 'Feb 6', event: 'US Non-Farm Payrolls', consensus: '185K', previous: '206K', impact: 'High' },
-    { date: 'Feb 11', event: 'US CPI (YoY)', consensus: '3.1%', previous: '3.2%', impact: 'High' },
-    { date: 'Feb 13', event: 'US Retail Sales', consensus: '0.3%', previous: '0.4%', impact: 'Medium' },
-    { date: 'Feb 26', event: 'US GDP (Q4 Final)', consensus: '2.5%', previous: '2.4%', impact: 'Medium' },
-    { date: 'Mar 5', event: 'ECB Rate Decision', consensus: '2.75%', previous: '3.00%', impact: 'High' },
-    { date: 'Mar 12', event: 'BoJ Policy Meeting', consensus: '0.25%', previous: '0.25%', impact: 'High' },
-    { date: 'Mar 18', event: 'FOMC Rate Decision', consensus: '3.25% - 3.50%', previous: '3.50%', impact: 'High' },
-];
 
 export const UpcomingEventsCard: React.FC = () => {
+    const { data: events, isLoading } = useMacroEvents();
+
+    if (isLoading) return <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />;
+    if (!events || events.length === 0) return null;
     return (
         <Card sx={{
             p: 3,
@@ -51,26 +38,26 @@ export const UpcomingEventsCard: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {UPCOMING_EVENTS.map((event, idx) => (
+                        {events.map((event, idx) => (
                             <TableRow key={idx}>
                                 <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', pl: 0 }}>
-                                    {event.date}
+                                    {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                 </TableCell>
                                 <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                    {event.event}
+                                    {event.event_name}
                                 </TableCell>
                                 <TableCell sx={{ fontWeight: 800, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'primary.light' }}>
-                                    {event.consensus}
+                                    {event.consensus_value || '-'}
                                 </TableCell>
                                 <TableCell sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)', pr: 0 }}>
                                     <Chip
-                                        label={event.impact}
+                                        label={event.impact_level.toUpperCase()}
                                         size="small"
                                         sx={{
                                             height: 16,
                                             fontSize: '0.6rem',
                                             fontWeight: 900,
-                                            bgcolor: event.impact === 'High' ? 'error.main' : 'warning.main',
+                                            bgcolor: event.impact_level === 'high' ? 'error.main' : 'warning.main',
                                             color: 'white',
                                             borderRadius: 0.5
                                         }}

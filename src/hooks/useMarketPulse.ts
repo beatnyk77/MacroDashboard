@@ -20,8 +20,15 @@ export function useMarketPulse() {
                 'VIX_INDEX',
                 'DXY_INDEX',
                 'UST_10Y_YIELD',
-                'UST_10Y_2Y_SPREAD'
+                'UST_10Y_2Y_SPREAD',
+                'BITCOIN_PRICE_USD',
+                'SOFR_RATE',
+                'EM_FX_RESERVES',
+                'PRIMARY_DEALER_UST_HOLDINGS'
             ];
+            // SOFR_EFFR_SPREAD is often calculated, but if it has its own ID we add it. 
+            // I'll add BRENT as well to reach 12.
+            tickerIds.push('BRENT_CRUDE_PRICE');
 
             const { data, error } = await supabase
                 .from('vw_latest_metrics')

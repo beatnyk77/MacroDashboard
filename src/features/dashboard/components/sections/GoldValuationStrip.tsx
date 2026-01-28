@@ -1,11 +1,13 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
+import { useIngestionStatus } from '@/hooks/useIngestionStatus';
 
 export const GoldValuationStrip: React.FC = () => {
     const theme = useTheme();
     const { data: ratios } = useGoldRatios();
     const { data: gold } = useLatestMetric('GOLD_PRICE_USD');
+    const { data: status } = useIngestionStatus();
 
     const getRatio = (name: string) => ratios?.find((r: any) => r.ratio_name === name);
     const m2Gold = getRatio('M2/Gold');
@@ -89,18 +91,18 @@ export const GoldValuationStrip: React.FC = () => {
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
                 <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', fontSize: '0.6rem', letterSpacing: '0.05em' }}>
-                        SYSTEM STATUS
+                        LAST INGESTION (UTC)
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'flex-end' }}>
                         <Box sx={{
                             width: 6,
                             height: 6,
                             borderRadius: '50%',
-                            bgcolor: 'success.main',
-                            boxShadow: `0 0 10px ${theme.palette.success.main}`
+                            bgcolor: status?.last_ingestion_at ? 'success.main' : 'error.main',
+                            boxShadow: status?.last_ingestion_at ? `0 0 10px ${theme.palette.success.main}` : 'none'
                         }} />
                         <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', fontSize: '0.65rem' }}>
-                            OPERATIONAL
+                            {status?.last_ingestion_at ? new Date(status.last_ingestion_at).toLocaleTimeString() : 'OFFLINE'}
                         </Typography>
                     </Box>
                 </Box>
