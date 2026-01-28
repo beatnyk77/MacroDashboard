@@ -34,6 +34,7 @@ export const UpcomingEventsCard: React.FC = () => {
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.65rem', border: 'none', pl: 0 }}>DATE</TableCell>
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.65rem', border: 'none' }}>EVENT</TableCell>
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.65rem', border: 'none' }}>CONSENSUS</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.65rem', border: 'none' }}>ACTUAL</TableCell>
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.65rem', border: 'none', pr: 0 }}>IMPACT</TableCell>
                         </TableRow>
                     </TableHead>
@@ -49,19 +50,37 @@ export const UpcomingEventsCard: React.FC = () => {
                                 <TableCell sx={{ fontWeight: 800, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'primary.light' }}>
                                     {event.consensus_value || '-'}
                                 </TableCell>
+                                <TableCell sx={{ fontWeight: 900, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', color: event.actual_value ? 'text.primary' : 'text.disabled' }}>
+                                    {event.actual_value || 'TBD'}
+                                </TableCell>
                                 <TableCell sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)', pr: 0 }}>
-                                    <Chip
-                                        label={event.impact_level.toUpperCase()}
-                                        size="small"
-                                        sx={{
-                                            height: 16,
-                                            fontSize: '0.6rem',
-                                            fontWeight: 900,
-                                            bgcolor: event.impact_level === 'high' ? 'error.main' : 'warning.main',
-                                            color: 'white',
-                                            borderRadius: 0.5
-                                        }}
-                                    />
+                                    {event.actual_value ? (
+                                        <Chip
+                                            label="SURPRISE"
+                                            size="small"
+                                            sx={{
+                                                height: 16,
+                                                fontSize: '0.55rem',
+                                                fontWeight: 900,
+                                                bgcolor: 'success.main',
+                                                color: 'white',
+                                                borderRadius: 0.5
+                                            }}
+                                        />
+                                    ) : (
+                                        <Chip
+                                            label={event.impact_level.toUpperCase()}
+                                            size="small"
+                                            sx={{
+                                                height: 16,
+                                                fontSize: '0.6rem',
+                                                fontWeight: 900,
+                                                bgcolor: event.impact_level === 'high' ? 'error.main' : 'warning.main',
+                                                color: 'white',
+                                                borderRadius: 0.5
+                                            }}
+                                        />
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}

@@ -21,12 +21,11 @@ Deno.serve(async (req: Request) => {
     // For simplicity and stability, we seed/update a curated list of recurring high-impact events
     // In a production scenario, this could be fetched from a FRED Economic Calendar or similar
     const events = [
-      { date: '2026-02-01', name: 'FOMC Interest Rate Decision', impact: 'high' },
-      { date: '2026-02-04', name: 'US Consumer Price Index (CPI)', impact: 'high' },
-      { date: '2026-02-06', name: 'Non-Farm Payrolls (NFP)', impact: 'high' },
-      { date: '2026-02-12', name: 'US Retail Sales', impact: 'medium' },
-      { date: '2026-03-18', name: 'FOMC Meeting & Projections', impact: 'high' },
-      // ... more events can be added here
+      { date: '2026-02-01', name: 'FOMC Interest Rate Decision', impact: 'high', consensus: '4.50%', actual: null },
+      { date: '2026-02-04', name: 'US Consumer Price Index (CPI)', impact: 'high', consensus: '3.1%', actual: null },
+      { date: '2026-02-06', name: 'Non-Farm Payrolls (NFP)', impact: 'high', consensus: '180k', actual: null },
+      { date: '2026-02-12', name: 'US Retail Sales', impact: 'medium', consensus: '0.4%', actual: null },
+      { date: '2026-03-18', name: 'FOMC Meeting & Projections', impact: 'high', consensus: '4.25%', actual: null },
     ];
 
     const { error: upsertError } = await supabase
@@ -36,7 +35,9 @@ Deno.serve(async (req: Request) => {
           event_date: e.date,
           event_name: e.name,
           impact_level: e.impact,
-          status: 'upcoming'
+          consensus_value: e.consensus,
+          actual_value: e.actual,
+          status: e.actual ? 'completed' : 'upcoming'
         })),
         { onConflict: 'event_date, event_name' }
       );

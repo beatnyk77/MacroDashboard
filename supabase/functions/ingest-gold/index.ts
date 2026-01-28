@@ -33,82 +33,84 @@ Deno.serve(async (req: Request) => {
 
         if (sourceError) throw sourceError
 
-        // 2. Fetch Gold Price
-        let price: number | null = null
-        let sourceUsed = 'Yahoo Finance'
-        let asOfDate = new Date().toISOString().split('T')[0]
+        // 2. Fetch Gold & Silver Prices
+        const metals = [
+            { id: 'GOLD_PRICE_USD', ticker: 'GC=F', api_id: 'XAU' },
+            { id: 'SILVER_PRICE_USD', ticker: 'SI=F', api_id: 'XAG' }
+        ]
 
-        // Attempt Yahoo First
-        try {
-            console.log('Fetching from Yahoo Finance (GC=F)...')
-            const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1d&range=25y'
-            const res = await fetch(yahooUrl)
-            if (!res.ok) throw new Error(`Yahoo HTTP ${res.status}`)
+        const results = []
 
-            const json = await res.json()
-            const result = json.chart?.result?.[0]
-            if (!result) throw new Error('Invalid Yahoo structure')
+        for (const metal of metals) {
+            let price: number | null = null
+            let sourceUsed = 'Yahoo Finance'
+            let asOfDate = new Date().toISOString().split('T')[0]
 
-            const timestamps = result.timestamp
-            const quotes = result.indicators?.quote?.[0]?.close
+            // Attempt Yahoo First
+            try {
+                console.log(`Fetching ${metal.id} from Yahoo Finance (${metal.ticker})...`)
+                const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${metal.ticker}?interval=1d&range=5d`
+                const res = await fetch(yahooUrl)
+                if (!res.ok) throw new Error(`Yahoo HTTP ${res.status}`)
 
-            if (timestamps && quotes) {
-                // Get last non-null price
-                for (let i = timestamps.length - 1; i >= 0; i--) {
-                    if (quotes[i]) {
-                        price = quotes[i]
-                        asOfDate = new Date(timestamps[i] * 1000).toISOString().split('T')[0]
-                        break
+                const json = await res.json()
+                const result = json.chart?.result?.[0]
+                if (!result) throw new Error('Invalid Yahoo structure')
+
+                const timestamps = result.timestamp
+                const quotes = result.indicators?.quote?.[0]?.close
+
+                if (timestamps && quotes) {
+                    for (let i = timestamps.length - 1; i >= 0; i--) {
+                        if (quotes[i]) {
+                            price = quotes[i]
+                            asOfDate = new Date(timestamps[i] * 1000).toISOString().split('T')[0]
+                            break
+                        }
                     }
                 }
-            }
-        } catch (e) {
-            console.warn('Yahoo fetch failed:', e)
-        }
-
-        // Attempt GoldAPI Fallback if Yahoo failed or returned null
-        if (!price && goldApiKey) {
-            try {
-                console.log('Fetching from GoldAPI...')
-                sourceUsed = 'GoldAPI'
-                const res = await fetch('https://www.goldapi.io/api/XAU/USD', {
-                    headers: { 'x-access-token': goldApiKey }
-                })
-                if (!res.ok) throw new Error(`GoldAPI HTTP ${res.status}`)
-                const json = await res.json()
-                price = json.price
-                // GoldAPI returns live price, assume today
-                asOfDate = new Date().toISOString().split('T')[0]
             } catch (e) {
-                console.error('GoldAPI fetch failed:', e)
+                console.warn(`Yahoo fetch failed for ${metal.id}:`, e)
+            }
+
+            // Fallback to GoldAPI
+            if (!price && goldApiKey) {
+                try {
+                    console.log(`Fetching ${metal.id} from GoldAPI...`)
+                    sourceUsed = 'GoldAPI'
+                    const res = await fetch(`https://www.goldapi.io/api/${metal.api_id}/USD`, {
+                        headers: { 'x-access-token': goldApiKey }
+                    })
+                    if (res.ok) {
+                        const json = await res.json()
+                        price = json.price
+                        asOfDate = new Date().toISOString().split('T')[0]
+                    }
+                } catch (e) {
+                    console.error(`GoldAPI fetch failed for ${metal.id}:`, e)
+                }
+            }
+
+            if (price) {
+                console.log(`Fetched ${metal.id}: $${price} (${asOfDate}) from ${sourceUsed}`)
+                const { error: upsertError } = await supabase
+                    .from('metric_observations')
+                    .upsert({
+                        metric_id: metal.id,
+                        as_of_date: asOfDate,
+                        value: price,
+                        last_updated_at: new Date().toISOString(),
+                        metadata: { source_used: sourceUsed }
+                    }, { onConflict: 'metric_id, as_of_date' })
+
+                if (upsertError) console.error(`Upsert error for ${metal.id}:`, upsertError)
+                results.push({ metal: metal.id, price, date: asOfDate, source: sourceUsed })
             }
         }
-
-        if (!price) {
-            throw new Error('Failed to fetch gold price from all sources')
-        }
-
-        console.log(`Fetched Gold Price: $${price} (${asOfDate}) from ${sourceUsed}`)
-
-        // 3. Upsert to DB
-        // Metric ID: GOLD_PRICE_USD
-        const { error: upsertError } = await supabase
-            .from('metric_observations')
-            .upsert({
-                metric_id: 'GOLD_PRICE_USD',
-                as_of_date: asOfDate,
-                value: price,
-                last_updated_at: new Date().toISOString(),
-                metadata: { source_used: sourceUsed }
-            }, { onConflict: 'metric_id, as_of_date' })
-
-        if (upsertError) throw upsertError
 
         return new Response(JSON.stringify({
             message: 'Success',
-            price,
-            date: asOfDate,
-            source: sourceUsed
+            results
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
