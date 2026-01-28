@@ -31,9 +31,8 @@ jobs:
     - name: Build
       run: npm run build
       env:
-        # These are needed for the build to pass TS checks if they are referenced
-        # We can use dummy values here for the build check if we want, or real secrets if available.
-        # Ideally, build should not require secrets unless it bakes them in.
-        # Assuming Vite build needs these available at build time for 'import.meta.env'.
-        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        # Vite needs these at build time for import.meta.env
+        # Using fallback values for CI builds where secrets might not be set
+        # Netlify will inject the real values during its own build
+        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
