@@ -9,6 +9,7 @@ import { GoldValuationStrip } from '@/features/dashboard/components/sections/Gol
 import { StickyRegimeBar } from '@/features/dashboard/components/StickyRegimeBar';
 import { LiquidityAlarmCard } from '@/features/dashboard/components/sections/LiquidityAlarmCard';
 import { MarketPulseTicker } from '@/features/dashboard/components/MarketPulseTicker';
+import { MajorEconomiesTable } from '@/features/dashboard/components/sections/MajorEconomiesTable';
 
 export const Dashboard: React.FC = () => {
     return (
@@ -35,6 +36,9 @@ export const Dashboard: React.FC = () => {
                 </Box>
                 <Box id="brics-tracker-section">
                     <BRICSTrackerSection />
+                </Box>
+                <Box id="major-economies-section">
+                    <MajorEconomiesTable />
                 </Box>
                 <Box id="treasury-snapshot-section">
                     <TreasurySnapshotSection />
