@@ -18,6 +18,8 @@ export function useNetLiquidity() {
             const { data, error } = await supabase
                 .from('vw_net_liquidity')
                 .select('*')
+                .order('as_of_date', { ascending: false })
+                .limit(1)
                 .single();
 
             if (error || !data) {
