@@ -4,7 +4,6 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 export const MarketPulseTicker: React.FC = () => {
-    const theme = useTheme();
     const { data: pulseData } = useMarketPulse();
     const { data: liqData } = useNetLiquidity();
 

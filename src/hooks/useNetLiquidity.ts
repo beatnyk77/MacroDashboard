@@ -7,6 +7,7 @@ export interface NetLiquidityData {
     z_score: number;
     percentile: number;
     delta: number;
+    delta_pct: number;
     alarm_status: string;
 }
 
@@ -30,6 +31,7 @@ export function useNetLiquidity() {
                 z_score: Number(data.z_score),
                 percentile: Number(data.percentile),
                 delta: Number(data.delta),
+                delta_pct: Number(data.delta_pct),
                 alarm_status: data.alarm_status
             };
         },
