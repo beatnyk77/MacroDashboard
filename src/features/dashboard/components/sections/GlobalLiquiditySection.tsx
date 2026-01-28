@@ -4,12 +4,15 @@ import { RatioCard } from '@/components/RatioCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
+import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 
 export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
     const { data: ratios, isLoading: ratiosLoading } = useGoldRatios();
 
     const m2Gold = ratios?.find(r => r.ratio_name === 'M2/Gold');
+
+    const { data: netLiq, isLoading: netLiqLoading } = useNetLiquidity();
 
     return (
         <Box sx={{ mb: 6 }}>
@@ -18,7 +21,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="US M2 Money Stock"
-                        value={m2?.value.toFixed(1) || '-'}
+                        value={m2?.value.toLocaleString() || '-'}
                         delta={m2?.delta !== null ? { value: `${m2?.delta.toFixed(1)}`, period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
                         status={m2?.status}
                         history={m2?.history}
@@ -40,12 +43,13 @@ export const GlobalLiquiditySection: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <MetricCard
-                        label="G20 Reserves YoY"
-                        value="+2.4"
-                        delta={{ value: "0.2%", period: "MoM", trend: "up" }}
-                        status="safe"
-                        suffix="%"
-                        isLoading={false} // Stub for now
+                        label="Global Net Liquidity"
+                        value={netLiq ? (netLiq.current_value / 1e6).toFixed(2) : '-'}
+                        delta={netLiq ? { value: `${netLiq.delta_pct.toFixed(1)}%`, period: "WoW", trend: netLiq.delta_pct > 0 ? 'up' : 'down' } : undefined}
+                        status={netLiq ? (netLiq.z_score > 1 ? 'danger' : netLiq.z_score < -1 ? 'warning' : 'safe') : undefined}
+                        suffix="T"
+                        isLoading={netLiqLoading}
+                        lastUpdated={netLiq?.as_of_date}
                     />
                 </Grid>
             </Grid>

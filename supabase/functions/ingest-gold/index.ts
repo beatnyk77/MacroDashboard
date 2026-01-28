@@ -40,7 +40,7 @@ Deno.serve(async (req: Request) => {
         // Attempt Yahoo First
         try {
             console.log('Fetching from Yahoo Finance (GC=F)...')
-            const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1d&range=5d'
+            const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1d&range=25y'
             const res = await fetch(yahooUrl)
             if (!res.ok) throw new Error(`Yahoo HTTP ${res.status}`)
 

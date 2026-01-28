@@ -92,8 +92,8 @@ Deno.serve(async (req: Request) => {
         const lastDate = latestObs?.as_of_date;
         console.log(`[FRED] ${fredId}: Last DB date = ${lastDate || 'none'}`);
 
-        // B. Fetch from FRED (limit to 30 for efficiency if incremental)
-        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=30`;
+        // B. Fetch from FRED (high limit to ensure 25-year backfill for Z-scores)
+        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=10000`;
 
         const response = await fetchWithRetry(fredUrl);
         const data = await response.json();
@@ -114,10 +114,8 @@ Deno.serve(async (req: Request) => {
           }))
           .filter((obs: any) => {
             const isValid = !isNaN(obs.value);
-            const isNewer = !lastDate || obs.as_of_date > lastDate;
             if (!isValid) console.log(`[FRED] ${fredId}: Skipping invalid value for ${obs.as_of_date}`);
-            if (!isNewer && isValid) console.log(`[FRED] ${fredId}: Skipping already-current date ${obs.as_of_date}`);
-            return isValid && isNewer;
+            return isValid;
           });
 
         if (observations.length === 0) {
