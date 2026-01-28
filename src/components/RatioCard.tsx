@@ -137,12 +137,18 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                                 px: 1,
                                 py: 0.3,
                                 borderRadius: 1,
-                                bgcolor: `${getZScoreColor(zScore)}15`,
+                                bgcolor: Math.abs(zScore) > 2 ? `${getZScoreColor(zScore)}` : `${getZScoreColor(zScore)}15`,
                                 border: '1px solid',
-                                borderColor: `${getZScoreColor(zScore)}25`
+                                borderColor: `${getZScoreColor(zScore)}25`,
+                                animation: Math.abs(zScore) > 2 ? 'pulse 2s infinite' : 'none',
+                                '@keyframes pulse': {
+                                    '0%': { opacity: 1 },
+                                    '50%': { opacity: 0.7 },
+                                    '100%': { opacity: 1 }
+                                }
                             }}
                         >
-                            <Typography variant="caption" sx={{ fontWeight: 900, color: getZScoreColor(zScore), fontSize: '0.65rem' }}>
+                            <Typography variant="caption" sx={{ fontWeight: 900, color: Math.abs(zScore) > 2 ? 'white' : getZScoreColor(zScore), fontSize: '0.65rem' }}>
                                 Z: {zScore > 0 ? '+' : ''}{zScore.toFixed(1)}
                             </Typography>
                         </Box>
@@ -153,7 +159,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 </Typography>
             </Box>
 
-            <Box sx={{ mb: 2, minHeight: 40 }}>
+            <Box sx={{ mb: 2, minHeight: 40, display: 'flex', alignItems: 'baseline', gap: 1 }}>
                 {isLoading ? (
                     <Skeleton variant="text" width="60%" height={40} />
                 ) : isNullValue ? (
@@ -161,9 +167,20 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         No data
                     </Typography>
                 ) : (
-                    <Typography variant="h3" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.04em' }}>
-                        {formattedValue}
-                    </Typography>
+                    <>
+                        <Typography variant="h3" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.04em' }}>
+                            {formattedValue}
+                        </Typography>
+                        {Math.abs(zScore || 0) > 2 && (
+                            <Box sx={{
+                                bgcolor: getZScoreColor(zScore || 0),
+                                borderRadius: '50%',
+                                width: 8,
+                                height: 8,
+                                alignSelf: 'center'
+                            }} />
+                        )}
+                    </>
                 )}
             </Box>
 

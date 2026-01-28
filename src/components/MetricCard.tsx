@@ -194,6 +194,16 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.7rem' }}>{delta.value}</Typography>
                             </Box>
                         )}
+                        {status !== 'neutral' && (
+                            <Box sx={{
+                                bgcolor: getStatusColor(),
+                                borderRadius: '50%',
+                                width: 8,
+                                height: 8,
+                                alignSelf: 'center',
+                                ml: 'auto'
+                            }} />
+                        )}
                     </Box>
                 )}
             </Box>

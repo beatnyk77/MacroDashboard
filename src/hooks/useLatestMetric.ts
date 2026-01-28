@@ -38,7 +38,7 @@ export function useLatestMetric(metricId: string) {
                 .select('as_of_date, value')
                 .eq('metric_id', metricId)
                 .order('as_of_date', { ascending: false })
-                .limit(20);
+                .limit(300);
 
             // Map staleness_flag to status
             const statusMap: Record<string, 'safe' | 'warning' | 'danger' | 'neutral'> = {

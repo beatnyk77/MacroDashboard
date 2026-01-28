@@ -58,9 +58,11 @@ export const DeDollarizationSection: React.FC = () => {
                         suffix="%"
                         isLoading={isLoading}
                         lastUpdated={usdShare?.as_of_date}
+                        description="Tracks the proportion of global foreign exchange reserves held in US Dollars."
+                        methodology="Based on IMF COFER (Currency Composition of Official Foreign Exchange Reserves) data. Includes G20 and remaining reporting economies (approx 149 countries)."
                         source="IMF COFER"
                         frequency="Quarterly"
-                        zScoreWindow="Global proxy; G20 drives trend"
+                        zScoreWindow="25-Year Context (100 Qurs)"
                         sx={{
                             // Subtle red tint if USD declining (de-dollarization signal)
                             ...(usdShare?.delta_qoq && usdShare.delta_qoq < 0 && {
@@ -78,7 +80,7 @@ export const DeDollarizationSection: React.FC = () => {
                         value={goldShare?.delta_yoy_pct?.toFixed(1) || '-'}
                         delta={goldShare?.value ? {
                             value: `${goldShare.value.toFixed(1)}%`,
-                            period: 'Current',
+                            period: 'Total Share',
                             trend: (goldShare?.delta_yoy_pct || 0) > 0 ? 'up' : 'down'
                         } : undefined}
                         status={getGoldStatus()}
@@ -86,9 +88,11 @@ export const DeDollarizationSection: React.FC = () => {
                         suffix="%"
                         isLoading={isLoading}
                         lastUpdated={goldShare?.as_of_date}
-                        source="IMF COFER"
+                        description="Tracks the annual percentage change in the share of global reserves held in gold bullion."
+                        methodology="Derived from IMF COFER global holdings and LBMA gold pricing. Trends >10% accumulation signal significant central bank diversification into hard assets."
+                        source="IMF COFER, LBMA"
                         frequency="Quarterly"
-                        zScoreWindow="Central banks diversifying reserves"
+                        zScoreWindow="25-Year Context (100 Qurs)"
                         sx={{
                             // Subtle gold tint if accelerating accumulation
                             ...(goldShare?.delta_yoy_pct && goldShare.delta_yoy_pct > 10 && {
@@ -98,18 +102,6 @@ export const DeDollarizationSection: React.FC = () => {
                         }}
                     />
                 </Grid>
-
-                {/* Optional: RMB Share Card (can be added in future) */}
-                {/* <Grid item xs={12} md={4}>
-                    <MetricCard
-                        label="RMB Share in Reserves"
-                        value={data?.rmbShare?.value.toFixed(2) || '-'}
-                        suffix="%"
-                        isLoading={isLoading}
-                        source="IMF COFER"
-                        frequency="Quarterly"
-                    />
-                </Grid> */}
             </Grid>
         </Box>
     );

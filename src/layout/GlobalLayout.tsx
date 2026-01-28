@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, AppBar, Toolbar, Typography, Container, Chip, useTheme } from '@mui/material';
 import { Activity } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
+import { SocialShareMode } from '@/components/SocialShareMode';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -92,6 +93,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 </Container>
             </Box>
 
+
             <Box component="footer" sx={{
                 py: 4,
                 px: { xs: 2, md: 6 },
@@ -105,6 +107,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 gap: 2,
                 backgroundColor: 'rgba(2, 6, 23, 0.4)'
             }}>
+                {/* ... existing footer content ... */}
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
                     GraphiQuestor.com – Institutional Macro Intelligence Terminal | Data from FRED, US Treasury &amp; IMF
                 </Typography>
@@ -134,6 +137,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     ))}
                 </Box>
             </Box>
+
+            <SocialShareMode />
         </Box>
     );
 };

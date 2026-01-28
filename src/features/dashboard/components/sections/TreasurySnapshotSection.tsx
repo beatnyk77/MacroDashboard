@@ -30,6 +30,11 @@ export const TreasurySnapshotSection: React.FC = () => {
                         suffix="T"
                         isLoading={debtLoading}
                         lastUpdated={debt?.lastUpdated}
+                        description="Total US Treasury debt outstandng, including both marketable and non-marketable securities."
+                        methodology="Aggregated from the Daily Treasury Statement (DTS). Standard z-score windows applied over 25y history."
+                        source="US Treasury FiscalData"
+                        frequency="Monthly"
+                        zScoreWindow="25-Year Context"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -43,6 +48,11 @@ export const TreasurySnapshotSection: React.FC = () => {
                         suffix="B"
                         isLoading={netSupplyLoading}
                         lastUpdated={netSupply?.lastUpdated}
+                        description="Net change in total US marketable debt outstanding over the previous rolling 30-day period."
+                        methodology="Calculated as gross issuance minus redemptions. High net issuance indicates increased absorption pressure on private balance sheets."
+                        source="US Treasury FiscalData"
+                        frequency="Monthly"
+                        zScoreWindow="25-Year Context"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -56,9 +66,11 @@ export const TreasurySnapshotSection: React.FC = () => {
                         lastUpdated={refi?.lastUpdated}
                         sx={{ borderRight: '4px solid', borderRightColor: refi?.value && refi.value > 30 ? 'warning.main' : 'success.main' }}
                         chartType="bar"
-                        description="Tracks the percentage of total US marketable debt maturing within the next 12 months. Higher values indicate increased sensitivity to interest rate fluctuations during debt roll-overs."
-                        methodology="Calculated as (Total Marketable Debt maturing in <12M / Total Marketable Debt). Data sourced from the US Treasury Monthly Statement of the Public Debt (MSPD)."
+                        description="Tracks the percentage of total US marketable debt maturing within the next 12 months."
+                        methodology="Calculated as (Total Marketable Debt maturing in <12M / Total Marketable Debt). High values indicate sensitivity to interest rate fluctuations."
                         source="US Treasury FiscalData"
+                        frequency="Monthly"
+                        zScoreWindow="25-Year Context"
                         stats={[
                             { label: 'Long-term Median', value: '28.4%' },
                             { label: 'All-time High', value: '34.2% (2023)' },

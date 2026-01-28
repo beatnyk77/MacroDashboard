@@ -79,7 +79,7 @@ export function useDeDollarizationHistory(metricId: string) {
                 .select('as_of_date, value')
                 .eq('metric_id', metricId)
                 .order('as_of_date', { ascending: false })
-                .limit(20); // 5 years of quarterly data
+                .limit(100); // 25 years of quarterly data (100 quarters)
 
             if (error) throw error;
 
