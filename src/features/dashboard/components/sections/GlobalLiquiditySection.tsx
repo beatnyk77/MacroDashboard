@@ -9,7 +9,7 @@ export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
     const { data: ratios, isLoading: ratiosLoading } = useGoldRatios();
 
-    const m2Gold = ratios?.find(r => r.ratio_name === 'M2 Money Supply / Gold');
+    const m2Gold = ratios?.find(r => r.ratio_name === 'M2/Gold');
 
     return (
         <Box sx={{ mb: 6 }}>

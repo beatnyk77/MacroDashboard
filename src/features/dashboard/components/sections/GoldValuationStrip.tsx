@@ -8,8 +8,8 @@ export const GoldValuationStrip: React.FC = () => {
     const { data: gold } = useLatestMetric('GOLD_PRICE_USD');
 
     const getRatio = (name: string) => ratios?.find((r: any) => r.ratio_name === name);
-    const m2Gold = getRatio('M2 Money Supply / Gold');
-    const spxGold = getRatio('S&P 500 / Gold');
+    const m2Gold = getRatio('M2/Gold');
+    const spxGold = getRatio('SPX/Gold');
 
     const getZColor = (z?: number) => {
         if (!z) return 'text.disabled';

@@ -25,10 +25,10 @@ Deno.serve(async (req: Request) => {
         // Source: IMF COFER database - Currency Composition of Official Foreign Exchange Reserves
         // We simulate "Latest" data being Q3 2025 (released Dec 2025) which is fresh for Jan 2026.
         const mockCoferData = [
-            { quarter: '2025Q3', usd_share: 57.68, eur_share: 19.82, rmb_share: 2.98, other_share: 19.52 },
-            { quarter: '2025Q2', usd_share: 58.02, eur_share: 19.75, rmb_share: 2.86, other_share: 19.37 },
-            { quarter: '2025Q1', usd_share: 58.28, eur_share: 19.68, rmb_share: 2.78, other_share: 19.26 },
-            { quarter: '2024Q4', usd_share: 58.41, eur_share: 19.60, rmb_share: 2.65, other_share: 19.34 },
+            { quarter: '2025Q3', usd_share: 57.68, eur_share: 19.82, rmb_share: 2.98, other_share: 19.52, gold_share: 15.4, gold_holdings_usd: 2450000000000 },
+            { quarter: '2025Q2', usd_share: 58.02, eur_share: 19.75, rmb_share: 2.86, other_share: 19.37, gold_share: 14.8, gold_holdings_usd: 2380000000000 },
+            { quarter: '2025Q1', usd_share: 58.28, eur_share: 19.68, rmb_share: 2.78, other_share: 19.26, gold_share: 14.2, gold_holdings_usd: 2320000000000 },
+            { quarter: '2024Q4', usd_share: 58.41, eur_share: 19.60, rmb_share: 2.65, other_share: 19.34, gold_share: 13.5, gold_holdings_usd: 2250000000000 },
         ];
 
         console.log(`Processing ${mockCoferData.length} quarters of COFER data...`);
@@ -39,6 +39,8 @@ Deno.serve(async (req: Request) => {
             'GLOBAL_EUR_SHARE_PCT': 'eur_share',
             'GLOBAL_RMB_SHARE_PCT': 'rmb_share',
             'GLOBAL_OTHER_SHARE_PCT': 'other_share',
+            'GLOBAL_GOLD_SHARE_PCT': 'gold_share',
+            'GLOBAL_GOLD_HOLDINGS_USD': 'gold_holdings_usd',
         };
 
         const observations: any[] = [];
