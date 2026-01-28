@@ -2,14 +2,17 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface MacroEvent {
+    id: string;
     event_date: string;
     event_name: string;
-    consensus_value: string | null;
-    previous_value: string | null;
-    expected_value: string | null;
-    actual_value: string | null;
-    impact_level: 'high' | 'medium' | 'low';
+    country: string;
+    impact_level: 'High' | 'Medium' | 'Low';
+    forecast: string | null;
+    previous: string | null;
+    actual: string | null;
+    surprise: string | null;
     surprise_direction: 'positive' | 'negative' | 'neutral';
+    source_url: string;
 }
 
 export function useMacroEvents() {
