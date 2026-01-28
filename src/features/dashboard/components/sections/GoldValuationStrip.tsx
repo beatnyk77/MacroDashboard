@@ -11,6 +11,7 @@ export const GoldValuationStrip: React.FC = () => {
     const m2Gold = getRatio('M2/Gold');
     const spxGold = getRatio('SPX/Gold');
     const debtGold = getRatio('DEBT/Gold');
+    const goldSilver = getRatio('Gold/Silver');
 
     const getZColor = (z?: number) => {
         if (!z) return 'text.disabled';
@@ -57,7 +58,8 @@ export const GoldValuationStrip: React.FC = () => {
                 {[
                     { label: 'M2/GOLD', data: m2Gold },
                     { label: 'SPX/GOLD', data: spxGold },
-                    { label: 'DEBT/GOLD', data: debtGold }
+                    { label: 'DEBT/GOLD', data: debtGold },
+                    { label: 'GOLD/SILVER', data: goldSilver }
                 ].map((item, idx) => (
                     <Box key={idx} sx={{ display: 'flex', flexDirection: 'column' }}>
                         <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', fontSize: '0.6rem', letterSpacing: '0.08em' }}>

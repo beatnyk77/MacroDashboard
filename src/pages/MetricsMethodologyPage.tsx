@@ -14,16 +14,19 @@ const metrics: MetricInfo[] = [
     { category: 'Rates', metric: 'SOFR (Secured Overnight Financing Rate)', metricId: 'SOFR_RATE', source: 'FRED', frequency: 'Daily', tier: 'Core' },
     { category: 'Rates', metric: 'Fed Funds Rate', metricId: 'FED_FUNDS_RATE', source: 'FRED', frequency: 'Daily', tier: 'Core' },
     { category: 'Liquidity', metric: 'US M2 Money Supply', metricId: 'US_M2', source: 'FRED (M2SL)', frequency: 'Weekly', tier: 'Core' },
-    { category: 'Liquidity', metric: 'Net Liquidity Composite', metricId: 'NET_LIQUIDITY', source: 'Fed Assets - (TGA + RRP)', frequency: 'Weekly', tier: 'Core' },
+    { category: 'Liquidity', metric: 'Net Liquidity Composite', metricId: 'NET_LIQUIDITY', source: 'Fed Assets - (TGA + RRP*1000)', frequency: 'Daily', tier: 'Core' },
 
-    // Gold & Precious Metals
-    { category: 'Safe Assets', metric: 'Gold Price (USD/oz)', metricId: 'GOLD_PRICE_USD', source: 'Yahoo Finance (GC=F)', frequency: 'Daily', tier: 'Core' },
-    { category: 'Safe Assets', metric: 'M2 / Gold Ratio', metricId: 'M2/Gold', source: 'Computed', frequency: 'Daily', tier: 'Core' },
-    { category: 'Safe Assets', metric: 'SPX / Gold Ratio', metricId: 'SPX/Gold', source: 'Computed', frequency: 'Daily', tier: 'Secondary' },
-    { category: 'Safe Assets', metric: 'Debt / Gold Ratio', metricId: 'DEBT/Gold', source: 'Computed', frequency: 'Daily', tier: 'Core' },
+    // Market Pulse
+    { category: 'Macro Regime', metric: 'Gold Price (USD/oz)', metricId: 'GOLD_PRICE_USD', source: 'Yahoo Finance (GC=F)', frequency: 'Daily', tier: 'Core' },
+    { category: 'Macro Regime', metric: 'WTI Crude Oil', metricId: 'WTI_CRUDE_PRICE', source: 'Yahoo Finance (CL=F)', frequency: 'Daily', tier: 'Core' },
+    { category: 'Macro Regime', metric: 'VIX Volatility Index', metricId: 'VIX_INDEX', source: 'Yahoo Finance (^VIX)', frequency: 'Daily', tier: 'Core' },
+    { category: 'Macro Regime', metric: 'US Dollar Index (DXY)', metricId: 'DXY_INDEX', source: 'Yahoo Finance (DX-Y.NYB)', frequency: 'Daily', tier: 'Core' },
 
-    // Equity Markets
-    { category: 'Equities', metric: 'S&P 500 Index', metricId: 'SPX_INDEX', source: 'FRED (SP500)', frequency: 'Daily', tier: 'Core' },
+    // Ratios
+    { category: 'Valuation', metric: 'M2 / Gold Ratio', metricId: 'M2/Gold', source: 'Computed', frequency: 'Daily', tier: 'Core' },
+    { category: 'Valuation', metric: 'SPX / Gold Ratio', metricId: 'SPX/Gold', source: 'Computed', frequency: 'Daily', tier: 'Secondary' },
+    { category: 'Valuation', metric: 'Debt / Gold Ratio', metricId: 'DEBT/Gold', source: 'Computed', frequency: 'Daily', tier: 'Core' },
+    { category: 'Valuation', metric: 'Gold / Silver Ratio', metricId: 'Gold/Silver', source: 'Computed', frequency: 'Daily', tier: 'Core' },
 
     // Treasury & Sovereign
     { category: 'Sovereign', metric: 'US Debt Outstanding', metricId: 'UST_DEBT_TOTAL', source: 'US Treasury FiscalData', frequency: 'Daily', tier: 'Core' },
@@ -53,10 +56,10 @@ export const MetricsMethodologyPage: React.FC = () => {
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>Calculation Formulas</Typography>
                 <Grid container spacing={2} sx={{ mb: 4 }}>
                     {[
-                        { label: 'Net Liquidity', formula: 'Fed Assets - (TGA Balance + Reverse Repo)' },
+                        { label: 'Net Liquidity', formula: '(WALCL - TGA - RRP*1000) / 1000' },
                         { label: 'M2 / Gold', formula: 'US M2 Money Stock (Billions) / Gold Spot Price' },
                         { label: 'Debt / Gold', formula: 'Total Public Debt (Billions) / Gold Spot Price' },
-                        { label: 'Z-Score', formula: '(Current Value - 25yr Mean) / 25yr StdDev' }
+                        { label: 'Z-Score', formula: '(Current Value - Rolling Mean) / Rolling StdDev' }
                     ].map((item) => (
                         <Grid item xs={12} md={6} key={item.label}>
                             <Paper variant="outlined" sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.02)' }}>

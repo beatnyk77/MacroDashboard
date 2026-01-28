@@ -4,10 +4,10 @@ import { supabase } from '@/lib/supabase';
 export interface NetLiquidityData {
     as_of_date: string;
     current_value: number;
-    previous_value: number;
-    delta_pct: number;
     z_score: number;
     percentile: number;
+    delta: number;
+    alarm_status: string;
 }
 
 export function useNetLiquidity() {
@@ -26,11 +26,11 @@ export function useNetLiquidity() {
 
             return {
                 as_of_date: data.as_of_date,
-                current_value: Number(data.current_value),
-                previous_value: Number(data.previous_value),
-                delta_pct: Number(data.delta_pct),
+                current_value: Number(data.value),
                 z_score: Number(data.z_score),
-                percentile: Number(data.percentile)
+                percentile: Number(data.percentile),
+                delta: Number(data.delta),
+                alarm_status: data.alarm_status
             };
         },
         staleTime: 1000 * 60 * 60, // 1h

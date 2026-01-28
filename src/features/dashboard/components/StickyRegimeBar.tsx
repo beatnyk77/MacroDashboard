@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useRegime } from '@/hooks/useRegime';
+import { MarketPulseTicker } from './MarketPulseTicker';
 
 export const StickyRegimeBar: React.FC = () => {
     const { data: regimeData } = useRegime();
@@ -29,7 +30,7 @@ export const StickyRegimeBar: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'space-between'
         }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                 <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.disabled', letterSpacing: '0.1em' }}>
                     CURRENT REGIME
                 </Typography>
@@ -46,11 +47,15 @@ export const StickyRegimeBar: React.FC = () => {
                 </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ flexGrow: 1, overflow: 'hidden', mx: 4 }}>
+                <MarketPulseTicker />
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                 <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
                     PULSE: {regimeData.pulseScore.toFixed(1)}
                 </Typography>
-                <Box sx={{ width: 100, height: 4, bgcolor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
+                <Box sx={{ width: 60, height: 4, bgcolor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
                     <Box sx={{ width: `${regimeData.pulseScore}%`, height: '100%', bgcolor: getRegimeColor(regimeData.regimeLabel) }} />
                 </Box>
             </Box>
