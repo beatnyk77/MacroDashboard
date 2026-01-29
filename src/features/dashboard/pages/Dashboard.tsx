@@ -4,6 +4,7 @@ import { HardAssetValuationSection } from '@/features/dashboard/components/secti
 import { GlobalLiquiditySection } from '@/features/dashboard/components/sections/GlobalLiquiditySection';
 import { DeDollarizationSection } from '@/features/dashboard/components/sections/DeDollarizationSection';
 import { BRICSTrackerSection } from '@/features/dashboard/components/sections/BRICSTrackerSection';
+import { IndiaMacroPulseSection } from '@/features/dashboard/components/sections/IndiaMacroPulseSection';
 import { TreasurySnapshotSection } from '@/features/dashboard/components/sections/TreasurySnapshotSection';
 import { TreasuryHoldersSection } from '@/features/dashboard/components/sections/TreasuryHoldersSection';
 import { GoldValuationStrip } from '@/features/dashboard/components/sections/GoldValuationStrip';
@@ -41,6 +42,9 @@ export const Dashboard: React.FC = () => {
                 </Box>
                 <Box id="brics-tracker-section">
                     <BRICSTrackerSection />
+                </Box>
+                <Box id="india-macro-section">
+                    <IndiaMacroPulseSection />
                 </Box>
                 <Box id="major-economies-section">
                     <MajorEconomiesTable />

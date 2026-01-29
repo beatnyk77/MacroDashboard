@@ -94,7 +94,9 @@ Deno.serve(async (req: Request) => {
         console.log(`[FRED] ${fredId}: Last DB date = ${lastDate || 'none'}`);
 
         // B. Fetch from FRED (high limit to ensure 25-year backfill for Z-scores)
-        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=10000`;
+        const fredUnits = (metric.metadata as any)?.fred_units;
+        const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
+        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=10000${unitsParam}`;
 
         const response = await fetchWithRetry(fredUrl);
         const data = await response.json();
