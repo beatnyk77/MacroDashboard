@@ -2,7 +2,7 @@ import { Box, Typography, Modal, Fade, Backdrop, IconButton, Grid } from '@mui/m
 import { useRegime } from '@/hooks/useRegime';
 import { MarketPulseTicker } from './MarketPulseTicker';
 import { useState } from 'react';
-import { X, History, TrendingUp, TrendingDown } from 'lucide-react';
+import { X, History, TrendingUp, TrendingDown, Play } from 'lucide-react';
 
 export const StickyRegimeBar: React.FC = () => {
     const { data: regimeData } = useRegime();
@@ -39,8 +39,11 @@ export const StickyRegimeBar: React.FC = () => {
                 <Box
                     onClick={() => setIsReplayOpen(true)}
                     sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
                         px: 1.5,
-                        py: 0.2,
+                        py: 0.5,
                         borderRadius: 1,
                         bgcolor: `${getRegimeColor(regimeData.regimeLabel)}20`,
                         border: `1px solid ${getRegimeColor(regimeData.regimeLabel)}40`,
@@ -48,9 +51,11 @@ export const StickyRegimeBar: React.FC = () => {
                         transition: 'all 0.2s ease',
                         '&:hover': {
                             bgcolor: `${getRegimeColor(regimeData.regimeLabel)}30`,
-                            transform: 'scale(1.05)'
+                            transform: 'translateY(-1px)',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                         }
                     }}>
+                    <Play size={12} fill={getRegimeColor(regimeData.regimeLabel)} color={getRegimeColor(regimeData.regimeLabel)} />
                     <Typography variant="caption" sx={{ fontWeight: 900, color: getRegimeColor(regimeData.regimeLabel), fontSize: '0.75rem' }}>
                         {regimeData.regimeLabel.toUpperCase()}
                     </Typography>

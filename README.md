@@ -6,6 +6,26 @@
 
 Inspired by the structural analysis of **Jim Rickards** (The New Case for Gold) and the monetary history of **Willem Middelkoop** (The Big Reset), this terminal provides the raw data and Z-score analytics required to navigate the transition to a multi-polar monetary world.
 
+## New Features (v2.0 Update)
+
+### 📄 Downloadable Briefing Packs
+Institutional-grade reporting is now built-in.
+- **Export to PDF**: Generate A4-formatted briefing documents with timestamped metadata and source attribution.
+- **Export to PNG**: Capture high-resolution (retina) snapshots of any chart or section for presentation decks.
+- **Watermarking**: Automated attribution footer ("GraphiQuestor Intelligence | Generated: {Date}") ensures provenance.
+
+### ⚡ Today's Brief Panel
+A 30-second "Executive Summary" at the top of the dashboard.
+- **Regime State**: Current macro weather (Expansion, Contraction, Reset) calculated from real-time Z-scores.
+- **Liquidity Pulse**: 7-Day Delta of Global Net Liquidity.
+- **3 Key Moves**: Automatically identifies the top 3 biggest macro movers (e.g., "DXY ↑ +2.3%") for immediate attention.
+
+### 🦅 Presidential Policy Tracker (Trump 2.0)
+Systematic tacking of the new administration's impact.
+- **Asset Impact Chips**: Direct correlation mapping (e.g., "Tariffs announced → DXY Bullish").
+- **Narrative Tags**: Contextual framing for policy events.
+- **Macro Analogues**: Interactive "History Rhymes" section comparing current events to 2018 or 1980 equivalents.
+
 ---
 
 ## I. Global Liquidity Pulse (The Central Bank Engine)
@@ -27,18 +47,7 @@ The shift from a West-centric to a multi-polar system is captured in real-time.
 - **BRICS Tracker**: Aggregate GDP, Gold Holdings, and Debt profile of the BRICS+ alliance vs. the G7.
 - **Sovereign Stress**: Monitoring G20 bond yield spreads and "Real Rate Proxies" to detect the next sovereign debt default cycle.
 
-## IV. Presidential Policy & Regime Replay
-Political volatility is now a primary macro driver.
-- **Policy Impact Tracker (Trump 2.0)**: Systematic tracking of Tariffs, Corporate Tax Cuts, and Fiscal Expansion with deterministic correlation scoring.
-- **Deterministic Regime Detection**: Move beyond "expert opinion" to a rules-based engine that classifies markets into:
-    *   **Fiat Expansion** (High Liquidity, Low Gold Z-Score)
-    *   **Monetary Stress** (Inverted Curves, Rising Gold)
-    *   **Hard Reset** (Systemic Default Risk)
-- **Regime Replay**: Interactive historical analogues showing how assets performed in prior identical regimes (e.g., 2018 Trade War, 2020 Liquidity Injection).
-
----
-
-## V. Technical Architecture (The Pipeline)
+## IV. Technical Architecture (The Pipeline)
 GraphiQuestor is built on an institutional-grade stack for sub-second data integrity.
 - **Edge Functions**: Automated Deno-based ingestors for **FRED**, **IMF (COFER)**, **Yahoo Finance**, and **US Treasury (FiscalData)**.
 - **Database Architecture**: Supabase (Postgres) with heavily optimized materialized views and `pg_cron` scheduling for monthly/quarterly data releases.
@@ -46,7 +55,7 @@ GraphiQuestor is built on an institutional-grade stack for sub-second data integ
 
 ---
 
-## VI. Methodology
+## V. Methodology
 All Z-scores are calculated using a **rolling 25-year window** (9125 observations) to capture more than one full credit cycle, ensuring depth and significance. Percentiles are derived from the entire historical observation set since 1971 (Abandonment of Bretton Woods).
 
 > "Data is the new gold, but only when refined through the lens of history."

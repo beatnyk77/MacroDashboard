@@ -16,7 +16,11 @@ export const GlobalLiquiditySection: React.FC = () => {
 
     return (
         <Box sx={{ mb: 6 }}>
-            <SectionHeader title="Global Liquidity" subtitle="Monetary aggregates and central bank reserves" />
+            <SectionHeader
+                title="Global Liquidity"
+                subtitle="Monetary aggregates and central bank reserves"
+                exportId="global-liquidity-section"
+            />
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <MetricCard

@@ -15,6 +15,7 @@ import { MajorEconomiesTable } from '@/features/dashboard/components/sections/Ma
 import { ScenarioStudio } from '@/features/dashboard/components/sections/ScenarioStudio';
 import { SovereignHealthRadar } from '@/features/dashboard/components/sections/SovereignHealthRadar';
 import GoldReturnsSection from '@/features/dashboard/components/sections/GoldReturnsSection';
+import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
 
 export const Dashboard: React.FC = () => {
     return (
@@ -26,6 +27,10 @@ export const Dashboard: React.FC = () => {
                     <StickyRegimeBar />
                 </Box>
             </Box>
+
+            {/* Today's Brief Panel */}
+            <TodaysBriefPanel />
+
             <Box sx={{ mt: 4 }}>
                 <SovereignHealthRadar />
                 <ScenarioStudio />

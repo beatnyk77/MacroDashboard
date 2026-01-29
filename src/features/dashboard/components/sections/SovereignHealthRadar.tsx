@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Card, Grid, CircularProgress, Stack, Tooltip } from '@mui/material';
 import { Shield, Info } from 'lucide-react';
 import { useViewContext } from '@/context/ViewContext';
+import { SectionHeader } from '@/components/SectionHeader';
 
 export const SovereignHealthRadar: React.FC = () => {
     const { isInstitutionalView } = useViewContext();
@@ -33,18 +34,17 @@ export const SovereignHealthRadar: React.FC = () => {
     };
 
     return (
-        <Card sx={{ p: 3, mb: 4, bgcolor: 'background.paper', position: 'relative', overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Shield size={20} color="#3b82f6" />
-                    <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.1em' }}>
-                        SOVEREIGN HEALTH ENGINE (G20)
-                    </Typography>
-                </Box>
-                <Tooltip title="Institutional Alpha: Weighted index of Debt Sustainability, Reserve Adequacy, and Monetary Policy effectiveness.">
-                    <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
-                </Tooltip>
-            </Box>
+        <Card id="sovereign-health-radar" sx={{ p: 3, mb: 4, bgcolor: 'background.paper', position: 'relative', overflow: 'hidden' }}>
+            <SectionHeader
+                title="SOVEREIGN HEALTH ENGINE (G20)"
+                icon={<Shield size={20} color="#3b82f6" />}
+                exportId="sovereign-health-radar"
+                action={
+                    <Tooltip title="Institutional Alpha: Weighted index of Debt Sustainability, Reserve Adequacy, and Monetary Policy effectiveness.">
+                        <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                    </Tooltip>
+                }
+            />
 
             <Grid container spacing={4} alignItems="center">
                 <Grid item xs={12} md={4}>

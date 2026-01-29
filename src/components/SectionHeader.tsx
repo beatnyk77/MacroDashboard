@@ -1,16 +1,27 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { FileText, Image as ImageIcon } from 'lucide-react';
+import { exportSectionToPDF, exportSectionToPNG } from '@/utils/exportUtils';
+import { Tooltip, IconButton, Box, Typography } from '@mui/material';
 
 interface SectionHeaderProps {
     title: string;
     subtitle?: string;
     icon?: React.ReactNode;
     action?: React.ReactNode;
+    exportId?: string; // ID of the container to export
 }
 
-export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, icon, action }) => {
+export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, icon, action, exportId }) => {
     return (
-        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderLeft: '3px solid', borderColor: 'primary.main', pl: 2 }}>
+        <Box sx={{
+            mb: 3,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            borderLeft: '3px solid',
+            borderColor: 'primary.main',
+            pl: 2,
+            '&:hover .export-controls': { opacity: 1 }
+        }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 {icon}
                 <Box>
@@ -24,7 +35,44 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, i
                     )}
                 </Box>
             </Box>
-            {action}
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {exportId && (
+                    <Box
+                        className="export-controls"
+                        sx={{
+                            display: 'flex',
+                            gap: 0.5,
+                            mr: 2,
+                            opacity: { xs: 1, md: 0 },
+                            transition: 'opacity 0.2s',
+                            bgcolor: 'rgba(255,255,255,0.03)',
+                            borderRadius: 1,
+                            p: 0.5
+                        }}
+                    >
+                        <Tooltip title="Export as PNG">
+                            <IconButton
+                                size="small"
+                                onClick={() => exportSectionToPNG(exportId, title)}
+                                sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                            >
+                                <ImageIcon size={14} />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Export as PDF">
+                            <IconButton
+                                size="small"
+                                onClick={() => exportSectionToPDF(exportId, title, title)}
+                                sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                            >
+                                <FileText size={14} />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                )}
+                {action}
+            </Box>
         </Box>
     );
 };

@@ -17,25 +17,25 @@ interface ChartProps {
 }
 
 const COUNTRY_COLORS: Record<string, string> = {
-    'Japan': '#3b82f6', // blue
-    'United Kingdom': '#a855f7', // purple
-    'China, Mainland': '#ef4444', // red
-    'Belgium': '#eab308', // yellow
-    'Luxembourg': '#ec4899', // pink
-    'Canada': '#10b981', // green
-    'Cayman Islands': '#f97316', // orange
-    'Switzerland': '#06b6d4', // cyan
-    'Ireland': '#8b5cf6', // violet
-    'Taiwan': '#14b8a6', // teal
-    'India': '#f59e0b', // amber
-    'Hong Kong': '#6366f1', // indigo
-    'Singapore': '#f43f5e', // rose
-    'Brazil': '#22c55e', // light green
-    'Norway': '#64748b', // slate
-    'France': '#facc15', // yellow-400
-    'Germany': '#fb7185', // rose-400
-    'Israel': '#0ea5e9', // sky
-    'Others': '#94a3b8'
+    'Japan': '#1e40af', // Deep Blue
+    'United Kingdom': '#3b82f6', // Bright Blue
+    'China, Mainland': '#0ea5e9', // Sky Blue
+    'Belgium': '#059669', // Emerald
+    'Luxembourg': '#10b981', // Green
+    'Canada': '#84cc16', // Lime
+    'Cayman Islands': '#eab308', // Yellow
+    'Switzerland': '#f59e0b', // Amber
+    'Ireland': '#f97316', // Orange
+    'Taiwan': '#ef4444', // Red
+    'India': '#db2777', // Pink
+    'Hong Kong': '#a855f7', // Purple
+    'Singapore': '#6366f1', // Indigo
+    'Brazil': '#8b5cf6', // Violet
+    'Norway': '#64748b', // Slate
+    'France': '#94a3b8', // Gray
+    'Germany': '#cbd5e1', // Light Gray
+    'Israel': '#06b6d4', // Cyan
+    'Others': '#334155' // Dark Slate
 };
 
 const COUNTRY_FLAGS: Record<string, string> = {

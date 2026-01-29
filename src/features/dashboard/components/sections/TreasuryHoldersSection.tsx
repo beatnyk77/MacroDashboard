@@ -19,6 +19,10 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useTreasuryHolders } from '@/hooks/useTreasuryHolders';
 import { TreasuryHoldersChart } from '../charts/TreasuryHoldersChart';
 import { Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { formatCurrency, formatPercentage } from '@/utils/formatNumber';
+import { IconButton, Tooltip } from '@mui/material';
+import { Image as ImageIcon } from 'lucide-react';
+import { exportSectionToPNG } from '@/utils/exportUtils';
 
 const COUNTRY_FLAGS: Record<string, string> = {
     'Japan': '🇯🇵',
@@ -78,21 +82,57 @@ export const TreasuryHoldersSection: React.FC = () => {
             <SectionHeader
                 title="Major Foreign Holders of U.S. Treasuries"
                 subtitle="Tracking institutional demand and sovereign accumulation of U.S. government debt"
+                exportId="treasury-holders-section"
             />
 
             <Grid container spacing={3}>
                 {/* Visual Chart Area */}
                 <Grid item xs={12}>
-                    <Card sx={{ p: 3, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
+                    <Card id="treasury-chart-card" sx={{ p: 3, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                            <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.secondary', letterSpacing: '0.1em' }}>
-                                Historical Stacked Positions ($ BN)
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.secondary', letterSpacing: '0.1em' }}>
+                                    Historical Stacked Positions ($ BN)
+                                </Typography>
+                                {/* Top 3 Movers Badge */}
+                                <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+                                    {latestHolders
+                                        .filter(h => h.mom_pct_change !== null)
+                                        .sort((a, b) => Math.abs(b.mom_pct_change!) - Math.abs(a.mom_pct_change!))
+                                        .slice(0, 3)
+                                        .map(mover => (
+                                            <Box key={mover.country_name} sx={{
+                                                bgcolor: 'rgba(255,255,255,0.03)',
+                                                px: 1,
+                                                py: 0.5,
+                                                borderRadius: 1,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                border: '1px solid',
+                                                borderColor: 'divider'
+                                            }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 700 }}>{COUNTRY_FLAGS[mover.country_name] || ''} {mover.country_name}</Typography>
+                                                <Typography variant="caption" sx={{
+                                                    fontWeight: 800,
+                                                    color: (mover.mom_pct_change || 0) > 0 ? 'success.main' : 'error.main'
+                                                }}>
+                                                    {formatPercentage(mover.mom_pct_change, { showSign: true })}
+                                                </Typography>
+                                            </Box>
+                                        ))}
+                                </Box>
+                            </Box>
+                            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                <Tooltip title="Export Chart">
+                                    <IconButton size="small" onClick={() => exportSectionToPNG('treasury-chart-card', 'Treasury_Holdings_Chart')}>
+                                        <ImageIcon size={16} />
+                                    </IconButton>
+                                </Tooltip>
                                 {totalForeign && (
-                                    <Box sx={{ textAlign: 'right' }}>
+                                    <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
                                         <Typography variant="caption" color="text.secondary">Total Foreign Holdings</Typography>
-                                        <Typography variant="h6" sx={{ fontWeight: 800 }}>${(totalForeign.holdings_usd_bn / 1000).toFixed(2)}T</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 800 }}>{formatCurrency(totalForeign.holdings_usd_bn / 1000, { suffix: 'T', decimals: 2 })}</Typography>
                                     </Box>
                                 )}
                             </Box>
@@ -139,7 +179,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 800 }}>${holder.holdings_usd_bn.toLocaleString()}</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 800 }}>{formatCurrency(holder.holdings_usd_bn, { decimals: 0 })}</Typography>
                                         </TableCell>
                                         <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
@@ -148,18 +188,18 @@ export const TreasuryHoldersSection: React.FC = () => {
                                                     fontWeight: 700,
                                                     color: (holder.mom_pct_change || 0) > 0 ? 'success.main' : (holder.mom_pct_change || 0) < 0 ? 'error.main' : 'text.disabled'
                                                 }}>
-                                                    {holder.mom_pct_change !== null ? `${holder.mom_pct_change > 0 ? '+' : ''}${holder.mom_pct_change.toFixed(2)}%` : '-'}
+                                                    {holder.mom_pct_change !== null ? formatPercentage(holder.mom_pct_change, { showSign: true, decimals: 2 }) : '—'}
                                                 </Typography>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                             <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                                                {holder.yoy_pct_change !== null ? `${holder.yoy_pct_change > 0 ? '+' : ''}${holder.yoy_pct_change.toFixed(1)}%` : '-'}
+                                                {holder.yoy_pct_change !== null ? formatPercentage(holder.yoy_pct_change, { showSign: true, decimals: 1 }) : '—'}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                             <Typography variant="body2" sx={{ fontWeight: 700, color: 'secondary.light' }}>
-                                                {holder.pct_of_total_foreign ? `${holder.pct_of_total_foreign.toFixed(1)}%` : '-'}
+                                                {holder.pct_of_total_foreign ? formatPercentage(holder.pct_of_total_foreign, { decimals: 1 }) : '—'}
                                             </Typography>
                                         </TableCell>
                                     </TableRow>

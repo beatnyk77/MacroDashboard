@@ -13,6 +13,37 @@ import {
 import { useGoldReturns } from '@/hooks/useGoldReturns';
 // import { format } from 'date-fns'; // Removed to avoid dependency issue
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        return (
+            <div className="bg-gray-950 border border-gray-800 p-4 rounded-lg shadow-2xl backdrop-blur-md">
+                <p className="text-gray-400 text-xs font-mono mb-1">{data.formattedDate}</p>
+                <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-lg font-bold ${data.return_pct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {data.return_pct.toFixed(2)}%
+                    </span>
+                    <span className="text-gray-500 text-sm">Monthly Return</span>
+                </div>
+                {data.event_name && (
+                    <div className="border-t border-gray-800 pt-2 mt-2">
+                        <p className="text-yellow-500 text-xs font-bold uppercase tracking-wider mb-1">
+                            {data.event_name}
+                        </p>
+                        <p className="text-gray-300 text-sm leading-snug">
+                            {data.event_description}
+                        </p>
+                        <span className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] bg-gray-800 text-gray-400 font-mono">
+                            {data.macro_regime}
+                        </span>
+                    </div>
+                )}
+            </div>
+        );
+    }
+    return null;
+};
+
 const GoldReturnsChart: React.FC = () => {
     const { data: returns, isLoading } = useGoldReturns();
 
@@ -33,37 +64,6 @@ const GoldReturnsChart: React.FC = () => {
             </div>
         );
     }
-
-    const CustomTooltip = ({ active, payload }: any) => {
-        if (active && payload && payload.length) {
-            const data = payload[0].payload;
-            return (
-                <div className="bg-gray-950 border border-gray-800 p-4 rounded-lg shadow-2xl backdrop-blur-md">
-                    <p className="text-gray-400 text-xs font-mono mb-1">{data.formattedDate}</p>
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className={`text-lg font-bold ${data.return_pct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                            {data.return_pct.toFixed(2)}%
-                        </span>
-                        <span className="text-gray-500 text-sm">Monthly Return</span>
-                    </div>
-                    {data.event_name && (
-                        <div className="border-t border-gray-800 pt-2 mt-2">
-                            <p className="text-yellow-500 text-xs font-bold uppercase tracking-wider mb-1">
-                                {data.event_name}
-                            </p>
-                            <p className="text-gray-300 text-sm leading-snug">
-                                {data.event_description}
-                            </p>
-                            <span className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] bg-gray-800 text-gray-400 font-mono">
-                                {data.macro_regime}
-                            </span>
-                        </div>
-                    )}
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <div className="h-[400px] w-full bg-gray-950/20 rounded-xl p-4 border border-gray-800/50 backdrop-blur-sm">

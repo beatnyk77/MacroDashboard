@@ -58,6 +58,25 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     const theme = useTheme();
     const { isInstitutionalView } = useViewContext();
 
+    // Status color mapping for traffic lights
+    const statusColorMap: Record<string, string> = {
+        'safe': theme.palette.success.main,
+        'neutral': theme.palette.primary.main,
+        'warning': theme.palette.warning.main,
+        'danger': theme.palette.error.main
+    };
+
+    // Get brief signal label (3-5 words max)
+    const getSignalLabel = (status: string): string => {
+        switch (status) {
+            case 'safe': return 'HEALTHY';
+            case 'neutral': return 'STABLE';
+            case 'warning': return 'WATCH';
+            case 'danger': return 'STRESS';
+            default: return 'NORMAL';
+        }
+    };
+
     const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
         (typeof value === 'number' && isNaN(value));
 
@@ -171,63 +190,97 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 </Box>
             </Box>
 
-            <Box sx={{ mb: 1.5, minHeight: 48 }}>
+            <Box sx={{ mb: 2, minHeight: 64 }}>
                 {isLoading ? (
-                    <Skeleton variant="text" width="80%" height={48} />
+                    <Skeleton variant="text" width="80%" height={64} />
                 ) : isNullValue ? (
                     <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
                         No data
                     </Typography>
                 ) : (
-                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
-                        <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em', color: 'text.primary' }}>
-                            {prefix}{typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value}{suffix}
-                        </Typography>
-                        {delta && (
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5,
-                                px: 1,
-                                py: 0.3,
-                                borderRadius: 1,
-                                bgcolor: `${getDeltaColor()}10`,
-                                border: '1px solid',
-                                borderColor: `${getDeltaColor()}20`,
-                                color: getDeltaColor()
-                            }}>
-                                {getDeltaIcon()}
-                                <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.7rem' }}>{delta.value}</Typography>
-                            </Box>
-                        )}
-                        {status !== 'neutral' && (
-                            <Box sx={{
-                                bgcolor: getStatusColor(),
-                                borderRadius: '50%',
-                                width: 8,
-                                height: 8,
-                                alignSelf: 'center',
-                                ml: 'auto'
-                            }} />
-                        )}
-                        {isInstitutionalView && typeof zScore === 'number' && !isNaN(zScore) && (
-                            <Box
+                    <Box>
+                        {/* Primary Value - Unmissable */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+                            {/* Traffic Light Status Dot */}
+                            {status !== 'neutral' && (
+                                <Box
+                                    sx={{
+                                        width: 12,
+                                        height: 12,
+                                        borderRadius: '50%',
+                                        bgcolor: statusColorMap[status],
+                                        boxShadow: `0 0 12px ${statusColorMap[status]}`,
+                                        flexShrink: 0
+                                    }}
+                                />
+                            )}
+                            <Typography
+                                variant="h2"
                                 sx={{
-                                    ml: 'auto',
+                                    fontWeight: 900,
+                                    letterSpacing: '-0.04em',
+                                    color: 'text.primary',
+                                    fontSize: { xs: '2rem', md: '2.5rem' },
+                                    lineHeight: 1
+                                }}
+                            >
+                                {prefix}{typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value}{suffix}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            {delta && (
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.5,
                                     px: 1,
                                     py: 0.3,
                                     borderRadius: 1,
-                                    bgcolor: Math.abs(zScore) > 2 ? 'error.main' : 'rgba(255,255,255,0.05)',
+                                    bgcolor: `${getDeltaColor()}10`,
                                     border: '1px solid',
-                                    borderColor: Math.abs(zScore) > 2 ? 'error.main' : 'divider',
-                                    color: Math.abs(zScore) > 2 ? 'white' : 'text.secondary'
-                                }}
-                            >
-                                <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
-                                    Z: {zScore > 0 ? '+' : ''}{zScore.toFixed(1)}
+                                    borderColor: `${getDeltaColor()}20`,
+                                    color: getDeltaColor()
+                                }}>
+                                    {getDeltaIcon()}
+                                    <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.7rem' }}>{delta.value}</Typography>
+                                </Box>
+                            )}
+
+                            {isInstitutionalView && typeof zScore === 'number' && !isNaN(zScore) && (
+                                <Box
+                                    sx={{
+                                        px: 1,
+                                        py: 0.3,
+                                        borderRadius: 1,
+                                        bgcolor: Math.abs(zScore) > 2 ? 'error.main' : 'rgba(255,255,255,0.05)',
+                                        border: '1px solid',
+                                        borderColor: Math.abs(zScore) > 2 ? 'error.main' : 'divider',
+                                        color: Math.abs(zScore) > 2 ? 'white' : 'text.secondary'
+                                    }}
+                                >
+                                    <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
+                                        Z: {zScore > 0 ? '+' : ''}{zScore.toFixed(1)}
+                                    </Typography>
+                                </Box>
+                            )}
+
+                            {/* Signal Label */}
+                            {status !== 'neutral' && (
+                                <Typography
+                                    variant="overline"
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.75rem',
+                                        letterSpacing: '0.1em',
+                                        color: statusColorMap[status],
+                                        ml: 'auto'
+                                    }}
+                                >
+                                    {getSignalLabel(status)}
                                 </Typography>
-                            </Box>
-                        )}
+                            )}
+                        </Box>
                     </Box>
                 )}
             </Box>
