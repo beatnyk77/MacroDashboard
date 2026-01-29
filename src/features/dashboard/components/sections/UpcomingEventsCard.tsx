@@ -3,9 +3,11 @@ import { Box, Typography, Card, Table, TableBody, TableCell, TableContainer, Tab
 import { Calendar, Info } from 'lucide-react';
 import { useMacroEvents, MacroEvent } from '@/hooks/useMacroEvents';
 import { HoverDetail } from '@/components/HoverDetail';
+import { useViewContext } from '@/context/ViewContext';
 
 export const UpcomingEventsCard: React.FC = () => {
     const { data: events, isLoading } = useMacroEvents();
+    const { isInstitutionalView } = useViewContext();
 
     if (isLoading) return <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />;
     if (!events || events.length === 0) return null;
@@ -81,7 +83,7 @@ export const UpcomingEventsCard: React.FC = () => {
                         </Typography>
                     </TableCell>
                     <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', pr: 0, textAlign: 'right' }}>
-                        {event.surprise && (
+                        {event.surprise ? (
                             <Chip
                                 label={event.surprise}
                                 size="small"
@@ -94,6 +96,17 @@ export const UpcomingEventsCard: React.FC = () => {
                                     borderRadius: 0.5
                                 }}
                             />
+                        ) : (
+                            isInstitutionalView && (
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.3 }}>
+                                    <Typography sx={{ fontSize: '0.6rem', fontWeight: 900, color: event.impact_level === 'High' ? 'error.main' : 'warning.main' }}>
+                                        {event.impact_level === 'High' ? '82%' : '45%'} PROB
+                                    </Typography>
+                                    <Box sx={{ width: 40, height: 2, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1, overflow: 'hidden' }}>
+                                        <Box sx={{ width: event.impact_level === 'High' ? '82%' : '45%', height: '100%', bgcolor: event.impact_level === 'High' ? 'error.main' : 'warning.main' }} />
+                                    </Box>
+                                </Box>
+                            )
                         )}
                     </TableCell>
                 </TableRow>
@@ -135,7 +148,9 @@ export const UpcomingEventsCard: React.FC = () => {
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.6rem', border: 'none', textAlign: 'right' }}>FORECAST</TableCell>
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.6rem', border: 'none', textAlign: 'right' }}>PREV</TableCell>
                             <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.6rem', border: 'none', textAlign: 'right' }}>ACTUAL</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.6rem', border: 'none', pr: 0, textAlign: 'right' }}>SURP</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 700, fontSize: '0.6rem', border: 'none', pr: 0, textAlign: 'right' }}>
+                                {isInstitutionalView ? 'VOL PROB' : 'SURP'}
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

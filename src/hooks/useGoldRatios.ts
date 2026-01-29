@@ -36,25 +36,43 @@ export function useGoldRatios() {
 
             if (!finalLatest) return [];
 
-            // 2. Fetch history for each ratio
-            // We'll fetch all history from the view and group it
-            const { data: historyData } = await supabase
-                .from('vw_gold_ratios')
-                .select('ratio_name, current_value, last_updated')
-                .order('last_updated', { ascending: false })
-                .limit(1000); // 250 points per ratio if 4 ratios
+            // 2. Fetch history for each ratio from metric_observations
+            const ratioIds = finalLatest.map((r: any) => {
+                if (r.ratio_name === 'M2/Gold') return 'RATIO_M2_GOLD';
+                if (r.ratio_name === 'SPX/Gold') return 'RATIO_SPX_GOLD';
+                if (r.ratio_name === 'DEBT/Gold') return 'RATIO_DEBT_GOLD';
+                if (r.ratio_name === 'Gold/Silver') return 'RATIO_GOLD_SILVER';
+                return null;
+            }).filter(Boolean) as string[];
 
-            return finalLatest.map((r: any) => ({
-                ratio_name: r.ratio_name,
-                current_value: Number(r.current_value),
-                z_score: Number(r.z_score),
-                percentile: Number(r.percentile),
-                last_updated: r.last_updated,
-                history: (historyData || [])
-                    .filter((h: any) => h.ratio_name === r.ratio_name)
-                    .map((h: any) => ({ date: h.last_updated, value: Number(h.current_value) }))
-                    .reverse()
-            }));
+            const { data: historyData } = await supabase
+                .from('metric_observations')
+                .select('metric_id, value, as_of_date')
+                .in('metric_id', ratioIds)
+                .order('as_of_date', { ascending: false })
+                .limit(2000);
+
+            return finalLatest.map((r: any) => {
+                const metricIdMap: Record<string, string> = {
+                    'M2/Gold': 'RATIO_M2_GOLD',
+                    'SPX/Gold': 'RATIO_SPX_GOLD',
+                    'DEBT/Gold': 'RATIO_DEBT_GOLD',
+                    'Gold/Silver': 'RATIO_GOLD_SILVER'
+                };
+                const mId = metricIdMap[r.ratio_name];
+
+                return {
+                    ratio_name: r.ratio_name,
+                    current_value: Number(r.current_value),
+                    z_score: Number(r.z_score),
+                    percentile: Number(r.percentile),
+                    last_updated: r.last_updated,
+                    history: (historyData || [])
+                        .filter((h: any) => h.metric_id === mId)
+                        .map((h: any) => ({ date: h.as_of_date, value: Number(h.value) }))
+                        .reverse()
+                };
+            });
         },
         staleTime: 1000 * 60 * 60, // 1h
     });

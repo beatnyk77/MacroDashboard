@@ -3,6 +3,7 @@ import { Card, Box, Typography, useTheme, SxProps, Theme, Skeleton, Button } fro
 import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
+import { useViewContext } from '@/context/ViewContext';
 
 interface MetricCardProps {
     label: string;
@@ -28,6 +29,8 @@ interface MetricCardProps {
     methodology?: string;
     stats?: { label: string; value: string | number; color?: string }[];
     chartType?: 'line' | 'bar';
+    zScore?: number;
+    percentile?: number;
 }
 
 export const MetricCard: React.FC<MetricCardProps> = ({
@@ -48,9 +51,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     description,
     methodology,
     stats = [],
-    chartType = 'line'
+    chartType = 'line',
+    zScore,
+    percentile
 }) => {
     const theme = useTheme();
+    const { isInstitutionalView } = useViewContext();
 
     const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
         (typeof value === 'number' && isNaN(value));
@@ -204,9 +210,48 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 ml: 'auto'
                             }} />
                         )}
+                        {isInstitutionalView && zScore !== undefined && (
+                            <Box
+                                sx={{
+                                    ml: 'auto',
+                                    px: 1,
+                                    py: 0.3,
+                                    borderRadius: 1,
+                                    bgcolor: Math.abs(zScore) > 2 ? 'error.main' : 'rgba(255,255,255,0.05)',
+                                    border: '1px solid',
+                                    borderColor: Math.abs(zScore) > 2 ? 'error.main' : 'divider',
+                                    color: Math.abs(zScore) > 2 ? 'white' : 'text.secondary'
+                                }}
+                            >
+                                <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
+                                    Z: {zScore > 0 ? '+' : ''}{zScore.toFixed(1)}
+                                </Typography>
+                            </Box>
+                        )}
                     </Box>
                 )}
             </Box>
+
+            {isInstitutionalView && percentile !== undefined && !isLoading && (
+                <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                        <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary' }}>
+                            INSTITUTIONAL PERCENTILE (120Y+)
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
+                            {percentile.toFixed(1)}%
+                        </Typography>
+                    </Box>
+                    <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
+                        <Box sx={{
+                            width: `${percentile}%`,
+                            bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
+                            height: '100%',
+                            transition: 'width 1s ease'
+                        }} />
+                    </Box>
+                </Box>
+            )}
 
             <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 <Box sx={{ flexGrow: 1 }}>

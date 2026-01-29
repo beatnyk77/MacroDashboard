@@ -17,25 +17,29 @@ const LoadingFallback = () => (
     </Box>
 );
 
+import { ViewProvider } from '@/context/ViewContext';
+
 function App() {
     const theme = useMemo(() => getTheme('dark'), []);
 
     return (
         <GlobalErrorBoundary>
             <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <BrowserRouter>
-                        <GlobalLayout>
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Routes>
-                                    <Route path="/" element={<Dashboard />} />
-                                    <Route path="/methodology" element={<MetricsMethodologyPage />} />
-                                </Routes>
-                            </Suspense>
-                        </GlobalLayout>
-                    </BrowserRouter>
-                </ThemeProvider>
+                <ViewProvider>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <BrowserRouter>
+                            <GlobalLayout>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <Routes>
+                                        <Route path="/" element={<Dashboard />} />
+                                        <Route path="/methodology" element={<MetricsMethodologyPage />} />
+                                    </Routes>
+                                </Suspense>
+                            </GlobalLayout>
+                        </BrowserRouter>
+                    </ThemeProvider>
+                </ViewProvider>
             </QueryClientProvider>
         </GlobalErrorBoundary>
     );

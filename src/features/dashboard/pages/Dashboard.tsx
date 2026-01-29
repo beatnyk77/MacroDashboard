@@ -11,6 +11,7 @@ import { StickyRegimeBar } from '@/features/dashboard/components/StickyRegimeBar
 import { LiquidityAlarmCard } from '@/features/dashboard/components/sections/LiquidityAlarmCard';
 import { MarketPulseTicker } from '@/features/dashboard/components/MarketPulseTicker';
 import { MajorEconomiesTable } from '@/features/dashboard/components/sections/MajorEconomiesTable';
+import { ScenarioStudio } from '@/features/dashboard/components/sections/ScenarioStudio';
 
 export const Dashboard: React.FC = () => {
     return (
@@ -23,6 +24,7 @@ export const Dashboard: React.FC = () => {
                 </Box>
             </Box>
             <Box sx={{ mt: 4 }}>
+                <ScenarioStudio />
                 <Box id="macro-orientation-section">
                     <MacroOrientationSection />
                 </Box>

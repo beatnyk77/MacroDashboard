@@ -29,8 +29,10 @@ export const GlobalLiquiditySection: React.FC = () => {
                         isLoading={m2Loading}
                         lastUpdated={m2?.lastUpdated}
                         frequency="Monthly"
+                        zScore={m2?.zScore}
+                        percentile={m2?.percentile}
                         description="M2 is a measure of the U.S. money supply that includes cash, checking deposits, and easily-convertible 'near money' like money market funds."
-                        methodology="Sourced from FRED (M2SL). Aggregated monthly with a 1-week reporting lag. Used as a proxy for broad monetary expansion."
+                        methodology="Institutional Z-Score calculated against full historical dataset. Sourced from FRED (M2SL). Used as a proxy for broad monetary expansion."
                         source="Federal Reserve (FRED)"
                     />
                 </Grid>
@@ -44,7 +46,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                         isLoading={ratiosLoading}
                         lastUpdated={m2Gold?.last_updated}
                         description="Measures fiat currency quantity per ounce of gold. A rising ratio indicates monetary expansion exceeding gold supply growth."
-                        methodology="M2SL / Gold (LBMA). Z-Score uses a 9125-day (25Y) rolling sample to provide generational context."
+                        methodology="M2SL / Gold (LBMA). Z-Score and Percentile are calculated against a 124-year historical dataset (1900-Present) to provide deep generational context."
                         source="FRED, LBMA"
                     />
                 </Grid>
@@ -58,8 +60,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                         isLoading={netLiqLoading}
                         lastUpdated={netLiq?.as_of_date}
                         history={netLiq?.history}
+                        zScore={netLiq?.z_score}
                         description="Global Net Liquidity estimates the actual 'spendable' liquidity provided by the Federal Reserve, adjusted for the TGA and Repo drains."
-                        methodology="Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Sourced from H.4.1 weekly releases and daily FiscalData. A primary indicator of dollar availability in the plumbing of the global financial system."
+                        methodology="Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Z-Score provides the deviation from the 3-year trend."
                         source="Fed, US Treasury"
                         stats={[
                             { label: 'Fed Assets', value: '$8.12T', color: 'primary.main' },

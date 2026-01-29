@@ -24,7 +24,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         lastUpdated={getRatio('M2/Gold')?.last_updated}
                         frequency="Monthly"
                         description="The M2/Gold ratio measures the expansion of fiat money relative to a fixed hard asset anchor. It is a primary indicator of monetary debasement."
-                        methodology="Calculated as (US M2 Money Stock / Gold Price USD). Z-score is derived from a 25-year rolling window to normalize current valuations against historical debasement cycles."
+                        methodology="Calculated as (US M2 Money Stock / Gold Price USD). Z-score and percentile are derived from over 65 years of overlapping data (1959-Present)."
                         source="FRED, LBMA"
                     />
                 </Grid>
@@ -39,7 +39,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         isLoading={isLoading}
                         lastUpdated={getRatio('SPX/Gold')?.last_updated}
                         description="The S&P 500 priced in Gold reveals the true 'hard money' purchasing power of US equities, removing the noise of currency inflation."
-                        methodology="Calculated as (S&P 500 Index / Gold Price USD). High ratios suggest equity overvaluation or gold undervaluation."
+                        methodology="Calculated as (S&P 500 Index / Gold Price USD). Multi-decade institutional Z-score highlights generational equity overvaluation/undervaluation."
                         source="FRED, Yahoo Finance"
                     />
                 </Grid>
@@ -54,7 +54,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         isLoading={isLoading}
                         lastUpdated={getRatio('DEBT/Gold')?.last_updated}
                         description="This ratio tracks the US national debt burden in real terms (Gold). It indicates the sustainability of fiscal expansion relative to sound money."
-                        methodology="Calculated as (Total US Public Debt / Gold Price USD), normalized to billions. Tracks the 'Gold cover' required to offset national liabilities."
+                        methodology="Calculated as (Total US Public Debt / Gold Price USD). Normalized Z-score against historical debt cycles."
                         source="US Treasury FiscalData"
                     />
                 </Grid>
@@ -69,7 +69,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         isLoading={isLoading}
                         lastUpdated={getRatio('Gold/Silver')?.last_updated}
                         description="The Gold/Silver ratio indicates the relative value of safe-haven demand vs industrial utility. Extreme highs often precede safe-haven spikes."
-                        methodology="Calculated as (Gold Price USD / Silver Price USD). Z-score is derived from 25y history. Ratio at 25y low → safe-haven demand spike; Highest since 1980 → industrial demand surge."
+                        methodology="Calculated as (Gold Price USD / Silver Price USD). Institutional Z-score allows for regime identification (Safe-haven vs Industrial demand)."
                         source="Yahoo Finance"
                     />
                 </Grid>

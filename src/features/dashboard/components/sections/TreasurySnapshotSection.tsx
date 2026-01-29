@@ -7,7 +7,7 @@ import { useG20Sovereign } from '@/hooks/useG20Sovereign';
 export const TreasurySnapshotSection: React.FC = () => {
     const { data: debt, isLoading: debtLoading } = useLatestMetric('UST_DEBT_TOTAL');
     const { data: netSupply, isLoading: netSupplyLoading } = useLatestMetric('UST_NET_ISSUANCE_M');
-    const { data: refi, isLoading: refiLoading } = useLatestMetric('UST_MATURITY_12M_PCT');
+    const { data: refi } = useLatestMetric('UST_MATURITY_12M_PCT');
     const { data: g20, isLoading: g20Loading } = useG20Sovereign();
 
     return (
@@ -30,11 +30,13 @@ export const TreasurySnapshotSection: React.FC = () => {
                         suffix="T"
                         isLoading={debtLoading}
                         lastUpdated={debt?.lastUpdated}
-                        description="Total US Treasury debt outstandng, including both marketable and non-marketable securities."
-                        methodology="Aggregated from the Daily Treasury Statement (DTS). Standard z-score windows applied over 25y history."
+                        zScore={debt?.zScore}
+                        percentile={debt?.percentile}
+                        description="Total US Treasury debt outstanding, including both marketable and non-marketable securities."
+                        methodology="Aggregated from the Daily Treasury Statement (DTS). Z-score and percentile calculated against full historical sovereign record."
                         source="US Treasury FiscalData"
                         frequency="Monthly"
-                        zScoreWindow="25-Year Context"
+                        zScoreWindow="Historical Context"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -48,11 +50,13 @@ export const TreasurySnapshotSection: React.FC = () => {
                         suffix="B"
                         isLoading={netSupplyLoading}
                         lastUpdated={netSupply?.lastUpdated}
+                        zScore={netSupply?.zScore}
+                        percentile={netSupply?.percentile}
                         description="Net change in total US marketable debt outstanding over the previous rolling 30-day period."
-                        methodology="Calculated as gross issuance minus redemptions. High net issuance indicates increased absorption pressure on private balance sheets."
+                        methodology="Calculated as gross issuance minus redemptions. Normalized against 10-year issuance cycles."
                         source="US Treasury FiscalData"
                         frequency="Monthly"
-                        zScoreWindow="25-Year Context"
+                        zScoreWindow="Institutional Baseline"
                     />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -60,17 +64,13 @@ export const TreasurySnapshotSection: React.FC = () => {
                         label="Refinancing Risk (12M)"
                         value={refi?.value !== undefined ? refi.value.toFixed(1) : '-'}
                         status={refi?.value && refi.value > 30 ? 'warning' : 'safe'}
-                        history={refi?.history}
-                        suffix="%"
-                        isLoading={refiLoading}
-                        lastUpdated={refi?.lastUpdated}
-                        sx={{ borderRight: '4px solid', borderRightColor: refi?.value && refi.value > 30 ? 'warning.main' : 'success.main' }}
-                        chartType="bar"
+                        zScore={refi?.zScore}
+                        percentile={refi?.percentile}
                         description="Tracks the percentage of total US marketable debt maturing within the next 12 months."
-                        methodology="Calculated as (Total Marketable Debt maturing in <12M / Total Marketable Debt). High values indicate sensitivity to interest rate fluctuations."
+                        methodology="Calculated as (Total Marketable Debt maturing in <12M / Total Marketable Debt). Contextualized against all major interest rate regimes."
                         source="US Treasury FiscalData"
                         frequency="Monthly"
-                        zScoreWindow="25-Year Context"
+                        zScoreWindow="Institutional Baseline"
                         stats={[
                             { label: 'Long-term Median', value: '28.4%' },
                             { label: 'All-time High', value: '34.2% (2023)' },

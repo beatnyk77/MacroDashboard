@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { Box, AppBar, Toolbar, Typography, Container, Chip, useTheme } from '@mui/material';
-import { Activity } from 'lucide-react';
+import { Activity, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
+import { useViewContext } from '@/context/ViewContext';
+import { FormControlLabel, Switch } from '@mui/material';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -12,6 +14,7 @@ interface GlobalLayoutProps {
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const theme = useTheme();
     const { data: regime } = useRegime();
+    const { isInstitutionalView, setInstitutionalView } = useViewContext();
 
     const regimeColor = useMemo(() => {
         if (!regime) return theme.palette.primary.main;
@@ -84,6 +87,42 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    size="small"
+                                    checked={isInstitutionalView}
+                                    onChange={(e) => setInstitutionalView(e.target.checked)}
+                                    sx={{
+                                        '& .MuiSwitch-switchBase.Mui-checked': {
+                                            color: theme.palette.primary.main,
+                                        },
+                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                            backgroundColor: theme.palette.primary.main,
+                                        },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                    {isInstitutionalView ? <ShieldCheck size={14} color={theme.palette.primary.main} /> : <ShieldAlert size={14} color={theme.palette.text.disabled} />}
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            fontWeight: 900,
+                                            fontSize: '0.6rem',
+                                            letterSpacing: '0.1em',
+                                            color: isInstitutionalView ? 'primary.main' : 'text.disabled',
+                                            display: { xs: 'none', md: 'block' }
+                                        }}
+                                    >
+                                        INSTITUTIONAL TERMINAL
+                                    </Typography>
+                                </Box>
+                            }
+                            labelPlacement="start"
+                            sx={{ m: 0 }}
+                        />
                     </Box>
                 </Toolbar>
             </AppBar>
