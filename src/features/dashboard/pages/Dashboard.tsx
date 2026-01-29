@@ -5,6 +5,7 @@ import { GlobalLiquiditySection } from '@/features/dashboard/components/sections
 import { DeDollarizationSection } from '@/features/dashboard/components/sections/DeDollarizationSection';
 import { BRICSTrackerSection } from '@/features/dashboard/components/sections/BRICSTrackerSection';
 import { TreasurySnapshotSection } from '@/features/dashboard/components/sections/TreasurySnapshotSection';
+import { TreasuryHoldersSection } from '@/features/dashboard/components/sections/TreasuryHoldersSection';
 import { GoldValuationStrip } from '@/features/dashboard/components/sections/GoldValuationStrip';
 import { StickyRegimeBar } from '@/features/dashboard/components/StickyRegimeBar';
 import { LiquidityAlarmCard } from '@/features/dashboard/components/sections/LiquidityAlarmCard';
@@ -42,6 +43,9 @@ export const Dashboard: React.FC = () => {
                 </Box>
                 <Box id="treasury-snapshot-section">
                     <TreasurySnapshotSection />
+                </Box>
+                <Box id="treasury-holders-section">
+                    <TreasuryHoldersSection />
                 </Box>
             </Box>
             <Box id="gold-valuation-strip">
