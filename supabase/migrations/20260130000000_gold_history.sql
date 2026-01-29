@@ -75,14 +75,17 @@ VALUES
     ('1944-07-01', 'Bretton Woods Agreement', 'Gold-linked USD becomes the global reserve currency.', 'Monetary Reset'),
     ('1971-08-15', 'Nixon Shock', 'US ends direct convertibility of the USD to gold, ending the Bretton Woods system.', 'Systemic Shift'),
     ('1973-10-01', 'Oil Crisis', 'OPEC oil embargo leads to stagflation and gold surge.', 'Stagflation'),
-    ('1979-01-01', 'Iranian Revolution', 'Oil supply shocks and geopolitical instability drive gold to then-record highs.', 'Geopolitical / Inflation'),
+    ('1979-01-01', 'Iranian Revolution', 'Oil supply shocks and geopolitical instability drive gold to record highs.', 'Geopolitical / Inflation'),
+    ('1979-12-01', 'Soviet-Afghan War', 'Cold War escalation increases safe-haven demand.', 'Geopolitical'),
     ('1980-01-01', 'Volcker Shock', 'Fed Chair Volcker raises rates to 20% to kill inflation, gold peaks and crashes.', 'Monetary Tightening'),
+    ('1982-08-01', 'Latin American Debt Crisis', 'Mexico defaults, sparking regional financial instability.', 'Credit Crisis'),
     ('1987-10-01', 'Black Monday', 'Largest one-day percentage drop in stock market history.', 'Market Panic'),
-    ('1999-05-01', 'Browns Bottom', 'UK sells half its gold reserves at historic lows; European central banks limit sales.', 'Sentiment Low'),
+    ('1997-07-01', 'Asian Financial Crisis', 'Currency devaluations spread through emerging markets.', 'Currency Crisis'),
+    ('1999-05-01', 'Browns Bottom / Dot-com Bubble', 'UK sells gold at lows; Tech bubble nearing peak.', 'Sentiment Low / Bubble'),
     ('2001-09-01', '9/11 Attacks', 'Geopolitical terror shock leads to long-term safe haven demand.', 'Geopolitical Crisis'),
     ('2008-09-01', 'GFC / Lehman Collapse', 'Global Financial Crisis triggers massive monetary expansion (QE).', 'Credit Crisis'),
     ('2011-09-01', 'Eurozone Debt Crisis', 'Concerns over sovereign defaults drive gold to $1,900 peak.', 'Sovereign Debt'),
-    ('2013-05-01', 'Taper Tantrum', 'Fed signals reduction in QE, causing real rates to rise and gold to sell off.', 'Policy Shift'),
+    ('2013-05-01', 'Taper Tantrum', 'Fed signals reduction in QE, causing real rates to rise and gold price drop.', 'Policy Shift'),
     ('2020-03-01', 'COVID-19 Pandemic', 'Global lockdowns and unprecedented fiscal/monetary stimulus.', 'Deflationary Shock -> Reflation'),
-    ('2022-02-01', 'Russia-Ukraine War', 'Weaponization of reserves and surge in inflation.', 'Geopolitical / Deglobalization')
+    ('2022-02-01', 'Russia-Ukraine War + Inflation', 'Weaponization of reserves and surge in global inflation.', 'Geopolitical / Deglobalization')
 ON CONFLICT (event_month, event_name) DO NOTHING;

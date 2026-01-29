@@ -19,7 +19,7 @@ Deno.serve(async (req: Request) => {
 
         // 1. Fetch recent monthly data from Yahoo Finance (GC=F) - 5 years for overlap
         const ticker = 'GC=F'
-        const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1mo&range=5y`
+        const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1mo&range=50y`
         const res = await fetch(yahooUrl)
         if (!res.ok) throw new Error(`Yahoo HTTP ${res.status}`)
 

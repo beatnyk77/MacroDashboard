@@ -29,11 +29,13 @@ export interface MajorEconomyRow {
     policy_rate: number;
     fx_reserves: number;
     gold_reserves: number;
+    debt_gold_ratio: number;
     last_updated: string;
     staleness: string;
 }
 
 const COUNTRY_CONFIG: Record<string, { name: string; flag: string }> = {
+    US: { name: 'United States', flag: '🇺🇸' },
     CN: { name: 'China', flag: '🇨🇳' },
     IN: { name: 'India', flag: '🇮🇳' },
     JP: { name: 'Japan', flag: '🇯🇵' },
@@ -64,6 +66,15 @@ export function useMajorEconomies() {
 
             if (reservesError) throw reservesError;
 
+            // 3. Fetch gold price for ratio calculation
+            const { data: goldPrice } = await supabase
+                .from('vw_latest_metrics')
+                .select('value')
+                .eq('metric_id', 'GOLD_PRICE_USD')
+                .single();
+
+            const gp = goldPrice?.value || 0;
+
             // Manual distinct on (country_code) since reserves might have history
             const latestReserves = codes.reduce((acc: any, code) => {
                 const latest = reserves?.find(r => r.country_code === code);
@@ -83,6 +94,19 @@ export function useMajorEconomies() {
                 const growth = findVal('GDP_GROWTH_YOY');
                 const cpi = findVal('CPI_YOY');
                 const policy = findVal('POLICY_RATE');
+                const debt = findVal('DEBT_USD_TN') || (code === 'US' ? findVal('DEBT_TOTAL') : null);
+
+                // Debt/Gold Ratio Calculation: Debt / (Gold Tonnes * 32150.75 * Gold Price)
+                let debtGoldRatio = 0;
+                if (gp > 0 && res?.gold_tonnes > 0) {
+                    const debtValue = Number(debt?.value || 0);
+                    // If US, debt is in absolute USD. If others, in Trillions USD.
+                    const debtInUSD = code === 'US' ? debtValue : debtValue * 1e12;
+                    const goldValueUSD = res.gold_tonnes * 32150.75 * gp;
+                    if (goldValueUSD > 0) {
+                        debtGoldRatio = debtInUSD / goldValueUSD;
+                    }
+                }
 
                 return {
                     code,
@@ -95,6 +119,7 @@ export function useMajorEconomies() {
                     policy_rate: Number(policy?.value || 0),
                     fx_reserves: Number(res?.fx_reserves_usd || 0) / 1e9, // USD bn
                     gold_reserves: Number(res?.gold_tonnes || 0),
+                    debt_gold_ratio: debtGoldRatio,
                     last_updated: gdpNom?.last_updated_at || res?.as_of_date || '',
                     staleness: gdpNom?.staleness_flag || 'no_data'
                 };

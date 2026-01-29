@@ -102,6 +102,9 @@ export const MajorEconomiesTable: React.FC = () => {
                                 Gold (t)
                             </TableCell>
                             <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.65rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                                Debt/Gold (x)
+                            </TableCell>
+                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.65rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
                                 Status
                             </TableCell>
                         </TableRow>
@@ -141,6 +144,7 @@ export const MajorEconomiesTable: React.FC = () => {
                                     {renderCell(row.policy_rate, '%', 2, "Benchmark Policy Interest Rate. Source: Relevant Central Bank.")}
                                     {renderCell(row.fx_reserves, 'B', 0, "Current Foreign Exchange Reserves in USD Billions. Source: IMF IFS.")}
                                     {renderCell(row.gold_reserves, 't', 0, "Official Gold Bullion Reserves in Tonnes. Source: World Gold Council.")}
+                                    {renderCell(row.debt_gold_ratio, 'x', 1, "Ratio of Total Debt to Gold Reserves (valued at current spot). Measures how many ounces of gold are needed to back the debt. Higher = Danger.")}
 
                                     <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>

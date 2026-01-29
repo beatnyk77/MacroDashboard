@@ -14,6 +14,7 @@ import { MarketPulseTicker } from '@/features/dashboard/components/MarketPulseTi
 import { MajorEconomiesTable } from '@/features/dashboard/components/sections/MajorEconomiesTable';
 import { ScenarioStudio } from '@/features/dashboard/components/sections/ScenarioStudio';
 import { SovereignHealthRadar } from '@/features/dashboard/components/sections/SovereignHealthRadar';
+import GoldReturnsSection from '@/features/dashboard/components/sections/GoldReturnsSection';
 
 export const Dashboard: React.FC = () => {
     return (
@@ -39,6 +40,9 @@ export const Dashboard: React.FC = () => {
                 </Box>
                 <Box id="de-dollarization-section">
                     <DeDollarizationSection />
+                </Box>
+                <Box id="gold-returns-section">
+                    <GoldReturnsSection />
                 </Box>
                 <Box id="brics-tracker-section">
                     <BRICSTrackerSection />

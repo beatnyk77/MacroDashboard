@@ -3,6 +3,7 @@ import { MetricCard } from '@/components/MetricCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useG20Sovereign } from '@/hooks/useG20Sovereign';
+import { USDebtGoldBackingCard } from '../cards/USDebtGoldBackingCard';
 
 export const TreasurySnapshotSection: React.FC = () => {
     const { data: debt, isLoading: debtLoading } = useLatestMetric('UST_DEBT_TOTAL');
@@ -77,6 +78,13 @@ export const TreasurySnapshotSection: React.FC = () => {
                             { label: 'All-time Low', value: '18.1% (2011)' }
                         ]}
                     />
+                </Grid>
+            </Grid>
+
+            {/* High-Signal Analysis Cards */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid item xs={12}>
+                    <USDebtGoldBackingCard />
                 </Grid>
             </Grid>
 

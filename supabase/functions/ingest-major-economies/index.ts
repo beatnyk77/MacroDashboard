@@ -34,12 +34,14 @@ Deno.serve(async (req: Request) => {
             { id: 'CN_GDP_GROWTH_YOY', value: 5.00 },
             { id: 'CN_CPI_YOY', value: 0.30 },
             { id: 'CN_POLICY_RATE', value: 3.10 },
+            { id: 'CN_DEBT_USD_TN', value: 19.45 },
             // India
             { id: 'IN_GDP_NOMINAL_TN', value: 4.10 },
             { id: 'IN_GDP_PPP_TN', value: 14.50 },
             { id: 'IN_GDP_GROWTH_YOY', value: 7.20 },
             { id: 'IN_CPI_YOY', value: 5.10 },
             { id: 'IN_POLICY_RATE', value: 6.50 },
+            { id: 'IN_DEBT_USD_TN', value: 4.25 },
             // Japan
             { id: 'JP_GDP_NOMINAL_TN', value: 4.50 },
             { id: 'JP_GDP_PPP_TN', value: 6.70 },
