@@ -20,7 +20,14 @@ export function useTreasuryHolders() {
                 .order('as_of_date', { ascending: false });
 
             if (error) throw error;
-            return data as TreasuryHolder[];
+            if (error) throw error;
+            return (data || []).map((item: any) => ({
+                ...item,
+                holdings_usd_bn: Number(item.holdings_usd_bn),
+                mom_pct_change: item.mom_pct_change !== null ? Number(item.mom_pct_change) : null,
+                yoy_pct_change: item.yoy_pct_change !== null ? Number(item.yoy_pct_change) : null,
+                pct_of_total_foreign: item.pct_of_total_foreign !== null ? Number(item.pct_of_total_foreign) : null
+            })) as TreasuryHolder[];
         },
     });
 }

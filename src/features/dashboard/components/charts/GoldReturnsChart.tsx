@@ -20,7 +20,8 @@ const GoldReturnsChart: React.FC = () => {
         if (!returns) return [];
         return returns.map((r) => ({
             ...r,
-            formattedDate: new Date(r.month_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+            // Append 'T00:00:00' to ensure local timezone parsing doesn't shift the day if it's treated as UTC
+            formattedDate: new Date(`${r.month_date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
             color: r.return_pct >= 0 ? '#10b981' : '#ef4444',
         }));
     }, [returns]);

@@ -20,7 +20,12 @@ export function useGoldReturns() {
                 .order('month_date', { ascending: true });
 
             if (error) throw error;
-            return data as GoldReturnEvent[];
+            if (error) throw error;
+            return (data || []).map((item: any) => ({
+                ...item,
+                return_pct: Number(item.return_pct),
+                gold_price: item.gold_price ? Number(item.gold_price) : null
+            })) as GoldReturnEvent[];
         },
     });
 }
