@@ -2,11 +2,13 @@ import { Box, Typography } from '@mui/material';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
-import { TrendingUp, TrendingDown, Circle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Circle, Activity } from 'lucide-react';
+import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 
 export const MarketPulseTicker: React.FC = () => {
     const { data: pulseData } = useMarketPulse();
     const { data: liqData } = useNetLiquidity();
+    const { data: integrity } = useDataIntegrity();
     const { data: ratioData } = useGoldRatios();
 
     const items = [...(pulseData || [])];
@@ -62,65 +64,89 @@ export const MarketPulseTicker: React.FC = () => {
             alignItems: 'center',
             py: 1,
             bgcolor: 'rgba(0,0,0,0.2)',
-            borderY: '1px solid rgba(255,255,255,0.03)'
         }}>
+            {/* Data Integrity Badge */}
             <Box sx={{
                 display: 'flex',
-                animation: 'pulse-scroll 60s linear infinite',
-                '&:hover': {
-                    animationPlayState: 'paused'
-                },
-                '@keyframes pulse-scroll': {
-                    '0%': { transform: 'translateX(0)' },
-                    '100%': { transform: 'translateX(-50%)' }
-                }
+                alignItems: 'center',
+                gap: 1,
+                px: 2,
+                py: 0.5,
+                borderRight: '1px solid rgba(255,255,255,0.05)',
+                color: integrity?.status === 'healthy' ? '#10b981' : '#f59e0b',
+                flexShrink: 0,
+                bgcolor: integrity?.status === 'healthy' ? 'rgba(16, 185, 129, 0.05)' : 'rgba(245, 158, 11, 0.05)'
             }}>
-                {displayItems.map((item, idx) => {
-                    const isPositive = item.delta_wow >= 0;
-                    const isZScore = item.id.includes('_Z');
+                <Activity size={14} />
+                <Typography variant="overline" sx={{ fontWeight: 900, fontSize: '0.6rem', letterSpacing: '0.05em' }}>
+                    {integrity?.status === 'healthy' ? 'INTEGRITY: OK' : 'INTEGRITY: LAGGED'}
+                </Typography>
+            </Box>
 
-                    return (
-                        <Box key={`${item.id}-${idx}`} sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1.5,
-                            mx: 5,
-                            cursor: 'default'
-                        }}>
-                            {/* Sentiment Pip */}
-                            <Circle
-                                size={6}
-                                fill={isPositive ? '#10b981' : '#ef4444'}
-                                color="transparent"
-                                style={{ boxShadow: isPositive ? '0 0 8px #10b981' : '0 0 8px #ef4444' }}
-                            />
+            <Box sx={{
+                display: 'flex',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                flexGrow: 1
+            }}>
+                <Box sx={{
+                    display: 'flex',
+                    animation: 'pulse-scroll 60s linear infinite',
+                    '&:hover': {
+                        animationPlayState: 'paused'
+                    },
+                    '@keyframes pulse-scroll': {
+                        '0%': { transform: 'translateX(0)' },
+                        '100%': { transform: 'translateX(-50%)' }
+                    }
+                }}>
+                    {displayItems.map((item, idx) => {
+                        const isPositive = item.delta_wow >= 0;
+                        const isZScore = item.id.includes('_Z');
 
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.65rem' }}>
-                                {item.name}
-                            </Typography>
+                        return (
+                            <Box key={`${item.id}-${idx}`} sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1.5,
+                                mx: 5,
+                                cursor: 'default'
+                            }}>
+                                {/* Sentiment Pip */}
+                                <Circle
+                                    size={6}
+                                    fill={isPositive ? '#10b981' : '#ef4444'}
+                                    color="transparent"
+                                    style={{ boxShadow: isPositive ? '0 0 8px #10b981' : '0 0 8px #ef4444' }}
+                                />
 
-                            <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.primary', fontSize: '0.75rem' }}>
-                                {isZScore ? `${item.value.toFixed(2)}σ` :
-                                    item.id.includes('YIELD') || item.id.includes('SPREAD') ? `${item.value.toFixed(2)}%` :
-                                        item.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                            </Typography>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.65rem' }}>
+                                    {item.name}
+                                </Typography>
 
-                            {!isZScore && (
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    color: isPositive ? 'success.light' : 'error.light',
-                                    gap: 0.2
-                                }}>
-                                    {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                    <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
-                                        {Math.abs(item.delta_wow).toFixed(2)}
-                                    </Typography>
-                                </Box>
-                            )}
-                        </Box>
-                    );
-                })}
+                                <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.primary', fontSize: '0.75rem' }}>
+                                    {isZScore ? `${item.value.toFixed(2)}σ` :
+                                        item.id.includes('YIELD') || item.id.includes('SPREAD') ? `${item.value.toFixed(2)}%` :
+                                            item.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                </Typography>
+
+                                {!isZScore && (
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        color: isPositive ? 'success.light' : 'error.light',
+                                        gap: 0.2
+                                    }}>
+                                        {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                        <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
+                                            {Math.abs(item.delta_wow).toFixed(2)}
+                                        </Typography>
+                                    </Box>
+                                )}
+                            </Box>
+                        );
+                    })}
+                </Box>
             </Box>
         </Box>
     );

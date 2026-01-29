@@ -12,6 +12,7 @@ import { LiquidityAlarmCard } from '@/features/dashboard/components/sections/Liq
 import { MarketPulseTicker } from '@/features/dashboard/components/MarketPulseTicker';
 import { MajorEconomiesTable } from '@/features/dashboard/components/sections/MajorEconomiesTable';
 import { ScenarioStudio } from '@/features/dashboard/components/sections/ScenarioStudio';
+import { SovereignHealthRadar } from '@/features/dashboard/components/sections/SovereignHealthRadar';
 
 export const Dashboard: React.FC = () => {
     return (
@@ -24,6 +25,7 @@ export const Dashboard: React.FC = () => {
                 </Box>
             </Box>
             <Box sx={{ mt: 4 }}>
+                <SovereignHealthRadar />
                 <ScenarioStudio />
                 <Box id="macro-orientation-section">
                     <MacroOrientationSection />

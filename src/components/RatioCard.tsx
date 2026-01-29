@@ -131,7 +131,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         </Typography>
                     </Box>
 
-                    {!isLoading && zScore !== undefined && (
+                    {!isLoading && typeof zScore === 'number' && !isNaN(zScore) && (
                         <Box
                             sx={{
                                 px: 1,
@@ -171,9 +171,9 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         <Typography variant="h3" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.04em' }}>
                             {formattedValue}
                         </Typography>
-                        {Math.abs(zScore || 0) > 2 && (
+                        {typeof zScore === 'number' && !isNaN(zScore) && Math.abs(zScore) > 2 && (
                             <Box sx={{
-                                bgcolor: getZScoreColor(zScore || 0),
+                                bgcolor: getZScoreColor(zScore),
                                 borderRadius: '50%',
                                 width: 8,
                                 height: 8,
@@ -185,7 +185,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             </Box>
 
             <Box sx={{ mb: 2.5 }}>
-                {percentile !== undefined && !isLoading && (
+                {typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
                     <Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.8 }}>
                             <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>VALUATION PERCENTILE</Typography>

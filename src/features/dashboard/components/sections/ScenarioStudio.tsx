@@ -18,11 +18,14 @@ export const ScenarioStudio: React.FC = () => {
     // Simulation State
     const [simGold, setSimGold] = useState(3000);
     const [simM2Growth, setSimM2Growth] = useState(5); // %
+    const [simReserveShift, setSimReserveShift] = useState(0); // % displacement
 
     // Calculations
     const currentM2 = m2Data?.value || BASELINES.US_M2.current;
-    const simM2 = currentM2 * (1 + simM2Growth / 100);
-    const simRatio = simM2 / simGold;
+
+    // Reserve displacement effectively reduces the 'real' backing or increases the required gold backing
+    const effectiveM2 = currentM2 * (1 + simM2Growth / 100) * (1 + simReserveShift / 50);
+    const simRatio = effectiveM2 / simGold;
 
     const zScore = (simRatio - BASELINES.RATIO_M2_GOLD.mean) / BASELINES.RATIO_M2_GOLD.stddev;
 
@@ -100,6 +103,28 @@ export const ScenarioStudio: React.FC = () => {
                                     }}
                                 />
                             </Box>
+
+                            <Box>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Reserve Displacement (USD)</Typography>
+                                    <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 800 }}>-{simReserveShift}%</Typography>
+                                </Box>
+                                <Slider
+                                    value={simReserveShift}
+                                    onChange={(_, v) => setSimReserveShift(v as number)}
+                                    min={0}
+                                    max={50}
+                                    step={1}
+                                    marks={[
+                                        { value: 0, label: 'Stable' },
+                                        { value: 10, label: 'High Shift' },
+                                        { value: 40, label: 'Hyper-Displacement' }
+                                    ]}
+                                    sx={{
+                                        '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
+                                    }}
+                                />
+                            </Box>
                         </Stack>
 
                         <Box sx={{ mt: 6, p: 2, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px dashed', borderColor: 'divider' }}>
@@ -110,8 +135,8 @@ export const ScenarioStudio: React.FC = () => {
                                 </Typography>
                             </Box>
                             <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
-                                This engine uses 124 years of fiscal and monetary data to recalculate sovereign stress levels.
-                                High Gold targets ($10K+) simulate extreme reserve displacement or currency reset scenarios.
+                                This engine uses 124 years of fiscal and monetary data.
+                                **Reserve Displacement** simulates a global shift away from USD reserves, impacting sovereign refinancing capacity and the 124Y historical Z-Score relative to Gold.
                             </Typography>
                         </Box>
                     </Card>
@@ -163,9 +188,9 @@ export const ScenarioStudio: React.FC = () => {
 
                             <Box>
                                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>SIMULATED LIQUIDITY POOL</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800 }}>${(simM2 / 1000).toFixed(1)}T</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800 }}>${(effectiveM2 / 1000).toFixed(1)}T</Typography>
                                 <Typography variant="caption" color="text.disabled">
-                                    {(simM2 / currentM2 - 1) > 0 ? '+' : ''}{((simM2 / currentM2 - 1) * 100).toFixed(1)}% vs Current
+                                    {(effectiveM2 / currentM2 - 1) > 0 ? '+' : ''}{((effectiveM2 / currentM2 - 1) * 100).toFixed(1)}% vs Current
                                 </Typography>
                             </Box>
                         </Stack>

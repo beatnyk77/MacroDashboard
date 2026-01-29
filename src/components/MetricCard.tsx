@@ -210,7 +210,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 ml: 'auto'
                             }} />
                         )}
-                        {isInstitutionalView && zScore !== undefined && (
+                        {isInstitutionalView && typeof zScore === 'number' && !isNaN(zScore) && (
                             <Box
                                 sx={{
                                     ml: 'auto',
@@ -232,7 +232,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 )}
             </Box>
 
-            {isInstitutionalView && percentile !== undefined && !isLoading && (
+            {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
                 <Box sx={{ mb: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                         <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary' }}>
@@ -244,7 +244,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                     </Box>
                     <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
                         <Box sx={{
-                            width: `${percentile}%`,
+                            width: `${Math.max(0, Math.min(100, percentile))}%`,
                             bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
                             height: '100%',
                             transition: 'width 1s ease'
