@@ -41,7 +41,7 @@ export const MajorEconomiesTable: React.FC = () => {
     const renderCell = (value: number, suffix: string = '', decimals: number = 2, tooltip?: string) => (
         <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', fontFamily: 'monospace' }}>
                     {formatValue(value, decimals)}{suffix}
                 </Typography>
                 {tooltip && (
@@ -111,10 +111,10 @@ export const MajorEconomiesTable: React.FC = () => {
                     </TableHead>
                     <TableBody>
                         {isLoading ? (
-                            Array.from({ length: 5 }).map((_, i) => (
+                            Array.from({ length: 6 }).map((_, i) => (
                                 <TableRow key={i}>
                                     <TableCell><Skeleton variant="text" /></TableCell>
-                                    {Array.from({ length: 8 }).map((_, j) => (
+                                    {Array.from({ length: 9 }).map((_, j) => (
                                         <TableCell key={j}><Skeleton variant="text" /></TableCell>
                                     ))}
                                 </TableRow>
@@ -154,7 +154,7 @@ export const MajorEconomiesTable: React.FC = () => {
                                                 color: getStalenessColor(row.staleness),
                                                 textTransform: 'uppercase'
                                             }}>
-                                                {row.staleness.replace('_', ' ')}
+                                                {row.staleness.replace(/_/g, ' ')}
                                             </Typography>
                                             <Box sx={{
                                                 width: 6,

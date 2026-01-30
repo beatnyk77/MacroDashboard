@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, AppBar, Toolbar, Typography, Container, Chip, useTheme } from '@mui/material';
 import { Activity } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 
@@ -12,6 +13,15 @@ interface GlobalLayoutProps {
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const theme = useTheme();
     const { data: regime } = useRegime();
+    const { data: latestMetric } = useLatestMetric('GOLD_PRICE_USD');
+
+    const lastIngestion = latestMetric?.lastUpdated
+        ? new Date(latestMetric.lastUpdated).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        })
+        : 'Jan 30, 2026';
 
     const regimeColor = useMemo(() => {
         if (!regime) return theme.palette.primary.main;
@@ -108,9 +118,17 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 backgroundColor: 'rgba(2, 6, 23, 0.4)'
             }}>
                 {/* ... existing footer content ... */}
-                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                    GraphiQuestor.com – Institutional Macro Intelligence Terminal | Data from FRED, US Treasury &amp; IMF
-                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: { xs: 'center', md: 'flex-start' } }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                        GraphiQuestor.com – Institutional Macro Intelligence Terminal | Data from FRED, US Treasury & IMF
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, opacity: 0.8 }}>
+                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 6px #10b981' }} />
+                        <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.secondary', letterSpacing: '0.05em' }}>
+                            LAST INGESTION: {lastIngestion} | STATUS: CONNECTED
+                        </Typography>
+                    </Box>
+                </Box>
                 <Box sx={{ display: 'flex', gap: 4 }}>
                     {[
                         { label: 'Methodology', href: '/methodology' },
@@ -139,7 +157,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </Box>
 
 
-            // ... existing code ...
 
             <SocialShareMode />
             <MobileNav />
