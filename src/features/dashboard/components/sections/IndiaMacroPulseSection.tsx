@@ -3,6 +3,7 @@ import { Grid, Box } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useIndiaMacro } from '@/hooks/useIndiaMacro';
+import { UPIAutopayFailureCard } from './UPIAutopayFailureCard';
 
 export const IndiaMacroPulseSection: React.FC = () => {
     const { data, isLoading } = useIndiaMacro();
@@ -176,6 +177,11 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         frequency={goldReserves?.display_frequency || 'Monthly'}
                         zScoreWindow="RBI Official Gold Holdings (Tonnes)"
                     />
+                </Grid>
+
+                {/* Row 3: High-Frequency Indicators */}
+                <Grid item xs={12} sm={6} md={3}>
+                    <UPIAutopayFailureCard />
                 </Grid>
             </Grid>
         </Box>
