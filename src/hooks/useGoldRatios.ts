@@ -14,30 +14,15 @@ export function useGoldRatios() {
     return useQuery({
         queryKey: ['gold-ratios'],
         queryFn: async (): Promise<GoldRatioData[]> => {
-            // 1. Fetch latest ratios
+            // 1. Fetch latest ratios from RPC (Tall Format)
             const { data: latestRatios, error: ratioError } = await supabase
                 .rpc('get_latest_gold_ratios');
 
-            // Fallback to manual selection if RPC fails or isn't defined
-            let finalLatest = latestRatios;
-            if (ratioError || !latestRatios) {
-                const { data } = await supabase
-                    .from('vw_gold_ratios')
-                    .select('*')
-                    .order('last_updated', { ascending: false });
-
-                // Group by ratio_name to get latest
-                const unique = new Map();
-                data?.forEach((r: any) => {
-                    if (!unique.has(r.ratio_name)) unique.set(r.ratio_name, r);
-                });
-                finalLatest = Array.from(unique.values());
-            }
-
-            if (!finalLatest) return [];
+            if (ratioError) throw ratioError;
+            if (!latestRatios) return [];
 
             // 2. Fetch history for each ratio from metric_observations
-            const ratioIds = finalLatest.map((r: any) => {
+            const ratioIds = latestRatios.map((r: any) => {
                 if (r.ratio_name === 'M2/Gold') return 'RATIO_M2_GOLD';
                 if (r.ratio_name === 'SPX/Gold') return 'RATIO_SPX_GOLD';
                 if (r.ratio_name === 'DEBT/Gold') return 'RATIO_DEBT_GOLD';
@@ -45,14 +30,18 @@ export function useGoldRatios() {
                 return null;
             }).filter(Boolean) as string[];
 
-            const { data: historyData } = await supabase
-                .from('metric_observations')
-                .select('metric_id, value, as_of_date')
-                .in('metric_id', ratioIds)
-                .order('as_of_date', { ascending: false })
-                .limit(2000);
+            let historyData: any[] = [];
+            if (ratioIds.length > 0) {
+                const { data } = await supabase
+                    .from('metric_observations')
+                    .select('metric_id, value, as_of_date')
+                    .in('metric_id', ratioIds)
+                    .order('as_of_date', { ascending: false })
+                    .limit(2000);
+                historyData = data || [];
+            }
 
-            return finalLatest.map((r: any) => {
+            return latestRatios.map((r: any) => {
                 const metricIdMap: Record<string, string> = {
                     'M2/Gold': 'RATIO_M2_GOLD',
                     'SPX/Gold': 'RATIO_SPX_GOLD',
@@ -67,7 +56,7 @@ export function useGoldRatios() {
                     z_score: Number(r.z_score),
                     percentile: Number(r.percentile),
                     last_updated: r.last_updated,
-                    history: (historyData || [])
+                    history: historyData
                         .filter((h: any) => h.metric_id === mId)
                         .map((h: any) => ({ date: h.as_of_date, value: Number(h.value) }))
                         .reverse()

@@ -11,11 +11,12 @@ export const MarketPulseTicker: React.FC = () => {
     const { data: integrity } = useDataIntegrity();
     const { data: ratioData } = useGoldRatios();
 
-    const items = [...(pulseData || [])];
+    // Consolidate all items first
+    let rawItems = [...(pulseData || [])];
 
     // Add Net Liquidity
     if (liqData) {
-        items.push({
+        rawItems.push({
             id: 'NET_LIQUIDITY',
             name: 'Net Liquidity',
             value: liqData.current_value,
@@ -27,20 +28,20 @@ export const MarketPulseTicker: React.FC = () => {
     // Add Institutional Ratios
     if (ratioData) {
         const m2Gold = ratioData.find(r => r.ratio_name === 'M2/Gold');
-        const goldSilver = ratioData.find(r => r.ratio_name === 'Gold / Silver');
+        const goldSilver = ratioData.find(r => r.ratio_name === 'Gold/Silver' || r.ratio_name === 'Gold / Silver'); // Handle variation
 
         if (m2Gold) {
-            items.push({
+            rawItems.push({
                 id: 'M2_GOLD_Z',
-                name: 'M2 / Gold Z-Score',
+                name: 'M2 / Gold Z',
                 value: m2Gold.z_score,
-                delta_wow: 0, // Z-score is the primary signal
+                delta_wow: 0,
                 staleness_flag: 'fresh'
             } as any);
         }
 
         if (goldSilver) {
-            items.push({
+            rawItems.push({
                 id: 'GOLD_SILVER',
                 name: 'Gold / Silver',
                 value: goldSilver.current_value,
@@ -50,10 +51,31 @@ export const MarketPulseTicker: React.FC = () => {
         }
     }
 
+    // De-duplicate items based on ID
+    const uniqueItemsMap = new Map();
+    rawItems.forEach(item => {
+        if (!uniqueItemsMap.has(item.id)) {
+            uniqueItemsMap.set(item.id, item);
+        }
+    });
+
+    // Prioritize specific high-signal items for the sticky strip
+    const priorityOrder = ['GOLD_PRICE_USD', 'WTI_CRUDE', 'SILVER_PRICE_USD', 'DXY_INDEX', 'VIX_INDEX', 'UST_10Y_YIELD', 'UST_10Y_2Y_SPREAD', 'NET_LIQUIDITY', 'BTC_PRICE', 'M2_GOLD_Z', 'GOLD_SILVER'];
+
+    const items = Array.from(uniqueItemsMap.values())
+        .filter((item: any) => priorityOrder.includes(item.id) || priorityOrder.some(p => item.id.includes(p)))
+        .sort((a: any, b: any) => {
+            const idxA = priorityOrder.findIndex(p => a.id.includes(p));
+            const idxB = priorityOrder.findIndex(p => b.id.includes(p));
+            return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+        });
+
+
     if (items.length === 0) return null;
 
     // Duplicate items for seamless loop
     const displayItems = [...items, ...items];
+
 
     return (
         <Box sx={{

@@ -20,6 +20,7 @@ export const UpcomingEventsCard: React.FC = () => {
         const isPast = new Date(event.event_date) < now;
         const surpriseVal = event.surprise ? parseFloat(event.surprise) : 0;
         const surpriseColor = surpriseVal > 0 ? '#10b981' : (surpriseVal < 0 ? '#f43f5e' : 'transparent');
+        const hasSurprise = event.surprise && event.surprise !== '0';
 
         return (
             <HoverDetail
@@ -83,16 +84,17 @@ export const UpcomingEventsCard: React.FC = () => {
                         </Typography>
                     </TableCell>
                     <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', pr: 0, textAlign: 'right' }}>
-                        {event.surprise ? (
+                        {hasSurprise ? (
                             <Chip
                                 label={event.surprise}
                                 size="small"
                                 sx={{
-                                    height: 16,
-                                    fontSize: '0.6rem',
+                                    height: 18,
+                                    fontSize: '0.65rem',
                                     fontWeight: 900,
-                                    bgcolor: surpriseColor,
-                                    color: 'white',
+                                    bgcolor: `${surpriseColor}20`, // 20% opacity background
+                                    color: surpriseColor,
+                                    border: `1px solid ${surpriseColor}40`,
                                     borderRadius: 0.5
                                 }}
                             />

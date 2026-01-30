@@ -115,7 +115,7 @@ export const GoldValuationStrip: React.FC = () => {
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
                 <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', fontSize: '0.6rem', letterSpacing: '0.05em' }}>
-                        LAST INGESTION (UTC)
+                        SYSTEM HEARTBEAT (UTC)
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'flex-end' }}>
                         <Box sx={{
@@ -126,7 +126,7 @@ export const GoldValuationStrip: React.FC = () => {
                             boxShadow: status?.last_ingestion_at ? `0 0 10px ${theme.palette.success.main}` : 'none'
                         }} />
                         <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', fontSize: '0.65rem' }}>
-                            {status?.last_ingestion_at ? new Date(status.last_ingestion_at).toLocaleTimeString() : 'OFFLINE'}
+                            {status?.last_ingestion_at ? new Date(status.last_ingestion_at).toUTCString().replace('GMT', 'UTC') : 'CONNECTING...'}
                         </Typography>
                     </Box>
                 </Box>

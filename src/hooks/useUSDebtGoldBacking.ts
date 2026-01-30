@@ -8,7 +8,9 @@ export interface USDebtGoldBacking {
     gold_price_usd: number;
     gold_ounces: number;
     gold_value_usd: number;
-    debt_gold_ratio: number;
+    debt_gold_ratio: number; // Legacy field
+    debt_to_gold_coverage_ratio: number; // New: Debt / Gold Value
+    implied_gold_price: number; // New: Debt / Ounces
 }
 
 export function useUSDebtGoldBacking() {
