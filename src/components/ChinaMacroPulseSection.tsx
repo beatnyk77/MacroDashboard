@@ -132,12 +132,12 @@ export const ChinaMacroPulseSection: React.FC = () => {
                 <Grid item xs={12} sm={6} md={3}>
                     <MetricCard
                         label="FX Reserves"
-                        value={chinaReserves?.fx_reserves ? chinaReserves.fx_reserves.toFixed(2) : 3.3}
+                        value={chinaReserves?.fx_reserves ? (chinaReserves.fx_reserves / 1000).toFixed(2) : 3.3}
                         suffix="tn"
                         prefix="$"
                         sublabel="USD Trillions"
                         status="neutral"
-                        source="SAME"
+                        source="PBoC"
                     />
                 </Grid>
 

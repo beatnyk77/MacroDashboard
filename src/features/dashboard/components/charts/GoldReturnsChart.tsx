@@ -117,14 +117,20 @@ const GoldReturnsChart: React.FC = () => {
 
     const chartData = useMemo(() => {
         if (!returns) return [];
-        return returns.map((r) => ({
-            ...r,
-            formattedDate: new Date(`${r.month_date}T00:00:00`).toLocaleDateString('en-US', {
-                month: 'short',
-                year: 'numeric'
-            }),
-            color: r.return_pct >= 0 ? '#10b981' : '#ef4444',
-        }));
+        return returns.map((r) => {
+            // Robust UTC parsing for ISO date string
+            const date = new Date(r.month_date);
+            return {
+                ...r,
+                dateObj: date,
+                formattedDate: date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    year: 'numeric',
+                    timeZone: 'UTC'
+                }),
+                color: r.return_pct >= 0 ? '#10b981' : '#ef4444',
+            };
+        });
     }, [returns]);
 
     const displayData = useMemo(() => {
@@ -143,6 +149,15 @@ const GoldReturnsChart: React.FC = () => {
     const resetZoom = () => {
         setZoomDomain(null);
     };
+
+    // Determine max/min for Y axis to keep it sane
+    const yDomain = useMemo(() => {
+        if (!displayData.length) return [-10, 10];
+        const vals = displayData.map(d => d.return_pct);
+        const min = Math.min(...vals);
+        const max = Math.max(...vals);
+        return [Math.max(-25, Math.floor(min - 2)), Math.min(25, Math.ceil(max + 2))];
+    }, [displayData]);
 
     if (isLoading) {
         return (
@@ -176,7 +191,7 @@ const GoldReturnsChart: React.FC = () => {
     return (
         <Box sx={{
             position: 'relative',
-            height: isMobile ? 300 : 400,
+            height: isMobile ? 350 : 450,
             width: '100%',
             bgcolor: 'rgba(0,0,0,0.2)',
             borderRadius: 2,
@@ -219,7 +234,7 @@ const GoldReturnsChart: React.FC = () => {
                 <Box sx={{
                     position: 'absolute',
                     top: 16,
-                    right: 16,
+                    right: 60,
                     zIndex: 10,
                     display: 'flex',
                     alignItems: 'center',
@@ -236,7 +251,7 @@ const GoldReturnsChart: React.FC = () => {
                         color: 'text.disabled',
                         fontWeight: 600
                     }}>
-                        Drag to zoom
+                        Drag to explore history
                     </Typography>
                 </Box>
             )}
@@ -245,7 +260,7 @@ const GoldReturnsChart: React.FC = () => {
                 <ComposedChart
                     data={displayData}
                     margin={isMobile
-                        ? { top: 10, right: 10, left: -10, bottom: 60 }
+                        ? { top: 20, right: 10, left: -10, bottom: 60 }
                         : { top: 40, right: 30, left: 10, bottom: 80 }
                     }
                 >
@@ -289,7 +304,7 @@ const GoldReturnsChart: React.FC = () => {
                         }}
                         axisLine={false}
                         tickLine={false}
-                        domain={['dataMin - 2', 'dataMax + 2']}
+                        domain={yDomain}
                         tickFormatter={(val) => `${val}%`}
                     />
 
@@ -307,9 +322,8 @@ const GoldReturnsChart: React.FC = () => {
 
                     <Bar
                         dataKey="return_pct"
-                        radius={[3, 3, 0, 0]}
+                        radius={[2, 2, 0, 0]}
                         animationDuration={1500}
-                        animationEasing="ease-out"
                     >
                         {displayData.map((entry, index) => (
                             <Cell
@@ -320,29 +334,29 @@ const GoldReturnsChart: React.FC = () => {
                                         ? 'url(#positiveReturn)'
                                         : 'url(#negativeReturn)'
                                 }
+                                fillOpacity={entry.event_name ? 1 : 0.8}
                                 stroke={entry.event_name ? '#eab308' : 'none'}
                                 strokeWidth={entry.event_name ? 2 : 0}
                             />
                         ))}
                     </Bar>
 
-                    {/* Brush for zoom/pan - only show if not already zoomed */}
-                    {!zoomDomain && chartData.length > 20 && (
-                        <Brush
-                            dataKey="formattedDate"
-                            height={isMobile ? 20 : 30}
-                            stroke={theme.palette.primary.main}
-                            fill="rgba(255,255,255,0.02)"
-                            travellerWidth={isMobile ? 8 : 10}
-                            onChange={handleBrushChange}
-                            startIndex={Math.max(0, chartData.length - 60)} // Show last 5 years by default
-                            endIndex={chartData.length - 1}
-                        />
-                    )}
+                    {/* Brush for zoom/pan */}
+                    <Brush
+                        dataKey="formattedDate"
+                        height={25}
+                        stroke={theme.palette.primary.main}
+                        fill="rgba(15, 23, 42, 0.8)"
+                        travellerWidth={10}
+                        onChange={handleBrushChange}
+                        startIndex={zoomDomain?.startIndex ?? Math.max(0, chartData.length - 120)}
+                        endIndex={zoomDomain?.endIndex ?? chartData.length - 1}
+                    />
                 </ComposedChart>
             </ResponsiveContainer>
         </Box>
     );
 };
+
 
 export default GoldReturnsChart;

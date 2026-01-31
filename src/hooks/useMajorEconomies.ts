@@ -94,14 +94,14 @@ export function useMajorEconomies() {
                 const growth = findVal('GDP_GROWTH_YOY');
                 const cpi = findVal('CPI_YOY');
                 const policy = findVal('POLICY_RATE');
-                const debt = findVal('DEBT_USD_TN') || (code === 'US' ? findVal('DEBT_TOTAL') : null);
+                const debt = findVal('DEBT_USD_TN') || (code === 'US' ? findVal('UST_DEBT_TOTAL') : null);
 
                 // Debt/Gold Ratio Calculation: Debt / (Gold Tonnes * 32150.75 * Gold Price)
                 let debtGoldRatio = 0;
                 if (gp > 0 && res?.gold_tonnes > 0) {
                     const debtValue = Number(debt?.value || 0);
-                    // If US, debt is in absolute USD. If others, in Trillions USD.
-                    const debtInUSD = code === 'US' ? debtValue : debtValue * 1e12;
+                    // If US, debt (UST_DEBT_TOTAL) is in absolute USD. If others, in Trillions USD.
+                    const debtInUSD = (code === 'US' && !debt?.metric_id.includes('TN')) ? debtValue : debtValue * 1e12;
                     const goldValueUSD = res.gold_tonnes * 32150.75 * gp;
                     if (goldValueUSD > 0) {
                         debtGoldRatio = debtInUSD / goldValueUSD;

@@ -144,18 +144,18 @@ export const UpcomingEventsCard: React.FC = () => {
             </Box>
 
             <TableContainer sx={{ overflowX: 'auto' }}>
-                <Table size="small" sx={{ minWidth: 600, tableLayout: 'fixed' }}>
+                <Table size="small" sx={{ minWidth: 700 }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', pl: 0, width: 80 }}>DATE/TIME</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', width: 60 }}>CUR</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', minWidth: 120 }}>EVENT</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', width: 40 }}>IMP</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', textAlign: 'right', width: 70 }}>FORECAST</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', textAlign: 'right', width: 70 }}>PREV</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', textAlign: 'right', width: 70 }}>ACTUAL</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.55rem', border: 'none', pr: 0, textAlign: 'right', width: 80 }}>
-                                {isInstitutionalView ? 'VOL PROB' : 'SURP'}
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', pl: 0, width: '12%' }}>DATE / TIME</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '8%' }}>COUNTRY</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '30%' }}>EVENT</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '8%' }}>IMPACT</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '10%' }}>FORECAST</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '10%' }}>PREVIOUS</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '10%' }}>ACTUAL</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', pr: 0, textAlign: 'right', width: '12%' }}>
+                                {isInstitutionalView ? 'VOL PROB' : 'SURPRISE'}
                             </TableCell>
                         </TableRow>
                     </TableHead>
