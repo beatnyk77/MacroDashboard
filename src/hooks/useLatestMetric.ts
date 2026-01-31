@@ -25,7 +25,7 @@ export function useLatestMetric(metricId: string) {
                 .from('vw_latest_metrics')
                 .select('*')
                 .eq('metric_id', metricId)
-                .single();
+                .maybeSingle();
 
             if (latestError || !latest) {
                 console.warn(`Metric ${metricId} not found in vw_latest_metrics`);

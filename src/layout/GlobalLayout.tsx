@@ -2,9 +2,9 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Box, AppBar, Toolbar, Typography, Container, Chip, useTheme, Stack } from '@mui/material';
 import { Activity, Clock } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
-import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
+import { DashboardFooter } from '@/layout/DashboardFooter';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -13,7 +13,6 @@ interface GlobalLayoutProps {
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const theme = useTheme();
     const { data: regime } = useRegime();
-    const { data: latestMetric } = useLatestMetric('GOLD_PRICE_USD');
     const [currentTime, setCurrentTime] = useState(new Date());
     const [refreshCountdown, setRefreshCountdown] = useState(60);
 
@@ -28,14 +27,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
         }, 1000);
         return () => clearInterval(countdown);
     }, []);
-
-    const lastIngestion = latestMetric?.lastUpdated
-        ? new Date(latestMetric.lastUpdated).toLocaleDateString(undefined, {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        })
-        : 'Jan 30, 2026';
 
     const regimeColor = useMemo(() => {
         if (!regime) return theme.palette.primary.main;
@@ -86,6 +77,9 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                             <Activity color={regimeColor} size={28} style={{ filter: `drop-shadow(0 0 8px ${regimeColor}40)` }} />
                             <Typography variant="h5" component="div" sx={{ fontWeight: 800, letterSpacing: '-0.04em', display: { xs: 'none', sm: 'block' } }}>
                                 Graphi<Typography component="span" variant="h5" sx={{ fontWeight: 800, color: '#3b82f6' }}>Questor</Typography>
+                                <Typography component="span" variant="body2" sx={{ ml: 1, fontWeight: 600, color: 'text.disabled', letterSpacing: '0.05em', verticalAlign: 'middle', display: { xs: 'none', md: 'inline' } }}>
+                                    – MACRO OBSERVATORY
+                                </Typography>
                             </Typography>
                         </Box>
 
@@ -146,56 +140,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </Box>
 
 
-            <Box component="footer" sx={{
-                py: 4,
-                px: { xs: 2, md: 6 },
-                mt: 'auto',
-                borderTop: '1px solid',
-                borderColor: 'divider',
-                display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: 2,
-                backgroundColor: 'rgba(2, 6, 23, 0.4)'
-            }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: { xs: 'center', md: 'flex-start' } }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                        GraphiQuestor.com – Institutional Macro Intelligence Terminal | Data from FRED, US Treasury & IMF
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, opacity: 0.8 }}>
-                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 6px #10b981' }} />
-                        <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.secondary', letterSpacing: '0.05em' }}>
-                            LAST INGESTION: {lastIngestion} | STATUS: CONNECTED
-                        </Typography>
-                    </Box>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 4 }}>
-                    {[
-                        { label: 'Methodology', href: '/methodology' },
-                        { label: 'Data Sources', href: '#' },
-                        { label: 'API Reference', href: '#' }
-                    ].map((link) => (
-                        <Typography
-                            key={link.label}
-                            variant="caption"
-                            component="a"
-                            href={link.href}
-                            sx={{
-                                color: 'text.secondary',
-                                textDecoration: 'none',
-                                fontWeight: 700,
-                                fontSize: '0.7rem',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                '&:hover': { color: 'primary.main' }
-                            }}
-                        >
-                            {link.label}
-                        </Typography>
-                    ))}
-                </Box>
-            </Box>
+            {/* Dashboard Footer with Disclaimer & Data Transparency */}
+            <DashboardFooter />
 
             <SocialShareMode />
             <MobileNav />

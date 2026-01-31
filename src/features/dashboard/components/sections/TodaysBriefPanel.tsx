@@ -49,6 +49,7 @@ export const TodaysBriefPanel: React.FC = () => {
     const briefingItems: BriefingItem[] = [
         { label: 'G20 real rate remains negative, favoring hard assets', anchor: '#macro-orientation-section', trend: 'down' },
         { label: 'BRICS+ gold share surpassing US reserves logic', anchor: '#de-dollarization-section', trend: 'up' },
+        { label: 'US Private Investment % GDP signals structural consumption dominance', anchor: '#major-economies-overview', trend: 'down' },
         { label: 'China industrial pulse stabilizing at $3.3Tn FX floor', anchor: '#china-macro-section', trend: 'neutral' },
         { label: 'India UPI Autopay signals robust domestic liquidity', anchor: '#india-macro-section', trend: 'up' },
         { label: 'Treasury net issuance pressure mounting on 10Y yield', anchor: '#treasury-snapshot-section', trend: 'down' }

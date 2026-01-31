@@ -74,7 +74,7 @@ export function useMajorEconomies() {
                 .from('vw_latest_metrics')
                 .select('value')
                 .eq('metric_id', 'GOLD_PRICE_USD')
-                .single();
+                .maybeSingle();
 
             const gp = goldPrice?.value || 0;
 

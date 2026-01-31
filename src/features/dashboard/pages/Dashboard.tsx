@@ -15,6 +15,7 @@ import { ScenarioStudio } from '@/features/dashboard/components/sections/Scenari
 import { SovereignHealthRadar } from '@/features/dashboard/components/sections/SovereignHealthRadar';
 import GoldReturnsSection from '@/features/dashboard/components/sections/GoldReturnsSection';
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
+import { HowToUseCard } from '@/features/dashboard/components/sections/HowToUseCard';
 
 export const Dashboard: React.FC = () => {
     return (
@@ -27,6 +28,11 @@ export const Dashboard: React.FC = () => {
             {/* 2. Today's Brief Panel */}
             <Box id="todays-brief">
                 <TodaysBriefPanel />
+            </Box>
+
+            {/* 2.5. How to Use GraphiQuestor */}
+            <Box id="how-to-use">
+                <HowToUseCard />
             </Box>
 
             <Box sx={{ mt: 4 }}>

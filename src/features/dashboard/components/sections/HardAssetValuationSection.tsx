@@ -11,12 +11,12 @@ export const HardAssetValuationSection: React.FC = () => {
 
     return (
         <Box sx={{ mb: 6 }}>
-            <SectionHeader title="Hard Asset Valuation" subtitle="Currency and equity pricing relative to gold anchor" />
+            <SectionHeader title="Hard Asset Valuation" subtitle="Currency and equity pricing relative to gold anchor (USA Market)" />
             <Grid container spacing={3}>
                 <Grid item xs={12} md={3}>
                     <RatioCard
-                        primaryLabel="M2 / Gold"
-                        subtitle="Fiat quantity per unit of hard money"
+                        primaryLabel="M2 / Gold (USA)"
+                        subtitle="US fiat quantity per unit of hard money"
                         value={getRatio('M2/Gold')?.current_value || '-'}
                         zScore={getRatio('M2/Gold')?.z_score}
                         percentile={getRatio('M2/Gold')?.percentile}
@@ -24,7 +24,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         isLoading={isLoading}
                         lastUpdated={getRatio('M2/Gold')?.last_updated}
                         frequency="Monthly"
-                        description="The M2/Gold ratio measures the expansion of fiat money relative to a fixed hard asset anchor. It is a primary indicator of monetary debasement."
+                        description="The M2/Gold ratio measures the expansion of US fiat money relative to a fixed hard asset anchor. It is a primary indicator of monetary debasement in the United States."
                         methodology="Calculated as (US M2 Money Stock / Gold Price USD). Z-score and percentile are derived from over 65 years of overlapping data (1959-Present)."
                         source="FRED, LBMA"
                     />
@@ -46,8 +46,8 @@ export const HardAssetValuationSection: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                     <RatioCard
-                        primaryLabel="Debt / Gold"
-                        subtitle="Public debt burden in real terms"
+                        primaryLabel="Debt / Gold (USA)"
+                        subtitle="US public debt burden in real terms"
                         value={getRatio('DEBT/Gold')?.current_value || '-'}
                         zScore={getRatio('DEBT/Gold')?.z_score}
                         percentile={getRatio('DEBT/Gold')?.percentile}

@@ -28,6 +28,16 @@ Deno.serve(async (req: Request) => {
 
         // GDP & Macro Params
         const macroData = [
+            // United States
+            { id: 'US_GDP_NOMINAL_TN', value: 28.78 }, // Latest BEA estimate
+            { id: 'US_GDP_PPP_TN', value: 28.78 },
+            { id: 'US_GDP_GROWTH_YOY', value: 2.50 },
+            { id: 'US_CPI_YOY', value: 2.70 }, // YoY rate, not index level
+            { id: 'US_POLICY_RATE', value: 4.50 }, // Fed Funds
+            { id: 'US_DEBT_USD_TN', value: 36.20 }, // Total public debt
+            { id: 'US_DEPENDENCY_RATIO', value: 28.50 },
+            { id: 'US_GFCF_GDP_PCT', value: 21.80 },
+            { id: 'US_PRIVATE_GFCF_GDP_PCT', value: 17.50 },
             // China
             { id: 'CN_GDP_NOMINAL_TN', value: 19.10 },
             { id: 'CN_GDP_PPP_TN', value: 35.60 },
@@ -65,6 +75,7 @@ Deno.serve(async (req: Request) => {
         // FX & Gold Reserves (Source: IMF IFS / WGC)
         // Note: Gold values matched to BRICS ingestion for consistency where applicable
         const reservesData = [
+            { code: 'US', name: 'United States', fx_usd_bn: 245.0, gold_tonnes: 8133.5 }, // Official US reserves
             { code: 'CN', name: 'China', fx_usd_bn: 3300.0, gold_tonnes: 2291.5 },
             { code: 'IN', name: 'India', fx_usd_bn: 650.0, gold_tonnes: 854.7 },
             { code: 'JP', name: 'Japan', fx_usd_bn: 1200.0, gold_tonnes: 846.0 }, // FX approx

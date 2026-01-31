@@ -90,7 +90,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     };
 
     const getStaleness = () => {
-        if (!lastUpdated) return { isStale: false, label: '' };
+        if (!lastUpdated) return { state: 'no_data', label: 'No data' };
+
         const updateDate = new Date(lastUpdated);
         const now = new Date();
         const diffMs = now.getTime() - updateDate.getTime();
@@ -101,16 +102,20 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
         else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
 
-        // Reporting cadence awareness
-        const maxStaleHours = frequency?.toLowerCase() === 'monthly' ? 32 * 24 : 48;
+        // systematic staleness detection
+        const expectedHours = (frequency?.toLowerCase() === 'monthly') ? 31 * 24 :
+            (frequency?.toLowerCase() === 'quarterly') ? 92 * 24 : 48;
 
-        return {
-            isStale: diffHours > maxStaleHours,
-            label: `Refreshed ${timeLabel}`
-        };
+        // intentional lag (e.g. GDP is always lagging)
+        const isIntentional = frequency?.toLowerCase() === 'quarterly' || frequency?.toLowerCase() === 'monthly';
+
+        if (diffHours > expectedHours * 3) return { state: 'overdue', label: `${timeLabel}` };
+        if (diffHours > expectedHours * 1.5) return { state: 'lagged', label: `${timeLabel}` };
+        if (isIntentional) return { state: 'intentional', label: `${timeLabel}` };
+        return { state: 'fresh', label: `${timeLabel}` };
     };
 
-    const { isStale, label: timeLabel } = getStaleness();
+    const { state: stalenessState, label: timeLabel } = getStaleness();
 
     const getDeltaIcon = () => {
         if (!delta) return null;
@@ -147,23 +152,24 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 ...sx
             }}
         >
-            {isStale && (
+            {stalenessState !== 'fresh' && stalenessState !== 'no_data' && (
                 <Box
                     sx={{
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        bgcolor: 'error.main',
-                        color: 'white',
+                        bgcolor: stalenessState === 'overdue' ? 'error.main' : (stalenessState === 'lagged' ? 'warning.main' : 'rgba(255,255,255,0.05)'),
+                        color: stalenessState === 'intentional' ? 'text.secondary' : 'white',
                         fontSize: '0.6rem',
                         fontWeight: 900,
                         px: 1,
                         py: 0.5,
                         borderBottomLeftRadius: 4,
-                        zIndex: 1
+                        zIndex: 1,
+                        textTransform: 'uppercase'
                     }}
                 >
-                    STALE
+                    {stalenessState === 'intentional' ? 'Lagged (Expected)' : stalenessState}
                 </Box>
             )}
 
@@ -313,8 +319,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                             <Sparkline data={history} color={getStatusColor()} height={32} />
                         </Box>
                     )}
-                    <Typography variant="caption" sx={{ color: isStale ? 'error.main' : 'text.disabled', fontSize: '0.6rem', fontWeight: 600 }}>
-                        {timeLabel}
+                    <Typography variant="caption" sx={{
+                        color: stalenessState === 'overdue' ? 'error.main' : (stalenessState === 'lagged' ? 'warning.main' : 'text.disabled'),
+                        fontSize: '0.6rem',
+                        fontWeight: 600
+                    }}>
+                        Refreshed {timeLabel}
                     </Typography>
                 </Box>
                 <Button

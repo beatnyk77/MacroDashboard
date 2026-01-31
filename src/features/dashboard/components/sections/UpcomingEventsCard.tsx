@@ -143,7 +143,12 @@ export const UpcomingEventsCard: React.FC = () => {
                 </Tooltip>
             </Box>
 
-            <TableContainer sx={{ overflowX: 'auto' }}>
+            <TableContainer sx={{
+                overflowX: 'auto',
+                flex: 1,
+                '&::-webkit-scrollbar': { height: 4 },
+                '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }
+            }}>
                 <Table size="small" sx={{ minWidth: 700 }}>
                     <TableHead>
                         <TableRow>
