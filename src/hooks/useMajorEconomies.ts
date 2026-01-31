@@ -30,6 +30,7 @@ export interface MajorEconomyRow {
     fx_reserves: number;
     gold_reserves: number;
     debt_gold_ratio: number;
+    dependency_ratio: number;
     last_updated: string;
     staleness: string;
 }
@@ -95,6 +96,7 @@ export function useMajorEconomies() {
                 const cpi = findVal('CPI_YOY');
                 const policy = findVal('POLICY_RATE');
                 const debt = findVal('DEBT_USD_TN') || (code === 'US' ? findVal('UST_DEBT_TOTAL') : null);
+                const dependency = findVal('DEPENDENCY_RATIO');
 
                 // Debt/Gold Ratio Calculation: Debt / (Gold Tonnes * 32150.75 * Gold Price)
                 let debtGoldRatio = 0;
@@ -120,6 +122,7 @@ export function useMajorEconomies() {
                     fx_reserves: Number(res?.fx_reserves_usd || 0) / 1e9, // USD bn
                     gold_reserves: Number(res?.gold_tonnes || 0),
                     debt_gold_ratio: debtGoldRatio,
+                    dependency_ratio: Number(dependency?.value || 0),
                     last_updated: gdpNom?.last_updated_at || res?.as_of_date || '',
                     staleness: gdpNom?.staleness_flag || 'no_data'
                 };

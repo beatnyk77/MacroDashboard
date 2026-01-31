@@ -2,6 +2,7 @@ import { Grid, Box } from '@mui/material';
 import { RatioCard } from '@/components/RatioCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
+import { PreciousDivergenceCard } from './PreciousDivergenceCard';
 
 export const HardAssetValuationSection: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
@@ -72,6 +73,11 @@ export const HardAssetValuationSection: React.FC = () => {
                         methodology="Calculated as (Gold Price USD / Silver Price USD). Institutional Z-score allows for regime identification (Safe-haven vs Industrial demand)."
                         source="Yahoo Finance"
                     />
+                </Grid>
+
+                {/* New Divergence Tracking */}
+                <Grid item xs={12} md={6}>
+                    <PreciousDivergenceCard />
                 </Grid>
             </Grid>
         </Box>

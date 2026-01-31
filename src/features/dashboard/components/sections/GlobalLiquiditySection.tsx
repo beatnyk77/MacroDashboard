@@ -5,6 +5,8 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
+import { OffshoreDollarStressCard } from './OffshoreDollarStressCard';
+import { CreditCreationPulseCard } from './CreditCreationPulseCard';
 
 export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
@@ -74,6 +76,12 @@ export const GlobalLiquiditySection: React.FC = () => {
                             { label: 'RRP Drainage', value: '$0.45T' }
                         ]}
                     />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <OffshoreDollarStressCard />
+                </Grid>
+                <Grid item xs={12}>
+                    <CreditCreationPulseCard />
                 </Grid>
             </Grid>
         </Box>

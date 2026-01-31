@@ -1,15 +1,15 @@
 import { Box, Typography } from '@mui/material';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { TrendingUp, TrendingDown, Circle, Activity } from 'lucide-react';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
+import { usePreciousDivergence } from '@/hooks/usePreciousDivergence';
 
 export const MarketPulseTicker: React.FC = () => {
     const { data: pulseData } = useMarketPulse();
     const { data: liqData } = useNetLiquidity();
     const { data: integrity } = useDataIntegrity();
-    const { data: ratioData } = useGoldRatios();
+    const { data: divergenceData } = usePreciousDivergence();
 
     // Consolidate all items first
     let rawItems = [...(pulseData || [])];
@@ -25,27 +25,26 @@ export const MarketPulseTicker: React.FC = () => {
         } as any);
     }
 
-    // Add Institutional Ratios
-    if (ratioData) {
-        const m2Gold = ratioData.find(r => r.ratio_name === 'M2/Gold');
-        const goldSilver = ratioData.find(r => r.ratio_name === 'Gold/Silver' || r.ratio_name === 'Gold / Silver');
+    // Add Precious Divergence
+    if (divergenceData) {
+        const goldSpread = divergenceData.find(d => d.metric_id === 'GOLD_COMEX_SHANGHAI_SPREAD_PCT');
+        const silverSpread = divergenceData.find(d => d.metric_id === 'SILVER_COMEX_SHANGHAI_SPREAD_PCT');
 
-        if (m2Gold) {
+        if (goldSpread) {
             rawItems.push({
-                id: 'M2_GOLD_Z',
-                name: 'M2 / Gold Z',
-                value: m2Gold.z_score,
-                delta_wow: 0,
+                id: 'GOLD_SH_PREM',
+                name: 'Gold SHFE Prem',
+                value: goldSpread.value,
+                delta_wow: goldSpread.delta_wow,
                 staleness_flag: 'fresh'
             } as any);
         }
-
-        if (goldSilver) {
+        if (silverSpread) {
             rawItems.push({
-                id: 'GOLD_SILVER',
-                name: 'Gold / Silver',
-                value: goldSilver.current_value,
-                delta_wow: 0,
+                id: 'SILVER_SH_PREM',
+                name: 'Silver SHFE Prem',
+                value: silverSpread.value,
+                delta_wow: silverSpread.delta_wow,
                 staleness_flag: 'fresh'
             } as any);
         }
@@ -71,8 +70,8 @@ export const MarketPulseTicker: React.FC = () => {
         'NET_LIQUIDITY',
         'BTC_PRICE',
         'SOFR_RATE',
-        'M2_GOLD_Z',
-        'GOLD_SILVER'
+        'GOLD_SH_PREM',
+        'SILVER_SH_PREM'
     ];
 
     const items = priorityOrder.map(id => {
