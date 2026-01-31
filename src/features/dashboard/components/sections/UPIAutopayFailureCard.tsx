@@ -99,12 +99,12 @@ export const UPIAutopayFailureCard: React.FC = () => {
 
                 <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1.5 }}>
                     <Typography variant="h3" sx={{ fontWeight: 700, mr: 1.5, color: isRising ? 'error.main' : 'text.primary' }}>
-                        {failure_rate_pct?.toFixed(2)}%
+                        {failure_rate_pct !== undefined && failure_rate_pct !== null ? `${failure_rate_pct.toFixed(2)}%` : 'N/A'}
                     </Typography>
                     {failure_rate_delta_mom !== null && (
                         <Chip
                             icon={isRising ? <TrendingUpIcon /> : <TrendingDownIcon />}
-                            label={`${isRising ? '+' : ''}${failure_rate_delta_mom?.toFixed(2)}% MoM`}
+                            label={`${isRising ? '+' : ''}${(failure_rate_delta_mom !== undefined && failure_rate_delta_mom !== null) ? failure_rate_delta_mom.toFixed(2) : '-'}% MoM`}
                             size="small"
                             sx={{
                                 height: 20,

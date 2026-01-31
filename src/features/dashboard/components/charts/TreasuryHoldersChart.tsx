@@ -118,7 +118,7 @@ export const TreasuryHoldersChart: React.FC<ChartProps> = ({ data }) => {
                         }}
                         itemStyle={{ fontSize: '12px', fontWeight: 600 }}
                         labelStyle={{ color: theme.palette.text.secondary, marginBottom: '4px', fontSize: '10px' }}
-                        formatter={(value: number, name: string) => [`$${value.toFixed(1)}B`, `${COUNTRY_FLAGS[name] || ''} ${name}`]}
+                        formatter={(value: number, name: string) => [`$${(value !== undefined && value !== null) ? value.toFixed(1) : '-'}B`, `${COUNTRY_FLAGS[name] || ''} ${name}`]}
                     />
                     <Legend
                         iconType="circle"

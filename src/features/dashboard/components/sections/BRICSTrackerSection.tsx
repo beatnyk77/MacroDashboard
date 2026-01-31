@@ -43,7 +43,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         label="BRICS+ USD Reserve Share"
                         value={usdShare?.value || 0}
                         suffix="%"
-                        delta={usdShare?.delta_qoq ? {
+                        delta={usdShare?.delta_qoq !== undefined && usdShare?.delta_qoq !== null ? {
                             value: `${usdShare.delta_qoq > 0 ? '+' : ''}${usdShare.delta_qoq.toFixed(2)}pp`,
                             period: 'QoQ',
                             trend: usdShare.delta_qoq < 0 ? 'down' : 'up' // Red down is signal
@@ -70,7 +70,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         label="BRICS+ Gold Holdings"
                         value={goldHoldings?.value || 0}
                         suffix="t"
-                        delta={goldHoldings?.delta_yoy_pct ? {
+                        delta={goldHoldings?.delta_yoy_pct !== undefined && goldHoldings?.delta_yoy_pct !== null ? {
                             value: `${goldHoldings.delta_yoy_pct > 0 ? '+' : ''}${goldHoldings.delta_yoy_pct.toFixed(1)}%`,
                             period: 'YoY',
                             trend: goldHoldings.delta_yoy_pct > 0 ? 'up' : 'down'
@@ -97,7 +97,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         label="BRICS+ Debt / GDP"
                         value={debtGdp?.value || 0}
                         suffix="%"
-                        delta={debtGdp?.delta_qoq ? {
+                        delta={debtGdp?.delta_qoq !== undefined && debtGdp?.delta_qoq !== null ? {
                             value: `${debtGdp.delta_qoq > 0 ? '+' : ''}${debtGdp.delta_qoq.toFixed(1)}%`,
                             period: 'QoQ',
                             trend: debtGdp.delta_qoq > 0 ? 'up' : 'down'
@@ -118,7 +118,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         label="BRICS+ Inflation YoY"
                         value={inflation?.value || 0}
                         suffix="%"
-                        delta={inflation?.delta_qoq ? {
+                        delta={inflation?.delta_qoq !== undefined && inflation?.delta_qoq !== null ? {
                             value: `${inflation.delta_qoq > 0 ? '+' : ''}${inflation.delta_qoq.toFixed(1)}%`,
                             period: 'MoM',
                             trend: inflation.delta_qoq > 0 ? 'up' : 'down'
@@ -137,7 +137,7 @@ export const BRICSTrackerSection: React.FC = () => {
             {/* Subtle Country-wise Gold Detail */}
             <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap', opacity: 0.6 }}>
                 {countryReserves.map((c) => (
-                    <Tooltip key={c.country_code} title={`YoY Growth: ${c.gold_yoy_pct_change?.toFixed(1) || 0}%`} arrow>
+                    <Tooltip key={c.country_code} title={`YoY Growth: ${(c.gold_yoy_pct_change !== undefined && c.gold_yoy_pct_change !== null) ? c.gold_yoy_pct_change.toFixed(1) : 0}%`} arrow>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.6rem', color: 'text.secondary' }}>
                                 {c.country_code}:

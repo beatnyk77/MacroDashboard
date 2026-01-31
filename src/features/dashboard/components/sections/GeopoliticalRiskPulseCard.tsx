@@ -11,7 +11,7 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
     return (
         <MetricCard
             label="Geopolitical Risk Pulse"
-            value={data ? data.composite_z_score.toFixed(2) : '-'}
+            value={data?.composite_z_score !== undefined && data?.composite_z_score !== null ? data.composite_z_score.toFixed(2) : '-'}
             isLoading={geoRisk.isLoading}
             status={isHighRisk ? 'danger' : 'safe'}
             sublabel={isHighRisk ? 'Extreme Geopolitical Pricing' : 'Geopolitical Risk Contained'}
@@ -22,9 +22,9 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
             lastUpdated={data?.as_of_date}
             history={data?.history}
             stats={[
-                { label: 'VIX Z-Score', value: data?.vix_z.toFixed(1) || '-' },
-                { label: 'MOVE Z-Score', value: data?.move_z.toFixed(1) || '-' },
-                { label: 'Gold Z-Score', value: data?.gold_z.toFixed(1) || '-' }
+                { label: 'VIX Z-Score', value: (data?.vix_z !== undefined && data?.vix_z !== null) ? data.vix_z.toFixed(1) : '-' },
+                { label: 'MOVE Z-Score', value: (data?.move_z !== undefined && data?.move_z !== null) ? data.move_z.toFixed(1) : '-' },
+                { label: 'Gold Z-Score', value: (data?.gold_z !== undefined && data?.gold_z !== null) ? data.gold_z.toFixed(1) : '-' }
             ]}
         />
     );

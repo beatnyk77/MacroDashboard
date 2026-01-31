@@ -11,7 +11,7 @@ export const OffshoreDollarStressCard: React.FC = () => {
     return (
         <MetricCard
             label="Offshore Dollar Funding Stress"
-            value={data ? `${data.ted_spread.toFixed(0)} bps` : '-'}
+            value={data?.ted_spread !== undefined && data?.ted_spread !== null ? `${data.ted_spread.toFixed(0)} bps` : '-'}
             isLoading={offshore.isLoading}
             status={isStressed ? 'danger' : 'safe'}
             sublabel={isStressed ? 'SYSTEMIC STRESS DETECTED' : 'LIQUIDITY CONDITIONS NORMAL'}
@@ -22,12 +22,12 @@ export const OffshoreDollarStressCard: React.FC = () => {
             stats={[
                 {
                     label: 'TED Spread',
-                    value: `${data?.ted_spread.toFixed(0)} bps`,
+                    value: (data?.ted_spread !== undefined && data?.ted_spread !== null) ? `${data.ted_spread.toFixed(0)} bps` : '-',
                     color: (data?.ted_spread || 0) > 50 ? 'error.main' : 'success.main'
                 },
                 {
                     label: 'Curve Slope',
-                    value: `${data?.slope_bps.toFixed(0)} bps`,
+                    value: (data?.slope_bps !== undefined && data?.slope_bps !== null) ? `${data.slope_bps.toFixed(0)} bps` : '-',
                     color: (data?.slope_bps || 0) < 0 ? 'error.main' : 'success.main'
                 }
             ]}

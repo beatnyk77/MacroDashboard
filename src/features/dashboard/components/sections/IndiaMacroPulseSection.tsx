@@ -43,7 +43,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         label="GDP Growth YoY"
                         value={gdpGrowth?.value || 0}
                         suffix="%"
-                        delta={gdpGrowth?.delta_mom ? {
+                        delta={gdpGrowth?.delta_mom !== undefined && gdpGrowth?.delta_mom !== null ? {
                             value: `${gdpGrowth.delta_mom > 0 ? '+' : ''}${gdpGrowth.delta_mom.toFixed(2)}%`,
                             period: 'Prev',
                             trend: gdpGrowth.delta_mom > 0 ? 'up' : 'down'
@@ -93,7 +93,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         label="Industrial Production"
                         value={iipGrowth?.value || 0}
                         suffix="%"
-                        delta={iipGrowth?.delta_mom ? {
+                        delta={iipGrowth?.delta_mom !== undefined && iipGrowth?.delta_mom !== null ? {
                             value: `${iipGrowth.delta_mom > 0 ? '+' : ''}${iipGrowth.delta_mom.toFixed(1)}%`,
                             period: 'MoM',
                             trend: iipGrowth.delta_mom > 0 ? 'up' : 'down'
@@ -144,7 +144,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         label="FX Reserves"
                         value={fxReserves?.value ? fxReserves.value / 1e9 : 0}
                         suffix="bn"
-                        delta={fxReserves?.delta_mom ? {
+                        delta={fxReserves?.delta_mom !== undefined && fxReserves?.delta_mom !== null ? {
                             value: `${fxReserves.delta_mom > 0 ? '+' : ''}${(fxReserves.delta_mom / 1e9).toFixed(1)}bn`,
                             period: 'MoM',
                             trend: fxReserves.delta_mom > 0 ? 'up' : 'down'
@@ -164,7 +164,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         label="Gold Reserves"
                         value={goldReserves?.value || 0}
                         suffix="t"
-                        delta={goldReserves?.delta_mom ? {
+                        delta={goldReserves?.delta_mom !== undefined && goldReserves?.delta_mom !== null ? {
                             value: `${goldReserves.delta_mom > 0 ? '+' : ''}${goldReserves.delta_mom.toFixed(1)}t`,
                             period: 'MoM',
                             trend: goldReserves.delta_mom > 0 ? 'up' : 'down'

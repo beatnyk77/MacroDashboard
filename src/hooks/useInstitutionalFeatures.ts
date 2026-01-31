@@ -36,7 +36,12 @@ export function useInstitutionalFeatures() {
                 .limit(1)
                 .single();
             if (error) throw error;
-            return data as OffshoreDollarStress;
+            return {
+                as_of_date: data.as_of_date,
+                ted_spread: Number(data.ted_spread || 0),
+                slope_bps: Number(data.slope_bps || 0),
+                status: data.status
+            } as OffshoreDollarStress;
         }
     });
 
@@ -51,7 +56,14 @@ export function useInstitutionalFeatures() {
 
             // Group by country and get latest for each
             const latest = data.reduce((acc: any, curr) => {
-                if (!acc[curr.country_code]) acc[curr.country_code] = curr;
+                if (!acc[curr.country_code]) {
+                    acc[curr.country_code] = {
+                        ...curr,
+                        current_stock: Number(curr.current_stock || 0),
+                        change_12m: Number(curr.change_12m || 0),
+                        impulse_z_score: Number(curr.impulse_z_score || 0)
+                    };
+                }
                 return acc;
             }, {});
 
@@ -71,10 +83,17 @@ export function useInstitutionalFeatures() {
             const latest = data[0];
             const history = data.slice(0, 30).map(d => ({
                 date: d.as_of_date,
-                value: d.composite_z_score
+                value: Number(d.composite_z_score || 0)
             })).reverse();
 
-            return { ...latest, history } as GeopoliticalRisk;
+            return {
+                as_of_date: latest.as_of_date,
+                vix_z: Number(latest.vix_z || 0),
+                move_z: Number(latest.move_z || 0),
+                gold_z: Number(latest.gold_z || 0),
+                composite_z_score: Number(latest.composite_z_score || 0),
+                history
+            } as GeopoliticalRisk;
         }
     });
 

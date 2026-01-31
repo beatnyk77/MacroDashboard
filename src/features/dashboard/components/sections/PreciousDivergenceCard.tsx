@@ -46,7 +46,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                         <Skeleton width={80} height={40} />
                     ) : (
                         <Typography variant="h4" sx={{ fontWeight: 800, color: color }}>
-                            {metric?.value ? (metric.value > 0 ? '+' : '') + metric.value.toFixed(2) + '%' : 'N/A'}
+                            {metric?.value !== undefined && metric?.value !== null ? (metric.value > 0 ? '+' : '') + metric.value.toFixed(2) + '%' : 'N/A'}
                         </Typography>
                     )}
                 </Box>
@@ -72,10 +72,10 @@ export const PreciousDivergenceCard: React.FC = () => {
                 methodology,
                 source: "Yahoo Finance, COMEX, SGE",
                 stats: [
-                    { label: 'Gold Shanghai (USD)', value: getMetric('GOLD_SHANGHAI_USD')?.value.toFixed(2) || 'N/A' },
-                    { label: 'Gold COMEX (USD)', value: getMetric('GOLD_COMEX_USD')?.value.toFixed(2) || 'N/A' },
-                    { label: 'Silver Shanghai (USD)', value: getMetric('SILVER_SHANGHAI_USD')?.value.toFixed(2) || 'N/A' },
-                    { label: 'Silver COMEX (USD)', value: getMetric('SILVER_COMEX_USD')?.value.toFixed(2) || 'N/A' },
+                    { label: 'Gold Shanghai (USD)', value: (getMetric('GOLD_SHANGHAI_USD')?.value !== undefined && getMetric('GOLD_SHANGHAI_USD')?.value !== null) ? getMetric('GOLD_SHANGHAI_USD')!.value.toFixed(2) : 'N/A' },
+                    { label: 'Gold COMEX (USD)', value: (getMetric('GOLD_COMEX_USD')?.value !== undefined && getMetric('GOLD_COMEX_USD')?.value !== null) ? getMetric('GOLD_COMEX_USD')!.value.toFixed(2) : 'N/A' },
+                    { label: 'Silver Shanghai (USD)', value: (getMetric('SILVER_SHANGHAI_USD')?.value !== undefined && getMetric('SILVER_SHANGHAI_USD')?.value !== null) ? getMetric('SILVER_SHANGHAI_USD')!.value.toFixed(2) : 'N/A' },
+                    { label: 'Silver COMEX (USD)', value: (getMetric('SILVER_COMEX_USD')?.value !== undefined && getMetric('SILVER_COMEX_USD')?.value !== null) ? getMetric('SILVER_COMEX_USD')!.value.toFixed(2) : 'N/A' },
                 ]
             }}
         >

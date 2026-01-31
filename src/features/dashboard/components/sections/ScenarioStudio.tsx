@@ -153,14 +153,14 @@ export const ScenarioStudio: React.FC = () => {
                         <Stack spacing={3} sx={{ mt: 3 }}>
                             <Box>
                                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>M2 / GOLD RATIO</Typography>
-                                <Typography variant="h3" sx={{ fontWeight: 900 }}>{simRatio.toFixed(2)}</Typography>
+                                <Typography variant="h3" sx={{ fontWeight: 900 }}>{(simRatio !== undefined && simRatio !== null && !isNaN(simRatio)) ? simRatio.toFixed(2) : '-'}</Typography>
                             </Box>
 
                             <Box>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                                     <Typography variant="caption" sx={{ fontWeight: 700 }}>INSTITUTIONAL Z-SCORE</Typography>
                                     <Typography variant="caption" sx={{ fontWeight: 900, color: Math.abs(zScore) > 2 ? 'error.main' : 'primary.main' }}>
-                                        {zScore > 0 ? '+' : ''}{zScore.toFixed(2)}σ
+                                        {zScore > 0 ? '+' : ''}{(zScore !== undefined && zScore !== null && !isNaN(zScore)) ? zScore.toFixed(2) : '-'}σ
                                     </Typography>
                                 </Box>
                                 <Box sx={{ height: 4, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 1, overflow: 'hidden' }}>
@@ -172,7 +172,7 @@ export const ScenarioStudio: React.FC = () => {
                                     }} />
                                 </Box>
                                 <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary', fontSize: '0.65rem' }}>
-                                    Percentile Rank: <strong>{percentile.toFixed(1)}%</strong>
+                                    Percentile Rank: <strong>{(percentile !== undefined && percentile !== null && !isNaN(percentile)) ? percentile.toFixed(1) : '-'}%</strong>
                                 </Typography>
                             </Box>
 
@@ -188,9 +188,9 @@ export const ScenarioStudio: React.FC = () => {
 
                             <Box>
                                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>SIMULATED LIQUIDITY POOL</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800 }}>${(effectiveM2 / 1000).toFixed(1)}T</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800 }}>${(effectiveM2 !== undefined && effectiveM2 !== null && !isNaN(effectiveM2)) ? (effectiveM2 / 1000).toFixed(1) : '-'}T</Typography>
                                 <Typography variant="caption" color="text.disabled">
-                                    {(effectiveM2 / currentM2 - 1) > 0 ? '+' : ''}{((effectiveM2 / currentM2 - 1) * 100).toFixed(1)}% vs Current
+                                    {(effectiveM2 / currentM2 - 1) > 0 ? '+' : ''}{(!isNaN(effectiveM2) && !isNaN(currentM2) && currentM2 !== 0) ? ((effectiveM2 / currentM2 - 1) * 100).toFixed(1) : '-'}% vs Current
                                 </Typography>
                             </Box>
                         </Stack>

@@ -84,8 +84,8 @@ export const LiquidityAlarmCard: React.FC = () => {
                     <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em' }}>
                         ${liq.current_value.toLocaleString(undefined, { maximumFractionDigits: 0 })}B
                     </Typography>
-                    <Typography variant="caption" sx={{ color: liq.delta >= 0 ? 'success.main' : 'error.main', fontWeight: 800, bgcolor: liq.delta >= 0 ? 'success.main10' : 'error.main10', px: 1, py: 0.2, borderRadius: 0.5 }}>
-                        {liq.delta >= 0 ? '+' : ''}{liq.delta.toFixed(1)}B
+                    <Typography variant="caption" sx={{ color: (liq?.delta || 0) >= 0 ? 'success.main' : 'error.main', fontWeight: 800, bgcolor: (liq?.delta || 0) >= 0 ? 'success.main10' : 'error.main10', px: 1, py: 0.2, borderRadius: 0.5 }}>
+                        {liq?.delta !== undefined && liq?.delta !== null ? (liq.delta >= 0 ? '+' : '') : ''}{liq?.delta !== undefined && liq?.delta !== null ? liq.delta.toFixed(1) : '-'}B
                     </Typography>
                 </Box>
 
@@ -93,13 +93,13 @@ export const LiquidityAlarmCard: React.FC = () => {
                     <Box>
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>Z-SCORE (25Y)</Typography>
                         <Typography variant="h6" sx={{ fontWeight: 800, color: getStatusColor() }}>
-                            {liq.z_score.toFixed(2)}σ
+                            {liq?.z_score !== undefined && liq?.z_score !== null ? liq.z_score.toFixed(2) : '-'}σ
                         </Typography>
                     </Box>
                     <Box>
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>PERCENTILE</Typography>
                         <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                            {liq.percentile.toFixed(1)}%
+                            {liq?.percentile !== undefined && liq?.percentile !== null ? liq.percentile.toFixed(1) : '-'}%
                         </Typography>
                     </Box>
                 </Box>

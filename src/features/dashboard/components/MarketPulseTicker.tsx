@@ -160,12 +160,12 @@ export const MarketPulseTicker: React.FC = () => {
                                 </Typography>
 
                                 <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.primary', fontSize: '0.7rem', fontFamily: 'monospace' }}>
-                                    {isZScore ? `${item.value.toFixed(2)}σ` :
-                                        item.id.includes('YIELD') || item.id.includes('SPREAD') || item.id.includes('RATE') ? `${item.value.toFixed(2)}%` :
-                                            item.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                    {isZScore ? `${(item.value !== undefined && item.value !== null) ? item.value.toFixed(2) : '-'}σ` :
+                                        item.id.includes('YIELD') || item.id.includes('SPREAD') || item.id.includes('RATE') ? `${(item.value !== undefined && item.value !== null) ? item.value.toFixed(2) : '-'}%` :
+                                            item.value ? item.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '-'}
                                 </Typography>
 
-                                {!isZScore && item.delta_wow !== 0 && (
+                                {!isZScore && item.delta_wow !== 0 && item.delta_wow !== null && item.delta_wow !== undefined && (
                                     <Box sx={{
                                         display: 'flex',
                                         alignItems: 'center',

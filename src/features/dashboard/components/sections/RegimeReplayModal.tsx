@@ -29,8 +29,8 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
     ];
 
     const currentTriggers = [
-        `M2/Gold Z-Score: ${m2Gold?.z_score?.toFixed(2) || '-'}σ (${(m2Gold?.z_score || 0) > 1.5 ? 'Extreme' : 'Refining'})`,
-        `SPX/Gold Z-Score: ${spxGold?.z_score?.toFixed(2) || '-'}σ`,
+        `M2/Gold Z-Score: ${(m2Gold?.z_score !== undefined && m2Gold?.z_score !== null) ? m2Gold.z_score.toFixed(2) : '-'}σ (${(m2Gold?.z_score || 0) > 1.5 ? 'Extreme' : 'Refining'})`,
+        `SPX/Gold Z-Score: ${(spxGold?.z_score !== undefined && spxGold?.z_score !== null) ? spxGold.z_score.toFixed(2) : '-'}σ`,
         regime === 'Liquidity Expansion' ? 'US Net Liquidity Impulse > $50B' : 'US Net Liquidity Impulse < -$50B',
         'UST Refinancing Risk > 28%'
     ];

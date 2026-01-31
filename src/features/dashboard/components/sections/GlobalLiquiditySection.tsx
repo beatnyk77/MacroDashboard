@@ -28,7 +28,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                     <MetricCard
                         label="US M2 Money Stock"
                         value={m2?.value.toLocaleString() || '-'}
-                        delta={m2?.delta !== null ? { value: `${m2?.delta.toFixed(1)}`, period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
+                        delta={m2?.delta !== null && m2?.delta !== undefined ? { value: `${m2.delta.toFixed(1)}`, period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
                         status={m2?.status}
                         history={m2?.history}
                         suffix="B"
@@ -60,7 +60,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                     <MetricCard
                         label="Global Net Liquidity"
                         value={netLiq ? (netLiq.current_value / 1e6).toFixed(2) : '-'}
-                        delta={netLiq ? { value: `${netLiq.delta_pct.toFixed(1)}%`, period: "WoW", trend: netLiq.delta_pct > 0 ? 'up' : 'down' } : undefined}
+                        delta={netLiq ? { value: `${(netLiq.delta_pct !== undefined && netLiq.delta_pct !== null) ? netLiq.delta_pct.toFixed(1) : '-'}%`, period: "WoW", trend: netLiq.delta_pct > 0 ? 'up' : 'down' } : undefined}
                         status={netLiq ? (netLiq.z_score > 1 ? 'danger' : netLiq.z_score < -1 ? 'warning' : 'safe') : undefined}
                         suffix="T"
                         isLoading={netLiqLoading}
