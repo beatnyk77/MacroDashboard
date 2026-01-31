@@ -33,6 +33,8 @@ export interface MajorEconomyRow {
     dependency_ratio: number;
     last_updated: string;
     staleness: string;
+    gfcf_pct: number;
+    private_gfcf_pct?: number; // US only
 }
 
 const COUNTRY_CONFIG: Record<string, { name: string; flag: string }> = {
@@ -97,6 +99,8 @@ export function useMajorEconomies() {
                 const policy = findVal('POLICY_RATE');
                 const debt = findVal('DEBT_USD_TN') || (code === 'US' ? findVal('UST_DEBT_TOTAL') : null);
                 const dependency = findVal('DEPENDENCY_RATIO');
+                const gfcf = findVal('GFCF_GDP_PCT');
+                const privateGfcf = findVal('PRIVATE_GFCF_GDP_PCT');
 
                 // Debt/Gold Ratio Calculation: Debt / (Gold Tonnes * 32150.75 * Gold Price)
                 let debtGoldRatio = 0;
@@ -124,7 +128,9 @@ export function useMajorEconomies() {
                     debt_gold_ratio: debtGoldRatio,
                     dependency_ratio: Number(dependency?.value || 0),
                     last_updated: gdpNom?.last_updated_at || res?.as_of_date || '',
-                    staleness: gdpNom?.staleness_flag || 'no_data'
+                    staleness: gdpNom?.staleness_flag || 'no_data',
+                    gfcf_pct: Number(gfcf?.value || 0),
+                    private_gfcf_pct: privateGfcf ? Number(privateGfcf.value) : undefined
                 };
             });
 

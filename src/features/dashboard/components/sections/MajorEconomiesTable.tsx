@@ -105,6 +105,9 @@ export const MajorEconomiesTable: React.FC = () => {
                                 Debt/Gold (x)
                             </TableCell>
                             <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.65rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                                Inv. % GDP
+                            </TableCell>
+                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.65rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
                                 Dependency Ratio
                             </TableCell>
                             <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.65rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
@@ -148,6 +151,38 @@ export const MajorEconomiesTable: React.FC = () => {
                                     {renderCell(row.fx_reserves, 'B', 0, "Current Foreign Exchange Reserves in USD Billions. Source: IMF IFS.")}
                                     {renderCell(row.gold_reserves, 't', 0, "Official Gold Bullion Reserves in Tonnes. Source: World Gold Council.")}
                                     {renderCell(row.debt_gold_ratio, 'x', 1, "Ratio of Total Debt to Gold Reserves (valued at current spot). Measures how many ounces of gold are needed to back the debt. Higher = Danger.")}
+
+                                    {/* GFCF Column */}
+                                    <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                                                <Typography variant="body2" sx={{
+                                                    fontWeight: 600,
+                                                    fontFamily: 'monospace',
+                                                    color: row.gfcf_pct > 25 ? theme.palette.success.main : row.gfcf_pct < 20 ? theme.palette.error.main : 'text.primary'
+                                                }}>
+                                                    {formatValue(row.gfcf_pct, 1)}%
+                                                </Typography>
+                                                {row.private_gfcf_pct && (
+                                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
+                                                        Pvt: {formatValue(row.private_gfcf_pct, 1)}%
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                            <Tooltip title={
+                                                <Box>
+                                                    <Typography variant="body2" sx={{ fontWeight: 600 }}>Gross Fixed Capital Formation % GDP</Typography>
+                                                    <Typography variant="caption" display="block">Investment intensity. {'>'}25% suggests strong future growth capacity. {'<'}20% warns of consumption dominance/stagnation.</Typography>
+                                                    {row.private_gfcf_pct && <Typography variant="caption" display="block" sx={{ mt: 1 }}>US Private Investment: {row.private_gfcf_pct}% (Declining share may indicate fiscal crowding out)</Typography>}
+                                                </Box>
+                                            } arrow placement="top">
+                                                <Box component="span" sx={{ cursor: 'help', opacity: 0.3, display: 'flex' }}>
+                                                    <Info size={12} />
+                                                </Box>
+                                            </Tooltip>
+                                        </Box>
+                                    </TableCell>
+
                                     {renderCell(row.dependency_ratio, '%', 1, "Old-age dependency ratio (% of working-age population). Higher ratio → fiscal drag & lower long-term growth potential. Source: World Bank.")}
 
                                     <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
