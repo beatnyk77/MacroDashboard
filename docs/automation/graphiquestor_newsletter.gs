@@ -47,11 +47,16 @@ function generateNewsletter() {
 
   // 3. Call Gemini API
   console.log('Calling Gemini...');
-  const newsletterContent = callGemini(geminiKey, prompt);
+  let newsletterContent;
+  try {
+    newsletterContent = callGemini(geminiKey, prompt);
+  } catch (e) {
+    console.error('Gemini call crashed:', e);
+  }
 
   if (!newsletterContent) {
     console.error('Gemini Error: No content returned');
-    sendErrorEmail(userEmail, 'Gemini failed to generate content');
+    sendErrorEmail(userEmail, 'Newsletter draft failed — check Supabase logs.');
     return;
   }
 
@@ -78,7 +83,7 @@ function fetchSupabaseData(url, key) {
       'Authorization': `Bearer ${key}`,
       'apikey': key
     },
-    payload: JSON.stringify({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 }),
+    payload: JSON.stringify({}), // Use defaults
     muteHttpExceptions: true
   };
 
@@ -89,10 +94,15 @@ function fetchSupabaseData(url, key) {
 
 function constructPrompt(data) {
   const context = JSON.stringify(data.narrative_context, null, 2);
+  const charts = data.narrative_context.charts;
   
   return `You are the editorial AI for GraphiQuestor – Macro Observatory.
 
 Task: Generate a complete monthly newsletter (~800–1200 words) in storytelling style from the provided dashboard data.
+
+Metadata Requirements (At the very top of the Markdown):
+1. Subject Line: Provide 3 distinct subject line options (one punchy, one data-driven, one narrative).
+2. Preview Text: Provide a compelling preview text (exactly first 100 characters).
 
 Tone: Calm, institutional, evidence-based, zero hype — let data speak.
 
@@ -104,16 +114,18 @@ Structure:
 
 2. Liquidity & Hard Asset Update (200–300 words)
    - Net liquidity change (cite the 30d change)
-   - Gold/Silver spreads (highlight if spread > 1%)
+   - Gold/Silver spreads
    - Debt/Gold ratio movement
+   - Embed the Net Liquidity chart here: ![Net Liquidity](${charts.net_liquidity_1y})
 
 3. Sovereign & De-Dollarization Pulse (200–300 words)
    - BRICS+ gold accumulation
-   - US Treasury foreign holders change (mention top sellers/buyers)
+   - US Treasury foreign holders change
    - China & India macro highlights
+   - Embed the Gold Spread chart here: ![Gold Spread](${charts.gold_spread_1y})
 
 4. Key Event Recap & Forward Look (150–200 words)
-   - Recap significant surprises from last month
+   - Recap significant surprises
    - Highlight high-impact upcoming events
 
 5. Closing (50–100 words)
@@ -121,7 +133,7 @@ Structure:
    - Ko-fi/Patreon link
    - "See you next month"
 
-Use exact numbers from the data. Cite sources briefly (e.g. "Supabase Data", "IMF"). No speculation.
+Use exact numbers from the data. Cite sources briefly. Embed the provided chart URLs exactly as shown above using Markdown syntax.
 
 Data Context:
 ${context}
