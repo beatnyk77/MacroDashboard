@@ -9,6 +9,7 @@ export const TreasurySnapshotSection: React.FC = () => {
     const { data: debt, isLoading: debtLoading } = useLatestMetric('UST_DEBT_TOTAL');
     const { data: netSupply, isLoading: netSupplyLoading } = useLatestMetric('UST_NET_ISSUANCE_M');
     const { data: refi } = useLatestMetric('UST_MATURITY_12M_PCT');
+    const { data: pdPositions, isLoading: pdPositionsLoading } = useLatestMetric('PRIMARY_DEALER_TREASURY_HOLDINGS_BN');
     const { data: g20, isLoading: g20Loading } = useG20Sovereign();
 
     return (
@@ -83,8 +84,28 @@ export const TreasurySnapshotSection: React.FC = () => {
 
             {/* High-Signal Analysis Cards */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                     <USDebtGoldBackingCard />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <MetricCard
+                        label="Primary Dealer Treasury Holdings"
+                        value={pdPositions?.value !== undefined ? pdPositions.value.toFixed(1) : '-'}
+                        delta={pdPositions?.delta !== null && pdPositions?.delta !== undefined ? { value: `${pdPositions.delta.toFixed(1)}B`, period: 'Weekly', trend: pdPositions.trend || 'neutral' } : undefined}
+                        status={pdPositions?.status}
+                        history={pdPositions?.history}
+                        prefix="$"
+                        suffix="B"
+                        isLoading={pdPositionsLoading}
+                        lastUpdated={pdPositions?.lastUpdated}
+                        zScore={pdPositions?.zScore}
+                        percentile={pdPositions?.percentile}
+                        description="Net positions held by primary dealers in US Treasury securities. Reflects dealer balance sheet capacity and market-making appetite."
+                        methodology="Calculated from NY Fed Primary Dealer Statistics. Net long positions in Treasury Securities. Conversion from Millions to Billions."
+                        source="NY Fed Markets"
+                        frequency="Weekly"
+                        zScoreWindow="Institutional Baseline"
+                    />
                 </Grid>
             </Grid>
 

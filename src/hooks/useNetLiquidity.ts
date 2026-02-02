@@ -10,25 +10,31 @@ export interface NetLiquidityData {
     delta_pct: number;
     alarm_status: string;
     history?: { date: string; value: number }[];
+    rrp_balance?: number;
+    tga_balance?: number;
+    sofr_effr_spread?: number;
+    fed_assets?: number;
 }
 
 export function useNetLiquidity() {
     return useQuery({
         queryKey: ['net-liquidity'],
         queryFn: async (): Promise<NetLiquidityData | null> => {
-            const { data, error } = await supabase
-                .from('vw_net_liquidity')
-                .select('*')
-                .order('as_of_date', { ascending: false })
-                .limit(90);
+            const [liqRes, rrpRes, tgaRes, spreadRes, fedRes] = await Promise.all([
+                supabase.from('vw_net_liquidity').select('*').order('as_of_date', { ascending: false }).limit(90),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'RRP_BALANCE_BN').maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'TGA_BALANCE_BN').maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'SOFR_EFFR_SPREAD_BPS').maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FED_BALANCE_SHEET').maybeSingle()
+            ]);
 
-            if (error || !data || data.length === 0) {
+            if (liqRes.error || !liqRes.data || liqRes.data.length === 0) {
                 console.warn('Could not fetch net liquidity');
                 return null;
             }
 
-            const latest = data[0];
-            const history = data.map(d => ({
+            const latest = liqRes.data[0];
+            const history = liqRes.data.map(d => ({
                 date: d.as_of_date,
                 value: Number(d.value)
             })).reverse();
@@ -41,7 +47,11 @@ export function useNetLiquidity() {
                 delta: Number(latest.delta),
                 delta_pct: Number(latest.delta_pct),
                 alarm_status: latest.alarm_status,
-                history: history
+                history: history,
+                rrp_balance: rrpRes.data?.value || 0,
+                tga_balance: tgaRes.data?.value || 0,
+                sofr_effr_spread: spreadRes.data?.value || 0,
+                fed_assets: fedRes.data?.value || 0
             };
         },
         staleTime: 1000 * 60 * 60, // 1h

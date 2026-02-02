@@ -59,7 +59,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Global Net Liquidity"
-                        value={netLiq ? (netLiq.current_value / 1e6).toFixed(2) : '-'}
+                        value={netLiq ? (netLiq.current_value / 1e3).toFixed(2) : '-'}
                         delta={netLiq ? { value: `${(netLiq.delta_pct !== undefined && netLiq.delta_pct !== null) ? netLiq.delta_pct.toFixed(1) : '-'}%`, period: "WoW", trend: netLiq.delta_pct > 0 ? 'up' : 'down' } : undefined}
                         status={netLiq ? (netLiq.z_score > 1 ? 'danger' : netLiq.z_score < -1 ? 'warning' : 'safe') : undefined}
                         suffix="T"
@@ -71,9 +71,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                         methodology="Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Z-Score provides the deviation from the 3-year trend."
                         source="Fed, US Treasury"
                         stats={[
-                            { label: 'Fed Assets', value: '$8.12T', color: 'primary.main' },
-                            { label: 'TGA Balance', value: '$0.72T' },
-                            { label: 'RRP Drainage', value: '$0.45T' }
+                            { label: 'Fed Assets', value: `$${netLiq?.fed_assets ? (netLiq.fed_assets / 1e6).toFixed(2) : '-'}T`, color: 'primary.main' },
+                            { label: 'TGA Balance', value: `$${netLiq?.tga_balance ? (netLiq.tga_balance / 1e3).toFixed(2) : '-'}T` },
+                            { label: 'RRP Drainage', value: `$${netLiq?.rrp_balance ? (netLiq.rrp_balance / 1e3).toFixed(2) : '-'}T` }
                         ]}
                     />
                 </Grid>

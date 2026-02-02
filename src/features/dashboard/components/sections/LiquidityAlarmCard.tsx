@@ -81,10 +81,22 @@ export const LiquidityAlarmCard: React.FC = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
-                    <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em' }}>
-                        ${liq.current_value.toLocaleString(undefined, { maximumFractionDigits: 0 })}B
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: (liq?.delta || 0) >= 0 ? 'success.main' : 'error.main', fontWeight: 800, bgcolor: (liq?.delta || 0) >= 0 ? 'success.main10' : 'error.main10', px: 1, py: 0.2, borderRadius: 0.5 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em' }}>
+                            ${liq.current_value.toLocaleString(undefined, { maximumFractionDigits: 0 })}B
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
+                            <Box sx={{ px: 0.8, py: 0.2, borderRadius: 1, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary', letterSpacing: '0.02em' }}>RRP</Typography>
+                                <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 900, color: (liq.rrp_balance || 0) > 500 ? 'warning.main' : 'text.primary' }}>${liq.rrp_balance?.toFixed(0)}B</Typography>
+                            </Box>
+                            <Box sx={{ px: 0.8, py: 0.2, borderRadius: 1, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary', letterSpacing: '0.02em' }}>TGA</Typography>
+                                <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 900, color: (liq.tga_balance || 0) > 750 ? 'error.main' : 'text.primary' }}>${liq.tga_balance?.toFixed(0)}B</Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                    <Typography variant="caption" sx={{ color: (liq?.delta || 0) >= 0 ? 'success.main' : 'error.main', fontWeight: 800, bgcolor: (liq?.delta || 0) >= 0 ? 'success.main10' : 'error.main10', px: 1, py: 0.2, borderRadius: 0.5, height: 'fit-content' }}>
                         {liq?.delta !== undefined && liq?.delta !== null ? (liq.delta >= 0 ? '+' : '') : ''}{liq?.delta !== undefined && liq?.delta !== null ? liq.delta.toFixed(1) : '-'}B
                     </Typography>
                 </Box>
@@ -94,6 +106,12 @@ export const LiquidityAlarmCard: React.FC = () => {
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>Z-SCORE (25Y)</Typography>
                         <Typography variant="h6" sx={{ fontWeight: 800, color: getStatusColor() }}>
                             {liq?.z_score !== undefined && liq?.z_score !== null ? liq.z_score.toFixed(2) : '-'}σ
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>SOFR-EFFR</Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 800, color: (liq.sofr_effr_spread || 0) > 0 ? 'error.light' : 'success.light' }}>
+                            {liq?.sofr_effr_spread !== undefined ? (liq.sofr_effr_spread > 0 ? '+' : '') + liq.sofr_effr_spread.toFixed(1) : '-'} bps
                         </Typography>
                     </Box>
                     <Box>
@@ -229,7 +247,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                                         Net Liquidity = WALCL - TGA - RRP
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                                        Calculated as the Federal Reserve Total Assets (WALCL) minus the Treasury General Account (TGA) and Reverse Repo Facility (RRP). This represents the effective cash balance in the commercial banking system.
+                                        Calculated as the Federal Reserve Total Assets (WALCL) minus the Treasury General Account (TGA) and Reverse Repo Facility (RRP). Data ingested daily from NY Fed Markets API for high-fidelity signal.
                                     </Typography>
                                 </Box>
                             </Grid>
