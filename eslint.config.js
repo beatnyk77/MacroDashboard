@@ -65,6 +65,7 @@ export default [
                 ResizeObserver: 'readonly',
                 Performance: 'readonly',
                 performance: 'readonly',
+                gtag: 'readonly',
             }
         },
         plugins: {

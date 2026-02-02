@@ -79,21 +79,30 @@ export const PreciousDivergenceCard: React.FC = () => {
                 ]
             }}
         >
-            <Card sx={{
-                p: 2.5,
-                height: 250,
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                transition: 'all 0.2s',
-                border: '1px solid',
-                borderColor: 'divider',
-                bgcolor: 'background.paper',
-                '&:hover': {
-                    borderColor: 'primary.main',
-                    boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
-                },
-            }}>
+            <Card
+                onClick={() => {
+                    gtag('event', 'click_divergence_card', {
+                        gold_spread: goldDist?.value,
+                        silver_spread: silverDist?.value
+                    });
+                }}
+                sx={{
+                    p: 2.5,
+                    height: 250,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    transition: 'all 0.2s',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'background.paper',
+                    '&:hover': {
+                        borderColor: 'primary.main',
+                        boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
+                    },
+                }}
+            >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <Box>
                         <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.65rem', color: 'text.secondary' }}>

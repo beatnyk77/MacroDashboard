@@ -38,10 +38,19 @@ export const UpcomingEventsCard: React.FC = () => {
                     source: event.source_url
                 }}
             >
-                <TableRow sx={{
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.02)', cursor: 'pointer' },
-                    opacity: isPast ? 0.7 : 1
-                }}>
+                <TableRow
+                    onClick={() => {
+                        gtag('event', 'click_calendar_event', {
+                            event_name: event.event_name,
+                            country: event.country,
+                            impact_level: event.impact_level
+                        });
+                    }}
+                    sx={{
+                        '&:hover': { bgcolor: 'rgba(255,255,255,0.02)', cursor: 'pointer' },
+                        opacity: isPast ? 0.7 : 1
+                    }}
+                >
                     <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', pl: 0, width: 80 }}>
                         <Typography sx={{ fontWeight: 700, fontSize: '0.65rem', color: isPast ? 'text.disabled' : 'text.primary' }}>
                             {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}

@@ -59,16 +59,24 @@ export const UPIAutopayFailureCard: React.FC = () => {
     const trendColor = isRising ? '#ff5252' : '#4caf50'; // Red if rising (bad for failure rate)
 
     return (
-        <Card sx={{
-            height: '100%',
-            position: 'relative',
-            overflow: 'visible',
-            transition: 'transform 0.2s, box-shadow 0.2s',
-            '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: 6
-            }
-        }}>
+        <Card
+            onClick={() => {
+                gtag('event', 'click_upi_stress', {
+                    failure_rate: failure_rate_pct,
+                    delta_mom: failure_rate_delta_mom
+                });
+            }}
+            sx={{
+                height: '100%',
+                position: 'relative',
+                overflow: 'visible',
+                cursor: 'pointer',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: 6
+                }
+            }}>
             <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                     <Box>

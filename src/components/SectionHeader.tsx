@@ -54,7 +54,13 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, i
                         <Tooltip title="Export as PNG">
                             <IconButton
                                 size="small"
-                                onClick={() => exportSectionToPNG(exportId, title)}
+                                onClick={() => {
+                                    exportSectionToPNG(exportId, title);
+                                    gtag('event', 'export_data', {
+                                        export_type: 'png',
+                                        section_title: title
+                                    });
+                                }}
                                 sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
                             >
                                 <ImageIcon size={14} />
@@ -63,7 +69,13 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, i
                         <Tooltip title="Export as PDF">
                             <IconButton
                                 size="small"
-                                onClick={() => exportSectionToPDF(exportId, title, title)}
+                                onClick={() => {
+                                    exportSectionToPDF(exportId, title, title);
+                                    gtag('event', 'export_data', {
+                                        export_type: 'pdf',
+                                        section_title: title
+                                    });
+                                }}
                                 sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
                             >
                                 <FileText size={14} />

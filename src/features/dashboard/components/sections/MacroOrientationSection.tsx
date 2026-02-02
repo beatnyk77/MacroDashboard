@@ -24,7 +24,16 @@ export const MacroOrientationSection: React.FC = () => {
                     <LiquidityAlarmCard />
                 </Grid>
                 <Grid item xs={12} md={4}>
-                    <Box onClick={() => setModalOpen(true)} sx={{ height: '100%', cursor: 'pointer' }}>
+                    <Box
+                        onClick={() => {
+                            setModalOpen(true);
+                            gtag('event', 'click_regime_pulse', {
+                                regime_label: regimeData?.regimeLabel || 'Unknown',
+                                pulse_score: regimeData?.pulseScore // if available in data
+                            });
+                        }}
+                        sx={{ height: '100%', cursor: 'pointer' }}
+                    >
                         <MetricCard
                             label="Regime Label (Click for Replay)"
                             value={regimeData?.regimeLabel || 'Unknown'}
