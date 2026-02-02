@@ -3,7 +3,7 @@ import { ShieldAlert, ShieldCheck, X, Info, Target, TrendingDown, Activity } fro
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { Skeleton, IconButton } from '@mui/material';
 import { useState } from 'react';
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis } from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
 
 export const LiquidityAlarmCard: React.FC = () => {
     const theme = useTheme();
@@ -108,11 +108,34 @@ export const LiquidityAlarmCard: React.FC = () => {
                             {liq?.z_score !== undefined && liq?.z_score !== null ? liq.z_score.toFixed(2) : '-'}σ
                         </Typography>
                     </Box>
-                    <Box>
+                    <Box sx={{ flex: 1 }}>
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>SOFR-EFFR</Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 800, color: (liq.sofr_effr_spread || 0) > 0 ? 'error.light' : 'success.light' }}>
-                            {liq?.sofr_effr_spread !== undefined ? (liq.sofr_effr_spread > 0 ? '+' : '') + liq.sofr_effr_spread.toFixed(1) : '-'} bps
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="h6" sx={{
+                                fontWeight: 800,
+                                color: (liq.sofr_effr_spread || 0) > 15 ? 'error.main' : (liq.sofr_effr_spread || 0) > 0 ? 'warning.main' : 'success.light',
+                                bgcolor: (liq.sofr_effr_spread || 0) > 15 ? 'error.main10' : 'transparent',
+                                px: (liq.sofr_effr_spread || 0) > 15 ? 0.5 : 0,
+                                borderRadius: 0.5
+                            }}>
+                                {liq?.sofr_effr_spread !== undefined ? (liq.sofr_effr_spread > 0 ? '+' : '') + liq.sofr_effr_spread.toFixed(1) : '-'} bps
+                            </Typography>
+                            {liq.sofr_effr_history && liq.sofr_effr_history.length > 0 && (
+                                <Box sx={{ width: 40, height: 20 }}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={liq.sofr_effr_history}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke={(liq.sofr_effr_spread || 0) > 15 ? theme.palette.error.main : theme.palette.primary.main}
+                                                strokeWidth={2}
+                                                dot={false}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </Box>
+                            )}
+                        </Box>
                     </Box>
                     <Box>
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>PERCENTILE</Typography>

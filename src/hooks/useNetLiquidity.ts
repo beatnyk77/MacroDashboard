@@ -13,6 +13,7 @@ export interface NetLiquidityData {
     rrp_balance?: number;
     tga_balance?: number;
     sofr_effr_spread?: number;
+    sofr_effr_history?: { date: string; value: number }[];
     fed_assets?: number;
 }
 
@@ -24,7 +25,7 @@ export function useNetLiquidity() {
                 supabase.from('vw_net_liquidity').select('*').order('as_of_date', { ascending: false }).limit(90),
                 supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'RRP_BALANCE_BN').maybeSingle(),
                 supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'TGA_BALANCE_BN').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'SOFR_EFFR_SPREAD_BPS').maybeSingle(),
+                supabase.from('metric_observations').select('as_of_date, value').eq('metric_id', 'SOFR_EFFR_SPREAD_BPS').order('as_of_date', { ascending: false }).limit(30),
                 supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FED_BALANCE_SHEET').maybeSingle()
             ]);
 
@@ -35,6 +36,12 @@ export function useNetLiquidity() {
 
             const latest = liqRes.data[0];
             const history = liqRes.data.map(d => ({
+                date: d.as_of_date,
+                value: Number(d.value)
+            })).reverse();
+
+            const spreadData = spreadRes.data || [];
+            const sofr_effr_history = spreadData.map(d => ({
                 date: d.as_of_date,
                 value: Number(d.value)
             })).reverse();
@@ -50,7 +57,8 @@ export function useNetLiquidity() {
                 history: history,
                 rrp_balance: rrpRes.data?.value || 0,
                 tga_balance: tgaRes.data?.value || 0,
-                sofr_effr_spread: spreadRes.data?.value || 0,
+                sofr_effr_spread: spreadData[0]?.value || 0,
+                sofr_effr_history,
                 fed_assets: fedRes.data?.value || 0
             };
         },

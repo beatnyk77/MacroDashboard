@@ -8,6 +8,7 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { OffshoreDollarStressCard } from './OffshoreDollarStressCard';
 import { CreditCreationPulseCard } from './CreditCreationPulseCard';
 import { ECBBalanceSheetCard } from './ECBBalanceSheetCard';
+import { BoJBalanceSheetCard } from './BoJBalanceSheetCard';
 
 export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
@@ -83,6 +84,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <ECBBalanceSheetCard />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <BoJBalanceSheetCard />
                 </Grid>
                 <Grid item xs={12}>
                     <CreditCreationPulseCard />
