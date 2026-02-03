@@ -15,6 +15,7 @@ import { ScenarioStudio } from '@/features/dashboard/components/sections/Scenari
 import { SovereignHealthRadar } from '@/features/dashboard/components/sections/SovereignHealthRadar';
 import GoldReturnsSection from '@/features/dashboard/components/sections/GoldReturnsSection';
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
+import { LatestMacroHeadlinesCard } from '@/features/dashboard/components/cards/LatestMacroHeadlinesCard';
 import { HowToUseCard } from '@/features/dashboard/components/sections/HowToUseCard';
 
 export const Dashboard: React.FC = () => {
@@ -25,9 +26,12 @@ export const Dashboard: React.FC = () => {
                 <MarketPulseTicker />
             </Box>
 
-            {/* 2. Today's Brief Panel */}
+            {/* 2. Today's Brief Panel & Headlines */}
             <Box id="todays-brief">
                 <TodaysBriefPanel />
+                <Box sx={{ mt: 3, mb: 4 }}>
+                    <LatestMacroHeadlinesCard />
+                </Box>
             </Box>
 
             {/* 2.5. How to Use GraphiQuestor */}

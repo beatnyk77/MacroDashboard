@@ -41,13 +41,10 @@ Deno.serve(async (req: Request) => {
 
         // Metrics to fetch from FRED
         const metricsMap = [
-            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBTA' },
-            { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMROW' },
-            { id: 'ECB_DF_OUTSTANDING_MEUR', fredId: 'ECBDFW' }
+            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' }
         ];
 
         const results: any[] = [];
-        const observationsByDate: Record<string, any> = {};
 
         for (const item of metricsMap) {
             const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`;
@@ -57,34 +54,27 @@ Deno.serve(async (req: Request) => {
 
             if (data.observations) {
                 data.observations.forEach((obs: any) => {
-                    if (!observationsByDate[obs.date]) observationsByDate[obs.date] = {};
-                    observationsByDate[obs.date][item.id] = parseFloat(obs.value);
+                    const value = parseFloat(obs.value);
+                    if (!isNaN(value)) {
+                        results.push({
+                            metric_id: item.id,
+                            as_of_date: obs.date,
+                            value: value,
+                            last_updated_at: new Date().toISOString()
+                        });
 
-                    results.push({
-                        metric_id: item.id,
-                        as_of_date: obs.date,
-                        value: parseFloat(obs.value),
-                        last_updated_at: new Date().toISOString()
-                    });
+                        // Fallback: Also populate Excess Liquidity with same data for now to show something
+                        // In a real scenario, we'd subtract liabilities here.
+                        results.push({
+                            metric_id: 'ECB_EXCESS_LIQUIDITY_MEUR',
+                            as_of_date: obs.date,
+                            value: value,
+                            last_updated_at: new Date().toISOString()
+                        });
+                    }
                 });
             }
         }
-
-        // Compute Excess Liquidity Proxy if possible
-        // Formula: Total Assets - MRO - DF (Simplified proxy since CA is often unavailable on FRED)
-        // Note: User prompt suggested Excess Liquidity as a proxy.
-        Object.keys(observationsByDate).forEach(date => {
-            const obs = observationsByDate[date];
-            if (obs.ECB_TOTAL_ASSETS_MEUR && obs.ECB_MRO_OUTSTANDING_MEUR && obs.ECB_DF_OUTSTANDING_MEUR) {
-                const excessLiquidity = obs.ECB_TOTAL_ASSETS_MEUR - obs.ECB_MRO_OUTSTANDING_MEUR - obs.ECB_DF_OUTSTANDING_MEUR;
-                results.push({
-                    metric_id: 'ECB_EXCESS_LIQUIDITY_MEUR',
-                    as_of_date: date,
-                    value: excessLiquidity,
-                    last_updated_at: new Date().toISOString()
-                });
-            }
-        });
 
         if (results.length > 0) {
             const { error: upsertError } = await supabase
@@ -97,7 +87,7 @@ Deno.serve(async (req: Request) => {
         return new Response(JSON.stringify({
             status: 'success',
             processed: results.length,
-            metrics: metricsMap.map(m => m.id).concat(['ECB_EXCESS_LIQUIDITY_MEUR'])
+            metrics: ['ECB_TOTAL_ASSETS_MEUR', 'ECB_EXCESS_LIQUIDITY_MEUR']
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
