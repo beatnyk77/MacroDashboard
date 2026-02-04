@@ -3,11 +3,11 @@ import { Box, Typography, Card, Table, TableBody, TableCell, TableContainer, Tab
 import { Calendar, Info } from 'lucide-react';
 import { useMacroEvents, MacroEvent } from '@/hooks/useMacroEvents';
 import { HoverDetail } from '@/components/HoverDetail';
-import { useViewContext } from '@/context/ViewContext';
+// import { useViewContext } from '@/context/ViewContext';
 
 export const UpcomingEventsCard: React.FC = () => {
     const { data: events, isLoading } = useMacroEvents();
-    const { isInstitutionalView } = useViewContext();
+    // const { isInstitutionalView } = useViewContext();
 
     if (isLoading) return <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />;
     if (!events || events.length === 0) return null;
@@ -18,7 +18,7 @@ export const UpcomingEventsCard: React.FC = () => {
 
     const renderRow = (event: MacroEvent) => {
         const isPast = new Date(event.event_date) < now;
-        const surpriseVal = event.surprise ? parseFloat(event.surprise) : 0;
+        // const surpriseVal = event.surprise ? parseFloat(event.surprise) : 0;
 
         return (
             <HoverDetail
