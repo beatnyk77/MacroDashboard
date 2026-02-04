@@ -162,10 +162,17 @@ export const UPIAutopayFailureCard: React.FC = () => {
                     </ResponsiveContainer>
                 </Box>
 
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
-                        Updated: {data?.as_of_date} {staleness_flag === 'lagged' && '(Lagged)'}
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1, mt: 1 }}>
+                    <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.disabled', opacity: 0.8 }}>
+                        Updated: {data?.as_of_date}
                     </Typography>
+                    <Box sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        bgcolor: staleness_flag === 'fresh' ? 'primary.main' : 'text.disabled',
+                        opacity: staleness_flag === 'fresh' ? 0.8 : 0.3
+                    }} />
                 </Box>
             </CardContent>
         </Card>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Box, Typography, useTheme, SxProps, Theme, Skeleton, Button } from '@mui/material';
+import { Card, Box, Typography, SxProps, Theme, Skeleton, Button } from '@mui/material';
 import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
@@ -55,15 +55,14 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     zScore,
     percentile
 }) => {
-    const theme = useTheme();
     const { isInstitutionalView } = useViewContext();
 
     // Status color mapping for traffic lights
     const statusColorMap: Record<string, string> = {
-        'safe': theme.palette.success.main,
-        'neutral': theme.palette.primary.main,
-        'warning': theme.palette.warning.main,
-        'danger': theme.palette.error.main
+        'safe': '#10b981',    // Emerald
+        'neutral': '#3b82f6', // Blue
+        'warning': '#f59e0b', // Amber
+        'danger': '#ef4444'   // Crimson
     };
 
     // Get brief signal label (3-5 words max)
@@ -82,10 +81,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
     const getStatusColor = () => {
         switch (status) {
-            case 'safe': return theme.palette.success.main;
-            case 'warning': return theme.palette.warning.main;
-            case 'danger': return theme.palette.error.main;
-            default: return theme.palette.text.secondary;
+            case 'safe': return '#10b981';
+            case 'warning': return '#f59e0b';
+            case 'danger': return '#ef4444';
+            default: return 'rgba(255,255,255,0.4)';
         }
     };
 
@@ -158,18 +157,21 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        bgcolor: stalenessState === 'overdue' ? 'error.main' : (stalenessState === 'lagged' ? 'warning.main' : 'rgba(255,255,255,0.05)'),
-                        color: stalenessState === 'intentional' ? 'text.secondary' : 'white',
+                        bgcolor: stalenessState === 'overdue' ? 'rgba(244, 63, 94, 0.4)' : 'rgba(148, 163, 184, 0.15)',
+                        color: stalenessState === 'overdue' ? '#fff' : 'text.secondary',
                         fontSize: '0.6rem',
                         fontWeight: 900,
                         px: 1,
                         py: 0.5,
                         borderBottomLeftRadius: 4,
                         zIndex: 1,
-                        textTransform: 'uppercase'
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        borderLeft: stalenessState === 'overdue' ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                        borderBottom: stalenessState === 'overdue' ? 'none' : '1px solid rgba(255,255,255,0.05)',
                     }}
                 >
-                    {stalenessState === 'intentional' ? 'Lagged (Expected)' : stalenessState}
+                    {stalenessState === 'intentional' ? 'Expected Lag' : stalenessState}
                 </Box>
             )}
 
@@ -335,12 +337,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                         fontWeight: 900,
                         minWidth: 'auto',
                         p: 0,
-                        opacity: 0.3,
-                        '&:hover': { opacity: 1, bgcolor: 'transparent' }
+                        opacity: 0.15,
+                        '&:hover': { opacity: 0.8, bgcolor: 'transparent' },
+                        color: 'text.secondary'
                     }}
-                    startIcon={<ExternalLink size={10} />}
                 >
-                    DETAILS
+                    <ExternalLink size={12} />
                 </Button>
             </Box>
         </Card>

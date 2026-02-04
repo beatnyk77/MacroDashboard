@@ -5,6 +5,7 @@ import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { DashboardFooter } from '@/layout/DashboardFooter';
+import { NavigationSidebar } from '@/components/NavigationSidebar';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -133,10 +134,22 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 </Toolbar>
             </AppBar>
 
-            <Box component="main" sx={{ flexGrow: 1, py: { xs: 2, md: 4 }, display: 'flex', flexDirection: 'column' }}>
-                <Container maxWidth="xl" sx={{ flexGrow: 1 }}>
-                    {children}
-                </Container>
+            <Box sx={{ display: 'flex', flexGrow: 1 }}>
+                {/* Navigation Sidebar (Desktop Only) */}
+                <NavigationSidebar />
+
+                <Box component="main" sx={{
+                    flexGrow: 1,
+                    py: { xs: 2, md: 4 },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    overflowX: 'hidden'
+                }}>
+                    <Container maxWidth="xl" sx={{ flexGrow: 1 }}>
+                        {children}
+                    </Container>
+                </Box>
             </Box>
 
 

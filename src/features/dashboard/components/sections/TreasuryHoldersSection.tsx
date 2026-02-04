@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
     Box,
     Typography,
@@ -44,6 +45,7 @@ const COUNTRY_FLAGS: Record<string, string> = {
 export const TreasuryHoldersSection: React.FC = () => {
     const theme = useTheme();
     const { data, isLoading, error } = useTreasuryHolders();
+    const [isExpanded, setIsExpanded] = useState(false);
 
     if (isLoading) return <Skeleton variant="rectangular" height={600} sx={{ borderRadius: 2, mb: 6 }} />;
 
@@ -61,6 +63,8 @@ export const TreasuryHoldersSection: React.FC = () => {
         .filter(d => d.as_of_date === latestDate && d.country_name !== 'Total Foreign' && d.country_name !== 'Grand Total')
         .sort((a, b) => b.holdings_usd_bn - a.holdings_usd_bn);
 
+    const visibleHolders = isExpanded ? latestHolders : latestHolders.slice(0, 10);
+
     const renderTrendIcon = (change: number | null) => {
         if (change === null) return <Minus size={12} color={theme.palette.text.disabled} />;
         if (change > 0) return <TrendingUp size={12} color={theme.palette.success.main} />;
@@ -69,7 +73,7 @@ export const TreasuryHoldersSection: React.FC = () => {
     };
 
     return (
-        <Box sx={{ mb: 6 }}>
+        <Box id="treasury-holders-section" sx={{ mb: 6 }}>
             <SectionHeader
                 title="Major Foreign Holders of U.S. Treasuries"
                 subtitle="Tracking institutional demand and sovereign accumulation of U.S. government debt"
@@ -80,11 +84,12 @@ export const TreasuryHoldersSection: React.FC = () => {
                 {/* Data Table Area */}
                 <Grid item xs={12}>
                     <TableContainer sx={{
-                        maxHeight: 500,
+                        maxHeight: isExpanded ? 800 : 500,
                         border: '1px solid',
                         borderColor: 'divider',
                         borderRadius: 2,
-                        bgcolor: 'background.paper'
+                        bgcolor: 'background.paper',
+                        transition: 'max-height 0.3s ease-in-out'
                     }}>
                         <Table stickyHeader size="small">
                             <TableHead>
@@ -97,7 +102,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {latestHolders.map((holder) => (
+                                {visibleHolders.map((holder) => (
                                     <TableRow
                                         key={holder.country_name}
                                         sx={{
@@ -140,6 +145,28 @@ export const TreasuryHoldersSection: React.FC = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
+
+                    {latestHolders.length > 10 && (
+                        <Box sx={{ mt: 2, textAlign: 'center' }}>
+                            <Typography
+                                variant="button"
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                sx={{
+                                    cursor: 'pointer',
+                                    color: 'primary.main',
+                                    fontWeight: 800,
+                                    letterSpacing: '0.05em',
+                                    fontSize: '0.75rem',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                    '&:hover': { color: 'primary.light', textDecoration: 'underline' }
+                                }}
+                            >
+                                {isExpanded ? '▲ Show Less' : `▼ View Full List (${latestHolders.length} Holders)`}
+                            </Typography>
+                        </Box>
+                    )}
                 </Grid>
             </Grid>
 

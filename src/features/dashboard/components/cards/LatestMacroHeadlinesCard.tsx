@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, Typography, Link, Stack, Chip, Skeleton, useTheme } from '@mui/material';
+import { Box, Card, Typography, Link, Stack, Chip, Skeleton } from '@mui/material';
 import { Newspaper, Clock } from 'lucide-react';
 import { useMacroHeadlines } from '@/hooks/useMacroHeadlines';
 
@@ -19,7 +19,6 @@ const timeAgo = (date: Date) => {
 };
 
 export const LatestMacroHeadlinesCard: React.FC = () => {
-    const theme = useTheme();
     const { data: headlines, isLoading, error } = useMacroHeadlines();
 
     if (isLoading) {
@@ -53,38 +52,29 @@ export const LatestMacroHeadlinesCard: React.FC = () => {
     return (
         <Card sx={{
             p: 3,
-            bgcolor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(12px)',
+            bgcolor: '#1e293b', // Slate - External Feed
             border: '1px solid',
-            borderColor: 'divider',
+            borderColor: 'rgba(255, 255, 255, 0.05)',
             borderRadius: 2,
             height: '100%',
             position: 'relative',
             overflow: 'hidden',
-            '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '2px',
-                background: `linear-gradient(90deg, ${theme.palette.primary.main}, transparent)`,
-            }
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                 <Box sx={{
                     p: 1,
                     borderRadius: 1,
-                    bgcolor: 'rgba(37, 99, 235, 0.1)',
-                    color: 'primary.main',
+                    bgcolor: 'rgba(148, 163, 184, 0.1)',
+                    color: 'text.secondary',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
                     <Newspaper size={20} />
                 </Box>
-                <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.01em', color: 'text.primary' }}>
-                    Latest Macro Headlines
+                <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.01em', color: 'text.primary', opacity: 0.9 }}>
+                    External Macro Headlines
                 </Typography>
             </Box>
 
@@ -101,19 +91,41 @@ export const LatestMacroHeadlinesCard: React.FC = () => {
                                 transition: 'all 0.2s',
                                 '&:hover': {
                                     transform: 'translateX(4px)',
-                                    '& .headline-title': { color: 'primary.main' }
+                                    '& .headline-title': { color: 'primary.light' }
                                 }
                             }}
                         >
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                <Typography variant="caption" sx={{
+                                    fontWeight: 800,
+                                    color: 'text.disabled',
+                                    fontSize: '0.65rem',
+                                    bgcolor: 'rgba(255,255,255,0.05)',
+                                    px: 0.8,
+                                    py: 0.2,
+                                    borderRadius: 0.5
+                                }}>
+                                    {headline.source.includes('Bloomberg') ? 'BBG' :
+                                        headline.source.includes('Financial Times') ? 'FT' :
+                                            headline.source.includes('Reuters') ? 'RTR' :
+                                                headline.source.toUpperCase().slice(0, 3)}
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.disabled' }}>
+                                    <Clock size={10} />
+                                    <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 500 }}>
+                                        {timeAgo(new Date(headline.published_at))}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
                             <Typography
                                 className="headline-title"
                                 variant="body1"
                                 sx={{
-                                    fontWeight: 600,
-                                    color: 'text.primary',
+                                    fontWeight: 500,
+                                    color: 'text.secondary',
                                     lineHeight: 1.4,
-                                    fontSize: '0.925rem',
-                                    mb: 0.75,
+                                    fontSize: '0.9rem',
                                     transition: 'color 0.2s',
                                     display: '-webkit-box',
                                     WebkitLineClamp: 2,
@@ -123,25 +135,6 @@ export const LatestMacroHeadlinesCard: React.FC = () => {
                             >
                                 {headline.title}
                             </Typography>
-
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <Typography variant="caption" sx={{
-                                    fontWeight: 700,
-                                    color: 'primary.light',
-                                    textTransform: 'uppercase',
-                                    fontSize: '0.65rem',
-                                    letterSpacing: '0.05em'
-                                }}>
-                                    {headline.source}
-                                </Typography>
-
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.disabled' }}>
-                                    <Clock size={12} />
-                                    <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 500 }}>
-                                        {timeAgo(new Date(headline.published_at))}
-                                    </Typography>
-                                </Box>
-                            </Box>
                         </Link>
                     </Box>
                 ))}

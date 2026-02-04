@@ -6,7 +6,11 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useMacroEvents } from '@/hooks/useMacroEvents';
 import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
 
-export const TodaysBriefPanel: React.FC = () => {
+interface TodaysBriefPanelProps {
+    sx?: any;
+}
+
+export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
     const theme = useTheme();
     const { data: regime } = useRegime();
     const { data: liquidity } = useNetLiquidity();
@@ -23,7 +27,7 @@ export const TodaysBriefPanel: React.FC = () => {
         if (!events) return null;
         return events
             .filter(e => new Date(e.event_date).toDateString() === today.toDateString())
-            .sort((a, b) => a.impact_level === 'High' ? -1 : 1)[0];
+            .sort((a) => a.impact_level === 'High' ? -1 : 1)[0];
     }, [events, today]);
 
     // Mapping headlines to briefing items
@@ -83,48 +87,64 @@ export const TodaysBriefPanel: React.FC = () => {
             p: { xs: 2.5, md: 4 },
             borderLeft: '4px solid',
             borderLeftColor: 'primary.main',
-            bgcolor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(12px)',
+            bgcolor: '#0a1929', // Deep Navy - Institutional House View
             border: '1px solid',
-            borderColor: 'divider',
+            borderColor: 'rgba(59, 130, 246, 0.2)',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: '0 20px 40px -12px rgba(0,0,0,0.5)',
+            ...sx
         }}>
-            {/* Background Accent */}
+            {/* Subtle Gradient Overlay */}
             <Box sx={{
                 position: 'absolute',
-                top: -20,
-                right: -20,
-                width: 150,
-                height: 150,
-                background: `radial-gradient(circle, ${theme.palette.primary.main}10 0%, transparent 70%)`,
-                zIndex: 0
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, transparent 40%)',
+                pointerEvents: 'none'
             }} />
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4, position: 'relative', zIndex: 1 }}>
                 <Box>
-                    <Typography variant="overline" sx={{
-                        fontWeight: 900,
-                        letterSpacing: '0.15em',
-                        color: 'primary.main',
-                        fontSize: '0.7rem'
-                    }}>
-                        TODAY'S INTELLIGENCE BRIEF
+                    <Typography
+                        variant="overline"
+                        sx={{
+                            fontWeight: 900,
+                            letterSpacing: '0.2em',
+                            color: 'primary.main',
+                            fontSize: '0.75rem',
+                            fontFamily: '"Inter", sans-serif',
+                            display: 'block',
+                            mb: 1
+                        }}
+                    >
+                        GRAPHIQUESTOR INTELLIGENCE
                     </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: 'text.primary', letterSpacing: '-0.02em' }}>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            fontWeight: 400, // Regular weight for serif looks more premium
+                            color: 'text.primary',
+                            letterSpacing: '-0.01em',
+                            fontFamily: '"Merriweather", "Georgia", serif', // Institutional Serif
+                            lineHeight: 1.2
+                        }}
+                    >
                         {formatDate(new Date())}
                     </Typography>
                 </Box>
                 <Chip
-                    label="INSTITUTIONAL GRADE"
+                    label="PROPRIETARY VIEW"
                     size="small"
                     sx={{
-                        bgcolor: 'rgba(59, 130, 246, 0.1)',
+                        bgcolor: 'rgba(59, 130, 246, 0.15)',
                         color: 'primary.light',
-                        border: '1px solid',
-                        borderColor: 'rgba(59, 130, 246, 0.3)',
+                        border: '1px solid rgba(59, 130, 246, 0.3)',
                         fontWeight: 900,
-                        fontSize: '0.65rem'
+                        fontSize: '0.65rem',
+                        letterSpacing: '0.05em'
                     }}
                 />
             </Box>

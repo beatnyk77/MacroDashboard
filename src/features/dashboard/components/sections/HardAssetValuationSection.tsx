@@ -3,6 +3,7 @@ import { RatioCard } from '@/components/RatioCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { PreciousDivergenceCard } from './PreciousDivergenceCard';
+import { GoldRatioRibbon } from './GoldRatioRibbon';
 
 export const HardAssetValuationSection: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
@@ -11,7 +12,13 @@ export const HardAssetValuationSection: React.FC = () => {
 
     return (
         <Box sx={{ mb: 6 }}>
-            <SectionHeader title="Hard Asset Valuation" subtitle="Currency and equity pricing relative to gold anchor (USA Market)" />
+            <SectionHeader
+                title="Hard Asset Valuation"
+                subtitle="Currency and equity pricing relative to gold anchor (USA Market)"
+            />
+
+            <GoldRatioRibbon />
+
             <Grid container spacing={3}>
                 <Grid item xs={12} md={3}>
                     <RatioCard
@@ -29,6 +36,7 @@ export const HardAssetValuationSection: React.FC = () => {
                         source="FRED, LBMA"
                     />
                 </Grid>
+                {/* Other cards remain... */}
                 <Grid item xs={12} md={3}>
                     <RatioCard
                         primaryLabel="S&P 500 / Gold"

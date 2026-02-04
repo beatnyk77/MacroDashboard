@@ -20,6 +20,7 @@ import { Info } from 'lucide-react';
 export const MajorEconomiesTable: React.FC = () => {
     const theme = useTheme();
     const { data, isLoading } = useMajorEconomies();
+    const [isExpanded, setIsExpanded] = React.useState(false);
 
     const formatValue = (val: number, decimals: number = 2) => {
         if (val === 0) return '-';
@@ -29,14 +30,6 @@ export const MajorEconomiesTable: React.FC = () => {
         });
     };
 
-    const getStalenessColor = (staleness: string) => {
-        switch (staleness) {
-            case 'fresh': return theme.palette.success.main;
-            case 'lagged': return theme.palette.warning.main;
-            case 'very_lagged': return theme.palette.error.main;
-            default: return theme.palette.text.disabled;
-        }
-    };
 
     const renderCell = (value: number, suffix: string = '', decimals: number = 2, tooltip?: string) => (
         <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -55,8 +48,10 @@ export const MajorEconomiesTable: React.FC = () => {
         </TableCell>
     );
 
+    const visibleData = data ? (isExpanded ? data : data.slice(0, 5)) : [];
+
     return (
-        <Box sx={{ mb: 6 }}>
+        <Box id="major-economies-section" sx={{ mb: 6 }}>
             <SectionHeader
                 title="Major Economies Overview"
                 subtitle="High-signal macro comparison: GDP, Growth, CPI, Policy Rates, and Reserves (Jan 2026)"
@@ -117,7 +112,7 @@ export const MajorEconomiesTable: React.FC = () => {
                     </TableHead>
                     <TableBody>
                         {isLoading ? (
-                            Array.from({ length: 6 }).map((_, i) => (
+                            Array.from({ length: 5 }).map((_, i) => (
                                 <TableRow key={i}>
                                     <TableCell><Skeleton variant="text" /></TableCell>
                                     {Array.from({ length: 9 }).map((_, j) => (
@@ -126,7 +121,7 @@ export const MajorEconomiesTable: React.FC = () => {
                                 </TableRow>
                             ))
                         ) : (
-                            data?.map((row: MajorEconomyRow) => (
+                            visibleData.map((row: MajorEconomyRow) => (
                                 <TableRow
                                     key={row.code}
                                     sx={{
@@ -188,18 +183,20 @@ export const MajorEconomiesTable: React.FC = () => {
                                     <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
                                             <Typography variant="caption" sx={{
-                                                fontSize: '0.6rem',
+                                                fontSize: '0.65rem',
                                                 fontWeight: 800,
-                                                color: getStalenessColor(row.staleness),
-                                                textTransform: 'uppercase'
+                                                color: 'text.disabled',
+                                                textTransform: 'uppercase',
+                                                opacity: 0.5
                                             }}>
-                                                {row.staleness.replace(/_/g, ' ')}
+                                                {row.staleness === 'fresh' ? 'Updated' : row.staleness.replace(/_/g, ' ')}
                                             </Typography>
                                             <Box sx={{
                                                 width: 6,
                                                 height: 6,
                                                 borderRadius: '50%',
-                                                bgcolor: getStalenessColor(row.staleness)
+                                                bgcolor: row.staleness === 'fresh' ? 'primary.main' : 'text.disabled',
+                                                opacity: row.staleness === 'fresh' ? 0.8 : 0.3
                                             }} />
                                         </Box>
                                     </TableCell>
@@ -209,6 +206,28 @@ export const MajorEconomiesTable: React.FC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {data && data.length > 5 && (
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography
+                        variant="button"
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        sx={{
+                            cursor: 'pointer',
+                            color: 'primary.main',
+                            fontWeight: 800,
+                            letterSpacing: '0.05em',
+                            fontSize: '0.75rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            '&:hover': { color: 'primary.light', textDecoration: 'underline' }
+                        }}
+                    >
+                        {isExpanded ? '▲ Show Less' : `▼ View Full Table (${data.length} Countries)`}
+                    </Typography>
+                </Box>
+            )}
         </Box>
     );
 };

@@ -23,9 +23,9 @@ interface RatioCardProps {
 }
 
 const getZScoreColor = (z: number) => {
-    if (z > 2) return '#f43f5e';     // Rose 500
-    if (z < -2) return '#10b981';    // Emerald 500
-    return '#94a3b8';              // Slate 400
+    if (z > 2) return '#ef4444';     // Crimson
+    if (z < -2) return '#10b981';    // Emerald
+    return 'rgba(255,255,255,0.4)';  // Muted
 };
 
 export const RatioCard: React.FC<RatioCardProps> = ({
@@ -226,12 +226,12 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         fontWeight: 900,
                         minWidth: 'auto',
                         p: 0,
-                        opacity: 0.5,
-                        '&:hover': { opacity: 1, bgcolor: 'transparent' }
+                        opacity: 0.15,
+                        '&:hover': { opacity: 0.8, bgcolor: 'transparent' },
+                        color: 'text.secondary'
                     }}
-                    startIcon={<ExternalLink size={10} />}
                 >
-                    DETAILS
+                    <ExternalLink size={12} />
                 </Button>
             </Box>
         </Card>
