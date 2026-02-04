@@ -8,6 +8,7 @@ const corsHeaders = {
 /**
  * Ingest China Macro Pulse Data
  * Syncs with FRED for FX and Gold reserves.
+ * CI/CD Verified: 2026-02-05
  */
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {

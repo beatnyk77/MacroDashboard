@@ -63,3 +63,31 @@ All Z-scores are calculated using a **rolling 25-year window** (9125 observation
 ---
 
 *GraphiQuestor is a proprietary tool for sophisticated macro analysis. Not financial advice.*
+
+---
+
+## 🛠️ Backend & DevOps (CI/CD)
+
+### Automated Edge Function Deployment
+Edge Functions are automatically deployed to Supabase via GitHub Actions when changes are pushed to the `main` branch under the `supabase/functions/` directory.
+
+#### Setup Requirements
+To maintain the CI/CD pipeline, the following **GitHub Secrets** must be configured in your repository (`Settings > Secrets and variables > Actions`):
+
+1.  `SUPABASE_ACCESS_TOKEN`: Your personal access token. [Generate one here](https://supabase.com/dashboard/account/tokens).
+2.  `SUPABASE_PROJECT_ID`: The project reference ID (`debdriyzfcwvgrhzzzre`).
+
+#### CI/CD Workflow
+- **File**: `.github/workflows/deploy-supabase-functions.yml`
+- **Trigger**: Pushes to `main` branch affecting `supabase/functions/**`.
+- **Manual Trigger**: Can be run manually via the "Actions" tab in GitHub.
+
+#### Token Rotation
+If you need to rotate your access token: 
+1. Generate a new token in the Supabase Dashboard.
+2. Update the `SUPABASE_ACCESS_TOKEN` secret in GitHub.
+3. The next deployment will use the new token automatically.
+
+> [!CAUTION]  
+> **Source of Truth**  
+> Do not use the Supabase web editor to modify Edge Functions. All changes must be committed to the repository to avoid being overwritten by the CI/CD pipeline.

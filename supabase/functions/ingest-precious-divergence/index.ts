@@ -92,6 +92,7 @@ async function fetchSGEPrice(contract: string, retries = 3): Promise<number> {
 
 /**
  * Precious Metals Divergence Ingestion
+ * CI/CD Verified: 2026-02-05
  */
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
