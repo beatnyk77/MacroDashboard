@@ -3,57 +3,25 @@ import { Box, Card, Typography, Grid, Chip, useTheme, Stack, Divider } from '@mu
 import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper, Calendar } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { useMacroEvents } from '@/hooks/useMacroEvents';
-
-interface BriefingItem {
-    label: string;
-    anchor: string;
-    trend: 'up' | 'down' | 'neutral';
-}
+import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
 
 export const TodaysBriefPanel: React.FC = () => {
     const theme = useTheme();
     const { data: regime } = useRegime();
     const { data: liquidity } = useNetLiquidity();
     const { data: events } = useMacroEvents();
+    const { data: headlines } = useMacroHeadlines();
 
-    // Use 7D delta from liquidity data
-    const liquidityDelta = liquidity?.delta || null;
-
-    const liquidityStatus = liquidityDelta
-        ? liquidityDelta > 0 ? 'Expanding' : 'Contracting'
-        : 'Unknown';
-
-    const liquidityColor = liquidityDelta
-        ? liquidityDelta > 0 ? theme.palette.success.main : theme.palette.error.main
-        : theme.palette.text.disabled;
-
-    // Get today's key event
-    const today = useMemo(() => new Date(), []);
-
-    const keyEvent = useMemo(() => {
-        if (!events) return null;
-        return events
-            .filter(e => {
-                const eventDate = new Date(e.event_date);
-                return eventDate.toDateString() === today.toDateString();
-            })
-            .sort((a, b) => {
-                if (a.impact_level === 'High' && b.impact_level !== 'High') return -1;
-                if (a.impact_level !== 'High' && b.impact_level === 'High') return 1;
-                return 0;
-            })[0];
-    }, [events, today]);
-
-    // Key briefing items - representative for institutional storytelling
-    const briefingItems: BriefingItem[] = [
-        { label: 'G20 real rate remains negative, favoring hard assets', anchor: '#macro-orientation-section', trend: 'down' },
-        { label: 'BRICS+ gold share surpassing US reserves logic', anchor: '#de-dollarization-section', trend: 'up' },
-        { label: 'US Private Investment % GDP signals structural consumption dominance', anchor: '#major-economies-overview', trend: 'down' },
-        { label: 'China industrial pulse stabilizing at $3.3Tn FX floor', anchor: '#china-macro-section', trend: 'neutral' },
-        { label: 'India UPI Autopay signals robust domestic liquidity', anchor: '#india-macro-section', trend: 'up' },
-        { label: 'Treasury net issuance pressure mounting on 10Y yield', anchor: '#treasury-snapshot-section', trend: 'down' }
-    ];
+    // Mapping headlines to briefing items
+    const dynamicBriefing = useMemo(() => {
+        if (!headlines || headlines.length === 0) return [];
+        return headlines.slice(0, 5).map((h: MacroHeadline) => ({
+            label: h.title,
+            anchor: '#macro-orientation-section', // Default anchor
+            trend: h.title.includes('↑') || h.title.includes('positive') ? 'up' :
+                (h.title.includes('↓') || h.title.includes('negative') ? 'down' : 'neutral')
+        }));
+    }, [headlines]);
 
     const handleScrollTo = (anchor: string) => {
         const element = document.querySelector(anchor);
@@ -212,36 +180,42 @@ export const TodaysBriefPanel: React.FC = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                             <Newspaper size={16} color={theme.palette.primary.main} />
                             <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.65rem', letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
-                                Key Narrative Shifts
+                                LIVE INTELLIGENCE FEED
                             </Typography>
                         </Box>
                         <Stack spacing={1.5} divider={<Divider sx={{ borderColor: 'rgba(255,255,255,0.03)' }} />}>
-                            {briefingItems.map((item, idx) => (
-                                <Box
-                                    key={idx}
-                                    onClick={() => handleScrollTo(item.anchor)}
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'flex-start',
-                                        gap: 1.5,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s',
-                                        '&:hover': { pl: 1, color: 'primary.main' }
-                                    }}
-                                >
-                                    <Box sx={{
-                                        mt: 0.7,
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: '50%',
-                                        bgcolor: item.trend === 'up' ? 'success.main' : item.trend === 'down' ? 'error.main' : 'text.disabled',
-                                        flexShrink: 0
-                                    }} />
-                                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 600, color: 'text.primary', lineHeight: 1.4 }}>
-                                        {item.label}
-                                    </Typography>
-                                </Box>
-                            ))}
+                            {dynamicBriefing.length > 0 ? (
+                                dynamicBriefing.map((item, idx) => (
+                                    <Box
+                                        key={idx}
+                                        onClick={() => handleScrollTo(item.anchor)}
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'flex-start',
+                                            gap: 1.5,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            '&:hover': { pl: 1, color: 'primary.main' }
+                                        }}
+                                    >
+                                        <Box sx={{
+                                            mt: 0.7,
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: '50%',
+                                            bgcolor: item.trend === 'up' ? 'success.main' : item.trend === 'down' ? 'error.main' : 'text.disabled',
+                                            flexShrink: 0
+                                        }} />
+                                        <Typography variant="body2" sx={{ fontSize: '0.82rem', fontWeight: 600, color: 'text.primary', lineHeight: 1.4 }}>
+                                            {item.label}
+                                        </Typography>
+                                    </Box>
+                                ))
+                            ) : (
+                                <Typography variant="caption" sx={{ color: 'text.disabled', textAlign: 'center', display: 'block', py: 2 }}>
+                                    Awaiting institutional signal ingest...
+                                </Typography>
+                            )}
                         </Stack>
                     </Box>
                 </Grid>
