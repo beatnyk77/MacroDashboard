@@ -49,7 +49,7 @@ export const UpcomingEventsCard: React.FC = () => {
                         opacity: isPast ? 0.7 : 1
                     }}
                 >
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', pl: 0, width: '14%', whiteSpace: 'nowrap' }}>
+                    <TableCell sx={{ py: 1.5, pl: 0, width: '130px', whiteSpace: 'nowrap' }}>
                         <Typography sx={{ fontWeight: 700, fontSize: '0.65rem', color: isPast ? 'text.disabled' : 'text.primary' }}>
                             {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                         </Typography>
@@ -57,17 +57,17 @@ export const UpcomingEventsCard: React.FC = () => {
                             {new Date(event.event_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', width: '10%' }}>
+                    <TableCell sx={{ py: 1.5, width: '80px' }}>
                         <Typography sx={{ fontWeight: 800, fontSize: '0.65rem', color: 'secondary.light' }}>
                             {event.country}
                         </Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', width: '30%' }}>
+                    <TableCell sx={{ py: 1.5 }}>
                         <Typography sx={{ fontWeight: 600, fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {event.event_name}
                         </Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', width: '8%' }}>
+                    <TableCell sx={{ py: 1.5, width: '70px' }}>
                         <Box
                             sx={{
                                 width: 8,
@@ -77,13 +77,13 @@ export const UpcomingEventsCard: React.FC = () => {
                             }}
                         />
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', textAlign: 'right', width: '12%' }}>
+                    <TableCell sx={{ py: 1.5, textAlign: 'right', width: '90px' }}>
                         <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary', fontFamily: 'monospace' }}>{event.forecast || '-'}</Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', textAlign: 'right', width: '12%' }}>
+                    <TableCell sx={{ py: 1.5, textAlign: 'right', width: '90px' }}>
                         <Typography sx={{ fontSize: '0.7rem', color: 'text.disabled', fontFamily: 'monospace' }}>{event.previous || '-'}</Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)', textAlign: 'right', width: '14%', pr: 0 }}>
+                    <TableCell sx={{ py: 1.5, textAlign: 'right', width: '90px', pr: 0 }}>
                         {event.actual ? (
                             <Typography sx={{ fontWeight: 800, fontSize: '0.75rem', color: 'text.primary', fontFamily: 'monospace' }}>
                                 {event.actual}
@@ -123,20 +123,28 @@ export const UpcomingEventsCard: React.FC = () => {
 
             <TableContainer sx={{
                 overflowX: 'auto',
-                flex: 1,
+                width: '100%',
+                bgcolor: 'transparent',
                 '&::-webkit-scrollbar': { height: 4 },
                 '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }
             }}>
-                <Table size="small" sx={{ minWidth: 700, tableLayout: 'fixed' }}>
+                <Table size="small" sx={{
+                    minWidth: 800,
+                    tableLayout: 'fixed',
+                    '& .MuiTableCell-root': {
+                        borderBottom: '1px solid rgba(255,255,255,0.05)',
+                        px: 1
+                    }
+                }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', pl: 0, width: '14%' }}>DATE / TIME</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '10%' }}>COUNTRY</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '30%' }}>EVENT</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '8%' }}>IMPACT</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '12%' }}>FORECAST</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '12%' }}>PREVIOUS</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '14%' }}>ACTUAL</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', pl: 0, width: '130px' }}>DATE / TIME</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '80px' }}>COUNTRY</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none' }}>EVENT</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '70px' }}>IMPACT</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '90px' }}>FORECAST</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '90px' }}>PREVIOUS</TableCell>
+                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '90px', pr: 0 }}>ACTUAL</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

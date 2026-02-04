@@ -64,105 +64,104 @@ const JPY_USD_RATE = 150; // Approx exchange rate
 
 export const BoJBalanceSheetCard: React.FC = () => {
     const { data, isLoading } = useBoJBalanceSheet();
-
-    // Use Excess Reserves as the primary signal
-    const primary = data?.excessReserves;
+    const theme = useTheme();
 
     const formatValue = (val: number | undefined) => {
         if (val === undefined || val === null) return '-';
-        // Scale 100M units to Trillions
         return (val / SCALE_FACTOR).toFixed(1);
     };
 
     const getUsdValue = (val: number | undefined): string => {
         if (val === undefined || val === null) return '-';
         const trillionsYen = val / SCALE_FACTOR;
-        const trillionsUsd = trillionsYen / JPY_USD_RATE; // Approx 150 JPY/USD
+        const trillionsUsd = trillionsYen / JPY_USD_RATE;
         return `$${trillionsUsd.toFixed(2)}T`;
     };
 
+    if (isLoading) return <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 2 }} />;
+
+    const items = [
+        { label: 'EXCESS RESERVES', value: data?.excessReserves?.value, history: data?.excessReserves?.history, primary: true },
+        { label: 'TOTAL ASSETS', value: data?.totalAssets?.value, history: data?.totalAssets?.history },
+        { label: 'MONETARY BASE', value: data?.monetaryBase?.value, history: data?.monetaryBase?.history },
+        { label: 'JGB HOLDINGS', value: data?.jgbHoldings?.value, history: data?.jgbHoldings?.history }
+    ];
+
     return (
-        <Box sx={{ mt: 3, width: '100%', overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 2 }}>
-                <Typography variant="overline" sx={{ color: 'text.secondary', fontWeight: 800, letterSpacing: '0.1em' }}>
-                    Bank of Japan Balance Sheet
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 500 }}>
-                    (Weekly • ~150 ¥/$)
-                </Typography>
-            </Box>
+        <Box sx={{ mt: 4 }}>
+            <Paper sx={{
+                p: 0,
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                overflow: 'hidden'
+            }}>
+                <Box sx={{
+                    p: 2,
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    bgcolor: 'rgba(255,255,255,0.01)'
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: '0.15em', color: 'primary.main' }}>
+                            BANK OF JAPAN SURVEILLANCE
+                        </Typography>
+                        <Chip label="WEEKLY" size="small" sx={{ height: 16, fontSize: '0.55rem', fontWeight: 900, bgcolor: 'rgba(255,255,255,0.05)' }} />
+                    </Box>
+                    <Typography variant="caption" sx={{ color: 'text.disabled', fontFamily: 'monospace' }}>
+                        BASIS: 150 ¥/$ | UNITS: TRILLIONS
+                    </Typography>
+                </Box>
 
-            <Grid container spacing={2} alignItems="stretch">
-                {/* Primary Card: Excess Reserves */}
-                <Grid item xs={12} md={5}>
-                    <MetricCard
-                        label="BoJ Excess Reserves"
-                        sublabel="Primary Liquidity Signal"
-                        value={primary?.value !== undefined ? formatValue(primary.value) : '-'}
-                        prefix="¥"
-                        suffix="T"
-                        delta={primary?.delta_wow !== null && primary?.delta_wow !== undefined ? {
-                            value: `${primary.delta_wow > 0 ? '+' : ''}${(primary.delta_wow / SCALE_FACTOR).toFixed(1)}T`,
-                            period: 'WoW',
-                            trend: primary.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        stats={[
-                            {
-                                label: 'USD Equiv',
-                                value: getUsdValue(primary?.value),
-                                color: 'text.secondary'
-                            }
-                        ]}
-                        isLoading={isLoading}
-                        lastUpdated={primary?.as_of_date}
-                        history={primary?.history}
-                        source="Bank of Japan"
-                        frequency="Weekly"
-                        description="Excess reserves at the Bank of Japan. High values indicate loose monetary policy."
-                        methodology="Proxied by Current Account Balances. Scaled to Trillions of Yen."
-                        sx={{ height: '100%' }}
-                    />
-                </Grid>
+                <Grid container>
+                    {items.map((item, idx) => (
+                        <Grid item xs={12} sm={6} md={3} key={idx} sx={{
+                            p: 3,
+                            borderRight: idx < 3 ? { md: '1px solid rgba(255,255,255,0.05)' } : 'none',
+                            borderBottom: { xs: '1px solid rgba(255,255,255,0.05)', md: 'none' },
+                            position: 'relative',
+                            transition: 'all 0.2s',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' }
+                        }}>
+                            <Typography variant="caption" sx={{
+                                color: 'text.disabled',
+                                fontWeight: 800,
+                                letterSpacing: '0.05em',
+                                display: 'block',
+                                mb: 1,
+                                fontSize: '0.6rem'
+                            }}>
+                                {item.label}
+                            </Typography>
 
-                {/* Sub-cards */}
-                <Grid item xs={12} md={7}>
-                    <Grid container spacing={2} sx={{ height: '100%' }}>
-                        <Grid item xs={12} sm={4}>
-                            <Box sx={{ height: '100%' }}>
-                                <BoJSubCard
-                                    label="Total Assets"
-                                    value={data?.totalAssets?.value ? (data.totalAssets.value / SCALE_FACTOR) : undefined}
-                                    history={data?.totalAssets?.history}
-                                    isLoading={isLoading}
-                                    secondaryValue={getUsdValue(data?.totalAssets?.value)}
-                                />
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                                <Typography sx={{
+                                    fontSize: item.primary ? '1.8rem' : '1.4rem',
+                                    fontWeight: 900,
+                                    fontFamily: 'monospace',
+                                    color: item.primary ? 'text.primary' : 'text.secondary'
+                                }}>
+                                    ¥{formatValue(item.value)}T
+                                </Typography>
                             </Box>
+
+                            <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block', mb: 2, fontFamily: 'monospace' }}>
+                                {getUsdValue(item.value)}
+                            </Typography>
+
+                            {item.history && item.history.length > 0 && (
+                                <Box sx={{ height: 30, opacity: 0.4 }}>
+                                    <Sparkline data={item.history} color={theme.palette.primary.main} height={30} />
+                                </Box>
+                            )}
                         </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <Box sx={{ height: '100%' }}>
-                                <BoJSubCard
-                                    label="Monetary Base"
-                                    value={data?.monetaryBase?.value ? (data.monetaryBase.value / SCALE_FACTOR) : undefined}
-                                    history={data?.monetaryBase?.history}
-                                    isLoading={isLoading}
-                                    secondaryValue={getUsdValue(data?.monetaryBase?.value)}
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <Box sx={{ height: '100%' }}>
-                                <BoJSubCard
-                                    label="JGB Holdings"
-                                    value={data?.jgbHoldings?.value ? (data.jgbHoldings.value / SCALE_FACTOR) : undefined}
-                                    history={data?.jgbHoldings?.history}
-                                    isLoading={isLoading}
-                                    secondaryValue={getUsdValue(data?.jgbHoldings?.value)}
-                                />
-                            </Box>
-                        </Grid>
-                    </Grid>
+                    ))}
                 </Grid>
-            </Grid>
+            </Paper>
         </Box>
     );
 };
