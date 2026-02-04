@@ -61,6 +61,8 @@ export default [
                 TouchEvent: 'readonly',
                 PopStateEvent: 'readonly',
                 IntersectionObserver: 'readonly',
+                IntersectionObserverEntry: 'readonly',
+                IntersectionObserverCallback: 'readonly',
                 MutationObserver: 'readonly',
                 ResizeObserver: 'readonly',
                 Performance: 'readonly',

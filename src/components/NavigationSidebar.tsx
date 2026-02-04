@@ -33,7 +33,7 @@ export const NavigationSidebar: React.FC = () => {
     const [activeId, setActiveId] = useState('top');
 
     useEffect(() => {
-        const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+        const handleIntersect: IntersectionObserverCallback = (entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     setActiveId(entry.target.id);
