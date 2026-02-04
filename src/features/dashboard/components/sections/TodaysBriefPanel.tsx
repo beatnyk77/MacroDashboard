@@ -3,6 +3,7 @@ import { Box, Card, Typography, Grid, Chip, useTheme, Stack, Divider } from '@mu
 import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper, Calendar } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
+import { useMacroEvents } from '@/hooks/useMacroEvents';
 import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
 
 export const TodaysBriefPanel: React.FC = () => {
@@ -11,6 +12,19 @@ export const TodaysBriefPanel: React.FC = () => {
     const { data: liquidity } = useNetLiquidity();
     const { data: events } = useMacroEvents();
     const { data: headlines } = useMacroHeadlines();
+
+    // Restoration of missing variables for JSX
+    const liquidityDelta = liquidity?.delta || null;
+    const liquidityStatus = liquidityDelta ? (liquidityDelta > 0 ? 'Expanding' : 'Contracting') : 'Awaiting Data';
+    const liquidityColor = liquidityDelta ? (liquidityDelta > 0 ? theme.palette.success.main : theme.palette.error.main) : theme.palette.text.disabled;
+
+    const today = useMemo(() => new Date(), []);
+    const keyEvent = useMemo(() => {
+        if (!events) return null;
+        return events
+            .filter(e => new Date(e.event_date).toDateString() === today.toDateString())
+            .sort((a, b) => a.impact_level === 'High' ? -1 : 1)[0];
+    }, [events, today]);
 
     // Mapping headlines to briefing items
     const dynamicBriefing = useMemo(() => {
