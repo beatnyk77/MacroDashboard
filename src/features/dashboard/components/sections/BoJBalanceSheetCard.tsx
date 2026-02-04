@@ -1,63 +1,7 @@
 import React from 'react';
-import { Box, Grid, Typography, useTheme, Paper, Skeleton } from '@mui/material';
+import { Box, Grid, Typography, useTheme, Paper, Skeleton, Chip } from '@mui/material';
 import { useBoJBalanceSheet } from '@/hooks/useBoJBalanceSheet';
-import { MetricCard } from '@/components/MetricCard';
 import { Sparkline } from '@/components/Sparkline';
-
-const BoJSubCard: React.FC<{
-    label: string,
-    value: number | undefined,
-    history: { date: string; value: number }[] | undefined,
-    isLoading: boolean,
-    secondaryValue?: string
-}> = ({ label, value, history, isLoading, secondaryValue }) => {
-    const theme = useTheme();
-
-    return (
-        <Paper sx={{
-            p: 1.5,
-            bgcolor: 'rgba(255,255,255,0.02)',
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 2,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            '&:hover': {
-                bgcolor: 'rgba(255,255,255,0.04)',
-                transform: 'translateY(-2px)',
-                transition: 'all 0.2s'
-            }
-        }}>
-            <Box>
-                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 0.5 }}>
-                    {label}
-                </Typography>
-                {isLoading ? (
-                    <Skeleton variant="text" width="60%" />
-                ) : (
-                    <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: 'monospace', mb: 0.5 }}>
-                            ¥{value?.toFixed(1)}T
-                        </Typography>
-                        {secondaryValue && (
-                            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1, fontFamily: 'monospace' }}>
-                                {secondaryValue}
-                            </Typography>
-                        )}
-                    </Box>
-                )}
-            </Box>
-
-            {!isLoading && history && history.length > 0 && (
-                <Box sx={{ height: 24, opacity: 0.6, mt: 1 }}>
-                    <Sparkline data={history} color={theme.palette.primary.main} height={24} />
-                </Box>
-            )}
-        </Paper>
-    );
-};
 
 const SCALE_FACTOR = 10000; // Convert 100M JPY to Trillion JPY
 const JPY_USD_RATE = 150; // Approx exchange rate
