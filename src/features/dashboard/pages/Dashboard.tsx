@@ -34,11 +34,6 @@ export const Dashboard: React.FC = () => {
                 </Box>
             </Box>
 
-            {/* 2.5. How to Use GraphiQuestor */}
-            <Box id="how-to-use">
-                <HowToUseCard />
-            </Box>
-
             <Box sx={{ mt: 4 }}>
                 {/* 3. Macro Orientation */}
                 <Box id="macro-orientation-section">
@@ -102,6 +97,11 @@ export const Dashboard: React.FC = () => {
 
                 {/* Additional context components */}
                 <ScenarioStudio />
+            </Box>
+
+            {/* 15. How to Use GraphiQuestor (Relocated to bottom) */}
+            <Box id="how-to-use" sx={{ mt: 6 }}>
+                <HowToUseCard />
             </Box>
 
             <Box id="gold-valuation-strip">

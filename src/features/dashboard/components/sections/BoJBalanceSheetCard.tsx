@@ -120,7 +120,7 @@ export const BoJBalanceSheetCard: React.FC = () => {
                         frequency="Weekly"
                         description="Excess reserves at the Bank of Japan. High values indicate loose monetary policy."
                         methodology="Proxied by Current Account Balances. Scaled to Trillions of Yen."
-                        sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                        sx={{ height: '100%' }}
                     />
                 </Grid>
 
@@ -128,31 +128,37 @@ export const BoJBalanceSheetCard: React.FC = () => {
                 <Grid item xs={12} md={7}>
                     <Grid container spacing={2} sx={{ height: '100%' }}>
                         <Grid item xs={12} sm={4}>
-                            <BoJSubCard
-                                label="Total Assets"
-                                value={data?.totalAssets?.value ? (data.totalAssets.value / SCALE_FACTOR) : undefined}
-                                history={data?.totalAssets?.history}
-                                isLoading={isLoading}
-                                secondaryValue={getUsdValue(data?.totalAssets?.value)}
-                            />
+                            <Box sx={{ height: '100%' }}>
+                                <BoJSubCard
+                                    label="Total Assets"
+                                    value={data?.totalAssets?.value ? (data.totalAssets.value / SCALE_FACTOR) : undefined}
+                                    history={data?.totalAssets?.history}
+                                    isLoading={isLoading}
+                                    secondaryValue={getUsdValue(data?.totalAssets?.value)}
+                                />
+                            </Box>
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            <BoJSubCard
-                                label="Monetary Base"
-                                value={data?.monetaryBase?.value ? (data.monetaryBase.value / SCALE_FACTOR) : undefined}
-                                history={data?.monetaryBase?.history}
-                                isLoading={isLoading}
-                                secondaryValue={getUsdValue(data?.monetaryBase?.value)}
-                            />
+                            <Box sx={{ height: '100%' }}>
+                                <BoJSubCard
+                                    label="Monetary Base"
+                                    value={data?.monetaryBase?.value ? (data.monetaryBase.value / SCALE_FACTOR) : undefined}
+                                    history={data?.monetaryBase?.history}
+                                    isLoading={isLoading}
+                                    secondaryValue={getUsdValue(data?.monetaryBase?.value)}
+                                />
+                            </Box>
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            <BoJSubCard
-                                label="JGB Holdings"
-                                value={data?.jgbHoldings?.value ? (data.jgbHoldings.value / SCALE_FACTOR) : undefined}
-                                history={data?.jgbHoldings?.history}
-                                isLoading={isLoading}
-                                secondaryValue={getUsdValue(data?.jgbHoldings?.value)}
-                            />
+                            <Box sx={{ height: '100%' }}>
+                                <BoJSubCard
+                                    label="JGB Holdings"
+                                    value={data?.jgbHoldings?.value ? (data.jgbHoldings.value / SCALE_FACTOR) : undefined}
+                                    history={data?.jgbHoldings?.history}
+                                    isLoading={isLoading}
+                                    secondaryValue={getUsdValue(data?.jgbHoldings?.value)}
+                                />
+                            </Box>
                         </Grid>
                     </Grid>
                 </Grid>

@@ -212,7 +212,7 @@ export const TodaysBriefPanel: React.FC = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                             <Newspaper size={16} color={theme.palette.primary.main} />
                             <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.65rem', letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
-                                Key Narrative Shifts (3-5 Items)
+                                Key Narrative Shifts
                             </Typography>
                         </Box>
                         <Stack spacing={1.5} divider={<Divider sx={{ borderColor: 'rgba(255,255,255,0.03)' }} />}>

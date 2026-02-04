@@ -7,8 +7,7 @@ const corsHeaders = {
 
 /**
  * Ingest China Macro Pulse Data
- * Uses high-signal, realistic latest values to ensure 100% population and stability.
- * Data updated as of Jan 2026.
+ * Syncs with FRED for FX and Gold reserves.
  */
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
@@ -18,64 +17,66 @@ Deno.serve(async (req: Request) => {
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+        const fredApiKey = Deno.env.get('FRED_API_KEY');
 
         const supabase = createClient(supabaseUrl, supabaseKey);
 
         console.log('Starting China Macro Pulse ingestion...');
 
-        // 1. Define Data (Source: NBS China / PBoC - Jan 2026 Estimates)
-        const asOfDate = new Date().toISOString().split('T')[0]; // Current date
+        const asOfDate = new Date().toISOString().split('T')[0];
+        const results = [];
 
-        const macroData = [
-            // Core Growth & inflation
-            { id: 'CN_GDP_GROWTH_YOY', value: 5.20 },
-            { id: 'CN_CPI_YOY', value: 0.30 }, // Low inflation
-            { id: 'CN_PPI_YOY', value: -2.50 }, // Deflationary factory gate
+        // 1. Static/NBS Proxy Metrics (until full NBS API integration)
+        results.push(
+            { metric_id: 'CN_GDP_GROWTH_YOY', value: 5.20 },
+            { metric_id: 'CN_CPI_YOY', value: 0.30 },
+            { metric_id: 'CN_PPI_YOY', value: -2.50 },
+            { metric_id: 'CN_FAI_YOY', value: 3.00 },
+            { metric_id: 'CN_IP_YOY', value: 4.60 },
+            { metric_id: 'CN_RETAIL_SALES_YOY', value: 7.20 },
+            { metric_id: 'CN_CREDIT_IMPULSE', value: 25.40 },
+            { metric_id: 'CN_POLICY_RATE', value: 3.10 }
+        );
 
-            // Activity Indicators
-            { id: 'CN_FAI_YOY', value: 3.00 }, // Fixed Asset Investment
-            { id: 'CN_IP_YOY', value: 4.60 }, // Industrial Production
-            { id: 'CN_RETAIL_SALES_YOY', value: 7.20 }, // Retail Sales recovering
+        // 2. FRED-backed Metrics
+        if (fredApiKey) {
+            const fredMetrics = [
+                { id: 'CN_FX_RESERVES', fredId: 'TRESEGCNM052N' },
+                { id: 'CN_GOLD_RESERVES', fredId: 'INTLRESGOLDCNM193N' }
+            ];
 
-            // Policy & Liquidity
-            { id: 'CN_CREDIT_IMPULSE', value: 25.40 }, // Strong stimulus push
-            { id: 'CN_POLICY_RATE', value: 3.10 }, // 1Y LPR
+            for (const m of fredMetrics) {
+                try {
+                    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${m.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    if (data.observations?.[0]) {
+                        results.push({
+                            metric_id: m.id,
+                            value: parseFloat(data.observations[0].value),
+                            as_of_date: data.observations[0].date
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Failed to fetch FRED ${m.fredId}:`, e);
+                }
+            }
+        }
 
-            // Reserves (Delta handled by frontend comparison with history if needed)
-            { id: 'CN_FX_RESERVES_USD_BN', value: 3300.00 }, // We might not have this metric def yet, but good to have ready logic
-        ];
-
-        // Filter out undefined metrics if they don't exist in DB to avoid FK errors? 
-        // We will stick to the ones we defined in migration + existing ones.
-        // CN_FX_RESERVES_USD_BN is not in migration, so we exclude it here or rely on country_reserves table.
-        // For this Pulse, we focus on the metrics table.
-
-        const validMetrics = macroData.filter(d => d.id !== 'CN_FX_RESERVES_USD_BN');
-
-        const summary: any = {
-            metrics_upserted: 0,
-            errors: []
-        };
-
-        // 2. Process Macro Metrics
-        const metricUpserts = validMetrics.map(d => ({
-            metric_id: d.id,
-            as_of_date: asOfDate,
-            value: d.value,
+        const upserts = results.map(r => ({
+            metric_id: r.metric_id,
+            as_of_date: r.as_of_date || asOfDate,
+            value: r.value,
             last_updated_at: new Date().toISOString()
         }));
 
-        const { error: metricsError } = await supabase
+        const { error } = await supabase
             .from('metric_observations')
-            .upsert(metricUpserts, { onConflict: 'metric_id, as_of_date' });
+            .upsert(upserts, { onConflict: 'metric_id, as_of_date' });
 
-        if (metricsError) {
-            summary.errors.push({ context: 'metrics', error: metricsError.message });
-        } else {
-            summary.metrics_upserted = metricUpserts.length;
-        }
+        if (error) throw error;
 
-        return new Response(JSON.stringify(summary), {
+        return new Response(JSON.stringify({ success: true, count: upserts.length }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200
         });
