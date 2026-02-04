@@ -36,22 +36,22 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Start logging
-    const logId = await logIngestionStart(supabase, 'ingest-ecb-balance-sheet');
+    const logId = await logIngestionStart(supabase, 'ingest-imf-sdr');
 
     try {
         const fredApiKey = Deno.env.get('FRED_API_KEY');
-
         if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
 
-        // Metrics to fetch from FRED
+        // IMF SDR Allocations can be fetched from FRED (series: SDR)
+        // Or specific SDR rates. For balance sheet purposes, we usually look at Total SDRs.
         const metricsMap = [
-            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' }
+            { id: 'IMF_SDR_TOTAL_BILLIONS', fredId: 'SDR' } // SDR Allocations in Billions
         ];
 
         const results: any[] = [];
 
         for (const item of metricsMap) {
-            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`;
+            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=50`;
 
             const response = await fetchWithRetry(fredUrl);
             const data = await response.json();
@@ -62,15 +62,6 @@ Deno.serve(async (req: Request) => {
                     if (!isNaN(value)) {
                         results.push({
                             metric_id: item.id,
-                            as_of_date: obs.date,
-                            value: value,
-                            last_updated_at: new Date().toISOString()
-                        });
-
-                        // Fallback: Also populate Excess Liquidity with same data for now to show something
-                        // In a real scenario, we'd subtract liabilities here.
-                        results.push({
-                            metric_id: 'ECB_EXCESS_LIQUIDITY_MEUR',
                             as_of_date: obs.date,
                             value: value,
                             last_updated_at: new Date().toISOString()
@@ -91,7 +82,7 @@ Deno.serve(async (req: Request) => {
         const summary = {
             status: 'success',
             processed: results.length,
-            metrics: ['ECB_TOTAL_ASSETS_MEUR', 'ECB_EXCESS_LIQUIDITY_MEUR']
+            metrics: metricsMap.map(m => m.id)
         };
 
         // Log success
@@ -105,7 +96,7 @@ Deno.serve(async (req: Request) => {
         });
 
     } catch (error: any) {
-        console.error('ECB Ingestion error:', error);
+        console.error('IMF SDR Ingestion error:', error);
 
         // Log failure
         await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });

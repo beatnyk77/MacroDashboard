@@ -36,16 +36,16 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Start logging
-    const logId = await logIngestionStart(supabase, 'ingest-ecb-balance-sheet');
+    const logId = await logIngestionStart(supabase, 'ingest-boj-balance-sheet');
 
     try {
         const fredApiKey = Deno.env.get('FRED_API_KEY');
-
         if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
 
         // Metrics to fetch from FRED
         const metricsMap = [
-            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' }
+            { id: 'BOJ_TOTAL_ASSETS_TRJPY', fredId: 'JPNASSETS' }, // Scale: Millions of Yen -> Trillions
+            { id: 'BOJ_MONETARY_BASE_TRJPY', fredId: 'BASEML2257AMI' }
         ];
 
         const results: any[] = [];
@@ -58,19 +58,16 @@ Deno.serve(async (req: Request) => {
 
             if (data.observations) {
                 data.observations.forEach((obs: any) => {
-                    const value = parseFloat(obs.value);
+                    let value = parseFloat(obs.value);
                     if (!isNaN(value)) {
+                        // Scaling: JPNASSETS is in Millions. 
+                        // To get Trillions, divide by 1,000,000
+                        if (item.fredId === 'JPNASSETS' || item.fredId === 'BASEML2257AMI') {
+                            value = value / 1000000;
+                        }
+
                         results.push({
                             metric_id: item.id,
-                            as_of_date: obs.date,
-                            value: value,
-                            last_updated_at: new Date().toISOString()
-                        });
-
-                        // Fallback: Also populate Excess Liquidity with same data for now to show something
-                        // In a real scenario, we'd subtract liabilities here.
-                        results.push({
-                            metric_id: 'ECB_EXCESS_LIQUIDITY_MEUR',
                             as_of_date: obs.date,
                             value: value,
                             last_updated_at: new Date().toISOString()
@@ -91,7 +88,7 @@ Deno.serve(async (req: Request) => {
         const summary = {
             status: 'success',
             processed: results.length,
-            metrics: ['ECB_TOTAL_ASSETS_MEUR', 'ECB_EXCESS_LIQUIDITY_MEUR']
+            metrics: metricsMap.map(m => m.id)
         };
 
         // Log success
@@ -105,7 +102,7 @@ Deno.serve(async (req: Request) => {
         });
 
     } catch (error: any) {
-        console.error('ECB Ingestion error:', error);
+        console.error('BoJ Ingestion error:', error);
 
         // Log failure
         await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });

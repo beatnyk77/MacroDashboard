@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { sendSlackAlert } from '../_shared/slack.ts'
+import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -34,14 +35,17 @@ Deno.serve(async (req: Request) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // Start logging
+  const logId = await logIngestionStart(supabase, 'ingest-fred');
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const fredApiKey = Deno.env.get('FRED_API_KEY');
 
     if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // 1. Resolve FRED source_id
     const { data: source, error: sourceError } = await supabase
@@ -62,7 +66,9 @@ Deno.serve(async (req: Request) => {
 
     if (metricsError) throw metricsError;
     if (!metrics || metrics.length === 0) {
-      return new Response(JSON.stringify({ message: 'No active FRED metrics' }), {
+      const msg = 'No active FRED metrics';
+      await logIngestionEnd(supabase, logId, 'success', { metadata: { message: msg } });
+      return new Response(JSON.stringify({ message: msg }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -76,6 +82,8 @@ Deno.serve(async (req: Request) => {
       error_count: 0,
       details: []
     };
+
+    let totalInserted = 0;
 
     for (const metric of targetMetrics) {
       const fredId = (metric.metadata as any).fred_id;
@@ -134,6 +142,7 @@ Deno.serve(async (req: Request) => {
 
         if (upsertError) throw upsertError;
 
+        totalInserted += observations.length;
         summary.success_count++;
         summary.details.push({
           metric: metric.id,
@@ -154,6 +163,12 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // Log success
+    await logIngestionEnd(supabase, logId, 'success', {
+      rows_inserted: totalInserted,
+      metadata: { summary }
+    });
+
     return new Response(JSON.stringify(summary), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: summary.error_count === summary.total_attempted ? 500 : 200
@@ -162,6 +177,10 @@ Deno.serve(async (req: Request) => {
   } catch (error: any) {
     console.error('Master ingestion error:', error);
     await sendSlackAlert(`GraphiQuestor ingestion failed: ingest-fred - ${error.message}`);
+
+    // Log failure
+    await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,

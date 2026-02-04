@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.3.2'
+import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -22,10 +23,14 @@ Deno.serve(async (req: Request) => {
         return new Response('ok', { headers: corsHeaders })
     }
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Start logging
+    const logId = await logIngestionStart(supabase, 'ingest-macro-news-headlines');
+
     try {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        const supabase = createClient(supabaseUrl, supabaseKey)
         const parser = new XMLParser()
 
         console.log('Starting Macro News ingestion...')
@@ -115,16 +120,28 @@ Deno.serve(async (req: Request) => {
         if (deleteError) console.error('Error deleting old articles:', deleteError)
         else console.log(`Cleaned up old articles.`)
 
-        return new Response(JSON.stringify({
+        const summary = {
             message: 'Ingestion complete',
             total_fetched: articles.length,
             total_filtered: filteredArticles.length
-        }), {
+        };
+
+        // Log success
+        await logIngestionEnd(supabase, logId, 'success', {
+            rows_inserted: filteredArticles.length,
+            metadata: { summary }
+        });
+
+        return new Response(JSON.stringify(summary), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
 
     } catch (error: any) {
         console.error('Master Error:', error.message)
+
+        // Log failure
+        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }

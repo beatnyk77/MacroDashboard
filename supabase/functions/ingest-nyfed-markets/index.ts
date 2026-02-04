@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
+import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -25,14 +26,17 @@ Deno.serve(async (req: Request) => {
         return new Response('ok', { headers: corsHeaders })
     }
 
-    try {
-        const supabaseClient = createClient(
-            // @ts-ignore: Deno is available in Supabase Edge Functions
-            Deno.env.get('SUPABASE_URL') ?? '',
-            // @ts-ignore: Deno is available in Supabase Edge Functions
-            Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        )
+    const supabaseClient = createClient(
+        // @ts-ignore: Deno is available in Supabase Edge Functions
+        Deno.env.get('SUPABASE_URL') ?? '',
+        // @ts-ignore: Deno is available in Supabase Edge Functions
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
+    // Start logging
+    const logId = await logIngestionStart(supabaseClient, 'ingest-nyfed-markets');
+
+    try {
         const results: any[] = [];
         const errors: any[] = [];
 
@@ -117,11 +121,22 @@ Deno.serve(async (req: Request) => {
             if (upsertError) throw upsertError;
         }
 
+        const summary = { success: true, results_count: results.length, error_count: errors.length, details: { results, errors } };
+
+        // Log success
+        await logIngestionEnd(supabaseClient, logId, 'success', {
+            rows_inserted: results.length,
+            metadata: { summary }
+        });
+
         return new Response(
-            JSON.stringify({ success: true, results_count: results.length, error_count: errors.length, details: { results, errors } }),
+            JSON.stringify(summary),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
     } catch (error: any) {
+        // Log failure
+        await logIngestionEnd(supabaseClient, logId, 'failed', { error_message: error.message });
+
         return new Response(
             JSON.stringify({ error: error.message }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
