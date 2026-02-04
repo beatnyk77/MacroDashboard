@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
+import { withTimeout } from '../_shared/timeout-guard.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -37,26 +38,28 @@ Deno.serve(async (req: Request) => {
         const results: any[] = []
         const errors: any[] = []
 
+        // Use timeout guard for the whole block or individual sections
         // 1. Debt to the Penny (US_DEBT_USD_TN)
         // https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny
         try {
-            const url = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date&page[size]=100'
-            const response = await fetchWithRetry(url)
-            const json = await response.json()
+            await withTimeout(async () => {
+                const url = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date&page[size]=100'
+                const response = await fetchWithRetry(url)
+                const json = await response.json()
 
-            if (json.data) {
-                const debtData = json.data
-                    .map((item: any) => ({
-                        metric_id: 'US_DEBT_USD_TN',
-                        as_of_date: item.record_date,
-                        value: parseFloat(item.tot_pub_debt_out_amt) / 1000000000000, // Dollars to Trillions
-                        last_updated_at: new Date().toISOString()
-                    }))
-                    .filter((item: any) => !isNaN(item.value))
+                if (json.data) {
+                    const debtData = json.data
+                        .map((item: any) => ({
+                            metric_id: 'US_DEBT_USD_TN',
+                            as_of_date: item.record_date,
+                            value: parseFloat(item.tot_pub_debt_out_amt) / 1000000000000, // Dollars to Trillions
+                            last_updated_at: new Date().toISOString()
+                        }))
+                        .filter((item: any) => !isNaN(item.value))
 
-                // We only need the latest few, or all 100? Upsert handles dedup.
-                results.push(...debtData)
-            }
+                    results.push(...debtData)
+                }
+            }, 45000, 'US Debt Ingestion');
         } catch (e: any) {
             errors.push({ metric: 'US_DEBT_USD_TN', error: e.message })
             console.error('Error fetching US Debt:', e)
@@ -91,7 +94,13 @@ Deno.serve(async (req: Request) => {
         console.error('Fiscal Data Ingestion error:', error.message)
 
         // Log failure
-        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+        try {
+            if (logId) {
+                await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+            }
+        } catch (logErr) {
+            console.error('Failed to log ingestion end:', logErr);
+        }
 
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,

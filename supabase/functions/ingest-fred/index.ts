@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { sendSlackAlert } from '../_shared/slack.ts'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
+import { withTimeout } from '../_shared/timeout-guard.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -89,67 +90,70 @@ Deno.serve(async (req: Request) => {
       const fredId = (metric.metadata as any).fred_id;
 
       try {
-        // A. Get latest date in DB to skip if current
-        const { data: latestObs } = await supabase
-          .from('metric_observations')
-          .select('as_of_date')
-          .eq('metric_id', metric.id)
-          .order('as_of_date', { ascending: false })
-          .limit(1)
-          .single();
+        // Use timeout guard for per-metric processing (45 seconds)
+        await withTimeout((async () => {
+          // A. Get latest date in DB to skip if current
+          const { data: latestObs } = await supabase
+            .from('metric_observations')
+            .select('as_of_date')
+            .eq('metric_id', metric.id)
+            .order('as_of_date', { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
-        const lastDate = latestObs?.as_of_date;
-        console.log(`[FRED] ${fredId}: Last DB date = ${lastDate || 'none'}`);
+          const lastDate = latestObs?.as_of_date;
+          console.log(`[FRED] ${fredId}: Last DB date = ${lastDate || 'none'}`);
 
-        // B. Fetch from FRED (high limit to ensure 25-year backfill for Z-scores)
-        const fredUnits = (metric.metadata as any)?.fred_units;
-        const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
-        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=500${unitsParam}`;
+          // B. Fetch from FRED (high limit to ensure 25-year backfill for Z-scores)
+          const fredUnits = (metric.metadata as any)?.fred_units;
+          const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
+          const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=500${unitsParam}`;
 
-        const response = await fetchWithRetry(fredUrl);
-        const data = await response.json();
+          const response = await fetchWithRetry(fredUrl);
+          const data = await response.json();
 
-        if (!data.observations || !Array.isArray(data.observations)) {
-          throw new Error(`Invalid response from FRED for ${fredId}`);
-        }
+          if (!data.observations || !Array.isArray(data.observations)) {
+            throw new Error(`Invalid response from FRED for ${fredId}`);
+          }
 
-        console.log(`[FRED] ${fredId}: Received ${data.observations.length} observations from API`);
+          console.log(`[FRED] ${fredId}: Received ${data.observations.length} observations from API`);
 
-        // C. Normalize and filter
-        const observations = data.observations
-          .map((obs: any) => ({
-            metric_id: metric.id,
-            as_of_date: obs.date,
-            value: parseFloat(obs.value),
-            last_updated_at: new Date().toISOString()
-          }))
-          .filter((obs: any) => {
-            const isValid = !isNaN(obs.value);
-            if (!isValid) console.log(`[FRED] ${fredId}: Skipping invalid value for ${obs.as_of_date}`);
-            return isValid;
+          // C. Normalize and filter
+          const observations = data.observations
+            .map((obs: any) => ({
+              metric_id: metric.id,
+              as_of_date: obs.date,
+              value: parseFloat(obs.value),
+              last_updated_at: new Date().toISOString()
+            }))
+            .filter((obs: any) => {
+              const isValid = !isNaN(obs.value);
+              if (!isValid) console.log(`[FRED] ${fredId}: Skipping invalid value for ${obs.as_of_date}`);
+              return isValid;
+            });
+
+          if (observations.length === 0) {
+            console.log(`[FRED] ${fredId}: Already up to date, skipping upsert`);
+            summary.details.push({ metric: metric.id, status: 'skipped', message: 'Already up to date' });
+            return;
+          }
+
+          // D. Idempotent UPSERT
+          const { error: upsertError } = await supabase
+            .from('metric_observations')
+            .upsert(observations, { onConflict: 'metric_id, as_of_date' });
+
+          if (upsertError) throw upsertError;
+
+          totalInserted += observations.length;
+          summary.success_count++;
+          summary.details.push({
+            metric: metric.id,
+            fred_id: fredId,
+            status: 'success',
+            inserted: observations.length
           });
-
-        if (observations.length === 0) {
-          console.log(`[FRED] ${fredId}: Already up to date, skipping upsert`);
-          summary.details.push({ metric: metric.id, status: 'skipped', message: 'Already up to date' });
-          continue;
-        }
-
-        // D. Idempotent UPSERT
-        const { error: upsertError } = await supabase
-          .from('metric_observations')
-          .upsert(observations, { onConflict: 'metric_id, as_of_date' });
-
-        if (upsertError) throw upsertError;
-
-        totalInserted += observations.length;
-        summary.success_count++;
-        summary.details.push({
-          metric: metric.id,
-          fred_id: fredId,
-          status: 'success',
-          inserted: observations.length
-        });
+        })(), 45000, `FRED Ingestion for ${fredId}`);
 
       } catch (err: any) {
         summary.error_count++;
@@ -163,7 +167,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Log success
+    // Log final results
     await logIngestionEnd(supabase, logId, 'success', {
       rows_inserted: totalInserted,
       metadata: { summary }
@@ -178,8 +182,14 @@ Deno.serve(async (req: Request) => {
     console.error('Master ingestion error:', error);
     await sendSlackAlert(`GraphiQuestor ingestion failed: ingest-fred - ${error.message}`);
 
-    // Log failure
-    await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+    // Ensure log end is recorded
+    try {
+      if (logId) {
+        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+      }
+    } catch (logErr) {
+      console.error('Failed to log ingestion end:', logErr);
+    }
 
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

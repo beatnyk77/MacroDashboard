@@ -4,6 +4,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useG20Sovereign } from '@/hooks/useG20Sovereign';
 import { USDebtGoldBackingCard } from '../cards/USDebtGoldBackingCard';
+import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
 
 export const TreasurySnapshotSection: React.FC = () => {
     const { data: debt, isLoading: debtLoading } = useLatestMetric('UST_DEBT_TOTAL');
@@ -24,8 +25,8 @@ export const TreasurySnapshotSection: React.FC = () => {
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Total Public Debt"
-                        value={debt?.value ? (debt.value / 1e12).toFixed(1) : '-'}
-                        delta={debt?.delta !== null ? { value: `${(debt?.delta || 0).toFixed(1)}B`, period: debt?.deltaPeriod || 'MoM', trend: debt?.trend || 'neutral' } : undefined}
+                        value={debt?.value ? (debt.value / 1e12) : 0}
+                        delta={debt?.delta !== null ? { value: formatNumber(debt?.delta, { decimals: 1, suffix: 'B' }), period: debt?.deltaPeriod || 'MoM', trend: debt?.trend || 'neutral' } : undefined}
                         status={debt?.status}
                         history={debt?.history}
                         prefix="$"
@@ -44,8 +45,8 @@ export const TreasurySnapshotSection: React.FC = () => {
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Net Monthly Issuance"
-                        value={netSupply?.value !== undefined ? (netSupply.value / 1e9).toFixed(1) : '-'}
-                        delta={netSupply?.delta !== null ? { value: `${(netSupply?.delta || 0 / 1e9).toFixed(1)}`, period: netSupply?.deltaPeriod || 'MoM', trend: netSupply?.trend || 'neutral' } : undefined}
+                        value={netSupply?.value !== undefined ? (netSupply.value / 1e9) : 0}
+                        delta={netSupply?.delta !== null ? { value: formatNumber((netSupply?.delta || 0) / 1e9, { decimals: 1 }), period: netSupply?.deltaPeriod || 'MoM', trend: netSupply?.trend || 'neutral' } : undefined}
                         status={netSupply?.status}
                         history={netSupply?.history}
                         prefix="$"
@@ -64,8 +65,9 @@ export const TreasurySnapshotSection: React.FC = () => {
                 <Grid item xs={12} md={4}>
                     <MetricCard
                         label="Refinancing Risk (12M)"
-                        value={refi?.value !== undefined ? refi.value.toFixed(1) : '-'}
+                        value={refi?.value !== undefined ? refi.value : 0}
                         status={refi?.value && refi.value > 30 ? 'warning' : 'safe'}
+                        suffix="%"
                         zScore={refi?.zScore}
                         percentile={refi?.percentile}
                         description="Tracks the percentage of total US marketable debt maturing within the next 12 months."
@@ -90,8 +92,8 @@ export const TreasurySnapshotSection: React.FC = () => {
                 <Grid item xs={12} md={6}>
                     <MetricCard
                         label="Primary Dealer Treasury Holdings"
-                        value={pdPositions?.value !== undefined ? pdPositions.value.toFixed(1) : '-'}
-                        delta={pdPositions?.delta !== null && pdPositions?.delta !== undefined ? { value: `${pdPositions.delta.toFixed(1)}B`, period: 'Weekly', trend: pdPositions.trend || 'neutral' } : undefined}
+                        value={pdPositions?.value !== undefined ? pdPositions.value : 0}
+                        delta={pdPositions?.delta !== null && pdPositions?.delta !== undefined ? { value: formatNumber(pdPositions.delta, { decimals: 1, suffix: 'B' }), period: 'Weekly', trend: pdPositions.trend || 'neutral' } : undefined}
                         status={pdPositions?.status}
                         history={pdPositions?.history}
                         prefix="$"
@@ -117,8 +119,8 @@ export const TreasurySnapshotSection: React.FC = () => {
                 <Grid item xs={12} md={3}>
                     <MetricCard
                         label="G20 Debt/GDP"
-                        value={g20?.debt_gdp_current?.toFixed(1) || '-'}
-                        delta={g20?.debt_gdp_delta ? { value: g20.debt_gdp_delta.toFixed(1), period: 'YoY', trend: g20.debt_gdp_delta > 0 ? 'up' : 'down' } : undefined}
+                        value={g20?.debt_gdp_current || 0}
+                        delta={g20?.debt_gdp_delta ? { value: formatDelta(g20.debt_gdp_delta, { decimals: 1 }), period: 'YoY', trend: g20.debt_gdp_delta > 0 ? 'up' : 'down' } : undefined}
                         status={g20?.debt_gdp_current && g20.debt_gdp_current > 100 ? 'danger' : 'neutral'}
                         suffix="%"
                         isLoading={g20Loading}
@@ -128,8 +130,8 @@ export const TreasurySnapshotSection: React.FC = () => {
                 <Grid item xs={12} md={3}>
                     <MetricCard
                         label="G20 Inflation (YoY)"
-                        value={g20?.inflation_current?.toFixed(1) || '-'}
-                        delta={g20?.inflation_delta ? { value: g20.inflation_delta.toFixed(1), period: 'YoY', trend: g20.inflation_delta > 0 ? 'up' : 'down' } : undefined}
+                        value={g20?.inflation_current || 0}
+                        delta={g20?.inflation_delta ? { value: formatDelta(g20.inflation_delta, { decimals: 1 }), period: 'YoY', trend: g20.inflation_delta > 0 ? 'up' : 'down' } : undefined}
                         status={g20?.inflation_current && g20.inflation_current > 5 ? 'warning' : 'safe'}
                         suffix="%"
                         isLoading={g20Loading}
@@ -140,7 +142,7 @@ export const TreasurySnapshotSection: React.FC = () => {
                     <MetricCard
                         label="Global Real Rate Proxy"
                         sublabel="(Fed Funds - G20 CPI)"
-                        value={g20?.real_rate_current?.toFixed(2) || '-'}
+                        value={g20?.real_rate_current || 0}
                         status={g20?.real_rate_current && g20.real_rate_current > 2 ? 'warning' : 'neutral'}
                         suffix="%"
                         isLoading={g20Loading}
@@ -151,8 +153,8 @@ export const TreasurySnapshotSection: React.FC = () => {
                     <MetricCard
                         label="Interest Burden"
                         sublabel="(Interest / Revenue)"
-                        value={g20?.interest_burden_current?.toFixed(1) || '-'}
-                        delta={g20?.interest_burden_delta ? { value: g20.interest_burden_delta.toFixed(1), period: 'YoY', trend: g20.interest_burden_delta > 0 ? 'up' : 'down' } : undefined}
+                        value={g20?.interest_burden_current || 0}
+                        delta={g20?.interest_burden_delta ? { value: formatDelta(g20.interest_burden_delta, { decimals: 1 }), period: 'YoY', trend: g20.interest_burden_delta > 0 ? 'up' : 'down' } : undefined}
                         status={g20?.interest_burden_current && g20.interest_burden_current > 15 ? 'danger' : 'safe'}
                         suffix="%"
                         isLoading={g20Loading}
@@ -163,4 +165,5 @@ export const TreasurySnapshotSection: React.FC = () => {
         </Box>
     );
 };
+
 

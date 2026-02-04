@@ -4,6 +4,7 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { TrendingUp, TrendingDown, Circle, Activity } from 'lucide-react';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 import { usePreciousDivergence } from '@/hooks/usePreciousDivergence';
+import { formatNumber, formatDelta } from '@/utils/formatNumber';
 
 export const MarketPulseTicker: React.FC = () => {
     const { data: pulseData } = useMarketPulse();
@@ -160,9 +161,9 @@ export const MarketPulseTicker: React.FC = () => {
                                 </Typography>
 
                                 <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.primary', fontSize: '0.7rem', fontFamily: 'monospace' }}>
-                                    {isZScore ? `${(item.value !== undefined && item.value !== null) ? item.value.toFixed(2) : '-'}σ` :
-                                        item.id.includes('YIELD') || item.id.includes('SPREAD') || item.id.includes('RATE') ? `${(item.value !== undefined && item.value !== null) ? item.value.toFixed(2) : '-'}%` :
-                                            item.value ? item.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '-'}
+                                    {isZScore ? `${formatNumber(item.value, { decimals: 2 })}σ` :
+                                        item.id.includes('YIELD') || item.id.includes('SPREAD') || item.id.includes('RATE') ? `${formatNumber(item.value, { decimals: 2 })}%` :
+                                            formatNumber(item.value, { decimals: 2, notation: 'standard' })}
                                 </Typography>
 
                                 {!isZScore && item.delta_wow !== 0 && item.delta_wow !== null && item.delta_wow !== undefined && (
@@ -174,7 +175,7 @@ export const MarketPulseTicker: React.FC = () => {
                                     }}>
                                         {isPositive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                                         <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.6rem' }}>
-                                            {Math.abs(item.delta_wow).toFixed(2)}
+                                            {formatNumber(Math.abs(item.delta_wow), { decimals: 2 })}
                                         </Typography>
                                     </Box>
                                 )}

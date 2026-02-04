@@ -5,6 +5,7 @@ import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useMacroEvents } from '@/hooks/useMacroEvents';
 import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
+import { formatNumber, formatBillions } from '@/utils/formatNumber';
 
 interface TodaysBriefPanelProps {
     sx?: any;
@@ -45,6 +46,31 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
         const element = document.querySelector(anchor);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    const handleHighlight = (label: string, anchor: string) => {
+        // 1. Scroll to section
+        handleScrollTo(anchor);
+
+        // 2. Map keywords to Metric IDs
+        let metricId = '';
+        const lowerLabel = label.toLowerCase();
+
+        if (lowerLabel.includes('liquidity') || lowerLabel.includes('fed') || lowerLabel.includes('m2')) metricId = 'NET_LIQUIDITY';
+        else if (lowerLabel.includes('dollar') || lowerLabel.includes('dxy') || lowerLabel.includes('usd')) metricId = 'DXY_INDEX';
+        else if (lowerLabel.includes('gold') || lowerLabel.includes('precious')) metricId = 'GOLD_PRICE';
+        else if (lowerLabel.includes('oil') || lowerLabel.includes('wti') || lowerLabel.includes('crude') || lowerLabel.includes('energy')) metricId = 'CRUDE_OIL';
+        else if (lowerLabel.includes('yield') || lowerLabel.includes('treasury') || lowerLabel.includes('curve') || lowerLabel.includes('rates')) metricId = 'YIELD_CURVE';
+        else if (lowerLabel.includes('volatility') || lowerLabel.includes('vix') || lowerLabel.includes('fear')) metricId = 'VIX_INDEX';
+
+        if (metricId) {
+            // Give a small delay for scroll to start
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('macro-dashboard-highlight', {
+                    detail: { metricId }
+                }));
+            }, 100);
         }
     };
 
@@ -195,7 +221,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
                                 {liquidityStatus}
                             </Typography>
                             <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.7rem', fontWeight: 600 }}>
-                                {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${(liquidityDelta / 1e9).toFixed(1)}B net change (7D)` : 'Awaiting fresh feed'}
+                                {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${formatBillions(liquidityDelta / 1e9, { decimals: 1 })} net change (7D)` : 'Awaiting fresh feed'}
                             </Typography>
                         </Box>
                     </Stack>
@@ -219,32 +245,53 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
                         </Box>
                         <Stack spacing={1.5} divider={<Divider sx={{ borderColor: 'rgba(255,255,255,0.03)' }} />}>
                             {dynamicBriefing.length > 0 ? (
-                                dynamicBriefing.map((item, idx) => (
-                                    <Box
-                                        key={idx}
-                                        onClick={() => handleScrollTo(item.anchor)}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'flex-start',
-                                            gap: 1.5,
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            '&:hover': { pl: 1, color: 'primary.main' }
-                                        }}
-                                    >
-                                        <Box sx={{
-                                            mt: 0.7,
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: '50%',
-                                            bgcolor: item.trend === 'up' ? 'success.main' : item.trend === 'down' ? 'error.main' : 'text.disabled',
-                                            flexShrink: 0
-                                        }} />
-                                        <Typography variant="body2" sx={{ fontSize: '0.82rem', fontWeight: 600, color: 'text.primary', lineHeight: 1.4 }}>
-                                            {item.label}
-                                        </Typography>
-                                    </Box>
-                                ))
+                                dynamicBriefing.map((item, idx) => {
+                                    // Extract the actual headline object from the hook data if possible
+                                    const rawHeadline = headlines?.find(h => h.title === item.label);
+
+                                    return (
+                                        <Box key={idx} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                                            <Box sx={{
+                                                mt: 0.7,
+                                                width: 6,
+                                                height: 6,
+                                                borderRadius: '50%',
+                                                bgcolor: item.trend === 'up' ? 'success.main' : item.trend === 'down' ? 'error.main' : 'text.disabled',
+                                                flexShrink: 0
+                                            }} />
+                                            <Typography
+                                                variant="body2"
+                                                component="a"
+                                                href={rawHeadline?.link || '#'}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={(e) => {
+                                                    if (!rawHeadline?.link || rawHeadline.link.includes('example.com')) {
+                                                        e.preventDefault();
+                                                        handleHighlight(item.label, item.anchor);
+                                                    }
+                                                }}
+                                                sx={{
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 600,
+                                                    color: 'text.primary',
+                                                    lineHeight: 1.3,
+                                                    textDecoration: 'none',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 3,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    '&:hover': { color: 'primary.main' }
+                                                }}
+                                                title={item.label}
+                                            >
+                                                {item.label}
+                                            </Typography>
+                                        </Box>
+                                    );
+                                })
                             ) : (
                                 <Typography variant="caption" sx={{ color: 'text.disabled', textAlign: 'center', display: 'block', py: 2 }}>
                                     Awaiting institutional signal ingest...

@@ -8,6 +8,7 @@ import { CreditCreationPulseCard } from './CreditCreationPulseCard';
 import { ECBBalanceSheetCard } from './ECBBalanceSheetCard';
 import { BoJBalanceSheetCard } from './BoJBalanceSheetCard';
 import { LiquidityHeatmapGrid } from './LiquidityHeatmapGrid';
+import { formatNumber, formatDelta } from '@/utils/formatNumber';
 
 export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
@@ -30,8 +31,8 @@ export const GlobalLiquiditySection: React.FC = () => {
                         <Grid item xs={12} md={6}>
                             <MetricCard
                                 label="US M2 Money Stock"
-                                value={m2?.value.toLocaleString() || '-'}
-                                delta={m2?.delta !== null && m2?.delta !== undefined ? { value: `${m2.delta.toFixed(1)}`, period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
+                                value={m2?.value || 0}
+                                delta={m2?.delta !== null && m2?.delta !== undefined ? { value: formatDelta(m2.delta, { decimals: 1 }), period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
                                 status={m2?.status}
                                 history={m2?.history}
                                 suffix="B"
@@ -48,8 +49,8 @@ export const GlobalLiquiditySection: React.FC = () => {
                         <Grid item xs={12} md={6}>
                             <MetricCard
                                 label="Global Net Liquidity"
-                                value={netLiq ? (netLiq.current_value / 1e3).toFixed(2) : '-'}
-                                delta={netLiq ? { value: `${(netLiq.delta_pct !== undefined && netLiq.delta_pct !== null) ? netLiq.delta_pct.toFixed(1) : '-'}%`, period: "WoW", trend: netLiq.delta_pct > 0 ? 'up' : 'down' } : undefined}
+                                value={netLiq ? (netLiq.current_value / 1e3) : 0}
+                                delta={netLiq ? { value: formatDelta(netLiq.delta_pct, { decimals: 1, suffix: '%' }), period: "WoW", trend: (netLiq.delta_pct || 0) > 0 ? 'up' : 'down' } : undefined}
                                 status={netLiq ? (netLiq.z_score > 1 ? 'danger' : netLiq.z_score < -1 ? 'warning' : 'safe') : undefined}
                                 suffix="T"
                                 isLoading={netLiqLoading}
@@ -60,9 +61,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                                 methodology="Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Z-Score provides the deviation from the 3-year trend."
                                 source="Fed, US Treasury"
                                 stats={[
-                                    { label: 'Fed Assets', value: `$${netLiq?.fed_assets ? (netLiq.fed_assets / 1e6).toFixed(2) : '-'}T`, color: 'primary.main' },
-                                    { label: 'TGA Balance', value: `$${netLiq?.tga_balance ? (netLiq.tga_balance / 1e3).toFixed(2) : '-'}T` },
-                                    { label: 'RRP Drainage', value: `$${netLiq?.rrp_balance ? (netLiq.rrp_balance / 1e3).toFixed(2) : '-'}T` }
+                                    { label: 'Fed Assets', value: `$${formatNumber(netLiq?.fed_assets ? netLiq.fed_assets / 1e6 : 0, { decimals: 2 })}T`, color: 'primary.main' },
+                                    { label: 'TGA Balance', value: `$${formatNumber(netLiq?.tga_balance ? netLiq.tga_balance / 1e3 : 0, { decimals: 2 })}T` },
+                                    { label: 'RRP Drainage', value: `$${formatNumber(netLiq?.rrp_balance ? netLiq.rrp_balance / 1e3 : 0, { decimals: 2 })}T` }
                                 ]}
                             />
                         </Grid>

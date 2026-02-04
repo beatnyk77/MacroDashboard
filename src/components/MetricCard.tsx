@@ -3,10 +3,13 @@ import { Card, Box, Typography, SxProps, Theme, Skeleton, Button } from '@mui/ma
 import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
+import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
 import { useViewContext } from '@/context/ViewContext';
+import { FreshnessChip, FreshnessStatus } from './FreshnessChip';
 
 interface MetricCardProps {
     label: string;
+    metricId?: string;
     sublabel?: string;
     value: string | number;
     delta?: {
@@ -35,6 +38,7 @@ interface MetricCardProps {
 
 export const MetricCard: React.FC<MetricCardProps> = ({
     label,
+    metricId,
     sublabel,
     value,
     delta,
@@ -56,6 +60,25 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     percentile
 }) => {
     const { isInstitutionalView } = useViewContext();
+    const [isHighlighted, setIsHighlighted] = React.useState(false);
+
+    React.useEffect(() => {
+        const handleHighlight = (e: any) => {
+            if (e.detail?.metricId === (metricId || label)) {
+                setIsHighlighted(true);
+                setTimeout(() => setIsHighlighted(false), 3000);
+
+                // Optional: Scroll into view if not visible
+                const element = document.getElementById(metricId || label);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        };
+
+        window.addEventListener('macro-dashboard-highlight', handleHighlight);
+        return () => window.removeEventListener('macro-dashboard-highlight', handleHighlight);
+    }, [metricId, label]);
 
     // Status color mapping for traffic lights
     const statusColorMap: Record<string, string> = {
@@ -88,7 +111,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         }
     };
 
-    const getStaleness = () => {
+    const getStaleness = (): { state: FreshnessStatus; label: string } => {
         if (!lastUpdated) return { state: 'no_data', label: 'No data' };
 
         const updateDate = new Date(lastUpdated);
@@ -101,20 +124,21 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
         else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
 
-        // systematic staleness detection
         const expectedHours = (frequency?.toLowerCase() === 'monthly') ? 31 * 24 :
             (frequency?.toLowerCase() === 'quarterly') ? 92 * 24 : 48;
 
-        // intentional lag (e.g. GDP is always lagging)
-        const isIntentional = frequency?.toLowerCase() === 'quarterly' || frequency?.toLowerCase() === 'monthly';
-
-        if (diffHours > expectedHours * 3) return { state: 'overdue', label: `${timeLabel}` };
-        if (diffHours > expectedHours * 1.5) return { state: 'lagged', label: `${timeLabel}` };
-        if (isIntentional) return { state: 'intentional', label: `${timeLabel}` };
-        return { state: 'fresh', label: `${timeLabel}` };
+        if (diffHours > expectedHours * 3) return { state: 'overdue', label: `${timeLabel} ` };
+        if (diffHours > expectedHours * 1.5) return { state: 'stale', label: `${timeLabel} ` };
+        if (diffHours > expectedHours) return { state: 'lagged', label: `${timeLabel} ` };
+        return { state: 'fresh', label: `${timeLabel} ` };
     };
 
     const { state: stalenessState, label: timeLabel } = getStaleness();
+
+    const isExtreme = (!isLoading && !isNullValue) && (
+        (typeof percentile === 'number' && (percentile > 95 || percentile < 5)) ||
+        (typeof zScore === 'number' && Math.abs(zScore) >= 2.5)
+    );
 
     const getDeltaIcon = () => {
         if (!delta) return null;
@@ -140,9 +164,15 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: '1px solid',
-                borderColor: 'divider',
+                border: isHighlighted ? '2px solid' : '1px solid',
+                borderColor: isHighlighted ? 'primary.main' : 'divider',
                 bgcolor: 'background.paper',
+                animation: isHighlighted ? 'pulse-highlight 1.5s infinite' : 'none',
+                '@keyframes pulse-highlight': {
+                    '0%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' },
+                    '50%': { boxShadow: '0 0 20px 5px rgba(59, 130, 246, 0.4)' },
+                    '100%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' }
+                },
                 '&:hover': {
                     borderColor: 'primary.main',
                     boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
@@ -150,28 +180,46 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 },
                 ...sx
             }}
+            id={metricId || label}
         >
-            {stalenessState !== 'fresh' && stalenessState !== 'no_data' && (
+            {isExtreme && (
                 <Box
                     sx={{
                         position: 'absolute',
                         top: 0,
-                        right: 0,
-                        bgcolor: stalenessState === 'overdue' ? 'rgba(244, 63, 94, 0.4)' : 'rgba(148, 163, 184, 0.15)',
-                        color: stalenessState === 'overdue' ? '#fff' : 'text.secondary',
+                        left: 0,
+                        bgcolor: 'rgba(59, 130, 246, 0.15)',
+                        color: 'primary.main',
                         fontSize: '0.6rem',
                         fontWeight: 900,
                         px: 1,
                         py: 0.5,
-                        borderBottomLeftRadius: 4,
+                        borderBottomRightRadius: 4,
                         zIndex: 1,
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        borderLeft: stalenessState === 'overdue' ? 'none' : '1px solid rgba(255,255,255,0.05)',
-                        borderBottom: stalenessState === 'overdue' ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                        borderRight: '1px solid rgba(59, 130, 246, 0.2)',
+                        borderBottom: '1px solid rgba(59, 130, 246, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5
                     }}
                 >
-                    {stalenessState === 'intentional' ? 'Expected Lag' : stalenessState}
+                    <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'primary.main', animation: 'pulse 1s infinite' }} />
+                    Historical Extreme
+                </Box>
+            )}
+
+            {stalenessState !== 'fresh' && (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        zIndex: 10
+                    }}
+                >
+                    <FreshnessChip status={stalenessState} lastUpdated={lastUpdated} />
                 </Box>
             )}
 
@@ -217,7 +265,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                         height: 12,
                                         borderRadius: '50%',
                                         bgcolor: statusColorMap[status],
-                                        boxShadow: `0 0 12px ${statusColorMap[status]}`,
+                                        boxShadow: `0 0 12px ${statusColorMap[status]} `,
                                         flexShrink: 0
                                     }}
                                 />
@@ -232,7 +280,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                     lineHeight: 1
                                 }}
                             >
-                                {prefix}{typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value}{suffix}
+                                {prefix}{formatNumber(typeof value === 'string' ? parseFloat(value) : value, { decimals: 2, notation: 'standard' })}{suffix}
                             </Typography>
                         </Box>
 
@@ -245,9 +293,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                     px: 1,
                                     py: 0.3,
                                     borderRadius: 1,
-                                    bgcolor: `${getDeltaColor()}10`,
+                                    bgcolor: `rgba(255, 255, 255, 0.03)`,
                                     border: '1px solid',
-                                    borderColor: `${getDeltaColor()}20`,
+                                    borderColor: 'divider',
                                     color: getDeltaColor()
                                 }}>
                                     {getDeltaIcon()}
@@ -268,7 +316,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                     }}
                                 >
                                     <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
-                                        Z: {zScore > 0 ? '+' : ''}{zScore.toFixed(1)}
+                                        Z: {formatDelta(zScore, { decimals: 1 })}
                                     </Typography>
                                 </Box>
                             )}
@@ -300,12 +348,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                             INSTITUTIONAL PERCENTILE (120Y+)
                         </Typography>
                         <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
-                            {percentile.toFixed(1)}%
+                            {formatPercentage(percentile, { decimals: 1 })}
                         </Typography>
                     </Box>
                     <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
                         <Box sx={{
-                            width: `${Math.max(0, Math.min(100, percentile))}%`,
+                            width: `${Math.max(0, Math.min(100, percentile))}% `,
                             bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
                             height: '100%',
                             transition: 'width 1s ease'

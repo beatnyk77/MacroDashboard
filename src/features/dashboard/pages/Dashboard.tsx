@@ -70,123 +70,132 @@ export const Dashboard: React.FC = () => {
                 </Typography>
             </Box>
 
-            <Grid container spacing={4}>
-                {/* LEFT COLUMN (70%) - Main Analysis & Data */}
-                <Grid item xs={12} lg={8.5}>
-                    {/* 2. Cockpit KPI Grid (Stage 2.1) */}
-                    <Box id="cockpit-section" sx={{ mb: 6 }}>
-                        <CockpitKPIGrid />
-                    </Box>
-
-                    <Box sx={{ mt: 4 }}>
-                        {/* 3. Macro Orientation */}
-                        <Box id="macro-orientation-section">
-                            <MacroOrientationSection />
+            <Grid container spacing={2.5}>
+                {/* LEFT COLUMN (Main Content) - Occupies 70% on large desktops */}
+                <Grid item xs={12} lg={8.5} xl={9}>
+                    <Box sx={{ maxWidth: '1600px' }}>
+                        {/* 2. Cockpit KPI Grid (Stage 2.1) */}
+                        <Box id="cockpit-section" sx={{ mb: 4 }}>
+                            <CockpitKPIGrid />
                         </Box>
 
-                        {/* 4. Hard Asset Valuation (Paper vs Hard Money) */}
-                        <Box id="hard-asset-valuation-section">
-                            <HardAssetValuationSection />
-                        </Box>
+                        <Box sx={{ mt: 2 }}>
+                            {/* 3. Macro Orientation */}
+                            <Box id="macro-orientation-section" sx={{ mb: 4 }}>
+                                <MacroOrientationSection />
+                            </Box>
 
-                        {/* 5. Global Liquidity */}
-                        <Box id="global-liquidity-section">
-                            <GlobalLiquiditySection />
-                        </Box>
+                            <Grid container spacing={2.5}>
+                                {/* Mid-size cards can now be side-by-side on desktop */}
+                                <Grid item xs={12} md={6}>
+                                    <Box id="hard-asset-valuation-section" sx={{ height: '100%', mb: 2.5 }}>
+                                        <HardAssetValuationSection />
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Box id="global-liquidity-section" sx={{ height: '100%', mb: 2.5 }}>
+                                        <GlobalLiquiditySection />
+                                    </Box>
+                                </Grid>
+                            </Grid>
 
-                        {/* 6. De-Dollarization Tracker */}
-                        <Box id="de-dollarization-section">
-                            <DeDollarizationSection />
-                        </Box>
+                            {/* 6. De-Dollarization Tracker */}
+                            <Box id="de-dollarization-section" sx={{ mb: 4 }}>
+                                <DeDollarizationSection />
+                            </Box>
 
-                        {/* 6.1 Trade Settlement & BRICS+ Momentum (New Stage 5) */}
-                        <Box id="trade-settlement-section" sx={{ mb: 6 }}>
-                            <TradeSettlementFlows />
-                        </Box>
+                            {/* 6.1 Trade Settlement & BRICS+ Momentum */}
+                            <Box id="trade-settlement-section" sx={{ mb: 4 }}>
+                                <TradeSettlementFlows />
+                            </Box>
 
-                        {/* 7. Historical Chart of Gold */}
-                        <Box id="gold-returns-section">
-                            <GoldReturnsSection />
-                        </Box>
+                            <Grid container spacing={2.5}>
+                                <Grid item xs={12} md={6}>
+                                    <Box id="gold-returns-section" sx={{ mb: 4 }}>
+                                        <GoldReturnsSection />
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Box id="brics-tracker-section" sx={{ mb: 4 }}>
+                                        <BRICSTrackerSection />
+                                    </Box>
+                                </Grid>
+                            </Grid>
 
-                        {/* 8. BRICS+ Tracker */}
-                        <Box id="brics-tracker-section">
-                            <BRICSTrackerSection />
-                        </Box>
+                            {/* Pulse Pulse Sections */}
+                            <Grid container spacing={2.5}>
+                                <Grid item xs={12} md={6}>
+                                    <Box id="china-macro-section" sx={{ mb: 4 }}>
+                                        <ChinaMacroPulseSection />
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Box id="india-macro-section" sx={{ mb: 4 }}>
+                                        <IndiaMacroPulseSection />
+                                    </Box>
+                                </Grid>
+                            </Grid>
 
-                        {/* 9. China Macro Pulse */}
-                        <Box id="china-macro-section">
-                            <ChinaMacroPulseSection />
-                        </Box>
+                            {/* Large Data Tables */}
+                            <Box id="major-economies-section" sx={{ mb: 4 }}>
+                                <MajorEconomiesTable />
+                            </Box>
 
-                        {/* 10. India Macro Pulse */}
-                        <Box id="india-macro-section">
-                            <IndiaMacroPulseSection />
-                        </Box>
+                            <Box id="sovereign-risk-matrix" sx={{ mb: 4 }}>
+                                <SovereignRiskMatrix />
+                            </Box>
 
-                        {/* 11. Major Economies Overview */}
-                        <Box id="major-economies-section">
-                            <MajorEconomiesTable />
-                        </Box>
+                            {/* Sovereign & Treasury Stress */}
+                            <Box id="treasury-snapshot-section" sx={{ mb: 4 }}>
+                                <TreasurySnapshotSection />
+                            </Box>
 
-                        {/* 11.1 Sovereign Risk Matrix (New Stage 4) */}
-                        <Box id="sovereign-risk-matrix" sx={{ mb: 6 }}>
-                            <SovereignRiskMatrix />
-                        </Box>
+                            <Box id="sovereign-health-radar" sx={{ mb: 4 }}>
+                                <SovereignHealthRadar />
+                            </Box>
 
-                        {/* 12. Sovereign & Treasury Stress */}
-                        <Box id="treasury-snapshot-section">
-                            <TreasurySnapshotSection />
-                        </Box>
+                            {/* Major Foreign Holders */}
+                            <Box id="treasury-holders-section" sx={{ mb: 4 }}>
+                                <React.Suspense fallback={<Box sx={{ height: 200, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2 }} />}>
+                                    <TreasuryHoldersSection />
+                                </React.Suspense>
+                            </Box>
 
-                        {/* 13. G20 Sovereign Aggregate */}
-                        <Box id="sovereign-health-radar">
-                            <SovereignHealthRadar />
-                        </Box>
+                            <ScenarioStudio />
 
-                        {/* 14. Major Foreign Holders */}
-                        <Box id="treasury-holders-section">
-                            <React.Suspense fallback={<Box sx={{ height: 200, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2 }} />}>
-                                <TreasuryHoldersSection />
-                            </React.Suspense>
-                        </Box>
-
-                        {/* Additional context components */}
-                        <ScenarioStudio />
-
-                        <Box id="gold-valuation-strip" sx={{ mt: 4 }}>
-                            <GoldValuationStrip />
+                            <Box id="gold-valuation-strip" sx={{ mt: 2 }}>
+                                <GoldValuationStrip />
+                            </Box>
                         </Box>
                     </Box>
                 </Grid>
 
-                {/* RIGHT COLUMN (30%) - Sticky Intel Sidebar (Stage 2.2) */}
-                <Grid item xs={12} lg={3.5}>
+                {/* RIGHT COLUMN (Intel Sidebar) - Occupies 30% or 3/12 on large screens */}
+                <Grid item xs={12} lg={3.5} xl={3}>
                     <Box sx={{
                         position: { lg: 'sticky' },
-                        top: { lg: 88 }, // Header height + spacing
+                        top: { lg: 88 },
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 3
+                        gap: 2.5
                     }}>
                         <Box id="todays-brief">
                             <TodaysBriefPanel sx={{ mb: 0 }} />
                         </Box>
                         <LatestMacroHeadlinesCard />
 
-                        {/* Summary of what they're looking at */}
+                        {/* Navigation Context Card */}
                         <Box sx={{
-                            p: 3,
+                            p: 2.5,
                             borderRadius: 2,
                             bgcolor: 'rgba(255,255,255,0.02)',
                             border: '1px solid',
-                            borderColor: 'divider',
-                            mt: 2
+                            borderColor: 'divider'
                         }}>
                             <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.disabled', letterSpacing: '0.1em' }}>
                                 Navigation Context
                             </Typography>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1, fontSize: '0.8rem' }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1, fontSize: '0.8rem', lineHeight: 1.5 }}>
                                 Use the left sidebar to jump between macroeconomic themes. This sidebar follows your focus.
                             </Typography>
                         </Box>

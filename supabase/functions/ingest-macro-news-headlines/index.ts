@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.3.2'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
+import { withTimeout } from '../_shared/timeout-guard.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -18,6 +19,14 @@ const KEYWORDS = [
     'dollar', 'reserves', 'sovereign', 'de-dollarization'
 ]
 
+function isValidUrl(url: string): boolean {
+    if (!url) return false;
+    const lower = url.toLowerCase();
+    return !lower.includes('example.com') &&
+        !lower.includes('localhost') &&
+        (lower.startsWith('http://') || lower.startsWith('https://'));
+}
+
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
@@ -31,44 +40,70 @@ Deno.serve(async (req: Request) => {
     const logId = await logIngestionStart(supabase, 'ingest-macro-news-headlines');
 
     try {
-        const parser = new XMLParser()
+        const parser = new XMLParser({
+            ignoreAttributes: false,
+            attributeNamePrefix: "@_"
+        })
 
         console.log('Starting Macro News ingestion...')
         const articles: any[] = []
 
         for (const feed of FEEDS) {
-            let attempt = 0;
-            const maxRetries = 3;
-            let success = false;
+            try {
+                await withTimeout(async () => {
+                    let attempt = 0;
+                    const maxRetries = 2;
+                    let success = false;
 
-            while (attempt < maxRetries && !success) {
-                try {
-                    console.log(`Fetching ${feed.source} feed (attempt ${attempt + 1})...`)
-                    const response = await fetch(feed.url)
-                    if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`)
+                    while (attempt < maxRetries && !success) {
+                        try {
+                            console.log(`Fetching ${feed.source} feed (attempt ${attempt + 1})...`)
+                            const response = await fetch(feed.url)
+                            if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`)
 
-                    const xml = await response.text()
-                    const jsonObj = parser.parse(xml)
-                    const items = jsonObj.rss?.channel?.item || []
+                            const xml = await response.text()
+                            const jsonObj = parser.parse(xml)
 
-                    const feedArticles = (Array.isArray(items) ? items : [items]).map((item: any) => ({
-                        title: item.title,
-                        link: item.link,
-                        source: feed.source,
-                        published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString()
-                    }))
+                            // Handle different RSS structures
+                            const items = jsonObj.rss?.channel?.item || jsonObj.feed?.entry || []
+                            const itemList = Array.isArray(items) ? items : [items]
 
-                    articles.push(...feedArticles)
-                    success = true
-                } catch (e) {
-                    attempt++
-                    console.error(`Error fetching ${feed.source}:`, e.message)
-                    if (attempt === maxRetries) {
-                        console.error(`Failed to fetch ${feed.source} after ${maxRetries} attempts.`)
-                    } else {
-                        await new Promise(r => setTimeout(r, 1000 * attempt))
+                            const feedArticles = itemList.map((item: any) => {
+                                // Extract link - handle various RSS/Atom formats
+                                let link = item.link;
+                                if (typeof link === 'object' && link['@_href']) {
+                                    link = link['@_href'];
+                                } else if (Array.isArray(link)) {
+                                    const preferred = link.find((l: any) => l['@_rel'] === 'alternate' || !l['@_rel']);
+                                    link = preferred ? (preferred['@_href'] || preferred) : link[0];
+                                }
+
+                                // Fallback to guid/id if link is missing or object
+                                if ((!link || typeof link !== 'string') && item.guid) {
+                                    link = typeof item.guid === 'object' ? item.guid['#text'] || item.guid['@_isPermaLink'] : item.guid;
+                                }
+
+                                return {
+                                    title: item.title?.['#text'] || item.title || 'Untitled Article',
+                                    link: link,
+                                    source: feed.source,
+                                    published_at: item.pubDate || item.updated || item.published || new Date().toISOString()
+                                };
+                            }).filter(a => isValidUrl(a.link));
+
+                            articles.push(...feedArticles)
+                            success = true
+                        } catch (e) {
+                            attempt++
+                            console.error(`Error fetching ${feed.source}:`, e.message)
+                            if (attempt < maxRetries) {
+                                await new Promise(r => setTimeout(r, 1000 * attempt))
+                            }
+                        }
                     }
-                }
+                }, 45000, `News Ingestion for ${feed.source}`);
+            } catch (err: any) {
+                console.error(`Feed ${feed.source} timed out or failed:`, err.message);
             }
         }
 
@@ -91,7 +126,7 @@ Deno.serve(async (req: Request) => {
         console.log(`Articles matching macro keywords: ${filteredArticles.length}`)
 
         if (filteredArticles.length > 0) {
-            // Upsert articles
+            // Upsert articles - use link as unique key to prevent duplicates
             const { error: upsertError } = await supabase
                 .from('macro_news_headlines')
                 .upsert(
@@ -99,7 +134,7 @@ Deno.serve(async (req: Request) => {
                         title: a.title,
                         link: a.link,
                         source: a.source,
-                        published_at: a.published_at,
+                        published_at: new Date(a.published_at).toISOString(),
                         keywords: a.keywords
                     })),
                     { onConflict: 'link', ignoreDuplicates: true }
@@ -108,14 +143,14 @@ Deno.serve(async (req: Request) => {
             if (upsertError) throw upsertError
         }
 
-        // Retention policy: Delete older than 60 days
-        const sixtyDaysAgo = new Date()
-        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60)
+        // Retention policy: Delete older than 30 days (tighter retention for noise)
+        const thirtyDaysAgo = new Date()
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-        const { error: deleteError, count } = await supabase
+        const { error: deleteError } = await supabase
             .from('macro_news_headlines')
             .delete()
-            .lt('published_at', sixtyDaysAgo.toISOString())
+            .lt('published_at', thirtyDaysAgo.toISOString())
 
         if (deleteError) console.error('Error deleting old articles:', deleteError)
         else console.log(`Cleaned up old articles.`)
@@ -139,8 +174,14 @@ Deno.serve(async (req: Request) => {
     } catch (error: any) {
         console.error('Master Error:', error.message)
 
-        // Log failure
-        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+        // Ensure log end is recorded
+        try {
+            if (logId) {
+                await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+            }
+        } catch (logErr) {
+            console.error('Failed to log News Ingestion end:', logErr);
+        }
 
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,

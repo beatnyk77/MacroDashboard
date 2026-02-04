@@ -3,8 +3,9 @@ import { Grid, Skeleton } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
+import { formatNumber, formatBillions, formatPercentage, formatDelta } from '@/utils/formatNumber';
 
-export const CockpitKPIGrid: React.FC = () => {
+export const CockpitKPIGrid = React.memo(() => {
     const { data: marketPulse, isLoading: isMarketLoading } = useMarketPulse();
     const { data: netLiq, isLoading: isLiqLoading } = useNetLiquidity();
 
@@ -36,11 +37,12 @@ export const CockpitKPIGrid: React.FC = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <MetricCard
                     label="Net Liquidity"
+                    metricId="NET_LIQUIDITY"
                     value={netLiq?.current_value || 0}
                     prefix="$"
                     suffix="T"
                     delta={netLiq ? {
-                        value: `${netLiq.delta > 0 ? '+' : ''}${(netLiq.delta / 1e9).toFixed(1)}B`,
+                        value: `${netLiq.delta > 0 ? '+' : ''}${formatBillions(netLiq.delta / 1e9, { decimals: 1 })}`,
                         period: '7D',
                         trend: netLiq.delta > 0 ? 'up' : 'down'
                     } : undefined}
@@ -56,10 +58,11 @@ export const CockpitKPIGrid: React.FC = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <MetricCard
                     label="Yield Curve (2s10s)"
+                    metricId="YIELD_CURVE"
                     value={curve?.value || 0}
                     suffix=" bps"
                     delta={curve ? {
-                        value: `${curve.delta_wow > 0 ? '+' : ''}${curve.delta_wow.toFixed(1)}`,
+                        value: formatDelta(curve.delta_wow, { decimals: 1 }),
                         period: 'WoW',
                         trend: curve.delta_wow > 0 ? 'up' : 'down'
                     } : undefined}
@@ -73,10 +76,11 @@ export const CockpitKPIGrid: React.FC = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <MetricCard
                     label="Gold (Spot)"
+                    metricId="GOLD_PRICE"
                     value={gold?.value || 0}
                     prefix="$"
                     delta={gold ? {
-                        value: `${gold.delta_wow > 0 ? '+' : ''}${gold.delta_wow.toFixed(1)}%`,
+                        value: formatDelta(gold.delta_wow, { decimals: 1, suffix: '%' }),
                         period: 'WoW',
                         trend: gold.delta_wow > 0 ? 'up' : 'down'
                     } : undefined}
@@ -90,9 +94,10 @@ export const CockpitKPIGrid: React.FC = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <MetricCard
                     label="US Dollar (DXY)"
+                    metricId="DXY_INDEX"
                     value={dxy?.value || 0}
                     delta={dxy ? {
-                        value: `${dxy.delta_wow > 0 ? '+' : ''}${dxy.delta_wow.toFixed(2)}`,
+                        value: formatDelta(dxy.delta_wow, { decimals: 2 }),
                         period: 'WoW',
                         trend: dxy.delta_wow > 0 ? 'up' : 'down'
                     } : undefined}
@@ -106,10 +111,11 @@ export const CockpitKPIGrid: React.FC = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <MetricCard
                     label="WTI Crude"
+                    metricId="CRUDE_OIL"
                     value={oil?.value || 0}
                     prefix="$"
                     delta={oil ? {
-                        value: `${oil.delta_wow > 0 ? '+' : ''}${oil.delta_wow.toFixed(1)}%`,
+                        value: formatDelta(oil.delta_wow, { decimals: 1, suffix: '%' }),
                         period: 'WoW',
                         trend: oil.delta_wow > 0 ? 'up' : 'down'
                     } : undefined}
@@ -123,11 +129,12 @@ export const CockpitKPIGrid: React.FC = () => {
             <Grid item xs={12} sm={6} md={4}>
                 <MetricCard
                     label="VIX (Volatility)"
+                    metricId="VIX_INDEX"
                     value={vix?.value || 0}
                     delta={vix ? {
-                        value: `${vix.delta_wow > 0 ? '+' : ''}${vix.delta_wow.toFixed(1)}`,
+                        value: formatDelta(vix.delta_wow, { decimals: 1 }),
                         period: 'WoW',
-                        trend: vix.delta_wow > 0 ? 'down' : 'up' // Lower VIX is usually "up" trend for markets
+                        trend: vix.delta_wow > 0 ? 'down' : 'up'
                     } : undefined}
                     status={(vix?.value || 0) > 20 ? 'warning' : (vix?.value || 0) > 30 ? 'danger' : 'safe'}
                     isLoading={isLoading}
@@ -136,4 +143,4 @@ export const CockpitKPIGrid: React.FC = () => {
             </Grid>
         </Grid>
     );
-};
+});

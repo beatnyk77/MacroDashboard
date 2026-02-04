@@ -3,9 +3,12 @@ import { Card, Typography, Box, Skeleton, useTheme, Button } from '@mui/material
 import { Sparkline } from '@/components/Sparkline';
 import { ExternalLink } from 'lucide-react';
 import { HoverDetail } from '@/components/HoverDetail';
+import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
+import { FreshnessChip, FreshnessStatus } from './FreshnessChip';
 
 interface RatioCardProps {
     primaryLabel: string;
+    metricId?: string;
     subtitle: string;
     value: number | string;
     zScore?: number;
@@ -30,6 +33,7 @@ const getZScoreColor = (z: number) => {
 
 export const RatioCard: React.FC<RatioCardProps> = ({
     primaryLabel,
+    metricId,
     subtitle,
     value,
     zScore,
@@ -45,11 +49,29 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     chartType = 'line'
 }) => {
     const theme = useTheme();
+    const [isHighlighted, setIsHighlighted] = React.useState(false);
+
+    React.useEffect(() => {
+        const handleHighlight = (e: any) => {
+            if (e.detail?.metricId === (metricId || primaryLabel)) {
+                setIsHighlighted(true);
+                setTimeout(() => setIsHighlighted(false), 3000);
+
+                const element = document.getElementById(metricId || primaryLabel);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        };
+
+        window.addEventListener('macro-dashboard-highlight', handleHighlight);
+        return () => window.removeEventListener('macro-dashboard-highlight', handleHighlight);
+    }, [metricId, primaryLabel]);
 
     const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
         (typeof value === 'number' && isNaN(value));
 
-    const formattedValue = isNullValue ? 'No data' : (typeof value === 'number' ? value.toFixed(2) : value);
+    const formattedValue = isNullValue ? 'No data' : formatNumber(typeof value === 'string' ? parseFloat(value) : value, { decimals: 2, notation: 'standard' });
 
     const isStaleFlag = (lastUpdated: any) => {
         if (!lastUpdated) return false;
@@ -58,20 +80,28 @@ export const RatioCard: React.FC<RatioCardProps> = ({
         return diff > maxStaleMs;
     };
 
-    const getStalenessLabel = () => {
-        if (!lastUpdated) return '';
+    const getStaleness = (): { state: FreshnessStatus; label: string } => {
+        if (!lastUpdated) return { state: 'no_data', label: 'No data' };
+
         const updateDate = new Date(lastUpdated);
         const now = new Date();
         const diffMs = now.getTime() - updateDate.getTime();
         const diffHours = diffMs / (1000 * 60 * 60);
 
-        if (diffHours < 1) return 'Just now';
-        if (diffHours < 24) return `${Math.floor(diffHours)}h ago`;
-        return `${Math.floor(diffHours / 24)}d ago`;
+        let timeLabel = '';
+        if (diffHours < 1) timeLabel = 'Just now';
+        else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
+        else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
+
+        const expectedHours = (frequency?.toLowerCase() === 'monthly') ? 31 * 24 : 48;
+
+        if (diffHours > expectedHours * 3) return { state: 'overdue', label: `${timeLabel}` };
+        if (diffHours > expectedHours * 1.5) return { state: 'stale', label: `${timeLabel}` };
+        if (diffHours > expectedHours) return { state: 'lagged', label: `${timeLabel}` };
+        return { state: 'fresh', label: `${timeLabel}` };
     };
 
-    const isStale = isStaleFlag(lastUpdated);
-    const timeLabel = getStalenessLabel();
+    const { state: stalenessState, label: timeLabel } = getStaleness();
 
     const cardContent = (
         <Card
@@ -83,34 +113,33 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: '1px solid',
-                borderColor: 'divider',
+                border: isHighlighted ? '2px solid' : '1px solid',
+                borderColor: isHighlighted ? 'primary.main' : 'divider',
                 bgcolor: 'background.paper',
+                animation: isHighlighted ? 'pulse-highlight 1.5s infinite' : 'none',
+                '@keyframes pulse-highlight': {
+                    '0%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' },
+                    '50%': { boxShadow: '0 0 20px 5px rgba(59, 130, 246, 0.4)' },
+                    '100%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' }
+                },
                 '&:hover': {
                     borderColor: 'primary.main',
                     boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
                     transform: 'translateY(-2px)',
                 },
             }}
+            id={metricId || primaryLabel}
         >
-            {isStale && (
+            {stalenessState !== 'fresh' && (
                 <Box
                     sx={{
                         position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        bgcolor: 'error.main',
-                        color: 'white',
-                        fontSize: '0.6rem',
-                        fontWeight: 900,
-                        px: 1,
-                        py: 0.5,
-                        borderBottomLeftRadius: 4,
-                        letterSpacing: '0.05em',
-                        zIndex: 1
+                        top: 8,
+                        right: 8,
+                        zIndex: 10
                     }}
                 >
-                    STALE
+                    <FreshnessChip status={stalenessState} lastUpdated={lastUpdated} />
                 </Box>
             )}
 
@@ -149,7 +178,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                             }}
                         >
                             <Typography variant="caption" sx={{ fontWeight: 900, color: Math.abs(zScore) > 2 ? 'white' : getZScoreColor(zScore), fontSize: '0.65rem' }}>
-                                Z: {zScore > 0 ? '+' : ''}{zScore.toFixed(1)}
+                                Z: {formatDelta(zScore, { decimals: 1 })}
                             </Typography>
                         </Box>
                     )}
@@ -190,7 +219,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.8 }}>
                             <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>VALUATION PERCENTILE</Typography>
                             <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
-                                {percentile.toFixed(0)}%
+                                {formatPercentage(percentile, { decimals: 0 })}
                             </Typography>
                         </Box>
                         <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 6, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -213,7 +242,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         </Box>
                     )}
                     {timeLabel && (
-                        <Typography variant="caption" sx={{ color: isStale ? 'error.main' : 'text.disabled', fontSize: '0.6rem', fontWeight: 600 }}>
+                        <Typography variant="caption" sx={{ color: stalenessState === 'stale' || stalenessState === 'overdue' ? 'error.main' : 'text.disabled', fontSize: '0.6rem', fontWeight: 600 }}>
                             Updated {timeLabel}
                         </Typography>
                     )}
@@ -246,8 +275,8 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 methodology,
                 source,
                 stats: [
-                    { label: 'Z-Score', value: zScore?.toFixed(2) || 'N/A', color: zScore ? getZScoreColor(zScore) : undefined },
-                    { label: 'Percentile', value: (percentile !== undefined ? percentile.toFixed(1) + '%' : 'N/A') },
+                    { label: 'Z-Score', value: formatDelta(zScore, { decimals: 2 }) || 'N/A', color: zScore ? getZScoreColor(zScore) : undefined },
+                    { label: 'Percentile', value: formatPercentage(percentile, { decimals: 1 }) || 'N/A' },
                     { label: 'Frequency', value: frequency },
                     ...stats
                 ],
