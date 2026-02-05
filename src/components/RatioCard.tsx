@@ -101,7 +101,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
         return { state: 'fresh', label: `${timeLabel}` };
     };
 
-    const { state: stalenessState, label: timeLabel } = getStaleness();
+    const { state: stalenessState } = getStaleness();
 
     const cardContent = (
         <Card

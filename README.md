@@ -91,3 +91,19 @@ If you need to rotate your access token:
 > [!CAUTION]  
 > **Source of Truth**  
 > Do not use the Supabase web editor to modify Edge Functions. All changes must be committed to the repository to avoid being overwritten by the CI/CD pipeline.
+
+---
+
+## 🛡️ Production Audit & Hardening (Feb 2026)
+
+The platform has undergone a comprehensive production audit and institutional hardening phase to ensure 24/7 reliability and data integrity.
+
+### Key Stabilization Measures:
+- **Backend Resilience**: Implemented timeout guards and chunked processing in Edge Functions (`ingest-fred`, `ingest-fiscaldata`) to prevent hanging and ensure data freshness.
+- **Data Integrity**: Centralized `formatNumber` and `formatCurrency` utilities with null/NaN safety to eliminate runtime crashes on stale data.
+- **Clickable Intelligence**: News headlines now support live article extraction and redirection, replacing previous placeholder behavior.
+- **Desktop Optimization**: Overhauled the grid system to a 3-column architecture on high-resolution displays, maximizing information density for professional analysts.
+- **Trust Signals**: Added data source attribution (FRED, BIS, IMF) and system health monitoring directly into the terminal footer.
+- **Automated Freshness**: Integrated a global auto-refresh sync that keeps metrics updated without manual intervention.
+
+---

@@ -3,10 +3,14 @@ import { Box, Container, Grid, Typography, Link, Divider, Stack, useTheme } from
 import { ExternalLink, Database, Shield, Github, Activity, Clock, BookOpen } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { getStaleness } from '@/hooks/useStaleness';
 
 export const DashboardFooter: React.FC = () => {
     const theme = useTheme();
     const currentYear = new Date().getFullYear();
+
+    // Use the new FreshnessChip component instead of the legacy flag
+    const { state: stalenessState } = getStaleness();
 
     // Fetch latest ingestion timestamp for trust signal
     const { data: lastIngestion } = useQuery({
@@ -100,7 +104,7 @@ export const DashboardFooter: React.FC = () => {
                                 <Clock size={12} color={theme.palette.text.disabled} />
                                 <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem' }}>
                                     Ingestion: <Typography component="span" variant="caption" sx={{ color: 'primary.main', fontWeight: 700, fontSize: '0.65rem' }}>
-                                        {formatTimeAgo(lastIngestion)}
+                                        {formatTimeAgo(lastIngestion ?? null)}
                                     </Typography>
                                 </Typography>
                             </Box>
