@@ -1,0 +1,49 @@
+
+> macrodashboard@1.0.0 lint
+> eslint src --max-warnings 0
+
+
+/Users/kartikaysharma/Desktop/MacroDashboard/MacroDashboard/src/features/dashboard/components/CockpitKPIGrid.tsx
+  6:10  warning  'formatNumber' is defined but never used      @typescript-eslint/no-unused-vars
+  6:40  warning  'formatPercentage' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/kartikaysharma/Desktop/MacroDashboard/MacroDashboard/src/features/dashboard/components/MarketPulseTicker.tsx
+  7:24  warning  'formatDelta' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/kartikaysharma/Desktop/MacroDashboard/MacroDashboard/src/features/dashboard/components/sections/SovereignRiskMatrix.tsx
+  109:52  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/kartikaysharma/Desktop/MacroDashboard/MacroDashboard/src/features/dashboard/components/sections/SovereignRiskMatrix.tsx:109:52
+  107 |                         />
+  108 |                         <ZAxis type="number" dataKey="z" range={[100, 2000]} />
+> 109 |                         <RechartsTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3:3' }} />
+      |                                                    ^^^^^^^^^^^^^ This component is created during render
+  110 |
+  111 |                         {/* Shaded Quadrants for interpretation */}
+  112 |                         {/* Bottom Left: Danger Zone (Fiscal Trap) */}
+
+/Users/kartikaysharma/Desktop/MacroDashboard/MacroDashboard/src/features/dashboard/components/sections/SovereignRiskMatrix.tsx:25:27
+  23 |         }));
+  24 |
+> 25 |     const CustomTooltip = ({ active, payload }: any) => {
+     |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 26 |         if (active && payload && payload.length) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 27 |             const data = payload[0].payload;
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         return null;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |     };
+     | ^^^^^^ The component is created during render here
+  52 |
+  53 |     return (
+  54 |         <Box sx={{ mb: 6 }}>  react-hooks/static-components
+
+/Users/kartikaysharma/Desktop/MacroDashboard/MacroDashboard/src/features/dashboard/components/sections/TodaysBriefPanel.tsx
+  8:10  warning  'formatNumber' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 5 problems (1 error, 4 warnings)
+

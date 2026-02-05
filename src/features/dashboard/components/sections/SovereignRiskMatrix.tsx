@@ -4,6 +4,34 @@ import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, ResponsiveCo
 import { SectionHeader } from '@/components/SectionHeader';
 import { useMajorEconomies } from '@/hooks/useMajorEconomies';
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        return (
+            <Paper sx={{ p: 1.5, border: '1px solid rgba(255,255,255,0.1)', bgcolor: 'background.paper', boxShadow: 24 }}>
+                <Typography variant="body2" sx={{ fontWeight: 900, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {data.flag} {data.name}
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        Debt/Gold: <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>{data.x.toFixed(1)}x</Box>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        Real Growth: <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>{data.y.toFixed(1)}%</Box>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        CPI YoY: <Box component="span" sx={{ color: data.cpi > 5 ? 'error.main' : 'success.main', fontWeight: 700 }}>{data.cpi.toFixed(1)}%</Box>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        GDP: <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>${data.z.toFixed(1)}T</Box>
+                    </Typography>
+                </Box>
+            </Paper>
+        );
+    }
+    return null;
+};
+
 export const SovereignRiskMatrix = React.memo(() => {
     const { data, isLoading } = useMajorEconomies();
 
@@ -22,33 +50,6 @@ export const SovereignRiskMatrix = React.memo(() => {
             flag: d.flag
         }));
 
-    const CustomTooltip = ({ active, payload }: any) => {
-        if (active && payload && payload.length) {
-            const data = payload[0].payload;
-            return (
-                <Paper sx={{ p: 1.5, border: '1px solid rgba(255,255,255,0.1)', bgcolor: 'background.paper', boxShadow: 24 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 900, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {data.flag} {data.name}
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Debt/Gold: <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>{data.x.toFixed(1)}x</Box>
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Real Growth: <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>{data.y.toFixed(1)}%</Box>
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            CPI YoY: <Box component="span" sx={{ color: data.cpi > 5 ? 'error.main' : 'success.main', fontWeight: 700 }}>{data.cpi.toFixed(1)}%</Box>
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            GDP: <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>${data.z.toFixed(1)}T</Box>
-                        </Typography>
-                    </Box>
-                </Paper>
-            );
-        }
-        return null;
-    };
 
     return (
         <Box sx={{ mb: 6 }}>

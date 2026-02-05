@@ -4,7 +4,8 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useG20Sovereign } from '@/hooks/useG20Sovereign';
 import { USDebtGoldBackingCard } from '../cards/USDebtGoldBackingCard';
-import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
+import { formatNumber, formatDelta } from '@/utils/formatNumber';
+
 
 export const TreasurySnapshotSection: React.FC = () => {
     const { data: debt, isLoading: debtLoading } = useLatestMetric('UST_DEBT_TOTAL');

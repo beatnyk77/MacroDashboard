@@ -4,7 +4,7 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { TrendingUp, TrendingDown, Circle, Activity } from 'lucide-react';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 import { usePreciousDivergence } from '@/hooks/usePreciousDivergence';
-import { formatNumber, formatDelta } from '@/utils/formatNumber';
+import { formatNumber } from '@/utils/formatNumber';
 
 export const MarketPulseTicker: React.FC = () => {
     const { data: pulseData } = useMarketPulse();

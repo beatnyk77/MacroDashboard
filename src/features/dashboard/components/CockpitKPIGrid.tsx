@@ -3,7 +3,7 @@ import { Grid, Skeleton } from '@mui/material';
 import { MetricCard } from '@/components/MetricCard';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { formatNumber, formatBillions, formatPercentage, formatDelta } from '@/utils/formatNumber';
+import { formatBillions, formatDelta } from '@/utils/formatNumber';
 
 export const CockpitKPIGrid = React.memo(() => {
     const { data: marketPulse, isLoading: isMarketLoading } = useMarketPulse();

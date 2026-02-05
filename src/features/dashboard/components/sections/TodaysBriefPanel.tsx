@@ -5,7 +5,9 @@ import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useMacroEvents } from '@/hooks/useMacroEvents';
 import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
-import { formatNumber, formatBillions } from '@/utils/formatNumber';
+import { formatBillions } from '@/utils/formatNumber';
+
+
 
 interface TodaysBriefPanelProps {
     sx?: any;

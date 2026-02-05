@@ -9,9 +9,6 @@ export const DashboardFooter: React.FC = () => {
     const theme = useTheme();
     const currentYear = new Date().getFullYear();
 
-    // Use the new FreshnessChip component instead of the legacy flag
-    const { state: stalenessState } = getStaleness();
-
     // Fetch latest ingestion timestamp for trust signal
     const { data: lastIngestion } = useQuery({
         queryKey: ['last_ingestion'],
@@ -27,6 +24,9 @@ export const DashboardFooter: React.FC = () => {
         },
         staleTime: 1000 * 60 * 5,
     });
+
+    const { state: stalenessState } = getStaleness(lastIngestion);
+
 
     const formatTimeAgo = (date: Date | null) => {
         if (!date) return 'System Syncing...';
@@ -123,10 +123,13 @@ export const DashboardFooter: React.FC = () => {
                                 All data points are cross-validated against secondary sources. Z-scores are computed against a rolling 252-day window (High Frequency) or 10-year baseline (Sovereign).
                             </Typography>
                             <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Database size={12} color={theme.palette.text.disabled} />
+                                <Database size={12} color={stalenessState === 'fresh' ? '#10b981' : stalenessState === 'lagged' ? '#f59e0b' : '#ef4444'} />
                                 <Typography variant="caption" color="text.disabled" sx={{ fontSize: '0.65rem' }}>
-                                    Pipe Status: <Typography component="span" variant="caption" sx={{ color: 'success.main', fontWeight: 700, fontSize: '0.65rem' }}>STABILIZED</Typography>
+                                    Pipe Status: <Typography component="span" variant="caption" sx={{ color: stalenessState === 'fresh' ? 'success.main' : stalenessState === 'lagged' ? 'warning.main' : 'error.main', fontWeight: 700, fontSize: '0.65rem' }}>
+                                        {stalenessState === 'fresh' ? 'STABILIZED' : stalenessState === 'lagged' ? 'LAGGED' : 'DETACHED'}
+                                    </Typography>
                                 </Typography>
+
                             </Box>
                         </Box>
                     </Grid>

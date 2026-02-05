@@ -5,7 +5,24 @@ import { Skeleton, IconButton } from '@mui/material';
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <Box sx={{ bgcolor: '#0f172a', p: 2, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 2, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)' }}>
+                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>Z-SCORE BIN</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 900 }}>{payload[0].payload.bin}σ</Typography>
+                <Box sx={{ mt: 1 }}>
+                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>FREQUENCY</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 900, color: 'primary.main' }}>{payload[0].value} Days</Typography>
+                </Box>
+            </Box>
+        );
+    }
+    return null;
+};
+
 export const LiquidityAlarmCard: React.FC = () => {
+
     const theme = useTheme();
     const { data: liq, isLoading } = useNetLiquidity();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -227,22 +244,9 @@ export const LiquidityAlarmCard: React.FC = () => {
                                                 <YAxis hide />
                                                 <Tooltip
                                                     cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-                                                    content={({ active, payload }) => {
-                                                        if (active && payload && payload.length) {
-                                                            return (
-                                                                <Box sx={{ bgcolor: '#0f172a', p: 2, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 2, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)' }}>
-                                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>Z-SCORE BIN</Typography>
-                                                                    <Typography variant="body2" sx={{ fontWeight: 900 }}>{payload[0].payload.bin}σ</Typography>
-                                                                    <Box sx={{ mt: 1 }}>
-                                                                        <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>FREQUENCY</Typography>
-                                                                        <Typography variant="body2" sx={{ fontWeight: 900, color: 'primary.main' }}>{payload[0].value} Days</Typography>
-                                                                    </Box>
-                                                                </Box>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    }}
+                                                    content={<CustomTooltip />}
                                                 />
+
                                                 <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                                                     {distributionData.map((entry, index) => {
                                                         const isCurrentBin = Math.abs(entry.bin - liq.z_score) < 0.25;

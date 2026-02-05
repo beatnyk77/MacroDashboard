@@ -5,7 +5,9 @@ import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
 import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
 import { useViewContext } from '@/context/ViewContext';
-import { FreshnessChip, FreshnessStatus } from './FreshnessChip';
+import { FreshnessChip } from './FreshnessChip';
+import { getStaleness } from '@/hooks/useStaleness';
+
 
 interface MetricCardProps {
     label: string;
@@ -111,29 +113,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         }
     };
 
-    const getStaleness = (): { state: FreshnessStatus; label: string } => {
-        if (!lastUpdated) return { state: 'no_data', label: 'No data' };
+    const { state: stalenessState, label: timeLabel } = getStaleness(lastUpdated, frequency);
 
-        const updateDate = new Date(lastUpdated);
-        const now = new Date();
-        const diffMs = now.getTime() - updateDate.getTime();
-        const diffHours = diffMs / (1000 * 60 * 60);
 
-        let timeLabel = '';
-        if (diffHours < 1) timeLabel = 'Just now';
-        else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
-        else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
-
-        const expectedHours = (frequency?.toLowerCase() === 'monthly') ? 31 * 24 :
-            (frequency?.toLowerCase() === 'quarterly') ? 92 * 24 : 48;
-
-        if (diffHours > expectedHours * 3) return { state: 'overdue', label: `${timeLabel} ` };
-        if (diffHours > expectedHours * 1.5) return { state: 'stale', label: `${timeLabel} ` };
-        if (diffHours > expectedHours) return { state: 'lagged', label: `${timeLabel} ` };
-        return { state: 'fresh', label: `${timeLabel} ` };
-    };
-
-    const { state: stalenessState, label: timeLabel } = getStaleness();
 
     const isExtreme = (!isLoading && !isNullValue) && (
         (typeof percentile === 'number' && (percentile > 95 || percentile < 5)) ||

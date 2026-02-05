@@ -4,7 +4,9 @@ import { Sparkline } from '@/components/Sparkline';
 import { ExternalLink } from 'lucide-react';
 import { HoverDetail } from '@/components/HoverDetail';
 import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
-import { FreshnessChip, FreshnessStatus } from './FreshnessChip';
+import { FreshnessChip } from './FreshnessChip';
+import { getStaleness } from '@/hooks/useStaleness';
+
 
 interface RatioCardProps {
     primaryLabel: string;
@@ -73,35 +75,9 @@ export const RatioCard: React.FC<RatioCardProps> = ({
 
     const formattedValue = isNullValue ? 'No data' : formatNumber(typeof value === 'string' ? parseFloat(value) : value, { decimals: 2, notation: 'standard' });
 
-    const isStaleFlag = (lastUpdated: any) => {
-        if (!lastUpdated) return false;
-        const diff = new Date().getTime() - new Date(lastUpdated).getTime();
-        const maxStaleMs = frequency?.toLowerCase() === 'monthly' ? 32 * 24 * 60 * 60 * 1000 : 2 * 24 * 60 * 60 * 1000;
-        return diff > maxStaleMs;
-    };
+    const { state: stalenessState, label: timeLabel } = getStaleness(lastUpdated, frequency);
 
-    const getStaleness = (): { state: FreshnessStatus; label: string } => {
-        if (!lastUpdated) return { state: 'no_data', label: 'No data' };
 
-        const updateDate = new Date(lastUpdated);
-        const now = new Date();
-        const diffMs = now.getTime() - updateDate.getTime();
-        const diffHours = diffMs / (1000 * 60 * 60);
-
-        let timeLabel = '';
-        if (diffHours < 1) timeLabel = 'Just now';
-        else if (diffHours < 24) timeLabel = `${Math.floor(diffHours)}h ago`;
-        else timeLabel = `${Math.floor(diffHours / 24)}d ago`;
-
-        const expectedHours = (frequency?.toLowerCase() === 'monthly') ? 31 * 24 : 48;
-
-        if (diffHours > expectedHours * 3) return { state: 'overdue', label: `${timeLabel}` };
-        if (diffHours > expectedHours * 1.5) return { state: 'stale', label: `${timeLabel}` };
-        if (diffHours > expectedHours) return { state: 'lagged', label: `${timeLabel}` };
-        return { state: 'fresh', label: `${timeLabel}` };
-    };
-
-    const { state: stalenessState } = getStaleness();
 
     const cardContent = (
         <Card
