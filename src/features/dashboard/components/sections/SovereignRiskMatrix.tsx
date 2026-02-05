@@ -70,16 +70,16 @@ export const SovereignRiskMatrix = React.memo(() => {
                 overflow: 'hidden'
             }}>
                 {/* Quadrant Labels */}
-                <Typography variant="overline" sx={{ position: 'absolute', top: 20, right: 30, color: 'success.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
+                <Typography variant="overline" sx={{ position: 'absolute', top: 20, left: 80, color: 'success.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
                     DYNAMIC ANCHORS (SAFE)
                 </Typography>
-                <Typography variant="overline" sx={{ position: 'absolute', top: 20, left: 80, color: 'warning.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
+                <Typography variant="overline" sx={{ position: 'absolute', top: 20, right: 30, color: 'warning.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
                     GROWTH AT RISK
                 </Typography>
-                <Typography variant="overline" sx={{ position: 'absolute', bottom: 60, left: 80, color: 'error.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
+                <Typography variant="overline" sx={{ position: 'absolute', bottom: 60, right: 30, color: 'error.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
                     FISCAL TRAP (DANGER)
                 </Typography>
-                <Typography variant="overline" sx={{ position: 'absolute', bottom: 60, right: 30, color: 'primary.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
+                <Typography variant="overline" sx={{ position: 'absolute', bottom: 60, left: 80, color: 'primary.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
                     STAGNANT STABILITY
                 </Typography>
 
@@ -110,10 +110,10 @@ export const SovereignRiskMatrix = React.memo(() => {
                         <RechartsTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
 
                         {/* Shaded Quadrants for interpretation */}
-                        {/* Bottom Left: Danger Zone (Fiscal Trap) */}
-                        <rect x="0" y="0" width="50%" height="50%" fill="rgba(239, 68, 68, 0.03)" />
-                        {/* Top Right: Safety / Growth */}
-                        <rect x="50%" y="50%" width="50%" height="50%" fill="rgba(16, 185, 129, 0.03)" />
+                        {/* Top Left: Safe Zone (Dynamic Anchors) */}
+                        <rect x="0" y="0" width="50%" height="50%" fill="rgba(16, 185, 129, 0.03)" />
+                        {/* Bottom Right: Danger Zone (Fiscal Trap) */}
+                        <rect x="50%" y="50%" width="50%" height="50%" fill="rgba(239, 68, 68, 0.03)" />
 
                         <Scatter data={chartData}>
                             {chartData.map((entry, index) => (

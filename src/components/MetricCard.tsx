@@ -140,7 +140,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         <Card
             sx={{
                 p: 2.5,
-                height: 200,
+                minHeight: 200,
+                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
@@ -232,9 +233,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 {isLoading ? (
                     <Skeleton variant="text" width="80%" height={64} />
                 ) : isNullValue ? (
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
-                        No data
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: 0.4, mt: 1 }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', border: '2px solid', borderColor: 'text.disabled' }} />
+                        <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.disabled' }}>
+                            Awaiting data
+                        </Typography>
+                    </Box>
                 ) : (
                     <Box>
                         {/* Primary Value - Unmissable */}
@@ -303,46 +307,54 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 </Box>
                             )}
 
-                            {/* Signal Label */}
                             {status !== 'neutral' && (
-                                <Typography
-                                    variant="overline"
-                                    sx={{
-                                        fontWeight: 800,
-                                        fontSize: '0.75rem',
-                                        letterSpacing: '0.1em',
-                                        color: statusColorMap[status],
-                                        ml: 'auto'
-                                    }}
-                                >
-                                    {getSignalLabel(status)}
-                                </Typography>
+                                <Box sx={{ ml: 'auto' }}>
+                                    <Typography
+                                        variant="overline"
+                                        sx={{
+                                            fontWeight: 800,
+                                            fontSize: '0.65rem',
+                                            letterSpacing: '0.05em',
+                                            color: statusColorMap[status],
+                                            bgcolor: `${statusColorMap[status]}15`,
+                                            px: 0.8,
+                                            py: 0.25,
+                                            borderRadius: 0.5,
+                                            border: '1px solid',
+                                            borderColor: `${statusColorMap[status]}30`
+                                        }}
+                                    >
+                                        {getSignalLabel(status)}
+                                    </Typography>
+                                </Box>
                             )}
                         </Box>
                     </Box>
                 )}
             </Box>
 
-            {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
-                <Box sx={{ mb: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                        <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary' }}>
-                            INSTITUTIONAL PERCENTILE (120Y+)
-                        </Typography>
-                        <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
-                            {formatPercentage(percentile, { decimals: 1 })}
-                        </Typography>
+            {
+                isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
+                    <Box sx={{ mb: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                            <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary' }}>
+                                INSTITUTIONAL PERCENTILE (120Y+)
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
+                                {formatPercentage(percentile, { decimals: 1 })}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
+                            <Box sx={{
+                                width: `${Math.max(0, Math.min(100, percentile))}% `,
+                                bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
+                                height: '100%',
+                                transition: 'width 1s ease'
+                            }} />
+                        </Box>
                     </Box>
-                    <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
-                        <Box sx={{
-                            width: `${Math.max(0, Math.min(100, percentile))}% `,
-                            bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
-                            height: '100%',
-                            transition: 'width 1s ease'
-                        }} />
-                    </Box>
-                </Box>
-            )}
+                )
+            }
 
             <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 <Box sx={{ flexGrow: 1 }}>
@@ -375,7 +387,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                     <ExternalLink size={12} />
                 </Button>
             </Box>
-        </Card>
+        </Card >
     );
 
     return (

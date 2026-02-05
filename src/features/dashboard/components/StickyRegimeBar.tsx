@@ -1,6 +1,6 @@
 import { Box, Typography, Modal, Fade, Backdrop, IconButton, Grid } from '@mui/material';
 import { useRegime } from '@/hooks/useRegime';
-import { MarketPulseTicker } from './MarketPulseTicker';
+
 import { useState } from 'react';
 import { X, History, TrendingUp, TrendingDown, Play } from 'lucide-react';
 
@@ -131,9 +131,7 @@ export const StickyRegimeBar: React.FC = () => {
                 </Fade>
             </Modal>
 
-            <Box sx={{ flexGrow: 1, overflow: 'hidden', mx: 4 }}>
-                <MarketPulseTicker />
-            </Box>
+
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                 <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>

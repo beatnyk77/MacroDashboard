@@ -1,7 +1,28 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
+declare module '@mui/material/styles' {
+    interface BreakpointOverrides {
+        xs: true;
+        sm: true;
+        md: true;
+        lg: true;
+        xl: true;
+        xxl: true;
+    }
+}
+
 const getTheme = (mode: 'light' | 'dark') => {
     const theme = createTheme({
+        breakpoints: {
+            values: {
+                xs: 0,
+                sm: 600,
+                md: 960,
+                lg: 1280,
+                xl: 1600,
+                xxl: 1920 // Custom breakout for ultra-wide
+            }
+        },
         palette: {
             mode,
             background: {
@@ -37,8 +58,15 @@ const getTheme = (mode: 'light' | 'dark') => {
         typography: {
             fontFamily: '"Inter", "system-ui", "-apple-system", sans-serif',
             h1: { fontWeight: 800, letterSpacing: '-0.025em' },
-            h2: { fontWeight: 800, letterSpacing: '-0.02em' },
-            h3: { fontWeight: 700, letterSpacing: '-0.01em' },
+            h2: {
+                fontWeight: 800,
+                letterSpacing: '-0.02em',
+                // Responsive font sizing handled by responsiveFontSizes, but establishing base
+            },
+            h3: {
+                fontWeight: 700,
+                letterSpacing: '-0.01em',
+            },
             h4: { fontWeight: 700, letterSpacing: '-0.01em' },
             h5: { fontWeight: 600 },
             h6: { fontWeight: 600 },
@@ -46,6 +74,7 @@ const getTheme = (mode: 'light' | 'dark') => {
             body1: { lineHeight: 1.6 },
             caption: { letterSpacing: '0.01em', fontWeight: 500 },
         },
+        spacing: 8, // Base unit = 8px
         components: {
             MuiCard: {
                 styleOverrides: {
@@ -91,6 +120,28 @@ const getTheme = (mode: 'light' | 'dark') => {
             borderRadius: 12,
         },
     });
+
+    // Custom typography overrides for desktops
+    theme.typography.h2 = {
+        ...theme.typography.h2,
+        [theme.breakpoints.up('xs')]: { fontSize: '1.75rem' },
+        [theme.breakpoints.up('md')]: { fontSize: '2rem' },
+        [theme.breakpoints.up('lg')]: { fontSize: '2.25rem' },
+    };
+
+    theme.typography.h3 = {
+        ...theme.typography.h3,
+        [theme.breakpoints.up('xs')]: { fontSize: '1.5rem' },
+        [theme.breakpoints.up('md')]: { fontSize: '1.75rem' },
+        [theme.breakpoints.up('lg')]: { fontSize: '2rem' },
+    };
+
+    theme.typography.body1 = {
+        ...theme.typography.body1,
+        [theme.breakpoints.up('xs')]: { fontSize: '0.875rem' },
+        [theme.breakpoints.up('md')]: { fontSize: '0.9375rem' },
+        [theme.breakpoints.up('lg')]: { fontSize: '1rem' },
+    };
 
     return responsiveFontSizes(theme);
 };

@@ -9,7 +9,6 @@ import { IndiaMacroPulseSection } from '@/features/dashboard/components/sections
 import { ChinaMacroPulseSection } from '@/components/ChinaMacroPulseSection';
 import { TreasurySnapshotSection } from '@/features/dashboard/components/sections/TreasurySnapshotSection';
 import { GoldValuationStrip } from '@/features/dashboard/components/sections/GoldValuationStrip';
-import { MarketPulseTicker } from '@/features/dashboard/components/MarketPulseTicker';
 import { MajorEconomiesTable } from '@/features/dashboard/components/sections/MajorEconomiesTable';
 import { SovereignRiskMatrix } from '@/features/dashboard/components/sections/SovereignRiskMatrix';
 import { TradeSettlementFlows } from '@/features/dashboard/components/sections/TradeSettlementFlows';
@@ -28,10 +27,10 @@ const HowToUseCard = React.lazy(() => import('@/features/dashboard/components/se
 export const Dashboard: React.FC = () => {
     return (
         <Box sx={{ pb: 8, pt: 0 }}>
-            {/* 1. Market Pulse Ticker (Top Anchor - Full Width) */}
-            <Box id="top" sx={{ mb: 4 }}>
-                <MarketPulseTicker />
-            </Box>
+            {/* 1. Market Pulse Ticker Removed for Desktop Rework */}
+
+            {/* Top Anchor */}
+            <Box id="top" />
 
             {/* SEO H1 - Visually Hidden for Screen Readers & Crawlers */}
             <Typography
@@ -72,90 +71,97 @@ export const Dashboard: React.FC = () => {
 
             <Grid container spacing={2.5}>
                 {/* LEFT COLUMN (Main Content) - Occupies 70% on large desktops */}
-                <Grid item xs={12} lg={8.5} xl={9}>
-                    <Box sx={{ maxWidth: '1600px' }}>
-                        {/* 2. Cockpit KPI Grid (Stage 2.1) */}
-                        <Box id="cockpit-section" sx={{ mb: 4 }}>
+                <Grid item xs={12} lg={8} xl={9}>
+                    <Box sx={{ maxWidth: '1800px' }}>
+                        {/* 2. System Heartbeat (Hero Section) */}
+                        <Box id="cockpit-section" sx={{ mb: 5 }}>
                             <CockpitKPIGrid />
                         </Box>
 
                         <Box sx={{ mt: 2 }}>
                             {/* 3. Macro Orientation */}
-                            <Box id="macro-orientation-section" sx={{ mb: 4 }}>
+                            <Box id="macro-orientation-section" sx={{ mb: 5 }}>
                                 <MacroOrientationSection />
                             </Box>
 
                             <Grid container spacing={2.5}>
                                 {/* Mid-size cards can now be side-by-side on desktop */}
                                 <Grid item xs={12} md={6}>
-                                    <Box id="hard-asset-valuation-section" sx={{ height: '100%', mb: 2.5 }}>
+                                    <Box id="hard-asset-valuation-section" sx={{ height: '100%', mb: 0 }}>
                                         <HardAssetValuationSection />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="global-liquidity-section" sx={{ height: '100%', mb: 2.5 }}>
+                                    <Box id="global-liquidity-section" sx={{ height: '100%', mb: 0 }}>
                                         <GlobalLiquiditySection />
                                     </Box>
                                 </Grid>
                             </Grid>
 
+                            {/* Spacer after the grid row */}
+                            <Box sx={{ mb: 5 }} />
+
                             {/* 6. De-Dollarization Tracker */}
-                            <Box id="de-dollarization-section" sx={{ mb: 4 }}>
+                            <Box id="de-dollarization-section" sx={{ mb: 5 }}>
                                 <DeDollarizationSection />
                             </Box>
 
                             {/* 6.1 Trade Settlement & BRICS+ Momentum */}
-                            <Box id="trade-settlement-section" sx={{ mb: 4 }}>
+                            <Box id="trade-settlement-section" sx={{ mb: 5 }}>
                                 <TradeSettlementFlows />
                             </Box>
 
                             <Grid container spacing={2.5}>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="gold-returns-section" sx={{ mb: 4 }}>
+                                    <Box id="gold-returns-section" sx={{ height: '100%' }}>
                                         <GoldReturnsSection />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="brics-tracker-section" sx={{ mb: 4 }}>
+                                    <Box id="brics-tracker-section" sx={{ height: '100%' }}>
                                         <BRICSTrackerSection />
                                     </Box>
                                 </Grid>
                             </Grid>
 
+                            <Box sx={{ mb: 5 }} />
+
                             {/* Pulse Pulse Sections */}
                             <Grid container spacing={2.5}>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="china-macro-section" sx={{ mb: 4 }}>
+                                    <Box id="china-macro-section" sx={{ height: '100%' }}>
                                         <ChinaMacroPulseSection />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="india-macro-section" sx={{ mb: 4 }}>
+                                    <Box id="india-macro-section" sx={{ height: '100%' }}>
                                         <IndiaMacroPulseSection />
                                     </Box>
                                 </Grid>
                             </Grid>
 
+                            <Box sx={{ mb: 5 }} />
+
                             {/* Large Data Tables */}
-                            <Box id="major-economies-section" sx={{ mb: 4 }}>
+                            <Box id="major-economies-section" sx={{ mb: 5 }}>
                                 <MajorEconomiesTable />
                             </Box>
 
-                            <Box id="sovereign-risk-matrix" sx={{ mb: 4 }}>
+                            <Box id="sovereign-risk-matrix" sx={{ mb: 5 }}>
                                 <SovereignRiskMatrix />
                             </Box>
 
                             {/* Sovereign & Treasury Stress */}
-                            <Box id="treasury-snapshot-section" sx={{ mb: 4 }}>
+                            <Box id="treasury-snapshot-section" sx={{ mb: 5 }}>
                                 <TreasurySnapshotSection />
                             </Box>
 
-                            <Box id="sovereign-health-radar" sx={{ mb: 4 }}>
+                            <Box id="sovereign-health-radar" sx={{ mb: 5 }}>
                                 <SovereignHealthRadar />
                             </Box>
 
                             {/* Major Foreign Holders */}
-                            <Box id="treasury-holders-section" sx={{ mb: 4 }}>
+                            <Box id="treasury-holders-section" sx={{ mb: 5 }}>
                                 <React.Suspense fallback={<Box sx={{ height: 200, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2 }} />}>
                                     <TreasuryHoldersSection />
                                 </React.Suspense>
@@ -163,15 +169,15 @@ export const Dashboard: React.FC = () => {
 
                             <ScenarioStudio />
 
-                            <Box id="gold-valuation-strip" sx={{ mt: 2 }}>
+                            <Box id="gold-valuation-strip" sx={{ mt: 5 }}>
                                 <GoldValuationStrip />
                             </Box>
                         </Box>
                     </Box>
                 </Grid>
 
-                {/* RIGHT COLUMN (Intel Sidebar) - Occupies 30% or 3/12 on large screens */}
-                <Grid item xs={12} lg={3.5} xl={3}>
+                {/* RIGHT COLUMN (Intel Sidebar) - Occupies 30% or 4/12 on large screens */}
+                <Grid item xs={12} lg={4} xl={3}>
                     <Box sx={{
                         position: { lg: 'sticky' },
                         top: { lg: 88 },
@@ -212,7 +218,7 @@ export const Dashboard: React.FC = () => {
                     <HowToUseCard />
                 </React.Suspense>
             </Box>
-        </Box>
+        </Box >
     );
 };
 
