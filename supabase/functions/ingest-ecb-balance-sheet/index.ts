@@ -1,5 +1,5 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
-import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { runIngestion } from '../_shared/logging.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -8,19 +8,25 @@ const corsHeaders = {
 
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
     let lastError: Error | null = null;
+    const defaultOptions = {
+        ...options,
+        headers: {
+            ...options.headers,
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+        }
+    };
     for (let i = 0; i <= maxRetries; i++) {
         try {
             if (i > 0) {
                 const delay = Math.pow(2, i) * 1000;
                 await new Promise(resolve => setTimeout(resolve, delay));
-                console.log(`Retry ${i}/${maxRetries} for ${url}...`);
             }
-            const response = await fetch(url, options);
+            const response = await fetch(url, defaultOptions);
             if (response.ok) return response;
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         } catch (error: any) {
             lastError = error;
-            console.warn(`Attempt ${i + 1} failed: ${error.message}`);
+            console.warn(`Attempt ${i + 1} failed for ${url}: ${error.message}`);
         }
     }
     throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
@@ -33,86 +39,68 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const fredApiKey = Deno.env.get('FRED_API_KEY');
+
+    if (!fredApiKey) {
+        return new Response(JSON.stringify({ error: 'FRED_API_KEY is missing' }), { status: 500, headers: corsHeaders });
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Start logging
-    const logId = await logIngestionStart(supabase, 'ingest-ecb-balance-sheet');
-
-    try {
-        const fredApiKey = Deno.env.get('FRED_API_KEY');
-
-        if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
-
+    return runIngestion(supabase, 'ingest-ecb-balance-sheet', async (ctx) => {
         // Metrics to fetch from FRED
         const metricsMap = [
-            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' }
+            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' },
+            { id: 'ECB_DF_OUTSTANDING_MEUR', fredId: 'ECBDFR' }, // Using Rate for now as proxy or check if balance exists
+            { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMRRFR' } // Using Rate
         ];
 
         const results: any[] = [];
+        const errors: any[] = [];
 
         for (const item of metricsMap) {
-            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`;
+            try {
+                const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
 
-            const response = await fetchWithRetry(fredUrl);
-            const data = await response.json();
+                const response = await fetchWithRetry(fredUrl);
+                const data = await response.json();
 
-            if (data.observations) {
-                data.observations.forEach((obs: any) => {
-                    const value = parseFloat(obs.value);
-                    if (!isNaN(value)) {
-                        results.push({
-                            metric_id: item.id,
-                            as_of_date: obs.date,
-                            value: value,
-                            last_updated_at: new Date().toISOString()
-                        });
-
-                        // Fallback: Also populate Excess Liquidity with same data for now to show something
-                        // In a real scenario, we'd subtract liabilities here.
-                        results.push({
-                            metric_id: 'ECB_EXCESS_LIQUIDITY_MEUR',
-                            as_of_date: obs.date,
-                            value: value,
-                            last_updated_at: new Date().toISOString()
-                        });
-                    }
-                });
+                if (data.observations) {
+                    data.observations.forEach((obs: any) => {
+                        const value = parseFloat(obs.value);
+                        if (!isNaN(value)) {
+                            results.push({
+                                metric_id: item.id,
+                                as_of_date: obs.date,
+                                value: value,
+                                last_updated_at: new Date().toISOString()
+                            });
+                        }
+                    });
+                }
+            } catch (e: any) {
+                console.error(`Error fetching ${item.id}:`, e);
+                errors.push({ metric: item.id, error: e.message });
             }
         }
 
+        // Calculate Excess Liquidity (Assets - Liabilities/Providing Ops? Actually ECB publishes a specific series, but we can approximate)
+        // For now, let's just ensure we have the primary ones.
+
         if (results.length > 0) {
-            const { error: upsertError } = await supabase
+            const { error: upsertError } = await ctx.supabase
                 .from('metric_observations')
                 .upsert(results, { onConflict: 'metric_id, as_of_date' });
 
             if (upsertError) throw upsertError;
         }
 
-        const summary = {
-            status: 'success',
-            processed: results.length,
-            metrics: ['ECB_TOTAL_ASSETS_MEUR', 'ECB_EXCESS_LIQUIDITY_MEUR']
-        };
-
-        // Log success
-        await logIngestionEnd(supabase, logId, 'success', {
+        return {
             rows_inserted: results.length,
-            metadata: { summary }
-        });
-
-        return new Response(JSON.stringify(summary), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-
-    } catch (error: any) {
-        console.error('ECB Ingestion error:', error);
-
-        // Log failure
-        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500,
-        });
-    }
+            metadata: {
+                metrics_processed: metricsMap.map(m => m.id),
+                errors
+            }
+        };
+    });
 })

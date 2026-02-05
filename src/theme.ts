@@ -147,3 +147,49 @@ const getTheme = (mode: 'light' | 'dark') => {
 };
 
 export default getTheme;
+
+// Design System Tokens
+export const spacing = {
+    sectionMajor: 6,      // 48px between major sections (for visual breathing room)
+    sectionMinor: 4,      // 32px between related subsections
+    cardGap: 2.5,         // 20px grid gap
+    inlineGap: 1.5,       // 12px for inline elements
+};
+
+// Typography scale for metrics (not cluttered, breathing room)
+export const metricTypography = {
+    hero: {
+        fontSize: '3rem',
+        fontWeight: 800,
+        lineHeight: 1.1,
+        letterSpacing: '-0.02em'
+    },
+    primary: {
+        fontSize: '2rem',
+        fontWeight: 700,
+        lineHeight: 1.2,
+        letterSpacing: '-0.01em'
+    },
+    secondary: {
+        fontSize: '1.25rem',
+        fontWeight: 600,
+        lineHeight: 1.3
+    },
+    label: {
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        textTransform: 'uppercase' as const,
+        letterSpacing: '0.1em',
+        color: 'text.secondary'
+    },
+};
+
+// Z-index scale for proper layering
+export const zIndex = {
+    base: 0,
+    dropdown: 1000,
+    sticky: 1100,
+    tooltip: 1200,
+    modal: 1300,
+    toast: 1400,
+};

@@ -15,6 +15,7 @@ export const HardAssetValuationSection: React.FC = () => {
             <SectionHeader
                 title="Hard Asset Valuation"
                 subtitle="Currency and equity pricing relative to gold anchor (USA Market)"
+                lastUpdated={ratios?.[0]?.last_updated}
             />
 
             <GoldRatioRibbon />

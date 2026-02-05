@@ -8,7 +8,9 @@ import { CreditCreationPulseCard } from './CreditCreationPulseCard';
 import { ECBBalanceSheetCard } from './ECBBalanceSheetCard';
 import { BoJBalanceSheetCard } from './BoJBalanceSheetCard';
 import { LiquidityHeatmapGrid } from './LiquidityHeatmapGrid';
-import { formatNumber, formatDelta } from '@/utils/formatNumber';
+import { CopperGoldRatioCard } from '../cards/CopperGoldRatioCard';
+import { formatMetric, formatDelta } from '@/utils/formatMetric';
+import { formatNumber } from '@/utils/formatNumber';
 
 export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
@@ -20,6 +22,7 @@ export const GlobalLiquiditySection: React.FC = () => {
                 title="Global Liquidity"
                 subtitle="Monetary aggregates and central bank reserves"
                 exportId="global-liquidity-section"
+                lastUpdated={netLiq?.as_of_date || m2?.lastUpdated}
             />
             <Grid container spacing={3}>
                 <Grid item xs={12} lg={4}>
@@ -31,8 +34,8 @@ export const GlobalLiquiditySection: React.FC = () => {
                         <Grid item xs={12} md={6}>
                             <MetricCard
                                 label="US M2 Money Stock"
-                                value={m2?.value || 0}
-                                delta={m2?.delta !== null && m2?.delta !== undefined ? { value: formatDelta(m2.delta, { decimals: 1 }), period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
+                                value={formatMetric(m2?.value || 0, 'billion', { showUnit: false })}
+                                delta={m2?.delta !== null && m2?.delta !== undefined ? { value: formatDelta(m2.delta, { decimals: 1 }) || '—', period: m2?.deltaPeriod || 'MoM', trend: m2?.trend || 'neutral' } : undefined}
                                 status={m2?.status}
                                 history={m2?.history}
                                 suffix="B"
@@ -49,8 +52,8 @@ export const GlobalLiquiditySection: React.FC = () => {
                         <Grid item xs={12} md={6}>
                             <MetricCard
                                 label="Global Net Liquidity"
-                                value={netLiq ? (netLiq.current_value / 1e3) : 0}
-                                delta={netLiq ? { value: formatDelta(netLiq.delta_pct, { decimals: 1, suffix: '%' }), period: "WoW", trend: (netLiq.delta_pct || 0) > 0 ? 'up' : 'down' } : undefined}
+                                value={formatMetric(netLiq ? (netLiq.current_value / 1e3) : 0, 'trillion', { showUnit: false })}
+                                delta={netLiq ? { value: formatDelta(netLiq.delta_pct, { decimals: 1, unit: '%' }) || '—', period: "WoW", trend: (netLiq.delta_pct || 0) > 0 ? 'up' : 'down' } : undefined}
                                 status={netLiq ? (netLiq.z_score > 1 ? 'danger' : netLiq.z_score < -1 ? 'warning' : 'safe') : undefined}
                                 suffix="T"
                                 isLoading={netLiqLoading}
@@ -75,6 +78,9 @@ export const GlobalLiquiditySection: React.FC = () => {
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <BoJBalanceSheetCard />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <CopperGoldRatioCard />
                         </Grid>
                     </Grid>
                 </Grid>

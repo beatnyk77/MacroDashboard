@@ -56,6 +56,7 @@ export const SovereignRiskMatrix = React.memo(() => {
             <SectionHeader
                 title="Sovereign Risk Matrix"
                 subtitle="Mapping Fiscal Vulnerability (Debt/Gold) vs Economic Vitality (Real Growth)"
+                lastUpdated={data?.[0]?.last_updated}
             />
 
             <Paper sx={{

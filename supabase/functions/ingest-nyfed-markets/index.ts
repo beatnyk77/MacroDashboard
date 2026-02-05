@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
-import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
+import { runIngestion } from '../_shared/logging.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -9,7 +9,11 @@ const corsHeaders = {
 async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
     for (let i = 0; i < maxRetries; i++) {
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+                }
+            });
             if (response.ok) return response;
             console.warn(`Attempt ${i + 1} for ${url} failed with ${response.status}`);
         } catch (err) {
@@ -33,10 +37,7 @@ Deno.serve(async (req: Request) => {
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Start logging
-    const logId = await logIngestionStart(supabaseClient, 'ingest-nyfed-markets');
-
-    try {
+    return runIngestion(supabaseClient, 'ingest-nyfed-markets', async (ctx) => {
         const results: any[] = [];
         const errors: any[] = [];
 
@@ -48,9 +49,17 @@ Deno.serve(async (req: Request) => {
             if (positions.length > 0) {
                 positions.sort((a: any, b: any) => new Date(b.businessDate).getTime() - new Date(a.businessDate).getTime());
                 const latest = positions[0];
+
+                // Detailed debug logging
+                console.log(`Processing PD data for date: ${latest.businessDate}`);
+
                 const totalTreasury = latest.instrumentAmount
-                    ?.filter((i: any) => i.instrumentType === "Treasury Securities")
-                    .reduce((sum: number, i: any) => sum + (i.netLong || 0), 0) || 0;
+                    ?.reduce((sum: number, i: any) => {
+                        if (i.instrumentType === "Treasury Securities" || i.instrumentType === "Federal Agency and GSE Debt Securities") {
+                            return sum + (i.netLong || 0);
+                        }
+                        return sum;
+                    }, 0) || 0;
 
                 results.push({
                     metric_id: 'PRIMARY_DEALER_TREASURY_HOLDINGS_BN',
@@ -58,30 +67,61 @@ Deno.serve(async (req: Request) => {
                     value: totalTreasury / 1000, // Millions to Billions
                     last_updated_at: new Date().toISOString()
                 });
+            } else {
+                console.warn('No PD positions found in response');
             }
         } catch (e: any) {
+            console.error('Error fetching PD data:', e);
             errors.push({ metric: 'PRIMARY_DEALER_TREASURY_HOLDINGS_BN', error: e.message });
         }
 
-        // 2. RRP & 3. TGA (Daily)
-        for (const type of ['rrp', 'tga']) {
-            try {
-                const resp = await fetchWithRetry(`https://markets.newyorkfed.org/api/${type}/recent.json`);
-                const data = await resp.json();
-                const obs = data[type]?.operations || [];
-                if (obs.length > 0) {
-                    obs.sort((a: any, b: any) => new Date(b.businessDate).getTime() - new Date(a.businessDate).getTime());
-                    const latest = obs[0];
-                    results.push({
-                        metric_id: type === 'rrp' ? 'RRP_BALANCE_BN' : 'TGA_BALANCE_BN',
-                        as_of_date: latest.businessDate,
-                        value: (latest.totalAccepted || latest.closingBalance) / 1000, // Millions to Billions
-                        last_updated_at: new Date().toISOString()
-                    });
-                }
-            } catch (e: any) {
-                errors.push({ metric: type.toUpperCase() + '_BALANCE_BN', error: e.message });
+        // 2. RRP (Daily)
+        try {
+            const resp = await fetchWithRetry(`https://markets.newyorkfed.org/api/rrp/recent.json`);
+            const data = await resp.json();
+            const obs = data.rrp?.operations || [];
+
+            if (Array.isArray(obs) && obs.length > 0) {
+                obs.sort((a: any, b: any) => new Date(b.businessDate).getTime() - new Date(a.businessDate).getTime());
+                const latestObs = obs[0];
+                console.log(`Processing RRP data for date: ${latestObs.businessDate}`);
+                results.push({
+                    metric_id: 'RRP_BALANCE_BN',
+                    as_of_date: latestObs.businessDate,
+                    value: (latestObs.totalAccepted) / 1000,
+                    last_updated_at: new Date().toISOString()
+                });
+            } else {
+                console.warn(`No RRP observations found`);
             }
+        } catch (e: any) {
+            console.error(`Error fetching RRP data:`, e);
+            errors.push({ metric: 'RRP_BALANCE_BN', error: e.message });
+        }
+
+        // 3. TGA (Daily/Weekly from FRED - wtregen)
+        try {
+            const fredApiKey = Deno.env.get('FRED_API_KEY');
+            if (fredApiKey) {
+                const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=WTREGEN&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
+                const fredResp = await fetch(fredUrl);
+                if (fredResp.ok) {
+                    const fredData = await fredResp.json();
+                    if (fredData.observations?.length > 0) {
+                        const latest = fredData.observations[0];
+                        console.log(`Processing TGA (FRED) data for date: ${latest.date}`);
+                        results.push({
+                            metric_id: 'TGA_BALANCE_BN',
+                            as_of_date: latest.date,
+                            value: parseFloat(latest.value),
+                            last_updated_at: new Date().toISOString()
+                        });
+                    }
+                }
+            }
+        } catch (e: any) {
+            console.error(`Error fetching TGA data from FRED:`, e);
+            errors.push({ metric: 'TGA_BALANCE_BN', error: e.message });
         }
 
         // 4. SOFR-EFFR Spread (Daily)
@@ -102,44 +142,35 @@ Deno.serve(async (req: Request) => {
                 const latestSofr = sofrObs[0];
                 const latestEffr = effrObs.find((e: any) => e.effectiveDate === latestSofr.effectiveDate) || effrObs[0];
 
+                console.log(`Processing SOFR-EFFR data for date: ${latestSofr.effectiveDate}`);
                 results.push({
                     metric_id: 'SOFR_EFFR_SPREAD_BPS',
                     as_of_date: latestSofr.effectiveDate,
                     value: (latestSofr.percentRate - latestEffr.percentRate) * 100, // % to bps
                     last_updated_at: new Date().toISOString()
                 });
+            } else {
+                console.warn('Insufficient SOFR or EFFR data found');
             }
         } catch (e: any) {
+            console.error('Error fetching SOFR-EFFR data:', e);
             errors.push({ metric: 'SOFR_EFFR_SPREAD_BPS', error: e.message });
         }
 
         if (results.length > 0) {
-            const { error: upsertError } = await supabaseClient
+            const { error: upsertError } = await ctx.supabase
                 .from('metric_observations')
                 .upsert(results, { onConflict: 'metric_id, as_of_date' });
 
             if (upsertError) throw upsertError;
         }
 
-        const summary = { success: true, results_count: results.length, error_count: errors.length, details: { results, errors } };
-
-        // Log success
-        await logIngestionEnd(supabaseClient, logId, 'success', {
+        return {
             rows_inserted: results.length,
-            metadata: { summary }
-        });
-
-        return new Response(
-            JSON.stringify(summary),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-    } catch (error: any) {
-        // Log failure
-        await logIngestionEnd(supabaseClient, logId, 'failed', { error_message: error.message });
-
-        return new Response(
-            JSON.stringify({ error: error.message }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-    }
+            metadata: {
+                results_preview: results.map(r => ({ id: r.metric_id, date: r.as_of_date, val: r.value })),
+                errors
+            }
+        };
+    });
 })

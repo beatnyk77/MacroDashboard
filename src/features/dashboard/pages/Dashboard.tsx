@@ -1,5 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import { MatchHeightGrid } from '@/components/MatchHeightGrid';
+import { spacing } from '@/theme';
 import { MacroOrientationSection } from '@/features/dashboard/components/sections/MacroOrientationSection';
 import { HardAssetValuationSection } from '@/features/dashboard/components/sections/HardAssetValuationSection';
 import { GlobalLiquiditySection } from '@/features/dashboard/components/sections/GlobalLiquiditySection';
@@ -73,45 +75,46 @@ export const Dashboard: React.FC = () => {
                 {/* LEFT COLUMN (Main Content) - Occupies 70% on large desktops */}
                 <Grid item xs={12} lg={8} xl={9}>
                     <Box sx={{ maxWidth: '1800px' }}>
-                        {/* 2. System Heartbeat (Hero Section) */}
-                        <Box id="cockpit-section" sx={{ mb: 5 }}>
+                        {/* 2. System Heartbeat (Hero Section - Sacred, breathing room preserved) */}
+                        <Box id="cockpit-section" sx={{ mb: spacing.sectionMajor }}>
                             <CockpitKPIGrid />
                         </Box>
 
-                        <Box sx={{ mt: 2 }}>
-                            {/* 3. Macro Orientation */}
-                            <Box id="macro-orientation-section" sx={{ mb: 5 }}>
+                        <Box sx={{ mt: spacing.sectionMinor }}>
+                            {/* 3. Macro Orientation (Sacred - preserving existing layout) */}
+                            <Box id="macro-orientation-section" sx={{ mb: spacing.sectionMajor }}>
                                 <MacroOrientationSection />
                             </Box>
 
-                            <Grid container spacing={2.5}>
-                                {/* Mid-size cards can now be side-by-side on desktop */}
+                            {/* Hard Assets + Global Liquidity - 2-column breathing room */}
+                            <MatchHeightGrid container spacing={spacing.cardGap}>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="hard-asset-valuation-section" sx={{ height: '100%', mb: 0 }}>
+                                    <Box id="hard-asset-valuation-section" sx={{ height: '100%' }}>
                                         <HardAssetValuationSection />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <Box id="global-liquidity-section" sx={{ height: '100%', mb: 0 }}>
+                                    <Box id="global-liquidity-section" sx={{ height: '100%' }}>
                                         <GlobalLiquiditySection />
                                     </Box>
                                 </Grid>
-                            </Grid>
+                            </MatchHeightGrid>
 
                             {/* Spacer after the grid row */}
-                            <Box sx={{ mb: 5 }} />
+                            <Box sx={{ mb: spacing.sectionMajor }} />
 
                             {/* 6. De-Dollarization Tracker */}
-                            <Box id="de-dollarization-section" sx={{ mb: 5 }}>
+                            <Box id="de-dollarization-section" sx={{ mb: spacing.sectionMajor }}>
                                 <DeDollarizationSection />
                             </Box>
 
                             {/* 6.1 Trade Settlement & BRICS+ Momentum */}
-                            <Box id="trade-settlement-section" sx={{ mb: 5 }}>
+                            <Box id="trade-settlement-section" sx={{ mb: spacing.sectionMajor }}>
                                 <TradeSettlementFlows />
                             </Box>
 
-                            <Grid container spacing={2.5}>
+                            {/* Gold Returns + BRICS Tracker - 2-column with matched heights */}
+                            <MatchHeightGrid container spacing={spacing.cardGap}>
                                 <Grid item xs={12} md={6}>
                                     <Box id="gold-returns-section" sx={{ height: '100%' }}>
                                         <GoldReturnsSection />
@@ -122,12 +125,12 @@ export const Dashboard: React.FC = () => {
                                         <BRICSTrackerSection />
                                     </Box>
                                 </Grid>
-                            </Grid>
+                            </MatchHeightGrid>
 
-                            <Box sx={{ mb: 5 }} />
+                            <Box sx={{ mb: spacing.sectionMajor }} />
 
-                            {/* Pulse Pulse Sections */}
-                            <Grid container spacing={2.5}>
+                            {/* Country Pulse Sections - 2-column matched heights */}
+                            <MatchHeightGrid container spacing={spacing.cardGap}>
                                 <Grid item xs={12} md={6}>
                                     <Box id="china-macro-section" sx={{ height: '100%' }}>
                                         <ChinaMacroPulseSection />
@@ -138,30 +141,30 @@ export const Dashboard: React.FC = () => {
                                         <IndiaMacroPulseSection />
                                     </Box>
                                 </Grid>
-                            </Grid>
+                            </MatchHeightGrid>
 
-                            <Box sx={{ mb: 5 }} />
+                            <Box sx={{ mb: spacing.sectionMajor }} />
 
-                            {/* Large Data Tables */}
-                            <Box id="major-economies-section" sx={{ mb: 5 }}>
+                            {/* Large Data Tables - Full width for breathing room*/}
+                            <Box id="major-economies-section" sx={{ mb: spacing.sectionMajor }}>
                                 <MajorEconomiesTable />
                             </Box>
 
-                            <Box id="sovereign-risk-matrix" sx={{ mb: 5 }}>
+                            <Box id="sovereign-risk-matrix" sx={{ mb: spacing.sectionMajor }}>
                                 <SovereignRiskMatrix />
                             </Box>
 
                             {/* Sovereign & Treasury Stress */}
-                            <Box id="treasury-snapshot-section" sx={{ mb: 5 }}>
+                            <Box id="treasury-snapshot-section" sx={{ mb: spacing.sectionMajor }}>
                                 <TreasurySnapshotSection />
                             </Box>
 
-                            <Box id="sovereign-health-radar" sx={{ mb: 5 }}>
+                            <Box id="sovereign-health-radar" sx={{ mb: spacing.sectionMajor }}>
                                 <SovereignHealthRadar />
                             </Box>
 
                             {/* Major Foreign Holders */}
-                            <Box id="treasury-holders-section" sx={{ mb: 5 }}>
+                            <Box id="treasury-holders-section" sx={{ mb: spacing.sectionMajor }}>
                                 <React.Suspense fallback={<Box sx={{ height: 200, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2 }} />}>
                                     <TreasuryHoldersSection />
                                 </React.Suspense>
@@ -169,7 +172,8 @@ export const Dashboard: React.FC = () => {
 
                             <ScenarioStudio />
 
-                            <Box id="gold-valuation-strip" sx={{ mt: 5 }}>
+                            {/* Paper vs Hard Currency (Special focus - sacred) */}
+                            <Box id="gold-valuation-strip" sx={{ mt: spacing.sectionMajor }}>
                                 <GoldValuationStrip />
                             </Box>
                         </Box>

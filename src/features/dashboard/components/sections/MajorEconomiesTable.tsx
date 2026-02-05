@@ -10,12 +10,13 @@ import {
     Typography,
     Paper,
     Skeleton,
-    Tooltip,
     LinearProgress,
     Stack
 } from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useMajorEconomies, MajorEconomyRow } from '@/hooks/useMajorEconomies';
+import { formatMetric } from '@/utils/formatMetric';
+import { DataQualityBadge } from '@/components/DataQualityBadge';
 
 const SparkBar: React.FC<{ value: number, color: string, max?: number, suffix?: string }> = ({ value, color, max = 10, suffix = '%' }) => (
     <Box sx={{ width: '100%', minWidth: 60 }}>
@@ -68,14 +69,6 @@ export const MajorEconomiesTable: React.FC = () => {
     const { data, isLoading } = useMajorEconomies();
     const [isExpanded, setIsExpanded] = React.useState(false);
 
-    const formatValue = (val: number, decimals: number = 2) => {
-        if (val === 0) return '-';
-        return val.toLocaleString(undefined, {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
-        });
-    };
-
     const visibleData = data ? (isExpanded ? data : data.slice(0, 6)) : [];
 
     return (
@@ -83,6 +76,7 @@ export const MajorEconomiesTable: React.FC = () => {
             <SectionHeader
                 title="Sovereign Health Matrix"
                 subtitle="Comparative fundamentals across G20 anchors (Jan 2026)"
+                lastUpdated={data?.[0]?.last_updated}
             />
 
             <TableContainer
@@ -129,15 +123,15 @@ export const MajorEconomiesTable: React.FC = () => {
                     <TableBody>
                         {isLoading ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <TableRow key={i}>
+                                <TableRow key={i} sx={{ '&:nth-of-type(odd)': { bgcolor: 'rgba(255,255,255,0.01)' } }}>
                                     <TableCell><Skeleton variant="text" /></TableCell>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
+                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '60%' }} /></TableCell>
                                     <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
                                     <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
+                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
+                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
+                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
+                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
                                 </TableRow>
                             ))
                         ) : (
@@ -145,14 +139,15 @@ export const MajorEconomiesTable: React.FC = () => {
                                 <TableRow
                                     key={row.code}
                                     sx={{
-                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' },
-                                        transition: 'background-color 0.2s'
+                                        '&:nth-of-type(odd)': { bgcolor: 'rgba(255,255,255,0.01)' },
+                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
+                                        transition: 'background-color 0.1s ease'
                                     }}
                                 >
                                     <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontSize: '1rem' }}>{row.flag}</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 900, color: 'text.primary', fontSize: '0.75rem' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            <Typography sx={{ fontSize: '1.1rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{row.flag}</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
                                                 {row.code}
                                             </Typography>
                                         </Box>
@@ -160,7 +155,7 @@ export const MajorEconomiesTable: React.FC = () => {
 
                                     <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                                         <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.75rem' }}>
-                                            ${formatValue(row.gdp_nominal, 1)}T
+                                            ${formatMetric(row.gdp_nominal, 'trillion', { showUnit: false })}T
                                         </Typography>
                                     </TableCell>
 
@@ -209,17 +204,12 @@ export const MajorEconomiesTable: React.FC = () => {
                                     </TableCell>
 
                                     <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-                                            <Tooltip title={row.staleness === 'fresh' ? 'Data is fresh' : `Stale since: ${row.staleness}`}>
-                                                <Box sx={{
-                                                    width: 6,
-                                                    height: 6,
-                                                    borderRadius: '50%',
-                                                    bgcolor: row.staleness === 'fresh' ? '#10b981' : '#f59e0b',
-                                                    boxShadow: row.staleness === 'fresh' ? '0 0 6px #10b98150' : 'none'
-                                                }} />
-                                            </Tooltip>
-                                            <Typography variant="caption" sx={{ fontSize: '0.6rem', color: 'text.disabled', fontWeight: 700 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1.5 }}>
+                                            <DataQualityBadge
+                                                timestamp={row.staleness === 'fresh' ? new Date() : null}
+                                                label={false}
+                                            />
+                                            <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.secondary', fontWeight: 800 }}>
                                                 {row.growth > 0 && row.cpi < 5 ? 'STABLE' : 'STRESS'}
                                             </Typography>
                                         </Box>

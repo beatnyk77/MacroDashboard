@@ -3,10 +3,10 @@ import { Card, Box, Typography, SxProps, Theme, Skeleton, Button } from '@mui/ma
 import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
-import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
+import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { useViewContext } from '@/context/ViewContext';
-import { FreshnessChip } from './FreshnessChip';
-import { getStaleness } from '@/hooks/useStaleness';
+import { DataQualityBadge } from './DataQualityBadge';
+import { metricTypography } from '@/theme';
 
 
 interface MetricCardProps {
@@ -113,10 +113,6 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         }
     };
 
-    const { state: stalenessState, label: timeLabel } = getStaleness(lastUpdated, frequency);
-
-
-
     const isExtreme = (!isLoading && !isNullValue) && (
         (typeof percentile === 'number' && (percentile > 95 || percentile < 5)) ||
         (typeof zScore === 'number' && Math.abs(zScore) >= 2.5)
@@ -193,16 +189,16 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 </Box>
             )}
 
-            {stalenessState !== 'fresh' && (
+            {lastUpdated && (
                 <Box
                     sx={{
                         position: 'absolute',
-                        top: 8,
-                        right: 8,
+                        top: 12,
+                        right: 12,
                         zIndex: 10
                     }}
                 >
-                    <FreshnessChip status={stalenessState} lastUpdated={lastUpdated} />
+                    <DataQualityBadge timestamp={lastUpdated} size="small" label={false} />
                 </Box>
             )}
 
@@ -210,12 +206,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 <Box>
                     <Typography
                         variant="caption"
-                        color="text.secondary"
                         sx={{
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.12em',
-                            fontSize: '0.65rem',
+                            ...metricTypography.label,
+                            color: 'text.secondary',
                             opacity: 0.8
                         }}
                     >
@@ -259,14 +252,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                             <Typography
                                 variant="h2"
                                 sx={{
-                                    fontWeight: 900,
-                                    letterSpacing: '-0.04em',
+                                    ...metricTypography.primary,
                                     color: 'text.primary',
-                                    fontSize: { xs: '2rem', md: '2.5rem' },
                                     lineHeight: 1
                                 }}
                             >
-                                {prefix}{formatNumber(typeof value === 'string' ? parseFloat(value) : value, { decimals: 2, notation: 'standard' })}{suffix}
+                                {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}{suffix}
                             </Typography>
                         </Box>
 
@@ -341,7 +332,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 INSTITUTIONAL PERCENTILE (120Y+)
                             </Typography>
                             <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
-                                {formatPercentage(percentile, { decimals: 1 })}
+                                {formatMetric(percentile, 'percent', { showUnit: true })}
                             </Typography>
                         </Box>
                         <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
@@ -363,13 +354,15 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                             <Sparkline data={history} color={getStatusColor()} height={32} />
                         </Box>
                     )}
-                    <Typography variant="caption" sx={{
-                        color: stalenessState === 'overdue' ? 'error.main' : (stalenessState === 'lagged' ? 'warning.main' : 'text.disabled'),
-                        fontSize: '0.6rem',
-                        fontWeight: 600
-                    }}>
-                        Refreshed {timeLabel}
-                    </Typography>
+                    {lastUpdated && (
+                        <Typography variant="caption" sx={{
+                            color: 'text.disabled',
+                            fontSize: '0.6rem',
+                            fontWeight: 600
+                        }}>
+                            Updated {new Date(lastUpdated).toLocaleDateString()}
+                        </Typography>
+                    )}
                 </Box>
                 <Button
                     size="small"

@@ -8,6 +8,9 @@ import { UpcomingEventsCard } from './UpcomingEventsCard';
 import { PresidentialPolicyTracker } from './PresidentialPolicyTracker';
 import { RegimeReplayModal } from './RegimeReplayModal';
 import { GeopoliticalRiskPulseCard } from './GeopoliticalRiskPulseCard';
+import { BalanceOfPaymentsPressureCard } from './BalanceOfPaymentsPressureCard';
+import { OECDLeadingIndicatorsCard } from './OECDLeadingIndicatorsCard';
+import { SankeyFlowCard } from './SankeyFlowCard';
 
 export const MacroOrientationSection: React.FC = () => {
     const { data: regimeData, isLoading: regimeLoading } = useRegime();
@@ -58,6 +61,15 @@ export const MacroOrientationSection: React.FC = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <GeopoliticalRiskPulseCard />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <BalanceOfPaymentsPressureCard />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <OECDLeadingIndicatorsCard />
+                </Grid>
+                <Grid item xs={12}>
+                    <SankeyFlowCard />
                 </Grid>
             </Grid>
 

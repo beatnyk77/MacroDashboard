@@ -1,5 +1,5 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2'
-import { sendSlackAlert } from './slack.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { runIngestion } from '../_shared/logging.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -7,13 +7,23 @@ const corsHeaders = {
 }
 
 // Data Source Config
-const METRICS = [
+interface GfcfMetric {
+    id: string;
+    type: 'calculated' | 'direct';
+    series_id?: string;
+    numerator?: string;
+    denominator?: string;
+    denominator_candidates?: string[];
+    numerator_scale?: number; // Multiply by this to get to denominator units
+}
+
+const METRICS: GfcfMetric[] = [
     {
         id: 'US_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'GPDIC1', // Real Gross Private Domestic Investment
-        denominator: 'GDPC1', // Real GDP
-        adjust_units: false // Both in Billions of Chn 2012 Dollars
+        numerator: 'GPDIC1', // Real Gross Private Domestic Investment (Billions)
+        denominator: 'GDPC1', // Real GDP (Billions)
+        numerator_scale: 1
     },
     {
         id: 'US_PRIVATE_GFCF_GDP_PCT',
@@ -23,27 +33,27 @@ const METRICS = [
     {
         id: 'JP_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'NAEXKP04JPQ189S', // GFCF in Yen
-        denominator_candidates: ['JPNNGDP', 'MKTGDPJPA646NWDB'], // GDP in Millions of Yen
-        numerator_scale: 1000000 // Convert Yen to Millions of Yen
+        numerator: 'NAEXKP04JPQ189S', // GFCF (Billions of Yen)
+        denominator_candidates: ['JPNNGDP'], // GDP (Millions of Yen)
+        numerator_scale: 1000 // Convert Billions to Millions
     },
     {
         id: 'EU_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'NAEXCP04EZQ189S', // GFCF in Euros
-        denominator: 'EUNNGDP', // GDP in Millions of Euros
-        numerator_scale: 1000000 // Convert Euros to Millions of Euros
+        numerator: 'NAEXCP04EZQ189S', // GFCF (Euros)
+        denominator: 'EUNNGDP', // GDP (Millions of Euros)
+        numerator_scale: 0.000001 // Convert Euros to Millions
     },
     {
         id: 'IN_GFCF_GDP_PCT',
         type: 'calculated',
         numerator: 'NAEXKP04INQ652S', // GFCF (Rupees, Current Prices)
         denominator: 'INDGDPNQDSMEI', // Nominal GDP (Rupees, Quarterly, OECD)
+        numerator_scale: 1
     }
 ];
 
-// Constants for China
-const CHINA_GFCF_FIXED = 42.0; // Fallback %
+const CHINA_GFCF_FIXED = 42.0;
 
 async function fetchFredSeries(apiKey: string, seriesId: string) {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=1`;
@@ -60,18 +70,20 @@ async function fetchFredSeries(apiKey: string, seriesId: string) {
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-    try {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-        const fredApiKey = Deno.env.get('FRED_API_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const fredApiKey = Deno.env.get('FRED_API_KEY');
 
-        if (!fredApiKey) throw new Error('FRED_API_KEY is missing');
+    if (!fredApiKey) {
+        return new Response(JSON.stringify({ error: 'FRED_API_KEY is missing' }), { status: 500, headers: corsHeaders });
+    }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    return runIngestion(supabase, 'ingest-gfcf', async (ctx) => {
         const updates = [];
         const errors = [];
 
-        // 1. Process standard metrics
         for (const metric of METRICS) {
             try {
                 let value: number | null = null;
@@ -87,21 +99,24 @@ Deno.serve(async (req: Request) => {
                     const num = await fetchFredSeries(fredApiKey, metric.numerator);
 
                     let den = null;
-                    if (Array.isArray(metric.denominator_candidates)) {
-                        for (const cand of metric.denominator_candidates) {
-                            try {
-                                den = await fetchFredSeries(fredApiKey, cand);
-                                if (den) break;
-                            } catch (e) { console.log(`Candidate ${cand} failed`); }
+                    const candidates = metric.denominator_candidates || (metric.denominator ? [metric.denominator] : []);
+
+                    for (const cand of candidates) {
+                        try {
+                            den = await fetchFredSeries(fredApiKey, cand);
+                            if (den) break;
+                        } catch (e) {
+                            console.log(`Candidate ${cand} failed: ${e.message}`);
                         }
-                    } else if (metric.denominator) {
-                        den = await fetchFredSeries(fredApiKey, metric.denominator);
                     }
 
                     if (num && den) {
-                        const numValue = metric.numerator_scale ? num.value / metric.numerator_scale : num.value;
-                        value = (numValue / den.value) * 100;
+                        const scale = metric.numerator_scale ?? 1;
+                        const scaledNum = num.value * scale;
+                        value = (scaledNum / den.value) * 100;
                         date = num.date > den.date ? num.date : den.date;
+
+                        console.log(`Processed ${metric.id}: num=${num.value}, den=${den.value}, scale=${scale}, result=${value.toFixed(2)}%`);
                     }
                 }
 
@@ -116,43 +131,29 @@ Deno.serve(async (req: Request) => {
                     errors.push(`No data for ${metric.id}`);
                 }
             } catch (e: any) {
+                console.error(`Error processing ${metric.id}:`, e);
                 errors.push(`Error processing ${metric.id}: ${e.message}`);
             }
         }
 
-        // 2. Process China (Fallback/Placeholder)
-        // Try to fetch from TE if possible? For now, implementing robust fallback.
+        // Process China Fallback
         updates.push({
             metric_id: 'CN_GFCF_GDP_PCT',
-            as_of_date: new Date().toISOString().split('T')[0], // Today
+            as_of_date: new Date().toISOString().split('T')[0],
             value: CHINA_GFCF_FIXED,
             last_updated_at: new Date().toISOString()
         });
 
-        // 3. Upsert
         if (updates.length > 0) {
-            const { error } = await supabase
+            const { error } = await ctx.supabase
                 .from('metric_observations')
                 .upsert(updates, { onConflict: 'metric_id, as_of_date' });
-
             if (error) throw error;
         }
 
-        return new Response(JSON.stringify({
-            success: true,
-            processed: updates.length,
-            errors
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200
-        });
-
-    } catch (error: any) {
-        console.error('Ingest GFCF Error:', error);
-        await sendSlackAlert(`GFCF Ingestion Failed: ${error.message}`);
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500,
-        });
-    }
+        return {
+            rows_inserted: updates.length,
+            metadata: { errors, update_ids: updates.map(u => u.metric_id) }
+        };
+    });
 });
