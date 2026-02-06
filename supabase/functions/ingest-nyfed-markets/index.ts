@@ -11,7 +11,12 @@ async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
         try {
             const response = await fetch(url, {
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                    'Accept': 'application/json, text/javascript, */*; q=0.01',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Referer': 'https://www.newyorkfed.org/',
+                    'Origin': 'https://www.newyorkfed.org',
+                    'Connection': 'keep-alive'
                 }
             });
             if (response.ok) return response;
@@ -19,7 +24,7 @@ async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
         } catch (err) {
             console.warn(`Attempt ${i + 1} for ${url} errored: ${err}`);
         }
-        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
+        await new Promise(r => setTimeout(r, 2000 * Math.pow(2, i)));
     }
     throw new Error(`Failed to fetch ${url} after ${maxRetries} attempts`);
 }
@@ -40,120 +45,61 @@ Deno.serve(async (req: Request) => {
     return runIngestion(supabaseClient, 'ingest-nyfed-markets', async (ctx) => {
         const results: any[] = [];
         const errors: any[] = [];
+        const fredApiKey = Deno.env.get('FRED_API_KEY');
 
-        // 1. Primary Dealer Treasury Holdings (Weekly)
-        try {
-            const pdResp = await fetchWithRetry('https://markets.newyorkfed.org/api/pd/positions/recent.json');
-            const pdData = await pdResp.json();
-            const positions = pdData.pd?.positions || [];
-            if (positions.length > 0) {
-                positions.sort((a: any, b: any) => new Date(b.businessDate).getTime() - new Date(a.businessDate).getTime());
-                const latest = positions[0];
+        if (!fredApiKey) throw new Error('FRED_API_KEY is missing');
 
-                // Detailed debug logging
-                console.log(`Processing PD data for date: ${latest.businessDate}`);
-
-                const totalTreasury = latest.instrumentAmount
-                    ?.reduce((sum: number, i: any) => {
-                        if (i.instrumentType === "Treasury Securities" || i.instrumentType === "Federal Agency and GSE Debt Securities") {
-                            return sum + (i.netLong || 0);
-                        }
-                        return sum;
-                    }, 0) || 0;
-
-                results.push({
-                    metric_id: 'PRIMARY_DEALER_TREASURY_HOLDINGS_BN',
-                    as_of_date: latest.businessDate,
-                    value: totalTreasury / 1000, // Millions to Billions
-                    last_updated_at: new Date().toISOString()
-                });
-            } else {
-                console.warn('No PD positions found in response');
+        // Helper for FRED fetches
+        const fetchFred = async (seriesId: string, metricId: string, scale = 1) => {
+            try {
+                const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
+                const resp = await fetch(fredUrl);
+                if (!resp.ok) throw new Error(`FRED HTTP ${resp.status}`);
+                const data = await resp.json();
+                if (data.observations?.length > 0) {
+                    const latest = data.observations[0];
+                    results.push({
+                        metric_id: metricId,
+                        as_of_date: latest.date,
+                        value: parseFloat(latest.value) * scale,
+                        last_updated_at: new Date().toISOString()
+                    });
+                }
+            } catch (e: any) {
+                console.error(`Error fetching ${metricId} from FRED:`, e);
+                errors.push({ metric: metricId, error: e.message });
             }
-        } catch (e: any) {
-            console.error('Error fetching PD data:', e);
-            errors.push({ metric: 'PRIMARY_DEALER_TREASURY_HOLDINGS_BN', error: e.message });
-        }
+        };
 
-        // 2. RRP (Daily)
+        // 1. TGA (FRED - WTREGEN) - Billions
+        await fetchFred('WTREGEN', 'TGA_BALANCE_BN');
+
+        // 2. RRP (FRED - RRPONTSYD) - Billions
+        await fetchFred('RRPONTSYD', 'RRP_BALANCE_BN');
+
+        // 3. SOFR & EFFR for Spread (BPS)
         try {
-            const resp = await fetchWithRetry(`https://markets.newyorkfed.org/api/rrp/recent.json`);
-            const data = await resp.json();
-            const obs = data.rrp?.operations || [];
+            const [sofrResp, effrResp] = await Promise.all([
+                fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=SOFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`),
+                fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=EFFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`)
+            ]);
 
-            if (Array.isArray(obs) && obs.length > 0) {
-                obs.sort((a: any, b: any) => new Date(b.businessDate).getTime() - new Date(a.businessDate).getTime());
-                const latestObs = obs[0];
-                console.log(`Processing RRP data for date: ${latestObs.businessDate}`);
-                results.push({
-                    metric_id: 'RRP_BALANCE_BN',
-                    as_of_date: latestObs.businessDate,
-                    value: (latestObs.totalAccepted) / 1000,
-                    last_updated_at: new Date().toISOString()
-                });
-            } else {
-                console.warn(`No RRP observations found`);
-            }
-        } catch (e: any) {
-            console.error(`Error fetching RRP data:`, e);
-            errors.push({ metric: 'RRP_BALANCE_BN', error: e.message });
-        }
+            if (sofrResp.ok && effrResp.ok) {
+                const sofrData = await sofrResp.json();
+                const effrData = await effrResp.json();
+                const latestSofr = sofrData.observations?.[0];
+                const latestEffr = effrData.observations?.[0];
 
-        // 3. TGA (Daily/Weekly from FRED - wtregen)
-        try {
-            const fredApiKey = Deno.env.get('FRED_API_KEY');
-            if (fredApiKey) {
-                const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=WTREGEN&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
-                const fredResp = await fetch(fredUrl);
-                if (fredResp.ok) {
-                    const fredData = await fredResp.json();
-                    if (fredData.observations?.length > 0) {
-                        const latest = fredData.observations[0];
-                        console.log(`Processing TGA (FRED) data for date: ${latest.date}`);
-                        results.push({
-                            metric_id: 'TGA_BALANCE_BN',
-                            as_of_date: latest.date,
-                            value: parseFloat(latest.value),
-                            last_updated_at: new Date().toISOString()
-                        });
-                    }
+                if (latestSofr && latestEffr) {
+                    results.push({
+                        metric_id: 'SOFR_EFFR_SPREAD_BPS',
+                        as_of_date: latestSofr.date,
+                        value: (parseFloat(latestSofr.value) - parseFloat(latestEffr.value)) * 100,
+                        last_updated_at: new Date().toISOString()
+                    });
                 }
             }
         } catch (e: any) {
-            console.error(`Error fetching TGA data from FRED:`, e);
-            errors.push({ metric: 'TGA_BALANCE_BN', error: e.message });
-        }
-
-        // 4. SOFR-EFFR Spread (Daily)
-        try {
-            const [sofrResp, effrResp] = await Promise.all([
-                fetchWithRetry('https://markets.newyorkfed.org/api/rates/sofr/recent.json'),
-                fetchWithRetry('https://markets.newyorkfed.org/api/rates/effr/recent.json')
-            ]);
-            const sofrData = await sofrResp.json();
-            const effrData = await effrResp.json();
-            const sofrObs = sofrData.rates?.sofr || [];
-            const effrObs = effrData.rates?.effr || [];
-
-            if (sofrObs.length > 0 && effrObs.length > 0) {
-                sofrObs.sort((a: any, b: any) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime());
-                effrObs.sort((a: any, b: any) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime());
-
-                const latestSofr = sofrObs[0];
-                const latestEffr = effrObs.find((e: any) => e.effectiveDate === latestSofr.effectiveDate) || effrObs[0];
-
-                console.log(`Processing SOFR-EFFR data for date: ${latestSofr.effectiveDate}`);
-                results.push({
-                    metric_id: 'SOFR_EFFR_SPREAD_BPS',
-                    as_of_date: latestSofr.effectiveDate,
-                    value: (latestSofr.percentRate - latestEffr.percentRate) * 100, // % to bps
-                    last_updated_at: new Date().toISOString()
-                });
-            } else {
-                console.warn('Insufficient SOFR or EFFR data found');
-            }
-        } catch (e: any) {
-            console.error('Error fetching SOFR-EFFR data:', e);
             errors.push({ metric: 'SOFR_EFFR_SPREAD_BPS', error: e.message });
         }
 

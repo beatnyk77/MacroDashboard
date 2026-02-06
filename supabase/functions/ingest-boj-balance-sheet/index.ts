@@ -12,7 +12,8 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
         ...options,
         headers: {
             ...options.headers,
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Accept': 'application/json'
         }
     };
     for (let i = 0; i <= maxRetries; i++) {
@@ -23,7 +24,10 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
             }
             const response = await fetch(url, defaultOptions);
             if (response.ok) return response;
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+            // Log body for debugging 400/403
+            const text = await response.text();
+            throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
         } catch (error: any) {
             lastError = error;
             console.warn(`Attempt ${i + 1} failed for ${url}: ${error.message}`);
@@ -50,11 +54,8 @@ Deno.serve(async (req: Request) => {
     return runIngestion(supabase, 'ingest-boj-balance-sheet', async (ctx) => {
         // Metrics to fetch from FRED
         const metricsMap = [
-            { id: 'BOJ_TOTAL_ASSETS_TRJPY', fredId: 'JPNASSETS' }, // Millions -> Trillions
-            { id: 'BOJ_MONETARY_BASE_TRJPY', fredId: 'JPNBASE' }, // Base Money
-            { id: 'BOJ_JGB_HOLDINGS_TRJPY', fredId: 'JPNASSETSECUC' }, // This was 400, checking fallback
-            { id: 'BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY', fredId: 'JPNLIABDEPC' },
-            { id: 'BOJ_EXCESS_RESERVES_TRJPY', fredId: 'JPNLIABRESVE' }
+            { id: 'BOJ_TOTAL_ASSETS_TRJPY', fredId: 'JPNASSETS' },
+            { id: 'BOJ_MONETARY_BASE_TRJPY', fredId: 'JPNBASE' }
         ];
 
         const results: any[] = [];
