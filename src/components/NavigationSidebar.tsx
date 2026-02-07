@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, useTheme } from '@mui/material';
 import {
     LayoutDashboard,
     Droplets,
@@ -10,6 +9,7 @@ import {
     Table,
     BookOpen
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface NavItem {
     id: string;
@@ -29,7 +29,6 @@ const navItems: NavItem[] = [
 ];
 
 export const NavigationSidebar: React.FC = () => {
-    const theme = useTheme();
     const [activeId, setActiveId] = useState('top');
 
     useEffect(() => {
@@ -75,82 +74,55 @@ export const NavigationSidebar: React.FC = () => {
     };
 
     return (
-        <Box
-            sx={{
-                width: 240,
-                height: 'calc(100vh - 72px)',
-                position: 'sticky',
-                top: 72,
-                left: 0,
-                display: { xs: 'none', lg: 'flex' },
-                flexDirection: 'column',
-                borderRight: '1px solid',
-                borderColor: 'divider',
-                bgcolor: 'background.default',
-                py: 4,
-                zIndex: 1200,
-                overflowY: 'auto',
-            }}
-        >
-            <List sx={{ px: 2 }}>
-                {navItems.map((item) => (
-                    <ListItemButton
-                        key={item.id}
-                        onClick={() => handleNavClick(item.id)}
-                        selected={activeId === item.id}
-                        sx={{
-                            borderRadius: 2,
-                            mb: 1,
-                            py: 1.5,
-                            transition: 'all 0.2s ease',
-                            borderLeft: '3px solid transparent',
-                            '&.Mui-selected': {
-                                bgcolor: 'rgba(59, 130, 246, 0.08)',
-                                color: 'primary.main',
-                                borderLeft: `3px solid ${theme.palette.warning.main}`, // Gold accent for active
-                                '& .lucide': {
-                                    color: 'primary.main',
-                                },
-                            },
-                            '&:hover': {
-                                bgcolor: 'rgba(255, 255, 255, 0.03)',
-                            },
-                        }}
-                    >
-                        <ListItemIcon sx={{ minWidth: 40, color: activeId === item.id ? 'primary.main' : 'text.secondary' }}>
-                            {item.icon}
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={item.label}
-                            primaryTypographyProps={{
-                                variant: 'body2',
-                                fontWeight: activeId === item.id ? 700 : 500,
-                                letterSpacing: '0.01em',
-                            }}
-                        />
-                    </ListItemButton>
-                ))}
-            </List>
+        <aside className="hidden lg:flex w-[240px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/10 bg-background py-8 z-[1200] overflow-y-auto">
+            <nav className="px-3 flex-1">
+                <ul className="space-y-1">
+                    {navItems.map((item) => {
+                        const isActive = activeId === item.id;
+                        return (
+                            <li key={item.id}>
+                                <button
+                                    onClick={() => handleNavClick(item.id)}
+                                    className={cn(
+                                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 border-l-[3px]",
+                                        isActive
+                                            ? "bg-blue-500/10 text-primary border-yellow-500 font-bold"
+                                            : "text-muted-foreground border-transparent hover:bg-white/5 font-medium"
+                                    )}
+                                >
+                                    <span className={cn(
+                                        "shrink-0",
+                                        isActive ? "text-primary" : "text-muted-foreground"
+                                    )}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="truncate">{item.label}</span>
+                                </button>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </nav>
 
-            <Box sx={{ mt: 'auto', px: 3, py: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.disabled', letterSpacing: '0.1em', mb: 2, display: 'block' }}>
+            <div className="mt-auto px-6 py-4 border-t border-white/10">
+                <span className="block text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase mb-3">
                     SIGNAL KEY
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
-                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>Healthy</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'warning.main' }} />
-                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>Watch</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'error.main' }} />
-                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>Danger</Typography>
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
+                </span>
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                        <span className="text-xs font-semibold text-muted-foreground">Healthy</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]" />
+                        <span className="text-xs font-semibold text-muted-foreground">Watch</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" />
+                        <span className="text-xs font-semibold text-muted-foreground">Danger</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
     );
 };

@@ -1,20 +1,19 @@
 import React, { useMemo } from 'react';
-import { Box, Card, Typography, Grid, Chip, useTheme, Stack, Divider } from '@mui/material';
 import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper, Calendar } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useMacroEvents } from '@/hooks/useMacroEvents';
 import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
 import { formatBillions } from '@/utils/formatNumber';
-
-
+import { cn } from '@/lib/utils';
+import { Card, CardContent } from "@/components/ui/card";
 
 interface TodaysBriefPanelProps {
-    sx?: any;
+    className?: string;
+    sx?: any; // Deprecated, kept for compatibility
 }
 
-export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
-    const theme = useTheme();
+export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className }) => {
     const { data: regime } = useRegime();
     const { data: liquidity } = useNetLiquidity();
     const { data: events } = useMacroEvents();
@@ -23,7 +22,12 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
     // Restoration of missing variables for JSX
     const liquidityDelta = liquidity?.delta || null;
     const liquidityStatus = liquidityDelta ? (liquidityDelta > 0 ? 'Expanding' : 'Contracting') : 'Awaiting Data';
-    const liquidityColor = liquidityDelta ? (liquidityDelta > 0 ? theme.palette.success.main : theme.palette.error.main) : theme.palette.text.disabled;
+
+    // Tailwind text color classes instead of hex values
+    const getLiquidityColorClass = () => {
+        if (!liquidityDelta) return 'text-muted-foreground';
+        return liquidityDelta > 0 ? 'text-emerald-500' : 'text-rose-500';
+    };
 
     const today = useMemo(() => new Date(), []);
     const keyEvent = useMemo(() => {
@@ -76,12 +80,12 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
         }
     };
 
-    const getRegimeColor = () => {
-        if (!regime) return theme.palette.primary.main;
+    const getRegimeColorClass = () => {
+        if (!regime) return 'text-primary';
         const label = regime.regimeLabel.toLowerCase();
-        if (label.includes('expansion') || label.includes('recovery')) return theme.palette.success.main;
-        if (label.includes('tightening') || label.includes('slowdown')) return theme.palette.error.main;
-        return theme.palette.primary.main;
+        if (label.includes('expansion') || label.includes('recovery')) return 'text-emerald-500';
+        if (label.includes('tightening') || label.includes('slowdown')) return 'text-rose-500';
+        return 'text-primary';
     };
 
     const getRegimeStatus = () => {
@@ -94,9 +98,9 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case 'safe': return <Activity size={16} color={theme.palette.success.main} />;
-            case 'danger': return <AlertCircle size={16} color={theme.palette.error.main} />;
-            default: return <Activity size={16} color={theme.palette.primary.main} />;
+            case 'safe': return <Activity size={16} className="text-emerald-500" />;
+            case 'danger': return <AlertCircle size={16} className="text-rose-500" />;
+            default: return <Activity size={16} className="text-primary" />;
         }
     };
 
@@ -110,280 +114,173 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ sx }) => {
     };
 
     return (
-        <Card sx={{
-            mb: 4,
-            p: { xs: 2.5, md: 4 },
-            borderLeft: '4px solid',
-            borderLeftColor: 'primary.main',
-            bgcolor: '#0a1929', // Deep Navy - Institutional House View
-            border: '1px solid',
-            borderColor: 'rgba(59, 130, 246, 0.2)',
-            position: 'relative',
-            overflow: 'hidden',
-            boxShadow: '0 20px 40px -12px rgba(0,0,0,0.5)',
-            ...sx
-        }}>
+        <Card className={cn(
+            "mb-8 border-l-4 border-l-primary relative overflow-hidden shadow-2xl transition-all duration-300",
+            "bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5",
+            className
+        )}>
             {/* Subtle Gradient Overlay */}
-            <Box sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, transparent 40%)',
-                pointerEvents: 'none'
-            }} />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4, position: 'relative', zIndex: 1 }}>
-                <Box>
-                    <Typography
-                        variant="overline"
-                        sx={{
-                            fontWeight: 900,
-                            letterSpacing: '0.2em',
-                            color: 'primary.main',
-                            fontSize: '0.75rem',
-                            fontFamily: '"Inter", sans-serif',
-                            display: 'block',
-                            mb: 1
-                        }}
-                    >
-                        GRAPHIQUESTOR INTELLIGENCE
-                    </Typography>
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            fontWeight: 400, // Regular weight for serif looks more premium
-                            color: 'text.primary',
-                            letterSpacing: '-0.01em',
-                            fontFamily: '"Merriweather", "Georgia", serif', // Institutional Serif
-                            lineHeight: 1.2
-                        }}
-                    >
-                        {formatDate(new Date())}
-                    </Typography>
-                </Box>
-                <Chip
-                    label="PROPRIETARY VIEW"
-                    size="small"
-                    sx={{
-                        bgcolor: 'rgba(59, 130, 246, 0.15)',
-                        color: 'primary.light',
-                        border: '1px solid rgba(59, 130, 246, 0.3)',
-                        fontWeight: 900,
-                        fontSize: '0.65rem',
-                        letterSpacing: '0.05em'
-                    }}
-                />
-            </Box>
+            <CardContent className="p-6 md:p-8 relative z-10">
+                <div className="flex justify-between items-start mb-8">
+                    <div>
+                        <span className="block text-primary font-black tracking-[0.2em] text-xs font-sans mb-2">
+                            GRAPHIQUESTOR INTELLIGENCE
+                        </span>
+                        <h3 className="text-3xl md:text-4xl font-serif text-foreground tracking-tight leading-tight">
+                            {formatDate(new Date())}
+                        </h3>
+                    </div>
+                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-[0.65rem] font-black tracking-wider uppercase">
+                        Proprietary View
+                    </div>
+                </div>
 
-            <Grid container spacing={3} sx={{ position: 'relative', zIndex: 1 }}>
-                {/* Column 1: Core Signals */}
-                <Grid item xs={12} md={4}>
-                    <Stack spacing={2}>
-                        <Box sx={{
-                            p: 2.5,
-                            borderRadius: 2,
-                            bgcolor: 'rgba(255,255,255,0.02)',
-                            border: '1px solid',
-                            borderColor: 'divider',
-                        }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    {/* Column 1: Core Signals (4 cols) */}
+                    <div className="md:col-span-4 space-y-4">
+                        <div className="p-5 rounded-lg bg-white/5 border border-white/10">
+                            <div className="flex items-center gap-2 mb-3">
                                 {getStatusIcon(getRegimeStatus())}
-                                <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.65rem', letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
+                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
                                     Regime Consensus
-                                </Typography>
-                            </Box>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: getRegimeColor(), mb: 0.5 }}>
+                                </span>
+                            </div>
+                            <h5 className={cn("text-xl font-black mb-1", getRegimeColorClass())}>
                                 {regime?.regimeLabel || 'Neutral Persistence'}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.7rem', fontWeight: 600 }}>
+                            </h5>
+                            <span className="text-xs font-semibold text-muted-foreground">
                                 {regime?.timestamp ? `Model updated ${new Date(regime.timestamp).toLocaleDateString()}` : 'Real-time detection active'}
-                            </Typography>
-                        </Box>
+                            </span>
+                        </div>
 
-                        <Box sx={{
-                            p: 2.5,
-                            borderRadius: 2,
-                            bgcolor: 'rgba(255,255,255,0.02)',
-                            border: '1px solid',
-                            borderColor: 'divider',
-                        }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                        <div className="p-5 rounded-lg bg-white/5 border border-white/10">
+                            <div className="flex items-center gap-2 mb-3">
                                 {liquidityDelta && liquidityDelta > 0 ? (
-                                    <TrendingUp size={16} color={theme.palette.success.main} />
+                                    <TrendingUp size={16} className="text-emerald-500" />
                                 ) : (
-                                    <TrendingDown size={16} color={theme.palette.error.main} />
+                                    <TrendingDown size={16} className="text-rose-500" />
                                 )}
-                                <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.65rem', letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
+                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
                                     Liquidity Impulse
-                                </Typography>
-                            </Box>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: liquidityColor, mb: 0.5 }}>
+                                </span>
+                            </div>
+                            <h5 className={cn("text-xl font-black mb-1", getLiquidityColorClass())}>
                                 {liquidityStatus}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.7rem', fontWeight: 600 }}>
+                            </h5>
+                            <span className="text-xs font-semibold text-muted-foreground">
                                 {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${formatBillions(liquidityDelta / 1e9, { decimals: 1 })} net change (7D)` : 'Awaiting fresh feed'}
-                            </Typography>
-                        </Box>
-                    </Stack>
-                </Grid>
+                            </span>
+                        </div>
+                    </div>
 
-                {/* Column 2: Market Briefing */}
-                <Grid item xs={12} md={5}>
-                    <Box sx={{
-                        p: 2.5,
-                        borderRadius: 2,
-                        bgcolor: 'rgba(255,255,255,0.02)',
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        height: '100%'
-                    }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                            <Newspaper size={16} color={theme.palette.primary.main} />
-                            <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.65rem', letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
-                                LIVE INTELLIGENCE FEED
-                            </Typography>
-                        </Box>
-                        <Stack spacing={1.5} divider={<Divider sx={{ borderColor: 'rgba(255,255,255,0.03)' }} />}>
-                            {dynamicBriefing.length > 0 ? (
-                                dynamicBriefing.map((item, idx) => {
-                                    // Extract the actual headline object from the hook data if possible
-                                    const rawHeadline = headlines?.find(h => h.title === item.label);
+                    {/* Column 2: Market Briefing (5 cols) */}
+                    <div className="md:col-span-5">
+                        <div className="p-5 rounded-lg bg-white/5 border border-white/10 h-full">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Newspaper size={16} className="text-primary" />
+                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
+                                    LIVE INTELLIGENCE FEED
+                                </span>
+                            </div>
+                            <div className="space-y-4 divide-y divide-white/5">
+                                {dynamicBriefing.length > 0 ? (
+                                    dynamicBriefing.map((item, idx) => {
+                                        const rawHeadline = headlines?.find(h => h.title === item.label);
+                                        return (
+                                            <div key={idx} className="flex items-start gap-3 pt-3 first:pt-0">
+                                                <div className={cn(
+                                                    "mt-1.5 w-1.5 h-1.5 rounded-full shrink-0",
+                                                    item.trend === 'up' ? 'bg-emerald-500' : item.trend === 'down' ? 'bg-rose-500' : 'bg-muted-foreground'
+                                                )} />
+                                                <a
+                                                    href={rawHeadline?.link || '#'}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    onClick={(e) => {
+                                                        if (!rawHeadline?.link || rawHeadline.link.includes('example.com')) {
+                                                            e.preventDefault();
+                                                            handleHighlight(item.label, item.anchor);
+                                                        }
+                                                    }}
+                                                    className="text-xs font-semibold text-foreground hover:text-primary transition-colors line-clamp-3 leading-relaxed cursor-pointer"
+                                                    title={item.label}
+                                                >
+                                                    {item.label}
+                                                </a>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <span className="text-xs text-muted-foreground text-center block py-4">
+                                        Awaiting institutional signal ingest...
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
-                                    return (
-                                        <Box key={idx} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                                            <Box sx={{
-                                                mt: 0.7,
-                                                width: 6,
-                                                height: 6,
-                                                borderRadius: '50%',
-                                                bgcolor: item.trend === 'up' ? 'success.main' : item.trend === 'down' ? 'error.main' : 'text.disabled',
-                                                flexShrink: 0
-                                            }} />
-                                            <Typography
-                                                variant="body2"
-                                                component="a"
-                                                href={rawHeadline?.link || '#'}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={(e) => {
-                                                    if (!rawHeadline?.link || rawHeadline.link.includes('example.com')) {
-                                                        e.preventDefault();
-                                                        handleHighlight(item.label, item.anchor);
-                                                    }
-                                                }}
-                                                sx={{
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: 600,
-                                                    color: 'text.primary',
-                                                    lineHeight: 1.3,
-                                                    textDecoration: 'none',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.2s',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 3,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                    '&:hover': { color: 'primary.main' }
-                                                }}
-                                                title={item.label}
-                                            >
-                                                {item.label}
-                                            </Typography>
-                                        </Box>
-                                    );
-                                })
+                    {/* Column 3: Scheduled Focus (3 cols) */}
+                    <div className="md:col-span-3">
+                        <div className="p-5 rounded-lg bg-blue-500/5 border border-dashed border-primary/50 h-full flex flex-col">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Calendar size={16} className="text-secondary" />
+                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
+                                    Today's Key Alpha
+                                </span>
+                            </div>
+
+                            {keyEvent ? (
+                                <div>
+                                    <h6 className="text-base font-black text-foreground mb-2 leading-tight">
+                                        {keyEvent.event_name}
+                                    </h6>
+                                    <div className="flex gap-2 mb-4">
+                                        <span className="px-1.5 py-0.5 bg-white/10 rounded text-[0.55rem] font-black uppercase">
+                                            {keyEvent.country}
+                                        </span>
+                                        <span className={cn(
+                                            "px-1.5 py-0.5 rounded text-[0.55rem] font-black uppercase text-white",
+                                            keyEvent.impact_level === 'High' ? 'bg-rose-500' : 'bg-amber-500'
+                                        )}>
+                                            {keyEvent.impact_level}
+                                        </span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                            <span className="text-xs font-semibold text-muted-foreground">Forecast</span>
+                                            <span className="text-xs font-black font-mono text-foreground capitalize">{keyEvent.forecast || '-'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-xs font-semibold text-muted-foreground">Previous</span>
+                                            <span className="text-xs font-black font-mono text-foreground">{keyEvent.previous || '-'}</span>
+                                        </div>
+                                        <div className="flex justify-between mt-2 pt-2 border-t border-white/5">
+                                            <span className="text-xs font-black text-muted-foreground uppercase">ACTUAL</span>
+                                            <span className="text-xs font-black font-mono text-primary">{keyEvent.actual || 'PENDING'}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             ) : (
-                                <Typography variant="caption" sx={{ color: 'text.disabled', textAlign: 'center', display: 'block', py: 2 }}>
-                                    Awaiting institutional signal ingest...
-                                </Typography>
+                                <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-50 text-center py-6">
+                                    <AlertCircle size={24} />
+                                    <span className="text-xs font-bold">
+                                        No high-impact releases scheduled for today.
+                                    </span>
+                                </div>
                             )}
-                        </Stack>
-                    </Box>
-                </Grid>
 
-                {/* Column 3: Scheduled Focus */}
-                <Grid item xs={12} md={3}>
-                    <Box sx={{
-                        p: 2.5,
-                        borderRadius: 2,
-                        bgcolor: 'rgba(59, 130, 246, 0.05)',
-                        border: '1px dashed',
-                        borderColor: 'primary.main',
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                            <Calendar size={16} color={theme.palette.secondary.main} />
-                            <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.65rem', letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
-                                Today's Key Alpha
-                            </Typography>
-                        </Box>
-
-                        {keyEvent ? (
-                            <Box>
-                                <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary', mb: 1, lineHeight: 1.2 }}>
-                                    {keyEvent.event_name}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                                    <Chip label={keyEvent.country} size="small" sx={{ height: 16, fontSize: '0.55rem', fontWeight: 900, bgcolor: 'rgba(255,255,255,0.1)' }} />
-                                    <Chip
-                                        label={keyEvent.impact_level.toUpperCase()}
-                                        size="small"
-                                        sx={{
-                                            height: 16,
-                                            fontSize: '0.55rem',
-                                            fontWeight: 900,
-                                            bgcolor: keyEvent.impact_level === 'High' ? 'error.main' : 'warning.main',
-                                            color: 'white'
-                                        }}
-                                    />
-                                </Box>
-                                <Stack spacing={1}>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>Forecast</Typography>
-                                        <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 800, fontFamily: 'monospace' }}>{keyEvent.forecast || '-'}</Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>Previous</Typography>
-                                        <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 800, fontFamily: 'monospace' }}>{keyEvent.previous || '-'}</Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, pt: 1, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 900 }}>ACTUAL</Typography>
-                                        <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 900, fontFamily: 'monospace' }}>{keyEvent.actual || 'PENDING'}</Typography>
-                                    </Box>
-                                </Stack>
-                            </Box>
-                        ) : (
-                            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 1, opacity: 0.5 }}>
-                                <AlertCircle size={24} />
-                                <Typography variant="caption" sx={{ textAlign: 'center', fontWeight: 700 }}>
-                                    No high-impact releases scheduled for today.
-                                </Typography>
-                            </Box>
-                        )}
-
-                        <Typography
-                            variant="caption"
-                            onClick={() => handleScrollTo('#macro-calendar')}
-                            sx={{
-                                mt: 'auto',
-                                pt: 2,
-                                textAlign: 'right',
-                                color: 'primary.main',
-                                fontWeight: 800,
-                                cursor: 'pointer',
-                                fontSize: '0.6rem',
-                                '&:hover': { textDecoration: 'underline' }
-                            }}
-                        >
-                            VIEW FULL CALENDAR →
-                        </Typography>
-                    </Box>
-                </Grid>
-            </Grid>
+                            <span
+                                onClick={() => handleScrollTo('#macro-calendar')}
+                                className="mt-auto pt-4 text-right text-[0.6rem] font-black text-primary cursor-pointer hover:underline uppercase block ml-auto"
+                            >
+                                VIEW FULL CALENDAR →
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
         </Card>
     );
 };

@@ -1,13 +1,13 @@
 import React from 'react';
-import { Card, Box, Typography, SxProps, Theme, Skeleton, Button } from '@mui/material';
-import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { useViewContext } from '@/context/ViewContext';
 import { DataQualityBadge } from './DataQualityBadge';
-import { metricTypography } from '@/theme';
-
+import { cn } from '@/lib/utils'; // Shadcn utility
 
 interface MetricCardProps {
     label: string;
@@ -26,7 +26,8 @@ interface MetricCardProps {
     prefix?: string;
     lastUpdated?: string | Date;
     isLoading?: boolean;
-    sx?: SxProps<Theme>;
+    sx?: any; // Keeping for compatibility but ignoring in new implementation
+    className?: string;
     source?: string;
     frequency?: string;
     zScoreWindow?: string;
@@ -50,7 +51,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     prefix = '',
     lastUpdated,
     isLoading,
-    sx,
+    className,
     source = 'FRED',
     frequency = 'Daily',
     zScoreWindow = 'Rolling 252D',
@@ -70,7 +71,6 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 setIsHighlighted(true);
                 setTimeout(() => setIsHighlighted(false), 3000);
 
-                // Optional: Scroll into view if not visible
                 const element = document.getElementById(metricId || label);
                 if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -82,15 +82,21 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         return () => window.removeEventListener('macro-dashboard-highlight', handleHighlight);
     }, [metricId, label]);
 
-    // Status color mapping for traffic lights
-    const statusColorMap: Record<string, string> = {
-        'safe': '#10b981',    // Emerald
-        'neutral': '#3b82f6', // Blue
-        'warning': '#f59e0b', // Amber
-        'danger': '#ef4444'   // Crimson
+    // Status colors for inline styles where tailwind classes might be dynamic
+    const statusColors = {
+        safe: 'text-emerald-500',
+        neutral: 'text-blue-500',
+        warning: 'text-amber-500',
+        danger: 'text-rose-500'
     };
 
-    // Get brief signal label (3-5 words max)
+    const statusBgColors = {
+        safe: 'bg-emerald-500',
+        neutral: 'bg-blue-500',
+        warning: 'bg-amber-500',
+        danger: 'bg-rose-500'
+    };
+
     const getSignalLabel = (status: string): string => {
         switch (status) {
             case 'safe': return 'HEALTHY';
@@ -104,15 +110,6 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
         (typeof value === 'number' && isNaN(value));
 
-    const getStatusColor = () => {
-        switch (status) {
-            case 'safe': return '#10b981';
-            case 'warning': return '#f59e0b';
-            case 'danger': return '#ef4444';
-            default: return 'rgba(255,255,255,0.4)';
-        }
-    };
-
     const isExtreme = (!isLoading && !isNullValue) && (
         (typeof percentile === 'number' && (percentile > 95 || percentile < 5)) ||
         (typeof zScore === 'number' && Math.abs(zScore) >= 2.5)
@@ -125,262 +122,163 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         return <Minus size={12} />;
     };
 
-    const getDeltaColor = () => {
-        if (!delta) return 'text.secondary';
-        if (delta.trend === 'up') return 'success.main';
-        if (delta.trend === 'down') return 'error.main';
-        return 'text.secondary';
+    const getDeltaTextColor = () => {
+        if (!delta) return 'text-muted-foreground';
+        if (delta.trend === 'up') return 'text-emerald-500';
+        if (delta.trend === 'down') return 'text-rose-500';
+        return 'text-muted-foreground';
     };
 
     const cardContent = (
         <Card
-            sx={{
-                p: 2.5,
-                minHeight: 200,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: isHighlighted ? '2px solid' : '1px solid',
-                borderColor: isHighlighted ? 'primary.main' : 'divider',
-                bgcolor: 'background.paper',
-                animation: isHighlighted ? 'pulse-highlight 1.5s infinite' : 'none',
-                '@keyframes pulse-highlight': {
-                    '0%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' },
-                    '50%': { boxShadow: '0 0 20px 5px rgba(59, 130, 246, 0.4)' },
-                    '100%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' }
-                },
-                '&:hover': {
-                    borderColor: 'primary.main',
-                    boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
-                    transform: 'translateY(-2px)',
-                },
-                ...sx
-            }}
             id={metricId || label}
+            className={cn(
+                "relative flex flex-col min-h-[200px] h-full overflow-hidden transition-all duration-300",
+                "bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5",
+                "hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/50",
+                isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                className
+            )}
         >
             {isExtreme && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        bgcolor: 'rgba(59, 130, 246, 0.15)',
-                        color: 'primary.main',
-                        fontSize: '0.6rem',
-                        fontWeight: 900,
-                        px: 1,
-                        py: 0.5,
-                        borderBottomRightRadius: 4,
-                        zIndex: 1,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        borderRight: '1px solid rgba(59, 130, 246, 0.2)',
-                        borderBottom: '1px solid rgba(59, 130, 246, 0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5
-                    }}
-                >
-                    <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'primary.main', animation: 'pulse 1s infinite' }} />
+                <div className="absolute top-0 left-0 z-10 flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 border-r border-b border-blue-500/20 rounded-br text-[10px] font-black tracking-wider text-blue-500 uppercase">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                     Historical Extreme
-                </Box>
+                </div>
             )}
 
             {lastUpdated && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 12,
-                        right: 12,
-                        zIndex: 10
-                    }}
-                >
+                <div className="absolute top-3 right-3 z-10">
                     <DataQualityBadge timestamp={lastUpdated} size="small" label={false} />
-                </Box>
+                </div>
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                <Box>
-                    <Typography
-                        variant="caption"
-                        sx={{
-                            ...metricTypography.label,
-                            color: 'text.secondary',
-                            opacity: 0.8
-                        }}
-                    >
-                        {label}
-                    </Typography>
-                    {sublabel && (
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.6rem', opacity: 0.6, mt: 0.2 }}>
-                            {sublabel}
-                        </Typography>
-                    )}
-                </Box>
-            </Box>
+            <CardContent className="flex flex-col flex-grow p-5 space-y-4">
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                    <div>
+                        <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase opacity-80">
+                            {label}
+                        </div>
+                        {sublabel && (
+                            <div className="text-[10px] text-muted-foreground opacity-60 mt-0.5 font-medium">
+                                {sublabel}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
-            <Box sx={{ mb: 2, minHeight: 64 }}>
-                {isLoading ? (
-                    <Skeleton variant="text" width="80%" height={64} />
-                ) : isNullValue ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: 0.4, mt: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', border: '2px solid', borderColor: 'text.disabled' }} />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.disabled' }}>
-                            Awaiting data
-                        </Typography>
-                    </Box>
-                ) : (
-                    <Box>
-                        {/* Primary Value - Unmissable */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
-                            {/* Traffic Light Status Dot */}
-                            {status !== 'neutral' && (
-                                <Box
-                                    sx={{
-                                        width: 12,
-                                        height: 12,
-                                        borderRadius: '50%',
-                                        bgcolor: statusColorMap[status],
-                                        boxShadow: `0 0 12px ${statusColorMap[status]} `,
-                                        flexShrink: 0
-                                    }}
-                                />
-                            )}
-                            <Typography
-                                variant="h2"
-                                sx={{
-                                    ...metricTypography.primary,
-                                    color: 'text.primary',
-                                    lineHeight: 1
-                                }}
-                            >
-                                {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}{suffix}
-                            </Typography>
-                        </Box>
+                {/* Main Value Area */}
+                <div className="flex-grow min-h-[64px]">
+                    {isLoading ? (
+                        <Skeleton className="w-[80%] h-16 rounded-lg" />
+                    ) : isNullValue ? (
+                        <div className="flex items-center gap-2 mt-2 opacity-40">
+                            <span className="w-2 h-2 rounded-full border-2 border-muted-foreground" />
+                            <span className="text-xl font-semibold text-muted-foreground">Awaiting data</span>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {/* Primary Value */}
+                            <div className="flex items-baseline gap-3">
+                                {status !== 'neutral' && (
+                                    <span className={cn(
+                                        "w-2.5 h-2.5 rounded-full shadow-[0_0_8px] shrink-0 animate-pulse",
+                                        statusBgColors[status as keyof typeof statusBgColors],
+                                        `shadow-${statusColors[status as keyof typeof statusColors].split('-')[1]}-500/50`
+                                    )} />
+                                )}
+                                <span className="text-4xl font-bold tracking-tight text-foreground leading-none tabular-nums">
+                                    {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}{suffix}
+                                </span>
+                            </div>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            {delta && (
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 0.5,
-                                    px: 1,
-                                    py: 0.3,
-                                    borderRadius: 1,
-                                    bgcolor: `rgba(255, 255, 255, 0.03)`,
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    color: getDeltaColor()
-                                }}>
-                                    {getDeltaIcon()}
-                                    <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.7rem' }}>{delta.value}</Typography>
-                                </Box>
-                            )}
+                            {/* Signal Row */}
+                            <div className="flex items-center gap-2 flex-wrap">
+                                {delta && (
+                                    <div className={cn(
+                                        "flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-xs font-bold",
+                                        "bg-background/40 border-border/50",
+                                        getDeltaTextColor()
+                                    )}>
+                                        {getDeltaIcon()}
+                                        <span>{delta.value}</span>
+                                    </div>
+                                )}
 
-                            {isInstitutionalView && typeof zScore === 'number' && !isNaN(zScore) && (
-                                <Box
-                                    sx={{
-                                        px: 1,
-                                        py: 0.3,
-                                        borderRadius: 1,
-                                        bgcolor: Math.abs(zScore) > 2 ? 'error.main' : 'rgba(255,255,255,0.05)',
-                                        border: '1px solid',
-                                        borderColor: Math.abs(zScore) > 2 ? 'error.main' : 'divider',
-                                        color: Math.abs(zScore) > 2 ? 'white' : 'text.secondary'
-                                    }}
-                                >
-                                    <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
+                                {isInstitutionalView && typeof zScore === 'number' && !isNaN(zScore) && (
+                                    <div className={cn(
+                                        "px-2 py-0.5 rounded-md border text-[10px] font-black tracking-wide",
+                                        Math.abs(zScore) > 2
+                                            ? "bg-rose-500/20 border-rose-500/30 text-rose-500"
+                                            : "bg-background/40 border-border/50 text-muted-foreground"
+                                    )}>
                                         Z: {formatDelta(zScore, { decimals: 1 })}
-                                    </Typography>
-                                </Box>
-                            )}
+                                    </div>
+                                )}
 
-                            {status !== 'neutral' && (
-                                <Box sx={{ ml: 'auto' }}>
-                                    <Typography
-                                        variant="overline"
-                                        sx={{
-                                            fontWeight: 800,
-                                            fontSize: '0.65rem',
-                                            letterSpacing: '0.05em',
-                                            color: statusColorMap[status],
-                                            bgcolor: `${statusColorMap[status]}15`,
-                                            px: 0.8,
-                                            py: 0.25,
-                                            borderRadius: 0.5,
-                                            border: '1px solid',
-                                            borderColor: `${statusColorMap[status]}30`
-                                        }}
-                                    >
+                                {status !== 'neutral' && (
+                                    <div className={cn(
+                                        "ml-auto px-2 py-0.5 rounded border text-[10px] font-black tracking-widest uppercase",
+                                        status === 'safe' && "bg-emerald-500/10 border-emerald-500/20 text-emerald-500",
+                                        status === 'warning' && "bg-amber-500/10 border-amber-500/20 text-amber-500",
+                                        status === 'danger' && "bg-rose-500/10 border-rose-500/20 text-rose-500",
+                                    )}>
                                         {getSignalLabel(status)}
-                                    </Typography>
-                                </Box>
-                            )}
-                        </Box>
-                    </Box>
-                )}
-            </Box>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
 
-            {
-                isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
-                    <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                            <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary' }}>
-                                INSTITUTIONAL PERCENTILE (120Y+)
-                            </Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
+                {/* Institutional Context: Percentile Bar */}
+                {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
+                    <div className="space-y-1">
+                        <div className="flex justify-between items-end">
+                            <span className="text-[9px] font-bold text-muted-foreground tracking-widest uppercase">
+                                INST. PERCENTILE
+                            </span>
+                            <span className={cn(
+                                "text-[10px] font-black tabular-nums",
+                                (percentile > 90 || percentile < 10) ? "text-amber-500" : "text-blue-500"
+                            )}>
                                 {formatMetric(percentile, 'percent', { showUnit: true })}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 4, overflow: 'hidden' }}>
-                            <Box sx={{
-                                width: `${Math.max(0, Math.min(100, percentile))}% `,
-                                bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
-                                height: '100%',
-                                transition: 'width 1s ease'
-                            }} />
-                        </Box>
-                    </Box>
-                )
-            }
+                            </span>
+                        </div>
+                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                            <div
+                                className={cn(
+                                    "h-full transition-all duration-1000 ease-out",
+                                    (percentile > 90 || percentile < 10) ? "bg-amber-500" : "bg-blue-500"
+                                )}
+                                style={{ width: `${Math.max(0, Math.min(100, percentile))}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
 
-            <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                    {history && history.length > 0 && (
-                        <Box sx={{ height: 32, opacity: 0.7 }}>
-                            <Sparkline data={history} color={getStatusColor()} height={32} />
-                        </Box>
-                    )}
-                    {lastUpdated && (
-                        <Typography variant="caption" sx={{
-                            color: 'text.disabled',
-                            fontSize: '0.6rem',
-                            fontWeight: 600
-                        }}>
-                            Updated {new Date(lastUpdated).toLocaleDateString()}
-                        </Typography>
-                    )}
-                </Box>
-                <Button
-                    size="small"
-                    variant="text"
-                    sx={{
-                        fontSize: '0.6rem',
-                        fontWeight: 900,
-                        minWidth: 'auto',
-                        p: 0,
-                        opacity: 0.15,
-                        '&:hover': { opacity: 0.8, bgcolor: 'transparent' },
-                        color: 'text.secondary'
-                    }}
-                >
-                    <ExternalLink size={12} />
-                </Button>
-            </Box>
-        </Card >
+                {/* Footer: Sparkline & Info */}
+                <div className="mt-auto flex justify-between items-end pt-2">
+                    <div className="flex-grow">
+                        {history && history.length > 0 && (
+                            <div className="h-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-300">
+                                <Sparkline
+                                    data={history}
+                                    color={status === 'safe' || status === 'neutral' ? '#3b82f6' : '#ef4444'}
+                                    height={32}
+                                />
+                            </div>
+                        )}
+                        {lastUpdated && (
+                            <div className="text-[10px] font-bold text-muted-foreground/60 mt-1">
+                                Updated {new Date(lastUpdated).toLocaleDateString()}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     );
 
     return (

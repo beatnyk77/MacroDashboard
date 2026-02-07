@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
-import { Box, Card, Typography, Skeleton } from '@mui/material';
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
+import { cn } from '@/lib/utils';
 
 export const GoldRatioRibbon: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
@@ -41,9 +43,9 @@ export const GoldRatioRibbon: React.FC = () => {
 
     if (isLoading) {
         return (
-            <Card sx={{ p: 4, height: 400, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Skeleton variant="text" width="40%" height={32} />
-                <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: 2 }} />
+            <Card className="p-6 h-[400px] flex flex-col gap-4 bg-card/40 backdrop-blur-md border border-white/10">
+                <Skeleton className="h-8 w-[40%]" />
+                <Skeleton className="h-full w-full rounded-xl" />
             </Card>
         );
     }
@@ -55,30 +57,21 @@ export const GoldRatioRibbon: React.FC = () => {
     ];
 
     return (
-        <Card sx={{
-            p: 3,
-            bgcolor: '#0a1929',
-            border: '1px solid',
-            borderColor: 'rgba(59, 130, 246, 0.2)',
-            borderRadius: 2,
-            mb: 4,
-            overflow: 'hidden',
-            position: 'relative'
-        }}>
-            <Box sx={{ mb: 4 }}>
-                <Typography variant="overline" sx={{ fontWeight: 900, color: 'primary.main', letterSpacing: '0.15em' }}>
+        <Card className="p-6 bg-[#0a1929]/80 backdrop-blur-md border border-blue-500/20 rounded-xl mb-8 overflow-hidden relative shadow-2xl">
+            <div className="mb-6">
+                <span className="block text-[0.65rem] font-black text-blue-500 tracking-[0.15em] uppercase mb-1">
                     UNIFIED VALUATION ANCHOR
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 400, fontFamily: '"Merriweather", serif', color: 'text.primary' }}>
+                </span>
+                <h2 className="text-2xl font-serif text-foreground">
                     The Gold Ratio Ribbon
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, maxWidth: 600 }}>
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
                     Tracking the expansion of credit, equities, and debt relative to the hard money floor.
                     Divergence in these ratios signals generational shifts in monetary regimes.
-                </Typography>
-            </Box>
+                </p>
+            </div>
 
-            <Box sx={{ height: 320, width: '100%' }}>
+            <div className="h-[320px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
@@ -131,24 +124,23 @@ export const GoldRatioRibbon: React.FC = () => {
                         ))}
                     </AreaChart>
                 </ResponsiveContainer>
-            </Box>
+            </div>
 
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 4 }}>
+            <div className="mt-4 flex flex-wrap justify-center gap-8">
                 {ratios?.filter(r => series.some(s => s.key === r.ratio_name)).map(ratio => (
-                    <Box key={ratio.ratio_name} sx={{ textAlign: 'center' }}>
-                        <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800 }}>
+                    <div key={ratio.ratio_name} className="text-center">
+                        <span className="block text-[0.65rem] font-extrabold text-muted-foreground uppercase tracking-wider mb-0.5">
                             {ratio.ratio_name} Z-SCORE
-                        </Typography>
-                        <Typography variant="h6" sx={{
-                            color: Math.abs(ratio.z_score) > 2 ? 'warning.main' : 'text.primary',
-                            fontWeight: 800,
-                            lineHeight: 1
-                        }}>
+                        </span>
+                        <span className={cn(
+                            "text-lg font-black leading-none",
+                            Math.abs(ratio.z_score) > 2 ? 'text-amber-500' : 'text-foreground'
+                        )}>
                             {ratio.z_score > 0 ? '+' : ''}{ratio.z_score.toFixed(2)}σ
-                        </Typography>
-                    </Box>
+                        </span>
+                    </div>
                 ))}
-            </Box>
+            </div>
         </Card>
     );
 };

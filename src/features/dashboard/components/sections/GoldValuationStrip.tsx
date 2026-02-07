@@ -1,13 +1,19 @@
-import { Box, Typography, useTheme, Tooltip } from '@mui/material';
+import React from 'react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { useIngestionStatus } from '@/hooks/useIngestionStatus';
 import { useGoldRatioHistory } from '@/hooks/useGoldRatioHistory';
 import { Sparkline } from '@/components/Sparkline';
 import { Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const GoldValuationStrip: React.FC = () => {
-    const theme = useTheme();
     const { data: ratios } = useGoldRatios();
     const { data: gold } = useLatestMetric('GOLD_PRICE_USD');
     const { data: status } = useIngestionStatus();
@@ -27,47 +33,38 @@ export const GoldValuationStrip: React.FC = () => {
         })).filter(v => v.value !== 0);
     };
 
-    const getZColor = (z?: number) => {
-        if (!z) return 'text.disabled';
-        if (z > 1.5) return theme.palette.error.main;
-        if (z < -1.5) return theme.palette.success.main;
-        return theme.palette.text.secondary;
+    const getZColorClass = (z?: number) => {
+        if (!z) return 'text-muted-foreground/50';
+        if (z > 1.5) return 'text-rose-500 bg-rose-500/15';
+        if (z < -1.5) return 'text-emerald-500 bg-emerald-500/15';
+        return 'text-muted-foreground';
+    };
+
+    const getZSeriesColor = (z?: number) => {
+        if (!z) return '#9ca3af';
+        if (z > 1.5) return '#ef4444';
+        if (z < -1.5) return '#10b981';
+        return '#9ca3af';
     };
 
     return (
-        <Box sx={{
-            position: 'sticky',
-            bottom: 0,
-            zIndex: 1100,
-            bgcolor: 'rgba(2, 6, 23, 0.95)',
-            backdropFilter: 'blur(20px)',
-            borderTop: '2px solid',
-            borderColor: 'rgba(255,215,0,0.1)',
-            py: { xs: 1.5, md: 1.5 }, // Slightly thinner for professionalism
-            px: { xs: 2.5, md: 6 },
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: '0 -10px 40px rgba(0,0,0,0.5)',
-            width: '100%',
-            left: 0
-        }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 3, md: 6 } }}>
-                <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-                        <Typography variant="caption" sx={{ fontWeight: 900, color: 'primary.main', letterSpacing: '0.15em', display: 'block', fontSize: '0.6rem' }}>
+        <div className="sticky bottom-0 left-0 z-[1100] w-full bg-slate-950/95 backdrop-blur-md border-t-2 border-amber-400/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] py-2 px-6 flex items-center justify-between">
+            <div className="flex items-center gap-6 md:gap-12 overflow-x-auto no-scrollbar">
+                <div className="shrink-0 flex flex-col justify-center">
+                    <div className="flex items-baseline gap-1.5 mb-0.5">
+                        <span className="text-[0.6rem] font-black text-primary tracking-[0.15em] uppercase">
                             LIVE ANCHOR
-                        </Typography>
-                        <Box sx={{ bgcolor: 'rgba(59, 130, 246, 0.1)', px: 0.5, borderRadius: 0.5, border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                            <Typography sx={{ fontSize: '0.5rem', fontWeight: 900, color: 'primary.main' }}>25Y CYCLE</Typography>
-                        </Box>
-                    </Box>
-                    <Typography variant="body2" sx={{ fontWeight: 900, color: 'text.primary', fontSize: { xs: '0.85rem', md: '1rem' }, letterSpacing: '-0.02em' }}>
+                        </span>
+                        <div className="bg-blue-500/10 px-1 rounded-[2px] border border-blue-500/20">
+                            <span className="text-[0.5rem] font-black text-primary block leading-tight">25Y CYCLE</span>
+                        </div>
+                    </div>
+                    <span className="text-base md:text-lg font-black text-foreground tracking-tight">
                         GOLD ${gold?.value.toLocaleString() || '-'}
-                    </Typography>
-                </Box>
+                    </span>
+                </div>
 
-                <Box sx={{ width: '1px', height: 32, bgcolor: 'divider', display: { xs: 'none', sm: 'block' } }} />
+                <div className="hidden sm:block w-px h-8 bg-border" />
 
                 {[
                     { label: 'M2/GOLD', data: m2Gold, name: 'M2/Gold' },
@@ -75,62 +72,64 @@ export const GoldValuationStrip: React.FC = () => {
                     { label: 'DEBT/GOLD', data: debtGold, name: 'DEBT/Gold' },
                     { label: 'GOLD/SILVER', data: goldSilver, name: 'Gold/Silver' }
                 ].map((item, idx) => (
-                    <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', fontSize: '0.6rem', letterSpacing: '0.08em' }}>
+                    <div key={idx} className="flex items-center gap-4 shrink-0">
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-1 mb-0.5">
+                                <span className="text-[0.6rem] font-bold text-muted-foreground tracking-[0.08em] uppercase">
                                     {item.label}
-                                </Typography>
+                                </span>
                                 {item.name === 'Gold/Silver' && (
-                                    <Tooltip title="Historical context: 50y average around 60. Current relative to 25y window." arrow>
-                                        <Info size={10} style={{ opacity: 0.5, cursor: 'help' }} />
-                                    </Tooltip>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Info size={10} className="text-muted-foreground/50 cursor-help" />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p className="text-xs">Historical context: 50y average around 60. Current relative to 25y window.</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 )}
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary', fontSize: { xs: '0.8rem', md: '0.9rem' } }}>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm md:text-base font-extrabold text-foreground">
                                     {item.data?.current_value.toFixed(2) || '-'}
-                                </Typography>
+                                </span>
                                 {item.data?.z_score !== undefined && (
-                                    <Typography variant="caption" sx={{
-                                        fontWeight: 900,
-                                        color: getZColor(item.data.z_score),
-                                        fontSize: '0.65rem',
-                                        bgcolor: `${getZColor(item.data.z_score)}15`,
-                                        px: 0.5,
-                                        borderRadius: 0.5
-                                    }}>
+                                    <span className={cn(
+                                        "text-[0.65rem] font-black px-1 rounded-[2px]",
+                                        getZColorClass(item.data.z_score)
+                                    )}>
                                         Z: {item.data.z_score > 0 ? '+' : ''}{item.data.z_score.toFixed(1)}
-                                    </Typography>
+                                    </span>
                                 )}
-                            </Box>
-                        </Box>
-                        <Box sx={{ width: 40, height: 20, mt: 1, display: { xs: 'none', md: 'block' } }}>
-                            <Sparkline data={getRatioHistory(item.name)} color={getZColor(item.data?.z_score)} height={20} />
-                        </Box>
-                    </Box>
+                            </div>
+                        </div>
+                        <div className="hidden md:block w-10 h-5 mt-1 opacity-80">
+                            <Sparkline data={getRatioHistory(item.name)} color={getZSeriesColor(item.data?.z_score)} height={20} />
+                        </div>
+                    </div>
                 ))}
-            </Box>
+            </div>
 
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
-                <Box sx={{ textAlign: 'right' }}>
-                    <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', fontSize: '0.6rem', letterSpacing: '0.05em' }}>
+            <div className="hidden md:flex items-center gap-4 shrink-0 border-l border-white/5 pl-6">
+                <div className="text-right">
+                    <span className="block text-[0.6rem] font-bold text-muted-foreground/50 tracking-[0.05em] uppercase mb-0.5">
                         SYSTEM HEARTBEAT (UTC)
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'flex-end' }}>
-                        <Box sx={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: '50%',
-                            bgcolor: status?.last_ingestion_at ? 'success.main' : 'error.main',
-                            boxShadow: status?.last_ingestion_at ? `0 0 10px ${theme.palette.success.main}` : 'none'
-                        }} />
-                        <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', fontSize: '0.65rem' }}>
+                    </span>
+                    <div className="flex items-center gap-2 justify-end">
+                        <div className={cn(
+                            "w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]",
+                            status?.last_ingestion_at
+                                ? "bg-emerald-500 shadow-emerald-500/50"
+                                : "bg-rose-500 shadow-rose-500/50"
+                        )} />
+                        <span className="text-[0.65rem] font-bold text-muted-foreground">
                             {status?.last_ingestion_at ? new Date(status.last_ingestion_at).toUTCString().replace('GMT', 'UTC') : 'CONNECTING...'}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };

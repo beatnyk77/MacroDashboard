@@ -1,18 +1,17 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Box, AppBar, Toolbar, Typography, Container, Chip, useTheme, Stack } from '@mui/material';
 import { Activity, Clock } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { DashboardFooter } from '@/layout/DashboardFooter';
 import { NavigationSidebar } from '@/components/NavigationSidebar';
+import { cn } from '@/lib/utils';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
 }
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
-    const theme = useTheme();
     const { data: regime } = useRegime();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [refreshCountdown, setRefreshCountdown] = useState(60);
@@ -29,15 +28,24 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
         return () => clearInterval(countdown);
     }, []);
 
-    const regimeColor = useMemo(() => {
-        if (!regime) return theme.palette.primary.main;
+    const regimeColorClass = useMemo(() => {
+        if (!regime) return 'text-blue-500';
         const label = regime.regimeLabel.toLowerCase();
-        if (label.includes('expansion') || label.includes('recovery')) return theme.palette.success.main;
-        if (label.includes('tightening') || label.includes('slowdown')) return theme.palette.error.main;
-        return theme.palette.primary.main;
-    }, [regime, theme]);
+        if (label.includes('expansion') || label.includes('recovery')) return 'text-emerald-500';
+        if (label.includes('tightening') || label.includes('slowdown')) return 'text-rose-500';
+        return 'text-blue-500';
+    }, [regime]);
 
-    const bgTint = useMemo(() => {
+    // Hex colors for drop-shadow style which needs exact color
+    const regimeColorHex = useMemo(() => {
+        if (!regime) return '#3b82f6';
+        const label = regime.regimeLabel.toLowerCase();
+        if (label.includes('expansion') || label.includes('recovery')) return '#10b981';
+        if (label.includes('tightening') || label.includes('slowdown')) return '#f43f5e';
+        return '#3b82f6';
+    }, [regime]);
+
+    const bgTintStyle = useMemo(() => {
         if (!regime) return 'transparent';
         const label = regime.regimeLabel.toLowerCase();
         // Very subtle tints
@@ -47,118 +55,91 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     }, [regime]);
 
     return (
-        <Box sx={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            bgcolor: theme.palette.background.default,
-            backgroundImage: `radial-gradient(circle at 50% -20%, ${bgTint}, transparent 70%)`,
-            transition: 'background-image 0.5s ease'
-        }}>
-            <AppBar
-                position="sticky"
-                color="default"
-                elevation={0}
-                sx={{
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                    bgcolor: 'rgba(2, 6, 23, 0.8)', // Semi-transparent Slate 950
-                    backdropFilter: 'blur(12px)',
-                    zIndex: 1300
-                }}
-            >
-                <Toolbar sx={{ justifyContent: 'space-between', minHeight: { xs: 60, md: 72 }, px: { xs: 2, md: 4 } }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 3 } }}>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1.5,
-                            '&:hover': { cursor: 'pointer' }
-                        }}>
-                            <Activity color={regimeColor} size={28} style={{ filter: `drop-shadow(0 0 8px ${regimeColor}40)` }} />
-                            <Typography variant="h5" component="div" sx={{ fontWeight: 800, letterSpacing: '-0.04em', display: { xs: 'none', sm: 'block' } }}>
-                                Graphi<Typography component="span" variant="h5" sx={{ fontWeight: 800, color: '#3b82f6' }}>Questor</Typography>
-                                <Typography component="span" variant="body2" sx={{ ml: 1, fontWeight: 600, color: 'text.disabled', letterSpacing: '0.05em', verticalAlign: 'middle', display: { xs: 'none', md: 'inline' } }}>
+        <div
+            className="min-h-screen flex flex-col bg-background transition-[background-image] duration-500 ease-in-out"
+            style={{
+                backgroundImage: `radial-gradient(circle at 50% -20%, ${bgTintStyle}, transparent 70%)`
+            }}
+        >
+            <header className="sticky top-0 z-[1300] w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
+                <div className="flex h-[60px] md:h-[72px] items-center justify-between px-4 md:px-8">
+                    <div className="flex items-center gap-3 md:gap-6">
+                        <div className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+                            <Activity
+                                size={28}
+                                className={regimeColorClass}
+                                style={{ filter: `drop-shadow(0 0 8px ${regimeColorHex}40)` }}
+                            />
+                            <div className="hidden sm:block text-2xl font-black tracking-tighter leading-none">
+                                <span className="text-foreground">Graphi</span>
+                                <span className="text-blue-500">Questor</span>
+                                <span className="hidden md:inline ml-2 text-sm font-semibold text-muted-foreground tracking-widest align-middle">
                                     – MACRO OBSERVATORY
-                                </Typography>
-                            </Typography>
-                        </Box>
+                                </span>
+                            </div>
+                        </div>
 
-                        <Box sx={{ height: 24, width: '1px', bgcolor: 'divider', mx: 1, display: { xs: 'none', md: 'block' } }} />
+                        <div className="hidden md:block h-6 w-px bg-white/10 mx-2" />
 
-                        <Stack direction="row" spacing={2} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                            <Box>
-                                <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.disabled', display: 'block', lineHeight: 1, fontSize: '0.6rem' }}>
+                        <div className="hidden md:flex items-center gap-4">
+                            <div>
+                                <span className="block text-[0.6rem] font-black text-muted-foreground uppercase leading-none mb-0.5">
                                     LOCAL TIME
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary', fontFamily: 'monospace' }}>
+                                </span>
+                                <span className="text-sm font-black text-foreground font-mono">
                                     {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                                </Typography>
-                            </Box>
-                            <Box>
-                                <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.disabled', display: 'block', lineHeight: 1, fontSize: '0.6rem' }}>
+                                </span>
+                            </div>
+                            <div>
+                                <span className="block text-[0.6rem] font-black text-muted-foreground uppercase leading-none mb-0.5">
                                     DATE
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.75rem' }}>
+                                </span>
+                                <span className="text-xs font-black text-foreground">
                                     {currentTime.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                                </Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Box sx={{ display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 1, px: 2, py: 0.5, borderRadius: 1, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <Clock size={12} color={theme.palette.text.disabled} />
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', fontSize: '0.65rem' }}>
-                                NEXT REFRESH: <Typography component="span" variant="caption" sx={{ color: 'primary.main', fontWeight: 900 }}>{refreshCountdown}s</Typography>
-                            </Typography>
-                        </Box>
+                    <div className="flex items-center gap-4">
+                        <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-white/5 border border-white/5">
+                            <Clock size={12} className="text-muted-foreground" />
+                            <span className="text-[0.65rem] font-black text-muted-foreground">
+                                NEXT REFRESH: <span className="text-blue-500 font-black ml-1">{refreshCountdown}s</span>
+                            </span>
+                        </div>
 
                         {regime && (
-                            <Chip
-                                label={`DETECTION: ${regime.regimeLabel.toUpperCase()}`}
-                                size="small"
-                                sx={{
-                                    height: 24,
-                                    fontSize: '0.65rem',
-                                    fontWeight: 800,
-                                    bgcolor: `${regimeColor}15`,
-                                    color: regimeColor,
-                                    border: `1px solid ${regimeColor}30`,
-                                    borderRadius: 1,
-                                    letterSpacing: '0.05em'
-                                }}
-                            />
+                            <div className={cn(
+                                "flex items-center px-2 py-0.5 rounded border text-[0.65rem] font-black tracking-wider uppercase h-6",
+                                regimeColorClass.replace('text-', 'text-'), // Ensures text color applies
+                                regimeColorClass.replace('text-', 'bg-').replace('500', '500/10'), // Background tint
+                                regimeColorClass.replace('text-', 'border-').replace('500', '500/30') // Border tint
+                            )}>
+                                DETECTION: {regime.regimeLabel.toUpperCase()}
+                            </div>
                         )}
-                    </Box>
-                </Toolbar>
-            </AppBar>
+                    </div>
+                </div>
+            </header>
 
-            <Box sx={{ display: 'flex', flexGrow: 1 }}>
+            <div className="flex flex-1">
                 {/* Navigation Sidebar (Desktop Only) */}
                 <NavigationSidebar />
 
-                <Box component="main" sx={{
-                    flexGrow: 1,
-                    py: { xs: 2, md: 4 },
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    overflowX: 'hidden'
-                }}>
-                    <Container maxWidth="xl" sx={{ flexGrow: 1 }}>
+                <main className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden">
+                    <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
                         {children}
-                    </Container>
-                </Box>
-            </Box>
-
+                    </div>
+                </main>
+            </div>
 
             {/* Dashboard Footer with Disclaimer & Data Transparency */}
             <DashboardFooter />
 
             <SocialShareMode />
             <MobileNav />
-        </Box>
+        </div>
     );
 };
 

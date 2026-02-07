@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
-import {
-    Card,
-    Box,
-    Typography,
-    Tooltip,
-    Skeleton,
-    Alert,
-    Modal,
-    Fade,
-    Backdrop,
-    IconButton,
-    Chip,
-    Stack
-} from '@mui/material';
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Info, X, TrendingUp } from 'lucide-react';
 import { ResponsiveContainer, Sankey, Tooltip as RechartsTooltip } from 'recharts';
 import { useSankeyFlows, SankeyNode as SankeyNodeType } from '@/hooks/useSankeyFlows';
+
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Custom Sankey Tooltip
 const CustomSankeyTooltip = ({ active, payload }: any) => {
@@ -27,38 +22,29 @@ const CustomSankeyTooltip = ({ active, payload }: any) => {
     if (data.payload.source !== undefined) {
         // It's a link
         return (
-            <Box sx={{
-                bgcolor: '#0f172a',
-                p: 2,
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 2,
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)'
-            }}>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>
+            <div className="bg-slate-950 p-2 border border-white/10 rounded-lg shadow-xl">
+                <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">
                     FLOW MAGNITUDE
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 900, color: 'primary.main' }}>
+                </span>
+                <span className="text-sm font-black text-primary">
                     {data.payload.value.toFixed(2)} {data.payload.value > 100 ? 'Index' : '$B'}
-                </Typography>
-            </Box>
+                </span>
+            </div>
         );
     } else {
         // It's a node
         return (
-            <Box sx={{
-                bgcolor: '#0f172a',
-                p: 2,
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 2,
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)'
-            }}>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>
+            <div className="bg-slate-950 p-2 border border-white/10 rounded-lg shadow-xl">
+                <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">
                     {data.payload.name}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 900, color: data.payload.color || 'primary.main' }}>
+                </span>
+                <span
+                    className="text-sm font-black"
+                    style={{ color: data.payload.color || '#3b82f6' }}
+                >
                     {data.payload.category?.replace(/_/g, ' ').toUpperCase()}
-                </Typography>
-            </Box>
+                </span>
+            </div>
         );
     }
 };
@@ -69,29 +55,29 @@ export const SankeyFlowCard: React.FC = () => {
 
     if (isLoading) {
         return (
-            <Card sx={{ p: 3, height: 700, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
-                <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
-                <Skeleton variant="rectangular" height={600} sx={{ borderRadius: 2 }} />
+            <Card className="p-6 h-[700px] border border-white/10 bg-card/40 backdrop-blur-md rounded-xl flex flex-col gap-4">
+                <Skeleton className="h-8 w-[40%] mb-2" />
+                <Skeleton className="h-[600px] w-full rounded-xl" />
             </Card>
         );
     }
 
     if (error) {
         return (
-            <Card sx={{ p: 3, height: 700, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
-                <Alert severity="error">
+            <Card className="p-6 h-[700px] border border-white/10 bg-card/40 backdrop-blur-md rounded-xl flex items-center justify-center">
+                <div className="bg-rose-500/10 text-rose-500 p-4 rounded-lg border border-rose-500/20 text-sm font-bold">
                     Failed to load Sankey flow data. Please try again later.
-                </Alert>
+                </div>
             </Card>
         );
     }
 
     if (!sankeyData || sankeyData.nodes.length === 0) {
         return (
-            <Card sx={{ p: 3, height: 700, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
-                <Alert severity="info">
+            <Card className="p-6 h-[700px] border border-white/10 bg-card/40 backdrop-blur-md rounded-xl flex items-center justify-center">
+                <div className="bg-blue-500/10 text-blue-500 p-4 rounded-lg border border-blue-500/20 text-sm font-bold">
                     No flow data available yet. Data will appear after initial ingestion.
-                </Alert>
+                </div>
             </Card>
         );
     }
@@ -130,59 +116,53 @@ export const SankeyFlowCard: React.FC = () => {
 
     return (
         <>
-            <Card sx={{
-                p: 3,
-                height: '100%',
-                minHeight: 700,
-                bgcolor: 'background.paper',
-                border: '1px solid',
-                borderColor: 'divider',
-                position: 'relative',
-                overflow: 'visible'
-            }}>
+            <Card className="p-6 h-full min-h-[700px] bg-card/40 backdrop-blur-md border border-white/10 dark:border-white/5 shadow-xl relative overflow-visible transition-all duration-300">
                 {/* Header */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                    <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                            <TrendingUp size={20} color="#3b82f6" />
-                            <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.12em', color: 'text.secondary' }}>
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <TrendingUp size={20} className="text-blue-500" />
+                            <h4 className="font-extrabold text-xs tracking-[0.12em] text-muted-foreground uppercase">
                                 MACRO FLOW MAP
-                            </Typography>
-                        </Box>
-                        <Typography variant="body2" sx={{ color: 'text.disabled', fontSize: '0.75rem', lineHeight: 1.5 }}>
+                            </h4>
+                        </div>
+                        <p className="text-muted-foreground text-xs font-medium leading-relaxed max-w-[80%]">
                             Visualizing macro indicator flows across 6 high-signal metrics
-                        </Typography>
-                    </Box>
-                    <Tooltip
-                        title="Data sources: FRED (Federal Reserve Economic Data), IMF BOP Statistics. Some metrics use high-quality public API proxies. Click nodes for details."
-                        placement="left"
-                    >
-                        <IconButton size="small" sx={{ color: 'text.disabled' }}>
-                            <Info size={16} />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
+                        </p>
+                    </div>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button className="text-muted-foreground/50 hover:text-foreground transition-colors p-1">
+                                    <Info size={16} />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-[300px] bg-slate-950 border-white/10">
+                                <p className="text-xs">Data sources: FRED (Federal Reserve Economic Data), IMF BOP Statistics. Some metrics use high-quality public API proxies. Click nodes for details.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
 
                 {/* Category Legend */}
-                <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: 'wrap', gap: 1 }}>
+                <div className="flex flex-wrap gap-2 mb-6">
                     {categories.map(cat => (
-                        <Chip
+                        <div
                             key={cat.key}
-                            label={cat.label}
-                            size="small"
-                            sx={{
-                                bgcolor: `${cat.color}20`,
+                            className="px-2 py-1 rounded text-[0.7rem] font-bold border"
+                            style={{
+                                backgroundColor: `${cat.color}20`,
                                 color: cat.color,
-                                border: `1px solid ${cat.color}40`,
-                                fontWeight: 700,
-                                fontSize: '0.7rem'
+                                borderColor: `${cat.color}40`,
                             }}
-                        />
+                        >
+                            {cat.label}
+                        </div>
                     ))}
-                </Stack>
+                </div>
 
                 {/* Sankey Chart */}
-                <Box sx={{ height: 540, width: '100%', position: 'relative' }}>
+                <div className="h-[540px] w-full relative">
                     <ResponsiveContainer width="100%" height="100%">
                         <Sankey
                             data={chartData}
@@ -216,93 +196,74 @@ export const SankeyFlowCard: React.FC = () => {
                             />
                         </Sankey>
                     </ResponsiveContainer>
-                </Box>
+                </div>
 
                 {/* Data Source Note */}
-                <Box sx={{
-                    mt: 2,
-                    pt: 2,
-                    borderTop: '1px solid',
-                    borderColor: 'divider'
-                }}>
-                    <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem', display: 'block' }}>
-                        <strong>Data Sources:</strong> FRED (Federal Reserve Economic Data), IMF Balance of Payments Statistics API
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem', display: 'block', mt: 0.5 }}>
-                        <strong>Note:</strong> Some metrics use high-quality public API proxies (e.g., equity ETF flows, PMI indicators) instead of paid institutional sources.
+                <div className="mt-4 pt-4 border-t border-white/5">
+                    <span className="text-[0.65rem] text-muted-foreground block leading-tight">
+                        <strong className="text-muted-foreground/80">Data Sources:</strong> FRED (Federal Reserve Economic Data), IMF Balance of Payments Statistics API
+                    </span>
+                    <span className="text-[0.65rem] text-muted-foreground/50 block mt-1 leading-tight">
+                        <strong className="text-muted-foreground/80">Note:</strong> Some metrics use high-quality public API proxies (e.g., equity ETF flows, PMI indicators) instead of paid institutional sources.
                         Last updated: {sankeyData.last_updated ? new Date(sankeyData.last_updated).toLocaleDateString() : 'N/A'}
-                    </Typography>
-                </Box>
+                    </span>
+                </div>
             </Card>
 
-            {/* Detail Modal */}
-            <Modal
-                open={selectedNode !== null}
-                onClose={() => setSelectedNode(null)}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                    sx: { backdropFilter: 'blur(16px)', bgcolor: 'rgba(0,0,0,0.85)' }
-                }}
-            >
-                <Fade in={selectedNode !== null}>
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: { xs: '90vw', md: 600 },
-                        bgcolor: 'rgba(15, 23, 42, 0.95)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                        p: 4,
-                        borderRadius: 4,
-                        color: 'text.primary'
-                    }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                            <Box>
-                                <Typography variant="h5" sx={{ fontWeight: 900, mb: 1 }}>
-                                    {selectedNode?.name}
-                                </Typography>
-                                <Chip
-                                    label={selectedNode?.category.replace(/_/g, ' ').toUpperCase()}
-                                    size="small"
-                                    sx={{
-                                        bgcolor: `${selectedNode?.color}20`,
-                                        color: selectedNode?.color,
-                                        border: `1px solid ${selectedNode?.color}40`,
-                                        fontWeight: 700
+            {/* Detail Modal Overlay */}
+            {selectedNode && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        onClick={() => setSelectedNode(null)}
+                    />
+                    <div className="relative w-full max-w-xl bg-slate-950/95 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 className="text-2xl font-black text-white mb-2">
+                                    {selectedNode.name}
+                                </h2>
+                                <div
+                                    className="inline-block px-2 py-1 rounded text-xs font-bold border"
+                                    style={{
+                                        backgroundColor: `${selectedNode.color}20`,
+                                        color: selectedNode.color,
+                                        borderColor: `${selectedNode.color}40`,
                                     }}
-                                />
-                            </Box>
-                            <IconButton
+                                >
+                                    {selectedNode.category.replace(/_/g, ' ').toUpperCase()}
+                                </div>
+                            </div>
+                            <button
                                 onClick={() => setSelectedNode(null)}
-                                sx={{ color: 'text.disabled', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}
+                                className="text-muted-foreground hover:text-white hover:bg-white/10 rounded-full p-2 transition-colors"
                             >
                                 <X size={24} />
-                            </IconButton>
-                        </Box>
+                            </button>
+                        </div>
 
-                        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                            This node represents a key macro indicator in the {selectedNode?.category.replace(/_/g, ' ')} category.
+                        <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                            This node represents a key macro indicator in the {selectedNode.category.replace(/_/g, ' ')} category.
                             Flow magnitude is determined by the latest observed value from FRED or IMF data sources.
-                        </Typography>
+                        </p>
 
-                        <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2 }}>
-                            <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>
+                        <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/5">
+                            <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase mb-2">
                                 CATEGORY COLOR LEGEND
-                            </Typography>
-                            <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Box sx={{ width: 16, height: 16, bgcolor: selectedNode?.color, borderRadius: 1 }} />
-                                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                                    {selectedNode?.category ? (selectedNode.category.replace(/_/g, ' ').charAt(0).toUpperCase() + selectedNode.category.replace(/_/g, ' ').slice(1)) : ''}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Fade>
-            </Modal>
+                            </span>
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className="w-4 h-4 rounded-sm shadow-sm"
+                                    style={{ backgroundColor: selectedNode.color }}
+                                />
+                                <span className="text-sm font-bold text-foreground">
+                                    {selectedNode.category ? (selectedNode.category.replace(/_/g, ' ').charAt(0).toUpperCase() + selectedNode.category.replace(/_/g, ' ').slice(1)) : ''}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

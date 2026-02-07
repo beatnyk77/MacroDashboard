@@ -1,12 +1,13 @@
 import React from 'react';
-import { Card, Typography, Box, Skeleton, useTheme, Button } from '@mui/material';
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Sparkline } from '@/components/Sparkline';
 import { ExternalLink } from 'lucide-react';
 import { HoverDetail } from '@/components/HoverDetail';
 import { formatNumber, formatDelta, formatPercentage } from '@/utils/formatNumber';
 import { FreshnessChip } from './FreshnessChip';
 import { getStaleness } from '@/hooks/useStaleness';
-
+import { cn } from '@/lib/utils';
 
 interface RatioCardProps {
     primaryLabel: string;
@@ -27,10 +28,10 @@ interface RatioCardProps {
     chartType?: 'line' | 'bar';
 }
 
-const getZScoreColor = (z: number) => {
-    if (z > 2) return '#ef4444';     // Crimson
-    if (z < -2) return '#10b981';    // Emerald
-    return 'rgba(255,255,255,0.4)';  // Muted
+const getZScoreColorClass = (z: number) => {
+    if (z > 2) return 'text-rose-500 bg-rose-500/15 border-rose-500/25';
+    if (z < -2) return 'text-emerald-500 bg-emerald-500/15 border-emerald-500/25';
+    return 'text-muted-foreground bg-muted/20 border-border/50';
 };
 
 export const RatioCard: React.FC<RatioCardProps> = ({
@@ -50,7 +51,6 @@ export const RatioCard: React.FC<RatioCardProps> = ({
     stats = [],
     chartType = 'line'
 }) => {
-    const theme = useTheme();
     const [isHighlighted, setIsHighlighted] = React.useState(false);
 
     React.useEffect(() => {
@@ -77,168 +77,115 @@ export const RatioCard: React.FC<RatioCardProps> = ({
 
     const { state: stalenessState, label: timeLabel } = getStaleness(lastUpdated, frequency);
 
-
-
     const cardContent = (
         <Card
-            sx={{
-                p: 2.5,
-                height: 250,
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: isHighlighted ? '2px solid' : '1px solid',
-                borderColor: isHighlighted ? 'primary.main' : 'divider',
-                bgcolor: 'background.paper',
-                animation: isHighlighted ? 'pulse-highlight 1.5s infinite' : 'none',
-                '@keyframes pulse-highlight': {
-                    '0%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' },
-                    '50%': { boxShadow: '0 0 20px 5px rgba(59, 130, 246, 0.4)' },
-                    '100%': { boxShadow: '0 0 0px 0px rgba(59, 130, 246, 0)' }
-                },
-                '&:hover': {
-                    borderColor: 'primary.main',
-                    boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
-                    transform: 'translateY(-2px)',
-                },
-            }}
             id={metricId || primaryLabel}
+            className={cn(
+                "relative flex flex-col p-5 h-[250px] overflow-hidden transition-all duration-300",
+                "bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5",
+                "hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/50",
+                isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse",
+                "group"
+            )}
         >
             {stalenessState !== 'fresh' && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        zIndex: 10
-                    }}
-                >
+                <div className="absolute top-2 right-2 z-10">
                     <FreshnessChip status={stalenessState} lastUpdated={lastUpdated} />
-                </Box>
+                </div>
             )}
 
-            <Box sx={{ mb: 1.5 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.8 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.12em',
-                                fontSize: '0.65rem'
-                            }}
-                        >
+            <div className="mb-3">
+                <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-2">
+                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.12em]">
                             {primaryLabel}
-                        </Typography>
-                    </Box>
+                        </span>
+                    </div>
 
                     {!isLoading && typeof zScore === 'number' && !isNaN(zScore) && (
-                        <Box
-                            sx={{
-                                px: 1,
-                                py: 0.3,
-                                borderRadius: 1,
-                                bgcolor: Math.abs(zScore) > 2 ? `${getZScoreColor(zScore)}` : `${getZScoreColor(zScore)}15`,
-                                border: '1px solid',
-                                borderColor: `${getZScoreColor(zScore)}25`,
-                                animation: Math.abs(zScore) > 2 ? 'pulse 2s infinite' : 'none',
-                                '@keyframes pulse': {
-                                    '0%': { opacity: 1 },
-                                    '50%': { opacity: 0.7 },
-                                    '100%': { opacity: 1 }
-                                }
-                            }}
-                        >
-                            <Typography variant="caption" sx={{ fontWeight: 900, color: Math.abs(zScore) > 2 ? 'white' : getZScoreColor(zScore), fontSize: '0.65rem' }}>
-                                Z: {formatDelta(zScore, { decimals: 1 })}
-                            </Typography>
-                        </Box>
+                        <div className={cn(
+                            "px-2 py-0.5 rounded text-[0.65rem] font-black border",
+                            getZScoreColorClass(zScore),
+                            Math.abs(zScore) > 2 && "animate-pulse"
+                        )}>
+                            Z: {formatDelta(zScore, { decimals: 1 })}
+                        </div>
                     )}
-                </Box>
-                <Typography variant="caption" display="block" color="text.secondary" sx={{ fontSize: '0.7rem', fontWeight: 500, opacity: 0.7 }}>
+                </div>
+                <span className="block text-[0.7rem] font-medium text-muted-foreground/70">
                     {subtitle}
-                </Typography>
-            </Box>
+                </span>
+            </div>
 
-            <Box sx={{ mb: 2, minHeight: 40, display: 'flex', alignItems: 'baseline', gap: 1 }}>
+            <div className="mb-4 min-h-[40px] flex items-baseline gap-2">
                 {isLoading ? (
-                    <Skeleton variant="text" width="60%" height={40} />
+                    <Skeleton className="h-10 w-[60%]" />
                 ) : isNullValue ? (
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.disabled', opacity: 0.5 }}>
+                    <h4 className="text-3xl font-bold text-muted-foreground/50">
                         No data
-                    </Typography>
+                    </h4>
                 ) : (
                     <>
-                        <Typography variant="h3" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.04em' }}>
+                        <h3 className="text-4xl font-extrabold text-foreground tracking-tight">
                             {formattedValue}
-                        </Typography>
+                        </h3>
                         {typeof zScore === 'number' && !isNaN(zScore) && Math.abs(zScore) > 2 && (
-                            <Box sx={{
-                                bgcolor: getZScoreColor(zScore),
-                                borderRadius: '50%',
-                                width: 8,
-                                height: 8,
-                                alignSelf: 'center'
-                            }} />
+                            <span className={cn(
+                                "w-2 h-2 rounded-full",
+                                zScore > 2 ? "bg-rose-500" : "bg-emerald-500"
+                            )} />
                         )}
                     </>
                 )}
-            </Box>
+            </div>
 
-            <Box sx={{ mb: 2.5 }}>
+            <div className="mb-5">
                 {typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
-                    <Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.8 }}>
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>VALUATION PERCENTILE</Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.7rem', color: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main' }}>
+                    <div className="space-y-1">
+                        <div className="flex justify-between">
+                            <span className="text-[0.6rem] font-extrabold text-muted-foreground tracking-wider uppercase">VALUATION PERCENTILE</span>
+                            <span className={cn(
+                                "text-[0.7rem] font-black",
+                                percentile > 90 || percentile < 10 ? "text-amber-500" : "text-primary"
+                            )}>
                                 {formatPercentage(percentile, { decimals: 0 })}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ width: '100%', bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1, height: 6, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <Box sx={{
-                                width: `${Math.min(100, Math.max(0, percentile))}%`,
-                                bgcolor: percentile > 90 || percentile < 10 ? 'warning.main' : 'primary.main',
-                                height: '100%',
-                                borderRadius: 'inherit',
-                            }} />
-                        </Box>
-                    </Box>
+                            </span>
+                        </div>
+                        <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden border border-white/5">
+                            <div
+                                className={cn(
+                                    "h-full rounded-full transition-all duration-500",
+                                    percentile > 90 || percentile < 10 ? "bg-amber-500" : "bg-primary"
+                                )}
+                                style={{ width: `${Math.min(100, Math.max(0, percentile))}%` }}
+                            />
+                        </div>
+                    </div>
                 )}
-            </Box>
+            </div>
 
-            <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                <Box sx={{ flexGrow: 1 }}>
+            <div className="mt-auto flex justify-between items-end">
+                <div className="flex-grow">
                     {history && history.length > 0 && (
-                        <Box sx={{ height: 32, opacity: 0.6 }}>
-                            <Sparkline data={history} height={32} color={theme.palette.text.disabled} />
-                        </Box>
+                        <div className="h-8 opacity-60">
+                            <Sparkline data={history} height={32} color="currentColor" />
+                        </div>
                     )}
                     {timeLabel && (
-                        <Typography variant="caption" sx={{ color: stalenessState === 'stale' || stalenessState === 'overdue' ? 'error.main' : 'text.disabled', fontSize: '0.6rem', fontWeight: 600 }}>
+                        <span className={cn(
+                            "block mt-1 text-[0.6rem] font-bold",
+                            stalenessState === 'stale' || stalenessState === 'overdue' ? "text-rose-500" : "text-muted-foreground/50"
+                        )}>
                             Updated {timeLabel}
-                        </Typography>
+                        </span>
                     )}
-                </Box>
-                <Button
-                    size="small"
-                    variant="text"
-                    sx={{
-                        fontSize: '0.6rem',
-                        fontWeight: 900,
-                        minWidth: 'auto',
-                        p: 0,
-                        opacity: 0.15,
-                        '&:hover': { opacity: 0.8, bgcolor: 'transparent' },
-                        color: 'text.secondary'
-                    }}
+                </div>
+                <button
+                    className="text-muted-foreground/20 hover:text-primary transition-colors p-1"
                 >
                     <ExternalLink size={12} />
-                </Button>
-            </Box>
+                </button>
+            </div>
         </Card>
     );
 
@@ -251,7 +198,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 methodology,
                 source,
                 stats: [
-                    { label: 'Z-Score', value: formatDelta(zScore, { decimals: 2 }) || 'N/A', color: zScore ? getZScoreColor(zScore) : undefined },
+                    { label: 'Z-Score', value: formatDelta(zScore, { decimals: 2 }) || 'N/A' },
                     { label: 'Percentile', value: formatPercentage(percentile, { decimals: 1 }) || 'N/A' },
                     { label: 'Frequency', value: frequency },
                     ...stats

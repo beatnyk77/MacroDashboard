@@ -1,44 +1,37 @@
 import React from 'react';
-import {
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-    Paper,
-    Skeleton,
-    LinearProgress,
-    Stack
-} from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useMajorEconomies, MajorEconomyRow } from '@/hooks/useMajorEconomies';
 import { formatMetric } from '@/utils/formatMetric';
 import { DataQualityBadge } from '@/components/DataQualityBadge';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { cn } from '@/lib/utils';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const SparkBar: React.FC<{ value: number, color: string, max?: number, suffix?: string }> = ({ value, color, max = 10, suffix = '%' }) => (
-    <Box sx={{ width: '100%', minWidth: 60 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-            <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 900, fontFamily: 'monospace' }}>
+    <div className="w-full min-w-[60px]">
+        <div className="flex justify-between mb-1">
+            <span className="text-[0.65rem] font-black font-mono text-foreground">
                 {value > 0 ? '+' : ''}{value.toFixed(1)}{suffix}
-            </Typography>
-        </Box>
-        <LinearProgress
-            variant="determinate"
-            value={Math.min(100, (Math.abs(value) / max) * 100)}
-            sx={{
-                height: 4,
-                borderRadius: 1,
-                bgcolor: 'rgba(255,255,255,0.05)',
-                '& .MuiLinearProgress-bar': {
-                    bgcolor: color,
-                    borderRadius: 1
-                }
-            }}
-        />
-    </Box>
+            </span>
+        </div>
+        <div className="h-1 w-full rounded bg-white/5 overflow-hidden">
+            <div
+                className="h-full rounded"
+                style={{
+                    width: `${Math.min(100, (Math.abs(value) / max) * 100)}%`,
+                    backgroundColor: color
+                }}
+            />
+        </div>
+    </div>
 );
 
 const PolicyDot: React.FC<{ rate: number }> = ({ rate }) => {
@@ -48,20 +41,21 @@ const PolicyDot: React.FC<{ rate: number }> = ({ rate }) => {
         if (rate > 0) return '#10b981'; // Accommodative
         return '#3b82f6'; // Crisis/ZIRP
     };
+    const color = getColor();
 
     return (
-        <Stack direction="row" alignItems="center" spacing={1}>
-            <Box sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                bgcolor: getColor(),
-                boxShadow: `0 0 8px ${getColor()}40`
-            }} />
-            <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.75rem' }}>
+        <div className="flex items-center gap-2">
+            <div
+                className="w-2 h-2 rounded-full"
+                style={{
+                    backgroundColor: color,
+                    boxShadow: `0 0 8px ${color}40`
+                }}
+            />
+            <span className="font-bold font-mono text-xs">
                 {rate.toFixed(2)}%
-            </Typography>
-        </Stack>
+            </span>
+        </div>
     );
 };
 
@@ -72,94 +66,79 @@ export const MajorEconomiesTable: React.FC = () => {
     const visibleData = data ? (isExpanded ? data : data.slice(0, 6)) : [];
 
     return (
-        <Box id="major-economies-section" sx={{ mb: 6 }}>
+        <div id="major-economies-section" className="mb-12">
             <SectionHeader
                 title="Sovereign Health Matrix"
                 subtitle="Comparative fundamentals across G20 anchors (Jan 2026)"
                 lastUpdated={data?.[0]?.last_updated}
             />
 
-            <TableContainer
-                component={Paper}
-                sx={{
-                    bgcolor: 'background.paper',
-                    backgroundImage: 'none',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                    boxShadow: '0 8px 32px -8px rgba(0,0,0,0.5)',
-                }}
-            >
-                <Table size="small">
-                    <TableHead>
-                        <TableRow sx={{ bgcolor: 'rgba(255,255,255,0.02)' }}>
-                            <TableCell sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+            <div className="bg-slate-950/50 rounded-xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-sm">
+                <Table>
+                    <TableHeader className="bg-white/5 sticky top-0 z-10 backdrop-blur-sm">
+                        <TableRow className="border-b border-white/10 hover:bg-transparent">
+                            <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
                                 Country
-                            </TableCell>
-                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
                                 GDP (Nom)
-                            </TableCell>
-                            <TableCell sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap w-[120px]">
                                 Real Growth
-                            </TableCell>
-                            <TableCell sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap w-[120px]">
                                 CPI Inflation
-                            </TableCell>
-                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
                                 Policy Rate
-                            </TableCell>
-                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
                                 Debt/Gold
-                            </TableCell>
-                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
                                 Investment
-                            </TableCell>
-                            <TableCell align="right" sx={{ py: 2, fontWeight: 800, textTransform: 'uppercase', fontSize: '0.6rem', color: 'text.secondary', letterSpacing: '0.1em' }}>
+                            </TableHead>
+                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
                                 Health
-                            </TableCell>
+                            </TableHead>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
+                    </TableHeader>
+                    <TableBody className="divide-y divide-white/5">
                         {isLoading ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <TableRow key={i} sx={{ '&:nth-of-type(odd)': { bgcolor: 'rgba(255,255,255,0.01)' } }}>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
-                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '60%' }} /></TableCell>
-                                    <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
-                                    <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
-                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
-                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
-                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
-                                    <TableCell sx={{ textAlign: 'right' }}><Skeleton variant="text" sx={{ ml: 'auto', width: '40%' }} /></TableCell>
+                                <TableRow key={i} className="even:bg-white/[0.01]">
+                                    <TableCell className="p-4"><Skeleton className="h-4 w-24" /></TableCell>
+                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                                    <TableCell className="p-4"><Skeleton className="h-4 w-20" /></TableCell>
+                                    <TableCell className="p-4"><Skeleton className="h-4 w-20" /></TableCell>
+                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             visibleData.map((row: MajorEconomyRow) => (
                                 <TableRow
                                     key={row.code}
-                                    sx={{
-                                        '&:nth-of-type(odd)': { bgcolor: 'rgba(255,255,255,0.01)' },
-                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
-                                        transition: 'background-color 0.1s ease'
-                                    }}
+                                    className="group transition-colors hover:bg-white/5 even:bg-white/[0.01] border-white/5"
                                 >
-                                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <Typography sx={{ fontSize: '1.1rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{row.flag}</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                                    <TableCell className="py-3 px-4">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-xl filter drop-shadow-md">{row.flag}</span>
+                                            <span className="font-extrabold text-xs text-foreground tracking-wider">
                                                 {row.code}
-                                            </Typography>
-                                        </Box>
+                                            </span>
+                                        </div>
                                     </TableCell>
 
-                                    <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                    <TableCell className="py-3 px-4 text-right">
+                                        <span className="font-bold font-mono tabular-nums text-xs text-foreground">
                                             ${formatMetric(row.gdp_nominal, 'trillion', { showUnit: false })}T
-                                        </Typography>
+                                        </span>
                                     </TableCell>
 
-                                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)', width: 100 }}>
+                                    <TableCell className="py-3 px-4">
                                         <SparkBar
                                             value={row.growth}
                                             color={row.growth > 3 ? '#10b981' : (row.growth > 0 ? '#3b82f6' : '#ef4444')}
@@ -167,7 +146,7 @@ export const MajorEconomiesTable: React.FC = () => {
                                         />
                                     </TableCell>
 
-                                    <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)', width: 100 }}>
+                                    <TableCell className="py-3 px-4">
                                         <SparkBar
                                             value={row.cpi}
                                             color={row.cpi > 5 ? '#ef4444' : (row.cpi > 3 ? '#f59e0b' : '#10b981')}
@@ -175,73 +154,66 @@ export const MajorEconomiesTable: React.FC = () => {
                                         />
                                     </TableCell>
 
-                                    <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    <TableCell className="py-3 px-4 text-right">
+                                        <div className="flex justify-end">
                                             <PolicyDot rate={row.policy_rate} />
-                                        </Box>
+                                        </div>
                                     </TableCell>
 
-                                    <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Typography variant="body2" sx={{
-                                            fontWeight: 800,
-                                            fontFamily: 'monospace',
-                                            fontSize: '0.75rem',
-                                            color: row.debt_gold_ratio > 200 ? 'error.main' : (row.debt_gold_ratio > 100 ? 'warning.main' : 'success.main')
-                                        }}>
+                                    <TableCell className="py-3 px-4 text-right">
+                                        <span className={cn(
+                                            "font-extrabold font-mono tabular-nums text-xs",
+                                            row.debt_gold_ratio > 200 ? 'text-rose-500' : (row.debt_gold_ratio > 100 ? 'text-amber-500' : 'text-emerald-500')
+                                        )}>
                                             {row.debt_gold_ratio.toFixed(1)}x
-                                        </Typography>
+                                        </span>
                                     </TableCell>
 
-                                    <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Typography variant="body2" sx={{
-                                            fontWeight: 700,
-                                            fontFamily: 'monospace',
-                                            fontSize: '0.75rem',
-                                            color: row.gfcf_pct > 25 ? 'success.main' : (row.gfcf_pct < 20 ? 'error.main' : 'text.primary')
-                                        }}>
+                                    <TableCell className="py-3 px-4 text-right">
+                                        <span className={cn(
+                                            "font-bold font-mono tabular-nums text-xs",
+                                            row.gfcf_pct > 25 ? 'text-emerald-500' : (row.gfcf_pct < 20 ? 'text-rose-500' : 'text-foreground')
+                                        )}>
                                             {row.gfcf_pct.toFixed(1)}%
-                                        </Typography>
+                                        </span>
                                     </TableCell>
 
-                                    <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1.5 }}>
+                                    <TableCell className="py-3 px-4 text-right">
+                                        <div className="flex items-center justify-end gap-2">
                                             <DataQualityBadge
                                                 timestamp={row.staleness === 'fresh' ? new Date() : null}
                                                 label={false}
                                             />
-                                            <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.secondary', fontWeight: 800 }}>
+                                            <span className="text-[0.65rem] text-muted-foreground font-extrabold tracking-wider">
                                                 {row.growth > 0 && row.cpi < 5 ? 'STABLE' : 'STRESS'}
-                                            </Typography>
-                                        </Box>
+                                            </span>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))
                         )}
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </div>
 
             {data && data.length > 6 && (
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
-                    <Typography
-                        variant="button"
+                <div className="mt-4 text-center">
+                    <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        sx={{
-                            cursor: 'pointer',
-                            color: 'primary.main',
-                            fontWeight: 900,
-                            letterSpacing: '0.05em',
-                            fontSize: '0.7rem',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            '&:hover': { color: 'primary.light' }
-                        }}
+                        className="inline-flex items-center gap-2 text-[0.7rem] font-black text-blue-500 hover:text-blue-400 uppercase tracking-widest transition-colors"
                     >
-                        {isExpanded ? '▲ CONSOLIDATE' : `▼ EXPAND ALL (${data.length})`}
-                    </Typography>
-                </Box>
+                        {isExpanded ? (
+                            <>
+                                <ChevronUp size={12} /> CONSOLIDATE
+                            </>
+                        ) : (
+                            <>
+                                <ChevronDown size={12} /> EXPAND ALL ({data.length})
+                            </>
+                        )}
+                    </button>
+                </div>
             )}
-        </Box>
+        </div>
     );
 };

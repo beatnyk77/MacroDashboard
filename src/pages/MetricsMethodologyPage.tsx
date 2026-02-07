@@ -1,4 +1,6 @@
-import { Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Chip, Grid } from '@mui/material';
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
 interface MetricInfo {
     category: string;
@@ -43,116 +45,129 @@ const metrics: MetricInfo[] = [
 
 export const MetricsMethodologyPage: React.FC = () => {
     return (
-        <Container maxWidth="lg" sx={{ py: 8 }}>
-            <Typography variant="h3" gutterBottom sx={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
-                Data Methodology
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary" paragraph sx={{ maxWidth: 800 }}>
-                GraphiQuestor provides institutional-grade macro intelligence. All Z-scores and percentiles are calculated using a
-                <strong> 25-year rolling window</strong> to capture full debt and monetary cycles.
-            </Typography>
+        <div className="container max-w-7xl mx-auto py-12 px-4 space-y-16">
+            <div className="space-y-4">
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+                    Data Methodology
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+                    GraphiQuestor provides institutional-grade macro intelligence. All Z-scores and percentiles are calculated using a
+                    <strong className="text-foreground"> 25-year rolling window</strong> to capture full debt and monetary cycles.
+                </p>
+            </div>
 
-            <Box sx={{ mt: 6 }}>
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>Calculation Formulas</Typography>
-                <Grid container spacing={2} sx={{ mb: 4 }}>
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">Calculation Formulas</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                         { label: 'Net Liquidity', formula: '(WALCL - TGA - RRP*1000) / 1000' },
                         { label: 'M2 / Gold', formula: 'US M2 Money Stock (Billions) / Gold Spot Price' },
                         { label: 'Debt / Gold', formula: 'Total Public Debt (Billions) / Gold Spot Price' },
                         { label: 'Z-Score', formula: '(Current Value - Rolling Mean) / Rolling StdDev' }
                     ].map((item) => (
-                        <Grid item xs={12} md={6} key={item.label}>
-                            <Paper variant="outlined" sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.02)' }}>
-                                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, textTransform: 'uppercase' }}>{item.label}</Typography>
-                                <Typography variant="h6" sx={{ fontFamily: 'serif', fontStyle: 'italic', mt: 1 }}>{item.formula}</Typography>
-                            </Paper>
-                        </Grid>
+                        <div key={item.label} className="p-4 bg-muted/20 border border-border rounded-xl">
+                            <span className="text-xs font-black uppercase text-muted-foreground tracking-wider block mb-2">{item.label}</span>
+                            <p className="font-serif italic text-lg text-foreground/90">{item.formula}</p>
+                        </div>
                     ))}
-                </Grid>
-            </Box>
+                </div>
+            </div>
 
-            <TableContainer component={Paper} variant="outlined">
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ bgcolor: 'rgba(255,255,255,0.02)' }}>
-                            <TableCell><Typography variant="subtitle2" fontWeight={700}>Category</Typography></TableCell>
-                            <TableCell><Typography variant="subtitle2" fontWeight={700}>Metric</Typography></TableCell>
-                            <TableCell><Typography variant="subtitle2" fontWeight={700}>Source</Typography></TableCell>
-                            <TableCell><Typography variant="subtitle2" fontWeight={700}>Frequency</Typography></TableCell>
-                            <TableCell><Typography variant="subtitle2" fontWeight={700}>Tier</Typography></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {metrics.map((row) => (
-                            <TableRow key={row.metricId} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' } }}>
-                                <TableCell sx={{ fontWeight: 600 }}>{row.category}</TableCell>
-                                <TableCell>{row.metric}</TableCell>
-                                <TableCell><Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'primary.main' }}>{row.source}</Typography></TableCell>
-                                <TableCell>{row.frequency}</TableCell>
-                                <TableCell>
-                                    <Chip
-                                        label={row.tier}
-                                        size="small"
-                                        color={row.tier === 'Core' ? 'primary' : 'default'}
-                                        variant="outlined"
-                                        sx={{ borderRadius: 1, fontWeight: 700, fontSize: '0.65rem' }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <div className="rounded-xl border border-border overflow-hidden bg-background">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-muted/30 border-b border-border">
+                            <tr>
+                                <th className="py-3 px-4 font-bold text-muted-foreground">Category</th>
+                                <th className="py-3 px-4 font-bold text-muted-foreground">Metric</th>
+                                <th className="py-3 px-4 font-bold text-muted-foreground">Source</th>
+                                <th className="py-3 px-4 font-bold text-muted-foreground">Frequency</th>
+                                <th className="py-3 px-4 font-bold text-muted-foreground">Tier</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50">
+                            {metrics.map((row) => (
+                                <tr key={row.metricId} className="hover:bg-muted/10 transition-colors">
+                                    <td className="py-3 px-4 font-semibold">{row.category}</td>
+                                    <td className="py-3 px-4 text-foreground">{row.metric}</td>
+                                    <td className="py-3 px-4 font-mono text-xs text-primary">{row.source}</td>
+                                    <td className="py-3 px-4 text-muted-foreground">{row.frequency}</td>
+                                    <td className="py-3 px-4">
+                                        <span className={cn(
+                                            "inline-flex items-center px-2 py-0.5 rounded text-[0.65rem] font-bold border",
+                                            row.tier === 'Core'
+                                                ? "bg-primary/10 text-primary border-primary/20"
+                                                : "bg-muted text-muted-foreground border-border"
+                                        )}>
+                                            {row.tier}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            <Box sx={{ mt: 8 }}>
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">
                     Regime Detection
-                </Typography>
-                <Typography variant="body1" paragraph color="text.secondary">
+                </h2>
+                <p className="text-muted-foreground max-w-3xl">
                     Our "Macro Regime" indicator is derived from a deterministic rules-based model using normalized liquidity and volatility signals:
-                </Typography>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={4}>
-                        <Paper variant="outlined" sx={{ p: 3, height: '100%', borderColor: 'rgba(244, 63, 94, 0.2)' }}>
-                            <Typography variant="h6" color="error.main" gutterBottom>Tightening Risk</Typography>
-                            <Typography variant="body2">
-                                Triggered when Net Liquidity Z-Score &lt; -1.5 OR SOFR Spreads widen &gt; 15bps. Indicates restrictive conditions.
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Paper variant="outlined" sx={{ p: 3, height: '100%', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
-                            <Typography variant="h6" color="success.main" gutterBottom>Liquidity Expansion</Typography>
-                            <Typography variant="body2">
-                                Triggered when Net Liquidity Z-Score &gt; 1.5, indicating aggressive central bank accommodation or TGA drain.
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Paper variant="outlined" sx={{ p: 3, height: '100%' }}>
-                            <Typography variant="h6" color="text.secondary" gutterBottom>Neutral / Stable</Typography>
-                            <Typography variant="body2">
-                                Signals are within +/- 1.0 StdDev of the 25-year mean. Market is in a trend-following structural phase.
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                </Grid>
-            </Box>
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="p-6 border-rose-500/20 bg-rose-500/[0.02]">
+                        <h3 className="text-lg font-bold text-rose-500 mb-2">Tightening Risk</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Triggered when Net Liquidity Z-Score &lt; -1.5 OR SOFR Spreads widen &gt; 15bps. Indicates restrictive conditions.
+                        </p>
+                    </Card>
+                    <Card className="p-6 border-emerald-500/20 bg-emerald-500/[0.02]">
+                        <h3 className="text-lg font-bold text-emerald-500 mb-2">Liquidity Expansion</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Triggered when Net Liquidity Z-Score &gt; 1.5, indicating aggressive central bank accommodation or TGA drain.
+                        </p>
+                    </Card>
+                    <Card className="p-6">
+                        <h3 className="text-lg font-bold text-muted-foreground mb-2">Neutral / Stable</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Signals are within +/- 1.0 StdDev of the 25-year mean. Market is in a trend-following structural phase.
+                        </p>
+                    </Card>
+                </div>
+            </div>
 
-            <Box sx={{ mt: 8, pt: 4, borderTop: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
+            <div className="pt-8 border-t border-border space-y-4">
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">
                     Data Integrity & Sources
-                </Typography>
-                <Typography variant="body1" paragraph color="text.secondary">
-                    GraphiQuestor leverages the <strong>Supabase Model Context Protocol (MCP)</strong> for real-time validation and automated cron-based ingestion.
-                </Typography>
-                <ul>
-                    <li><Typography variant="body2"><strong>FRED</strong> – US Federal Reserve Macro Data (St. Louis)</Typography></li>
-                    <li><Typography variant="body2"><strong>US Treasury FiscalData</strong> – Real-time debt and auction monitoring</Typography></li>
-                    <li><Typography variant="body2"><strong>IMF / COFER</strong> – Global reserve composition and gold accumulation</Typography></li>
-                    <li><Typography variant="body2"><strong>Yahoo Finance</strong> – Real-time market data for Gold (GC=F) and SPX</Typography></li>
+                </h2>
+                <p className="text-muted-foreground">
+                    GraphiQuestor leverages the <strong className="text-foreground">Supabase Model Context Protocol (MCP)</strong> for real-time validation and automated cron-based ingestion.
+                </p>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span><strong className="text-foreground">MoSPI</strong> – Ministry of Statistics & Programme Implementation (India)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span><strong className="text-foreground">FRED</strong> – US Federal Reserve Macro Data (St. Louis)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span><strong className="text-foreground">US Treasury FiscalData</strong> – Real-time debt and auction monitoring</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span><strong className="text-foreground">IMF / COFER</strong> – Global reserve composition and gold accumulation</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span><strong className="text-foreground">Yahoo Finance</strong> – Real-time market data for Gold (GC=F) and SPX</span>
+                    </li>
                 </ul>
-            </Box>
-        </Container>
+            </div>
+        </div>
     );
 };

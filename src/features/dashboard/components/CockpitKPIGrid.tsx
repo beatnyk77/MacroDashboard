@@ -1,11 +1,11 @@
 import React from 'react';
-import { Grid, Skeleton, Box, Typography } from '@mui/material';
+import { Skeleton } from "@/components/ui/skeleton";
 import { MetricCard } from '@/components/MetricCard';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 import { DataQualityBadge } from '@/components/DataQualityBadge';
-import { metricTypography, spacing } from '@/theme';
+
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
 
 export const CockpitKPIGrid = React.memo(() => {
@@ -30,54 +30,44 @@ export const CockpitKPIGrid = React.memo(() => {
 
     if (isLoading) {
         return (
-            <Grid container spacing={spacing.cardGap}>
-                {[...Array(8)].map((_, i) => (
-                    <Grid item xs={12} sm={6} md={3} key={i}>
-                        <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 4 }} />
-                    </Grid>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {[...Array(10)].map((_, i) => (
+                    <Skeleton key={i} className={i === 0 ? "md:col-span-2 h-[220px]" : "h-[220px]"} />
                 ))}
-            </Grid>
+            </div>
         );
     }
 
     return (
-        <Box sx={{
-            p: 3,
-            borderRadius: 4,
-            bgcolor: 'linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(16, 185, 129, 0.02) 100%)',
-            borderTop: '2px solid',
-            borderColor: 'primary.main',
-            position: 'relative',
-            overflow: 'hidden'
-        }}>
+        <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/5 to-emerald-500/5 border-t-2 border-primary relative overflow-hidden backdrop-blur-3xl">
             {/* Hero Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Box>
-                    <Typography variant="overline" sx={metricTypography.label}>
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <div className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-80">
                         DETECTION & INTEGRITY
-                    </Typography>
-                    <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mt: 0.5 }}>
+                    </div>
+                    <h3 className="text-3xl font-extrabold tracking-tight mt-1">
                         System Heartbeat
-                    </Typography>
-                </Box>
+                    </h3>
+                </div>
 
                 {/* Data Integrity Badge - Unified System */}
-                <Box>
-                    <Typography variant="caption" sx={metricTypography.label}>
+                <div>
+                    <div className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase text-right mb-1">
                         Data Integrity
-                    </Typography>
-                    <Box sx={{ mt: 0.5 }}>
+                    </div>
+                    <div>
                         <DataQualityBadge
                             timestamp={integrity?.lastChecked || null}
                             size="medium"
                         />
-                    </Box>
-                </Box>
-            </Box>
+                    </div>
+                </div>
+            </div>
 
-            <Grid container spacing={spacing.cardGap}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {/* 1. Net Liquidity - THE Core Signal (Double Width) */}
-                <Grid item xs={12} sm={12} md={6} lg={4}>
+                <div className="col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2">
                     <MetricCard
                         label="Net Liquidity"
                         metricId="NET_LIQUIDITY"
@@ -94,12 +84,12 @@ export const CockpitKPIGrid = React.memo(() => {
                         history={netLiq?.history}
                         isLoading={isLoading}
                         lastUpdated={netLiq?.as_of_date}
-                        sx={{ height: '100%', minHeight: 220, bgcolor: 'background.paper' }}
+                        className="bg-background"
                     />
-                </Grid>
+                </div>
 
                 {/* 2. US 10Y Yield */}
-                <Grid item xs={12} sm={6} md={3} lg={2}>
+                <div className="col-span-1">
                     <MetricCard
                         label="US 10Y Yield"
                         metricId="UST_10Y_YIELD"
@@ -112,12 +102,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status={(ust10y?.value || 0) > 4.5 ? 'warning' : 'neutral'}
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 3. Yield Curve (2s10s) */}
-                <Grid item xs={12} sm={6} md={3} lg={2}>
+                <div className="col-span-1">
                     <MetricCard
                         label="Yield Curve"
                         sublabel="10Y - 2Y Spread"
@@ -131,12 +120,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status={(curve?.value || 0) < 0 ? 'danger' : 'neutral'}
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 4. SOFR Rate */}
-                <Grid item xs={12} sm={6} md={3} lg={2}>
+                <div className="col-span-1">
                     <MetricCard
                         label="SOFR Rate"
                         sublabel="Secured Overnight Financing"
@@ -150,12 +138,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status="neutral"
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 5. DXY Index */}
-                <Grid item xs={12} sm={6} md={3} lg={2}>
+                <div className="col-span-1">
                     <MetricCard
                         label="US Dollar"
                         sublabel="DXY Index"
@@ -168,12 +155,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status="neutral"
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 6. Gold */}
-                <Grid item xs={12} sm={6} md={3} lg={2.4}>
+                <div className="col-span-1">
                     <MetricCard
                         label="Gold"
                         sublabel="Spot / USD"
@@ -187,12 +173,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status="neutral"
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 7. Silver */}
-                <Grid item xs={12} sm={6} md={3} lg={2.4}>
+                <div className="col-span-1">
                     <MetricCard
                         label="Silver"
                         sublabel="Spot / USD"
@@ -206,12 +191,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status="neutral"
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 8. WTI Crude */}
-                <Grid item xs={12} sm={6} md={3} lg={2.4}>
+                <div className="col-span-1">
                     <MetricCard
                         label="Oil"
                         sublabel="WTI Crude"
@@ -225,12 +209,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status="neutral"
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 9. Bitcoin */}
-                <Grid item xs={12} sm={6} md={3} lg={2.4}>
+                <div className="col-span-1">
                     <MetricCard
                         label="Bitcoin"
                         sublabel="BTC / USD"
@@ -244,12 +227,11 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status="neutral"
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
+                </div>
 
                 {/* 10. VIX Index */}
-                <Grid item xs={12} sm={6} md={3} lg={2.4}>
+                <div className="col-span-1">
                     <MetricCard
                         label="VIX"
                         sublabel="Volatility"
@@ -262,10 +244,9 @@ export const CockpitKPIGrid = React.memo(() => {
                         } : undefined}
                         status={(vix?.value || 0) > 20 ? 'warning' : (vix?.value || 0) > 30 ? 'danger' : 'safe'}
                         isLoading={isLoading}
-                        sx={{ height: '100%' }}
                     />
-                </Grid>
-            </Grid>
-        </Box>
+                </div>
+            </div>
+        </div>
     );
 });

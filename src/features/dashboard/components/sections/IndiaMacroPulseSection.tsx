@@ -4,6 +4,7 @@ import { MetricCard } from '@/components/MetricCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useIndiaMacro } from '@/hooks/useIndiaMacro';
 import { UPIAutopayFailureCard } from './UPIAutopayFailureCard';
+import { IndiaMacroCard } from './IndiaMacroCard';
 
 export const IndiaMacroPulseSection: React.FC = () => {
     const { data, isLoading } = useIndiaMacro();
@@ -15,14 +16,10 @@ export const IndiaMacroPulseSection: React.FC = () => {
     const findMetric = (id: string) => metrics.find(m => m.metric_id === id);
 
     // High-signal India metrics
-    const gdpGrowth = findMetric('IN_GDP_GROWTH_YOY');
-    const cpiIndex = findMetric('IN_CPI_YOY');
     const wpiIndex = findMetric('IN_WPI_YOY');
     const iipGrowth = findMetric('IN_IIP_GROWTH_YOY');
     const retailSales = findMetric('IN_RETAIL_SALES_YOY');
-    const fxReserves = findMetric('IN_FX_RESERVES');
     const goldReserves = findMetric('IN_GOLD_RESERVES_TONNES');
-    const repoRate = findMetric('IN_REPO_RATE');
 
     const stalenessToStatus = (flag?: string): 'safe' | 'warning' | 'danger' | 'neutral' => {
         if (!flag || flag === 'no_data') return 'neutral';
@@ -38,71 +35,9 @@ export const IndiaMacroPulseSection: React.FC = () => {
                 subtitle="Real-time monitoring of the fastest-growing major economy: Growth, Inflation, Reserves, and Policy stance"
             />
             <Grid container spacing={3}>
-                {/* Row 1: Core Macro - Always Visible */}
-                <Grid item xs={12} sm={6} md={3}>
-                    <MetricCard
-                        label="GDP Growth YoY"
-                        value={gdpGrowth?.value || 0}
-                        suffix="%"
-                        delta={gdpGrowth?.delta_mom !== undefined && gdpGrowth?.delta_mom !== null ? {
-                            value: `${gdpGrowth.delta_mom > 0 ? '+' : ''}${gdpGrowth.delta_mom.toFixed(2)}%`,
-                            period: 'Prev',
-                            trend: gdpGrowth.delta_mom > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status={gdpGrowth?.value && gdpGrowth.value > 6 ? 'safe' : 'neutral'}
-                        history={history['IN_GDP_GROWTH_YOY']}
-                        isLoading={isLoading}
-                        lastUpdated={gdpGrowth?.as_of_date}
-                        source={gdpGrowth?.source_name || 'FRED'}
-                        frequency={gdpGrowth?.display_frequency || 'Quarterly'}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <MetricCard
-                        label="CPI Inflation"
-                        value={cpiIndex?.value || 0}
-                        suffix="%"
-                        status={cpiIndex?.value && cpiIndex.value > 6 ? 'danger' : (cpiIndex?.value && cpiIndex.value > 4 ? 'warning' : 'safe')}
-                        history={history['IN_CPI_YOY']}
-                        isLoading={isLoading}
-                        lastUpdated={cpiIndex?.as_of_date}
-                        source={cpiIndex?.source_name || 'FRED'}
-                        frequency={cpiIndex?.display_frequency || 'Monthly'}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <MetricCard
-                        label="Repo Rate"
-                        value={repoRate?.value || 0}
-                        suffix="%"
-                        status="neutral"
-                        history={history['IN_REPO_RATE']}
-                        isLoading={isLoading}
-                        lastUpdated={repoRate?.as_of_date}
-                        source={repoRate?.source_name || 'RBI / FRED'}
-                        frequency={repoRate?.display_frequency || 'Monthly'}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <MetricCard
-                        label="FX Reserves"
-                        value={fxReserves?.value ? fxReserves.value / 1e9 : 0}
-                        suffix="bn"
-                        delta={fxReserves?.delta_mom !== undefined && fxReserves?.delta_mom !== null ? {
-                            value: `${fxReserves.delta_mom > 0 ? '+' : ''}${(fxReserves.delta_mom / 1e9).toFixed(1)}bn`,
-                            period: 'MoM',
-                            trend: fxReserves.delta_mom > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        history={history['IN_FX_RESERVES']}
-                        isLoading={isLoading}
-                        lastUpdated={fxReserves?.as_of_date}
-                        source={fxReserves?.source_name || 'RBI / FRED'}
-                        frequency={fxReserves?.display_frequency || 'Monthly'}
-                    />
+                {/* New Premium Card combining Core Metrics */}
+                <Grid item xs={12}>
+                    <IndiaMacroCard />
                 </Grid>
 
                 {/* Collapsible Content */}

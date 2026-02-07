@@ -1,11 +1,12 @@
 import React from 'react';
-import { Chip } from '@mui/material';
 import { getDataQuality } from '@/utils/dataQuality';
+import { cn } from '@/lib/utils';
 
 interface DataQualityBadgeProps {
     timestamp: Date | string | null;
     size?: 'small' | 'medium';
     label?: boolean; // Show text label or just indicator
+    className?: string;
 }
 
 /**
@@ -16,53 +17,60 @@ interface DataQualityBadgeProps {
 export const DataQualityBadge: React.FC<DataQualityBadgeProps> = ({
     timestamp,
     size = 'small',
-    label = true
+    label = true,
+    className
 }) => {
     const quality = getDataQuality(timestamp);
 
     const config: Record<ReturnType<typeof getDataQuality>, {
         icon: string;
-        color: string;
+        baseColorClass: string;
+        bgColorClass: string;
+        borderColorClass: string;
         label: string;
-        bgOpacity: string;
     }> = {
         fresh: {
             icon: '✓',
-            color: '#10b981', // green-500 from theme
-            label: 'Fresh',
-            bgOpacity: '15'
+            baseColorClass: 'text-emerald-500',
+            bgColorClass: 'bg-emerald-500/15',
+            borderColorClass: 'border-emerald-500/40',
+            label: 'Fresh'
         },
         delayed: {
             icon: '⏱',
-            color: '#f59e0b', // amber-500 from theme (yellow alternative)
-            label: 'Delayed',
-            bgOpacity: '15'
+            baseColorClass: 'text-amber-500',
+            bgColorClass: 'bg-amber-500/15',
+            borderColorClass: 'border-amber-500/40',
+            label: 'Delayed'
         },
         stale: {
             icon: '⚠',
-            color: '#f43f5e', // rose-500 from theme (red)
-            label: 'Stale',
-            bgOpacity: '15'
+            baseColorClass: 'text-rose-500',
+            bgColorClass: 'bg-rose-500/15',
+            borderColorClass: 'border-rose-500/40',
+            label: 'Stale'
         },
     };
 
-    const { icon, color, label: labelText, bgOpacity } = config[quality];
+    const { icon, baseColorClass, bgColorClass, borderColorClass, label: labelText } = config[quality];
 
     return (
-        <Chip
-            label={label ? labelText : icon}
-            size={size}
-            sx={{
-                bgcolor: `${color}${bgOpacity}`,
-                color,
-                border: `1px solid ${color}40`,
-                fontWeight: 600,
-                fontSize: size === 'small' ? '0.7rem' : '0.8rem',
-                height: size === 'small' ? 22 : 26,
-                '& .MuiChip-label': {
-                    px: 1,
-                }
-            }}
-        />
+        <div
+            className={cn(
+                "inline-flex items-center justify-center font-bold tracking-tight rounded-full border border-solid",
+                baseColorClass,
+                bgColorClass,
+                borderColorClass,
+                size === 'small' ? "h-5 text-[0.7rem] px-2" : "h-6 text-[0.8rem] px-2.5",
+                className
+            )}
+        >
+            <span className={cn("mr-1", !label && "mr-0")}>
+                {icon}
+            </span>
+            {label && (
+                <span>{labelText}</span>
+            )}
+        </div>
     );
 };

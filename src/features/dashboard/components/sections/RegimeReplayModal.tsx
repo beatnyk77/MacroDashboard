@@ -1,7 +1,15 @@
 import React from 'react';
-import { Modal, Box, Typography, IconButton, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { X, Activity, History, AlertCircle } from 'lucide-react';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
+import { cn } from '@/lib/utils';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 
 interface RegimeReplayModalProps {
     open: boolean;
@@ -11,6 +19,8 @@ interface RegimeReplayModalProps {
 
 export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onClose, regime }) => {
     const { data: ratios } = useGoldRatios();
+
+    if (!open) return null;
 
     const m2Gold = ratios?.find(r => r.ratio_name === 'M2/Gold');
     const spxGold = ratios?.find(r => r.ratio_name === 'SPX/Gold');
@@ -81,116 +91,113 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
     ];
 
     return (
-        <Modal open={open} onClose={onClose}>
-            <Box sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: { xs: '95%', md: 850 },
-                bgcolor: 'rgba(15, 23, 42, 0.98)',
-                border: '1px solid',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-                p: { xs: 3, md: 5 },
-                borderRadius: 4,
-                maxHeight: '90vh',
-                overflowY: 'auto',
-                color: 'text.primary'
-            }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'primary.main', color: 'white' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <div
+                className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+                onClick={onClose}
+            />
+
+            {/* Modal Content */}
+            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="p-2 rounded-lg bg-primary text-primary-foreground">
                             <Activity size={24} />
-                        </Box>
-                        <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em' }}>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black tracking-tight text-foreground">
                                 Regime Replay: {regime}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                            </h2>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
                                 CROSS-ASSET CORRELATION & HISTORICAL ANALOGUES
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <IconButton onClick={onClose} sx={{ color: 'text.disabled', '&:hover': { color: 'white' } }}>
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                    >
                         <X size={24} />
-                    </IconButton>
-                </Box>
+                    </button>
+                </div>
 
-                <Grid container spacing={5}>
-                    <Grid item xs={12} md={5}>
-                        <Box sx={{ p: 3, bgcolor: 'rgba(255, 255, 255, 0.02)', borderRadius: 3, border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                                <AlertCircle size={18} color="#3b82f6" />
-                                <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: '0.1em' }}>Live Regime Triggers</Typography>
-                            </Box>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    {/* Left Panel: Triggers */}
+                    <div className="md:col-span-5">
+                        <div className="p-6 bg-white/[0.02] rounded-xl border border-white/5 h-full">
+                            <div className="flex items-center gap-2 mb-6 text-blue-500">
+                                <AlertCircle size={18} />
+                                <span className="text-xs font-black uppercase tracking-widest">Live Regime Triggers</span>
+                            </div>
                             {currentTriggers.map((trigger, i) => (
-                                <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 2 }}>
-                                    <Box sx={{ mt: 0.8, width: 6, height: 6, borderRadius: '50%', bgcolor: 'primary.main' }} />
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600, lineHeight: 1.4 }}>
+                                <div key={i} className="flex items-start gap-3 mb-4 last:mb-0">
+                                    <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                    <p className="text-sm font-semibold text-muted-foreground leading-relaxed">
                                         {trigger}
-                                    </Typography>
-                                </Box>
+                                    </p>
+                                </div>
                             ))}
-                        </Box>
-                    </Grid>
+                        </div>
+                    </div>
 
-                    <Grid item xs={12} md={7}>
-                        <Box sx={{ mb: 4, p: 2, bgcolor: 'rgba(59, 130, 246, 0.05)', borderRadius: 2, border: '1px dashed rgba(59, 130, 246, 0.2)' }}>
-                            <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 900, textTransform: 'uppercase', mb: 1, display: 'block' }}>
+                    {/* Right Panel: Precedent */}
+                    <div className="md:col-span-7">
+                        <div className="mb-8 p-4 bg-blue-500/5 rounded-lg border border-blue-500/20 border-dashed">
+                            <span className="text-xs font-black text-primary uppercase tracking-wider mb-2 block">
                                 Historical Precedent
-                            </Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 800, mb: 1 }}>
+                            </span>
+                            <h3 className="text-lg font-extrabold text-foreground mb-2">
                                 {precedent}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, lineHeight: 1.5 }}>
+                            </h3>
+                            <p className="text-sm font-medium text-muted-foreground leading-relaxed">
                                 {description}
-                            </Typography>
-                        </Box>
+                            </p>
+                        </div>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                            <History size={18} color="#f59e0b" />
-                            <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: '0.1em' }}>Historical Asset Performance</Typography>
-                        </Box>
-                        <TableContainer component={Paper} variant="outlined" sx={{ bgcolor: 'transparent', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 2 }}>
-                            <Table size="small">
-                                <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.02)' }}>
-                                    <TableRow>
-                                        <TableCell sx={{ fontWeight: 900, fontSize: '0.65rem', color: 'text.secondary', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>ASSET</TableCell>
-                                        <TableCell sx={{ fontWeight: 900, fontSize: '0.65rem', color: 'text.secondary', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>PERF (AVG)</TableCell>
-                                        <TableCell sx={{ fontWeight: 900, fontSize: '0.65rem', color: 'text.secondary', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>MACRO CATALYST</TableCell>
+                        <div className="flex items-center gap-2 mb-4 text-amber-500">
+                            <History size={18} />
+                            <span className="text-xs font-black uppercase tracking-widest">Historical Asset Performance</span>
+                        </div>
+
+                        <div className="w-full overflow-hidden rounded-lg border border-white/5 bg-transparent">
+                            <Table>
+                                <TableHeader className="bg-white/[0.02]">
+                                    <TableRow className="border-b border-white/5 hover:bg-transparent">
+                                        <TableHead className="py-2 px-3 font-black text-[0.65rem] text-muted-foreground uppercase">ASSET</TableHead>
+                                        <TableHead className="py-2 px-3 font-black text-[0.65rem] text-muted-foreground uppercase">PERF (AVG)</TableHead>
+                                        <TableHead className="py-2 px-3 font-black text-[0.65rem] text-muted-foreground uppercase">MACRO CATALYST</TableHead>
                                     </TableRow>
-                                </TableHead>
+                                </TableHeader>
                                 <TableBody>
                                     {historicalPerformance.map((row) => (
-                                        <TableRow key={row.asset} sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.01)' } }}>
-                                            <TableCell sx={{ fontWeight: 800, fontSize: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>{row.asset}</TableCell>
-                                            <TableCell sx={{
-                                                fontWeight: 900,
-                                                fontSize: '0.75rem',
-                                                borderBottom: '1px solid rgba(255,255,255,0.03)',
-                                                color: row.performance.startsWith('+') ? 'success.main' : 'error.main'
-                                            }}>
+                                        <TableRow key={row.asset} className="hover:bg-white/[0.01] transition-colors border-white/5">
+                                            <TableCell className="py-3 px-3 font-extrabold text-xs text-foreground">
+                                                {row.asset}
+                                            </TableCell>
+                                            <TableCell className={cn(
+                                                "py-3 px-3 font-black text-xs",
+                                                row.performance.startsWith('+') ? "text-emerald-500" : "text-rose-500"
+                                            )}>
                                                 {row.performance}
                                             </TableCell>
-                                            <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: 'text.secondary', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                                            <TableCell className="py-3 px-3 font-semibold text-xs text-muted-foreground">
                                                 {row.catalyst}
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
-                        </TableContainer>
-                    </Grid>
-                </Grid>
+                        </div>
+                    </div>
+                </div>
 
-                <Box sx={{ mt: 5, pt: 3, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                    <Typography variant="caption" sx={{ color: 'text.disabled', fontStyle: 'italic', display: 'block', lineHeight: 1.5 }}>
+                <div className="mt-8 pt-6 border-t border-white/5">
+                    <p className="text-xs text-muted-foreground/60 italic leading-relaxed text-center">
                         Methodology: Performance is averaged over the last three identical macro regimes. Catalysts represent the primary driver during the most recent analogue period. Current Triggers are derived from live data pipelines (FRED/Treasury/Gold Ratios).
-                    </Typography>
-                </Box>
-            </Box>
-        </Modal>
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 };

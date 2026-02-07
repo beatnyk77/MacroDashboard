@@ -1,15 +1,15 @@
 import React from 'react';
-import { Box, Typography, Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Skeleton, Tooltip } from '@mui/material';
 import { Calendar, Info } from 'lucide-react';
 import { useMacroEvents, MacroEvent } from '@/hooks/useMacroEvents';
 import { HoverDetail } from '@/components/HoverDetail';
-// import { useViewContext } from '@/context/ViewContext';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export const UpcomingEventsCard: React.FC = () => {
     const { data: events, isLoading } = useMacroEvents();
-    // const { isInstitutionalView } = useViewContext();
 
-    if (isLoading) return <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />;
+    if (isLoading) return <Skeleton className="h-[300px] w-full rounded-xl" />;
     if (!events || events.length === 0) return null;
 
     const now = new Date();
@@ -18,7 +18,6 @@ export const UpcomingEventsCard: React.FC = () => {
 
     const renderRow = (event: MacroEvent) => {
         const isPast = new Date(event.event_date) < now;
-        // const surpriseVal = event.surprise ? parseFloat(event.surprise) : 0;
 
         return (
             <HoverDetail
@@ -36,137 +35,126 @@ export const UpcomingEventsCard: React.FC = () => {
                     source: event.source_url
                 }}
             >
-                <TableRow
+                <tr
+                    className={cn(
+                        "group hover:bg-white/[0.02] border-b border-white/[0.05] transition-colors last:border-0",
+                        isPast && "opacity-60 grayscale-[0.5]"
+                    )}
                     onClick={() => {
-                        gtag('event', 'click_calendar_event', {
-                            event_name: event.event_name,
-                            country: event.country,
-                            impact_level: event.impact_level
-                        });
-                    }}
-                    sx={{
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.02)', cursor: 'pointer' },
-                        opacity: isPast ? 0.7 : 1
+                        if (typeof window !== 'undefined' && 'gtag' in window) {
+                            (window as any).gtag('event', 'click_calendar_event', {
+                                event_name: event.event_name,
+                                country: event.country,
+                                impact_level: event.impact_level
+                            });
+                        }
                     }}
                 >
-                    <TableCell sx={{ py: 1.5, pl: 0, width: '130px', whiteSpace: 'nowrap' }}>
-                        <Typography sx={{ fontWeight: 700, fontSize: '0.65rem', color: isPast ? 'text.disabled' : 'text.primary' }}>
-                            {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                        </Typography>
-                        <Typography sx={{ fontSize: '0.6rem', color: 'text.disabled', fontFamily: 'monospace' }}>
-                            {new Date(event.event_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
-                        </Typography>
-                    </TableCell>
-                    <TableCell sx={{ py: 1.5, width: '80px' }}>
-                        <Typography sx={{ fontWeight: 800, fontSize: '0.65rem', color: 'secondary.light' }}>
+                    <td className="py-3 pl-0 pr-2 w-[130px] whitespace-nowrap">
+                        <div className="flex flex-col">
+                            <span className={cn(
+                                "font-bold text-[0.65rem] leading-tight",
+                                isPast ? "text-muted-foreground" : "text-foreground"
+                            )}>
+                                {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            </span>
+                            <span className="text-[0.6rem] text-muted-foreground font-mono">
+                                {new Date(event.event_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
+                            </span>
+                        </div>
+                    </td>
+                    <td className="py-3 px-2 w-[80px]">
+                        <span className="font-extrabold text-[0.65rem] text-blue-400">
                             {event.country}
-                        </Typography>
-                    </TableCell>
-                    <TableCell sx={{ py: 1.5 }}>
-                        <Typography sx={{ fontWeight: 600, fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        </span>
+                    </td>
+                    <td className="py-3 px-2">
+                        <div className="font-semibold text-[0.75rem] truncate max-w-[200px] text-foreground">
                             {event.event_name}
-                        </Typography>
-                    </TableCell>
-                    <TableCell sx={{ py: 1.5, width: '70px' }}>
-                        <Box
-                            sx={{
-                                width: 8,
-                                height: 16,
-                                borderRadius: 0.5,
-                                bgcolor: event.impact_level === 'High' ? '#ef4444' : (event.impact_level === 'Medium' ? '#f59e0b' : '#94a3b8')
+                        </div>
+                    </td>
+                    <td className="py-3 px-2 w-[70px]">
+                        <div
+                            className="w-2 h-4 rounded-sm"
+                            style={{
+                                backgroundColor: event.impact_level === 'High' ? '#ef4444' : (event.impact_level === 'Medium' ? '#f59e0b' : '#94a3b8')
                             }}
                         />
-                    </TableCell>
-                    <TableCell sx={{ py: 1.5, textAlign: 'right', width: '90px' }}>
-                        <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary', fontFamily: 'monospace' }}>{event.forecast || '-'}</Typography>
-                    </TableCell>
-                    <TableCell sx={{ py: 1.5, textAlign: 'right', width: '90px' }}>
-                        <Typography sx={{ fontSize: '0.7rem', color: 'text.disabled', fontFamily: 'monospace' }}>{event.previous || '-'}</Typography>
-                    </TableCell>
-                    <TableCell sx={{ py: 1.5, textAlign: 'right', width: '90px', pr: 0 }}>
+                    </td>
+                    <td className="py-3 px-2 text-right w-[90px]">
+                        <span className="text-[0.7rem] text-muted-foreground font-mono">{event.forecast || '-'}</span>
+                    </td>
+                    <td className="py-3 px-2 text-right w-[90px]">
+                        <span className="text-[0.7rem] text-muted-foreground/70 font-mono">{event.previous || '-'}</span>
+                    </td>
+                    <td className="py-3 pl-2 pr-0 text-right w-[90px]">
                         {event.actual ? (
-                            <Typography sx={{ fontWeight: 800, fontSize: '0.75rem', color: 'text.primary', fontFamily: 'monospace' }}>
+                            <span className="font-extrabold text-[0.75rem] text-foreground font-mono">
                                 {event.actual}
-                            </Typography>
+                            </span>
                         ) : (
-                            <Chip label="PENDING" size="small" sx={{ height: 16, fontSize: '0.55rem', fontWeight: 900, bgcolor: 'rgba(255,255,255,0.05)', color: 'text.disabled' }} />
+                            <span className="inline-block px-1.5 py-0.5 rounded text-[0.55rem] font-black bg-white/[0.05] text-muted-foreground/50 tracking-wider">
+                                PENDING
+                            </span>
                         )}
-                    </TableCell>
-                </TableRow>
+                    </td>
+                </tr>
             </HoverDetail>
         );
     };
 
     return (
-        <Card sx={{
-            p: 3,
-            height: '100%',
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'divider',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            overflow: 'hidden'
-        }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Calendar size={18} color="#94a3b8" />
-                    <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.1em', color: 'text.secondary' }}>
+        <Card className="h-full bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5 flex flex-col gap-4 overflow-hidden p-6 shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Calendar size={18} className="text-secondary-foreground/60" />
+                    <span className="font-extrabold text-xs tracking-[0.1em] text-muted-foreground uppercase">
                         MACRO CALENDAR
-                    </Typography>
-                </Box>
-                <Tooltip title="Institutional data seeded for 2026. Weekly refresh via cron.">
-                    <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
-                </Tooltip>
-            </Box>
+                    </span>
+                </div>
+                <div className="group relative">
+                    <Info size={14} className="text-muted-foreground cursor-help hover:text-foreground transition-colors" />
+                    <div className="absolute right-0 top-6 w-48 p-2 bg-popover border border-border rounded shadow-xl text-[0.6rem] text-popover-foreground z-10 hidden group-hover:block animate-in fade-in zoom-in-95 duration-200">
+                        Institutional data seeded for 2026. Weekly refresh via cron.
+                    </div>
+                </div>
+            </div>
 
-            <TableContainer sx={{
-                overflowX: 'auto',
-                width: '100%',
-                bgcolor: 'transparent',
-                '&::-webkit-scrollbar': { height: 4 },
-                '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }
-            }}>
-                <Table size="small" sx={{
-                    minWidth: 800,
-                    tableLayout: 'fixed',
-                    '& .MuiTableCell-root': {
-                        borderBottom: '1px solid rgba(255,255,255,0.05)',
-                        px: 1
-                    }
-                }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', pl: 0, width: '130px' }}>DATE / TIME</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '80px' }}>COUNTRY</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none' }}>EVENT</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', width: '70px' }}>IMPACT</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '90px' }}>FORECAST</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '90px' }}>PREVIOUS</TableCell>
-                            <TableCell sx={{ color: 'text.disabled', fontWeight: 800, fontSize: '0.6rem', border: 'none', textAlign: 'right', width: '90px', pr: 0 }}>ACTUAL</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {upcomingEvents.length > 0 && upcomingEvents.slice(0, 8).map(renderRow)}
+            <div className="relative w-full overflow-auto">
+                <div className="w-full">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr className="border-b border-white/[0.05]">
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none pl-0 w-[130px]">DATE / TIME</th>
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none w-[80px]">COUNTRY</th>
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none">EVENT</th>
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none w-[70px]">IMPACT</th>
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none text-right w-[90px]">FORECAST</th>
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none text-right w-[90px]">PREVIOUS</th>
+                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none text-right w-[90px] pr-0">ACTUAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {upcomingEvents.length > 0 && upcomingEvents.slice(0, 8).map(renderRow)}
 
-                        {pastEvents.length > 0 && (
-                            <>
-                                <TableRow>
-                                    <TableCell colSpan={8} sx={{ border: 'none', py: 2 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: 0.5 }}>
-                                            <Box sx={{ flex: 1, height: '1px', bgcolor: 'divider' }} />
-                                            <Typography sx={{ fontSize: '0.5rem', fontWeight: 900, color: 'text.disabled', letterSpacing: '0.2em' }}>RECENT RELEASES</Typography>
-                                            <Box sx={{ flex: 1, height: '1px', bgcolor: 'divider' }} />
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                                {pastEvents.map(renderRow)}
-                            </>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                            {pastEvents.length > 0 && (
+                                <>
+                                    <tr>
+                                        <td colSpan={7} className="py-4 border-none">
+                                            <div className="flex items-center gap-4 opacity-50">
+                                                <div className="flex-1 h-px bg-border" />
+                                                <span className="text-[0.5rem] font-black text-muted-foreground tracking-[0.2em]">RECENT RELEASES</span>
+                                                <div className="flex-1 h-px bg-border" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {pastEvents.map(renderRow)}
+                                </>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </Card>
     );
 };

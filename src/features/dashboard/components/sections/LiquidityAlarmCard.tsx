@@ -1,33 +1,33 @@
-import { Card, Box, Typography, useTheme, Alert, Modal, Fade, Backdrop, Grid, Divider } from '@mui/material';
-import { ShieldAlert, ShieldCheck, X, Info, Target, TrendingDown, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ShieldAlert, ShieldCheck, X, Info, Target, TrendingDown, Activity, AlertTriangle } from 'lucide-react';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { Skeleton, IconButton } from '@mui/material';
-import { useState } from 'react';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
+import { cn } from '@/lib/utils';
+import { formatBillions } from '@/utils/formatNumber';
 
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         return (
-            <Box sx={{ bgcolor: '#0f172a', p: 2, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 2, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)' }}>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>Z-SCORE BIN</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 900 }}>{payload[0].payload.bin}σ</Typography>
-                <Box sx={{ mt: 1 }}>
-                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 800, display: 'block' }}>FREQUENCY</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 900, color: 'primary.main' }}>{payload[0].value} Days</Typography>
-                </Box>
-            </Box>
+            <div className="bg-slate-950 p-2 border border-white/10 rounded-lg shadow-xl">
+                <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">Z-SCORE BIN</span>
+                <span className="text-sm font-black text-white">{payload[0].payload.bin}σ</span>
+                <div className="mt-1">
+                    <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">FREQUENCY</span>
+                    <span className="text-xs font-black text-primary">{payload[0].value} Days</span>
+                </div>
+            </div>
         );
     }
     return null;
 };
 
 export const LiquidityAlarmCard: React.FC = () => {
-
-    const theme = useTheme();
     const { data: liq, isLoading } = useNetLiquidity();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    if (isLoading) return <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />;
+    if (isLoading) return <Skeleton className="h-[200px] w-full rounded-xl" />;
     if (!liq) return null;
 
     // Smoothed distribution data for the histogram (representative of 25y distribution)
@@ -42,195 +42,176 @@ export const LiquidityAlarmCard: React.FC = () => {
     const isTightening = liq.alarm_status === 'TIGHTENING';
 
     const getStatusColor = () => {
-        if (isExtreme) return theme.palette.error.main;
-        if (isTightening) return theme.palette.warning.main;
-        return theme.palette.success.main;
+        if (isExtreme) return '#ef4444'; // Red
+        if (isTightening) return '#f59e0b'; // Amber
+        return '#10b981'; // Emerald
+    };
+
+    const getStatusClass = () => {
+        if (isExtreme) return 'text-rose-500 bg-rose-500/10 border-rose-500/20';
+        if (isTightening) return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
+        return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
     };
 
     const getStatusIcon = () => {
-        if (isExtreme) return <ShieldAlert size={20} />;
-        if (isTightening) return <ShieldAlert size={20} />;
-        return <ShieldCheck size={20} />;
+        if (isExtreme) return <ShieldAlert size={20} className="text-rose-500" />;
+        if (isTightening) return <AlertTriangle size={20} className="text-amber-500" />;
+        return <ShieldCheck size={20} className="text-emerald-500" />;
     };
 
     return (
         <>
             <Card
                 onClick={() => setIsModalOpen(true)}
-                sx={{
-                    p: 3,
-                    height: '100%',
-                    bgcolor: 'background.paper',
-                    border: '1px solid',
-                    borderColor: isExtreme ? 'error.main' : isTightening ? 'warning.main' : 'divider',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                    cursor: 'pointer',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    '&:hover': {
-                        boxShadow: `0 0 40px ${getStatusColor()}40`,
-                        transform: 'translateY(-4px)',
-                        borderColor: getStatusColor()
-                    }
-                }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ color: getStatusColor() }}>{getStatusIcon()}</Box>
-                        <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.12em', color: 'text.secondary' }}>
+                className={cn(
+                    "p-6 h-full relative overflow-hidden flex flex-col gap-4 cursor-pointer transition-all duration-300",
+                    "bg-card/40 backdrop-blur-md border border-white/10 dark:border-white/5 shadow-xl",
+                    "hover:-translate-y-1 hover:shadow-2xl hover:border-primary/50",
+                    isExtreme ? "border-rose-500/50 shadow-rose-500/20" : isTightening ? "border-amber-500/50 shadow-amber-500/20" : ""
+                )}
+            >
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        {getStatusIcon()}
+                        <h4 className="font-extrabold text-xs tracking-[0.12em] text-muted-foreground uppercase">
                             LIQUIDITY ALARM
-                        </Typography>
-                    </Box>
-                    <Box sx={{
-                        px: 1,
-                        py: 0.3,
-                        borderRadius: 1,
-                        bgcolor: `${getStatusColor()}20`,
-                        border: `1px solid ${getStatusColor()}40`,
-                        color: getStatusColor()
-                    }}>
-                        <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.65rem' }}>
-                            {liq.alarm_status}
-                        </Typography>
-                    </Box>
-                </Box>
+                        </h4>
+                    </div>
+                    <div className={cn("px-2 py-1 rounded text-[0.65rem] font-black border", getStatusClass())}>
+                        {liq.alarm_status}
+                    </div>
+                </div>
 
-                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em' }}>
-                            ${liq.current_value.toLocaleString(undefined, { maximumFractionDigits: 0 })}B
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
-                            <Box sx={{ px: 0.8, py: 0.2, borderRadius: 1, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary', letterSpacing: '0.02em' }}>RRP</Typography>
-                                <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 900, color: (liq.rrp_balance || 0) > 500 ? 'warning.main' : 'text.primary' }}>${liq.rrp_balance?.toFixed(0)}B</Typography>
-                            </Box>
-                            <Box sx={{ px: 0.8, py: 0.2, borderRadius: 1, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'text.secondary', letterSpacing: '0.02em' }}>TGA</Typography>
-                                <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 900, color: (liq.tga_balance || 0) > 750 ? 'error.main' : 'text.primary' }}>${liq.tga_balance?.toFixed(0)}B</Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                    <Typography variant="caption" sx={{ color: (liq?.delta || 0) >= 0 ? 'success.main' : 'error.main', fontWeight: 800, bgcolor: (liq?.delta || 0) >= 0 ? 'success.main10' : 'error.main10', px: 1, py: 0.2, borderRadius: 0.5, height: 'fit-content' }}>
-                        {liq?.delta !== undefined && liq?.delta !== null ? (liq.delta >= 0 ? '+' : '') : ''}{liq?.delta !== undefined && liq?.delta !== null ? liq.delta.toFixed(1) : '-'}B
-                    </Typography>
-                </Box>
+                <div className="flex items-baseline gap-3">
+                    <div className="flex flex-col">
+                        <h3 className="text-4xl font-black tracking-tighter text-foreground">
+                            ${formatBillions(liq.current_value)}
+                        </h3>
+                        <div className="flex gap-2 mt-1">
+                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/10 flex items-center gap-1">
+                                <span className="text-[0.6rem] font-bold text-muted-foreground tracking-wide">RRP</span>
+                                <span className={cn("text-[0.65rem] font-black", (liq.rrp_balance || 0) > 500 ? 'text-amber-500' : 'text-foreground')}>
+                                    ${formatBillions(liq.rrp_balance)}
+                                </span>
+                            </div>
+                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/10 flex items-center gap-1">
+                                <span className="text-[0.6rem] font-bold text-muted-foreground tracking-wide">TGA</span>
+                                <span className={cn("text-[0.65rem] font-black", (liq.tga_balance || 0) > 750 ? 'text-rose-500' : 'text-foreground')}>
+                                    ${formatBillions(liq.tga_balance)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <span className={cn(
+                        "px-2 py-0.5 rounded text-xs font-black",
+                        (liq?.delta || 0) >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'
+                    )}>
+                        {liq?.delta !== undefined && liq?.delta !== null ? (liq.delta >= 0 ? '+' : '') : ''}{liq?.delta !== undefined && liq?.delta !== null ? formatBillions(liq.delta) : '-'}
+                    </span>
+                </div>
 
-                <Box sx={{ display: 'flex', gap: 4 }}>
-                    <Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>Z-SCORE (25Y)</Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 800, color: getStatusColor() }}>
+                <div className="flex gap-6 mt-2">
+                    <div>
+                        <span className="text-[0.6rem] font-extrabold text-muted-foreground tracking-wider block mb-0.5">Z-SCORE (25Y)</span>
+                        <span className={cn("text-lg font-black", getStatusClass().split(' ')[0])}>
                             {liq?.z_score !== undefined && liq?.z_score !== null ? liq.z_score.toFixed(2) : '-'}σ
-                        </Typography>
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>SOFR-EFFR</Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography variant="h6" sx={{
-                                fontWeight: 800,
-                                color: (liq.sofr_effr_spread || 0) > 15 ? 'error.main' : (liq.sofr_effr_spread || 0) > 0 ? 'warning.main' : 'success.light',
-                                bgcolor: (liq.sofr_effr_spread || 0) > 15 ? 'error.main10' : 'transparent',
-                                px: (liq.sofr_effr_spread || 0) > 15 ? 0.5 : 0,
-                                borderRadius: 0.5
-                            }}>
+                        </span>
+                    </div>
+                    <div className="flex-1">
+                        <span className="text-[0.6rem] font-extrabold text-muted-foreground tracking-wider block mb-0.5">SOFR-EFFR</span>
+                        <div className="flex items-center gap-2">
+                            <span className={cn(
+                                "text-lg font-black px-1.5 rounded",
+                                (liq.sofr_effr_spread || 0) > 15 ? 'text-rose-500 bg-rose-500/10' : (liq.sofr_effr_spread || 0) > 0 ? 'text-amber-500' : 'text-emerald-500'
+                            )}>
                                 {liq?.sofr_effr_spread !== undefined ? (liq.sofr_effr_spread > 0 ? '+' : '') + liq.sofr_effr_spread.toFixed(1) : '-'} bps
-                            </Typography>
+                            </span>
                             {liq.sofr_effr_history && liq.sofr_effr_history.length > 0 && (
-                                <Box sx={{ width: 40, height: 20 }}>
+                                <div className="w-12 h-6 opacity-80">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <LineChart data={liq.sofr_effr_history}>
                                             <Line
                                                 type="monotone"
                                                 dataKey="value"
-                                                stroke={(liq.sofr_effr_spread || 0) > 15 ? theme.palette.error.main : theme.palette.primary.main}
+                                                stroke={(liq.sofr_effr_spread || 0) > 15 ? '#f43f5e' : '#3b82f6'}
                                                 strokeWidth={2}
                                                 dot={false}
                                             />
                                         </LineChart>
                                     </ResponsiveContainer>
-                                </Box>
+                                </div>
                             )}
-                        </Box>
-                    </Box>
-                    <Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800, letterSpacing: '0.05em', display: 'block', fontSize: '0.6rem' }}>PERCENTILE</Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                        </div>
+                    </div>
+                    <div>
+                        <span className="text-[0.6rem] font-extrabold text-muted-foreground tracking-wider block mb-0.5">PERCENTILE</span>
+                        <span className="text-lg font-black text-foreground">
                             {liq?.percentile !== undefined && liq?.percentile !== null ? liq.percentile.toFixed(1) : '-'}%
-                        </Typography>
-                    </Box>
-                </Box>
+                        </span>
+                    </div>
+                </div>
 
-                <Alert
-                    severity={isExtreme ? "error" : isTightening ? "warning" : "success"}
-                    sx={{
-                        mt: 'auto',
-                        px: 0,
-                        py: 0,
-                        bgcolor: 'transparent',
-                        border: 'none',
-                        '& .MuiAlert-message': {
-                            fontSize: '0.65rem',
-                            fontWeight: 700,
-                            color: 'text.secondary',
-                            lineHeight: 1.4
-                        },
-                        '& .MuiAlert-icon': { display: 'none' }
-                    }}
-                >
+                <div className={cn(
+                    "mt-auto px-3 py-2 rounded-lg text-[0.65rem] font-bold leading-relaxed border",
+                    isExtreme
+                        ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                        : isTightening
+                            ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                            : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                )}>
                     {isExtreme
                         ? "CRITICAL: Extreme net liquidity deviation detected. High risk of asset repricing."
                         : isTightening
                             ? "WARNING: Liquidity is tightening. Volatility risk is increasing."
                             : "STABLE: System liquidity remains within historical normal bounds."}
-                </Alert>
+                </div>
 
-                <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, bgcolor: getStatusColor(), opacity: 0.6 }} />
+                <div
+                    className="absolute bottom-0 left-0 right-0 h-1 opacity-60"
+                    style={{ backgroundColor: getStatusColor() }}
+                />
             </Card>
 
-            <Modal
-                open={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{ timeout: 500, sx: { backdropFilter: 'blur(16px)', bgcolor: 'rgba(0,0,0,0.85)' } }}
-            >
-                <Fade in={isModalOpen}>
-                    <Box sx={{
-                        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                        width: { xs: '95vw', md: 900 },
-                        maxHeight: '95vh', overflowY: 'auto',
-                        bgcolor: 'rgba(15, 23, 42, 0.95)', border: '1px solid', borderColor: 'rgba(255,255,255,0.1)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                        p: { xs: 4, md: 6 }, borderRadius: 4,
-                        color: 'text.primary'
-                    }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 6 }}>
-                            <Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: `${getStatusColor()}20`, color: getStatusColor(), display: 'flex' }}>
+            {/* Modal Overlay */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        onClick={() => setIsModalOpen(false)}
+                    />
+                    <div className="relative w-full max-w-5xl bg-[#0f172a]/95 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
+                        <div className="flex justify-between items-start mb-8">
+                            <div>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className={cn("p-2 rounded-lg bg-opacity-20 flex", getStatusClass())}>
                                         {getStatusIcon()}
-                                    </Box>
-                                    <Typography variant="h4" sx={{ fontWeight: 900, letterSpacing: '-0.02em' }}>Liquidity Regime Analysis</Typography>
-                                </Box>
-                                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
+                                    </div>
+                                    <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+                                        Liquidity Regime Analysis
+                                    </h2>
+                                </div>
+                                <p className="text-muted-foreground font-medium text-sm md:text-base">
                                     Visualizing the true net liquidity driving global asset prices.
-                                </Typography>
-                            </Box>
-                            <IconButton onClick={() => setIsModalOpen(false)} sx={{ color: 'text.disabled', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
-                                <X size={28} />
-                            </IconButton>
-                        </Box>
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-muted-foreground hover:text-white hover:bg-white/10 rounded-full p-2 transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
 
-                        <Grid container spacing={6}>
-                            <Grid item xs={12} md={7}>
-                                <Box sx={{ mb: 4 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                                        <Activity size={18} color={theme.palette.primary.main} />
-                                        <Typography variant="overline" sx={{ fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.1em' }}>25-Year Z-Score Distribution</Typography>
-                                    </Box>
-                                    <Box sx={{ height: 300, width: '100%', position: 'relative' }}>
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                            <div className="md:col-span-7 space-y-8">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Activity size={18} className="text-primary" />
+                                        <h5 className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+                                            25-Year Z-Score Distribution
+                                        </h5>
+                                    </div>
+                                    <div className="h-[300px] w-full relative">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={distributionData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                                 <XAxis
@@ -246,7 +227,6 @@ export const LiquidityAlarmCard: React.FC = () => {
                                                     cursor={{ fill: 'rgba(255,255,255,0.03)' }}
                                                     content={<CustomTooltip />}
                                                 />
-
                                                 <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                                                     {distributionData.map((entry, index) => {
                                                         const isCurrentBin = Math.abs(entry.bin - liq.z_score) < 0.25;
@@ -262,70 +242,72 @@ export const LiquidityAlarmCard: React.FC = () => {
                                                 <ReferenceLine x={liq.z_score} stroke={getStatusColor()} strokeWidth={2} strokeDasharray="5 5" label={{ value: 'CURRENT', position: 'top', fill: getStatusColor(), fontSize: 10, fontWeight: 900 }} />
                                             </BarChart>
                                         </ResponsiveContainer>
-                                    </Box>
-                                </Box>
+                                    </div>
+                                </div>
 
-                                <Box sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 3, border: '1px solid rgba(255,255,255,0.05)' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                        <Target size={18} color={theme.palette.secondary.main} />
-                                        <Typography variant="overline" sx={{ fontWeight: 900, fontSize: '0.75rem' }}>Formula & Methodology</Typography>
-                                    </Box>
-                                    <Typography variant="h6" sx={{ fontFamily: 'monospace', fontWeight: 700, mb: 1, color: 'primary.light' }}>
+                                <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Target size={18} className="text-secondary" />
+                                        <h5 className="text-xs font-black text-muted-foreground uppercase tracking-wider">Formula & Methodology</h5>
+                                    </div>
+                                    <code className="block text-sm font-bold text-primary mb-2 font-mono">
                                         Net Liquidity = WALCL - TGA - RRP
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                                    </code>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
                                         Calculated as the Federal Reserve Total Assets (WALCL) minus the Treasury General Account (TGA) and Reverse Repo Facility (RRP). Data ingested daily from NY Fed Markets API for high-fidelity signal.
-                                    </Typography>
-                                </Box>
-                            </Grid>
+                                    </p>
+                                </div>
+                            </div>
 
-                            <Grid item xs={12} md={5}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                    <Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                                            <Info size={18} color={theme.palette.warning.main} />
-                                            <Typography variant="overline" sx={{ fontWeight: 900, fontSize: '0.75rem' }}>Macro Significance</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                            <Box sx={{ pl: 2, borderLeft: '2px solid', borderColor: 'success.main' }}>
-                                                <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>High Net Liquidity</Typography>
-                                                <Typography variant="body2" color="text.secondary">Typical of 'Risk-On' regimes. Excess bank reserves fuel equity and crypto appreciation.</Typography>
-                                            </Box>
-                                            <Box sx={{ pl: 2, borderLeft: '2px solid', borderColor: 'error.main' }}>
-                                                <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>Low/Retracting Liquidity</Typography>
-                                                <Typography variant="body2" color="text.secondary">Correlates with tightening cycles. Higher probability of volatility and credit stress.</Typography>
-                                            </Box>
-                                        </Box>
-                                    </Box>
+                            <div className="md:col-span-5 space-y-8">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Info size={18} className="text-amber-500" />
+                                        <h5 className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+                                            Macro Significance
+                                        </h5>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div className="pl-3 border-l-2 border-emerald-500">
+                                            <h6 className="text-sm font-bold text-foreground">High Net Liquidity</h6>
+                                            <p className="text-xs text-muted-foreground mt-0.5">Typical of 'Risk-On' regimes. Excess bank reserves fuel equity and crypto appreciation.</p>
+                                        </div>
+                                        <div className="pl-3 border-l-2 border-rose-500">
+                                            <h6 className="text-sm font-bold text-foreground">Low/Retracting Liquidity</h6>
+                                            <p className="text-xs text-muted-foreground mt-0.5">Correlates with tightening cycles. Higher probability of volatility and credit stress.</p>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                    <Box sx={{ p: 4, bgcolor: 'rgba(244, 63, 94, 0.05)', borderRadius: 4, border: '1px solid rgba(244, 63, 94, 0.1)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2.5 }}>
-                                            <TrendingDown size={18} color={theme.palette.error.main} />
-                                            <Typography variant="overline" sx={{ fontWeight: 900, fontSize: '0.75rem', color: 'error.main' }}>Historical Risk Context</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                            <Box>
-                                                <Typography variant="caption" sx={{ fontWeight: 900, color: 'error.light', display: 'block', letterSpacing: '0.05em' }}>DEC 2018 (QT SHOCK)</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.5 }}>Last {'\u003e'}2σ tightening regime. SPX declined 20% in 6 months as liquidity drained.</Typography>
-                                            </Box>
-                                            <Divider sx={{ opacity: 0.05 }} />
-                                            <Box>
-                                                <Typography variant="caption" sx={{ fontWeight: 900, color: 'warning.light', display: 'block', letterSpacing: '0.05em' }}>MAR 2020 (COLLAPSE)</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.5 }}>Rapid liquidity contraction preceded the 34% SPX correction.</Typography>
-                                            </Box>
-                                            <Divider sx={{ opacity: 0.05 }} />
-                                            <Box>
-                                                <Typography variant="caption" sx={{ fontWeight: 900, color: 'success.light', display: 'block', letterSpacing: '0.05em' }}>JAN 2024 (RESILIENCE)</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.5 }}>Positive liquidity z-score supported market resilience despite high rates.</Typography>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </Fade>
-            </Modal>
+                                <div className="p-5 bg-rose-500/5 rounded-xl border border-rose-500/10">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <TrendingDown size={18} className="text-rose-500" />
+                                        <h5 className="text-xs font-black tracking-widest text-rose-500 uppercase">
+                                            Historical Risk Context
+                                        </h5>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <span className="text-[0.6rem] font-black text-rose-400 block tracking-widest mb-1">DEC 2018 (QT SHOCK)</span>
+                                            <p className="text-xs font-semibold text-muted-foreground">Last {'>'}2σ tightening regime. SPX declined 20% in 6 months as liquidity drained.</p>
+                                        </div>
+                                        <div className="h-px bg-white/5" />
+                                        <div>
+                                            <span className="text-[0.6rem] font-black text-amber-400 block tracking-widest mb-1">MAR 2020 (COLLAPSE)</span>
+                                            <p className="text-xs font-semibold text-muted-foreground">Rapid liquidity contraction preceded the 34% SPX correction.</p>
+                                        </div>
+                                        <div className="h-px bg-white/5" />
+                                        <div>
+                                            <span className="text-[0.6rem] font-black text-emerald-400 block tracking-widest mb-1">JAN 2024 (RESILIENCE)</span>
+                                            <p className="text-xs font-semibold text-muted-foreground">Positive liquidity z-score supported market resilience despite high rates.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

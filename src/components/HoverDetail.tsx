@@ -1,24 +1,13 @@
 import React, { useState } from 'react';
-import {
-    Box,
-    Typography,
-    Modal,
-    Fade,
-    Backdrop,
-    IconButton,
-    Grid,
-    Divider,
-    Paper,
-    useTheme
-} from '@mui/material';
 import { X, Info, Clock, Layers } from 'lucide-react';
 import { Sparkline } from '@/components/Sparkline';
 import { BarChart as ReBarChart, Bar, XAxis, Tooltip as ReTooltip, ResponsiveContainer } from 'recharts';
+import { cn } from '@/lib/utils';
 
 interface HoverDetailProps {
     title: string;
     subtitle?: string;
-    children: React.ReactElement; // The card to wrap
+    children: React.ReactElement; // The card/row to wrap
     detailContent: {
         description?: string;
         stats?: { label: string; value: string | number; color?: string }[];
@@ -36,161 +25,146 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
     detailContent
 }) => {
     const [open, setOpen] = useState(false);
-    const theme = useTheme();
 
     const handleOpen = () => setOpen(true);
-    const handleClose = (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const handleClose = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
         setOpen(false);
     };
 
+    // clone children to attach click handler without adding a wrapper div
+    // this keeps the DOM structure valid (e.g. valid tr inside tbody)
+    const trigger = React.cloneElement(children, {
+        onClick: (e: React.MouseEvent) => {
+            // Call original onClick if it exists
+            if (children.props.onClick) {
+                children.props.onClick(e);
+            }
+            handleOpen();
+        },
+        className: cn(children.props.className, "cursor-pointer transition-transform hover:scale-[1.005]")
+    });
+
+    if (!open) return trigger;
+
     return (
         <>
-            <Box
-                onClick={handleOpen}
-                sx={{
-                    cursor: 'pointer',
-                    height: '100%',
-                    transition: 'transform 0.2s',
-                    '&:hover': { transform: 'scale(1.01)' }
-                }}
-            >
-                {children}
-            </Box>
+            {trigger}
+            {/* Modal Overlay */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={handleClose}>
+                {/* Modal Content */}
+                <div
+                    className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950 border border-white/10 rounded-xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {/* Header */}
+                    <div className="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 className="text-xl font-extrabold text-primary mb-1">
+                                {title}
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                {subtitle || 'Institutional Data Analysis & Methodology'}
+                            </p>
+                        </div>
+                        <button
+                            onClick={handleClose}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
 
-            <Modal
-                open={open}
-                onClose={() => setOpen(false)}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                    sx: { backdropFilter: 'blur(8px)', bgcolor: 'rgba(2, 6, 23, 0.85)' }
-                }}
-            >
-                <Fade in={open}>
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: { xs: '95vw', md: 700 },
-                        maxWidth: '100%',
-                        bgcolor: 'background.paper',
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: 2,
-                        boxShadow: '0 24px 48px rgba(0,0,0,0.6)',
-                        p: { xs: 3, md: 5 },
-                        maxHeight: '90vh',
-                        overflowY: 'auto'
-                    }}>
-                        {/* Header */}
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
-                            <Box>
-                                <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, color: 'primary.main' }}>
-                                    {title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {subtitle || 'Institutional Data Analysis & Methodology'}
-                                </Typography>
-                            </Box>
-                            <IconButton onClick={(e) => handleClose(e)} sx={{ color: 'text.disabled', '&:hover': { color: 'text.primary' } }}>
-                                <X size={24} />
-                            </IconButton>
-                        </Box>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left Column: Stats & Description */}
+                        <div>
+                            <div className="mb-8">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Info size={16} className="text-primary" />
+                                    <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">EXECUTIVE SUMMARY</span>
+                                </div>
+                                <p className="text-sm leading-relaxed text-foreground/90">
+                                    {detailContent.description || 'No detailed description available for this metric.'}
+                                </p>
+                            </div>
 
-                        <Grid container spacing={4}>
-                            {/* Left Column: Stats & Description */}
-                            <Grid item xs={12} md={6}>
-                                <Box sx={{ mb: 4 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                                        <Info size={16} color={theme.palette.primary.main} />
-                                        <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.secondary' }}>EXECUTIVE SUMMARY</Typography>
-                                    </Box>
-                                    <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'text.primary', opacity: 0.9 }}>
-                                        {detailContent.description || 'No detailed description available for this metric.'}
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                                    {detailContent.stats?.map((stat, idx) => (
-                                        <Paper
-                                            key={idx}
-                                            variant="outlined"
-                                            sx={{
-                                                p: 2,
-                                                bgcolor: 'rgba(255,255,255,0.02)',
-                                                borderColor: stat.color ? `${stat.color}40` : 'divider'
-                                            }}
+                            <div className="grid grid-cols-2 gap-3">
+                                {detailContent.stats?.map((stat, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="p-3 border rounded bg-white/[0.02] border-white/5"
+                                        style={{ borderColor: stat.color ? `${stat.color}40` : undefined }}
+                                    >
+                                        <span className="text-[0.65rem] font-bold text-muted-foreground block mb-1 uppercase">
+                                            {stat.label}
+                                        </span>
+                                        <span
+                                            className="text-lg font-black"
+                                            style={{ color: stat.color || 'inherit' }}
                                         >
-                                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 0.5 }}>
-                                                {stat.label.toUpperCase()}
-                                            </Typography>
-                                            <Typography variant="h6" sx={{ fontWeight: 800, color: stat.color || 'text.primary' }}>
-                                                {stat.value}
-                                            </Typography>
-                                        </Paper>
-                                    ))}
-                                </Box>
-                            </Grid>
+                                            {stat.value}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-                            {/* Right Column: Mini Chart & Context */}
-                            <Grid item xs={12} md={6}>
-                                <Box sx={{ mb: 4 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                                        <Clock size={16} color={theme.palette.primary.main} />
-                                        <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.secondary' }}>RECENT TREND (90D)</Typography>
-                                    </Box>
-                                    <Box sx={{ height: 200, width: '100%', mt: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', borderRadius: 1, border: '1px solid rgba(255,255,255,0.05)' }}>
-                                        {detailContent.history && detailContent.history.length > 0 ? (
-                                            detailContent.chartType === 'bar' ? (
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <ReBarChart data={detailContent.history}>
-                                                        <XAxis dataKey="date" hide />
-                                                        <ReTooltip
-                                                            contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '4px' }}
-                                                            itemStyle={{ color: theme.palette.primary.main, fontWeight: 700 }}
-                                                        />
-                                                        <Bar dataKey="value" fill={theme.palette.primary.main} radius={[2, 2, 0, 0]} />
-                                                    </ReBarChart>
-                                                </ResponsiveContainer>
-                                            ) : (
-                                                <Sparkline data={detailContent.history} height={160} />
-                                            )
+                        {/* Right Column: Mini Chart & Context */}
+                        <div>
+                            <div className="mb-8">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Clock size={16} className="text-primary" />
+                                    <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">RECENT TREND (90D)</span>
+                                </div>
+                                <div className="h-[200px] w-full mt-2 p-3 bg-white/[0.01] rounded border border-white/5">
+                                    {detailContent.history && detailContent.history.length > 0 ? (
+                                        detailContent.chartType === 'bar' ? (
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <ReBarChart data={detailContent.history}>
+                                                    <XAxis dataKey="date" hide />
+                                                    <ReTooltip
+                                                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '4px', fontSize: '12px' }}
+                                                        itemStyle={{ color: '#3b82f6', fontWeight: 700 }}
+                                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                                    />
+                                                    <Bar dataKey="value" fill="#3b82f6" radius={[2, 2, 0, 0]} />
+                                                </ReBarChart>
+                                            </ResponsiveContainer>
                                         ) : (
-                                            <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Typography variant="caption" color="text.disabled">Historical data loading...</Typography>
-                                            </Box>
-                                        )}
-                                    </Box>
-                                </Box>
+                                            <Sparkline data={detailContent.history} height={160} />
+                                        )
+                                    ) : (
+                                        <div className="h-full flex items-center justify-center">
+                                            <span className="text-xs text-muted-foreground">Historical data loading...</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
-                                <Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                                        <Layers size={16} color={theme.palette.primary.main} />
-                                        <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.secondary' }}>METHODOLOGY</Typography>
-                                    </Box>
-                                    <Typography variant="caption" component="div" sx={{ color: 'text.secondary', bgcolor: 'rgba(255,255,255,0.02)', p: 1.5, borderRadius: 1, border: '1px solid rgba(255,255,255,0.05)' }}>
-                                        {detailContent.methodology || 'Calculated using standardized Z-Score normalization against institutional source data.'}
-                                        <Box sx={{ mt: 1, fontWeight: 700, color: 'primary.main', fontSize: '0.6rem' }}>
-                                            DATA SOURCE: {detailContent.source || 'Standard Financial Feeds'}
-                                        </Box>
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Layers size={16} className="text-primary" />
+                                    <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">METHODOLOGY</span>
+                                </div>
+                                <div className="text-xs text-muted-foreground bg-white/[0.02] p-3 rounded border border-white/5">
+                                    {detailContent.methodology || 'Calculated using standardized Z-Score normalization against institutional source data.'}
+                                    <div className="mt-2 font-bold text-primary text-[0.6rem] uppercase">
+                                        DATA SOURCE: {detailContent.source || 'Standard Financial Feeds'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <Divider sx={{ my: 4, opacity: 0.1 }} />
+                    <div className="my-6 h-px bg-white/10" />
 
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <Typography variant="caption" sx={{ color: 'text.disabled', fontStyle: 'italic' }}>
-                                Tap outside or click X to return to dashboard
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Fade>
-            </Modal>
+                    <div className="flex justify-center">
+                        <span className="text-xs text-muted-foreground italic">
+                            Tap outside or click X to return to dashboard
+                        </span>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

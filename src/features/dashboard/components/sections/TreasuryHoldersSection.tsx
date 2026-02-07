@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
+import { SectionHeader } from '@/components/SectionHeader';
+import { useTreasuryHolders } from '@/hooks/useTreasuryHolders';
+import { Info, TrendingUp, TrendingDown, Minus, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { formatCurrency, formatPercentage } from '@/utils/formatNumber';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
-    Box,
-    Typography,
-    Grid,
     Table,
     TableBody,
     TableCell,
-    TableContainer,
     TableHead,
+    TableHeader,
     TableRow,
-    Skeleton,
-    useTheme,
-    Alert,
-    AlertTitle
-} from '@mui/material';
-import { SectionHeader } from '@/components/SectionHeader';
-import { useTreasuryHolders } from '@/hooks/useTreasuryHolders';
-import { Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { formatCurrency, formatPercentage } from '@/utils/formatNumber';
+} from "@/components/ui/table";
+import { cn } from '@/lib/utils';
 
 const COUNTRY_FLAGS: Record<string, string> = {
     'Japan': '🇯🇵',
@@ -43,17 +38,19 @@ const COUNTRY_FLAGS: Record<string, string> = {
 };
 
 export const TreasuryHoldersSection: React.FC = () => {
-    const theme = useTheme();
     const { data, isLoading, error } = useTreasuryHolders();
     const [isExpanded, setIsExpanded] = useState(false);
 
-    if (isLoading) return <Skeleton variant="rectangular" height={600} sx={{ borderRadius: 2, mb: 6 }} />;
+    if (isLoading) return <Skeleton className="h-[600px] w-full rounded-xl mb-12" />;
 
     if (error) return (
-        <Alert severity="error" sx={{ mb: 6 }}>
-            <AlertTitle>Error loading TIC Data</AlertTitle>
-            Could not fetch Treasury Holdings data. Please try again later.
-        </Alert>
+        <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg mb-12 flex items-start gap-3">
+            <AlertCircle className="text-destructive h-5 w-5 mt-0.5" />
+            <div>
+                <h3 className="font-bold text-destructive text-sm">Error loading TIC Data</h3>
+                <p className="text-destructive/80 text-xs mt-1">Could not fetch Treasury Holdings data. Please try again later.</p>
+            </div>
+        </div>
     );
 
     if (!data || data.length === 0) return null;
@@ -66,117 +63,109 @@ export const TreasuryHoldersSection: React.FC = () => {
     const visibleHolders = isExpanded ? latestHolders : latestHolders.slice(0, 10);
 
     const renderTrendIcon = (change: number | null) => {
-        if (change === null) return <Minus size={12} color={theme.palette.text.disabled} />;
-        if (change > 0) return <TrendingUp size={12} color={theme.palette.success.main} />;
-        if (change < 0) return <TrendingDown size={12} color={theme.palette.error.main} />;
-        return <Minus size={12} color={theme.palette.text.disabled} />;
+        if (change === null) return <Minus size={12} className="text-muted-foreground" />;
+        if (change > 0) return <TrendingUp size={12} className="text-emerald-500" />;
+        if (change < 0) return <TrendingDown size={12} className="text-rose-500" />;
+        return <Minus size={12} className="text-muted-foreground" />;
     };
 
     return (
-        <Box id="treasury-holders-section" sx={{ mb: 6 }}>
+        <div id="treasury-holders-section" className="mb-12">
             <SectionHeader
                 title="Major Foreign Holders of U.S. Treasuries"
                 subtitle="Tracking institutional demand and sovereign accumulation of U.S. government debt"
                 exportId="treasury-holders-section"
             />
 
-            <Grid container spacing={3}>
+            <div className="grid grid-cols-1 gap-6">
                 {/* Data Table Area */}
-                <Grid item xs={12}>
-                    <TableContainer sx={{
-                        maxHeight: isExpanded ? 800 : 500,
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: 2,
-                        bgcolor: 'background.paper',
-                        transition: 'max-height 0.3s ease-in-out'
-                    }}>
-                        <Table stickyHeader size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ bgcolor: 'background.paper', fontWeight: 800, fontSize: '0.65rem', textTransform: 'uppercase' }}>Country / Holder</TableCell>
-                                    <TableCell align="right" sx={{ bgcolor: 'background.paper', fontWeight: 800, fontSize: '0.65rem', textTransform: 'uppercase' }}>Holdings ($BN)</TableCell>
-                                    <TableCell align="right" sx={{ bgcolor: 'background.paper', fontWeight: 800, fontSize: '0.65rem', textTransform: 'uppercase' }}>MoM %</TableCell>
-                                    <TableCell align="right" sx={{ bgcolor: 'background.paper', fontWeight: 800, fontSize: '0.65rem', textTransform: 'uppercase' }}>YoY %</TableCell>
-                                    <TableCell align="right" sx={{ bgcolor: 'background.paper', fontWeight: 800, fontSize: '0.65rem', textTransform: 'uppercase' }}>Share (%)</TableCell>
+                <div className="w-full">
+                    <div
+                        className={cn(
+                            "w-full bg-card/40 backdrop-blur-md border border-white/10 dark:border-white/5 rounded-xl overflow-hidden shadow-xl transition-all duration-300",
+                            isExpanded ? "max-h-[800px] overflow-y-auto" : "max-h-[500px]"
+                        )}
+                    >
+                        <Table className="relative">
+                            <TableHeader className="sticky top-0 bg-slate-950/90 backdrop-blur-md z-10 box-decoration-clone">
+                                <TableRow className="border-b border-border/50 shadow-sm hover:bg-transparent">
+                                    <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest bg-transparent">Country / Holder</TableHead>
+                                    <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">Holdings ($BN)</TableHead>
+                                    <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">MoM %</TableHead>
+                                    <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">YoY %</TableHead>
+                                    <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">Share (%)</TableHead>
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
+                            </TableHeader>
+                            <TableBody className="divide-y divide-border/50">
                                 {visibleHolders.map((holder) => (
                                     <TableRow
                                         key={holder.country_name}
-                                        sx={{
-                                            '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' },
-                                            transition: 'background-color 0.2s',
-                                        }}
+                                        className="group transition-colors hover:bg-muted/30 border-white/5"
                                     >
-                                        <TableCell sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                <Typography sx={{ fontSize: '1.1rem' }}>{COUNTRY_FLAGS[holder.country_name] || '🌐'}</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 700 }}>{holder.country_name}</Typography>
-                                            </Box>
+                                        <TableCell className="py-3 px-4">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl">{COUNTRY_FLAGS[holder.country_name] || '🌐'}</span>
+                                                <span className="font-bold text-xs text-foreground">{holder.country_name}</span>
+                                            </div>
                                         </TableCell>
-                                        <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 800 }}>{formatCurrency(holder.holdings_usd_bn, { decimals: 0 })}</Typography>
+                                        <TableCell className="py-3 px-4 text-right">
+                                            <span className="font-black text-xs font-mono">{formatCurrency(holder.holdings_usd_bn, { decimals: 0 })}</span>
                                         </TableCell>
-                                        <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                                        <TableCell className="py-3 px-4 text-right">
+                                            <div className="flex items-center justify-end gap-1.5">
                                                 {renderTrendIcon(holder.mom_pct_change)}
-                                                <Typography variant="caption" sx={{
-                                                    fontWeight: 700,
-                                                    color: (holder.mom_pct_change || 0) > 0 ? 'success.main' : (holder.mom_pct_change || 0) < 0 ? 'error.main' : 'text.disabled'
-                                                }}>
+                                                <span className={cn(
+                                                    "font-bold text-xs font-mono",
+                                                    (holder.mom_pct_change || 0) > 0 ? 'text-emerald-500' : (holder.mom_pct_change || 0) < 0 ? 'text-rose-500' : 'text-muted-foreground'
+                                                )}>
                                                     {holder.mom_pct_change !== null ? formatPercentage(holder.mom_pct_change, { showSign: true, decimals: 2 }) : '—'}
-                                                </Typography>
-                                            </Box>
+                                                </span>
+                                            </div>
                                         </TableCell>
-                                        <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                                        <TableCell className="py-3 px-4 text-right">
+                                            <span className="font-semibold text-xs text-muted-foreground font-mono">
                                                 {holder.yoy_pct_change !== null ? formatPercentage(holder.yoy_pct_change, { showSign: true, decimals: 1 }) : '—'}
-                                            </Typography>
+                                            </span>
                                         </TableCell>
-                                        <TableCell align="right" sx={{ py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 700, color: 'secondary.light' }}>
+                                        <TableCell className="py-3 px-4 text-right">
+                                            <span className="font-bold text-xs text-blue-400 font-mono">
                                                 {holder.pct_of_total_foreign ? formatPercentage(holder.pct_of_total_foreign, { decimals: 1 }) : '—'}
-                                            </Typography>
+                                            </span>
                                         </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
-                    </TableContainer>
+                    </div>
 
                     {latestHolders.length > 10 && (
-                        <Box sx={{ mt: 2, textAlign: 'center' }}>
-                            <Typography
-                                variant="button"
+                        <div className="mt-4 text-center">
+                            <button
                                 onClick={() => setIsExpanded(!isExpanded)}
-                                sx={{
-                                    cursor: 'pointer',
-                                    color: 'primary.main',
-                                    fontWeight: 800,
-                                    letterSpacing: '0.05em',
-                                    fontSize: '0.75rem',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    '&:hover': { color: 'primary.light', textDecoration: 'underline' }
-                                }}
+                                className="inline-flex items-center gap-2 text-[0.7rem] font-black text-primary hover:text-primary/80 uppercase tracking-widest transition-colors hover:underline"
                             >
-                                {isExpanded ? '▲ Show Less' : `▼ View Full List (${latestHolders.length} Holders)`}
-                            </Typography>
-                        </Box>
+                                {isExpanded ? (
+                                    <>
+                                        <ChevronUp size={12} /> Show Less
+                                    </>
+                                ) : (
+                                    <>
+                                        <ChevronDown size={12} /> View Full List ({latestHolders.length} Holders)
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     )}
-                </Grid>
-            </Grid>
+                </div>
+            </div>
 
             {/* Insight Note */}
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Info size={14} color={theme.palette.text.disabled} />
-                <Typography variant="caption" color="text.disabled">
+            <div className="mt-4 flex items-start gap-2 max-w-3xl">
+                <Info size={14} className="text-muted-foreground mt-0.5 shrink-0" />
+                <p className="text-[0.65rem] text-muted-foreground leading-relaxed">
                     Data source: U.S. Treasury International Capital (TIC). Monthly updates provided post-release (approx. 15th of month). Percentages based on total reported foreign holdings.
-                </Typography>
-            </Box>
-        </Box>
+                </p>
+            </div>
+        </div>
     );
 };

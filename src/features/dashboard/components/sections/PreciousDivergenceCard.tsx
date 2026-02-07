@@ -1,9 +1,11 @@
 import React from 'react';
-import { Card, Typography, Box, Skeleton, Grid, Badge } from '@mui/material';
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Sparkline } from '@/components/Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
 import { usePreciousDivergence } from '@/hooks/usePreciousDivergence';
 import { Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export const PreciousDivergenceCard: React.FC = () => {
     const { data, isLoading } = usePreciousDivergence();
@@ -15,48 +17,42 @@ export const PreciousDivergenceCard: React.FC = () => {
 
     const renderMetric = (metric: any, label: string) => {
         const isPositive = (metric?.value || 0) > 0;
-        const color = isPositive ? '#10b981' : '#f43f5e';
+        const colorClass = isPositive ? 'text-emerald-500' : 'text-rose-500';
+        const bgClass = isPositive ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30' : 'bg-rose-500/15 text-rose-500 border-rose-500/30';
+        const colorHex = isPositive ? '#10b981' : '#f43f5e';
 
         return (
-            <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', letterSpacing: '0.05em' }}>
+            <div className="flex-1 flex flex-col gap-2">
+                <div className="flex justify-between items-center mb-1">
+                    <span className="text-[0.65rem] font-extrabold text-muted-foreground tracking-[0.05em] uppercase">
                         {label} PREMIUM
-                    </Typography>
+                    </span>
                     {metric && (
-                        <Badge
-                            badgeContent={isPositive ? 'PREMIUM' : 'DISCOUNT'}
-                            sx={{
-                                '& .MuiBadge-badge': {
-                                    fontSize: '0.5rem',
-                                    height: 14,
-                                    minWidth: 40,
-                                    bgcolor: `${color}15`,
-                                    color: color,
-                                    fontWeight: 900,
-                                    border: `1px solid ${color}30`
-                                }
-                            }}
-                        />
+                        <span className={cn(
+                            "text-[0.5rem] font-black px-1.5 py-0.5 rounded-[2px] border leading-none min-w-[40px] text-center",
+                            bgClass
+                        )}>
+                            {isPositive ? 'PREMIUM' : 'DISCOUNT'}
+                        </span>
                     )}
-                </Box>
+                </div>
 
-                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1 }}>
+                <div className="flex items-baseline gap-1 mb-1">
                     {isLoading ? (
-                        <Skeleton width={80} height={40} />
+                        <Skeleton className="h-8 w-20" />
                     ) : (
-                        <Typography variant="h4" sx={{ fontWeight: 800, color: color }}>
+                        <h4 className={cn("text-3xl font-black tracking-tighter", colorClass)}>
                             {metric?.value !== undefined && metric?.value !== null ? (metric.value > 0 ? '+' : '') + metric.value.toFixed(2) + '%' : 'N/A'}
-                        </Typography>
+                        </h4>
                     )}
-                </Box>
+                </div>
 
-                <Box sx={{ height: 40, opacity: 0.6 }}>
+                <div className="h-10 opacity-60">
                     {!isLoading && metric?.history && (
-                        <Sparkline data={metric.history} height={40} color={color} />
+                        <Sparkline data={metric.history} height={40} color={colorHex} />
                     )}
-                </Box>
-            </Box>
+                </div>
+            </div>
         );
     };
 
@@ -80,55 +76,39 @@ export const PreciousDivergenceCard: React.FC = () => {
             }}
         >
             <Card
+                className="p-5 h-[250px] cursor-pointer flex flex-col relative transition-all duration-300 border-border bg-card/40 backdrop-blur-md hover:border-primary hover:shadow-xl hover:-translate-y-0.5 group"
                 onClick={() => {
-                    gtag('event', 'click_divergence_card', {
-                        gold_spread: goldDist?.value,
-                        silver_spread: silverDist?.value
-                    });
-                }}
-                sx={{
-                    p: 2.5,
-                    height: 250,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    position: 'relative',
-                    transition: 'all 0.2s',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    bgcolor: 'background.paper',
-                    '&:hover': {
-                        borderColor: 'primary.main',
-                        boxShadow: '0 12px 20px -10px rgba(0,0,0,0.5)',
-                    },
+                    // gtag is global, assume it exists or needs window prefix. Keeping as is for now but strict TS might complain.
+                    if (typeof window !== 'undefined' && (window as any).gtag) {
+                        (window as any).gtag('event', 'click_divergence_card', {
+                            gold_spread: goldDist?.value,
+                            silver_spread: silverDist?.value
+                        });
+                    }
                 }}
             >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                    <Box>
-                        <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.65rem', color: 'text.secondary' }}>
+                <div className="flex justify-between mb-4">
+                    <div>
+                        <span className="block text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.12em] mb-1">
                             Physical vs Paper
-                        </Typography>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                        </span>
+                        <h3 className="text-sm font-extrabold text-foreground tracking-tight">
                             Shanghai Divergence
-                        </Typography>
-                    </Box>
-                    <Info size={14} style={{ opacity: 0.5 }} />
-                </Box>
+                        </h3>
+                    </div>
+                    <Info size={14} className="text-muted-foreground/50 group-hover:text-foreground transition-colors" />
+                </div>
 
-                <Grid container spacing={3} sx={{ mt: 1 }}>
-                    <Grid item xs={6}>
-                        {renderMetric(goldDist, 'GOLD')}
-                    </Grid>
-                    <Grid item xs={6}>
-                        {renderMetric(silverDist, 'SILVER')}
-                    </Grid>
-                </Grid>
+                <div className="grid grid-cols-2 gap-6 mt-2">
+                    {renderMetric(goldDist, 'GOLD')}
+                    {renderMetric(silverDist, 'SILVER')}
+                </div>
 
-                <Box sx={{ mt: 'auto' }}>
-                    <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.6rem', fontWeight: 600, display: 'block' }}>
+                <div className="mt-auto">
+                    <span className="block text-[0.6rem] font-bold text-muted-foreground/60 leading-tight">
                         Positive = Shanghai Premium (China physical squeeze)
-                    </Typography>
-                </Box>
+                    </span>
+                </div>
             </Card>
         </HoverDetail>
     );
