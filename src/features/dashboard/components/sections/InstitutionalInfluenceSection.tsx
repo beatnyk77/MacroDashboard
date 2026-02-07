@@ -28,9 +28,9 @@ export const InstitutionalInfluenceSection: React.FC = () => {
                 incomes: {}
             };
         }
-        acc[curr.recipient_region].west += curr.west_total;
-        acc[curr.recipient_region].east += curr.east_total;
-        acc[curr.recipient_region].total += curr.total_volume;
+        acc[curr.recipient_region].west += Number(curr.west_total);
+        acc[curr.recipient_region].east += Number(curr.east_total);
+        acc[curr.recipient_region].total += Number(curr.total_volume);
         acc[curr.recipient_region].incomes[curr.recipient_income_bracket] = curr.east_dominance_pct;
         return acc;
     }, {}) || {};
@@ -167,8 +167,8 @@ export const InstitutionalInfluenceSection: React.FC = () => {
                                 const bracketData = loanData?.filter(d => d.recipient_income_bracket === bracket) || [];
                                 const west = bracketData.reduce((sum, d) => sum + d.west_total, 0);
                                 const east = bracketData.reduce((sum, d) => sum + d.east_total, 0);
-                                const total = west + east;
-                                const eastPct = total > 0 ? (east / total) * 100 : 0;
+                                const total = Number(west) + Number(east);
+                                const eastPct = total > 0 ? (Number(east) / total) * 100 : 0;
 
                                 return (
                                     <Box key={bracket}>
