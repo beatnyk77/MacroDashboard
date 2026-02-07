@@ -30,9 +30,19 @@ export const IndiaMacroPulseSection: React.FC = () => {
 
     return (
         <Box sx={{ mb: 6 }}>
+            <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center font-black text-[0.65rem] text-slate-900 shadow-2xl overflow-hidden shrink-0 text-center border-4 border-white/10">
+                    MoSPI<br />INDIA
+                </div>
+                <div>
+                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight">Institutional Coverage</h3>
+                    <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">Official Government of India Feed</p>
+                </div>
+            </div>
             <SectionHeader
                 title="India Macro Pulse"
-                subtitle="Real-time monitoring of the fastest-growing major economy: Growth, Inflation, Reserves, and Policy stance"
+                subtitle="Growth, Inflation, and Policy stance"
+                sectionId="india"
             />
             <Grid container spacing={3}>
                 {/* New Premium Card combining Core Metrics */}

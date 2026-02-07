@@ -1,87 +1,159 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Container, Box } from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
-import { SovereignRiskMatrix } from '../components/sections/SovereignRiskMatrix';
-import { MetricCard } from '@/components/MetricCard';
-import { useLatestMetric } from '@/hooks/useLatestMetric';
-import { formatMetric, formatDelta } from '@/utils/formatMetric';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 
-const ThematicMetricCard: React.FC<{ id: string; label: string; subtitle: string; unit: 'currency' | 'percent' }> = ({ id, label, subtitle, unit }) => {
-    const { data: m, isLoading } = useLatestMetric(id);
-    return (
-        <MetricCard
-            label={label}
-            sublabel={subtitle}
-            metricId={id}
-            value={formatMetric(m?.value || 0, unit, { showUnit: false })}
-            prefix={unit === 'currency' ? '$' : ''}
-            suffix={unit === 'percent' ? '%' : ''}
-            delta={m?.delta !== null && m?.delta !== undefined ? {
-                value: formatDelta(m.delta, { decimals: 1, unit: unit === 'percent' ? '%' : '' }) || '—',
-                period: m?.deltaPeriod || 'WoW',
-                trend: m?.trend || 'neutral'
-            } : undefined}
-            status={m?.status}
-            history={m?.history}
-            isLoading={isLoading}
-            lastUpdated={m?.lastUpdated}
-            zScore={m?.zScore}
-            percentile={m?.percentile}
-            source="Institutional Feed"
-        />
-    );
-};
+// Lazy load heavy sections
+const HardAssetValuationSection = lazy(() => import('../components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
+const GoldValuationStrip = lazy(() => import('../components/sections/GoldValuationStrip').then(m => ({ default: m.GoldValuationStrip })));
+const GoldReturnsSection = lazy(() => import('../components/sections/GoldReturnsSection'));
+const BRICSTrackerSection = lazy(() => import('../components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
+const DeDollarizationSection = lazy(() => import('../components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
+const InstitutionalInfluenceSection = lazy(() => import('../components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
+const TradeSettlementFlows = lazy(() => import('../components/sections/TradeSettlementFlows').then(m => ({ default: m.TradeSettlementFlows })));
+const SovereignRiskMatrix = lazy(() => import('../components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
+
+const LoadingFallback = () => (
+    <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
+        <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Analyzing Thematic Data...</span>
+    </div>
+);
 
 export const ThematicLabsView: React.FC = () => {
     return (
         <Container maxWidth="xl" sx={{ py: 8 }}>
             <SectionHeader
                 title="Thematic Labs"
-                subtitle="Deep-dive signals for Gold, BRICS, and Sovereign Risk"
-                interpretations={[
-                    "Gold-USD divergence confirming structural shifts in central bank reserves.",
-                    "Sovereign Risk Matrix indicates elevated stress in Frontier Markets.",
-                    "BRICS basket shows increasing internal trade settlement in non-USD currencies."
-                ]}
+                subtitle="Deep-dive signals for Gold, BRICS, and Global Sovereign Stress"
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-10">
-                <div className="lg:col-span-3">
-                    <SovereignRiskMatrix />
-                </div>
-                <div className="lg:col-span-1">
-                    <div className="h-full p-6 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-sm flex flex-col justify-center text-center">
-                        <h4 className="text-[0.65rem] font-black tracking-widest text-muted-foreground/30 uppercase mb-4">Risk Concentration</h4>
-                        <div className="aspect-square w-full max-w-[200px] mx-auto rounded-full border-2 border-dashed border-white/5 flex items-center justify-center italic text-[0.6rem] text-muted-foreground/20 px-8">
-                            Heatmap concentration visualization pending
+            <Tabs defaultValue="gold" className="space-y-12 mt-8">
+                <TabsList className="bg-background/5 border border-border/40 p-1">
+                    <TabsTrigger value="gold">Gold Anchor</TabsTrigger>
+                    <TabsTrigger value="brics">BRICS & De-Dollarization</TabsTrigger>
+                    <TabsTrigger value="boj">BoJ & Yen Pivot</TabsTrigger>
+                    <TabsTrigger value="sovereign">Sovereign Debt Stress</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="gold" className="space-y-32 outline-none">
+                    <section id="gold-valuation-suite" className="my-16">
+                        <SectionHeader
+                            title="Gold Valuation & Real Rates"
+                            subtitle="Tracking the decoupling of precious metals from US Treasury yields"
+                        />
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mt-12">
+                            <SectionErrorBoundary name="Hard Assets">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <HardAssetValuationSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+
+                            <SectionErrorBoundary name="Gold Returns">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GoldReturnsSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </section>
 
-            <Box sx={{ my: 24 }}>
-                <SectionHeader
-                    title="Gold Anchor"
-                    subtitle="Precious divergence and US debt backing"
-                    interpretations={[
-                        "Real rates are no longer the sole anchor for Gold pricing.",
-                        "USD Liquidity correlation remains positive but weakening."
-                    ]}
-                />
+                    <section id="gold-ribbon" className="shaded-band py-24 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-[1400px] mx-auto">
+                            <SectionErrorBoundary name="Gold Ribbon">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GoldValuationStrip />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                            <Box sx={{
+                                height: 500,
+                                width: '100%',
+                                mt: 12,
+                                bgcolor: 'rgba(255,200,0,0.02)',
+                                border: '1px solid rgba(255,200,0,0.1)',
+                                borderRadius: 6,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }} className="group">
+                                <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/5 via-transparent to-transparent opacity-30" />
+                                <span className="text-yellow-500/20 text-sm tracking-[0.4em] uppercase font-black mb-4 group-hover:text-yellow-500/40 transition-colors">Gold Ribbon Signal Engine</span>
+                                <span className="text-yellow-500/10 text-[0.65rem] italic">Multi-variable divergence model in preview...</span>
+                            </Box>
+                        </div>
+                    </section>
+                </TabsContent>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <ThematicMetricCard id="GOLD_PRICE_USD" label="Gold Spot" subtitle="XAU / USD" unit="currency" />
-                    <ThematicMetricCard id="SILVER_PRICE_USD" label="Silver Spot" subtitle="XAG / USD" unit="currency" />
-                    <ThematicMetricCard id="UST_10Y_YIELD" label="US 10Y Yield" subtitle="UST Benchmark" unit="percent" />
-                </div>
+                <TabsContent value="brics" className="space-y-32 outline-none">
+                    <section id="brics-alignment" className="my-16">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                            <SectionErrorBoundary name="De-Dollarization">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <DeDollarizationSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
 
-                <div className="relative h-[500px] w-full bg-slate-950/40 rounded-3xl border border-white/5 overflow-hidden flex items-center justify-center group">
-                    <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/[0.02] to-transparent" />
-                    <span className="text-muted-foreground/20 text-sm tracking-[0.3em] font-black uppercase opacity-20 group-hover:opacity-40 transition-opacity">Gold Ribbon Signal Engine</span>
-                    {/* Decorative element */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
-                </div>
-            </Box>
+                            <SectionErrorBoundary name="BRICS Tracker">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <BRICSTrackerSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
+                    </section>
+
+                    <section id="institutional-influence" className="shaded-band py-24 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-[1400px] mx-auto">
+                            <SectionErrorBoundary name="Money Wars">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <InstitutionalInfluenceSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
+                    </section>
+
+                    <section id="trade-settlement" className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-[1400px] mx-auto">
+                            <SectionErrorBoundary name="Trade Flows">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <TradeSettlementFlows />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
+                    </section>
+                </TabsContent>
+
+                <TabsContent value="boj" className="space-y-12 outline-none">
+                    <section id="boj-pivot">
+                        <SectionHeader
+                            title="Japanese Monetary Policy"
+                            subtitle="BoJ yield curve control and Yen carry trade risk"
+                        />
+                        <Box sx={{
+                            height: 600,
+                            bgcolor: 'rgba(255,255,255,0.01)',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            borderRadius: 6,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <span className="text-muted-foreground/20 text-sm tracking-[0.4em] uppercase font-black">BoJ Pivot Tracker Terminal</span>
+                        </Box>
+                    </section>
+                </TabsContent>
+
+                <TabsContent value="sovereign" className="space-y-12 outline-none">
+                    <section id="risk-matrix">
+                        <SectionErrorBoundary name="Sovereign Risk">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <SovereignRiskMatrix />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </section>
+                </TabsContent>
+            </Tabs>
         </Container>
     );
 };

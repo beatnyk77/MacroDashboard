@@ -17,9 +17,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Institutional Dashboard', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
-    { id: 'thematic', label: 'Thematic Labs', path: '/thematic', icon: <Coins size={18} strokeWidth={2.5} /> },
-    { id: 'pulse', label: 'Country Pulses', path: '/pulse', icon: <Globe size={18} strokeWidth={2.5} /> },
+    { id: 'dashboard', label: 'Dashboard', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
+    { id: 'thematics', label: 'Thematic Labs', path: '/thematics', icon: <Coins size={18} strokeWidth={2.5} /> },
+    { id: 'countries', label: 'Country Pulses', path: '/countries', icon: <Globe size={18} strokeWidth={2.5} /> },
     { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
 ];
 

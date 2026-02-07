@@ -18,13 +18,13 @@ export const CockpitKPIGrid = React.memo(() => {
     // Core Metrics for Hero Section
     const gold = findMetric('GOLD_PRICE_USD');
     const silver = findMetric('SILVER_PRICE_USD');
-    const oil = findMetric('WTI_CRUDE');
+    const oil = findMetric('WTI_CRUDE_PRICE');
     const dxy = findMetric('DXY_INDEX');
     const vix = findMetric('VIX_INDEX');
     const curve = findMetric('UST_10Y_2Y_SPREAD');
     const ust10y = findMetric('UST_10Y_YIELD');
     const sofr = findMetric('SOFR_RATE');
-    const btc = findMetric('BTC_PRICE');
+    const btc = findMetric('BITCOIN_PRICE_USD');
 
     const isLoading = isMarketLoading || isLiqLoading;
 
@@ -199,7 +199,7 @@ export const CockpitKPIGrid = React.memo(() => {
                     <MetricCard
                         label="Oil"
                         sublabel="WTI Crude"
-                        metricId="CRUDE_OIL"
+                        metricId="WTI_CRUDE_PRICE"
                         value={formatMetric(oil?.value, 'currency', { showUnit: false })}
                         prefix="$"
                         delta={oil ? {
@@ -217,7 +217,7 @@ export const CockpitKPIGrid = React.memo(() => {
                     <MetricCard
                         label="Bitcoin"
                         sublabel="BTC / USD"
-                        metricId="BTC_PRICE"
+                        metricId="BITCOIN_PRICE_USD"
                         value={formatMetric(btc?.value, 'currency', { showUnit: false })}
                         prefix="$"
                         delta={btc ? {

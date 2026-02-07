@@ -35,8 +35,8 @@ function App() {
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
                                         <Route path="/" element={<DashboardView />} />
-                                        <Route path="/thematic" element={<ThematicLabsView />} />
-                                        <Route path="/pulse" element={<CountryPulsesView />} />
+                                        <Route path="/thematics" element={<ThematicLabsView />} />
+                                        <Route path="/countries" element={<CountryPulsesView />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
                                     </Routes>
                                 </Suspense>

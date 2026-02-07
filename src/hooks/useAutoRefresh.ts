@@ -21,7 +21,6 @@ export function useAutoRefresh(intervalMs: number = 60000) {
 
         // Data refresh trigger
         const refreshInterval = setInterval(() => {
-            console.log('[AutoRefresh] Invaliding queries...');
             setLastRefresh(new Date());
             queryClient.invalidateQueries();
         }, intervalMs);

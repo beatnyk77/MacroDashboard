@@ -54,8 +54,8 @@ export const IntelligenceSidebar: React.FC = () => {
                 </button>
             </div>
 
-            <div className="flex-1 overflow-hidden">
-                <div className="h-full overflow-y-auto px-4 py-6 space-y-6">
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <div className="px-4 py-6 space-y-6">
                     {isLoading ? (
                         <div className="space-y-4">
                             {[1, 2, 3, 4, 5].map(i => (
@@ -85,12 +85,12 @@ export const IntelligenceSidebar: React.FC = () => {
                                         {item.title}
                                     </h4>
                                     <div className="flex items-center justify-between">
-                                        <div className="flex gap-1">
+                                        <div className="flex gap-1 overflow-hidden">
                                             {item.keywords?.slice(0, 2).map((k: string) => (
-                                                <span key={k} className="text-[0.6rem] text-muted-foreground/60">#{k}</span>
+                                                <span key={k} className="text-[0.6rem] text-muted-foreground/60 truncate">#{k}</span>
                                             ))}
                                         </div>
-                                        <ExternalLink size={10} className="text-muted-foreground/30 group-hover:text-primary transition-colors" />
+                                        <ExternalLink size={10} className="text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
                                     </div>
                                 </div>
                             </a>

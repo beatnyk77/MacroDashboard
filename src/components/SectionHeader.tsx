@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { RefreshCw, Info } from 'lucide-react';
+import { useRegimeInterpretations } from '@/hooks/useRegimeInterpretations';
 
 interface SectionHeaderProps {
     title: string;
@@ -12,6 +13,7 @@ interface SectionHeaderProps {
     exportId?: string;
     icon?: React.ReactNode;
     action?: React.ReactNode;
+    sectionId?: string;
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -20,8 +22,12 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     interpretations,
     onRefresh,
     isLoading,
-    lastUpdated
+    lastUpdated,
+    sectionId
 }) => {
+    const dynamicInterpretations = useRegimeInterpretations(sectionId || '');
+    const activeInterpretations = interpretations || (sectionId ? dynamicInterpretations : []);
+
     return (
         <div className="flex flex-col gap-6 mb-12 group">
             <div className="flex items-end justify-between border-l-4 border-blue-500 pl-6 py-2">
@@ -57,9 +63,9 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                 </div>
             </div>
 
-            {interpretations && interpretations.length > 0 && (
+            {activeInterpretations && activeInterpretations.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {interpretations.map((text, i) => (
+                    {activeInterpretations.map((text, i) => (
                         <div key={i} className="relative overflow-hidden flex items-start gap-3 p-4 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm group/item hover:bg-blue-500/[0.05] transition-colors">
                             <div className="mt-1 shrink-0 p-1 rounded-md bg-blue-500/10 text-blue-400">
                                 <Info size={12} />
