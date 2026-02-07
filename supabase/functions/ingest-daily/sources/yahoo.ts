@@ -13,8 +13,8 @@ export async function ingestYahoo(
 
     const { data: metrics, error: metricsError } = await client
         .from('metrics')
-        .select('id, metric_key')
-        .eq('data_source', source)
+        .select('id, metadata')
+        .eq('source', source)
 
     if (metricsError) {
         await logger.log(source, 'error', 0, `Failed to load metrics: ${metricsError.message}`)
@@ -24,9 +24,10 @@ export async function ingestYahoo(
     if (!metrics || metrics.length === 0) return
 
     for (const metric of metrics) {
+        const ticker = (metric.metadata as any)?.yahoo_ticker
+        if (!ticker) continue
+
         const fetchStart = performance.now()
-        // metric_key should be the ticker, e.g., ^GSPC, GC=F
-        const ticker = metric.metric_key
         const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=3mo`
 
         try {

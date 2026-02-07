@@ -1,105 +1,80 @@
-import React from 'react';
-import { FileText, Image as ImageIcon } from 'lucide-react';
-import { exportSectionToPDF, exportSectionToPNG } from '@/utils/exportUtils';
-import { Tooltip, IconButton, Box, Typography } from '@mui/material';
-import { DataQualityBadge } from './DataQualityBadge';
+import { cn } from '@/lib/utils';
+import { RefreshCw, Info } from 'lucide-react';
 
 interface SectionHeaderProps {
     title: string;
     subtitle?: string;
+    description?: string;
+    interpretations?: string[];
+    onRefresh?: () => void;
+    isLoading?: boolean;
+    lastUpdated?: Date | string | null;
+    exportId?: string;
     icon?: React.ReactNode;
     action?: React.ReactNode;
-    exportId?: string; // ID of the container to export
-    lastUpdated?: Date | string | null;
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
     title,
     subtitle,
-    icon,
-    action,
-    exportId,
+    interpretations,
+    onRefresh,
+    isLoading,
     lastUpdated
 }) => {
     return (
-        <Box sx={{
-            mb: 3,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            borderLeft: '3px solid',
-            borderColor: 'primary.main',
-            pl: 2,
-            '&:hover .export-controls': { opacity: 1 }
-        }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                {icon}
-                <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.02em', color: 'text.primary', lineHeight: 1.2 }}>
+        <div className="flex flex-col gap-6 mb-12 group">
+            <div className="flex items-end justify-between border-l-4 border-blue-500 pl-6 py-2">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground uppercase leading-none">
                             {title}
-                        </Typography>
+                        </h2>
                         {lastUpdated && (
-                            <DataQualityBadge timestamp={lastUpdated} size="small" label={false} />
+                            <div className="hidden md:flex items-center gap-1 text-[0.65rem] font-black text-muted-foreground/30 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded">
+                                <span className="w-1 h-1 rounded-full bg-blue-500/50" />
+                                LIVE FEED
+                            </div>
                         )}
-                    </Box>
+                    </div>
                     {subtitle && (
-                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', mt: 0.5, display: 'block' }}>
+                        <p className="text-sm font-bold text-muted-foreground/60 uppercase tracking-[0.05em]">
                             {subtitle}
-                        </Typography>
+                        </p>
                     )}
-                </Box>
-            </Box>
+                </div>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {exportId && (
-                    <Box
-                        className="export-controls"
-                        sx={{
-                            display: 'flex',
-                            gap: 0.5,
-                            mr: 2,
-                            opacity: { xs: 1, md: 0 },
-                            transition: 'opacity 0.2s',
-                            bgcolor: 'rgba(255,255,255,0.03)',
-                            borderRadius: 1,
-                            p: 0.5
-                        }}
-                    >
-                        <Tooltip title="Export as PNG">
-                            <IconButton
-                                size="small"
-                                onClick={() => {
-                                    exportSectionToPNG(exportId, title);
-                                    gtag('event', 'export_data', {
-                                        export_type: 'png',
-                                        section_title: title
-                                    });
-                                }}
-                                sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
-                            >
-                                <ImageIcon size={14} />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Export as PDF">
-                            <IconButton
-                                size="small"
-                                onClick={() => {
-                                    exportSectionToPDF(exportId, title, title);
-                                    gtag('event', 'export_data', {
-                                        export_type: 'pdf',
-                                        section_title: title
-                                    });
-                                }}
-                                sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
-                            >
-                                <FileText size={14} />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                )}
-                {action}
-            </Box>
-        </Box>
+                <div className="flex items-center gap-3">
+                    {onRefresh && (
+                        <button
+                            onClick={onRefresh}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[0.65rem] font-black text-muted-foreground hover:text-primary hover:bg-white/10 transition-all active:scale-95"
+                        >
+                            <RefreshCw size={14} className={cn(isLoading && "animate-spin text-blue-400")} />
+                            REFRESH SIGNAL
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {interpretations && interpretations.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {interpretations.map((text, i) => (
+                        <div key={i} className="relative overflow-hidden flex items-start gap-3 p-4 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm group/item hover:bg-blue-500/[0.05] transition-colors">
+                            <div className="mt-1 shrink-0 p-1 rounded-md bg-blue-500/10 text-blue-400">
+                                <Info size={12} />
+                            </div>
+                            <p className="text-xs text-blue-100/70 leading-relaxed font-semibold">
+                                {text}
+                            </p>
+                            {/* Decorative accent */}
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-3xl rounded-full translate-x-12 -translate-y-12" />
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            <div className="h-px w-full bg-gradient-to-r from-white/20 via-white/5 to-transparent shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+        </div>
     );
 };

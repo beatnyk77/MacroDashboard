@@ -6,7 +6,6 @@ import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { useViewContext } from '@/context/ViewContext';
-import { DataQualityBadge } from './DataQualityBadge';
 import { cn } from '@/lib/utils'; // Shadcn utility
 
 interface MetricCardProps {
@@ -82,38 +81,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         return () => window.removeEventListener('macro-dashboard-highlight', handleHighlight);
     }, [metricId, label]);
 
-    // Status colors for inline styles where tailwind classes might be dynamic
-    const statusColors = {
-        safe: 'text-emerald-500',
-        neutral: 'text-blue-500',
-        warning: 'text-amber-500',
-        danger: 'text-rose-500'
-    };
-
-    const statusBgColors = {
-        safe: 'bg-emerald-500',
-        neutral: 'bg-blue-500',
-        warning: 'bg-amber-500',
-        danger: 'bg-rose-500'
-    };
-
-    const getSignalLabel = (status: string): string => {
-        switch (status) {
-            case 'safe': return 'HEALTHY';
-            case 'neutral': return 'STABLE';
-            case 'warning': return 'WATCH';
-            case 'danger': return 'STRESS';
-            default: return 'NORMAL';
-        }
-    };
-
     const isNullValue = value === null || value === undefined || value === '-' || value === '' ||
         (typeof value === 'number' && isNaN(value));
-
-    const isExtreme = (!isLoading && !isNullValue) && (
-        (typeof percentile === 'number' && (percentile > 95 || percentile < 5)) ||
-        (typeof zScore === 'number' && Math.abs(zScore) >= 2.5)
-    );
 
     const getDeltaIcon = () => {
         if (!delta) return null;
@@ -133,98 +102,86 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         <Card
             id={metricId || label}
             className={cn(
-                "relative flex flex-col min-h-[200px] h-full overflow-hidden transition-all duration-300",
-                "bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5",
-                "hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/50",
-                isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                "relative flex flex-col min-h-[220px] h-full overflow-hidden transition-all duration-500",
+                "bg-background/40 backdrop-blur-xl border-white/5",
+                "hover:shadow-[0_0_40px_rgba(59,130,246,0.1)] hover:border-blue-500/20 group",
+                isHighlighted && "ring-2 ring-blue-500 ring-offset-4 ring-offset-background",
+                isNullValue && "opacity-60",
                 className
             )}
         >
-            {isExtreme && (
-                <div className="absolute top-0 left-0 z-10 flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 border-r border-b border-blue-500/20 rounded-br text-[10px] font-black tracking-wider text-blue-500 uppercase">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    Historical Extreme
-                </div>
-            )}
+            {/* Shaded Accent Band */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/[0.05] to-transparent blur-2xl -translate-y-16 translate-x-16 group-hover:from-blue-500/10 transition-colors duration-500" />
 
-            {lastUpdated && (
-                <div className="absolute top-3 right-3 z-10">
-                    <DataQualityBadge timestamp={lastUpdated} size="small" label={false} />
-                </div>
-            )}
-
-            <CardContent className="flex flex-col flex-grow p-5 space-y-4">
-                {/* Header */}
+            <CardContent className="flex flex-col flex-grow p-6 space-y-6 relative z-10">
+                {/* Header Section */}
                 <div className="flex justify-between items-start">
-                    <div>
-                        <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase opacity-80">
-                            {label}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[0.65rem] font-black tracking-[0.2em] text-muted-foreground/40 uppercase group-hover:text-blue-400/60 transition-colors">
+                                {label}
+                            </span>
+                            {status !== 'neutral' && (
+                                <div className={cn(
+                                    "px-1.5 py-0.5 rounded text-[0.6rem] font-bold tracking-tighter",
+                                    status === 'safe' && "bg-emerald-500/10 text-emerald-500",
+                                    status === 'warning' && "bg-amber-500/10 text-amber-500",
+                                    status === 'danger' && "bg-rose-500/10 text-rose-500",
+                                )}>
+                                    {status.toUpperCase()}
+                                </div>
+                            )}
                         </div>
                         {sublabel && (
-                            <div className="text-[10px] text-muted-foreground opacity-60 mt-0.5 font-medium">
+                            <div className="text-[0.65rem] font-bold text-muted-foreground/30 truncate max-w-[180px]">
                                 {sublabel}
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Main Value Area */}
-                <div className="flex-grow min-h-[64px]">
+                {/* Primary Metric Display */}
+                <div className="flex-grow flex flex-col justify-center min-h-[80px]">
                     {isLoading ? (
-                        <Skeleton className="w-[80%] h-16 rounded-lg" />
+                        <div className="space-y-2">
+                            <Skeleton className="w-[70%] h-12 rounded-lg opacity-20" />
+                            <Skeleton className="w-[40%] h-4 rounded-md opacity-10" />
+                        </div>
                     ) : isNullValue ? (
-                        <div className="flex items-center gap-2 mt-2 opacity-40">
-                            <span className="w-2 h-2 rounded-full border-2 border-muted-foreground" />
-                            <span className="text-xl font-semibold text-muted-foreground">Awaiting data</span>
+                        <div className="flex items-center gap-2 opacity-30">
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse" />
+                            <span className="text-sm font-black tracking-widest text-muted-foreground uppercase italic">Feed Offline</span>
                         </div>
                     ) : (
-                        <div className="space-y-3">
-                            {/* Primary Value */}
-                            <div className="flex items-baseline gap-3">
-                                {status !== 'neutral' && (
-                                    <span className={cn(
-                                        "w-2.5 h-2.5 rounded-full shadow-[0_0_8px] shrink-0 animate-pulse",
-                                        statusBgColors[status as keyof typeof statusBgColors],
-                                        `shadow-${statusColors[status as keyof typeof statusColors].split('-')[1]}-500/50`
-                                    )} />
-                                )}
-                                <span className="text-4xl font-bold tracking-tight text-foreground leading-none tabular-nums">
+                        <div className="space-y-4">
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-5xl font-black tracking-tighter text-foreground tabular-nums leading-none">
                                     {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}{suffix}
+                                </span>
+                                <span className="text-sm font-bold text-muted-foreground/40 mb-1">
+                                    {frequency?.toUpperCase() || 'DATA'}
                                 </span>
                             </div>
 
-                            {/* Signal Row */}
-                            <div className="flex items-center gap-2 flex-wrap">
+                            <div className="flex items-center gap-4">
                                 {delta && (
                                     <div className={cn(
-                                        "flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-xs font-bold",
-                                        "bg-background/40 border-border/50",
+                                        "flex items-center gap-1.5 text-sm font-black",
                                         getDeltaTextColor()
                                     )}>
                                         {getDeltaIcon()}
                                         <span>{delta.value}</span>
                                     </div>
                                 )}
-
-                                {isInstitutionalView && typeof zScore === 'number' && !isNaN(zScore) && (
-                                    <div className={cn(
-                                        "px-2 py-0.5 rounded-md border text-[10px] font-black tracking-wide",
-                                        Math.abs(zScore) > 2
-                                            ? "bg-rose-500/20 border-rose-500/30 text-rose-500"
-                                            : "bg-background/40 border-border/50 text-muted-foreground"
-                                    )}>
-                                        Z: {formatDelta(zScore, { decimals: 1 })}
-                                    </div>
-                                )}
-
-                                {status !== 'neutral' && (
-                                    <div className={cn(
-                                        "ml-auto px-2 py-0.5 rounded border text-[10px] font-black tracking-widest uppercase",
-                                        status === 'safe' && "bg-emerald-500/10 border-emerald-500/20 text-emerald-500",
-                                        status === 'warning' && "bg-amber-500/10 border-amber-500/20 text-amber-500",
-                                        status === 'danger' && "bg-rose-500/10 border-rose-500/20 text-rose-500",
-                                    )}>
-                                        {getSignalLabel(status)}
+                                {typeof zScore === 'number' && !isNaN(zScore) && (
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
+                                        <span className="text-[0.65rem] font-black text-muted-foreground/40 uppercase">Z-Score</span>
+                                        <span className={cn(
+                                            "text-xs font-black tabular-nums font-mono",
+                                            Math.abs(zScore) > 2 ? "text-amber-500" : "text-blue-400"
+                                        )}>
+                                            {formatDelta(zScore, { decimals: 1 })}
+                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -232,47 +189,36 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                     )}
                 </div>
 
-                {/* Institutional Context: Percentile Bar */}
-                {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
-                    <div className="space-y-1">
-                        <div className="flex justify-between items-end">
-                            <span className="text-[9px] font-bold text-muted-foreground tracking-widest uppercase">
-                                INST. PERCENTILE
-                            </span>
-                            <span className={cn(
-                                "text-[10px] font-black tabular-nums",
-                                (percentile > 90 || percentile < 10) ? "text-amber-500" : "text-blue-500"
-                            )}>
-                                {formatMetric(percentile, 'percent', { showUnit: true })}
-                            </span>
+                {/* Footer Meta */}
+                <div className="pt-4 border-t border-white/[0.03] mt-auto">
+                    <div className="flex items-end justify-between">
+                        <div className="space-y-2 flex-1">
+                            {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && (
+                                <div className="space-y-1.5 max-w-[120px]">
+                                    <div className="flex justify-between text-[0.6rem] font-black text-muted-foreground/40 tracking-wider">
+                                        <span>P-RANK</span>
+                                        <span>{Math.round(percentile)}%</span>
+                                    </div>
+                                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-blue-500/40 rounded-full transition-all duration-1000"
+                                            style={{ width: `${percentile}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            <div className="text-[0.6rem] font-bold text-muted-foreground/20 uppercase tracking-[0.1em]">
+                                Source: {source} • Refreshed: {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : 'N/A'}
+                            </div>
                         </div>
-                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-                            <div
-                                className={cn(
-                                    "h-full transition-all duration-1000 ease-out",
-                                    (percentile > 90 || percentile < 10) ? "bg-amber-500" : "bg-blue-500"
-                                )}
-                                style={{ width: `${Math.max(0, Math.min(100, percentile))}%` }}
-                            />
-                        </div>
-                    </div>
-                )}
 
-                {/* Footer: Sparkline & Info */}
-                <div className="mt-auto flex justify-between items-end pt-2">
-                    <div className="flex-grow">
                         {history && history.length > 0 && (
-                            <div className="h-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-300">
+                            <div className="w-24 h-10 opacity-30 group-hover:opacity-100 transition-opacity duration-700">
                                 <Sparkline
                                     data={history}
-                                    color={status === 'safe' || status === 'neutral' ? '#3b82f6' : '#ef4444'}
-                                    height={32}
+                                    color={status === 'safe' || status === 'neutral' ? '#60a5fa' : '#f87171'}
+                                    height={40}
                                 />
-                            </div>
-                        )}
-                        {lastUpdated && (
-                            <div className="text-[10px] font-bold text-muted-foreground/60 mt-1">
-                                Updated {new Date(lastUpdated).toLocaleDateString()}
                             </div>
                         )}
                     </div>

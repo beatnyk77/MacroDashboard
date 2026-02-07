@@ -1,103 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     LayoutDashboard,
-    Droplets,
     Coins,
-    AlertTriangle,
     Globe,
-    Flag,
-    Table,
     BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import { NavLink, useLocation } from 'react-router-dom';
+
 interface NavItem {
     id: string;
     label: string;
+    path: string;
     icon: React.ReactNode;
 }
 
 const navItems: NavItem[] = [
-    { id: 'top', label: 'Cockpit', icon: <LayoutDashboard size={20} /> },
-    { id: 'global-liquidity-section', label: 'Liquidity', icon: <Droplets size={20} /> },
-    { id: 'hard-asset-valuation-section', label: 'Hard Assets', icon: <Coins size={20} /> },
-    { id: 'treasury-snapshot-section', label: 'Sovereign Stress', icon: <AlertTriangle size={20} /> },
-    { id: 'de-dollarization-section', label: 'BRICS & De-USD', icon: <Globe size={20} /> },
-    { id: 'china-macro-section', label: 'Country Pulses', icon: <Flag size={20} /> },
-    { id: 'major-economies-section', label: 'Data Tables', icon: <Table size={20} /> },
-    { id: 'how-to-use', label: 'Methodology', icon: <BookOpen size={20} /> },
+    { id: 'dashboard', label: 'Institutional Dashboard', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
+    { id: 'thematic', label: 'Thematic Labs', path: '/thematic', icon: <Coins size={18} strokeWidth={2.5} /> },
+    { id: 'pulse', label: 'Country Pulses', path: '/pulse', icon: <Globe size={18} strokeWidth={2.5} /> },
+    { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
 ];
 
 export const NavigationSidebar: React.FC = () => {
-    const [activeId, setActiveId] = useState('top');
-
-    useEffect(() => {
-        const handleIntersect: IntersectionObserverCallback = (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    setActiveId(entry.target.id);
-                }
-            });
-        };
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '-20% 0px -70% 0px', // Detect when item is roughly in top-middle of view
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver(handleIntersect, observerOptions);
-
-        navItems.forEach((item) => {
-            const el = document.getElementById(item.id);
-            if (el) {
-                observer.observe(el);
-            }
-        });
-
-        return () => observer.disconnect();
-    }, []);
-
-    const handleNavClick = (id: string) => {
-        const el = document.getElementById(id);
-        if (el) {
-            const offset = 80; // Offset for sticky header
-            const elementPosition = el.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-            setActiveId(id);
-        }
-    };
+    const location = useLocation();
 
     return (
-        <aside className="hidden lg:flex w-[240px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/10 bg-background py-8 z-[1200] overflow-y-auto">
-            <nav className="px-3 flex-1">
-                <ul className="space-y-1">
+        <aside className="hidden lg:flex w-[260px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/10 bg-background/50 backdrop-blur-xl py-8 z-[1200] overflow-y-auto">
+            <nav className="px-4 flex-1">
+                <div className="mb-6 px-2">
+                    <span className="text-[0.65rem] font-black tracking-[0.2em] text-muted-foreground/50 uppercase">
+                        Main Navigation
+                    </span>
+                </div>
+                <ul className="space-y-2">
                     {navItems.map((item) => {
-                        const isActive = activeId === item.id;
+                        const isActive = location.pathname === item.path;
                         return (
                             <li key={item.id}>
-                                <button
-                                    onClick={() => handleNavClick(item.id)}
+                                <NavLink
+                                    to={item.path}
                                     className={cn(
-                                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 border-l-[3px]",
+                                        "group flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-300",
                                         isActive
-                                            ? "bg-blue-500/10 text-primary border-yellow-500 font-bold"
-                                            : "text-muted-foreground border-transparent hover:bg-white/5 font-medium"
+                                            ? "bg-blue-500/10 text-primary font-bold shadow-[inset_0_0_20px_rgba(59,130,246,0.1)] border border-blue-500/20"
+                                            : "text-muted-foreground/70 hover:text-primary hover:bg-white/5 font-medium border border-transparent"
                                     )}
                                 >
                                     <span className={cn(
-                                        "shrink-0",
-                                        isActive ? "text-primary" : "text-muted-foreground"
+                                        "shrink-0 transition-colors duration-300",
+                                        isActive ? "text-blue-400" : "text-muted-foreground/50 group-hover:text-muted-foreground"
                                     )}>
                                         {item.icon}
                                     </span>
                                     <span className="truncate">{item.label}</span>
-                                </button>
+                                    {isActive && (
+                                        <div className="ml-auto w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                                    )}
+                                </NavLink>
                             </li>
                         );
                     })}

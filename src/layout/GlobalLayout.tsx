@@ -5,6 +5,7 @@ import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { DashboardFooter } from '@/layout/DashboardFooter';
 import { NavigationSidebar } from '@/components/NavigationSidebar';
+import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
 
 interface GlobalLayoutProps {
@@ -127,11 +128,14 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 {/* Navigation Sidebar (Desktop Only) */}
                 <NavigationSidebar />
 
-                <main className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden">
+                <main className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden min-w-0">
                     <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
                         {children}
                     </div>
                 </main>
+
+                {/* Intelligence Sidebar (Desktop Only) */}
+                <IntelligenceSidebar />
             </div>
 
             {/* Dashboard Footer with Disclaimer & Data Transparency */}

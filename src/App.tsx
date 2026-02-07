@@ -8,7 +8,9 @@ import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Lazy load heavy page components
-const Dashboard = lazy(() => import('@/features/dashboard/pages/Dashboard').then(module => ({ default: module.Dashboard })));
+const DashboardView = lazy(() => import('@/features/dashboard/pages/DashboardView').then(module => ({ default: module.DashboardView })));
+const ThematicLabsView = lazy(() => import('@/features/dashboard/pages/ThematicLabsView').then(module => ({ default: module.ThematicLabsView })));
+const CountryPulsesView = lazy(() => import('@/features/dashboard/pages/CountryPulsesView').then(module => ({ default: module.CountryPulsesView })));
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
 
 const LoadingFallback = () => (
@@ -32,7 +34,9 @@ function App() {
                             <GlobalLayout>
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
-                                        <Route path="/" element={<Dashboard />} />
+                                        <Route path="/" element={<DashboardView />} />
+                                        <Route path="/thematic" element={<ThematicLabsView />} />
+                                        <Route path="/pulse" element={<CountryPulsesView />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
                                     </Routes>
                                 </Suspense>

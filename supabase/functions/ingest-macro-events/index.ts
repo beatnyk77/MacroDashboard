@@ -53,7 +53,7 @@ Deno.serve(async (req: Request) => {
             // GLOBAL KEY EVENTS
             { date: '2026-02-15T01:30:00Z', name: 'China CPI y/y', country: 'CNY', impact: 'High', forecast: '0.5%', previous: '0.3%' },
             { date: '2026-03-31T01:30:00Z', name: 'China Manufacturing PMI', country: 'CNY', impact: 'High', forecast: '50.2', previous: '49.8' },
-            { date: '2026-02-10T11:30:00Z', name: 'India RBI Interest Rate Decision', country: 'INR', impact: 'Medium', forecast: '6.50%', previous: '6.50%' },
+            { date: '2026-02-06T11:30:00Z', name: 'India RBI Interest Rate Decision', country: 'INR', impact: 'Medium', forecast: '6.50%', previous: '6.50%', actual: '5.50%', surprise: '-1.0%' },
             { date: '2026-03-20T03:00:00Z', name: 'BoJ Interest Rate Decision', country: 'JPY', impact: 'High', forecast: '0.10%', previous: '0.00%' }
         ];
 

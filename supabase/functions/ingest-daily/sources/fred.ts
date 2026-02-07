@@ -17,8 +17,8 @@ export async function ingestFred(
     // 1. Get metrics to fetch
     const { data: metrics, error: metricsError } = await client
         .from('metrics')
-        .select('id, metric_key, native_frequency')
-        .eq('data_source', source)
+        .select('id, metadata, native_frequency')
+        .eq('source', source)
 
     if (metricsError) {
         await logger.log(source, 'error', 0, `Failed to fetch metrics config: ${metricsError.message}`)
@@ -31,9 +31,12 @@ export async function ingestFred(
     }
 
     for (const metric of metrics) {
+        const fredId = (metric.metadata as any)?.fred_id
+        if (!fredId) continue
+
         const fetchStart = performance.now()
         // Incremental: last 100 observations
-        const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${metric.metric_key}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=100`
+        const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=100`
 
         try {
             await retry(async () => {
