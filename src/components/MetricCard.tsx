@@ -154,11 +154,16 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            <div className="flex items-baseline gap-2">
+                            <div className="flex items-baseline gap-1.5 overflow-hidden">
                                 <span className="text-5xl font-black tracking-tighter text-foreground tabular-nums leading-none">
-                                    {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}{suffix}
+                                    {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}
                                 </span>
-                                <span className="text-sm font-bold text-muted-foreground/40 mb-1">
+                                {suffix && (
+                                    <span className="text-2xl font-black tracking-tighter text-muted-foreground/40 self-baseline mb-0.5">
+                                        {suffix}
+                                    </span>
+                                )}
+                                <span className="text-[10px] font-black text-muted-foreground/20 uppercase tracking-[0.2em] ml-auto self-center">
                                     {frequency?.toUpperCase() || 'DATA'}
                                 </span>
                             </div>
@@ -207,8 +212,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                     </div>
                                 </div>
                             )}
-                            <div className="text-[0.6rem] font-bold text-muted-foreground/20 uppercase tracking-[0.1em]">
-                                Source: {source} • Refreshed: {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : 'N/A'}
+                            <div className="text-[0.6rem] font-bold text-muted-foreground/20 uppercase tracking-[0.1em] group-hover:text-muted-foreground/60 transition-colors duration-500">
+                                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-700">Source: {source} • </span>
+                                Refreshed: {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : 'N/A'}
                             </div>
                         </div>
 

@@ -30,9 +30,9 @@ export const CockpitKPIGrid = React.memo(() => {
 
     if (isLoading) {
         return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {[...Array(10)].map((_, i) => (
-                    <Skeleton key={i} className={i === 0 ? "md:col-span-2 h-[220px]" : "h-[220px]"} />
+                    <Skeleton key={i} className={i === 0 ? "sm:col-span-2 h-[220px]" : "h-[220px]"} />
                 ))}
             </div>
         );
@@ -65,9 +65,9 @@ export const CockpitKPIGrid = React.memo(() => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {/* 1. Net Liquidity - THE Core Signal (Double Width) */}
-                <div className="col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2">
+                <div className="col-span-1 sm:col-span-2">
                     <MetricCard
                         label="Net Liquidity"
                         metricId="NET_LIQUIDITY"
@@ -76,7 +76,7 @@ export const CockpitKPIGrid = React.memo(() => {
                         prefix="$"
                         suffix=" T"
                         delta={netLiq ? {
-                            value: formatDelta(netLiq.delta / 1e9, { unit: 'B' }) || '—',
+                            value: formatDelta(netLiq.delta / 1e12, { unit: 'T' }) || '—',
                             period: '7D',
                             trend: netLiq.delta > 0 ? 'up' : 'down'
                         } : undefined}
