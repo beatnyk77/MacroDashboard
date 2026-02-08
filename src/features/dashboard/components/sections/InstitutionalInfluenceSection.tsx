@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Paper, Typography, Grid, Stack, LinearProgress, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Box, Paper, Typography, Grid, Stack, LinearProgress, ToggleButtonGroup, ToggleButton, Skeleton, Alert } from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useInstitutionalLoans } from '@/hooks/useInstitutionalLoans';
-import { Shield, Globe } from 'lucide-react';
+import { Shield, Globe, AlertTriangle } from 'lucide-react';
 
 export const InstitutionalInfluenceSection: React.FC = () => {
     const [loanType, setLoanType] = useState<'Stock' | 'Flow'>('Stock');
-    const { data: loanData } = useInstitutionalLoans(loanType);
+    const { data: loanData, isLoading, error } = useInstitutionalLoans(loanType);
 
     const handleTypeChange = (
         _event: React.MouseEvent<HTMLElement>,
@@ -16,6 +16,46 @@ export const InstitutionalInfluenceSection: React.FC = () => {
             setLoanType(newType);
         }
     };
+
+    if (isLoading) {
+        return (
+            <Box sx={{ mb: 6 }}>
+                <SectionHeader
+                    title="Institutional Money Wars"
+                    subtitle="Analyzing global institutional lending flows..."
+                />
+                <Grid container spacing={3} mt={2}>
+                    <Grid item xs={12} lg={8}>
+                        <Grid container spacing={2}>
+                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <Grid item key={i} xs={12} md={6}>
+                                    <Skeleton variant="rectangular" height={160} sx={{ borderRadius: 2 }} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} lg={4}>
+                         <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+                    </Grid>
+                </Grid>
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ mb: 6 }}>
+                <SectionHeader
+                    title="Institutional Money Wars"
+                    subtitle="Data Stream Interrupted"
+                />
+                <Alert severity="error" sx={{ mt: 2 }} icon={<AlertTriangle />}>
+                    Failed to load institutional lending data. Please try refreshing the page.
+                    {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(error, null, 2)}</pre>}
+                </Alert>
+            </Box>
+        );
+    }
 
     // Calculate aggregated stats by region for the Heatmap Grid
     const regionalDominance = loanData?.reduce((acc: any, curr) => {
@@ -80,9 +120,14 @@ export const InstitutionalInfluenceSection: React.FC = () => {
             <Grid container spacing={3}>
                 {/* 1. Regional Dominance Heatmap Grid */}
                 <Grid item xs={12} lg={8}>
+                    {regionalList.length === 0 ? (
+                         <Box sx={{ p: 4, textAlign: 'center', border: '1px dashed', borderColor: 'divider', borderRadius: 2, width: '100%' }}>
+                            <Typography variant="body2" color="text.secondary">No lending data available for this view.</Typography>
+                         </Box>
+                    ) : (
                     <Grid container spacing={2}>
                         {regionalList.map((reg: any) => {
-                            const eastPct = (reg.east / reg.total) * 100;
+                            const eastPct = reg.total > 0 ? (reg.east / reg.total) * 100 : 0;
                             const westPct = 100 - eastPct;
                             const isEastDominant = eastPct > 60;
                             const isWestDominant = westPct > 60;
@@ -117,7 +162,7 @@ export const InstitutionalInfluenceSection: React.FC = () => {
                                                 fontWeight: 900,
                                                 fontSize: '0.6rem'
                                             }}>
-                                                {isEastDominant ? 'EAST DOMINANT' : (isWestDominant ? 'WEST DOMINANT' : 'CONTESTED')}
+                                                {getStatusLabel(eastPct, westPct)}
                                             </Typography>
                                         </Stack>
 
@@ -143,6 +188,7 @@ export const InstitutionalInfluenceSection: React.FC = () => {
                             );
                         })}
                     </Grid>
+                    )}
                 </Grid>
 
                 {/* 2. Income Bracket Ribbon & Intelligence Card */}
@@ -177,7 +223,7 @@ export const InstitutionalInfluenceSection: React.FC = () => {
                                                 {bracket.replace('_', ' ')}
                                             </Typography>
                                             <Typography variant="caption" sx={{ fontWeight: 900, color: eastPct > 50 ? '#ef4444' : '#3b82f6' }}>
-                                                {eastPct > 50 ? 'EAST LED' : 'WEST LED'}
+                                                {eastPct > 50 ? 'EAST LED' : (total > 0 ? 'WEST LED' : 'NO DATA')}
                                             </Typography>
                                         </Stack>
                                         <LinearProgress
@@ -212,3 +258,9 @@ export const InstitutionalInfluenceSection: React.FC = () => {
         </Box>
     );
 };
+
+const getStatusLabel = (eastPct: number, westPct: number) => {
+    if (eastPct > 60) return 'EAST DOMINANT';
+    if (westPct > 60) return 'WEST DOMINANT';
+    return 'CONTESTED';
+}
