@@ -5,12 +5,10 @@ import { queryClient } from '@/lib/queryClient';
 import getTheme from '@/theme';
 import { GlobalLayout } from '@/layout/GlobalLayout';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Lazy load heavy page components
-const DashboardView = lazy(() => import('@/features/dashboard/pages/DashboardView').then(module => ({ default: module.DashboardView })));
-const ThematicLabsView = lazy(() => import('@/features/dashboard/pages/ThematicLabsView').then(module => ({ default: module.ThematicLabsView })));
-const CountryPulsesView = lazy(() => import('@/features/dashboard/pages/CountryPulsesView').then(module => ({ default: module.CountryPulsesView })));
+// Lazy load page components
+const GraphiQuestorSPA = lazy(() => import('@/pages/GraphiQuestorSPA').then(module => ({ default: module.GraphiQuestorSPA })));
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
 
 const LoadingFallback = () => (
@@ -34,10 +32,11 @@ function App() {
                             <GlobalLayout>
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
-                                        <Route path="/" element={<DashboardView />} />
-                                        <Route path="/thematics" element={<ThematicLabsView />} />
-                                        <Route path="/countries" element={<CountryPulsesView />} />
+                                        <Route path="/" element={<GraphiQuestorSPA />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
+                                        {/* Legacy route redirects */}
+                                        <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
+                                        <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />
                                     </Routes>
                                 </Suspense>
                             </GlobalLayout>
@@ -50,3 +49,4 @@ function App() {
 }
 
 export default App;
+

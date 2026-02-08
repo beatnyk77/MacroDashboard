@@ -68,34 +68,37 @@
 
     /* .dark class redundancy for compatibility if toggle somehow exists */
     .dark {
-        --background: 222 47% 11%; /* Slate 950 #0f172a - slight blue tint for richness */
-        --foreground: 210 40% 98%; /* Slate 50 */
-        
+        --background: 222 47% 11%;
+        /* Slate 950 #0f172a - slight blue tint for richness */
+        --foreground: 210 40% 98%;
+        /* Slate 50 */
+
         --card: 222 47% 11%;
         --card-foreground: 210 40% 98%;
-        
+
         --popover: 222 47% 11%;
         --popover-foreground: 210 40% 98%;
-        
+
         --primary: 210 40% 98%;
         --primary-foreground: 222 47.4% 11.2%;
-        
+
         --secondary: 217.2 32.6% 17.5%;
         --secondary-foreground: 210 40% 98%;
-        
+
         --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%; /* Slate 400 - much lighter than before */
-        
+        --muted-foreground: 215 20.2% 65.1%;
+        /* Slate 400 - much lighter than before */
+
         --accent: 217.2 32.6% 17.5%;
         --accent-foreground: 210 40% 98%;
-        
+
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 210 40% 98%;
-        
+
         --border: 217.2 32.6% 17.5%;
         --input: 217.2 32.6% 17.5%;
         --ring: 212.7 26.8% 83.9%;
-        
+
         --chart-1: 220 70% 50%;
         --chart-2: 160 60% 45%;
         --chart-3: 30 80% 55%;
@@ -127,5 +130,34 @@
     .shaded-band::before {
         content: '';
         @apply absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-rose-500/5 opacity-50;
+    }
+
+    /* SPA Layout Utilities */
+    .spa-row {
+        @apply w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12;
+    }
+
+    .spa-card {
+        @apply bg-card/50 border border-border/40 rounded-2xl p-6 lg:p-8;
+        @apply transition-all duration-300 ease-out;
+        @apply hover:border-border/60 hover:shadow-lg hover:-translate-y-0.5;
+    }
+
+    .spa-hero-value {
+        @apply text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight;
+    }
+
+    .spa-section-title {
+        @apply text-2xl lg:text-3xl font-black tracking-tight;
+    }
+
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+
+        .spa-card,
+        .spa-fade-in {
+            @apply transition-none;
+            animation: none !important;
+        }
     }
 }
