@@ -12,7 +12,7 @@ export const DataHealthTicker: React.FC = () => {
             const { data, error } = await supabase
                 .from('ingestion_logs')
                 .select('*')
-                .order('started_at', { ascending: false })
+                .order('start_time', { ascending: false })
                 .limit(1)
                 .single();
 
@@ -26,7 +26,7 @@ export const DataHealthTicker: React.FC = () => {
 
     const isSuccess = health.status === 'success';
     const isError = health.status === 'failed';
-    const timeAgo = formatDistanceToNow(new Date(health.completed_at || health.started_at), { addSuffix: true });
+    const timeAgo = formatDistanceToNow(new Date(health.completed_at || health.start_time), { addSuffix: true });
 
     return (
         <div className={cn(
