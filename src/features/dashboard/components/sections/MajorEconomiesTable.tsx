@@ -73,72 +73,72 @@ export const MajorEconomiesTable: React.FC = () => {
                 lastUpdated={data?.[0]?.last_updated}
             />
 
-            <div className="bg-slate-950/50 rounded-xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-sm">
+            <div className="bg-card rounded-lg border border-border/60 overflow-hidden shadow-md">
                 <Table>
-                    <TableHeader className="bg-white/5 sticky top-0 z-10 backdrop-blur-sm">
-                        <TableRow className="border-b border-white/10 hover:bg-transparent">
-                            <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
+                    <TableHeader className="bg-muted/30 sticky top-0 z-10 backdrop-blur-sm">
+                        <TableRow className="border-b border-border/50 hover:bg-transparent">
+                            <TableHead className="py-4 px-5 font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap">
                                 Country
                             </TableHead>
-                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
+                            <TableHead className="py-4 px-5 text-right font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap">
                                 GDP (Nom)
                             </TableHead>
-                            <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap w-[120px]">
+                            <TableHead className="py-4 px-5 font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap w-[140px]">
                                 Real Growth
                             </TableHead>
-                            <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap w-[120px]">
+                            <TableHead className="py-4 px-5 font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap w-[140px]">
                                 CPI Inflation
                             </TableHead>
-                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
+                            <TableHead className="py-4 px-5 text-right font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap">
                                 Policy Rate
                             </TableHead>
-                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
+                            <TableHead className="py-4 px-5 text-right font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap">
                                 Debt/Gold
                             </TableHead>
-                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
+                            <TableHead className="py-4 px-5 text-right font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap">
                                 Investment
                             </TableHead>
-                            <TableHead className="py-3 px-4 text-right font-black uppercase text-xs text-muted-foreground tracking-widest whitespace-nowrap">
+                            <TableHead className="py-4 px-5 text-right font-semibold uppercase text-[11px] text-muted-foreground tracking-wide whitespace-nowrap">
                                 Health
                             </TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="divide-y divide-white/5">
+                    <TableBody className="divide-y divide-border/40">
                         {isLoading ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <TableRow key={i} className="even:bg-white/[0.01]">
-                                    <TableCell className="p-4"><Skeleton className="h-4 w-24" /></TableCell>
-                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
-                                    <TableCell className="p-4"><Skeleton className="h-4 w-20" /></TableCell>
-                                    <TableCell className="p-4"><Skeleton className="h-4 w-20" /></TableCell>
-                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
-                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
-                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
-                                    <TableCell className="p-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                                <TableRow key={i} className="even:bg-muted/10">
+                                    <TableCell className="p-5"><Skeleton className="h-5 w-24" /></TableCell>
+                                    <TableCell className="p-5 text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                                    <TableCell className="p-5"><Skeleton className="h-5 w-24" /></TableCell>
+                                    <TableCell className="p-5"><Skeleton className="h-5 w-24" /></TableCell>
+                                    <TableCell className="p-5 text-right"><Skeleton className="h-5 w-12 ml-auto" /></TableCell>
+                                    <TableCell className="p-5 text-right"><Skeleton className="h-5 w-12 ml-auto" /></TableCell>
+                                    <TableCell className="p-5 text-right"><Skeleton className="h-5 w-12 ml-auto" /></TableCell>
+                                    <TableCell className="p-5 text-right"><Skeleton className="h-5 w-20 ml-auto" /></TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             visibleData.map((row: MajorEconomyRow) => (
                                 <TableRow
                                     key={row.code}
-                                    className="group transition-colors hover:bg-white/5 even:bg-white/[0.01] border-white/5"
+                                    className="group transition-colors hover:bg-muted/30 even:bg-muted/5 border-border/40"
                                 >
-                                    <TableCell className="py-3 px-4">
+                                    <TableCell className="py-4 px-5">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xl filter drop-shadow-md">{row.flag}</span>
-                                            <span className="font-extrabold text-xs text-foreground tracking-wider">
+                                            <span className="text-xl filter drop-shadow-sm">{row.flag}</span>
+                                            <span className="font-bold text-sm text-foreground tracking-wide">
                                                 {row.code}
                                             </span>
                                         </div>
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4 text-right">
-                                        <span className="font-bold font-mono tabular-nums text-xs text-foreground">
+                                    <TableCell className="py-4 px-5 text-right">
+                                        <span className="font-semibold font-mono tabular-nums text-sm text-foreground">
                                             ${formatMetric(row.gdp_nominal, 'trillion', { showUnit: false })}T
                                         </span>
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4">
+                                    <TableCell className="py-4 px-5">
                                         <SparkBar
                                             value={row.growth}
                                             color={row.growth > 3 ? '#10b981' : (row.growth > 0 ? '#3b82f6' : '#ef4444')}
@@ -146,7 +146,7 @@ export const MajorEconomiesTable: React.FC = () => {
                                         />
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4">
+                                    <TableCell className="py-4 px-5">
                                         <SparkBar
                                             value={row.cpi}
                                             color={row.cpi > 5 ? '#ef4444' : (row.cpi > 3 ? '#f59e0b' : '#10b981')}
@@ -154,37 +154,37 @@ export const MajorEconomiesTable: React.FC = () => {
                                         />
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4 text-right">
+                                    <TableCell className="py-4 px-5 text-right">
                                         <div className="flex justify-end">
                                             <PolicyDot rate={row.policy_rate} />
                                         </div>
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4 text-right">
+                                    <TableCell className="py-4 px-5 text-right">
                                         <span className={cn(
-                                            "font-extrabold font-mono tabular-nums text-xs",
+                                            "font-semibold font-mono tabular-nums text-sm",
                                             row.debt_gold_ratio > 200 ? 'text-rose-500' : (row.debt_gold_ratio > 100 ? 'text-amber-500' : 'text-emerald-500')
                                         )}>
                                             {row.debt_gold_ratio.toFixed(1)}x
                                         </span>
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4 text-right">
+                                    <TableCell className="py-4 px-5 text-right">
                                         <span className={cn(
-                                            "font-bold font-mono tabular-nums text-xs",
+                                            "font-semibold font-mono tabular-nums text-sm",
                                             row.gfcf_pct > 25 ? 'text-emerald-500' : (row.gfcf_pct < 20 ? 'text-rose-500' : 'text-foreground')
                                         )}>
                                             {row.gfcf_pct.toFixed(1)}%
                                         </span>
                                     </TableCell>
 
-                                    <TableCell className="py-3 px-4 text-right">
+                                    <TableCell className="py-4 px-5 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <DataQualityBadge
                                                 timestamp={row.staleness === 'fresh' ? new Date() : null}
                                                 label={false}
                                             />
-                                            <span className="text-[0.65rem] text-muted-foreground font-extrabold tracking-wider">
+                                            <span className="text-[0.65rem] text-muted-foreground font-bold tracking-wider uppercase">
                                                 {row.growth > 0 && row.cpi < 5 ? 'STABLE' : 'STRESS'}
                                             </span>
                                         </div>

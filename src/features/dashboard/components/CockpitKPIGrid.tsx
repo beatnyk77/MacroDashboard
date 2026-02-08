@@ -39,16 +39,16 @@ export const CockpitKPIGrid = React.memo(() => {
     }
 
     return (
-        <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/5 to-emerald-500/5 border-t-2 border-primary relative overflow-hidden backdrop-blur-3xl">
+        <div className="p-6 rounded-xl bg-card border border-border/60 shadow-sm">
             {/* Hero Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <div className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-80">
+                    <div className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
                         DETECTION & INTEGRITY
                     </div>
-                    <h3 className="text-3xl font-extrabold tracking-tight mt-1">
+                    <h2 className="text-2xl font-bold tracking-tight mt-1">
                         System Heartbeat
-                    </h3>
+                    </h2>
                 </div>
 
                 {/* Data Integrity Badge - Unified System */}
@@ -65,7 +65,7 @@ export const CockpitKPIGrid = React.memo(() => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                 {/* 1. Net Liquidity - THE Core Signal (Double Width) */}
                 <div className="col-span-1 sm:col-span-2">
                     <MetricCard
@@ -84,7 +84,7 @@ export const CockpitKPIGrid = React.memo(() => {
                         history={netLiq?.history}
                         isLoading={isLoading}
                         lastUpdated={netLiq?.as_of_date}
-                        className="bg-background"
+                        className="bg-card/50"
                     />
                 </div>
 

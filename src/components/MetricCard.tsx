@@ -102,28 +102,28 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         <Card
             id={metricId || label}
             className={cn(
-                "relative flex flex-col min-h-[220px] h-full overflow-hidden transition-all duration-500",
-                "bg-background/40 backdrop-blur-xl border-white/5",
-                "hover:shadow-[0_0_40px_rgba(59,130,246,0.1)] hover:border-blue-500/20 group",
-                isHighlighted && "ring-2 ring-blue-500 ring-offset-4 ring-offset-background",
+                "relative flex flex-col h-full min-h-[180px] overflow-hidden transition-all duration-300",
+                "bg-card/95 border-border/60",
+                "hover:shadow-md hover:border-blue-500/30 group",
+                isHighlighted && "ring-2 ring-blue-500 ring-offset-2 ring-offset-background",
                 isNullValue && "opacity-60",
                 className
             )}
         >
-            {/* Shaded Accent Band */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/[0.05] to-transparent blur-2xl -translate-y-16 translate-x-16 group-hover:from-blue-500/10 transition-colors duration-500" />
+            {/* Subtle Gradient Accent - Simplified */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/[0.03] to-transparent blur-2xl -translate-y-8 translate-x-8 group-hover:from-blue-500/10 transition-colors duration-500" />
 
-            <CardContent className="flex flex-col flex-grow p-6 space-y-6 relative z-10">
+            <CardContent className="flex flex-col flex-grow p-5 gap-4 relative z-10">
                 {/* Header Section */}
                 <div className="flex justify-between items-start">
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                            <span className="text-[0.65rem] font-black tracking-[0.2em] text-muted-foreground/40 uppercase group-hover:text-blue-400/60 transition-colors">
+                            <span className="text-[0.7rem] font-semibold tracking-wider text-muted-foreground/70 uppercase group-hover:text-blue-500/80 transition-colors">
                                 {label}
                             </span>
                             {status !== 'neutral' && (
                                 <div className={cn(
-                                    "px-1.5 py-0.5 rounded text-[0.6rem] font-bold tracking-tighter",
+                                    "px-1.5 py-0.5 rounded-[4px] text-[0.6rem] font-bold tracking-tight",
                                     status === 'safe' && "bg-emerald-500/10 text-emerald-500",
                                     status === 'warning' && "bg-amber-500/10 text-amber-500",
                                     status === 'danger' && "bg-rose-500/10 text-rose-500",
@@ -133,7 +133,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                             )}
                         </div>
                         {sublabel && (
-                            <div className="text-[0.65rem] font-bold text-muted-foreground/30 truncate max-w-[180px]">
+                            <div className="text-[0.7rem] font-medium text-muted-foreground/55 truncate max-w-[180px]">
                                 {sublabel}
                             </div>
                         )}
@@ -141,48 +141,49 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 </div>
 
                 {/* Primary Metric Display */}
-                <div className="flex-grow flex flex-col justify-center min-h-[80px]">
+                <div className="flex-grow flex flex-col justify-center min-h-[60px]">
                     {isLoading ? (
                         <div className="space-y-2">
-                            <Skeleton className="w-[70%] h-12 rounded-lg opacity-20" />
-                            <Skeleton className="w-[40%] h-4 rounded-md opacity-10" />
+                            <Skeleton className="w-[60%] h-10 rounded-lg opacity-20" />
+                            <Skeleton className="w-[30%] h-3 rounded-md opacity-10" />
                         </div>
                     ) : isNullValue ? (
-                        <div className="flex items-center gap-2 opacity-30">
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse" />
-                            <span className="text-sm font-black tracking-widest text-muted-foreground uppercase italic">Feed Offline</span>
+                        <div className="flex items-center gap-2 opacity-50">
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+                            <span className="text-sm font-medium text-muted-foreground italic">No Data</span>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                            <div className="flex items-baseline gap-1.5 overflow-hidden">
-                                <span className="text-5xl font-black tracking-tighter text-foreground tabular-nums leading-none">
+                        <div className="space-y-3">
+                            <div className="flex items-baseline gap-1">
+                                <span className={cn(
+                                    "text-4xl font-bold tracking-tight text-foreground tabular-nums leading-none",
+                                    (String(value).length > 8) && "text-3xl" // Auto-scale for long numbers
+                                )}>
                                     {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}
                                 </span>
                                 {suffix && (
-                                    <span className="text-2xl font-black tracking-tighter text-muted-foreground/40 self-baseline mb-0.5">
+                                    <span className="text-lg font-semibold text-muted-foreground/60 self-baseline">
                                         {suffix}
                                     </span>
                                 )}
-                                <span className="text-[10px] font-black text-muted-foreground/20 uppercase tracking-[0.2em] ml-auto self-center">
-                                    {frequency?.toUpperCase() || 'DATA'}
-                                </span>
                             </div>
 
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
                                 {delta && (
                                     <div className={cn(
-                                        "flex items-center gap-1.5 text-sm font-black",
+                                        "flex items-center gap-1 text-sm font-semibold",
                                         getDeltaTextColor()
                                     )}>
                                         {getDeltaIcon()}
                                         <span>{delta.value}</span>
+                                        <span className="text-[0.65rem] font-medium text-muted-foreground/50 uppercase ml-1">{delta.period}</span>
                                     </div>
                                 )}
                                 {typeof zScore === 'number' && !isNaN(zScore) && (
-                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
-                                        <span className="text-[0.65rem] font-black text-muted-foreground/40 uppercase">Z-Score</span>
+                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-secondary/50 border border-border/50">
+                                        <span className="text-[0.6rem] font-semibold text-muted-foreground/60 uppercase">σ</span>
                                         <span className={cn(
-                                            "text-xs font-black tabular-nums font-mono",
+                                            "text-[0.7rem] font-bold tabular-nums font-mono",
                                             Math.abs(zScore) > 2 ? "text-amber-500" : "text-blue-400"
                                         )}>
                                             {formatDelta(zScore, { decimals: 1 })}
@@ -195,35 +196,35 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 </div>
 
                 {/* Footer Meta */}
-                <div className="pt-4 border-t border-white/[0.03] mt-auto">
+                <div className="pt-3 border-t border-border/40 mt-auto">
                     <div className="flex items-end justify-between">
-                        <div className="space-y-2 flex-1">
+                        <div className="space-y-1.5 flex-1">
                             {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && (
-                                <div className="space-y-1.5 max-w-[120px]">
-                                    <div className="flex justify-between text-[0.6rem] font-black text-muted-foreground/40 tracking-wider">
-                                        <span>P-RANK</span>
+                                <div className="space-y-1 max-w-[100px]">
+                                    <div className="flex justify-between text-[0.6rem] font-semibold text-muted-foreground/50 tracking-wide">
+                                        <span>RANK</span>
                                         <span>{Math.round(percentile)}%</span>
                                     </div>
-                                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-0.5 w-full bg-secondary rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-blue-500/40 rounded-full transition-all duration-1000"
+                                            className="h-full bg-blue-500/60 rounded-full"
                                             style={{ width: `${percentile}%` }}
                                         />
                                     </div>
                                 </div>
                             )}
-                            <div className="text-[0.6rem] font-bold text-muted-foreground/20 uppercase tracking-[0.1em] group-hover:text-muted-foreground/60 transition-colors duration-500">
-                                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-700">Source: {source} • </span>
-                                Refreshed: {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : 'N/A'}
+                            <div className="text-[0.6rem] font-medium text-muted-foreground/40 uppercase tracking-wide group-hover:text-muted-foreground/60 transition-colors">
+                                {frequency?.toUpperCase()} • {source}
+                                {lastUpdated && <span className="hidden group-hover:inline transition-opacity duration-300"> • {new Date(lastUpdated).toLocaleDateString()}</span>}
                             </div>
                         </div>
 
                         {history && history.length > 0 && (
-                            <div className="w-24 h-10 opacity-30 group-hover:opacity-100 transition-opacity duration-700">
+                            <div className="w-20 h-8 opacity-40 group-hover:opacity-100 transition-opacity">
                                 <Sparkline
                                     data={history}
-                                    color={status === 'safe' || status === 'neutral' ? '#60a5fa' : '#f87171'}
-                                    height={40}
+                                    color={status === 'safe' || status === 'neutral' ? 'currentColor' : '#f43f5e'}
+                                    height={32}
                                 />
                             </div>
                         )}

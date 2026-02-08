@@ -19,28 +19,28 @@ const LoadingFallback = () => (
 
 export const DashboardView: React.FC = () => {
     return (
-        <Container maxWidth="xl" sx={{ py: 8 }}>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <Container maxWidth="xl" sx={{ py: 6 }}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <DataHealthTicker />
             </div>
 
-            <Tabs defaultValue="heartbeat" className="space-y-12">
-                <TabsList className="bg-background/5 border border-border/40 p-1">
-                    <TabsTrigger value="heartbeat">Macro Heartbeat</TabsTrigger>
-                    <TabsTrigger value="flow-map">Interstate Flow Map</TabsTrigger>
+            <Tabs defaultValue="heartbeat" className="space-y-8">
+                <TabsList className="bg-muted/20 border border-border/40 p-1 rounded-lg">
+                    <TabsTrigger value="heartbeat" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Macro Heartbeat</TabsTrigger>
+                    <TabsTrigger value="flow-map" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Interstate Flow Map</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="heartbeat" className="space-y-32 outline-none">
-                    <section id="heartbeat-hero" className="my-16">
+                <TabsContent value="heartbeat" className="space-y-16 outline-none">
+                    <section id="heartbeat-hero" className="mt-8 mb-12">
                         <SectionHeader
                             title="Macro Heartbeat"
                             subtitle="High-frequency liquidity and regime signals"
                             sectionId="heartbeat"
                         />
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
                             <SectionErrorBoundary name="KPI Grid">
                                 <Suspense fallback={<LoadingFallback />}>
-                                    <div className="space-y-8">
+                                    <div className="space-y-6">
                                         <CockpitKPIGrid />
                                     </div>
                                 </Suspense>
@@ -48,10 +48,10 @@ export const DashboardView: React.FC = () => {
 
                             <SectionErrorBoundary name="Liquidity Terminal">
                                 <Suspense fallback={<LoadingFallback />}>
-                                    <div className="space-y-8">
+                                    <div className="space-y-6">
                                         <NetLiquidityCard />
-                                        <div className="p-8 rounded-2xl bg-blue-500/[0.02] border border-blue-500/10 italic text-xs text-muted-foreground/40 leading-relaxed">
-                                            Institutional Note: The Heartbeat suite monitors 48+ data points across G7 and EM markets to detect regime shifts in real-time.
+                                        <div className="p-6 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 italic text-xs text-muted-foreground/60 leading-relaxed">
+                                            <span className="font-semibold text-blue-500">Institutional Note:</span> The Heartbeat suite monitors 48+ data points across G7 and EM markets to detect regime shifts in real-time.
                                         </div>
                                     </div>
                                 </Suspense>
@@ -59,8 +59,8 @@ export const DashboardView: React.FC = () => {
                         </div>
                     </section>
 
-                    <section id="regime-context" className="shaded-band py-24 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-                        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <section id="regime-context" className="shaded-band py-16 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-black/20">
+                        <div className="max-w-[1920px] mx-auto px-4 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
                             <SectionErrorBoundary name="Macro Orientation">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <MacroOrientationSection />
@@ -100,10 +100,10 @@ export const DashboardView: React.FC = () => {
                             transition: 'all 0.3s',
                             position: 'relative',
                             overflow: 'hidden'
-                        }} className="hover:border-blue-500/10 group">
+                        }} className="hover:border-blue-500/10 group bg-card/10">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent opacity-50" />
-                            <span className="text-muted-foreground/20 text-sm tracking-[0.4em] uppercase font-black mb-4">Capital Flow Visualization</span>
-                            <span className="text-muted-foreground/10 text-[0.65rem] italic">Sankey Engine Initializing...</span>
+                            <span className="text-muted-foreground/40 text-sm tracking-[0.4em] uppercase font-bold mb-4">Capital Flow Visualization</span>
+                            <span className="text-muted-foreground/20 text-xs italic">Sankey Engine Initializing...</span>
                         </Box>
                     </section>
                 </TabsContent>
