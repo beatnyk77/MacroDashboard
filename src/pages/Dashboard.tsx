@@ -27,6 +27,7 @@ const HardAssetValuationSection = lazy(() => import('@/features/dashboard/compon
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const BRICSTrackerSection = lazy(() => import('@/features/dashboard/components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
 const DeDollarizationSection = lazy(() => import('@/features/dashboard/components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
+const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 
 // Country Pulses
@@ -162,15 +163,22 @@ export const Dashboard: React.FC = () => {
                                 "Gold Reserves at ATH"
                             ]}
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <SectionErrorBoundary name="De-Dollarization">
+                            <div className="space-y-8">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <SectionErrorBoundary name="De-Dollarization">
+                                        <Suspense fallback={<LoadingFallback />}>
+                                            <DeDollarizationSection />
+                                        </Suspense>
+                                    </SectionErrorBoundary>
+                                    <SectionErrorBoundary name="BRICS Tracker">
+                                        <Suspense fallback={<LoadingFallback />}>
+                                            <BRICSTrackerSection />
+                                        </Suspense>
+                                    </SectionErrorBoundary>
+                                </div>
+                                <SectionErrorBoundary name="Trade Flows">
                                     <Suspense fallback={<LoadingFallback />}>
-                                        <DeDollarizationSection />
-                                    </Suspense>
-                                </SectionErrorBoundary>
-                                <SectionErrorBoundary name="BRICS Tracker">
-                                    <Suspense fallback={<LoadingFallback />}>
-                                        <BRICSTrackerSection />
+                                        <TradeFlowsCard />
                                     </Suspense>
                                 </SectionErrorBoundary>
                             </div>

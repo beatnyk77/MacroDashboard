@@ -26,7 +26,7 @@ const GoldReturnsSection = lazy(() => import('@/features/dashboard/components/se
 const BRICSTrackerSection = lazy(() => import('@/features/dashboard/components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
 const DeDollarizationSection = lazy(() => import('@/features/dashboard/components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
 const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
-const TradeSettlementFlows = lazy(() => import('@/features/dashboard/components/sections/TradeSettlementFlows').then(m => ({ default: m.TradeSettlementFlows })));
+const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const EnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/EnergySecuritySection').then(m => ({ default: m.EnergySecuritySection })));
 
@@ -181,7 +181,7 @@ export const GraphiQuestorSPA: React.FC = () => {
 
                             <SectionErrorBoundary name="Trade Flows">
                                 <Suspense fallback={<LoadingFallback />}>
-                                    <TradeSettlementFlows />
+                                    <TradeFlowsCard />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </SPAAccordion>
