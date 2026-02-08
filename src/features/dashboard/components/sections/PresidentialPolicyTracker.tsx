@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flag, ShieldAlert, Zap, Info, Target, TrendingUp, TrendingDown, ChevronDown } from 'lucide-react';
+import { Flag, ShieldAlert, Zap, Target, TrendingUp, TrendingDown, ChevronDown } from 'lucide-react';
 import { usePresidentialPolicies } from '@/hooks/usePresidentialPolicies';
 import { cn } from '@/lib/utils';
 
