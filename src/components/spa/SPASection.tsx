@@ -9,6 +9,8 @@ interface SPASectionProps {
     variant?: 'default' | 'band' | 'hero';
     /** Disable scroll-triggered animation */
     disableAnimation?: boolean;
+    /** Apply staggered fade-in to children */
+    staggerChildren?: boolean;
 }
 
 /**
@@ -21,6 +23,7 @@ export const SPASection: React.FC<SPASectionProps> = ({
     className,
     variant = 'default',
     disableAnimation = false,
+    staggerChildren = false,
 }) => {
     const ref = useRef<HTMLElement>(null);
     const [isVisible, setIsVisible] = useState(disableAnimation);
@@ -47,15 +50,9 @@ export const SPASection: React.FC<SPASectionProps> = ({
 
     const baseStyles = 'w-full';
 
-    const variantStyles = {
-        default: 'px-4 sm:px-6 lg:px-8',
-        band: 'py-16 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-slate-900/50 border-y border-white/5',
-        hero: 'px-4 sm:px-6 lg:px-8 py-8',
-    };
-
     const animationStyles = isVisible
         ? 'opacity-100 translate-y-0'
-        : 'opacity-0 translate-y-4';
+        : 'opacity-0 translate-y-8';
 
     return (
         <section
@@ -63,13 +60,18 @@ export const SPASection: React.FC<SPASectionProps> = ({
             id={id}
             className={cn(
                 baseStyles,
-                variantStyles[variant],
-                'transition-all duration-700 ease-out',
+                variant === 'band' && 'shaded-band',
+                'transition-all duration-1000 cubic-bezier(0.22, 1, 0.36, 1)',
                 animationStyles,
+                staggerChildren && '[&>*]:opacity-0',
+                isVisible && staggerChildren && '[&>*]:animate-in [&>*]:fade-in [&>*]:slide-in-from-bottom-4 [&>*]:duration-700',
                 className
             )}
         >
-            <div className="max-w-[1600px] mx-auto">
+            <div className={cn(
+                "spa-row mx-auto transition-all duration-1000 delay-100",
+                isVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]"
+            )}>
                 {children}
             </div>
         </section>

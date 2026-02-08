@@ -1,33 +1,28 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Activity, IndianRupee } from 'lucide-react';
 
-// Design Principle: Distinctive Typography & Bold Aesthetic
-// Using a rich gradient and glassmorphism for the card
-
 const MetricValue: React.FC<{ label: string; value: number; unit: string; trend?: number }> = ({ label, value, unit, trend }) => (
     <div className="flex flex-col">
-        <span className="text-[0.65rem] font-bold uppercase tracking-widest text-white/50 mb-1">{label}</span>
-        <div className="flex items-baseline gap-1">
+        <span className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 mb-1.5">{label}</span>
+        <div className="flex items-baseline gap-1.5">
             <span className="text-2xl font-black text-white font-mono tracking-tighter">
                 {value.toFixed(1)}
             </span>
-            <span className="text-xs font-bold text-white/60">{unit}</span>
+            <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">{unit}</span>
         </div>
         {trend !== undefined && (
-            <div className={cn("flex items-center gap-1 text-[0.6rem] font-bold mt-1", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
+            <div className={cn("flex items-center gap-1 text-[0.6rem] font-black mt-1.5 uppercase tracking-widest", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
                 {trend > 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                <span>{Math.abs(trend)}% vs last</span>
+                <span>{Math.abs(trend)}% vs PREV</span>
             </div>
         )}
     </div>
 );
 
 export const IndiaMacroCard: React.FC = () => {
-    // Fetch specifically India metrics
     const { data: metrics } = useQuery({
         queryKey: ['india_macro_card'],
         queryFn: async () => {
@@ -49,79 +44,82 @@ export const IndiaMacroCard: React.FC = () => {
     const miseryIndex = (metrics['IN_CPI_YOY'] || 0) + (metrics['IN_UNEMPLOYMENT_RATE'] || 0);
 
     return (
-        <Card className="relative overflow-hidden border-0 group h-full">
-            {/* Background Gradient - India Flag Inspired but Dark/Premium */}
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-slate-950 to-emerald-500/10 opacity-100 transition-opacity duration-500" />
+        <div className="spa-card relative overflow-hidden group min-h-[400px] flex flex-col justify-between p-0 border-0">
+            {/* Background Layering */}
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/[0.08] via-slate-950 to-emerald-500/[0.08] pointer-events-none" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay pointer-events-none" />
 
-            {/* Texture Overlay */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+            <div className="relative p-8 lg:p-10 flex flex-col h-full">
 
-            <div className="relative p-6 flex flex-col h-full justify-between">
-
-                {/* Header */}
-                <div className="flex justify-between items-start mb-6">
+                {/* Header Section */}
+                <div className="flex justify-between items-start mb-10">
                     <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="text-2xl">🇮🇳</span>
-                            <h3 className="font-black text-lg text-white tracking-tight">INDIA MACRO</h3>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 shadow-lg shadow-orange-500/5">
+                                <IndianRupee className="w-5 h-5 text-orange-400" />
+                            </div>
+                            <h3 className="text-2xl font-black text-white tracking-tighter">INDIA MACRO</h3>
                         </div>
-                        <p className="text-[0.65rem] font-medium text-white/40 uppercase tracking-widest">
-                            MoSPI Official Data
+                        <p className="text-[0.65rem] font-black text-white/30 uppercase tracking-[0.3em]">
+                            MoSPI Institutional Feed
                         </p>
                     </div>
-                    <div className="p-2 bg-white/5 rounded-lg backdrop-blur-md border border-white/10">
-                        <IndianRupee className="w-4 h-4 text-orange-400" />
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[0.6rem] font-black text-emerald-400/80 uppercase tracking-widest">Live Signal</span>
                     </div>
                 </div>
 
-                {/* Primary Metric - Misery Index */}
-                <div className="mb-8 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/5 backdrop-blur-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-2 opacity-10">
-                        <Activity size={64} />
+                {/* Economic Misery Index - Hero Metric */}
+                <div className="mb-10 p-6 lg:p-8 rounded-3xl bg-white/[0.02] border border-white/[0.05] backdrop-blur-md relative overflow-hidden group/hero">
+                    <div className="absolute -top-4 -right-4 opacity-[0.03] group-hover/hero:opacity-[0.06] transition-opacity duration-700">
+                        <Activity className="w-48 h-48 text-white rotate-12" />
                     </div>
-                    <span className="text-[0.65rem] font-bold uppercase tracking-widest text-orange-300 block mb-2">
+
+                    <span className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-orange-400/60 block mb-4">
                         Economic Misery Index
                     </span>
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex items-baseline gap-4">
                         <span className={cn(
-                            "text-4xl font-black font-mono tracking-tighter",
+                            "text-6xl font-black font-mono tracking-tighter",
                             miseryIndex > 12 ? "text-rose-500" : (miseryIndex < 8 ? "text-emerald-500" : "text-amber-500")
                         )}>
                             {miseryIndex.toFixed(1)}
                         </span>
-                        <span className="text-sm text-white/50 font-medium">
-                            (CPI + Unemp)
-                        </span>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-black text-white/60 uppercase tracking-widest">Aggregated</span>
+                            <span className="text-[0.6rem] font-bold text-white/30 uppercase tracking-widest">(CPI + Unemp)</span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Grid of Core Metrics */}
-                <div className="grid grid-cols-2 gap-6">
+                {/* Secondary Metrics Grid */}
+                <div className="grid grid-cols-2 gap-x-12 gap-y-10">
                     <MetricValue
-                        label="GDP Growth"
+                        label="GDP Growth YOY"
                         value={metrics['IN_GDP_GROWTH_YOY']}
                         unit="%"
                     />
                     <MetricValue
-                        label="Inflation (CPI)"
+                        label="Consumer Inflation"
                         value={metrics['IN_CPI_YOY']}
                         unit="%"
                     />
                     <MetricValue
-                        label="Unemployment"
+                        label="Unemployment Rate"
                         value={metrics['IN_UNEMPLOYMENT_RATE']}
                         unit="%"
                     />
                     <MetricValue
-                        label="Industrial Prod."
+                        label="Industrial Output"
                         value={metrics['IN_IIP_YOY']}
                         unit="%"
                     />
                 </div>
             </div>
 
-            {/* Border Gradient */}
-            <div className="absolute inset-0 border border-white/10 rounded-xl pointer-events-none" />
-        </Card>
+            {/* Premium Glow Border */}
+            <div className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none group-hover:border-white/20 transition-colors duration-500" />
+        </div>
     );
 };

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Typography, Card, Tooltip, Chip, LinearProgress, IconButton, Collapse } from '@mui/material';
 import { Flag, ShieldAlert, Zap, Info, Target, TrendingUp, TrendingDown, ChevronDown } from 'lucide-react';
 import { usePresidentialPolicies } from '@/hooks/usePresidentialPolicies';
+import { cn } from '@/lib/utils';
 
-// Mock asset impact data - in production this would come from the database
 interface AssetImpact {
     symbol: string;
     change: number;
@@ -43,233 +42,130 @@ export const PresidentialPolicyTracker: React.FC = () => {
     };
 
     return (
-        <Card sx={{
-            p: 4,
-            height: '100%',
-            bgcolor: 'rgba(15, 23, 42, 0.4)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3,
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '4px',
-                height: '100%',
-                bgcolor: 'error.main',
-                opacity: 0.8
-            }
-        }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-                        <Target size={18} color="#ef4444" />
-                        <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: '0.2em', color: 'text.secondary', fontSize: '0.75rem' }}>
-                            ADMINISTRATION INTELLIGENCE
-                        </Typography>
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 900, letterSpacing: '-0.02em' }}>
-                        Policy Impact Monitor: Trump 2.0
-                    </Typography>
-                </Box>
-                <Chip
-                    label="H-S CONFIDENCE"
-                    size="small"
-                    sx={{
-                        fontSize: '0.6rem',
-                        fontWeight: 900,
-                        bgcolor: 'rgba(239, 68, 68, 0.1)',
-                        color: 'error.light',
-                        border: '1px solid rgba(239, 68, 68, 0.2)'
-                    }}
-                />
-            </Box>
+        <div className="spa-card bg-rose-500/[0.02] border-rose-500/10 relative overflow-hidden flex flex-col gap-6">
+            {/* Edge accent */}
+            <div className="absolute top-0 left-0 w-1 h-full bg-rose-500/60" />
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div className="flex justify-between items-start">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Target size={16} className="text-rose-500" />
+                        <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                            ADMINISTRATION INTELLIGENCE
+                        </span>
+                    </div>
+                    <h3 className="text-xl font-black tracking-tight text-foreground">
+                        Policy Impact Monitor: Trump 2.0
+                    </h3>
+                </div>
+                <div className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
+                    <span className="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest">H-S CONFIDENCE</span>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-8">
                 {policies.slice(0, 4).map((policy, idx) => {
                     const absScore = Math.abs(policy.policy_score);
                     const isPositive = policy.policy_score > 0;
                     const assetImpacts = MOCK_ASSET_IMPACTS[policy.event_name] || [];
                     const narrativeTag = NARRATIVE_TAGS[policy.event_name];
                     const macroAnalogue = MACRO_ANALOGUES[policy.event_name];
-                    const isExpanded = expandedId !== null && expandedId === policy.id;
+                    const isExpanded = expandedId === policy.id;
 
                     return (
-                        <Box key={policy.id} sx={{
-                            position: 'relative',
-                            pb: 2,
-                            borderBottom: idx < policies.slice(0, 4).length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                        }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    {isPositive ? <Zap size={14} color="#f59e0b" /> : <ShieldAlert size={14} color="#ef4444" />}
-                                    <Typography variant="caption" sx={{ fontWeight: 800, color: isPositive ? 'warning.light' : 'error.light', letterSpacing: '0.05em' }}>
-                                        {policy.category.toUpperCase()}
-                                    </Typography>
-                                </Box>
-                                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 700 }}>
+                        <div key={policy.id} className={cn(
+                            "relative pb-2",
+                            idx < policies.slice(0, 4).length - 1 && "border-b border-white/5"
+                        )}>
+                            <div className="flex justify-between items-center mb-3">
+                                <div className="flex items-center gap-1.5">
+                                    {isPositive ? <Zap size={12} className="text-amber-500" /> : <ShieldAlert size={12} className="text-rose-500" />}
+                                    <span className={cn(
+                                        "text-[0.65rem] font-black uppercase tracking-widest",
+                                        isPositive ? "text-amber-400/80" : "text-rose-400/80"
+                                    )}>
+                                        {policy.category}
+                                    </span>
+                                </div>
+                                <span className="text-[0.65rem] font-bold text-muted-foreground/40">
                                     {new Date(policy.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                </Typography>
-                            </Box>
+                                </span>
+                            </div>
 
-                            <Typography variant="body2" sx={{ fontWeight: 800, mb: 1, color: 'text.primary', lineHeight: 1.3 }}>
+                            <h4 className="text-sm font-black text-foreground mb-2 leading-tight">
                                 {policy.event_name}
-                            </Typography>
+                            </h4>
 
-                            {/* Narrative Tag */}
                             {narrativeTag && (
-                                <Chip
-                                    label={narrativeTag}
-                                    size="small"
-                                    sx={{
-                                        mb: 1.5,
-                                        height: '20px',
-                                        fontSize: '0.65rem',
-                                        fontWeight: 700,
-                                        bgcolor: 'rgba(59, 130, 246, 0.1)',
-                                        color: 'primary.light',
-                                        border: '1px solid rgba(59, 130, 246, 0.2)'
-                                    }}
-                                />
+                                <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-3">
+                                    <span className="text-[0.6rem] font-bold text-blue-400/80">{narrativeTag}</span>
+                                </div>
                             )}
 
-                            {/* Affected Assets */}
                             {assetImpacts.length > 0 && (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                                <div className="flex flex-wrap gap-2 mb-4">
                                     {assetImpacts.map((asset, assetIdx) => (
-                                        <Chip
-                                            key={assetIdx}
-                                            icon={asset.direction === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                            label={`${asset.symbol} ${asset.change > 0 ? '+' : ''}${asset.change}%`}
-                                            size="small"
-                                            sx={{
-                                                height: '24px',
-                                                fontSize: '0.7rem',
-                                                fontWeight: 800,
-                                                bgcolor: asset.direction === 'up' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                                                color: asset.direction === 'up' ? 'success.light' : 'error.light',
-                                                border: '1px solid',
-                                                borderColor: asset.direction === 'up' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
-                                                '& .MuiChip-icon': {
-                                                    color: asset.direction === 'up' ? 'success.light' : 'error.light',
-                                                    ml: 0.5
-                                                }
-                                            }}
-                                        />
+                                        <div key={assetIdx} className={cn(
+                                            "flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[0.65rem] font-black",
+                                            asset.direction === 'up' ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400" : "bg-rose-500/5 border-rose-500/20 text-rose-400"
+                                        )}>
+                                            {asset.direction === 'up' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                                            {asset.symbol} {asset.change > 0 ? '+' : ''}{asset.change}%
+                                        </div>
                                     ))}
-                                </Box>
+                                </div>
                             )}
 
-                            <Box sx={{ mt: 2 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', fontWeight: 700 }}>
-                                        MARKET IMPACT MAGNITUDE
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ fontWeight: 900, color: isPositive ? 'success.light' : 'error.light' }}>
+                            {/* Magnitude Bar */}
+                            <div className="mt-4">
+                                <div className="flex justify-between items-center mb-1.5">
+                                    <span className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40">Market Magnitude</span>
+                                    <span className={cn("text-[0.65rem] font-black", isPositive ? "text-emerald-400" : "text-rose-400")}>
                                         {absScore * 10}%
-                                    </Typography>
-                                </Box>
-                                <LinearProgress
-                                    variant="determinate"
-                                    value={absScore * 10}
-                                    sx={{
-                                        height: 4,
-                                        borderRadius: 2,
-                                        bgcolor: 'rgba(255,255,255,0.05)',
-                                        '& .MuiLinearProgress-bar': {
-                                            bgcolor: isPositive ? 'success.main' : 'error.main'
-                                        }
-                                    }}
-                                />
-                            </Box>
+                                    </span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div
+                                        className={cn("h-full transition-all duration-1000", isPositive ? "bg-emerald-500" : "bg-rose-500")}
+                                        style={{ width: `${absScore * 10}%` }}
+                                    />
+                                </div>
+                            </div>
 
-                            {/* Macro Analogue Badge */}
                             {macroAnalogue && (
-                                <Box>
-                                    <Box
+                                <div className="mt-4">
+                                    <button
                                         onClick={() => toggleExpanded(policy.id)}
-                                        sx={{
-                                            mt: 1.5,
-                                            px: 1.5,
-                                            py: 1,
-                                            bgcolor: 'rgba(234, 179, 8, 0.05)',
-                                            borderRadius: 1,
-                                            border: '1px solid rgba(234, 179, 8, 0.2)',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            '&:hover': {
-                                                bgcolor: 'rgba(234, 179, 8, 0.1)',
-                                                borderColor: 'rgba(234, 179, 8, 0.4)'
-                                            }
-                                        }}
+                                        className="w-full flex items-center justify-between p-2 rounded-xl bg-amber-500/[0.03] border border-amber-500/10 hover:bg-amber-500/[0.08] transition-all group"
                                     >
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                                                <Flag size={10} color="#eab308" />
-                                                <Typography variant="caption" sx={{ color: 'warning.light', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em' }}>
-                                                    MACRO ANALOGUE
-                                                </Typography>
-                                            </Box>
-                                            <IconButton size="small" sx={{ p: 0 }}>
-                                                <ChevronDown
-                                                    size={14}
-                                                    color="#eab308"
-                                                    style={{
-                                                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                                        transition: 'transform 0.2s'
-                                                    }}
-                                                />
-                                            </IconButton>
-                                        </Box>
-                                    </Box>
-                                    <Collapse in={isExpanded}>
-                                        <Box sx={{
-                                            mt: 1,
-                                            px: 1.5,
-                                            py: 1.5,
-                                            bgcolor: 'rgba(15, 23, 42, 0.6)',
-                                            borderRadius: 1,
-                                            border: '1px solid rgba(255,255,255,0.05)'
-                                        }}>
-                                            <Typography variant="caption" sx={{ color: 'warning.light', fontSize: '0.7rem', fontWeight: 600, lineHeight: 1.5 }}>
+                                        <div className="flex items-center gap-2">
+                                            <Flag size={10} className="text-amber-500/60" />
+                                            <span className="text-[0.6rem] font-black uppercase tracking-widest text-amber-500/60 group-hover:text-amber-400 transition-colors">Macro Analogue</span>
+                                        </div>
+                                        <ChevronDown size={14} className={cn("text-amber-500/60 transition-transform", isExpanded && "rotate-180")} />
+                                    </button>
+                                    {isExpanded && (
+                                        <div className="mt-2 p-3 rounded-xl bg-black/20 border border-white/5">
+                                            <p className="text-[0.7rem] font-bold text-amber-400/80 leading-relaxed italic">
                                                 {macroAnalogue}
-                                            </Typography>
-                                        </Box>
-                                    </Collapse>
-                                </Box>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             )}
-
-                            <Tooltip title={policy.impact_notes} arrow placement="top">
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1.5, cursor: 'help' }}>
-                                    <Info size={12} color="#64748b" />
-                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.68rem', fontWeight: 600 }}>
-                                        Institutional Impact Attribution...
-                                    </Typography>
-                                </Box>
-                            </Tooltip>
-                        </Box>
+                        </div>
                     );
                 })}
-            </Box>
+            </div>
 
-            <Box sx={{
-                mt: 'auto',
-                pt: 2,
-                px: 2,
-                py: 1.5,
-                bgcolor: 'rgba(239, 68, 68, 0.05)',
-                borderRadius: 2,
-                border: '1px solid rgba(239, 68, 68, 0.1)'
-            }}>
-                <Typography variant="caption" sx={{ color: 'error.light', fontSize: '0.65rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Flag size={10} /> Live policy tracking with historical correlation analysis
-                </Typography>
-            </Box>
-        </Card>
+            <div className="mt-auto p-3 rounded-2xl bg-rose-500/5 border border-rose-500/10">
+                <div className="flex items-center gap-2">
+                    <Flag size={10} className="text-rose-400/60" />
+                    <p className="text-[0.6rem] font-bold text-rose-400/60 uppercase tracking-widest leading-tight">
+                        Live policy tracking with deep historical correlation analysis
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 };

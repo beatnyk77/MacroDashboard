@@ -32,18 +32,28 @@ export const MobileNav: React.FC = () => {
                     setValue(newValue);
                     // Map generic indexes to section IDs
                     switch (newValue) {
-                        case 0: scrollToSection('top'); break;
-                        case 1: scrollToSection('regime-section'); break;
-                        case 2: scrollToSection('gold-section'); break;
-                        case 3: scrollToSection('policy-section'); break;
+                        case 0: scrollToSection('liquidity-hero'); break;
+                        case 1: scrollToSection('policy-geopolitics'); break;
+                        case 2: scrollToSection('thematic-labs'); break;
+                        case 3: scrollToSection('india-pulse'); break;
                     }
                 }}
-                sx={{ bgcolor: 'background.paper' }}
+                sx={{
+                    bgcolor: 'rgba(15, 23, 42, 0.8)',
+                    backdropFilter: 'blur(16px)',
+                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                    '& .MuiBottomNavigationAction-root': {
+                        color: 'rgba(255,255,255,0.4)',
+                        '&.Mui-selected': {
+                            color: '#3b82f6',
+                        }
+                    }
+                }}
             >
                 <BottomNavigationAction label="Macro" icon={<LayoutDashboard size={20} />} />
-                <BottomNavigationAction label="Regime" icon={<Activity size={20} />} />
-                <BottomNavigationAction label="Assets" icon={<Coins size={20} />} />
                 <BottomNavigationAction label="Policy" icon={<FileText size={20} />} />
+                <BottomNavigationAction label="Labs" icon={<Coins size={20} />} />
+                <BottomNavigationAction label="India" icon={<Activity size={20} />} />
             </BottomNavigation>
         </Paper>
     );

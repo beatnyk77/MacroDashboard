@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, ResponsiveContainer, Cell, LabelList, Tooltip as RechartsTooltip } from 'recharts';
-import { SectionHeader } from '@/components/SectionHeader';
 import { useMajorEconomies } from '@/hooks/useMajorEconomies';
+import { cn } from '@/lib/utils';
+import { ArrowDown } from 'lucide-react';
 
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -34,6 +35,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const SovereignRiskMatrix = React.memo(() => {
     const { data, isLoading } = useMajorEconomies();
+    const [isExpanded, setIsExpanded] = React.useState(false);
 
     if (isLoading || !data) return null;
 
@@ -52,89 +54,94 @@ export const SovereignRiskMatrix = React.memo(() => {
 
 
     return (
-        <Box sx={{ mb: 6 }}>
-            <SectionHeader
-                title="Sovereign Risk Matrix"
-                subtitle="Mapping Fiscal Vulnerability (Debt/Gold) vs Economic Vitality (Real Growth)"
-                lastUpdated={data?.[0]?.last_updated}
-            />
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Sovereign Risk Matrix</h3>
+                    <p className="text-[0.65rem] font-black tracking-widest text-muted-foreground/50 uppercase">Fiscal Vulnerability (Debt/Gold) vs Vitality (Growth)</p>
+                </div>
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[0.6rem] font-black uppercase tracking-widest transition-all"
+                >
+                    {isExpanded ? 'Collapse Analysis' : 'Expand Deep Analysis'}
+                </button>
+            </div>
 
-            <Paper sx={{
-                p: 3,
-                bgcolor: 'background.paper',
-                backgroundImage: 'none',
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 2,
-                height: 450,
-                position: 'relative',
-                overflow: 'hidden'
-            }}>
-                {/* Quadrant Labels */}
-                <Typography variant="overline" sx={{ position: 'absolute', top: 20, left: 80, color: 'success.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
-                    DYNAMIC ANCHORS (SAFE)
-                </Typography>
-                <Typography variant="overline" sx={{ position: 'absolute', top: 20, right: 30, color: 'warning.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
-                    GROWTH AT RISK
-                </Typography>
-                <Typography variant="overline" sx={{ position: 'absolute', bottom: 60, right: 30, color: 'error.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
-                    FISCAL TRAP (DANGER)
-                </Typography>
-                <Typography variant="overline" sx={{ position: 'absolute', bottom: 60, left: 80, color: 'primary.main', fontWeight: 900, opacity: 0.3, fontSize: '0.6rem' }}>
-                    STAGNANT STABILITY
-                </Typography>
+            <div className={cn(
+                "spa-card bg-slate-900/40 border-white/5 overflow-hidden transition-all duration-700 ease-in-out",
+                isExpanded ? "h-[550px] opacity-100" : "h-[200px] opacity-80 hover:opacity-100"
+            )}>
+                {!isExpanded && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/60 backdrop-blur-[2px] cursor-pointer group" onClick={() => setIsExpanded(true)}>
+                        <div className="text-center group-hover:scale-110 transition-transform">
+                            <ArrowDown className="w-8 h-8 text-blue-500 mx-auto mb-2 opacity-50 group-hover:opacity-100" />
+                            <span className="text-[0.65rem] font-black text-blue-400 uppercase tracking-[0.2em]">Reveal Global Risk Landscape</span>
+                        </div>
+                    </div>
+                )}
 
-                <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                        <XAxis
-                            type="number"
-                            dataKey="x"
-                            name="Risk"
-                            unit="x"
-                            domain={[0, 'auto']}
-                            stroke="rgba(255,255,255,0.3)"
-                            fontSize={10}
-                            label={{ value: 'Debt / Gold Ratio (Lower = Stronger)', position: 'insideBottom', offset: -10, fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 700 }}
-                        />
-                        <YAxis
-                            type="number"
-                            dataKey="y"
-                            name="Vitality"
-                            unit="%"
-                            domain={[0, 'auto']}
-                            stroke="rgba(255,255,255,0.3)"
-                            fontSize={10}
-                            label={{ value: 'Real GDP Growth %', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 700 }}
-                        />
-                        <ZAxis type="number" dataKey="z" range={[100, 2000]} />
-                        <RechartsTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
+                <div className="h-full pt-4">
+                    <div className="relative h-full px-4">
+                        {/* Quadrant Labels */}
+                        {isExpanded && (
+                            <>
+                                <div className="absolute top-4 left-20 text-[0.55rem] font-black text-emerald-500/40 uppercase tracking-widest pointer-events-none">DYNAMIC ANCHORS</div>
+                                <div className="absolute top-4 right-10 text-[0.55rem] font-black text-amber-500/40 uppercase tracking-widest pointer-events-none">GROWTH AT RISK</div>
+                                <div className="absolute bottom-16 right-10 text-[0.55rem] font-black text-rose-500/40 uppercase tracking-widest pointer-events-none">FISCAL TRAP</div>
+                                <div className="absolute bottom-16 left-20 text-[0.55rem] font-black text-blue-500/40 uppercase tracking-widest pointer-events-none">STAGNANT STABILITY</div>
+                            </>
+                        )}
 
-                        {/* Shaded Quadrants for interpretation */}
-                        {/* Top Left: Safe Zone (Dynamic Anchors) */}
-                        <rect x="0" y="0" width="50%" height="50%" fill="rgba(16, 185, 129, 0.03)" />
-                        {/* Bottom Right: Danger Zone (Fiscal Trap) */}
-                        <rect x="50%" y="50%" width="50%" height="50%" fill="rgba(239, 68, 68, 0.03)" />
-
-                        <Scatter data={chartData}>
-                            {chartData.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={entry.cpi > 5 ? '#ef4444' : (entry.y > 4 ? '#10b981' : '#3b82f6')}
-                                    fillOpacity={0.6}
-                                    stroke={entry.cpi > 5 ? '#ef4444' : (entry.y > 4 ? '#10b981' : '#3b82f6')}
-                                    strokeWidth={1}
+                        <ResponsiveContainer width="100%" height="100%">
+                            <ScatterChart margin={{ top: 20, right: 20, bottom: 40, left: 20 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <XAxis
+                                    type="number"
+                                    dataKey="x"
+                                    name="Risk"
+                                    unit="x"
+                                    domain={[0, 'auto']}
+                                    stroke="rgba(255,255,255,0.2)"
+                                    fontSize={9}
+                                    tick={{ fill: 'rgba(255,255,255,0.3)' }}
+                                    label={{ value: 'Debt / Gold Ratio', position: 'insideBottom', offset: -10, fill: 'rgba(255,255,255,0.3)', fontSize: 9, fontWeight: 900 }}
                                 />
-                            ))}
-                            <LabelList
-                                dataKey="code"
-                                position="top"
-                                style={{ fill: 'rgba(255,255,255,0.8)', fontSize: '10px', fontWeight: 'bold' }}
-                            />
-                        </Scatter>
-                    </ScatterChart>
-                </ResponsiveContainer>
-            </Paper>
-        </Box>
+                                <YAxis
+                                    type="number"
+                                    dataKey="y"
+                                    name="Vitality"
+                                    unit="%"
+                                    domain={[0, 'auto']}
+                                    stroke="rgba(255,255,255,0.2)"
+                                    fontSize={9}
+                                    tick={{ fill: 'rgba(255,255,255,0.3)' }}
+                                    label={{ value: 'Real GDP Growth %', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.3)', fontSize: 9, fontWeight: 900 }}
+                                />
+                                <ZAxis type="number" dataKey="z" range={[50, 1000]} />
+                                <RechartsTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
+
+                                <Scatter data={chartData}>
+                                    {chartData.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.cpi > 5 ? '#ef4444' : (entry.y > 4 ? '#10b981' : '#3b82f6')}
+                                            fillOpacity={0.5}
+                                            stroke={entry.cpi > 5 ? '#ef4444' : (entry.y > 4 ? '#10b981' : '#3b82f6')}
+                                            strokeWidth={1}
+                                        />
+                                    ))}
+                                    <LabelList
+                                        dataKey="code"
+                                        position="top"
+                                        style={{ fill: 'rgba(255,255,255,0.6)', fontSize: '9px', fontWeight: '900' }}
+                                    />
+                                </Scatter>
+                            </ScatterChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 });

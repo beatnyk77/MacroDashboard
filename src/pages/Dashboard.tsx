@@ -1,0 +1,248 @@
+import React, { Suspense, lazy } from 'react';
+import { Container } from '@mui/material';
+import {
+    Coins,
+    Globe2,
+    Building2,
+    MapPin,
+    ShieldAlert,
+    Briefcase
+} from 'lucide-react';
+import { SPASection, SPAAccordion } from '@/components/spa';
+import { SectionHeader } from '@/components/SectionHeader';
+import { DataHealthTicker } from '@/components/DataHealthTicker';
+import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+
+// Row Components
+import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
+
+// Lazy load feature components
+const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
+const SankeyFlowCard = lazy(() => import('@/features/dashboard/components/sections/SankeyFlowCard').then(m => ({ default: m.SankeyFlowCard })));
+const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
+const GeopoliticalRiskPulseCard = lazy(() => import('@/features/dashboard/components/sections/GeopoliticalRiskPulseCard').then(m => ({ default: m.GeopoliticalRiskPulseCard })));
+
+// Thematic Labs
+const HardAssetValuationSection = lazy(() => import('@/features/dashboard/components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
+const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
+const BRICSTrackerSection = lazy(() => import('@/features/dashboard/components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
+const DeDollarizationSection = lazy(() => import('@/features/dashboard/components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
+const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
+
+// Country Pulses
+const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
+const ChinaMacroPulseSection = lazy(() => import('@/components/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
+
+const LoadingFallback = () => (
+    <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
+        <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Signal...</span>
+    </div>
+);
+
+export const Dashboard: React.FC = () => {
+    return (
+        <Container maxWidth={false} disableGutters sx={{ py: 4 }}>
+            <div className="space-y-24">
+
+                {/* ROW 1: CORE LIQUIDITY SIGNAL */}
+                <SPASection id="liquidity-hero" variant="hero" disableAnimation>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
+                        <SectionHeader
+                            title="Macro Heartbeat"
+                            subtitle="High-frequency liquidity and regime signals"
+                            sectionId="heartbeat"
+                        />
+                        <DataHealthTicker />
+                    </div>
+
+                    <SectionErrorBoundary name="Net Liquidity Row">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <NetLiquidityRow />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* ROW 2: MARKET TERMINAL GRID */}
+                <SPASection id="market-pulse">
+                    <SectionErrorBoundary name="System Heartbeat">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CockpitKPIGrid />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* ROW 3: MACRO FLOWS (SANKEY) */}
+                <SPASection id="macro-flows" variant="band" staggerChildren={true}>
+                    <SectionHeader
+                        title="Macro Flow Map"
+                        subtitle="Interstate capital and energy liquidity flow visualization"
+                    />
+                    <div className="mt-12">
+                        <SectionErrorBoundary name="Flow Map">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <SankeyFlowCard />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+                </SPASection>
+
+                {/* ROW 4: POLICY & GEOPOLITICS */}
+                <SPASection id="policy-geopolitics" staggerChildren={true}>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <SPAAccordion
+                            title="Trump Action Monitor"
+                            subtitle="Presidential policy tracking & economic impact"
+                            icon={<ShieldAlert className="text-rose-500" />}
+                            accentColor="rose"
+                        >
+                            <SectionErrorBoundary name="Policy Tracker">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <PresidentialPolicyTracker />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPAAccordion>
+
+                        <SPAAccordion
+                            title="Geopolitical Pulse"
+                            subtitle="Global conflict risk and institutional sentiment"
+                            icon={<Globe2 className="text-blue-500" />}
+                            accentColor="blue"
+                        >
+                            <SectionErrorBoundary name="Geopolitics Card">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GeopoliticalRiskPulseCard />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPAAccordion>
+                    </div>
+                </SPASection>
+
+                {/* ROW 5: THEMATIC LABS */}
+                <SPASection id="thematic-labs" variant="band" className="py-24" staggerChildren={true}>
+                    <SectionHeader
+                        title="Thematic Deep Dives"
+                        subtitle="Detailed signal intelligence for Hard Assets, De-Dollarization, and Sovereign Sustainability"
+                    />
+
+                    <div className="mt-16 space-y-12">
+                        <SPAAccordion
+                            id="gold-anchor"
+                            title="Gold Anchor"
+                            subtitle="Debt/Gold ratios, M2/Gold σ, Shanghai Divergence"
+                            icon={<Coins />}
+                            accentColor="gold"
+                            interpretations={[
+                                "Shanghai/London Divergence: Wide",
+                                "M2/Gold Ratio: +1.2σ Expansion",
+                                "Physical Premium: Rising"
+                            ]}
+                        >
+                            <SectionErrorBoundary name="Gold Ratio Ribbon">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GoldRatioRibbon />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                            <SectionErrorBoundary name="Hard Assets">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <HardAssetValuationSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPAAccordion>
+
+                        {/* ... BRICS & De-Dollarization (already updated) ... */}
+                        <SPAAccordion
+                            id="brics-dedollarization"
+                            title="BRICS & De-Dollarization"
+                            subtitle="USD share decline, gold accumulation, East vs West influence"
+                            icon={<Briefcase />}
+                            accentColor="rose"
+                            interpretations={[
+                                "USD Share at 25-Year Low",
+                                "NDB Local Currency Loans Up",
+                                "Gold Reserves at ATH"
+                            ]}
+                        >
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <SectionErrorBoundary name="De-Dollarization">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <DeDollarizationSection />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                                <SectionErrorBoundary name="BRICS Tracker">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <BRICSTrackerSection />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                            </div>
+                        </SPAAccordion>
+
+                        <SPAAccordion
+                            id="sovereign-debt-stress"
+                            title="Sovereign Debt Stress"
+                            subtitle="G20 debt sustainability, credit spreads matrix"
+                            icon={<Building2 />}
+                            accentColor="purple"
+                            interpretations={[
+                                "G20 Debt/GDP: Polarizing",
+                                "CDS Spreads: Narrowing",
+                                "Refinancing Risk: Neutral"
+                            ]}
+                        >
+                            <SectionErrorBoundary name="Sovereign Risk">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <SovereignRiskMatrix />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPAAccordion>
+                    </div>
+                </SPASection>
+
+                {/* ROW 6: COUNTRY PULSES */}
+                <SPASection id="country-pulses" className="py-24">
+                    <SectionHeader
+                        title="Regional Pulse Terminals"
+                        subtitle="Institutional high-frequency coverage of India and China regional macro"
+                    />
+
+                    <div className="mt-16 space-y-12">
+                        <SPAAccordion
+                            id="india-pulse"
+                            title="India Macro Pulse"
+                            subtitle="MoSPI real-time data, credit creation, BOP pressure"
+                            icon={<MapPin />}
+                            accentColor="blue"
+                            interpretations={[
+                                "Robust Domestic Credit",
+                                "BOP Pressure: Low",
+                                "Inflation: Cooling"
+                            ]}
+                        >
+                            <SectionErrorBoundary name="India Macro">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <IndiaMacroPulseSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPAAccordion>
+
+                        <SPAAccordion
+                            id="china-pulse"
+                            title="China Pulse"
+                            subtitle="GDP, CPI, credit impulse, PBoC intervention"
+                            icon={<MapPin />}
+                            accentColor="rose"
+                        >
+                            <SectionErrorBoundary name="China Macro">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <ChinaMacroPulseSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPAAccordion>
+                    </div>
+                </SPASection>
+
+            </div>
+        </Container>
+    );
+};
+
+export default Dashboard;

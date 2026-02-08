@@ -1,6 +1,8 @@
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { RefreshCw, Info } from 'lucide-react';
 import { useRegimeInterpretations } from '@/hooks/useRegimeInterpretations';
+import { DataQualityBadge } from './DataQualityBadge';
 
 interface SectionHeaderProps {
     title: string;
@@ -37,9 +39,8 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                             {title}
                         </h2>
                         {lastUpdated && (
-                            <div className="hidden md:flex items-center gap-1 text-[0.65rem] font-black text-muted-foreground/30 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded">
-                                <span className="w-1 h-1 rounded-full bg-blue-500/50" />
-                                LIVE FEED
+                            <div className="hidden md:block">
+                                <DataQualityBadge timestamp={lastUpdated} size="small" />
                             </div>
                         )}
                     </div>

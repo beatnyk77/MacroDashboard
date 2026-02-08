@@ -1,13 +1,16 @@
 import React from 'react';
 import {
     LayoutDashboard,
+    ShieldAlert,
+    MapPin,
+    Building2,
     Coins,
     Globe,
     BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 interface NavItem {
     id: string;
@@ -18,13 +21,43 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { id: 'dashboard', label: 'Macro Heartbeat', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
-    { id: 'thematics', label: 'Thematic Labs', path: '/#thematic-labs', icon: <Coins size={18} strokeWidth={2.5} /> },
-    { id: 'countries', label: 'Country Pulses', path: '/#country-pulses', icon: <Globe size={18} strokeWidth={2.5} /> },
+    { id: 'policy', label: 'Geopolitics & Policy', path: '/#policy-geopolitics', icon: <ShieldAlert size={18} strokeWidth={2.5} /> },
+    { id: 'thematics', label: 'Thematic Deep Dives', path: '/#thematic-labs', icon: <Coins size={18} strokeWidth={2.5} /> },
+    { id: 'sovereign', label: 'Sovereign stress', path: '/#sovereign-debt-stress', icon: <Building2 size={18} strokeWidth={2.5} /> },
+    { id: 'india', label: 'India Macro Pulse', path: '/#india-pulse', icon: <MapPin size={18} strokeWidth={2.5} /> },
+    { id: 'china', label: 'China Pulse', path: '/#china-pulse', icon: <Globe size={18} strokeWidth={2.5} /> },
     { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
 ];
 
 export const NavigationSidebar: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleNavClick = (e: React.MouseEvent, path: string) => {
+        if (path.startsWith('/#')) {
+            e.preventDefault();
+            const id = path.replace('/#', '');
+
+            if (location.pathname !== '/') {
+                navigate(path);
+            } else {
+                const element = document.getElementById(id);
+                if (element) {
+                    const offset = 80; // Account for fixed header
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Update URL hash without reload
+                    window.history.pushState(null, '', path);
+                }
+            }
+        }
+    };
 
     return (
         <aside className="hidden lg:flex w-[260px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/10 bg-background/50 backdrop-blur-xl py-8 z-[1200] overflow-y-auto">
@@ -36,11 +69,12 @@ export const NavigationSidebar: React.FC = () => {
                 </div>
                 <ul className="space-y-2">
                     {navItems.map((item) => {
-                        const isActive = location.pathname === item.path;
+                        const isActive = location.pathname === item.path || (item.path.includes('#') && location.hash === `#${item.path.split('#')[1]}`);
                         return (
                             <li key={item.id}>
                                 <NavLink
                                     to={item.path}
+                                    onClick={(e) => handleNavClick(e, item.path)}
                                     className={cn(
                                         "group flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-300",
                                         isActive

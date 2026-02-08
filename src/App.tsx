@@ -8,7 +8,7 @@ import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Lazy load page components
-const GraphiQuestorSPA = lazy(() => import('@/pages/GraphiQuestorSPA').then(module => ({ default: module.GraphiQuestorSPA })));
+const Dashboard = lazy(() => import('@/pages/Dashboard').then(module => ({ default: module.Dashboard })));
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
 
 const LoadingFallback = () => (
@@ -32,7 +32,7 @@ function App() {
                             <GlobalLayout>
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
-                                        <Route path="/" element={<GraphiQuestorSPA />} />
+                                        <Route path="/" element={<Dashboard />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />

@@ -124,23 +124,24 @@
 
 @layer utilities {
     .shaded-band {
-        @apply bg-slate-900/50 border-y border-white/5 backdrop-blur-sm relative overflow-hidden;
+        @apply bg-slate-900/40 border-y border-white/[0.03] backdrop-blur-md relative overflow-hidden;
     }
 
     .shaded-band::before {
         content: '';
-        @apply absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-rose-500/5 opacity-50;
+        @apply absolute inset-0 bg-gradient-to-tr from-blue-500/[0.02] via-transparent to-rose-500/[0.02] opacity-40;
     }
 
     /* SPA Layout Utilities */
     .spa-row {
-        @apply w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12;
+        @apply w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12;
     }
 
     .spa-card {
-        @apply bg-card/50 border border-border/40 rounded-2xl p-6 lg:p-8;
-        @apply transition-all duration-300 ease-out;
-        @apply hover:border-border/60 hover:shadow-lg hover:-translate-y-0.5;
+        @apply bg-card/40 border border-border/50 rounded-3xl p-6 lg:p-10;
+        @apply shadow-xl transition-all duration-500;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        @apply hover:border-blue-500/30 hover:shadow-2xl hover:scale-[1.05] hover:-translate-y-2;
     }
 
     .spa-hero-value {
