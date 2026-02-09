@@ -7,6 +7,9 @@ import { UPIAutopayFailureCard } from './UPIAutopayFailureCard';
 import { IndiaMacroCard } from './IndiaMacroCard';
 import { BOPPressureTable } from './BOPPressureTable';
 
+import { EnergySection } from './EnergySection';
+import { ASISection } from './ASISection';
+
 
 export const IndiaMacroPulseSection: React.FC = () => {
     const { data, isLoading } = useIndiaMacro();
@@ -37,6 +40,20 @@ export const IndiaMacroPulseSection: React.FC = () => {
                 {/* Full-width India Macro Card (Hero/High Fidelity) */}
                 <Grid item xs={12}>
                     <IndiaMacroCard />
+                </Grid>
+
+                {/* Energy Statistics Section */}
+                <Grid item xs={12}>
+                    <SectionErrorBoundary name="Energy Statistics">
+                        <EnergySection />
+                    </SectionErrorBoundary>
+                </Grid>
+
+                {/* ASI Section (New) */}
+                <Grid item xs={12}>
+                    <SectionErrorBoundary name="Annual Survey of Industries">
+                        <ASISection />
+                    </SectionErrorBoundary>
                 </Grid>
 
                 {/* Full-width BOP Pressure Terminal */}
