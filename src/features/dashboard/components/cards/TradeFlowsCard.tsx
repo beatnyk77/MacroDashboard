@@ -85,9 +85,10 @@ export const TradeFlowsCard: React.FC = () => {
             data = Array.from({ length: 12 }).map((_, i) => {
                 const date = new Date();
                 date.setMonth(currentMonthIdx - (11 - i));
-                // Random walk simulation for visual density
-                const noiseExp = 1 + (Math.random() * 0.2 - 0.1); // +/- 10%
-                const noiseImp = 1 + (Math.random() * 0.2 - 0.1);
+                // Deterministic pseudo-randomness for visual density (React Pure Render)
+                const pseudoRandom = Math.abs(Math.sin(i * 999));
+                const noiseExp = 1 + (pseudoRandom * 0.2 - 0.1); // +/- 10%
+                const noiseImp = 1 + ((1 - pseudoRandom) * 0.2 - 0.1);
 
                 return {
                     date: date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
