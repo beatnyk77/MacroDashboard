@@ -85,10 +85,14 @@ export const GoldRatioRibbon: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                         <XAxis
                             dataKey="date"
-                            hide
+                            stroke="rgba(255,255,255,0.2)"
+                            fontSize={10}
+                            tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { year: '2-digit', month: 'short' })}
                         />
                         <YAxis
-                            hide
+                            stroke="rgba(255,255,255,0.2)"
+                            fontSize={10}
+                            scale="log"
                             domain={['auto', 'auto']}
                         />
                         <Tooltip
@@ -126,20 +130,40 @@ export const GoldRatioRibbon: React.FC = () => {
                 </ResponsiveContainer>
             </div>
 
-            <div className="mt-4 flex flex-wrap justify-center gap-8">
-                {ratios?.filter(r => series.some(s => s.key === r.ratio_name)).map(ratio => (
-                    <div key={ratio.ratio_name} className="text-center">
-                        <span className="block text-[0.65rem] font-extrabold text-muted-foreground uppercase tracking-wider mb-0.5">
-                            {ratio.ratio_name} Z-SCORE
-                        </span>
-                        <span className={cn(
-                            "text-lg font-black leading-none",
-                            Math.abs(ratio.z_score) > 2 ? 'text-amber-500' : 'text-foreground'
-                        )}>
-                            {ratio.z_score > 0 ? '+' : ''}{ratio.z_score.toFixed(2)}σ
-                        </span>
+            <div className="mt-8 pt-6 border-t border-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Live Z-Scores */}
+                    <div className="flex flex-wrap gap-8 justify-start">
+                        {ratios?.filter(r => series.some(s => s.key === r.ratio_name)).map(ratio => (
+                            <div key={ratio.ratio_name} className="flex flex-col gap-1">
+                                <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest">
+                                    {ratio.ratio_name} POSITION
+                                </span>
+                                <div className="flex items-baseline gap-2">
+                                    <span className={cn(
+                                        "text-xl font-black tracking-tighter",
+                                        Math.abs(ratio.z_score) > 1.5 ? 'text-amber-500' : 'text-emerald-500'
+                                    )}>
+                                        {ratio.z_score > 0 ? '+' : ''}{ratio.z_score.toFixed(2)}σ
+                                    </span>
+                                    <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase">
+                                        {Math.abs(ratio.z_score) > 1.5 ? 'Extended' : 'Normal Range'}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
+
+                    {/* Interpretation Guide */}
+                    <div className="bg-blue-500/5 p-4 rounded-xl border border-blue-500/10">
+                        <span className="text-[0.6rem] font-black text-blue-400 uppercase tracking-widest block mb-2">Guide: Monetary Regimes</span>
+                        <div className="space-y-2 text-[0.7rem] leading-relaxed text-muted-foreground/80">
+                            <p>• <span className="text-blue-400 font-bold">Rising M2/Gold:</span> Signal of accelerating monetary debasement.</p>
+                            <p>• <span className="text-emerald-400 font-bold">Rising SPX/Gold:</span> Equities overvalued versus the hard money floor.</p>
+                            <p>• <span className="text-rose-400 font-bold">Rising Debt/Gold:</span> Fiscal expansion outpacing hard asset reserves.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </Card>
     );

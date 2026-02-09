@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, Tabs, Tab, CircularProgress, Paper } from '@mui/material';
-import { IndiaEnergyMap } from '../maps/IndiaEnergyMap';
 import { useIndiaEnergy, StateEnergyStats } from '@/hooks/useIndiaEnergy';
 import { styled } from '@mui/material/styles';
 
@@ -18,7 +17,13 @@ export const EnergySection: React.FC = () => {
     const [selectedMetric, setSelectedMetric] = useState<keyof StateEnergyStats>('coal_production');
 
     if (isLoading) return <CircularProgress />;
-    if (error) return <Typography color="error">Error loading energy data</Typography>;
+    if (error || !data || data.length === 0) return (
+        <Paper sx={{ p: 4, textAlign: 'center', bgcolor: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.1)' }}>
+            <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                {error ? 'Error loading energy data' : 'No state energy data available at the moment.'}
+            </Typography>
+        </Paper>
+    );
 
     const topStates = [...(data || [])].sort((a, b) => Number(b[selectedMetric]) - Number(a[selectedMetric])).slice(0, 5);
 
@@ -34,17 +39,78 @@ export const EnergySection: React.FC = () => {
             </Box>
 
             <Grid container spacing={4}>
-                {/* Map View */}
+                {/* Heatmap View */}
                 <Grid item xs={12} lg={8}>
-                    <GlassPaper>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-                            <Tabs value={selectedMetric} onChange={(_, v) => setSelectedMetric(v)} textColor="secondary" indicatorColor="secondary">
-                                <Tab label="Coal Prod." value="coal_production" />
-                                <Tab label="Renewable Share" value="renewable_share" />
-                                <Tab label="Electricity Cons." value="electricity_consumption" />
+                    <GlassPaper sx={{ p: 4, height: '100%', minHeight: 600 }}>
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.15em]">
+                                    Sub-National Energy Matrix
+                                </span>
+                                <h3 className="text-xl font-black text-foreground tracking-tight">
+                                    State-Level Performance
+                                </h3>
+                            </div>
+                            <Tabs
+                                value={selectedMetric}
+                                onChange={(_, v) => setSelectedMetric(v as keyof StateEnergyStats)}
+                                className="bg-white/5 p-1 rounded-lg"
+                                TabIndicatorProps={{ style: { display: 'none' } }}
+                            >
+                                {['coal_production', 'renewable_share', 'electricity_consumption'].map((m) => (
+                                    <Tab
+                                        key={m}
+                                        label={m.replace('_', ' ')}
+                                        value={m}
+                                        className={`min-h-[32px] h-[32px] text-[0.65rem] font-extrabold uppercase tracking-wider rounded-md transition-all ${selectedMetric === m ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                                    />
+                                ))}
                             </Tabs>
-                        </Box>
-                        <IndiaEnergyMap data={data || []} metric={selectedMetric} />
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                            {data?.sort((a, b) => (b[selectedMetric as keyof typeof b] as number) - (a[selectedMetric as keyof typeof a] as number)).map((state) => {
+                                const val = state[selectedMetric as keyof typeof state] as number;
+                                // Calculate relative intensity for color
+                                const maxVal = Math.max(...(data || []).map(d => d[selectedMetric as keyof typeof d] as number));
+                                const intensity = (val / maxVal);
+
+                                let color = 'bg-slate-800';
+                                if (selectedMetric === 'coal_production') {
+                                    color = `rgba(249, 115, 22, ${0.1 + intensity * 0.9})`; // Orange
+                                } else if (selectedMetric === 'renewable_share') {
+                                    color = `rgba(16, 185, 129, ${0.1 + intensity * 0.9})`; // Green
+                                } else {
+                                    color = `rgba(59, 130, 246, ${0.1 + intensity * 0.9})`; // Blue
+                                }
+
+                                return (
+                                    <div
+                                        key={state.state_code}
+                                        className="p-3 rounded-xl border border-white/5 relative overflow-hidden group hover:border-white/20 transition-all cursor-crosshair"
+                                        style={{ backgroundColor: color }}
+                                    >
+                                        <div className="relative z-10">
+                                            <span className="text-[0.6rem] font-black text-white/70 uppercase tracking-widest block mb-1 truncate">
+                                                {state.state_name}
+                                            </span>
+                                            <div className="text-lg font-black text-white tracking-tighter shadow-sm">
+                                                {selectedMetric === 'renewable_share' ? val.toFixed(1) + '%' :
+                                                    selectedMetric === 'electricity_consumption' ? Math.round(val).toLocaleString() + ' MW' :
+                                                        val.toFixed(1) + ' MT'}
+                                            </div>
+                                        </div>
+                                        {/* Grain/Texture overlay */}
+                                        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-6 flex justify-between items-center text-[0.6rem] text-muted-foreground/60 font-medium italic">
+                            <span>Intensity indicates relative magnitude across states.</span>
+                            <span>Source: MoSPI • CEA</span>
+                        </div>
                     </GlassPaper>
                 </Grid>
 

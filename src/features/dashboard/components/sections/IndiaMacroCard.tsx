@@ -26,7 +26,7 @@ export const IndiaMacroCard: React.FC = () => {
     const { data: metrics } = useQuery({
         queryKey: ['india_macro_card'],
         queryFn: async () => {
-            const ids = ['IN_CPI_YOY', 'IN_UNEMPLOYMENT_RATE', 'IN_GDP_GROWTH_YOY', 'IN_IIP_YOY'];
+            const ids = ['IN_CPI_YOY', 'IN_UNEMPLOYMENT_RATE', 'IN_GDP_GROWTH_YOY', 'IN_IIP_GROWTH_YOY'];
             const { data } = await supabase
                 .from('vw_latest_metrics')
                 .select('*')

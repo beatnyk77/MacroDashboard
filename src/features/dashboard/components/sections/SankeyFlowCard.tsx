@@ -144,6 +144,17 @@ export const SankeyFlowCard: React.FC = () => {
                     </TooltipProvider>
                 </div>
 
+                {/* How to Read This Chart */}
+                <div className="mb-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                    <span className="text-[0.65rem] font-black text-blue-400 uppercase tracking-widest block mb-2">
+                        Institutional Guide: How to Read This Map
+                    </span>
+                    <p className="text-[0.7rem] text-muted-foreground/80 leading-relaxed">
+                        Each colored band represents a macro category. The **width of each flow** represents the relative magnitude (Z-Score or USD Volume) of that metric's current signaling impact.
+                        Bands flowing from left to right visualize how **Input Metrics** (Market data) correlate to **Economic Signals**.
+                    </p>
+                </div>
+
                 {/* Category Legend */}
                 <div className="flex flex-wrap gap-2 mb-6">
                     {categories.map(cat => (
@@ -163,6 +174,14 @@ export const SankeyFlowCard: React.FC = () => {
 
                 {/* Sankey Chart */}
                 <div className="h-[540px] w-full relative">
+                    {/* Axis Labels */}
+                    <div className="absolute top-0 left-0 -translate-y-8">
+                        <span className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em]">INPUT METRICS</span>
+                    </div>
+                    <div className="absolute top-0 right-0 -translate-y-8">
+                        <span className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em] text-right block">OUTPUT SIGNALS</span>
+                    </div>
+
                     <ResponsiveContainer width="100%" height="100%">
                         <Sankey
                             data={chartData}
@@ -176,19 +195,30 @@ export const SankeyFlowCard: React.FC = () => {
                                 const { x, y, width, height, index, payload } = props;
                                 const node = sankeyData.nodes.find(n => n.index === index);
                                 return (
-                                    <rect
-                                        x={x}
-                                        y={y}
-                                        width={width}
-                                        height={height}
-                                        fill={node?.color || '#6b7280'}
-                                        fillOpacity="1"
-                                        cursor="pointer"
-                                        onClick={() => handleNodeClick(payload)}
-                                    />
+                                    <g>
+                                        <rect
+                                            x={x}
+                                            y={y}
+                                            width={width}
+                                            height={height}
+                                            fill={node?.color || '#6b7280'}
+                                            fillOpacity="1"
+                                            cursor="pointer"
+                                            onClick={() => handleNodeClick(payload)}
+                                        />
+                                        <text
+                                            x={x > 500 ? x - 8 : x + width + 8}
+                                            y={y + height / 2}
+                                            textAnchor={x > 500 ? 'end' : 'start'}
+                                            alignmentBaseline="middle"
+                                            className="text-[0.65rem] font-bold fill-white/60 uppercase tracking-tighter"
+                                        >
+                                            {payload.name}
+                                        </text>
+                                    </g>
                                 );
                             }}
-                            margin={{ top: 10, right: 100, bottom: 10, left: 100 }}
+                            margin={{ top: 20, right: 120, bottom: 10, left: 120 }}
                         >
                             <RechartsTooltip
                                 content={<CustomSankeyTooltip />}

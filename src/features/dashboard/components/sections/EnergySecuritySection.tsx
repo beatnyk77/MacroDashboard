@@ -20,22 +20,46 @@ export const EnergySecuritySection: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <RefiningCapacityCard data={data.capacityData} isLoading={false} />
+                        {data.capacityData && data.capacityData.length > 0 ? (
+                            <RefiningCapacityCard data={data.capacityData} isLoading={false} />
+                        ) : (
+                            <div className="h-[300px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
+                                <span className="text-xs text-muted-foreground uppercase tracking-widest">No Refining Data</span>
+                            </div>
+                        )}
                     </Suspense>
                 </div>
                 <div className="lg:col-span-2">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <OilImportSankeyCard data={data.importData} isLoading={false} />
+                        {data.importData && data.importData.length > 0 ? (
+                            <OilImportSankeyCard data={data.importData} isLoading={false} />
+                        ) : (
+                            <div className="h-[300px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
+                                <span className="text-xs text-muted-foreground uppercase tracking-widest">No Import Flow Data</span>
+                            </div>
+                        )}
                     </Suspense>
                 </div>
                 <div className="lg:col-span-1">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
+                        {data.importData && data.importData.length > 0 ? (
+                            <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
+                        ) : (
+                            <div className="h-[300px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
+                                <span className="text-xs text-muted-foreground uppercase tracking-widest">No Vulnerability Data</span>
+                            </div>
+                        )}
                     </Suspense>
                 </div>
                 <div className="lg:col-span-1">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <SPRTrackerCard data={data.sprData} isLoading={false} />
+                        {data.sprData && data.sprData.length > 0 ? (
+                            <SPRTrackerCard data={data.sprData} isLoading={false} />
+                        ) : (
+                            <div className="h-[300px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
+                                <span className="text-xs text-muted-foreground uppercase tracking-widest">No SPR Data</span>
+                            </div>
+                        )}
                     </Suspense>
                 </div>
             </div>

@@ -29,6 +29,8 @@ const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/co
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const EnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/EnergySecuritySection').then(m => ({ default: m.EnergySecuritySection })));
+const MacroEconomicCalendar = lazy(() => import('@/features/dashboard/components/sections/MacroEconomicCalendar').then(m => ({ default: m.MacroEconomicCalendar })));
+const EastWestDebtInfluence = lazy(() => import('@/features/dashboard/components/sections/EastWestDebtInfluence').then(m => ({ default: m.EastWestDebtInfluence })));
 
 // Country Pulses
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
@@ -108,6 +110,15 @@ export const GraphiQuestorSPA: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                </SPASection>
+
+                {/* Tactical Monitor (Calendar) */}
+                <SPASection id="tactical-monitor" disableAnimation>
+                    <SectionErrorBoundary name="Macro Calendar">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <MacroEconomicCalendar />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* ═══════════════════════════════════════════════════════════════════
@@ -214,11 +225,19 @@ export const GraphiQuestorSPA: React.FC = () => {
                             accentColor="purple"
                             defaultOpen={true}
                         >
-                            <SectionErrorBoundary name="Sovereign Risk">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <SovereignRiskMatrix />
-                                </Suspense>
-                            </SectionErrorBoundary>
+                            <div className="grid grid-cols-1 gap-8">
+                                <SectionErrorBoundary name="East West Debt">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <EastWestDebtInfluence />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+
+                                <SectionErrorBoundary name="Sovereign Risk">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <SovereignRiskMatrix />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                            </div>
                         </SPAAccordion>
 
                         {/* Energy Security */}

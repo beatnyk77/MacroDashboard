@@ -2,7 +2,6 @@ import React from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { MetricCard } from '@/components/MetricCard';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
-import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 import { DataQualityBadge } from '@/components/DataQualityBadge';
 
@@ -10,7 +9,6 @@ import { formatMetric, formatDelta } from '@/utils/formatMetric';
 
 export const CockpitKPIGrid = React.memo(() => {
     const { data: marketPulse, isLoading: isMarketLoading } = useMarketPulse();
-    const { data: netLiq } = useNetLiquidity();
     const { data: integrity } = useDataIntegrity();
 
     const findMetric = (id: string) => marketPulse?.find(m => m.id === id);
@@ -67,28 +65,6 @@ export const CockpitKPIGrid = React.memo(() => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-                {/* 1. Net Liquidity - THE Core Signal (Double Width) */}
-                <div className="col-span-1 sm:col-span-2">
-                    <MetricCard
-                        label="Net Liquidity"
-                        metricId="NET_LIQUIDITY"
-                        description="Global central bank liquidity + Fed net liquidity injections"
-                        value={formatMetric(netLiq?.current_value, 'trillion', { showUnit: false })}
-                        prefix="$"
-                        suffix=" T"
-                        delta={netLiq ? {
-                            value: formatDelta(netLiq.delta / 1e12, { unit: 'T' }) || '—',
-                            period: '7D',
-                            trend: netLiq.delta > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status={netLiq?.alarm_status === 'warning' ? 'warning' : (netLiq?.alarm_status === 'expansion' ? 'safe' : 'neutral')}
-                        history={netLiq?.history}
-                        isLoading={isLoading}
-                        lastUpdated={netLiq?.as_of_date}
-                        className="bg-card/50"
-                    />
-                </div>
-
                 {/* 2. US 10Y Yield */}
                 <div className="col-span-1">
                     <MetricCard
