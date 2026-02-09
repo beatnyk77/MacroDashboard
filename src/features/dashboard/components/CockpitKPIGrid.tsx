@@ -10,7 +10,7 @@ import { formatMetric, formatDelta } from '@/utils/formatMetric';
 
 export const CockpitKPIGrid = React.memo(() => {
     const { data: marketPulse, isLoading: isMarketLoading } = useMarketPulse();
-    const { data: netLiq, isLoading: isLiqLoading } = useNetLiquidity();
+    const { data: netLiq } = useNetLiquidity();
     const { data: integrity } = useDataIntegrity();
 
     const findMetric = (id: string) => marketPulse?.find(m => m.id === id);
@@ -26,7 +26,7 @@ export const CockpitKPIGrid = React.memo(() => {
     const sofr = findMetric('SOFR_RATE');
     const btc = findMetric('BITCOIN_PRICE_USD');
 
-    const isLoading = isMarketLoading || isLiqLoading;
+    const isLoading = isMarketLoading;
 
     if (isLoading) {
         return (
@@ -37,6 +37,7 @@ export const CockpitKPIGrid = React.memo(() => {
             </div>
         );
     }
+
 
     return (
         <div className="p-6 rounded-xl bg-card border border-border/60 shadow-sm">
@@ -163,7 +164,7 @@ export const CockpitKPIGrid = React.memo(() => {
                     <MetricCard
                         label="Gold"
                         sublabel="Spot / USD"
-                        metricId="GOLD_PRICE"
+                        metricId="GOLD_PRICE_USD"
                         value={formatMetric(gold?.value, 'currency', { showUnit: false })}
                         prefix="$"
                         delta={gold ? {
@@ -181,7 +182,7 @@ export const CockpitKPIGrid = React.memo(() => {
                     <MetricCard
                         label="Silver"
                         sublabel="Spot / USD"
-                        metricId="SILVER_PRICE"
+                        metricId="SILVER_PRICE_USD"
                         value={formatMetric(silver?.value, 'currency', { showUnit: false })}
                         prefix="$"
                         delta={silver ? {

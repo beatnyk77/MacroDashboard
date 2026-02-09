@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import { sendSlackAlert } from '../_shared/slack.ts'
 
 const corsHeaders = {
@@ -9,7 +9,7 @@ const corsHeaders = {
 /**
  * Gold Price Ingestion
  * Sources: 
- * 1. Yahoo Finance (Primary) - Ticker: GC=F
+ * 1. Yahoo Finance (Primary) - Ticker: XAUUSD=X (Spot)
  * 2. GoldAPI (Fallback)
  */
 Deno.serve(async (req: Request) => {
@@ -29,7 +29,7 @@ Deno.serve(async (req: Request) => {
         const { data: sources, error: sourceError } = await supabase
             .from('data_sources')
             .select('id, name')
-            .in('name', ['FRED', 'Yahoo Finance']) // Gold ID is historically mapped to FRED source_id, we might need to update this logic if we want to be strict, but for now we write to Metric ID 'GOLD_PRICE_USD' regardless of source
+            .in('name', ['FRED', 'Yahoo Finance'])
 
         if (sourceError) throw sourceError
 
@@ -50,7 +50,11 @@ Deno.serve(async (req: Request) => {
             try {
                 console.log(`Fetching ${metal.id} from Yahoo Finance (${metal.ticker})...`)
                 const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${metal.ticker}?interval=1d&range=5d`
-                const res = await fetch(yahooUrl)
+                const res = await fetch(yahooUrl, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    }
+                })
                 if (!res.ok) throw new Error(`Yahoo HTTP ${res.status}`)
 
                 const json = await res.json()

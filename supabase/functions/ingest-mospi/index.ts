@@ -163,10 +163,10 @@ serve(async (req) => {
 
             const { error } = await supabase.from('metric_observations').upsert({
                 metric_id: metricId,
-                date: date,
+                as_of_date: date,
                 value: value,
-                created_at: new Date().toISOString()
-            }, { onConflict: 'metric_id, date' });
+                last_updated_at: new Date().toISOString()
+            }, { onConflict: 'metric_id, as_of_date' });
 
             if (error) throw error;
             return true;
@@ -183,14 +183,13 @@ serve(async (req) => {
             // console.log("[IN_UNEMPLOYMENT_RATE] Metadata:", JSON.stringify(plfsMeta.data?.slice(0, 5)));
 
             const indicator = plfsMeta.data?.find((i: any) =>
-                i.indicator_name?.toLowerCase?.().includes('unemployment rate') &&
-                i.indicator_name?.toLowerCase?.().includes('current weekly status')
+                i.description?.toLowerCase?.().includes('unemployment rate')
             );
 
             if (indicator) {
-                console.log(`[IN_UNEMPLOYMENT_RATE] Found indicator: ${indicator.indicator_id}`);
+                console.log(`[IN_UNEMPLOYMENT_RATE] Found indicator: ${indicator.indicator_code}`);
                 const data = await mospi.getPLFSData({
-                    indicator_code: indicator.indicator_id,
+                    indicator_code: indicator.indicator_code,
                     frequency_code: 2
                 });
 
@@ -225,48 +224,48 @@ serve(async (req) => {
         // ==================================================================
         try {
             console.log("[IN_CPI_YOY] Discovery started...");
-            // Heuristic: Current Date - 1 Month
-            const prevDate = new Date();
-            prevDate.setMonth(prevDate.getMonth() - 1);
-            const queryYear = prevDate.getFullYear().toString();
-            const queryMonth = (prevDate.getMonth() + 1).toString();
 
-            const cpiData = await mospi.getCPIData({
-                year: queryYear,
-                month: queryMonth,
-                group_code: "Combined"
-            });
+            let cpiItem: any = null;
+            let queryYear = "";
+            let queryMonth = "";
 
-            // Console log to debug response structure
-            // console.log("[IN_CPI_YOY] Raw Data:", JSON.stringify(cpiData));
+            // Try last 4 months due to MoSPI lag
+            for (let i = 1; i <= 4; i++) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                queryYear = d.getFullYear().toString();
+                queryMonth = (d.getMonth() + 1).toString();
 
-            if (cpiData && cpiData.data) {
-                // Flexible Match: "General", "Combined", "All India"
-                const generalItem = cpiData.data.find((d: any) => {
-                    const desc = (d.description || d.row_name || "").toLowerCase();
-                    return desc.includes('general') || desc.includes('combined') || desc.includes('all india');
+                console.log(`[IN_CPI_YOY] Trying ${queryYear}-${queryMonth}...`);
+                const cpiData = await mospi.getCPIData({
+                    year: queryYear,
+                    month: queryMonth,
+                    group_code: "Combined"
                 });
 
-                if (generalItem) {
-                    const rawVal = generalItem.value || generalItem.Value || 0;
-                    const value = parseFloat(rawVal);
-                    const dateStr = `${queryYear}-${queryMonth.padStart(2, '0')}-01`;
-
-                    console.log(`[IN_CPI_YOY] Found: ${generalItem.description}, Value: ${value}`);
-
-                    if (await upsertMetric('IN_CPI_YOY', value, dateStr, 'MoSPI')) {
-                        results.push({ metric: 'IN_CPI_YOY', status: 'success', value, date: dateStr });
-                    } else {
-                        results.push({ metric: 'IN_CPI_YOY', status: 'skipped', reason: 'NaN value' });
-                    }
-                } else {
-                    console.warn("[IN_CPI_YOY] General Index not found. Available rows:", cpiData.data.map((d: any) => d.description || d.row_name));
-                    results.push({ metric: 'IN_CPI_YOY', status: 'skipped', reason: 'General Index not found', available: cpiData.data.length });
+                if (cpiData && cpiData.data && cpiData.data.length > 0) {
+                    console.log(`[IN_CPI_YOY] Received ${cpiData.data.length} rows. Samples:`, cpiData.data.slice(0, 3).map((d: any) => d.description || d.row_name || d.Item_Name));
+                    cpiItem = cpiData.data.find((d: any) => {
+                        const desc = (d.description || d.row_name || d.Item_Name || "").toLowerCase();
+                        return desc.includes('general') || desc.includes('combined') || desc.includes('all india');
+                    });
+                    if (cpiItem) break;
                 }
-            } else {
-                results.push({ metric: 'IN_CPI_YOY', status: 'skipped', reason: 'No API data returned' });
             }
 
+            if (cpiItem) {
+                const rawVal = cpiItem.value || cpiItem.Value || 0;
+                const value = parseFloat(rawVal);
+                const dateStr = `${queryYear}-${queryMonth.padStart(2, '0')}-01`;
+
+                console.log(`[IN_CPI_YOY] Found: ${cpiItem.description}, Value: ${value}, Date: ${dateStr}`);
+
+                if (await upsertMetric('IN_CPI_YOY', value, dateStr, 'MoSPI')) {
+                    results.push({ metric: 'IN_CPI_YOY', status: 'success', value, date: dateStr });
+                }
+            } else {
+                results.push({ metric: 'IN_CPI_YOY', status: 'skipped', reason: 'No data found in last 4 months' });
+            }
         } catch (e) {
             results.push({ metric: 'IN_CPI_YOY', status: 'error', message: e.message });
         }
@@ -276,35 +275,43 @@ serve(async (req) => {
         // ==================================================================
         try {
             console.log("[IN_IIP_YOY] Discovery started...");
-            // IIP Lag: 2 months
-            const prevDateIIP = new Date();
-            prevDateIIP.setMonth(prevDateIIP.getMonth() - 2);
-            const queryYearIIP = prevDateIIP.getFullYear().toString();
-            const queryMonthIIP = (prevDateIIP.getMonth() + 1).toString();
 
-            const iipData = await mospi.getIIPData({ year: queryYearIIP, month: queryMonthIIP });
+            let iipItem: any = null;
+            let queryYear = "";
+            let queryMonth = "";
 
-            if (iipData && iipData.data) {
-                // Flexible Match: "General", "All Industries"
-                const general = iipData.data.find((d: any) => {
-                    const sector = (d.sector_name || d.Item_Name || "").toLowerCase();
-                    return sector === 'general' || sector === 'all industries' || sector.includes('general index');
-                });
+            // Try last 4 months for IIP (usually 2 month lag)
+            for (let i = 2; i <= 5; i++) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                queryYear = d.getFullYear().toString();
+                queryMonth = (d.getMonth() + 1).toString();
 
-                if (general) {
-                    const rawVal = general.value || general.Value || 0;
-                    const value = parseFloat(rawVal);
-                    const dateStr = `${queryYearIIP}-${queryMonthIIP.padStart(2, '0')}-01`;
+                console.log(`[IN_IIP_YOY] Trying ${queryYear}-${queryMonth}...`);
+                const iipData = await mospi.getIIPData({ year: queryYear, month: queryMonth });
 
-                    console.log(`[IN_IIP_YOY] Found: ${general.sector_name}, Value: ${value}`);
-
-                    if (await upsertMetric('IN_IIP_YOY', value, dateStr, 'MoSPI')) {
-                        results.push({ metric: 'IN_IIP_YOY', status: 'success', value, date: dateStr });
-                    }
-                } else {
-                    console.warn("[IN_IIP_YOY] General Sector not found. Available:", iipData.data.map((d: any) => d.sector_name));
-                    results.push({ metric: 'IN_IIP_YOY', status: 'skipped', reason: 'General Sector not found' });
+                if (iipData && iipData.data && iipData.data.length > 0) {
+                    console.log(`[IN_IIP_YOY] Received ${iipData.data.length} rows. Samples:`, iipData.data.slice(0, 3).map((d: any) => d.sector_name || d.Item_Name || d.description));
+                    iipItem = iipData.data.find((d: any) => {
+                        const sector = (d.sector_name || d.Item_Name || d.description || "").toLowerCase();
+                        return sector === 'general' || sector === 'all industries' || sector.includes('general index');
+                    });
+                    if (iipItem) break;
                 }
+            }
+
+            if (iipItem) {
+                const rawVal = iipItem.value || iipItem.Value || 0;
+                const value = parseFloat(rawVal);
+                const dateStr = `${queryYear}-${queryMonth.padStart(2, '0')}-01`;
+
+                console.log(`[IN_IIP_YOY] Found: ${iipItem.sector_name}, Value: ${value}, Date: ${dateStr}`);
+
+                if (await upsertMetric('IN_IIP_YOY', value, dateStr, 'MoSPI')) {
+                    results.push({ metric: 'IN_IIP_YOY', status: 'success', value, date: dateStr });
+                }
+            } else {
+                results.push({ metric: 'IN_IIP_YOY', status: 'skipped', reason: 'No data found in last 5 months' });
             }
         } catch (e) {
             results.push({ metric: 'IN_IIP_YOY', status: 'error', message: e.message });
@@ -324,15 +331,14 @@ serve(async (req) => {
             // Search keywords: "Gross Domestic Product" AND "Constant" AND ("Year on Year" OR "%" OR "Growth")
             // For safety in this iteration, we look for the main GDP Constant aggregate.
 
-            const gdpIndicator = nasMeta.data?.find((i: any) => {
-                const name = (i.indicator_name || "").toLowerCase();
-                return name.includes("gross domestic product") &&
-                    name.includes("constant") &&
-                    (name.includes("quarterly") || true); // NAS endpoint filters by freq later
+            const gdpIndicator = nasMeta.data?.indicator?.find((i: any) => {
+                const name = (i.description || "").toLowerCase();
+                return (name.includes("gross domestic product") || name.includes("gross value added")) &&
+                    name.includes("constant");
             });
 
             if (gdpIndicator) {
-                console.log(`[IN_GDP_GROWTH_YOY] Found Indicator: ${gdpIndicator.indicator_name} (${gdpIndicator.indicator_code})`);
+                console.log(`[IN_GDP_GROWTH_YOY] Found Indicator: ${gdpIndicator.description} (${gdpIndicator.indicator_code})`);
 
                 // 2. Fetch Data (Frequency 2 = Quarterly)
                 // Use a recent year to limit data size

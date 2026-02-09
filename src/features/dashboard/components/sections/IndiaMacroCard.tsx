@@ -45,6 +45,7 @@ export const IndiaMacroCard: React.FC = () => {
 
     return (
         <div className="spa-card relative overflow-hidden group min-h-[400px] flex flex-col justify-between p-0 border-0">
+            {/* ... */}
             {/* Background Layering */}
             <div className="absolute inset-0 bg-gradient-to-br from-orange-500/[0.08] via-slate-950 to-emerald-500/[0.08] pointer-events-none" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay pointer-events-none" />

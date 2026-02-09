@@ -24,11 +24,10 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const LiquidityAlarmCard: React.FC = () => {
-    const { data: liq, isLoading } = useNetLiquidity();
+    const { data: liq } = useNetLiquidity();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    if (isLoading) return <Skeleton className="h-[200px] w-full rounded-xl" />;
-    if (!liq) return null;
+    if (!liq || !liq.current_value) return <Skeleton className="h-[200px] w-full rounded-xl" />;
 
     // Smoothed distribution data for the histogram (representative of 25y distribution)
     const distributionData = [

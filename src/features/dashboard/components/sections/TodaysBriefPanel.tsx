@@ -65,7 +65,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
 
         if (lowerLabel.includes('liquidity') || lowerLabel.includes('fed') || lowerLabel.includes('m2')) metricId = 'NET_LIQUIDITY';
         else if (lowerLabel.includes('dollar') || lowerLabel.includes('dxy') || lowerLabel.includes('usd')) metricId = 'DXY_INDEX';
-        else if (lowerLabel.includes('gold') || lowerLabel.includes('precious')) metricId = 'GOLD_PRICE';
+        else if (lowerLabel.includes('gold') || lowerLabel.includes('precious')) metricId = 'GOLD_PRICE_USD';
         else if (lowerLabel.includes('oil') || lowerLabel.includes('wti') || lowerLabel.includes('crude') || lowerLabel.includes('energy')) metricId = 'CRUDE_OIL';
         else if (lowerLabel.includes('yield') || lowerLabel.includes('treasury') || lowerLabel.includes('curve') || lowerLabel.includes('rates')) metricId = 'YIELD_CURVE';
         else if (lowerLabel.includes('volatility') || lowerLabel.includes('vix') || lowerLabel.includes('fear')) metricId = 'VIX_INDEX';

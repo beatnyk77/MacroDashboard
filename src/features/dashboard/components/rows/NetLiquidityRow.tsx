@@ -4,15 +4,9 @@ import { Sparkline } from '@/components/Sparkline';
 import { formatNumber } from '@/utils/formatNumber';
 
 export const NetLiquidityRow: React.FC = () => {
-    const { data: liquidity, isLoading } = useNetLiquidity();
+    const { data: liquidity } = useNetLiquidity();
 
-    if (isLoading) {
-        return (
-            <div className="spa-card h-48 animate-pulse bg-white/5 rounded-2xl" />
-        );
-    }
-
-    const value = liquidity?.current_value ? `$${formatNumber(liquidity.current_value / 1e12, { decimals: 2 })}T` : 'N/A';
+    const value = liquidity?.current_value ? `$${formatNumber(liquidity.current_value / 1e3, { decimals: 2 })}T` : 'N/A';
     const trend = liquidity?.delta_pct && liquidity.delta_pct > 0 ? 'up' : 'down';
 
     return (
@@ -32,3 +26,4 @@ export const NetLiquidityRow: React.FC = () => {
         </RatioRow>
     );
 };
+

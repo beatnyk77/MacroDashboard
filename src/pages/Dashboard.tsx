@@ -6,7 +6,8 @@ import {
     Building2,
     MapPin,
     ShieldAlert,
-    Briefcase
+    Briefcase,
+    Fuel
 } from 'lucide-react';
 import { SPASection, SPAAccordion } from '@/components/spa';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -29,6 +30,7 @@ const BRICSTrackerSection = lazy(() => import('@/features/dashboard/components/s
 const DeDollarizationSection = lazy(() => import('@/features/dashboard/components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
+const EnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/EnergySecuritySection').then(m => ({ default: m.EnergySecuritySection })));
 
 // Country Pulses
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
@@ -182,6 +184,25 @@ export const Dashboard: React.FC = () => {
                                     </Suspense>
                                 </SectionErrorBoundary>
                             </div>
+                        </SPAAccordion>
+
+                        <SPAAccordion
+                            id="energy-security"
+                            title="Energy Security"
+                            subtitle="US Refining Capacity, Crude Sourcing, and Supplier Vulnerability"
+                            icon={<Fuel />}
+                            accentColor="gold"
+                            interpretations={[
+                                "Oil Import Diversification: Moderate",
+                                "SPR Level: Critical Watch",
+                                "Refining Capacity: Stable"
+                            ]}
+                        >
+                            <SectionErrorBoundary name="Energy Security">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <EnergySecuritySection />
+                                </Suspense>
+                            </SectionErrorBoundary>
                         </SPAAccordion>
 
                         <SPAAccordion

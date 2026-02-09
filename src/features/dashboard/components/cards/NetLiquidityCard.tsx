@@ -5,7 +5,7 @@ import { formatMetric } from '@/utils/formatMetric';
 import { formatNumber } from '@/utils/formatNumber';
 
 export const NetLiquidityCard: React.FC = () => {
-    const { data: netLiq, isLoading } = useNetLiquidity();
+    const { data: netLiq } = useNetLiquidity();
 
     return (
         <MetricCard
@@ -14,7 +14,7 @@ export const NetLiquidityCard: React.FC = () => {
             delta={netLiq ? { value: formatDelta(netLiq.delta_pct, { decimals: 1, unit: '%' }) || '—', period: "WoW", trend: (netLiq.delta_pct || 0) > 0 ? 'up' : 'down' } : undefined}
             status={netLiq ? (netLiq.z_score > 1 ? 'danger' : netLiq.z_score < -1 ? 'warning' : 'safe') : undefined}
             suffix="T"
-            isLoading={isLoading}
+            isLoading={false}
             lastUpdated={netLiq?.as_of_date}
             history={netLiq?.history}
             zScore={netLiq?.z_score}
