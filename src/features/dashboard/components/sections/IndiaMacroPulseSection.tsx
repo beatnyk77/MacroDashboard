@@ -39,7 +39,9 @@ export const IndiaMacroPulseSection: React.FC = () => {
             <Grid container spacing={6}>
                 {/* Full-width India Macro Card (Hero/High Fidelity) */}
                 <Grid item xs={12}>
-                    <IndiaMacroCard />
+                    <SectionErrorBoundary name="India Macro Card">
+                        <IndiaMacroCard />
+                    </SectionErrorBoundary>
                 </Grid>
 
                 {/* Energy Statistics Section */}

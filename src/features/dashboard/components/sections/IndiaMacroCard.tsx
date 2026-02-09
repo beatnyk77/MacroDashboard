@@ -4,12 +4,12 @@ import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Activity, IndianRupee } from 'lucide-react';
 
-const MetricValue: React.FC<{ label: string; value: number; unit: string; trend?: number }> = ({ label, value, unit, trend }) => (
+const MetricValue: React.FC<{ label: string; value: number | undefined | null; unit: string; trend?: number }> = ({ label, value, unit, trend }) => (
     <div className="flex flex-col">
         <span className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 mb-1.5">{label}</span>
         <div className="flex items-baseline gap-1.5">
             <span className="text-2xl font-black text-white font-mono tracking-tighter">
-                {value.toFixed(1)}
+                {value !== undefined && value !== null ? value.toFixed(1) : '---'}
             </span>
             <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">{unit}</span>
         </div>
@@ -98,22 +98,22 @@ export const IndiaMacroCard: React.FC = () => {
                 <div className="grid grid-cols-2 gap-x-12 gap-y-10">
                     <MetricValue
                         label="GDP Growth YOY"
-                        value={metrics['IN_GDP_GROWTH_YOY']}
+                        value={metrics?.['IN_GDP_GROWTH_YOY']}
                         unit="%"
                     />
                     <MetricValue
                         label="Consumer Inflation"
-                        value={metrics['IN_CPI_YOY']}
+                        value={metrics?.['IN_CPI_YOY']}
                         unit="%"
                     />
                     <MetricValue
                         label="Unemployment Rate"
-                        value={metrics['IN_UNEMPLOYMENT_RATE']}
+                        value={metrics?.['IN_UNEMPLOYMENT_RATE']}
                         unit="%"
                     />
                     <MetricValue
                         label="Industrial Output"
-                        value={metrics['IN_IIP_YOY']}
+                        value={metrics?.['IN_IIP_GROWTH_YOY']} // Fixed ID match
                         unit="%"
                     />
                 </div>
