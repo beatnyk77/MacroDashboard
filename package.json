@@ -39,7 +39,8 @@
     "react-simple-maps": "^3.0.0",
     "recharts": "^2.10.0",
     "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "yaml": "2.8.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
