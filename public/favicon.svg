@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pulse-gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399" /> <!-- Emerald 400 -->
+      <stop offset="100%" stop-color="#2dd4bf" /> <!-- Teal 400 -->
+    </linearGradient>
+  </defs>
+  
+  <!-- Pulse Path -->
+  <!-- Mimicking the provided logo: Horizontal start, Up spike, Down spike (deeper), Return to horizontal -->
+  <path d="M70 256 H 180 L 230 140 L 300 360 L 350 256 H 442" 
+        stroke="url(#pulse-gradient)" 
+        stroke-width="50" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>
