@@ -64,7 +64,7 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* ROW 2: MARKET TERMINAL GRID */}
-                <SPASection id="market-pulse">
+                <SPASection id="market-pulse" disableAnimation>
                     <SectionErrorBoundary name="System Heartbeat">
                         <Suspense fallback={<LoadingFallback />}>
                             <CockpitKPIGrid />
@@ -73,7 +73,7 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* ROW 3: MACRO FLOWS (SANKEY) */}
-                <SPASection id="macro-flows" variant="band" staggerChildren={true}>
+                <SPASection id="macro-flows" variant="band" staggerChildren={true} disableAnimation>
                     <SectionHeader
                         title="Macro Flow Map"
                         subtitle="Interstate capital and energy liquidity flow visualization"
@@ -88,7 +88,7 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* ROW 4: POLICY & GEOPOLITICS */}
-                <SPASection id="policy-geopolitics" staggerChildren={true}>
+                <SPASection id="policy-geopolitics" staggerChildren={true} disableAnimation>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         <SPAAccordion
                             title="Trump Action Monitor"
@@ -119,7 +119,7 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* ROW 5: THEMATIC LABS */}
-                <SPASection id="thematic-labs" variant="band" className="py-24" staggerChildren={true}>
+                <SPASection id="thematic-labs" variant="band" className="py-24" staggerChildren={true} disableAnimation>
                     <SectionHeader
                         title="Thematic Deep Dives"
                         subtitle="Detailed signal intelligence for Hard Assets, De-Dollarization, and Sovereign Sustainability"
@@ -206,7 +206,7 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* ROW 6: COUNTRY PULSES */}
-                <SPASection id="country-pulses" className="py-24">
+                <SPASection id="country-pulses" className="py-24" disableAnimation>
                     <SectionHeader
                         title="Regional Pulse Terminals"
                         subtitle="Institutional high-frequency coverage of India and China regional macro"
