@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface OffshoreDollarStress {
@@ -26,7 +26,7 @@ export interface GeopoliticalRisk {
 }
 
 export function useInstitutionalFeatures() {
-    const offshoreQuery = useQuery({
+    const offshoreQuery = useSuspenseQuery({
         queryKey: ['offshore_dollar_stress'],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -45,7 +45,7 @@ export function useInstitutionalFeatures() {
         }
     });
 
-    const creditQuery = useQuery({
+    const creditQuery = useSuspenseQuery({
         queryKey: ['credit_creation_pulse'],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -71,7 +71,7 @@ export function useInstitutionalFeatures() {
         }
     });
 
-    const geoRiskQuery = useQuery({
+    const geoRiskQuery = useSuspenseQuery({
         queryKey: ['geopolitical_risk_index'],
         queryFn: async () => {
             const { data, error } = await supabase

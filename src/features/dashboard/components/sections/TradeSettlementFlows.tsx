@@ -17,7 +17,7 @@ export const TradeSettlementFlows = React.memo(() => {
     if (!deDollar || !brics) return null;
 
     // Combine history for a dual-axis chart if possible, or just two areas
-    const mergedHistory = usdHistory?.map((d, i) => ({
+    const mergedHistory = usdHistory?.map((d, i: number) => ({
         date: d.date,
         usd: d.value,
         gold: goldHistory?.[i]?.value || null

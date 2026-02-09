@@ -8,7 +8,7 @@ const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreM
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
 
 export const EnergySecuritySection: React.FC = () => {
-    const { capacityData, importData, sprData, isLoading } = useOilData();
+    const { data } = useOilData();
 
     return (
         <div className="space-y-8">
@@ -20,22 +20,22 @@ export const EnergySecuritySection: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <RefiningCapacityCard data={capacityData} isLoading={isLoading} />
+                        <RefiningCapacityCard data={data.capacityData} isLoading={false} />
                     </Suspense>
                 </div>
                 <div className="lg:col-span-2">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <OilImportSankeyCard data={importData} isLoading={isLoading} />
+                        <OilImportSankeyCard data={data.importData} isLoading={false} />
                     </Suspense>
                 </div>
                 <div className="lg:col-span-1">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <VulnerabilityScoreMatrix data={importData} isLoading={isLoading} />
+                        <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
                     </Suspense>
                 </div>
                 <div className="lg:col-span-1">
                     <Suspense fallback={<div className="h-[300px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <SPRTrackerCard data={sprData} isLoading={isLoading} />
+                        <SPRTrackerCard data={data.sprData} isLoading={false} />
                     </Suspense>
                 </div>
             </div>

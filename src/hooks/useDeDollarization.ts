@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface DeDollarizationMetric {
@@ -38,7 +38,7 @@ export interface DeDollarizationData {
  * Includes USD share, gold reserves, and other currency composition
  */
 export function useDeDollarization() {
-    return useQuery({
+    return useSuspenseQuery({
         queryKey: ['dedollarization'],
         queryFn: async (): Promise<DeDollarizationData> => {
             const { data, error } = await supabase
@@ -71,7 +71,7 @@ export function useDeDollarization() {
  * Hook to fetch historical data for sparklines
  */
 export function useDeDollarizationHistory(metricId: string) {
-    return useQuery({
+    return useSuspenseQuery({
         queryKey: ['dedollarization-history', metricId],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -89,6 +89,6 @@ export function useDeDollarizationHistory(metricId: string) {
             })).reverse();
         },
         staleTime: 1000 * 60 * 60,
-        enabled: !!metricId,
+
     });
 }

@@ -5,7 +5,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useBricsTracker } from '@/hooks/useBricsTracker';
 
 export const BRICSTrackerSection: React.FC = () => {
-    const { data, isLoading } = useBricsTracker();
+    const { data } = useBricsTracker();
 
     const metrics = data?.metrics || [];
     const countryReserves = data?.countryReserves || [];
@@ -50,7 +50,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         } : undefined}
                         status={stalenessToStatus(usdShare?.staleness_flag)}
                         history={history['BRICS_USD_RESERVE_SHARE_PCT']}
-                        isLoading={isLoading}
+                        isLoading={false}
                         lastUpdated={usdShare?.as_of_date}
                         source="IMF COFER / Member Reports"
                         frequency="Quarterly"
@@ -77,7 +77,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         } : undefined}
                         status={goldHoldings?.delta_yoy_pct && goldHoldings.delta_yoy_pct > 5 ? 'safe' : 'neutral'}
                         history={history['BRICS_GOLD_HOLDINGS_TONNES']}
-                        isLoading={isLoading}
+                        isLoading={false}
                         lastUpdated={goldHoldings?.as_of_date}
                         source="IMF / World Gold Council"
                         frequency="Quarterly"
@@ -104,7 +104,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         } : undefined}
                         status={debtGdp?.value && debtGdp.value > 80 ? 'danger' : 'neutral'}
                         history={history['BRICS_DEBT_GDP_PCT']}
-                        isLoading={isLoading}
+                        isLoading={false}
                         lastUpdated={debtGdp?.as_of_date}
                         source="IMF WEO"
                         frequency="Quarterly"
@@ -125,7 +125,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         } : undefined}
                         status={inflation?.value && inflation.value > 5 ? 'warning' : 'neutral'}
                         history={history['BRICS_INFLATION_YOY']}
-                        isLoading={isLoading}
+                        isLoading={false}
                         lastUpdated={inflation?.as_of_date}
                         source="IMF / Local Reports"
                         frequency="Monthly"

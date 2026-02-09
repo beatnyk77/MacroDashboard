@@ -12,7 +12,7 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
         <MetricCard
             label="Geopolitical Risk Pulse"
             value={data?.composite_z_score !== undefined && data?.composite_z_score !== null ? data.composite_z_score.toFixed(2) : '-'}
-            isLoading={geoRisk.isLoading}
+            isLoading={false}
             status={isHighRisk ? 'danger' : 'safe'}
             sublabel={isHighRisk ? 'Extreme Geopolitical Pricing' : 'Geopolitical Risk Contained'}
             zScore={data?.composite_z_score}

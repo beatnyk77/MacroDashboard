@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface OilRefiningCapacity {
@@ -25,73 +25,64 @@ export interface MetricDefinition {
     metadata: any;
 }
 
+export interface OilData {
+    capacityData: OilRefiningCapacity[];
+    importData: OilImport[];
+    sprData: { date: string; value: number }[];
+    metrics: MetricDefinition[];
+}
+
 export const useOilData = () => {
-    const [capacityData, setCapacityData] = useState<OilRefiningCapacity[]>([]);
-    const [importData, setImportData] = useState<OilImport[]>([]);
-    const [sprData, setSprData] = useState<{ date: string; value: number }[]>([]);
-    const [metrics, setMetrics] = useState<MetricDefinition[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data } = useSuspenseQuery({
+        queryKey: ['oil_data'],
+        queryFn: async (): Promise<OilData> => {
+            // 1. Fetch Capacity (Latest Year)
+            const { data: capData, error: capError } = await supabase
+                .from('oil_refining_capacity')
+                .select('*')
+                .order('capacity_mbpd', { ascending: false });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // 1. Fetch Capacity (Latest Year)
-                const { data: capData, error: capError } = await supabase
-                    .from('oil_refining_capacity')
-                    .select('*')
-                    .order('capacity_mbpd', { ascending: false });
+            if (capError) throw capError;
 
-                if (capError) throw capError;
+            // 2. Fetch Imports (Last 12 months)
+            const { data: impData, error: impError } = await supabase
+                .from('oil_imports_by_origin')
+                .select('*')
+                .order('as_of_date', { ascending: false })
+                .limit(500);
 
-                // 2. Fetch Imports (Last 12 months)
-                // We want to visualize flows, so getting recent data is key.
-                const { data: impData, error: impError } = await supabase
-                    .from('oil_imports_by_origin')
-                    .select('*')
-                    .order('as_of_date', { ascending: false })
-                    .limit(500); // Guardrail
+            if (impError) throw impError;
 
-                if (impError) throw impError;
+            // 3. Fetch SPR Levels (Metric: OIL_SPR_LEVEL_US)
+            const { data: sprObs, error: sprError } = await supabase
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', 'OIL_SPR_LEVEL_US')
+                .order('as_of_date', { ascending: true });
 
-                // 3. Fetch SPR Levels (Metric: OIL_SPR_LEVEL_US)
-                const { data: sprObs, error: sprError } = await supabase
-                    .from('metric_observations')
-                    .select('as_of_date, value')
-                    .eq('metric_id', 'OIL_SPR_LEVEL_US')
-                    .order('as_of_date', { ascending: true }); // Ascending for chart
+            if (sprError) throw sprError;
 
-                if (sprError) throw sprError;
+            // 4. Fetch Metric Definitions for context
+            const { data: metData, error: metError } = await supabase
+                .from('metrics')
+                .select('*')
+                .eq('category', 'energy');
 
-                // 4. Fetch Metric Definitions for context
-                const { data: metData, error: metError } = await supabase
-                    .from('metrics')
-                    .select('*')
-                    .eq('category', 'energy');
+            if (metError) throw metError;
 
-                if (metError) throw metError;
+            return {
+                capacityData: (capData as OilRefiningCapacity[]) || [],
+                importData: (impData as OilImport[]) || [],
+                sprData: (sprObs || []).map(d => ({
+                    date: String(d.as_of_date),
+                    value: Number(d.value)
+                })),
+                metrics: (metData as MetricDefinition[]) || []
+            };
+        },
+        staleTime: 1000 * 60 * 60, // 1 hour
+        retry: 2,
+    });
 
-                setCapacityData(capData || []);
-                setImportData(impData || []);
-                setSprData((sprObs || []).map(d => ({ date: String(d.as_of_date), value: Number(d.value) })));
-                setMetrics(metData || []);
-            } catch (err: any) {
-                console.error('Error fetching oil data:', err);
-                setError(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    return {
-        capacityData,
-        importData,
-        sprData,
-        metrics,
-        isLoading,
-        error
-    };
+    return { data };
 };

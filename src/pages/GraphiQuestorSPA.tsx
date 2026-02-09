@@ -113,7 +113,7 @@ export const GraphiQuestorSPA: React.FC = () => {
                 {/* ═══════════════════════════════════════════════════════════════════
                     THEMATIC LABS
                 ═══════════════════════════════════════════════════════════════════ */}
-                <SPASection id="thematic-labs">
+                <SPASection id="thematic-labs" disableAnimation>
                     <SectionHeader
                         title="Thematic Labs"
                         subtitle="Deep-dive signals for Gold, BRICS, and Global Sovereign Stress"

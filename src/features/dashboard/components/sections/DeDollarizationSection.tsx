@@ -5,14 +5,14 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useDeDollarization, useDeDollarizationHistory } from '@/hooks/useDeDollarization';
 
 export const DeDollarizationSection: React.FC = () => {
-    const { data, isLoading } = useDeDollarization();
+    const { data } = useDeDollarization();
 
     // Fetch history for sparklines
     const { data: usdHistory } = useDeDollarizationHistory('GLOBAL_USD_SHARE_PCT');
     const { data: goldHistory } = useDeDollarizationHistory('GLOBAL_GOLD_SHARE_PCT');
 
-    const usdShare = data?.usdShare;
-    const goldShare = data?.goldShare;
+    const usdShare = data.usdShare;
+    const goldShare = data.goldShare;
 
     // Determine trend for USD share (down = de-dollarization signal)
     const getUsdTrend = (): 'up' | 'down' | 'neutral' => {
@@ -56,7 +56,7 @@ export const DeDollarizationSection: React.FC = () => {
                         status={stalenessToStatus(usdShare?.staleness_flag)}
                         history={usdHistory}
                         suffix="%"
-                        isLoading={isLoading}
+                        isLoading={false}
                         lastUpdated={usdShare?.as_of_date}
                         description="Tracks the proportion of global foreign exchange reserves held in US Dollars."
                         methodology="Based on IMF COFER (Currency Composition of Official Foreign Exchange Reserves) data. Includes G20 and remaining reporting economies (approx 149 countries)."
@@ -86,7 +86,7 @@ export const DeDollarizationSection: React.FC = () => {
                         status={getGoldStatus()}
                         history={goldHistory}
                         suffix="%"
-                        isLoading={isLoading}
+                        isLoading={false}
                         lastUpdated={goldShare?.as_of_date}
                         description="Tracks the annual percentage change in the share of global reserves held in gold bullion."
                         methodology="Derived from IMF COFER global holdings and LBMA gold pricing. Trends >10% accumulation signal significant central bank diversification into hard assets."
