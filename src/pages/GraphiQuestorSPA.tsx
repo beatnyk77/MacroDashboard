@@ -184,11 +184,6 @@ export const GraphiQuestorSPA: React.FC = () => {
                                 </SectionErrorBoundary>
                             </div>
 
-                            <SectionErrorBoundary name="Institutional Influence">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <InstitutionalInfluenceSection />
-                                </Suspense>
-                            </SectionErrorBoundary>
 
                             <SectionErrorBoundary name="Trade Flows">
                                 <Suspense fallback={<LoadingFallback />}>
@@ -256,6 +251,15 @@ export const GraphiQuestorSPA: React.FC = () => {
                             </SectionErrorBoundary>
                         </SPAAccordion>
                     </div>
+                </SPASection>
+
+                {/* 3.5 Spheres of Influence (Standalone) */}
+                <SPASection id="spheres-of-influence">
+                    <SectionErrorBoundary name="Spheres of Influence">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <InstitutionalInfluenceSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* ═══════════════════════════════════════════════════════════════════

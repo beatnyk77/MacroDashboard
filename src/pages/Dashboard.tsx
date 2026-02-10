@@ -35,6 +35,7 @@ const EnergySecuritySection = lazy(() => import('@/features/dashboard/components
 // Country Pulses
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
 const ChinaMacroPulseSection = lazy(() => import('@/components/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
+const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -224,6 +225,15 @@ export const Dashboard: React.FC = () => {
                             </SectionErrorBoundary>
                         </SPAAccordion>
                     </div>
+                </SPASection>
+
+                {/* ROW 5.5: SPHERES OF INFLUENCE */}
+                <SPASection id="spheres-of-influence" disableAnimation>
+                    <SectionErrorBoundary name="Spheres of Influence">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <InstitutionalInfluenceSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* ROW 6: COUNTRY PULSES */}
