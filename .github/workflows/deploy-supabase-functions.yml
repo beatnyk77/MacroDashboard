@@ -32,4 +32,10 @@ jobs:
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
-          supabase functions deploy --all --project-ref "$SUPABASE_PROJECT_ID"
+          for func_dir in supabase/functions/*/ ; do
+            if [ -f "${func_dir}index.ts" ]; then
+              func_name=$(basename "$func_dir")
+              echo "Deploying function: $func_name"
+              supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+            fi
+          done
