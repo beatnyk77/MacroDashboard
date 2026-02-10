@@ -5,6 +5,7 @@ import { useInstitutionalLoans } from '@/hooks/useInstitutionalLoans';
 import { Shield, Globe, AlertTriangle } from 'lucide-react';
 
 export const InstitutionalInfluenceSection = () => {
+    console.log("InstitutionalInfluenceSection: Render start");
     const [loanType, setLoanType] = useState<'Stock' | 'Flow'>('Stock');
     const { data: loanData, isLoading, error } = useInstitutionalLoans(loanType);
 
@@ -84,9 +85,9 @@ export const InstitutionalInfluenceSection = () => {
     const regionalList = Object.values(regionalDominance);
 
     const formatCurrency = (val: number) => {
-        if (val >= 1e12) return `$${(val / 1e12).toFixed(1)} T`;
-        if (val >= 1e9) return `$${(val / 1e9).toFixed(1)} B`;
-        return `$${(val / 1e6).toFixed(0)} M`;
+        if (val >= 1e12) return `$${(val / 1e12).toFixed(1)}T`;
+        if (val >= 1e9) return `$${(val / 1e9).toFixed(1)}B`;
+        return `$${(val / 1e6).toFixed(0)}M`;
     };
 
     const COLORS = {
@@ -101,6 +102,9 @@ export const InstitutionalInfluenceSection = () => {
                 title="Institutional Money Wars"
                 subtitle="Mapping the global Sphere of Influence: Western MDBs vs. Eastern Finance vs. Japan (JICA)"
             />
+            <Typography variant="body2" sx={{ color: 'red', display: 'none' }} id="debug-marker-institutional">
+                DEBUG: COMPONENT RENDERED
+            </Typography>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                 <ToggleButtonGroup
@@ -161,10 +165,10 @@ export const InstitutionalInfluenceSection = () => {
                                             position: 'relative',
                                             overflow: 'hidden',
                                             '&:hover': {
-                                                borderColor: `${statusColor} 40`,
+                                                borderColor: `${statusColor}40`,
                                                 bgcolor: 'rgba(255,255,255,0.02)',
                                                 transform: 'translateY(-2px)',
-                                                boxShadow: `0 8px 24px - 12px ${statusColor} 40`
+                                                boxShadow: `0 8px 24px -12px ${statusColor}40`
                                             }
                                         }}>
                                             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
@@ -178,11 +182,11 @@ export const InstitutionalInfluenceSection = () => {
                                                     px: 1,
                                                     py: 0.2,
                                                     borderRadius: 0.5,
-                                                    bgcolor: `${statusColor} 15`,
+                                                    bgcolor: `${statusColor}15`,
                                                     color: statusColor,
                                                     fontWeight: 900,
                                                     fontSize: '0.55rem',
-                                                    border: `1px solid ${statusColor} 30`
+                                                    border: `1px solid ${statusColor}30`
                                                 }}>
                                                     {status.replace('_', ' ')}
                                                 </Typography>
@@ -193,9 +197,9 @@ export const InstitutionalInfluenceSection = () => {
                                             </Typography>
 
                                             <Stack direction="row" spacing={0.5} sx={{ height: 4, borderRadius: 1, overflow: 'hidden', mb: 2, bgcolor: 'rgba(255,255,255,0.03)' }}>
-                                                <Box sx={{ width: `${westPct}% `, bgcolor: COLORS.WEST }} />
-                                                <Box sx={{ width: `${eastPct}% `, bgcolor: COLORS.EAST }} />
-                                                <Box sx={{ width: `${japanPct}% `, bgcolor: COLORS.JAPAN }} />
+                                                <Box sx={{ width: `${westPct}%`, bgcolor: COLORS.WEST }} />
+                                                <Box sx={{ width: `${eastPct}%`, bgcolor: COLORS.EAST }} />
+                                                <Box sx={{ width: `${japanPct}%`, bgcolor: COLORS.JAPAN }} />
                                             </Stack>
 
                                             <Grid container spacing={1}>
@@ -259,9 +263,9 @@ export const InstitutionalInfluenceSection = () => {
                                             </Typography>
                                         </Stack>
                                         <Stack direction="row" spacing={0.25} sx={{ height: 4, borderRadius: 1, overflow: 'hidden', bgcolor: 'rgba(255,255,255,0.03)' }}>
-                                            <Box sx={{ width: `${westW}% `, bgcolor: COLORS.WEST }} />
-                                            <Box sx={{ width: `${eastW}% `, bgcolor: COLORS.EAST }} />
-                                            <Box sx={{ width: `${japanW}% `, bgcolor: COLORS.JAPAN }} />
+                                            <Box sx={{ width: `${westW}%`, bgcolor: COLORS.WEST }} />
+                                            <Box sx={{ width: `${eastW}%`, bgcolor: COLORS.EAST }} />
+                                            <Box sx={{ width: `${japanW}%`, bgcolor: COLORS.JAPAN }} />
                                         </Stack>
                                     </Box>
                                 );
