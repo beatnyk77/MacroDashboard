@@ -22,6 +22,11 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
       }
       const response = await fetch(url, options);
       if (response.ok) return response;
+
+      const errorText = await response.text();
+      if (response.status === 400) {
+        throw new Error(`HTTP 400: Bad Request (Likely invalid Series ID or Parameters). FRED says: ${errorText}`);
+      }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error: any) {
       lastError = error;

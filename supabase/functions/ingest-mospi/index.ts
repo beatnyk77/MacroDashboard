@@ -172,102 +172,119 @@ serve(async (req) => {
             return true;
         };
 
-        // ==================================================================
-        // 1. Unemployment (PLFS)
+        // 1. PLFS (Unemployment, Wages, Participation, Hours)
         // ==================================================================
         try {
-            console.log("[IN_UNEMPLOYMENT_RATE] Discovery started...");
-            const plfsMeta = await mospi.getPLFSIndicators(2); // Quarterly
+            console.log("[PLFS] Discovery started...");
 
-            // Helpful Debug
-            // console.log("[IN_UNEMPLOYMENT_RATE] Metadata:", JSON.stringify(plfsMeta.data?.slice(0, 5)));
+            // A. Quarterly Metrics (UR, LFPR by Sector)
+            const plfsQuarterly = await mospi.getPLFSIndicators(2);
+            const qConfigs = [
+                { id: 'IN_UNEMPLOYMENT_RATE', keywords: ['unemployment rate'], label: 'Unemployment', sector: '3' },
+                { id: 'IN_LFPR', keywords: ['labor force participation', 'lfpr'], label: 'LFPR', sector: '3' },
+                { id: 'IN_PLFS_UR_URBAN', keywords: ['unemployment rate'], label: 'Urban UR', sector: '2' },
+                { id: 'IN_PLFS_UR_RURAL', keywords: ['unemployment rate'], label: 'Rural UR', sector: '1' },
+                { id: 'IN_PLFS_LFPR_URBAN', keywords: ['labor force participation'], label: 'Urban LFPR', sector: '2' },
+                { id: 'IN_PLFS_LFPR_RURAL', keywords: ['labor force participation'], label: 'Rural LFPR', sector: '1' }
+            ];
 
-            const indicator = plfsMeta.data?.find((i: any) =>
-                i.description?.toLowerCase?.().includes('unemployment rate')
-            );
+            for (const config of qConfigs) {
+                const indicator = plfsQuarterly.data?.find((i: any) =>
+                    config.keywords.some(k => i.description?.toLowerCase?.().includes(k))
+                );
 
-            if (indicator) {
-                console.log(`[IN_UNEMPLOYMENT_RATE] Found indicator: ${indicator.indicator_code}`);
-                const data = await mospi.getPLFSData({
-                    indicator_code: indicator.indicator_code,
-                    frequency_code: 2
-                });
+                if (indicator) {
+                    console.log(`[PLFS-Q] Found ${config.label}: ${indicator.indicator_code}`);
+                    const data = await mospi.getPLFSData({ indicator_code: indicator.indicator_code, frequency_code: 2, sector_code: config.sector });
+                    if (data?.data?.length > 0) {
+                        const latest = data.data.sort((a: any, b: any) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())[0];
+                        const value = parseFloat(latest.value || latest.Value || 0);
+                        if (await upsertMetric(config.id, value, latest.date || new Date().toISOString(), 'MoSPI')) {
+                            results.push({ metric: config.id, status: 'success', value, date: latest.date });
+                        }
+                    }
+                }
+            }
 
-                if (data && data.data && data.data.length > 0) {
-                    // Sort descending by date
-                    const sorted = data.data.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                    const latest = sorted[0];
+            // B. Annual Metrics (Wages, Hours)
+            const plfsAnnual = await mospi.getPLFSIndicators(1);
+            const aConfigs = [
+                { id: 'IN_WAGE_GROWTH', code: 6, label: 'Wage Growth' }, // Avg wage/salary earnings
+                { id: 'IN_HOURS_WORKED', keywords: ['hours worked', 'average hours'], label: 'Hours Worked' }
+            ];
 
-                    const rawVal = latest.value || latest.Value || latest.formatted_value;
-                    const value = parseFloat(rawVal);
+            for (const config of aConfigs) {
+                const indicator = config.code ?
+                    plfsAnnual.data?.find((i: any) => i.indicator_code === config.code) :
+                    plfsAnnual.data?.find((i: any) => config.keywords?.some(k => i.description?.toLowerCase?.().includes(k)));
 
-                    console.log(`[IN_UNEMPLOYMENT_RATE] Latest Raw: ${rawVal}, Parsed: ${value}, Date: ${latest.date}`);
-
-                    if (await upsertMetric('IN_UNEMPLOYMENT_RATE', value, latest.date || new Date().toISOString(), 'MoSPI')) {
-                        results.push({ metric: 'IN_UNEMPLOYMENT_RATE', status: 'success', value, date: latest.date });
-                    } else {
-                        results.push({ metric: 'IN_UNEMPLOYMENT_RATE', status: 'skipped', reason: 'NaN value' });
+                if (indicator) {
+                    console.log(`[PLFS-A] Found ${config.label}: ${indicator.indicator_code}`);
+                    const data = await mospi.getPLFSData({ indicator_code: indicator.indicator_code, frequency_code: 1 });
+                    if (data?.data?.length > 0) {
+                        const latest = data.data.sort((a: any, b: any) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())[0];
+                        const value = parseFloat(latest.value || latest.Value || 0);
+                        if (await upsertMetric(config.id, value, latest.date || new Date().toISOString(), 'MoSPI')) {
+                            results.push({ metric: config.id, status: 'success', value, date: latest.date });
+                        }
                     }
                 } else {
-                    results.push({ metric: 'IN_UNEMPLOYMENT_RATE', status: 'skipped', reason: 'No data returned' });
+                    results.push({ metric: config.id, status: 'skipped', reason: `${config.label} indicator not found` });
                 }
-            } else {
-                results.push({ metric: 'IN_UNEMPLOYMENT_RATE', status: 'error', message: 'Indicator not found in metadata' });
             }
         } catch (e) {
-            console.error("[IN_UNEMPLOYMENT_RATE] Error", e);
-            results.push({ metric: 'IN_UNEMPLOYMENT_RATE', status: 'error', message: e.message });
+            console.error("[PLFS] Error", e);
+            results.push({ metric: 'PLFS_GROUP', status: 'error', message: e instanceof Error ? e.message : String(e) });
         }
 
         // ==================================================================
-        // 2. CPI (Inflation)
+        // 2. CPI (Inflation + Fuel)
         // ==================================================================
         try {
-            console.log("[IN_CPI_YOY] Discovery started...");
+            console.log("[CPI] Discovery started...");
 
-            let cpiItem: any = null;
-            let queryYear = "";
-            let queryMonth = "";
+            const cpiConfigs = [
+                { id: 'IN_CPI_YOY', group: "0", keywords: ['general', 'combined'], label: 'Headline CPI' },
+                { id: 'IN_CPI_FUEL_YOY', group: "5", keywords: ['fuel'], label: 'Fuel & Light' }
+            ];
 
-            // Try last 4 months due to MoSPI lag
-            for (let i = 1; i <= 4; i++) {
-                const d = new Date();
-                d.setMonth(d.getMonth() - i);
-                queryYear = d.getFullYear().toString();
-                queryMonth = (d.getMonth() + 1).toString();
+            for (const config of cpiConfigs) {
+                let cpiItem: any = null;
+                let qYear = "";
+                let qMonth = "";
 
-                console.log(`[IN_CPI_YOY] Trying ${queryYear}-${queryMonth}...`);
-                const cpiData = await mospi.getCPIData({
-                    year: queryYear,
-                    month: queryMonth,
-                    group_code: "Combined"
-                });
+                // Try last 6 months
+                outer: for (let i = 1; i <= 6; i++) {
+                    const d = new Date();
+                    d.setMonth(d.getMonth() - i);
+                    qYear = d.getFullYear().toString();
+                    qMonth = (d.getMonth() + 1).toString();
 
-                if (cpiData && cpiData.data && cpiData.data.length > 0) {
-                    console.log(`[IN_CPI_YOY] Received ${cpiData.data.length} rows. Samples:`, cpiData.data.slice(0, 3).map((d: any) => d.description || d.row_name || d.Item_Name));
-                    cpiItem = cpiData.data.find((d: any) => {
-                        const desc = (d.description || d.row_name || d.Item_Name || "").toLowerCase();
-                        return desc.includes('general') || desc.includes('combined') || desc.includes('all india');
-                    });
-                    if (cpiItem) break;
+                    const cpiData = await mospi.getCPIData({ year: qYear, month: qMonth, group_code: config.group });
+                    if (cpiData?.data?.length > 0) {
+                        cpiItem = cpiData.data.find((d: any) => {
+                            const desc = (d.description || d.row_name || d.Item_Name || d.subgroup_name || d.group_name || "").toLowerCase();
+                            // If group is general, match general or combined
+                            // If group is 5, match fuel
+                            return config.keywords.some(k => desc.includes(k));
+                        }) || cpiData.data[0]; // Fallback to first if only one item per group
+
+                        if (cpiItem) break outer;
+                    }
                 }
-            }
 
-            if (cpiItem) {
-                const rawVal = cpiItem.value || cpiItem.Value || 0;
-                const value = parseFloat(rawVal);
-                const dateStr = `${queryYear}-${queryMonth.padStart(2, '0')}-01`;
-
-                console.log(`[IN_CPI_YOY] Found: ${cpiItem.description}, Value: ${value}, Date: ${dateStr}`);
-
-                if (await upsertMetric('IN_CPI_YOY', value, dateStr, 'MoSPI')) {
-                    results.push({ metric: 'IN_CPI_YOY', status: 'success', value, date: dateStr });
+                if (cpiItem) {
+                    const value = parseFloat(cpiItem.value || cpiItem.Value || 0);
+                    const dateStr = `${qYear}-${qMonth.padStart(2, '0')}-01`;
+                    if (await upsertMetric(config.id, value, dateStr, 'MoSPI')) {
+                        results.push({ metric: config.id, status: 'success', value, date: dateStr });
+                    }
+                } else {
+                    results.push({ metric: config.id, status: 'skipped', reason: `No ${config.label} found` });
                 }
-            } else {
-                results.push({ metric: 'IN_CPI_YOY', status: 'skipped', reason: 'No data found in last 4 months' });
             }
         } catch (e) {
-            results.push({ metric: 'IN_CPI_YOY', status: 'error', message: e.message });
+            results.push({ metric: 'CPI_GROUP', status: 'error', message: e.message });
         }
 
         // ==================================================================
@@ -318,89 +335,60 @@ serve(async (req) => {
         }
 
         // ==================================================================
-        // 4. GDP (Quarterly) - IMPLEMENTED
+        // 4. GDP (Quarterly)
         // ==================================================================
         try {
-            console.log("[IN_GDP_GROWTH_YOY] Discovery started...");
-            // 1. Get NAS Indicators to find "GDP at Constant Prices"
+            console.log("[NAS] Discovery started...");
             const nasMeta = await mospi.getNASIndicators();
+            const nasConfigs = [
+                { id: 'IN_GDP_GROWTH_YOY', code: 22, label: 'GDP Growth %' },
+                { id: 'IN_GDP_CONSTANT_LEVEL', code: 5, label: 'GDP Constant Level' }
+            ];
 
-            // Look for growth rate or constant prices absolute to calc growth?
-            // Usually MoSPI provides "percentage change" or we take absolute "Gross Domestic Product" at "Constant Prices"
-            // Let's assume we want the Growth Rate if available, else standard GDP.
-            // Search keywords: "Gross Domestic Product" AND "Constant" AND ("Year on Year" OR "%" OR "Growth")
-            // For safety in this iteration, we look for the main GDP Constant aggregate.
+            for (const config of nasConfigs) {
+                const indicator = config.code ?
+                    nasMeta.data?.indicator?.find((i: any) => i.indicator_code === config.code) :
+                    nasMeta.data?.indicator?.find((i: any) => (i.description || "").toLowerCase().includes('growth') && (i.description || "").toLowerCase().includes('constant'));
 
-            const gdpIndicator = nasMeta.data?.indicator?.find((i: any) => {
-                const name = (i.description || "").toLowerCase();
-                return (name.includes("gross domestic product") || name.includes("gross value added")) &&
-                    name.includes("constant");
-            });
+                if (indicator) {
+                    console.log(`[NAS] Found ${config.label}: ${indicator.indicator_code}`);
 
-            if (gdpIndicator) {
-                console.log(`[IN_GDP_GROWTH_YOY] Found Indicator: ${gdpIndicator.description} (${gdpIndicator.indicator_code})`);
+                    let nasItem: any = null;
+                    const years = [new Date().getFullYear().toString(), (new Date().getFullYear() - 1).toString()];
 
-                // 2. Fetch Data (Frequency 2 = Quarterly)
-                // Use a recent year to limit data size
-                const currentYear = new Date().getFullYear().toString();
-
-                const gdpData = await mospi.getNASData({
-                    indicator_code: gdpIndicator.indicator_code,
-                    frequency_code: 2, // Quarterly
-                    year: currentYear
-                });
-
-                if (gdpData && gdpData.data && gdpData.data.length > 0) {
-                    // Sort: Parse MoSPI dates carefully. 
-                    // Often formats like "Q1 2024-25" or specific dates.
-                    // Assuming standard date field exists
-
-                    const validData = gdpData.data.filter((d: any) => d.date || d.year);
-                    const sorted = validData.sort((a: any, b: any) => {
-                        // If date field exists, use it
-                        if (a.date && b.date) return new Date(b.date).getTime() - new Date(a.date).getTime();
-                        return 0;
-                    });
-
-                    const latest = sorted[0];
-                    // Check if this is a Growth Rate or Absolute Value.
-                    // If absolute, we might need to calculate growth (complex for this script).
-                    // We will assume for now the user wants to upsert whatever value is found (likely absolute if not specified)
-                    // OR we specifically look for a Growth Indicator above.
-                    // Refinement: If value > 1000, it's likely absolute. We might flag this.
-
-                    const rawVal = latest.value || latest.Value || 0;
-                    let value = parseFloat(rawVal);
-
-                    // Hack/Heuristic: If GDP value is huge (absolute), and we need %, we might skip or log.
-                    // For now, upsert what we get.
-
-                    let dateStr = latest.date;
-                    if (!dateStr) {
-                        // Fallback date construction if possible, else skip
-                        dateStr = new Date().toISOString(); // Bad fallback but keeps pipeline alive
+                    for (const yr of years) {
+                        const data = await mospi.getNASData({ indicator_code: indicator.indicator_code, frequency_code: 2, year: yr });
+                        if (data?.data?.length > 0) {
+                            nasItem = data.data.sort((a: any, b: any) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())[0];
+                            if (nasItem) break;
+                        }
                     }
 
-                    console.log(`[IN_GDP_GROWTH_YOY] Value: ${value}, Date: ${dateStr}`);
-
-                    if (await upsertMetric('IN_GDP_GROWTH_YOY', value, dateStr, 'MoSPI')) {
-                        results.push({ metric: 'IN_GDP_GROWTH_YOY', status: 'success', value, date: dateStr, note: 'Check if value is Growth % or Absolute' });
+                    if (nasItem) {
+                        const value = parseFloat(nasItem.value || nasItem.Value || 0);
+                        if (await upsertMetric(config.id, value, nasItem.date || new Date().toISOString(), 'MoSPI')) {
+                            results.push({ metric: config.id, status: 'success', value, date: nasItem.date });
+                        }
+                    } else {
+                        results.push({ metric: config.id, status: 'skipped', reason: `No data found for ${config.label}` });
                     }
-                } else {
-                    results.push({ metric: 'IN_GDP_GROWTH_YOY', status: 'skipped', reason: 'No data found for current year' });
                 }
-            } else {
-                console.warn("[IN_GDP_GROWTH_YOY] Indicator not found.");
-                results.push({ metric: 'IN_GDP_GROWTH_YOY', status: 'skipped', reason: 'Indicator definition not found' });
             }
-
         } catch (e) {
-            console.error("[IN_GDP_GROWTH_YOY] Error", e);
-            results.push({ metric: 'IN_GDP_GROWTH_YOY', status: 'error', message: e.message });
+            console.error("[NAS] Error", e);
+            results.push({ metric: 'NAS_GROUP', status: 'error', message: e.message });
         }
 
 
-        return new Response(JSON.stringify({ success: true, results }), {
+        return new Response(JSON.stringify({
+            success: true,
+            results,
+            debug: {
+                plfs_annual: (await mospi.getPLFSIndicators(1))?.data?.slice(0, 10),
+                cpi_combined: (await mospi.getCPIData({ year: (new Date().getFullYear() - 1).toString(), month: "12", group_code: "Combined" }))?.data?.slice(0, 5),
+                nas_indicators: (await mospi.getNASIndicators())?.data?.indicator?.slice(0, 30)
+            }
+        }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 

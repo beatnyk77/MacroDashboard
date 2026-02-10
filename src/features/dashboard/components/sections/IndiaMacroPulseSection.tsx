@@ -9,6 +9,7 @@ import { BOPPressureTable } from './BOPPressureTable';
 
 import { EnergySection } from './EnergySection';
 import { ASISection } from './ASISection';
+import { CompositeMetricsSection } from './CompositeMetricsSection';
 
 
 export const IndiaMacroPulseSection: React.FC = () => {
@@ -55,6 +56,13 @@ export const IndiaMacroPulseSection: React.FC = () => {
                 <Grid item xs={12}>
                     <SectionErrorBoundary name="Annual Survey of Industries">
                         <ASISection />
+                    </SectionErrorBoundary>
+                </Grid>
+
+                {/* Composite Efficiency Metrics (Phase 1) */}
+                <Grid item xs={12}>
+                    <SectionErrorBoundary name="Composite Metrics">
+                        <CompositeMetricsSection />
                     </SectionErrorBoundary>
                 </Grid>
 
