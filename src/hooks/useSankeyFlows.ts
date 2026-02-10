@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { getMetricLabel } from '@/lib/metricLabels';
 
 export interface SankeyNode {
     index: number;
@@ -103,7 +104,7 @@ export function useSankeyFlows() {
 
                 nodes.push({
                     index: idx,
-                    name: metric?.name?.replace(/^(OECD CLI - |Capital from |Flow to |Inflation |BOP |Housing |PMI |Labor |Activity )/i, '') || metricId,
+                    name: getMetricLabel(metricId),
                     category: category as SankeyNode['category'],
                     color: CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS] || '#6b7280',
                     // Pass through raw data for card display
