@@ -12,6 +12,115 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils';
 
+interface ArbitrageRowProps {
+    title: string;
+    spreadMetric?: PreciousDivergenceData;
+    comexMetric?: PreciousDivergenceData;
+    shanghaiMetric?: PreciousDivergenceData;
+    iconColor: string;
+}
+
+const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
+    title,
+    spreadMetric,
+    comexMetric,
+    shanghaiMetric,
+    iconColor
+}) => {
+    if (!spreadMetric) return null;
+
+    const spread = spreadMetric.value;
+    const isPremium = spread > 0;
+    const widthPercent = Math.min(Math.abs(spread) * 20, 100); // Scale: 5% spread fills bar
+
+    return (
+        <div className="group relative bg-black/20 hover:bg-black/30 transition-all rounded-xl p-5 border border-white/5">
+            <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center mb-4">
+                <div className="flex items-center gap-3">
+                    <div className={cn("p-2 rounded-lg bg-white/5", iconColor)}>
+                        <Globe className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h3 className="font-serif text-lg text-white">{title} Arbitrage</h3>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+                            <span>COMEX: <span className="text-white font-bold">${comexMetric?.value?.toLocaleString()}</span></span>
+                            <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
+                            <span>SHANGHAI: <span className="text-emerald-400 font-bold">${shanghaiMetric?.value?.toLocaleString()}</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-end">
+                    <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                        PREMIUM / DISCOUNT
+                    </span>
+                    <div className={cn(
+                        "text-2xl font-black tracking-tighter flex items-center gap-2",
+                        isPremium ? "text-emerald-400" : "text-rose-400"
+                    )}>
+                        {isPremium ? '+' : ''}{spread.toFixed(2)}%
+                        {Math.abs(spread) > 1.0 && (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="bg-amber-950 border-amber-500/20 text-amber-200 text-xs font-bold">
+                                        High arbitrage incentive! Physical drainage risk.
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Visual Spread Bar */}
+            <div className="relative h-2 bg-white/10 rounded-full mb-6 overflow-hidden">
+                {/* Center Marker */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-white/30 z-10" />
+
+                {/* Active Bar */}
+                <div
+                    className={cn(
+                        "absolute top-0 bottom-0 transition-all duration-1000 ease-out rounded-full",
+                        isPremium ? "left-1/2 bg-emerald-500" : "right-1/2 bg-rose-500"
+                    )}
+                    style={{ width: `${widthPercent / 2}%` }}
+                />
+            </div>
+
+            {/* Sparkline History */}
+            <div className="h-[80px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={spreadMetric.history || []}>
+                        <defs>
+                            <linearGradient id={`grad-${title}`} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0.2} />
+                                <stop offset="95%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
+                        <RechartsTooltip
+                            contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                            itemStyle={{ fontSize: '11px', fontWeight: 'bold', color: isPremium ? '#10b981' : '#f43f5e' }}
+                            formatter={(value: number) => [`${value.toFixed(2)}%`, 'Spread']}
+                            labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke={isPremium ? '#10b981' : '#f43f5e'}
+                            fill={`url(#grad-${title})`}
+                            strokeWidth={2}
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+    );
+};
+
 export const PreciousDivergenceCard: React.FC = () => {
     const { data: divergenceData, isLoading } = usePreciousDivergence();
 
@@ -32,113 +141,6 @@ export const PreciousDivergenceCard: React.FC = () => {
 
     const silverComex = divergenceData?.find(d => d.metric_id === 'SILVER_COMEX_USD');
     const silverShanghai = divergenceData?.find(d => d.metric_id === 'SILVER_SHANGHAI_USD');
-
-    const ArbitrageRow = ({
-        title,
-        spreadMetric,
-        comexMetric,
-        shanghaiMetric,
-        iconColor
-    }: {
-        title: string,
-        spreadMetric?: PreciousDivergenceData,
-        comexMetric?: PreciousDivergenceData,
-        shanghaiMetric?: PreciousDivergenceData,
-        iconColor: string
-    }) => {
-        if (!spreadMetric) return null;
-
-        const spread = spreadMetric.value;
-        const isPremium = spread > 0;
-        const widthPercent = Math.min(Math.abs(spread) * 20, 100); // Scale: 5% spread fills bar
-
-        return (
-            <div className="group relative bg-black/20 hover:bg-black/30 transition-all rounded-xl p-5 border border-white/5">
-                <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center mb-4">
-                    <div className="flex items-center gap-3">
-                        <div className={cn("p-2 rounded-lg bg-white/5", iconColor)}>
-                            <Globe className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h3 className="font-serif text-lg text-white">{title} Arbitrage</h3>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
-                                <span>COMEX: <span className="text-white font-bold">${comexMetric?.value?.toLocaleString()}</span></span>
-                                <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
-                                <span>SHANGHAI: <span className="text-emerald-400 font-bold">${shanghaiMetric?.value?.toLocaleString()}</span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col items-end">
-                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                            PREMIUM / DISCOUNT
-                        </span>
-                        <div className={cn(
-                            "text-2xl font-black tracking-tighter flex items-center gap-2",
-                            isPremium ? "text-emerald-400" : "text-rose-400"
-                        )}>
-                            {isPremium ? '+' : ''}{spread.toFixed(2)}%
-                            {Math.abs(spread) > 1.0 && (
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse" />
-                                        </TooltipTrigger>
-                                        <TooltipContent className="bg-amber-950 border-amber-500/20 text-amber-200 text-xs font-bold">
-                                            High arbitrage incentive! Physical drainage risk.
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Visual Spread Bar */}
-                <div className="relative h-2 bg-white/10 rounded-full mb-6 overflow-hidden">
-                    {/* Center Marker */}
-                    <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-white/30 z-10" />
-
-                    {/* Active Bar */}
-                    <div
-                        className={cn(
-                            "absolute top-0 bottom-0 transition-all duration-1000 ease-out rounded-full",
-                            isPremium ? "left-1/2 bg-emerald-500" : "right-1/2 bg-rose-500"
-                        )}
-                        style={{ width: `${widthPercent / 2}%` }}
-                    />
-                </div>
-
-                {/* Sparkline History */}
-                <div className="h-[80px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={spreadMetric.history || []}>
-                            <defs>
-                                <linearGradient id={`grad-${title}`} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0.2} />
-                                    <stop offset="95%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
-                            <RechartsTooltip
-                                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                                itemStyle={{ fontSize: '11px', fontWeight: 'bold', color: isPremium ? '#10b981' : '#f43f5e' }}
-                                formatter={(value: number) => [`${value.toFixed(2)}%`, 'Spread']}
-                                labelFormatter={(label) => new Date(label).toLocaleDateString()}
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="value"
-                                stroke={isPremium ? '#10b981' : '#f43f5e'}
-                                fill={`url(#grad-${title})`}
-                                strokeWidth={2}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-        );
-    };
 
     return (
         <Card className="p-6 bg-[#0a1929]/80 backdrop-blur-md border border-amber-500/20 rounded-xl relative overflow-hidden shadow-2xl">
