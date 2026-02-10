@@ -31,7 +31,7 @@ export const UpcomingEventsCard: React.FC = () => {
                         { label: 'Previous', value: event.previous || 'N/A' },
                         { label: 'Impact', value: (event.impact_level || 'Medium').toUpperCase(), color: event.impact_level === 'High' ? '#f43f5e' : '#eab308' }
                     ],
-                    methodology: "Surprise delta is calculated as Actual - Forecast. Positive values typically indicate economic outperformance relative to consensus.",
+                    methodology: "Surprise delta (Actual - Forecast) tracks consensus divergence. Institutional desks monitor these to anticipate volatility regimes and adjust liquidity positioning.",
                     source: event.source_url
                 }}
             >
@@ -115,7 +115,7 @@ export const UpcomingEventsCard: React.FC = () => {
                 <div className="group relative">
                     <Info size={14} className="text-muted-foreground cursor-help hover:text-foreground transition-colors" />
                     <div className="absolute right-0 top-6 w-48 p-2 bg-popover border border-border rounded shadow-xl text-[0.6rem] text-popover-foreground z-10 hidden group-hover:block animate-in fade-in zoom-in-95 duration-200">
-                        Institutional data seeded for 2026. Weekly refresh via cron.
+                        Institutional-grade calendar powered by Finnhub. Live updates hourly.
                     </div>
                 </div>
             </div>
