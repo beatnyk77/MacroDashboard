@@ -1,125 +1,201 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { HoverDetail } from '@/components/HoverDetail';
-import { usePreciousDivergence } from '@/hooks/usePreciousDivergence';
-import { Info } from 'lucide-react';
+import { ArrowRight, TrendingUp, Info, Globe, AlertTriangle } from 'lucide-react';
+import { usePreciousDivergence, PreciousDivergenceData } from '@/hooks/usePreciousDivergence';
+import { ResponsiveContainer, AreaChart, Area, ReferenceLine, Tooltip as RechartsTooltip } from 'recharts';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils';
 
 export const PreciousDivergenceCard: React.FC = () => {
-    const { data, isLoading } = usePreciousDivergence();
+    const { data: divergenceData, isLoading } = usePreciousDivergence();
 
-    const getMetric = (id: string) => data?.find(m => m.metric_id === id);
+    if (isLoading) {
+        return (
+            <Card className="p-6 h-[300px] flex flex-col gap-4 bg-card/40 backdrop-blur-md border border-white/10">
+                <Skeleton className="h-8 w-[60%]" />
+                <Skeleton className="h-[200px] w-full rounded-xl" />
+            </Card>
+        );
+    }
 
-    const goldDist = getMetric('GOLD_COMEX_SHANGHAI_SPREAD_PCT');
-    const silverDist = getMetric('SILVER_COMEX_SHANGHAI_SPREAD_PCT');
+    const goldSpread = divergenceData?.find(d => d.metric_id === 'GOLD_COMEX_SHANGHAI_SPREAD_PCT');
+    const silverSpread = divergenceData?.find(d => d.metric_id === 'SILVER_COMEX_SHANGHAI_SPREAD_PCT');
 
-    const renderPriceRow = (label: string, marketA: string, priceA: any, marketB: string, priceB: any, spread: any) => {
-        const isPositive = (spread?.value || 0) > 0;
-        const colorClass = isPositive ? 'text-emerald-400' : 'text-rose-400';
+    const goldComex = divergenceData?.find(d => d.metric_id === 'GOLD_COMEX_USD');
+    const goldShanghai = divergenceData?.find(d => d.metric_id === 'GOLD_SHANGHAI_USD');
+
+    const silverComex = divergenceData?.find(d => d.metric_id === 'SILVER_COMEX_USD');
+    const silverShanghai = divergenceData?.find(d => d.metric_id === 'SILVER_SHANGHAI_USD');
+
+    const ArbitrageRow = ({
+        title,
+        spreadMetric,
+        comexMetric,
+        shanghaiMetric,
+        iconColor
+    }: {
+        title: string,
+        spreadMetric?: PreciousDivergenceData,
+        comexMetric?: PreciousDivergenceData,
+        shanghaiMetric?: PreciousDivergenceData,
+        iconColor: string
+    }) => {
+        if (!spreadMetric) return null;
+
+        const spread = spreadMetric.value;
+        const isPremium = spread > 0;
+        const widthPercent = Math.min(Math.abs(spread) * 20, 100); // Scale: 5% spread fills bar
 
         return (
-            <div className="flex flex-col gap-3 py-4 border-b border-white/5 last:border-0">
-                <div className="flex justify-between items-center text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest">
-                    <span>{label} CROSS-MARKET ARBITRAGE</span>
-                    <span className={cn("px-2 py-0.5 rounded-sm border", isPositive ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400')}>
-                        {isPositive ? 'SHANGHAI PREMIUM' : 'COMEX PREMIUM'}
-                    </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    {/* Market A (COMEX) */}
-                    <div className="bg-white/5 p-3 rounded-lg border border-white/5 group-hover:border-white/10 transition-colors">
-                        <span className="block text-[0.55rem] font-bold text-muted-foreground/60 mb-1 uppercase tracking-tighter">{marketA} (WEST)</span>
-                        <div className="text-xl font-black tracking-tight text-foreground">
-                            {priceA?.value ? `$${priceA.value.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
+            <div className="group relative bg-black/20 hover:bg-black/30 transition-all rounded-xl p-5 border border-white/5">
+                <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className={cn("p-2 rounded-lg bg-white/5", iconColor)}>
+                            <Globe className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 className="font-serif text-lg text-white">{title} Arbitrage</h3>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+                                <span>COMEX: <span className="text-white font-bold">${comexMetric?.value?.toLocaleString()}</span></span>
+                                <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
+                                <span>SHANGHAI: <span className="text-emerald-400 font-bold">${shanghaiMetric?.value?.toLocaleString()}</span></span>
+                            </div>
                         </div>
                     </div>
-                    {/* Market B (SHANGHAI) */}
-                    <div className="bg-white/5 p-3 rounded-lg border border-white/5 group-hover:border-white/10 transition-colors">
-                        <span className="block text-[0.55rem] font-bold text-muted-foreground/60 mb-1 uppercase tracking-tighter">{marketB} (EAST)</span>
-                        <div className="text-xl font-black tracking-tight text-foreground">
-                            {priceB?.value ? `$${priceB.value.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
+
+                    <div className="flex flex-col items-end">
+                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                            PREMIUM / DISCOUNT
+                        </span>
+                        <div className={cn(
+                            "text-2xl font-black tracking-tighter flex items-center gap-2",
+                            isPremium ? "text-emerald-400" : "text-rose-400"
+                        )}>
+                            {isPremium ? '+' : ''}{spread.toFixed(2)}%
+                            {Math.abs(spread) > 1.0 && (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="bg-amber-950 border-amber-500/20 text-amber-200 text-xs font-bold">
+                                            High arbitrage incentive! Physical drainage risk.
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[0.65rem] font-bold text-muted-foreground uppercase">Divergence:</span>
-                    <span className={cn("text-sm font-black tracking-widest", colorClass)}>
-                        {spread?.value !== undefined ? (spread.value > 0 ? '+' : '') + spread.value.toFixed(2) + '%' : '—'}
-                    </span>
-                    <div className="flex-1 h-[2px] bg-white/5 rounded-full relative overflow-hidden">
-                        <div
-                            className={cn("absolute inset-y-0 left-1/2 w-1/2 transition-all duration-1000", isPositive ? 'bg-emerald-500' : 'bg-rose-500 left-0')}
-                            style={{ width: `${Math.min(Math.abs(spread?.value || 0) * 10, 50)}%` }}
-                        />
-                    </div>
+                {/* Visual Spread Bar */}
+                <div className="relative h-2 bg-white/10 rounded-full mb-6 overflow-hidden">
+                    {/* Center Marker */}
+                    <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-white/30 z-10" />
+
+                    {/* Active Bar */}
+                    <div
+                        className={cn(
+                            "absolute top-0 bottom-0 transition-all duration-1000 ease-out rounded-full",
+                            isPremium ? "left-1/2 bg-emerald-500" : "right-1/2 bg-rose-500"
+                        )}
+                        style={{ width: `${widthPercent / 2}%` }}
+                    />
+                </div>
+
+                {/* Sparkline History */}
+                <div className="h-[80px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={spreadMetric.history || []}>
+                            <defs>
+                                <linearGradient id={`grad-${title}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
+                            <RechartsTooltip
+                                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                                itemStyle={{ fontSize: '11px', fontWeight: 'bold', color: isPremium ? '#10b981' : '#f43f5e' }}
+                                formatter={(value: number) => [`${value.toFixed(2)}%`, 'Spread']}
+                                labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="value"
+                                stroke={isPremium ? '#10b981' : '#f43f5e'}
+                                fill={`url(#grad-${title})`}
+                                strokeWidth={2}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         );
     };
 
-    const description = "Tracks the price divergence between COMEX (Western institutional paper market) and Shanghai (Eastern physical-dominant market).";
-    const methodology = "Gold Spread = (Shanghai Gold USD - COMEX Gold USD) / COMEX Gold USD. Silver Spread = (Shanghai Silver USD - COMEX Silver USD) / COMEX Silver USD. Shanghai prices are converted from CNY/oz using live USDCNY rates.";
-
     return (
-        <HoverDetail
-            title="Precious Metals Divergence"
-            subtitle="Shanghai vs COMEX Arbitrage"
-            detailContent={{
-                description,
-                methodology,
-                source: "Yahoo Finance, COMEX, SGE",
-                stats: [
-                    { label: 'Gold Shanghai (USD)', value: (getMetric('GOLD_SHANGHAI_USD')?.value !== undefined && getMetric('GOLD_SHANGHAI_USD')?.value !== null) ? getMetric('GOLD_SHANGHAI_USD')!.value.toFixed(2) : 'N/A' },
-                    { label: 'Gold COMEX (USD)', value: (getMetric('GOLD_COMEX_USD')?.value !== undefined && getMetric('GOLD_COMEX_USD')?.value !== null) ? getMetric('GOLD_COMEX_USD')!.value.toFixed(2) : 'N/A' },
-                    { label: 'Silver Shanghai (USD)', value: (getMetric('SILVER_SHANGHAI_USD')?.value !== undefined && getMetric('SILVER_SHANGHAI_USD')?.value !== null) ? getMetric('SILVER_SHANGHAI_USD')!.value.toFixed(2) : 'N/A' },
-                    { label: 'Silver COMEX (USD)', value: (getMetric('SILVER_COMEX_USD')?.value !== undefined && getMetric('SILVER_COMEX_USD')?.value !== null) ? getMetric('SILVER_COMEX_USD')!.value.toFixed(2) : 'N/A' },
-                ]
-            }}
-        >
-            <Card
-                className="p-6 h-full cursor-pointer flex flex-col relative transition-all duration-300 border-border bg-card/40 backdrop-blur-md hover:border-primary hover:shadow-xl hover:-translate-y-0.5 group"
-                onClick={() => {
-                    if (typeof window !== 'undefined' && (window as any).gtag) {
-                        (window as any).gtag('event', 'click_divergence_card', {
-                            gold_spread: goldDist?.value,
-                            silver_spread: silverDist?.value
-                        });
-                    }
-                }}
-            >
-                <div className="flex justify-between mb-6">
-                    <div>
-                        <span className="block text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.15em] mb-1">
-                            Physical vs Paper Settlement
-                        </span>
-                        <h3 className="text-lg font-black text-foreground tracking-tight">
-                            Shanghai Divergence
-                        </h3>
-                    </div>
-                    <Info size={16} className="text-muted-foreground/30 group-hover:text-foreground transition-colors" />
-                </div>
-
-                {isLoading ? (
-                    <div className="space-y-4">
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-24 w-full" />
-                    </div>
-                ) : (
-                    <div className="flex flex-col">
-                        {renderPriceRow('Gold', 'COMEX', getMetric('GOLD_COMEX_USD'), 'Shanghai', getMetric('GOLD_SHANGHAI_USD'), goldDist)}
-                        {renderPriceRow('Silver', 'COMEX', getMetric('SILVER_COMEX_USD'), 'Shanghai', getMetric('SILVER_SHANGHAI_USD'), silverDist)}
-                    </div>
-                )}
-
-                <div className="mt-6 pt-4 border-t border-white/5 italic">
-                    <span className="block text-[0.65rem] font-bold text-muted-foreground/60 leading-tight">
-                        Note: Positive divergence signals a Shanghai Premium (Eastern physical squeeze). Comex represents the paper-dominant Western settlement.
+        <Card className="p-6 bg-[#0a1929]/80 backdrop-blur-md border border-amber-500/20 rounded-xl relative overflow-hidden shadow-2xl">
+            <div className="flex justify-between items-start mb-6">
+                <div>
+                    <span className="block text-[0.65rem] font-black text-amber-500 tracking-[0.15em] uppercase mb-1">
+                        EAST-WEST ARBITRAGE
                     </span>
+                    <h2 className="text-xl font-serif text-foreground flex items-center gap-2">
+                        Shanghai Premium
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <Info className="w-4 h-4 text-muted-foreground/50 hover:text-amber-400 transition-colors" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs bg-slate-950 border-white/10">
+                                    <p className="text-xs text-muted-foreground">
+                                        Price difference between Shanghai Gold Exchange (SGE) and COMEX.
+                                        A persistent positive spread signals physical metal migration from West to East.
+                                    </p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </h2>
                 </div>
-            </Card>
-        </HoverDetail>
+            </div>
+
+            <div className="space-y-6">
+                <ArbitrageRow
+                    title="Gold"
+                    spreadMetric={goldSpread}
+                    comexMetric={goldComex}
+                    shanghaiMetric={goldShanghai}
+                    iconColor="text-amber-400"
+                />
+
+                <ArbitrageRow
+                    title="Silver"
+                    spreadMetric={silverSpread}
+                    comexMetric={silverComex}
+                    shanghaiMetric={silverShanghai}
+                    iconColor="text-slate-300"
+                />
+            </div>
+
+            {/* Insight */}
+            <div className="mt-6 pt-4 border-t border-white/5">
+                <div className="flex items-start gap-3">
+                    <TrendingUp className="w-4 h-4 text-emerald-400 mt-1" />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                        <span className="text-emerald-400 font-bold">Arbitrage Signal:</span>
+                        {goldSpread && goldSpread.value > 0.5
+                            ? " Strong incentive for physical delivery in Shanghai. Bullish for physical demand."
+                            : " Markets are relatively balanced. Neutral flow signal."}
+                    </p>
+                </div>
+            </div>
+        </Card>
     );
 };

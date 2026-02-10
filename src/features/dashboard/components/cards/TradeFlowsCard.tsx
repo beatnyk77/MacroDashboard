@@ -12,7 +12,6 @@ import {
     CartesianGrid
 } from 'recharts';
 import {
-    Globe2,
     Info,
     ArrowUpRight,
     ArrowDownRight,
@@ -20,16 +19,17 @@ import {
     CheckCircle2,
     AlertTriangle,
     TrendingUp,
-    Calendar
+    Calendar,
+    Crown
 } from 'lucide-react';
 import { useTradeStats, getTradeInsights } from '@/hooks/useTradeStats';
 import { cn } from '@/lib/utils';
 
 const COUNTRIES = [
-    { code: 'IN', name: 'India', color: '#f97316' },
-    { code: 'US', name: 'United States', color: '#3b82f6' },
-    { code: 'CN', name: 'China', color: '#ef4444' },
-    { code: 'EU', name: 'Eurozone', color: '#8b5cf6' }
+    { code: 'IN', name: 'India', color: '#f59e0b' }, // Amber-500 (Imperial Gold)
+    { code: 'US', name: 'United States', color: '#3b82f6' }, // Blue
+    { code: 'CN', name: 'China', color: '#ef4444' }, // Red
+    { code: 'EU', name: 'Eurozone', color: '#8b5cf6' } // Purple
 ];
 
 export const TradeFlowsCard: React.FC = () => {
@@ -107,18 +107,21 @@ export const TradeFlowsCard: React.FC = () => {
     }
 
     return (
-        <Card className="w-full bg-black/40 border-white/5 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl">
-            <CardHeader className="p-8 border-b border-white/5 bg-white/[0.01]">
+        <Card className="w-full bg-[#0a0a0a] border-white/10 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl relative group">
+            {/* Imperial Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+
+            <CardHeader className="p-8 border-b border-white/5 bg-white/[0.01] relative z-10">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <Globe2 className="w-4 h-4 text-primary" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
-                                Global Supply Chain Intelligence
+                            <Crown className="w-4 h-4 text-amber-500" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500/80 shadow-amber-500/20 drop-shadow-sm">
+                                Imperial Resource Flow
                             </span>
                         </div>
                         <div className="flex items-center gap-4">
-                            <CardTitle className="text-3xl font-bold tracking-tight">Trade Flows & Geopolitics</CardTitle>
+                            <CardTitle className="text-3xl font-bold tracking-tight text-white">Global Trade Architecture</CardTitle>
                             {latestStat && (
                                 <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-muted-foreground/60 bg-white/5 px-2 py-1 rounded-md border border-white/5">
                                     <Calendar className="w-3 h-3" />
@@ -134,7 +137,7 @@ export const TradeFlowsCard: React.FC = () => {
                                 <TabsTrigger
                                     key={c.code}
                                     value={c.code}
-                                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white px-6 py-2 rounded-lg text-xs font-bold transition-all"
+                                    className="data-[state=active]:bg-white/10 data-[state=active]:text-white px-6 py-2 rounded-lg text-xs font-bold transition-all data-[state=active]:shadow-inner"
                                 >
                                     {c.name}
                                 </TabsTrigger>
@@ -144,7 +147,7 @@ export const TradeFlowsCard: React.FC = () => {
                 </div>
             </CardHeader>
 
-            <CardContent className="p-8">
+            <CardContent className="p-8 relative z-10">
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
 
                     {/* Left Column: Primary Metrics & FTAs */}
@@ -156,7 +159,7 @@ export const TradeFlowsCard: React.FC = () => {
                                     Annualized Exports (USD)
                                 </span>
                                 <div className="flex items-baseline gap-3">
-                                    <span className="text-5xl font-black tracking-tighter transition-transform group-hover:scale-[1.02] inline-block">
+                                    <span className="text-5xl font-black tracking-tighter transition-transform group-hover:scale-[1.02] inline-block text-white">
                                         ${latestStat?.exports_usd_bn}B
                                     </span>
                                     {latestStat?.exports_yoy_pct && (
@@ -172,7 +175,7 @@ export const TradeFlowsCard: React.FC = () => {
                             </div>
 
                             <div className="group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-rose-400">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-amber-500">
                                     Annualized Imports (USD)
                                 </span>
                                 <div className="flex items-baseline gap-3">
@@ -196,11 +199,12 @@ export const TradeFlowsCard: React.FC = () => {
                         </div>
 
                         {/* FTAs & Agreements */}
-                        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-full pointer-events-none" />
                             <div className="flex items-center gap-2 mb-6">
                                 <Link className="w-4 h-4 text-amber-400" />
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/80">
-                                    Active Trade Agreements
+                                    Strategic Alliances
                                 </span>
                             </div>
                             <div className="space-y-4">
@@ -250,7 +254,7 @@ export const TradeFlowsCard: React.FC = () => {
                         <div className="h-[400px] relative">
                             <div className="absolute top-0 left-0 z-10">
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
-                                    Partner Geographic Breakdown
+                                    Bilateral Volume Flow
                                 </span>
                             </div>
                             <ResponsiveContainer width="100%" height="100%">
@@ -258,12 +262,12 @@ export const TradeFlowsCard: React.FC = () => {
                                     data={sankeyData}
                                     nodePadding={50}
                                     margin={{ top: 40, bottom: 20, left: 20, right: 20 }}
-                                    link={{ stroke: countryInfo?.color || '#3b82f6', strokeOpacity: 0.1 }}
-                                    node={{ fill: '#334155', strokeWidth: 0 }}
+                                    link={{ stroke: '#f59e0b', strokeOpacity: 0.15 }} // Amber-500
+                                    node={{ fill: '#4b5563', strokeWidth: 0 }} // Slate-600
                                 >
                                     <RechartsTooltip
-                                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
-                                        itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '12px', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}
+                                        itemStyle={{ fontSize: '12px', fontWeight: 'bold', color: '#f59e0b' }}
                                     />
                                 </Sankey>
                             </ResponsiveContainer>
@@ -277,17 +281,27 @@ export const TradeFlowsCard: React.FC = () => {
                                 </span>
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1.5">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                                         <span className="text-[9px] font-bold text-muted-foreground uppercase">Exports</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                                         <span className="text-[9px] font-bold text-muted-foreground uppercase">Imports</span>
                                     </div>
                                 </div>
                             </div>
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={historyData} margin={{ top: 40, right: 20, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="exportGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                                        </linearGradient>
+                                        <linearGradient id="importGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
                                     <XAxis
                                         dataKey="date"
@@ -308,18 +322,18 @@ export const TradeFlowsCard: React.FC = () => {
                                     <Line
                                         type="monotone"
                                         dataKey="exports"
-                                        stroke={countryInfo?.color || '#3b82f6'}
-                                        strokeWidth={4}
+                                        stroke="#f59e0b"
+                                        strokeWidth={3}
                                         dot={false}
-                                        activeDot={{ r: 6, strokeWidth: 0 }}
+                                        activeDot={{ r: 6, strokeWidth: 0, fill: '#f59e0b' }}
                                     />
                                     <Line
                                         type="monotone"
                                         dataKey="imports"
-                                        stroke="rgba(255,255,255,0.1)"
-                                        strokeWidth={4}
+                                        stroke="#3b82f6"
+                                        strokeWidth={3}
                                         dot={false}
-                                        activeDot={{ r: 6, strokeWidth: 0 }}
+                                        activeDot={{ r: 6, strokeWidth: 0, fill: '#3b82f6' }}
                                     />
                                 </LineChart>
                             </ResponsiveContainer>
@@ -332,8 +346,8 @@ export const TradeFlowsCard: React.FC = () => {
                     {insights.length > 0 ? (
                         insights.map((insight, idx) => (
                             <div key={idx} className={cn(
-                                "flex items-center gap-3 p-4 rounded-xl border transition-all hover:scale-[1.01]",
-                                insight.type === 'negative' ? "bg-rose-500/5 border-rose-500/10" : "bg-emerald-500/5 border-emerald-500/10"
+                                "flex items-center gap-3 p-4 rounded-xl border transition-all hover:scale-[1.01] bg-opacity-50",
+                                insight.type === 'negative' ? "bg-rose-950/20 border-rose-500/20" : "bg-emerald-950/20 border-emerald-500/20"
                             )}>
                                 {insight.type === 'negative' ? <AlertTriangle className="w-5 h-5 text-rose-500" /> : <TrendingUp className="w-5 h-5 text-emerald-500" />}
                                 <div className="space-y-0.5">
@@ -347,10 +361,10 @@ export const TradeFlowsCard: React.FC = () => {
                             </div>
                         ))
                     ) : (
-                        <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/10 col-span-2">
-                            <Info className="w-4 h-4 text-primary" />
+                        <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 col-span-2">
+                            <Info className="w-4 h-4 text-amber-500" />
                             <p className="text-sm text-muted-foreground/80 leading-relaxed">
-                                <span className="text-white font-bold">Observation:</span> {selectedCountry === 'IN'
+                                <span className="text-white font-bold">Strategic Observation:</span> {selectedCountry === 'IN'
                                     ? "India's export growth is pivoting toward high-value engineering goods and services, while import reliance on energy continues to drive the bilateral deficit with the UAE and Russia."
                                     : "Global trade dynamics reflect shifting supply chain dependencies, with regional trade blocs gaining share over previous globalized flows."}
                             </p>

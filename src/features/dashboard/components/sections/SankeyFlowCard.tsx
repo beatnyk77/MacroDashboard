@@ -1,299 +1,240 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Info, X, TrendingUp } from 'lucide-react';
-import { ResponsiveContainer, Sankey, Tooltip as RechartsTooltip } from 'recharts';
-import { useSankeyFlows, SankeyNode as SankeyNodeType } from '@/hooks/useSankeyFlows';
-
+import {
+    Activity,
+    Wind,
+    DollarSign,
+    Home,
+    Briefcase,
+    Scale,
+    ArrowUpRight,
+    ArrowDownRight
+} from 'lucide-react';
+import { useSankeyFlows, SankeyNode } from '@/hooks/useSankeyFlows';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from '@/lib/utils';
 
-// Custom Sankey Tooltip
-const CustomSankeyTooltip = ({ active, payload }: any) => {
-    if (!active || !payload || payload.length === 0) return null;
-
-    const data = payload[0];
-
-    // Check if it's a link or a node
-    if (data.payload.source !== undefined) {
-        // It's a link
-        return (
-            <div className="bg-slate-950 p-2 border border-white/10 rounded-lg shadow-xl">
-                <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">
-                    FLOW MAGNITUDE
-                </span>
-                <span className="text-sm font-black text-primary">
-                    {data.payload.value.toFixed(2)} {data.payload.value > 100 ? 'Index' : '$B'}
-                </span>
-            </div>
-        );
-    } else {
-        // It's a node
-        return (
-            <div className="bg-slate-950 p-2 border border-white/10 rounded-lg shadow-xl">
-                <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">
-                    {data.payload.name}
-                </span>
-                <span
-                    className="text-sm font-black"
-                    style={{ color: data.payload.color || '#3b82f6' }}
-                >
-                    {data.payload.category?.replace(/_/g, ' ').toUpperCase()}
-                </span>
-            </div>
-        );
+// Helper to get category icon
+const getCategoryIcon = (category: string) => {
+    switch (category) {
+        case 'capital_flows': return <DollarSign className="w-4 h-4" />;
+        case 'inflation_regime': return <Wind className="w-4 h-4" />;
+        case 'balance_of_payments': return <Scale className="w-4 h-4" />;
+        case 'housing_cycle': return <Home className="w-4 h-4" />;
+        case 'activity_regime': return <Activity className="w-4 h-4" />;
+        case 'labor_market': return <Briefcase className="w-4 h-4" />;
+        default: return <Activity className="w-4 h-4" />;
     }
 };
 
+// Helper for Z-score formatting
+const formatZScore = (z: number | undefined) => {
+    if (z === undefined || z === null) return '-';
+    // const sign = z > 0 ? '+' : '';
+    return `${z.toFixed(2)}σ`;
+};
+
+// Helper for color coding based on Z-score (assuming standard deviation interpretation)
+const getZScoreColor = (z: number | undefined) => {
+    if (z === undefined || z === null) return 'text-muted-foreground';
+    if (Math.abs(z) > 2) return 'text-rose-500'; // Extreme
+    if (Math.abs(z) > 1) return 'text-amber-500'; // Elevated
+    // if (Math.abs(z) > 0.5) return 'text-blue-400';
+    return 'text-emerald-500'; // Normal
+};
+
 export const SankeyFlowCard: React.FC = () => {
-    const { data: sankeyData, isLoading, error } = useSankeyFlows();
-    const [selectedNode, setSelectedNode] = useState<SankeyNodeType | null>(null);
+    const { data: flowData, isLoading, error } = useSankeyFlows();
+
+    // Group nodes by category
+    const groupedNodes = useMemo(() => {
+        if (!flowData?.nodes) return {};
+        return flowData.nodes.reduce((acc, node) => {
+            if (!acc[node.category]) acc[node.category] = [];
+            acc[node.category].push(node);
+            return acc;
+        }, {} as Record<string, SankeyNode[]>);
+    }, [flowData]);
+
+    // Categories in display order
+    const displayCategories = [
+        'capital_flows',
+        'inflation_regime',
+        'balance_of_payments',
+        'housing_cycle',
+        'activity_regime',
+        'labor_market'
+    ];
 
     if (isLoading) {
         return (
-            <Card className="p-6 h-[700px] border border-white/10 bg-card/40 backdrop-blur-md rounded-xl flex flex-col gap-4">
-                <Skeleton className="h-8 w-[40%] mb-2" />
-                <Skeleton className="h-[600px] w-full rounded-xl" />
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Card key={i} className="p-6 h-[200px] border border-white/10 bg-card/40 backdrop-blur-md">
+                        <Skeleton className="h-6 w-1/2 mb-4" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-3/4" />
+                    </Card>
+                ))}
+            </div>
         );
     }
 
     if (error) {
         return (
-            <Card className="p-6 h-[700px] border border-white/10 bg-card/40 backdrop-blur-md rounded-xl flex items-center justify-center">
-                <div className="bg-rose-500/10 text-rose-500 p-4 rounded-lg border border-rose-500/20 text-sm font-bold">
-                    Failed to load Sankey flow data. Please try again later.
-                </div>
+            <Card className="p-6 border-rose-500/20 bg-rose-500/5 backdrop-blur-md">
+                <div className="text-rose-400 font-bold mb-2">Failed to load macro flow data</div>
+                <p className="text-xs text-rose-400/70">Please check your connection and try again.</p>
             </Card>
         );
     }
-
-    if (!sankeyData || sankeyData.nodes.length === 0) {
-        return (
-            <Card className="p-6 h-[700px] border border-white/10 bg-card/40 backdrop-blur-md rounded-xl flex items-center justify-center">
-                <div className="bg-blue-500/10 text-blue-500 p-4 rounded-lg border border-blue-500/20 text-sm font-bold">
-                    No flow data available yet. Data will appear after initial ingestion.
-                </div>
-            </Card>
-        );
-    }
-
-    const handleNodeClick = (node: any) => {
-        const nodeData = sankeyData.nodes.find(n => n.index === node.index);
-        if (nodeData) {
-            setSelectedNode(nodeData);
-        }
-    };
-
-    // Transform data for Recharts Sankey format
-    const chartData = {
-        nodes: sankeyData.nodes.map(n => ({
-            name: n.name,
-            index: n.index,
-            category: n.category,
-            color: n.color
-        })),
-        links: sankeyData.links.map(l => ({
-            source: l.source,
-            target: l.target,
-            value: l.value
-        }))
-    };
-
-    // Category legend
-    const categories = [
-        { key: 'capital_flows', label: 'Capital Flows', color: '#3b82f6' },
-        { key: 'inflation_regime', label: 'Inflation', color: '#f97316' },
-        { key: 'balance_of_payments', label: 'BOP', color: '#8b5cf6' },
-        { key: 'housing_cycle', label: 'Housing', color: '#ef4444' },
-        { key: 'activity_regime', label: 'Activity', color: '#10b981' },
-        { key: 'labor_market', label: 'Labor', color: '#f59e0b' }
-    ];
 
     return (
-        <>
-            <Card className="p-6 h-full min-h-[700px] bg-card/40 backdrop-blur-md border border-white/10 dark:border-white/5 shadow-xl relative overflow-visible transition-all duration-300">
-                {/* Header */}
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <TrendingUp size={20} className="text-blue-500" />
-                            <h4 className="font-extrabold text-xs tracking-[0.12em] text-muted-foreground uppercase">
-                                MACRO FLOW MAP
-                            </h4>
-                        </div>
-                        <p className="text-muted-foreground text-xs font-medium leading-relaxed max-w-[80%]">
-                            Visualizing macro indicator flows across 6 high-signal metrics
-                        </p>
+        <div className="space-y-8 animate-in fade-in duration-700">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 px-2">
+                <div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Activity className="text-blue-500 w-5 h-5" />
+                        <h2 className="font-extrabold text-sm tracking-[0.2em] text-blue-500 uppercase">
+                            MACRO REGIME DASHBOARD
+                        </h2>
                     </div>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <button className="text-muted-foreground/50 hover:text-foreground transition-colors p-1">
-                                    <Info size={16} />
-                                </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="left" className="max-w-[300px] bg-slate-950 border-white/10">
-                                <p className="text-xs">Data sources: FRED (Federal Reserve Economic Data), IMF BOP Statistics. Some metrics use high-quality public API proxies. Click nodes for details.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </div>
-
-                {/* How to Read This Chart */}
-                <div className="mb-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                    <span className="text-[0.65rem] font-black text-blue-400 uppercase tracking-widest block mb-2">
-                        Institutional Guide: How to Read This Map
-                    </span>
-                    <p className="text-[0.7rem] text-muted-foreground/80 leading-relaxed">
-                        Each colored band represents a macro category. The **width of each flow** represents the relative magnitude (Z-Score or USD Volume) of that metric's current signaling impact.
-                        Bands flowing from left to right visualize how **Input Metrics** (Market data) correlate to **Economic Signals**.
+                    <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
+                        Real-time monitoring of 6 key macro-economic subsystems. Z-Scores indicate deviation from
+                        historical norms (2-year lookback). <span className="text-amber-500 font-bold">High deviation (&gt;1.5σ)</span> signals regime stress.
                     </p>
                 </div>
+                {flowData?.last_updated && (
+                    <div className="text-[0.65rem] font-mono text-muted-foreground/50 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                        Last Updated: {new Date(flowData.last_updated).toLocaleString()}
+                    </div>
+                )}
+            </div>
 
-                {/* Category Legend */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                    {categories.map(cat => (
-                        <div
-                            key={cat.key}
-                            className="px-2 py-1 rounded text-[0.7rem] font-bold border"
-                            style={{
-                                backgroundColor: `${cat.color}20`,
-                                color: cat.color,
-                                borderColor: `${cat.color}40`,
-                            }}
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {displayCategories.map((category, catIdx) => {
+                    const nodes = groupedNodes[category] || [];
+                    if (nodes.length === 0) return null;
+
+                    const catColor = nodes[0]?.color || '#ffffff';
+
+                    return (
+                        <Card
+                            key={category}
+                            className="p-0 border-white/5 bg-black/40 backdrop-blur-xl overflow-hidden shadow-2xl transition-all hover:bg-black/50 hover:border-white/10 group"
+                            style={{ animationDelay: `${catIdx * 100}ms` }}
                         >
-                            {cat.label}
-                        </div>
-                    ))}
-                </div>
-
-                {/* Sankey Chart */}
-                <div className="h-[540px] w-full relative">
-                    {/* Axis Labels */}
-                    <div className="absolute top-0 left-0 -translate-y-8">
-                        <span className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em]">INPUT METRICS</span>
-                    </div>
-                    <div className="absolute top-0 right-0 -translate-y-8">
-                        <span className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em] text-right block">OUTPUT SIGNALS</span>
-                    </div>
-
-                    <ResponsiveContainer width="100%" height="100%">
-                        <Sankey
-                            data={chartData}
-                            nodePadding={20}
-                            nodeWidth={10}
-                            link={{
-                                stroke: 'rgba(148, 163, 184, 0.3)',
-                                strokeWidth: 2
-                            }}
-                            node={(props: any) => {
-                                const { x, y, width, height, index, payload } = props;
-                                const node = sankeyData.nodes.find(n => n.index === index);
-                                return (
-                                    <g>
-                                        <rect
-                                            x={x}
-                                            y={y}
-                                            width={width}
-                                            height={height}
-                                            fill={node?.color || '#6b7280'}
-                                            fillOpacity="1"
-                                            cursor="pointer"
-                                            onClick={() => handleNodeClick(payload)}
+                            {/* Category Header */}
+                            <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                                <div className="flex items-center gap-2.5">
+                                    <div
+                                        className="p-2 rounded-lg bg-opacity-10"
+                                        style={{ backgroundColor: `${catColor}15`, color: catColor }}
+                                    >
+                                        {getCategoryIcon(category)}
+                                    </div>
+                                    <span className="font-black text-sm tracking-wider uppercase text-white/90">
+                                        {category.replace(/_/g, ' ')}
+                                    </span>
+                                </div>
+                                <div className="flex gap-1">
+                                    {nodes.slice(0, 3).map((n, i) => ( // Mini sparkline visualization
+                                        <div
+                                            key={i}
+                                            className="w-1 rounded-full bg-current opacity-40"
+                                            style={{
+                                                height: '12px',
+                                                minHeight: '4px',
+                                                color: catColor,
+                                                transform: `scaleY(${Math.min(Math.abs(n.z_score || 0.5), 2)})`
+                                            }}
                                         />
-                                        <text
-                                            x={x > 500 ? x - 8 : x + width + 8}
-                                            y={y + height / 2}
-                                            textAnchor={x > 500 ? 'end' : 'start'}
-                                            alignmentBaseline="middle"
-                                            className="text-[0.65rem] font-bold fill-white/60 uppercase tracking-tighter"
-                                        >
-                                            {payload.name}
-                                        </text>
-                                    </g>
-                                );
-                            }}
-                            margin={{ top: 20, right: 120, bottom: 10, left: 120 }}
-                        >
-                            <RechartsTooltip
-                                content={<CustomSankeyTooltip />}
-                                cursor={{ fill: 'transparent' }}
-                            />
-                        </Sankey>
-                    </ResponsiveContainer>
-                </div>
-
-                {/* Data Source Note */}
-                <div className="mt-4 pt-4 border-t border-white/5">
-                    <span className="text-[0.65rem] text-muted-foreground block leading-tight">
-                        <strong className="text-muted-foreground/80">Data Sources:</strong> FRED (Federal Reserve Economic Data), IMF Balance of Payments Statistics API
-                    </span>
-                    <span className="text-[0.65rem] text-muted-foreground/50 block mt-1 leading-tight">
-                        <strong className="text-muted-foreground/80">Note:</strong> Some metrics use high-quality public API proxies (e.g., equity ETF flows, PMI indicators) instead of paid institutional sources.
-                        Last updated: {sankeyData.last_updated ? new Date(sankeyData.last_updated).toLocaleDateString() : 'N/A'}
-                    </span>
-                </div>
-            </Card>
-
-            {/* Detail Modal Overlay */}
-            {selectedNode && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div
-                        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
-                        onClick={() => setSelectedNode(null)}
-                    />
-                    <div className="relative w-full max-w-xl bg-slate-950/95 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
-                        <div className="flex justify-between items-start mb-6">
-                            <div>
-                                <h2 className="text-2xl font-black text-white mb-2">
-                                    {selectedNode.name}
-                                </h2>
-                                <div
-                                    className="inline-block px-2 py-1 rounded text-xs font-bold border"
-                                    style={{
-                                        backgroundColor: `${selectedNode.color}20`,
-                                        color: selectedNode.color,
-                                        borderColor: `${selectedNode.color}40`,
-                                    }}
-                                >
-                                    {selectedNode.category.replace(/_/g, ' ').toUpperCase()}
+                                    ))}
                                 </div>
                             </div>
-                            <button
-                                onClick={() => setSelectedNode(null)}
-                                className="text-muted-foreground hover:text-white hover:bg-white/10 rounded-full p-2 transition-colors"
-                            >
-                                <X size={24} />
-                            </button>
-                        </div>
 
-                        <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                            This node represents a key macro indicator in the {selectedNode.category.replace(/_/g, ' ')} category.
-                            Flow magnitude is determined by the latest observed value from FRED or IMF data sources.
-                        </p>
+                            {/* Metric List */}
+                            <div className="divide-y divide-white/5">
+                                {nodes.map((node) => (
+                                    <div key={node.index} className="px-5 py-4 hover:bg-white/[0.02] transition-colors relative">
 
-                        <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/5">
-                            <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase mb-2">
-                                CATEGORY COLOR LEGEND
-                            </span>
-                            <div className="flex items-center gap-2">
-                                <div
-                                    className="w-4 h-4 rounded-sm shadow-sm"
-                                    style={{ backgroundColor: selectedNode.color }}
-                                />
-                                <span className="text-sm font-bold text-foreground">
-                                    {selectedNode.category ? (selectedNode.category.replace(/_/g, ' ').charAt(0).toUpperCase() + selectedNode.category.replace(/_/g, ' ').slice(1)) : ''}
-                                </span>
+                                        <TooltipProvider delayDuration={0}>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <div className="flex items-baseline justify-between gap-4 cursor-default">
+                                                        <div className="flex flex-col gap-0.5 min-w-0">
+                                                            <span className="text-lg font-black tracking-tight text-white/90 truncate">
+                                                                {node.value?.toLocaleString(undefined, { maximumFractionDigits: 2 }) ?? '-'}
+                                                                <span className="text-[0.65rem] font-bold text-muted-foreground/60 ml-1.5 uppercase tracking-wide">
+                                                                    {node.unit || ''}
+                                                                </span>
+                                                            </span>
+                                                            <span className="text-[0.7rem] font-bold text-muted-foreground/70 uppercase tracking-tight truncate pr-2">
+                                                                {node.name}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="flex flex-col items-end gap-0.5 shrink-0">
+                                                            <div className={cn(
+                                                                "text-sm font-black tracking-tighter flex items-center gap-1",
+                                                                getZScoreColor(node.z_score)
+                                                            )}>
+                                                                {node.z_score ? (
+                                                                    <span className="text-[0.6rem] font-bold uppercase opacity-70 mr-1">Z</span>
+                                                                ) : null}
+                                                                {formatZScore(node.z_score)}
+                                                            </div>
+                                                            {node.change && (
+                                                                <div className={cn(
+                                                                    "text-[0.6rem] font-bold flex items-center gap-0.5",
+                                                                    node.change > 0 ? "text-emerald-400" : "text-rose-400"
+                                                                )}>
+                                                                    {node.change > 0 ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
+                                                                    {Math.abs(node.change).toFixed(1)}% {node.change_period}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top" className="bg-slate-950 border-white/10 p-3 max-w-[250px]">
+                                                    <div className="space-y-2">
+                                                        <p className="text-xs font-semibold text-white">
+                                                            {node.name}
+                                                        </p>
+                                                        <div className="text-[0.65rem] text-muted-foreground leading-relaxed">
+                                                            {node.z_score && Math.abs(node.z_score) > 1.5
+                                                                ? <span className="text-amber-400 font-bold block mb-1">⚠️ Significant deviation from trend</span>
+                                                                : <span className="text-emerald-400 font-bold block mb-1">Within normal bounds</span>
+                                                            }
+                                                            Standard deviation (Z-score) measures how unusual the current reading is compared to the 2-year average.
+                                                        </div>
+                                                    </div>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+
+                                        {/* Background Activity Indicator (Subtle) */}
+                                        {node.z_score && Math.abs(node.z_score) > 1.5 && (
+                                            <div
+                                                className="absolute inset-y-0 left-0 w-[2px]"
+                                                style={{ backgroundColor: Math.abs(node.z_score) > 2 ? '#f43f5e' : '#f59e0b' }}
+                                            />
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
+                        </Card>
+                    );
+                })}
+            </div>
+        </div>
     );
 };
