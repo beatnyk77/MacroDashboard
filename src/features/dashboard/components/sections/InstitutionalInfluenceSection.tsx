@@ -5,7 +5,6 @@ import { useInstitutionalLoans } from '@/hooks/useInstitutionalLoans';
 import { Shield, Globe, AlertTriangle } from 'lucide-react';
 
 export const InstitutionalInfluenceSection = () => {
-    console.log("InstitutionalInfluenceSection: Render start");
     const [loanType, setLoanType] = useState<'Stock' | 'Flow'>('Stock');
     const { data: loanData, isLoading, error } = useInstitutionalLoans(loanType);
 
@@ -99,12 +98,9 @@ export const InstitutionalInfluenceSection = () => {
     return (
         <Box sx={{ mb: 6 }}>
             <SectionHeader
-                title="Institutional Money Wars"
-                subtitle="Mapping the global Sphere of Influence: Western MDBs vs. Eastern Finance vs. Japan (JICA)"
+                title="Spheres of Influence"
+                subtitle="Analyzing global institutional dominance: Western MDBs vs. Eastern Finance vs. Japan (JICA)"
             />
-            <Typography variant="body2" sx={{ color: 'red', display: 'none' }} id="debug-marker-institutional">
-                DEBUG: COMPONENT RENDERED
-            </Typography>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                 <ToggleButtonGroup

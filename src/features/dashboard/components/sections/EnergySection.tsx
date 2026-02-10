@@ -27,6 +27,17 @@ export const EnergySection: React.FC = () => {
 
     const topStates = [...(data || [])].sort((a, b) => Number(b[selectedMetric]) - Number(a[selectedMetric])).slice(0, 5);
 
+    // Calculate national aggregates
+    const totalCoal = data.reduce((sum, s) => sum + s.coal_production, 0);
+    const avgRenewableShare = data.reduce((sum, s) => sum + s.renewable_share, 0) / data.length;
+    const totalElectricity = data.reduce((sum, s) => sum + s.electricity_consumption, 0);
+    const avgEnergyIntensity = data.reduce((sum, s) => sum + s.energy_intensity, 0) / data.length;
+
+    // Energy intensity status
+    let intensityStatus: 'success' | 'warning' | 'error' = 'success';
+    if (avgEnergyIntensity > 18) intensityStatus = 'error';
+    else if (avgEnergyIntensity > 15) intensityStatus = 'warning';
+
     return (
         <Box sx={{ mt: 10 }}>
             <Box sx={{ mb: 6 }}>
@@ -36,7 +47,66 @@ export const EnergySection: React.FC = () => {
                 <Typography variant="h3" sx={{ fontWeight: 900, letterSpacing: '-0.03em', mb: 1, textTransform: 'uppercase' }}>
                     Energy Statistics
                 </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontStyle: 'italic' }}>
+                    Data as of FY 2023–24 · Source: MoSPI MCP + CEA
+                </Typography>
             </Box>
+
+            {/* National Summary Strip */}
+            <GlassPaper sx={{ mb: 4, p: 3 }}>
+                <Typography variant="overline" sx={{ fontWeight: 900, mb: 2, display: 'block', letterSpacing: '0.2em', fontSize: '0.6rem', color: 'primary.light' }}>
+                    All India Summary
+                </Typography>
+                <Grid container spacing={3}>
+                    <Grid item xs={6} sm={3}>
+                        <Box>
+                            <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6, display: 'block', mb: 0.5 }}>Total Coal</Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em', color: 'primary.main' }}>
+                                {totalCoal.toFixed(1)} MT
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                        <Box>
+                            <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6, display: 'block', mb: 0.5 }}>Renewables Share</Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em', color: 'success.main' }}>
+                                {avgRenewableShare.toFixed(1)}%
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                        <Box>
+                            <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6, display: 'block', mb: 0.5 }}>Total Electricity</Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em', color: 'secondary.main' }}>
+                                {(totalElectricity / 1000).toFixed(1)} GW
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                        <Box>
+                            <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6, display: 'block', mb: 0.5 }}>Energy Intensity</Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em' }}>
+                                    {avgEnergyIntensity > 0 ? avgEnergyIntensity.toFixed(1) : '--'}%
+                                </Typography>
+                                {avgEnergyIntensity > 0 && (
+                                    <Typography variant="caption" sx={{
+                                        fontWeight: 900,
+                                        fontSize: '0.65rem',
+                                        bgcolor: intensityStatus === 'success' ? 'success.main' : intensityStatus === 'warning' ? 'warning.main' : 'error.main',
+                                        color: intensityStatus === 'success' ? 'success.contrastText' : intensityStatus === 'warning' ? 'warning.contrastText' : 'error.contrastText',
+                                        px: 1,
+                                        py: 0.25,
+                                        borderRadius: 1
+                                    }}>
+                                        {intensityStatus === 'success' ? 'Healthy' : intensityStatus === 'warning' ? 'Watch' : 'Danger'}
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </GlassPaper>
 
             <Grid container spacing={4}>
                 {/* Heatmap View */}
@@ -91,7 +161,10 @@ export const EnergySection: React.FC = () => {
                                         style={{ backgroundColor: color }}
                                     >
                                         <div className="relative z-10">
-                                            <span className="text-[0.6rem] font-black text-white/70 uppercase tracking-widest block mb-1 truncate">
+                                            <span className="text-[0.55rem] font-black text-white/50 uppercase tracking-widest block mb-0.5">
+                                                {state.state_code}
+                                            </span>
+                                            <span className="text-[0.6rem] font-semibold text-white/70 block mb-1.5 truncate">
                                                 {state.state_name}
                                             </span>
                                             <div className="text-lg font-black text-white tracking-tighter shadow-sm">
@@ -142,15 +215,25 @@ export const EnergySection: React.FC = () => {
                                 Energy Intensity
                             </Typography>
                             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 4, fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.6 }}>
-                                Tracking the efficiency of energy usage relative to state-level economic output.
+                                Energy use per unit GVA; lower is better for efficiency.
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
                                 <Typography variant="h2" sx={{ fontWeight: 900, color: 'secondary.main', fontFamily: 'mono', letterSpacing: '-0.05em', fontSize: '4rem' }}>
-                                    15.4%
+                                    {avgEnergyIntensity > 0 ? avgEnergyIntensity.toFixed(1) : '--'}%
                                 </Typography>
-                                <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.75rem', bgcolor: 'success.main', color: 'success.contrastText', px: 1, py: 0.25, borderRadius: 1 }}>
-                                    -2.1%
-                                </Typography>
+                                {avgEnergyIntensity > 0 && (
+                                    <Typography variant="caption" sx={{
+                                        fontWeight: 900,
+                                        fontSize: '0.75rem',
+                                        bgcolor: intensityStatus === 'success' ? 'success.main' : intensityStatus === 'warning' ? 'warning.main' : 'error.main',
+                                        color: intensityStatus === 'success' ? 'success.contrastText' : intensityStatus === 'warning' ? 'warning.contrastText' : 'error.contrastText',
+                                        px: 1,
+                                        py: 0.25,
+                                        borderRadius: 1
+                                    }}>
+                                        {intensityStatus === 'success' ? 'Healthy' : intensityStatus === 'warning' ? 'Watch' : 'Danger'}
+                                    </Typography>
+                                )}
                             </Box>
                         </GlassPaper>
                     </Box>

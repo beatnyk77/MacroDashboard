@@ -45,24 +45,47 @@ export const IndiaMacroPulseSection: React.FC = () => {
                     </SectionErrorBoundary>
                 </Grid>
 
-                {/* Energy Statistics Section */}
+                {/* Energy & Industrial Efficiency Module */}
                 <Grid item xs={12}>
-                    <SectionErrorBoundary name="Energy Statistics">
-                        <EnergySection />
-                    </SectionErrorBoundary>
+                    <Box sx={{
+                        borderLeft: '4px solid',
+                        borderColor: 'primary.main',
+                        pl: 4,
+                        py: 2,
+                        bgcolor: 'rgba(255, 255, 255, 0.01)',
+                        borderRadius: 2
+                    }}>
+                        <Typography variant="overline" sx={{
+                            color: 'primary.light',
+                            fontWeight: 900,
+                            letterSpacing: '0.25em',
+                            fontSize: '0.6rem',
+                            display: 'block',
+                            mb: 4
+                        }}>
+                            Energy & Industrial Efficiency
+                        </Typography>
+
+                        {/* Energy Statistics Section */}
+                        <Box sx={{ mb: 8 }}>
+                            <SectionErrorBoundary name="Energy Statistics">
+                                <EnergySection />
+                            </SectionErrorBoundary>
+                        </Box>
+
+                        {/* Composite Efficiency Metrics */}
+                        <Box>
+                            <SectionErrorBoundary name="Composite Metrics">
+                                <CompositeMetricsSection />
+                            </SectionErrorBoundary>
+                        </Box>
+                    </Box>
                 </Grid>
 
-                {/* ASI Section (New) */}
+                {/* ASI Section (Separate) */}
                 <Grid item xs={12}>
                     <SectionErrorBoundary name="Annual Survey of Industries">
                         <ASISection />
-                    </SectionErrorBoundary>
-                </Grid>
-
-                {/* Composite Efficiency Metrics (Phase 1) */}
-                <Grid item xs={12}>
-                    <SectionErrorBoundary name="Composite Metrics">
-                        <CompositeMetricsSection />
                     </SectionErrorBoundary>
                 </Grid>
 

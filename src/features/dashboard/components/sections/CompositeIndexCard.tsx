@@ -18,6 +18,7 @@ export interface CompositeIndexCardProps {
     isLoading?: boolean;
     prefix?: string;
     suffix?: string;
+    directionality?: string; // e.g., "Higher = better" or "Lower = better"
 }
 
 export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
@@ -32,9 +33,11 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
     description,
     isLoading,
     prefix = '',
-    suffix = ''
+    suffix = '',
+    directionality
 }) => {
     const isNullValue = value === null || value === undefined || (typeof value === 'number' && isNaN(value));
+    const isZeroWithNeutral = value === 0 && status === 'neutral';
 
     return (
         <div className={cn(
@@ -107,7 +110,15 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                         <Skeleton className="h-3 w-16 bg-white/5" />
                     </div>
                 ) : isNullValue ? (
-                    <span className="text-sm font-mono text-slate-600">--</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-mono text-slate-500">Data pending</span>
+                        <Info size={12} className="text-slate-600" />
+                    </div>
+                ) : isZeroWithNeutral ? (
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-mono text-slate-600">Awaiting wiring</span>
+                        <span className="text-[0.6rem] font-bold text-slate-600 uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-slate-700/30 bg-slate-800/30">Pending</span>
+                    </div>
                 ) : (
                     <div className="flex items-baseline gap-2">
                         <span className={cn(
@@ -135,11 +146,18 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
 
             {/* Footer: Sparkline & Formula */}
             <div className="relative z-10 flex items-end justify-between mt-4">
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/[0.03] border border-white/[0.05]">
-                    <Calculator size={10} className="text-slate-500" />
-                    <span className="text-[0.6rem] font-medium text-slate-400 font-mono">
-                        {formula}
-                    </span>
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/[0.03] border border-white/[0.05]">
+                        <Calculator size={10} className="text-slate-500" />
+                        <span className="text-[0.6rem] font-medium text-slate-400 font-mono">
+                            {formula}
+                        </span>
+                    </div>
+                    {directionality && (
+                        <span className="text-[0.55rem] text-slate-500 italic px-2">
+                            {directionality}
+                        </span>
+                    )}
                 </div>
 
                 {history && history.length > 0 && (

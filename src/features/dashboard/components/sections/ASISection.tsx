@@ -17,12 +17,31 @@ const GlassPaper = styled(Paper)(({ theme }) => ({
 export const ASISection: React.FC = () => {
     const { data, isLoading, error } = useIndiaASI();
     const [selectedMetric, setSelectedMetric] = useState<keyof StateASIStats>('total_gva');
+    const [rankingMetric, setRankingMetric] = useState<'total_gva' | 'total_employment' | 'avg_capacity_utilization'>('total_gva');
 
     if (isLoading) return <CircularProgress />;
     if (error) return <Typography color="error">Error loading ASI data</Typography>;
 
     const topStatesByGVA = [...(data || [])].sort((a, b) => b.total_gva - a.total_gva).slice(0, 5);
     const topStatesByEmployment = [...(data || [])].sort((a, b) => b.total_employment - a.total_employment).slice(0, 5);
+    const topStatesByCapacity = [...(data || [])].sort((a, b) => b.avg_capacity_utilization - a.avg_capacity_utilization).slice(0, 5);
+
+    // Get top states by selected ranking metric
+    const getTopStates = () => {
+        switch (rankingMetric) {
+            case 'total_employment': return topStatesByEmployment;
+            case 'avg_capacity_utilization': return topStatesByCapacity;
+            default: return topStatesByGVA;
+        }
+    };
+
+    const formatValue = (state: StateASIStats) => {
+        switch (rankingMetric) {
+            case 'total_employment': return `${(state.total_employment / 1000).toFixed(1)}M`;
+            case 'avg_capacity_utilization': return `${state.avg_capacity_utilization.toFixed(1)}%`;
+            default: return `₹${(state.total_gva / 100000).toFixed(2)}T`;
+        }
+    };
 
     // Calculate national aggregates
     const nationalGVA = (data || []).reduce((sum, s) => sum + s.total_gva, 0);
@@ -40,6 +59,9 @@ export const ASISection: React.FC = () => {
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem', maxWidth: '800px' }}>
                     State-level industrial metrics from MoSPI ASI dataset: Gross Value Added, Employment, and Capacity Utilization across manufacturing, mining, and electricity sectors.
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontStyle: 'italic', display: 'block', mt: 0.5 }}>
+                    <a href="#methodology" style={{ color: 'inherit', textDecoration: 'underline' }}>View methodology</a>
                 </Typography>
             </Box>
 
@@ -63,8 +85,11 @@ export const ASISection: React.FC = () => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, height: '100%' }}>
                         {/* National Aggregates */}
                         <GlassPaper sx={{ bgcolor: 'rgba(0,0,0,0.3)' }}>
-                            <Typography variant="overline" sx={{ fontWeight: 900, mb: 2, display: 'block', letterSpacing: '0.2em', fontSize: '0.6rem', color: 'primary.light' }}>
+                            <Typography variant="overline" sx={{ fontWeight: 900, mb: 1, display: 'block', letterSpacing: '0.2em', fontSize: '0.6rem', color: 'primary.light' }}>
                                 All India Aggregates
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', display: 'block', mb: 2, fontStyle: 'italic' }}>
+                                Latest ASI round · Manufacturing + Mining + Electricity
                             </Typography>
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
@@ -97,40 +122,44 @@ export const ASISection: React.FC = () => {
                             </Grid>
                         </GlassPaper>
 
-                        {/* Top States by GVA */}
+                        {/* Unified Top States Ranking */}
                         <GlassPaper>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3, fontSize: '0.9rem' }}>
-                                Top States by GVA
-                            </Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                {topStatesByGVA.map((state, i) => (
-                                    <Box key={state.state_code} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                            <Typography variant="body2" sx={{ opacity: 0.3, fontWeight: 900, fontSize: '0.7rem' }}>{String(i + 1).padStart(2, '0')}</Typography>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', letterSpacing: '-0.01em' }}>{state.state_name}</Typography>
-                                        </Box>
-                                        <Typography sx={{ fontFamily: 'mono', fontWeight: 900, color: 'primary.main', fontSize: '1rem', letterSpacing: '-0.02em' }}>
-                                            ₹{(state.total_gva / 100000).toFixed(2)}T
-                                        </Typography>
-                                    </Box>
-                                ))}
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                    Top Performing States
+                                </Typography>
+                                <Tabs
+                                    value={rankingMetric}
+                                    onChange={(_, v) => setRankingMetric(v)}
+                                    className="bg-white/5 p-0.5 rounded-lg"
+                                    TabIndicatorProps={{ style: { display: 'none' } }}
+                                >
+                                    <Tab
+                                        label="GVA"
+                                        value="total_gva"
+                                        className={`min-h-[28px] h-[28px] text-[0.6rem] font-extrabold uppercase tracking-wider rounded-md transition-all ${rankingMetric === 'total_gva' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                                    />
+                                    <Tab
+                                        label="Employment"
+                                        value="total_employment"
+                                        className={`min-h-[28px] h-[28px] text-[0.6rem] font-extrabold uppercase tracking-wider rounded-md transition-all ${rankingMetric === 'total_employment' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                                    />
+                                    <Tab
+                                        label="Capacity"
+                                        value="avg_capacity_utilization"
+                                        className={`min-h-[28px] h-[28px] text-[0.6rem] font-extrabold uppercase tracking-wider rounded-md transition-all ${rankingMetric === 'avg_capacity_utilization' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                                    />
+                                </Tabs>
                             </Box>
-                        </GlassPaper>
-
-                        {/* Top States by Employment */}
-                        <GlassPaper>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3, fontSize: '0.9rem' }}>
-                                Top States by Employment
-                            </Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                {topStatesByEmployment.slice(0, 3).map((state, i) => (
+                                {getTopStates().map((state, i) => (
                                     <Box key={state.state_code} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                             <Typography variant="body2" sx={{ opacity: 0.3, fontWeight: 900, fontSize: '0.7rem' }}>{String(i + 1).padStart(2, '0')}</Typography>
                                             <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', letterSpacing: '-0.01em' }}>{state.state_name}</Typography>
                                         </Box>
-                                        <Typography sx={{ fontFamily: 'mono', fontWeight: 900, color: 'secondary.main', fontSize: '1rem', letterSpacing: '-0.02em' }}>
-                                            {(state.total_employment / 1000).toFixed(1)}M
+                                        <Typography sx={{ fontFamily: 'mono', fontWeight: 900, color: rankingMetric === 'total_gva' ? 'primary.main' : rankingMetric === 'total_employment' ? 'secondary.main' : 'success.main', fontSize: '1rem', letterSpacing: '-0.02em' }}>
+                                            {formatValue(state)}
                                         </Typography>
                                     </Box>
                                 ))}

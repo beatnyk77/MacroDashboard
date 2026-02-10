@@ -168,6 +168,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<TrendingUp size={14} />}
                         suffix="%"
                         isLoading={isLoading}
+                        directionality="Higher = better for growth"
                     />
                 </Grid>
 
@@ -183,6 +184,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Factory size={14} />}
                         suffix="%"
                         isLoading={isLoading}
+                        directionality="Higher = better (margin expansion)"
                     />
                 </Grid>
 
@@ -198,6 +200,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Briefcase size={14} />}
                         suffix=""
                         isLoading={isLoading}
+                        directionality="Higher = better wage quality"
                     />
                 </Grid>
 
@@ -213,6 +216,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Users size={14} />}
                         suffix=""
                         isLoading={isLoading}
+                        directionality="Higher = better capital efficiency"
                     />
                 </Grid>
 
@@ -228,6 +232,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Zap size={14} />}
                         suffix=""
                         isLoading={isLoading}
+                        directionality="Lower = better efficiency"
                     />
                 </Grid>
 
@@ -243,6 +248,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Gauge size={14} />}
                         suffix=" Cr/W"
                         isLoading={isLoading}
+                        directionality="Higher = better productivity"
                     />
                 </Grid>
 
@@ -258,6 +264,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Activity size={14} />}
                         suffix=""
                         isLoading={isLoading}
+                        directionality="~1.0 = balanced growth"
                     />
                 </Grid>
 
@@ -273,6 +280,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Zap size={14} />}
                         suffix="%"
                         isLoading={isLoading}
+                        directionality="Lower = better stability"
                     />
                 </Grid>
 
@@ -288,6 +296,7 @@ export const CompositeMetricsSection: React.FC = () => {
                         icon={<Leaf size={14} />}
                         suffix="%"
                         isLoading={isLoading}
+                        directionality="Higher = better transition"
                     />
                 </Grid>
             </Grid>
