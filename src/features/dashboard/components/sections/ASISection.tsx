@@ -18,6 +18,7 @@ export const ASISection: React.FC = () => {
     const { data, isLoading, error } = useIndiaASI();
     const [selectedMetric, setSelectedMetric] = useState<keyof StateASIStats>('total_gva');
     const [rankingMetric, setRankingMetric] = useState<'total_gva' | 'total_employment' | 'avg_capacity_utilization'>('total_gva');
+    const [selectedState, setSelectedState] = useState<StateASIStats | null>(null);
 
     if (isLoading) return <CircularProgress />;
     if (error) return <Typography color="error">Error loading ASI data</Typography>;
@@ -35,8 +36,8 @@ export const ASISection: React.FC = () => {
         }
     };
 
-    const formatValue = (state: StateASIStats) => {
-        switch (rankingMetric) {
+    const formatValue = (state: StateASIStats, metric: 'total_gva' | 'total_employment' | 'avg_capacity_utilization') => {
+        switch (metric) {
             case 'total_employment': return `${(state.total_employment / 1000).toFixed(1)}M`;
             case 'avg_capacity_utilization': return `${state.avg_capacity_utilization.toFixed(1)}%`;
             default: return `₹${(state.total_gva / 100000).toFixed(2)}T`;
@@ -47,6 +48,18 @@ export const ASISection: React.FC = () => {
     const nationalGVA = (data || []).reduce((sum, s) => sum + s.total_gva, 0);
     const nationalEmployment = (data || []).reduce((sum, s) => sum + s.total_employment, 0);
     const avgCapacityUtil = (data || []).reduce((sum, s) => sum + s.avg_capacity_utilization, 0) / (data?.length || 1);
+
+    const activeStats = selectedState ? {
+        gva: selectedState.total_gva,
+        employment: selectedState.total_employment,
+        capacity: selectedState.avg_capacity_utilization,
+        title: selectedState.state_name
+    } : {
+        gva: nationalGVA,
+        employment: nationalEmployment,
+        capacity: avgCapacityUtil,
+        title: "All India Aggregates"
+    };
 
     return (
         <Box sx={{ mt: 10 }}>
@@ -76,21 +89,45 @@ export const ASISection: React.FC = () => {
                                 <Tab label="Capacity Util." value="avg_capacity_utilization" />
                             </Tabs>
                         </Box>
-                        <IndiaASIMap data={data || []} metric={selectedMetric} />
+                        <IndiaASIMap
+                            data={data || []}
+                            metric={selectedMetric}
+                            onStateClick={setSelectedState}
+                            selectedStateCode={selectedState?.state_code}
+                        />
                     </GlassPaper>
                 </Grid>
 
                 {/* Insights / Rankings */}
                 <Grid item xs={12} lg={4}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, height: '100%' }}>
-                        {/* National Aggregates */}
-                        <GlassPaper sx={{ bgcolor: 'rgba(0,0,0,0.3)' }}>
-                            <Typography variant="overline" sx={{ fontWeight: 900, mb: 1, display: 'block', letterSpacing: '0.2em', fontSize: '0.6rem', color: 'primary.light' }}>
-                                All India Aggregates
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', display: 'block', mb: 2, fontStyle: 'italic' }}>
-                                Latest ASI round · Manufacturing + Mining + Electricity
-                            </Typography>
+                        {/* Stats Panel (Dynamic: National or Selected State) */}
+                        <GlassPaper sx={{ bgcolor: selectedState ? 'rgba(59, 130, 246, 0.05)' : 'rgba(0,0,0,0.3)', transition: 'background-color 0.3s' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                <div>
+                                    <Typography variant="overline" sx={{ fontWeight: 900, mb: 0.5, display: 'block', letterSpacing: '0.2em', fontSize: '0.6rem', color: selectedState ? 'primary.light' : 'text.secondary' }}>
+                                        {selectedState ? 'Selected State Analysis' : 'All India Aggregates'}
+                                    </Typography>
+                                    <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em', mb: 0.5 }}>
+                                        {activeStats.title}
+                                    </Typography>
+                                </div>
+                                {selectedState && (
+                                    <button
+                                        onClick={() => setSelectedState(null)}
+                                        className="text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors"
+                                    >
+                                        Reset View
+                                    </button>
+                                )}
+                            </Box>
+
+                            {!selectedState && (
+                                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', display: 'block', mb: 2, fontStyle: 'italic' }}>
+                                    Latest ASI round · Manufacturing + Mining + Electricity
+                                </Typography>
+                            )}
+
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -98,7 +135,7 @@ export const ASISection: React.FC = () => {
                                         <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6 }}>GVA</Typography>
                                     </Box>
                                     <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em', color: 'primary.main' }}>
-                                        ₹{(nationalGVA / 100000).toFixed(1)}T
+                                        ₹{(activeStats.gva / 100000).toFixed(1)}T
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
@@ -107,7 +144,7 @@ export const ASISection: React.FC = () => {
                                         <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6 }}>Employment</Typography>
                                     </Box>
                                     <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em', color: 'secondary.main' }}>
-                                        {(nationalEmployment / 1000).toFixed(1)}M
+                                        {(activeStats.employment / 1000).toFixed(1)}M
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -116,7 +153,7 @@ export const ASISection: React.FC = () => {
                                         <Typography variant="caption" sx={{ fontSize: '0.65rem', opacity: 0.6 }}>Avg Capacity</Typography>
                                     </Box>
                                     <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'mono', letterSpacing: '-0.03em', color: 'success.main' }}>
-                                        {avgCapacityUtil.toFixed(1)}%
+                                        {activeStats.capacity.toFixed(1)}%
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -153,13 +190,29 @@ export const ASISection: React.FC = () => {
                             </Box>
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                                 {getTopStates().map((state, i) => (
-                                    <Box key={state.state_code} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <Box
+                                        key={state.state_code}
+                                        onClick={() => setSelectedState(state)}
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            p: 2,
+                                            borderRadius: 2,
+                                            bgcolor: 'rgba(255,255,255,0.03)',
+                                            border: '1px solid rgba(255,255,255,0.05)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', transform: 'translateY(-2px)' },
+                                            outline: selectedState?.state_code === state.state_code ? '1px solid #3b82f6' : 'none'
+                                        }}
+                                    >
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                             <Typography variant="body2" sx={{ opacity: 0.3, fontWeight: 900, fontSize: '0.7rem' }}>{String(i + 1).padStart(2, '0')}</Typography>
                                             <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', letterSpacing: '-0.01em' }}>{state.state_name}</Typography>
                                         </Box>
                                         <Typography sx={{ fontFamily: 'mono', fontWeight: 900, color: rankingMetric === 'total_gva' ? 'primary.main' : rankingMetric === 'total_employment' ? 'secondary.main' : 'success.main', fontSize: '1rem', letterSpacing: '-0.02em' }}>
-                                            {formatValue(state)}
+                                            {formatValue(state, rankingMetric)}
                                         </Typography>
                                     </Box>
                                 ))}
