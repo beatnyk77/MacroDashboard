@@ -6,6 +6,7 @@ import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 import { DataQualityBadge } from '@/components/DataQualityBadge';
 
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
+import { getRiskInterpretation, getMetricConfig } from '@/lib/metricRiskConfig';
 
 export const CockpitKPIGrid = React.memo(() => {
     const { data: marketPulse, isLoading: isMarketLoading } = useMarketPulse();
@@ -23,6 +24,37 @@ export const CockpitKPIGrid = React.memo(() => {
     const ust10y = findMetric('UST_10Y_YIELD');
     const sofr = findMetric('SOFR_RATE');
     const btc = findMetric('BITCOIN_PRICE_USD');
+
+    const renderMetricWithEnhancedDelta = (metric: any, metricId: string, label: string, sublabel?: string, unitType: any = 'index', prefix: string = '', suffixValue: string = '', statusType: any = 'neutral') => {
+        const config = getMetricConfig(metricId);
+        const valueWow = metric ? metric.value - metric.delta_wow : 0;
+        const deltaPct = valueWow !== 0 ? (metric.delta_wow / valueWow) * 100 : 0;
+
+        return (
+            <MetricCard
+                label={label}
+                sublabel={sublabel}
+                metricId={metricId}
+                value={formatMetric(metric?.value, unitType, { showUnit: false })}
+                prefix={prefix}
+                suffix={suffixValue}
+                delta={metric ? {
+                    value: formatDelta(metric.delta_wow, { decimals: config.deltaDecimals, unit: config.displayUnit }) || '—',
+                    period: 'WoW',
+                    trend: metric.delta_wow > 0 ? 'up' : 'down',
+                    tooltip: {
+                        currentValue: formatMetric(metric.value, unitType) || '—',
+                        previousValue: formatMetric(valueWow, unitType) || '—',
+                        absoluteChange: formatDelta(metric.delta_wow, { decimals: config.deltaDecimals, unit: config.displayUnit }) || '0',
+                        percentChange: formatDelta(deltaPct, { decimals: 1 }) || '0'
+                    },
+                    riskInterpretation: getRiskInterpretation(metricId, metric.delta_wow)
+                } : { value: 'WoW n/a', period: 'WoW', trend: 'neutral' }}
+                status={statusType}
+                isLoading={isLoading}
+            />
+        );
+    };
 
     const isLoading = isMarketLoading;
 
@@ -67,161 +99,116 @@ export const CockpitKPIGrid = React.memo(() => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                 {/* 2. US 10Y Yield */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="US 10Y Yield"
-                        metricId="UST_10Y_YIELD"
-                        value={formatMetric(ust10y?.value, 'percent', { showUnit: false })}
-                        suffix=" %"
-                        delta={ust10y ? {
-                            value: formatDelta(ust10y.delta_wow, { decimals: 1, unit: 'bps' }) || '—',
-                            period: 'WoW',
-                            trend: ust10y.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status={(ust10y?.value || 0) > 4.5 ? 'warning' : 'neutral'}
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        ust10y,
+                        'UST_10Y_YIELD',
+                        'US 10Y Yield',
+                        undefined,
+                        'percent',
+                        '',
+                        ' %',
+                        (ust10y?.value || 0) > 4.5 ? 'warning' : 'neutral'
+                    )}
                 </div>
 
                 {/* 3. Yield Curve (2s10s) */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="Yield Curve"
-                        sublabel="10Y - 2Y Spread"
-                        metricId="YIELD_CURVE"
-                        value={formatMetric(curve?.value, 'index', { showUnit: false })}
-                        suffix=" bps"
-                        delta={curve ? {
-                            value: formatDelta(curve.delta_wow, { decimals: 1 }) || '—',
-                            period: 'WoW',
-                            trend: curve.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status={(curve?.value || 0) < 0 ? 'danger' : 'neutral'}
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        curve,
+                        'UST_10Y_2Y_SPREAD',
+                        'Yield Curve',
+                        '10Y - 2Y Spread',
+                        'index',
+                        '',
+                        ' bps',
+                        (curve?.value || 0) < 0 ? 'danger' : 'neutral'
+                    )}
                 </div>
 
                 {/* 4. SOFR Rate */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="SOFR Rate"
-                        sublabel="Secured Overnight Financing"
-                        metricId="SOFR_RATE"
-                        value={formatMetric(sofr?.value, 'percent', { showUnit: false })}
-                        suffix=" %"
-                        delta={sofr ? {
-                            value: formatDelta(sofr.delta_wow, { decimals: 1 }) || '—',
-                            period: 'WoW',
-                            trend: sofr.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        sofr,
+                        'SOFR_RATE',
+                        'SOFR Rate',
+                        'Secured Overnight Financing',
+                        'percent',
+                        '',
+                        ' %'
+                    )}
                 </div>
 
                 {/* 5. DXY Index */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="US Dollar"
-                        sublabel="DXY Index"
-                        metricId="DXY_INDEX"
-                        value={formatMetric(dxy?.value, 'index', { showUnit: false })}
-                        delta={dxy ? {
-                            value: formatDelta(dxy.delta_wow, { decimals: 2 }) || '—',
-                            period: 'WoW',
-                            trend: dxy.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        dxy,
+                        'DXY_INDEX',
+                        'US Dollar',
+                        'DXY Index',
+                        'index'
+                    )}
                 </div>
 
                 {/* 6. Gold */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="Gold"
-                        sublabel="Spot / USD"
-                        metricId="GOLD_PRICE_USD"
-                        value={formatMetric(gold?.value, 'currency', { showUnit: false })}
-                        prefix="$"
-                        delta={gold ? {
-                            value: formatDelta(gold.delta_wow, { decimals: 1, unit: '%' }) || '—',
-                            period: 'WoW',
-                            trend: gold.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        gold,
+                        'GOLD_PRICE_USD',
+                        'Gold',
+                        'Spot / USD',
+                        'currency',
+                        '$'
+                    )}
                 </div>
 
                 {/* 7. Silver */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="Silver"
-                        sublabel="Spot / USD"
-                        metricId="SILVER_PRICE_USD"
-                        value={formatMetric(silver?.value, 'currency', { showUnit: false })}
-                        prefix="$"
-                        delta={silver ? {
-                            value: formatDelta(silver.delta_wow, { decimals: 1, unit: '%' }) || '—',
-                            period: 'WoW',
-                            trend: silver.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        silver,
+                        'SILVER_PRICE_USD',
+                        'Silver',
+                        'Spot / USD',
+                        'currency',
+                        '$'
+                    )}
                 </div>
 
                 {/* 8. WTI Crude */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="Oil"
-                        sublabel="WTI Crude"
-                        metricId="WTI_CRUDE_PRICE"
-                        value={formatMetric(oil?.value, 'currency', { showUnit: false })}
-                        prefix="$"
-                        delta={oil ? {
-                            value: formatDelta(oil.delta_wow, { decimals: 1, unit: '%' }) || '—',
-                            period: 'WoW',
-                            trend: oil.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        oil,
+                        'WTI_CRUDE_PRICE',
+                        'Oil',
+                        'WTI Crude',
+                        'currency',
+                        '$'
+                    )}
                 </div>
 
                 {/* 9. Bitcoin */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="Bitcoin"
-                        sublabel="BTC / USD"
-                        metricId="BITCOIN_PRICE_USD"
-                        value={formatMetric(btc?.value, 'currency', { showUnit: false })}
-                        prefix="$"
-                        delta={btc ? {
-                            value: formatDelta(btc.delta_wow, { decimals: 1, unit: '%' }) || '—',
-                            period: 'WoW',
-                            trend: btc.delta_wow > 0 ? 'up' : 'down'
-                        } : undefined}
-                        status="neutral"
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        btc,
+                        'BITCOIN_PRICE_USD',
+                        'Bitcoin',
+                        'BTC / USD',
+                        'currency',
+                        '$'
+                    )}
                 </div>
 
                 {/* 10. VIX Index */}
                 <div className="col-span-1">
-                    <MetricCard
-                        label="VIX"
-                        sublabel="Volatility"
-                        metricId="VIX_INDEX"
-                        value={formatMetric(vix?.value, 'index', { showUnit: false })}
-                        delta={vix ? {
-                            value: formatDelta(vix.delta_wow, { decimals: 1 }) || '—',
-                            period: 'WoW',
-                            trend: vix.delta_wow > 0 ? 'down' : 'up'
-                        } : undefined}
-                        status={(vix?.value || 0) > 20 ? 'warning' : (vix?.value || 0) > 30 ? 'danger' : 'safe'}
-                        isLoading={isLoading}
-                    />
+                    {renderMetricWithEnhancedDelta(
+                        vix,
+                        'VIX_INDEX',
+                        'VIX',
+                        'Volatility',
+                        'index',
+                        '',
+                        '',
+                        (vix?.value || 0) > 20 ? 'warning' : (vix?.value || 0) > 30 ? 'danger' : 'safe'
+                    )}
                 </div>
             </div>
         </div>

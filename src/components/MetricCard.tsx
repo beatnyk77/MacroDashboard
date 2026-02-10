@@ -6,6 +6,7 @@ import { Sparkline } from './Sparkline';
 import { HoverDetail } from '@/components/HoverDetail';
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { useViewContext } from '@/context/ViewContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils'; // Shadcn utility
 
 interface MetricCardProps {
@@ -17,6 +18,13 @@ interface MetricCardProps {
         value: string;
         period: string;
         trend: 'up' | 'down' | 'neutral';
+        tooltip?: {
+            currentValue: number | string;
+            previousValue: number | string;
+            absoluteChange: number | string;
+            percentChange: number | string;
+        };
+        riskInterpretation?: 'risk-on' | 'risk-off' | 'neutral';
     };
     status?: 'safe' | 'warning' | 'danger' | 'neutral';
     history?: { date: string; value: number }[];
@@ -93,6 +101,15 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
     const getDeltaTextColor = () => {
         if (!delta) return 'text-muted-foreground';
+
+        // If risk interpretation is provided, use it for coloring
+        if (delta.riskInterpretation) {
+            if (delta.riskInterpretation === 'risk-on') return 'text-emerald-500';
+            if (delta.riskInterpretation === 'risk-off') return 'text-rose-500';
+            return 'text-muted-foreground';
+        }
+
+        // Fallback to simple trend coloring
         if (delta.trend === 'up') return 'text-emerald-500';
         if (delta.trend === 'down') return 'text-rose-500';
         return 'text-muted-foreground';
@@ -170,14 +187,48 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
                             <div className="flex items-center gap-3">
                                 {delta && (
-                                    <div className={cn(
-                                        "flex items-center gap-1 text-sm font-semibold",
-                                        getDeltaTextColor()
-                                    )}>
-                                        {getDeltaIcon()}
-                                        <span>{delta.value}</span>
-                                        <span className="text-[0.65rem] font-medium text-muted-foreground/50 uppercase ml-1">{delta.period}</span>
-                                    </div>
+                                    <TooltipProvider delayDuration={100}>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div className={cn(
+                                                    "flex items-center gap-1 text-sm font-semibold cursor-help",
+                                                    getDeltaTextColor()
+                                                )}>
+                                                    {getDeltaIcon()}
+                                                    <span>{delta.value}</span>
+                                                    <span className="text-[0.65rem] font-medium text-muted-foreground/50 uppercase ml-1">{delta.period}</span>
+                                                </div>
+                                            </TooltipTrigger>
+                                            {delta.tooltip && (
+                                                <TooltipContent className="p-3 bg-slate-950 border-white/10 shadow-2xl backdrop-blur-xl">
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
+                                                            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">Current</span>
+                                                            <span className="text-xs font-mono font-bold text-white">{delta.tooltip.currentValue}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
+                                                            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">7 Days Ago</span>
+                                                            <span className="text-xs font-mono font-bold text-white/80">{delta.tooltip.previousValue}</span>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 gap-3 pt-0.5">
+                                                            <div className="space-y-0.5">
+                                                                <div className="text-[9px] font-black text-muted-foreground/40 uppercase leading-none">Change</div>
+                                                                <div className={cn("text-[11px] font-bold font-mono", getDeltaTextColor())}>
+                                                                    {delta.tooltip.absoluteChange}
+                                                                </div>
+                                                            </div>
+                                                            <div className="space-y-0.5 text-right">
+                                                                <div className="text-[9px] font-black text-muted-foreground/40 uppercase leading-none">% Change</div>
+                                                                <div className={cn("text-[11px] font-bold font-mono", getDeltaTextColor())}>
+                                                                    {delta.tooltip.percentChange}%
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </TooltipContent>
+                                            )}
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 )}
                                 {typeof zScore === 'number' && !isNaN(zScore) && (
                                     <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-secondary/50 border border-border/50">
