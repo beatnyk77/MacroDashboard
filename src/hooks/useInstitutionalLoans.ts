@@ -8,9 +8,11 @@ export interface InstitutionalLoanDominance {
     as_of_date: string;
     west_total: number;
     east_total: number;
+    japan_total: number;
     total_volume: number;
     east_dominance_pct: number;
-    dominance_status: 'WEST_DOMINANT' | 'EAST_DOMINANT' | 'CONTESTED' | 'NEUTRAL';
+    japan_dominance_pct: number;
+    dominance_status: 'WEST_DOMINANT' | 'EAST_DOMINANT' | 'JAPAN_DOMINANT' | 'CONTESTED' | 'NEUTRAL';
 }
 
 /**
@@ -57,7 +59,7 @@ export function useInstitutionalLendingHistory(region: string, type: 'Stock' | '
             // Group by date to create stacked data
             const grouped = (data || []).reduce((acc: any, curr) => {
                 const date = curr.as_of_date;
-                if (!acc[date]) acc[date] = { date, WEST: 0, EAST: 0 };
+                if (!acc[date]) acc[date] = { date, WEST: 0, EAST: 0, JAPAN: 0 };
                 acc[date][curr.lender_bloc] += Number(curr.amount_usd);
                 return acc;
             }, {});
