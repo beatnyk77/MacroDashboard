@@ -7,6 +7,77 @@ import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tool
 import { SectionHeader } from '@/components/SectionHeader';
 import { cn } from '@/lib/utils';
 
+interface StatCardProps {
+    title: string;
+    metric?: BricsMetric;
+    metricId: string;
+    icon: any;
+    color: string;
+    suffix?: string;
+    revertTrend?: boolean;
+    history: Record<string, any[]>;
+}
+
+const StatCard: React.FC<StatCardProps> = ({
+    title,
+    metric,
+    metricId,
+    icon: Icon,
+    color,
+    suffix = '',
+    revertTrend = false,
+    history
+}) => {
+    const histData = history[metricId] || [];
+    const delta = metric?.delta_qoq || metric?.delta_yoy_pct || 0;
+    const isPositive = delta > 0;
+    const isGood = revertTrend ? !isPositive : isPositive; // e.g. Debt/Inflation up is bad
+
+    return (
+        <div className="relative overflow-hidden bg-black/20 rounded-xl p-4 border border-white/5 hover:border-white/10 transition-all group">
+            <div className="flex justify-between items-start mb-2 relative z-10">
+                <div className="flex items-center gap-2">
+                    <div className={cn("p-1.5 rounded-md bg-white/5", `text-${color}-400`)}>
+                        <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-semibold text-muted-foreground">{title}</span>
+                </div>
+                <span className={cn("text-[0.65rem] font-bold px-1.5 py-0.5 rounded bg-white/5", isGood ? "text-emerald-400" : "text-rose-400")}>
+                    {isPositive ? '+' : ''}{delta.toFixed(1)}% {metric?.delta_qoq ? 'QoQ' : 'YoY'}
+                </span>
+            </div>
+
+            <div className="relative z-10">
+                <div className="text-xl font-black text-white tracking-tight">
+                    {metric?.value?.toLocaleString(undefined, { maximumFractionDigits: 1 })}{suffix}
+                </div>
+            </div>
+
+            {/* Mini Sparkline */}
+            <div className="absolute bottom-0 left-0 right-0 h-10 opacity-30 group-hover:opacity-50 transition-opacity">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={histData}>
+                        <defs>
+                            <linearGradient id={`grad-${metricId}`} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor={isGood ? '#10b981' : '#f43f5e'} stopOpacity={0.4} />
+                                <stop offset="100%" stopColor={isGood ? '#10b981' : '#f43f5e'} stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke={isGood ? '#10b981' : '#f43f5e'}
+                            fill={`url(#grad-${metricId})`}
+                            strokeWidth={2}
+                            isAnimationActive={false}
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+    );
+};
+
 export const BRICSTrackerSection: React.FC = () => {
     const { data, isLoading } = useBricsTracker();
 
@@ -38,72 +109,6 @@ export const BRICSTrackerSection: React.FC = () => {
         );
     }
 
-    const StatCard = ({
-        title,
-        metric,
-        metricId,
-        icon: Icon,
-        color,
-        suffix = '',
-        revertTrend = false
-    }: {
-        title: string,
-        metric?: BricsMetric,
-        metricId: string,
-        icon: any,
-        color: string,
-        suffix?: string,
-        revertTrend?: boolean
-    }) => {
-        const histData = history[metricId] || [];
-        const delta = metric?.delta_qoq || metric?.delta_yoy_pct || 0;
-        const isPositive = delta > 0;
-        const isGood = revertTrend ? !isPositive : isPositive; // e.g. Debt/Inflation up is bad
-
-        return (
-            <div className="relative overflow-hidden bg-black/20 rounded-xl p-4 border border-white/5 hover:border-white/10 transition-all group">
-                <div className="flex justify-between items-start mb-2 relative z-10">
-                    <div className="flex items-center gap-2">
-                        <div className={cn("p-1.5 rounded-md bg-white/5", `text-${color}-400`)}>
-                            <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs font-semibold text-muted-foreground">{title}</span>
-                    </div>
-                    <span className={cn("text-[0.65rem] font-bold px-1.5 py-0.5 rounded bg-white/5", isGood ? "text-emerald-400" : "text-rose-400")}>
-                        {isPositive ? '+' : ''}{delta.toFixed(1)}% {metric?.delta_qoq ? 'QoQ' : 'YoY'}
-                    </span>
-                </div>
-
-                <div className="relative z-10">
-                    <div className="text-xl font-black text-white tracking-tight">
-                        {metric?.value?.toLocaleString(undefined, { maximumFractionDigits: 1 })}{suffix}
-                    </div>
-                </div>
-
-                {/* Mini Sparkline */}
-                <div className="absolute bottom-0 left-0 right-0 h-10 opacity-30 group-hover:opacity-50 transition-opacity">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={histData}>
-                            <defs>
-                                <linearGradient id={`grad-${metricId}`} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={isGood ? '#10b981' : '#f43f5e'} stopOpacity={0.4} />
-                                    <stop offset="100%" stopColor={isGood ? '#10b981' : '#f43f5e'} stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <Area
-                                type="monotone"
-                                dataKey="value"
-                                stroke={isGood ? '#10b981' : '#f43f5e'}
-                                fill={`url(#grad-${metricId})`}
-                                strokeWidth={2}
-                                isAnimationActive={false}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-        );
-    };
 
     // Prepare chart data for Gold Horizontal Bar
     const chartData = countryReserves
@@ -138,6 +143,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         color="blue"
                         suffix="%"
                         revertTrend={true} // Lower USD share is "good" for BRICS goals
+                        history={history}
                     />
                     <StatCard
                         title="Gold Holdings"
@@ -146,6 +152,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         icon={Coins}
                         color="amber"
                         suffix="t"
+                        history={history}
                     />
                     <StatCard
                         title="Debt/GDP"
@@ -155,6 +162,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         color="rose"
                         suffix="%"
                         revertTrend={true}
+                        history={history}
                     />
                     <StatCard
                         title="Inflation"
@@ -164,6 +172,7 @@ export const BRICSTrackerSection: React.FC = () => {
                         color="purple"
                         suffix="%"
                         revertTrend={true}
+                        history={history}
                     />
                 </div>
 

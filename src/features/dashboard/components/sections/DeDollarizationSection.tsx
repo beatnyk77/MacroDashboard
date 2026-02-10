@@ -7,6 +7,90 @@ import { ResponsiveContainer, AreaChart, Area, Tooltip as RechartsTooltip } from
 import { cn } from '@/lib/utils';
 import { SectionHeader } from '@/components/SectionHeader';
 
+interface MetricPanelProps {
+    title: string;
+    metric: any;
+    history: any[];
+    color: string;
+    icon: any;
+    trendLabel: string;
+    isInverse?: boolean;
+}
+
+const MetricPanel: React.FC<MetricPanelProps> = ({
+    title,
+    metric,
+    history,
+    color,
+    icon: Icon,
+    trendLabel,
+    isInverse = false
+}) => {
+    const isPositive = (metric?.delta_qoq || 0) > 0;
+    const isGood = isInverse ? !isPositive : isPositive;
+    const trendColor = isGood ? 'text-emerald-400' : 'text-rose-400';
+
+    // Dynamic gradient ID
+    const gradId = `grad-${title.replace(/\s+/g, '')}`;
+
+    return (
+        <div className="flex-1 bg-black/20 rounded-xl p-5 border border-white/5 relative overflow-hidden group">
+            <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className={cn("p-2 rounded-lg bg-white/5", `text-${color}-400`)}>
+                        <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h3 className="font-serif text-lg text-white">{title}</h3>
+                        <div className="flex items-center gap-2">
+                            <span className={cn("text-2xl font-black tracking-tighter", `text-${color}-400`)}>
+                                {metric?.value?.toFixed(2)}%
+                            </span>
+                            <div className={cn("flex items-center text-xs font-bold px-1.5 py-0.5 rounded bg-white/5 border border-white/10", trendColor)}>
+                                {isPositive ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
+                                {Math.abs(metric?.delta_qoq || 0).toFixed(2)}pp
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Chart */}
+            <div className="h-[120px] w-full -mx-2">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={history}>
+                        <defs>
+                            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor={color === 'amber' ? '#fbbf24' : '#60a5fa'} stopOpacity={0.3} />
+                                <stop offset="95%" stopColor={color === 'amber' ? '#fbbf24' : '#60a5fa'} stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <RechartsTooltip
+                            contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                            itemStyle={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}
+                            formatter={(value: number) => [`${value.toFixed(2)}%`, title]}
+                            labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke={color === 'amber' ? '#fbbf24' : '#60a5fa'}
+                            fill={`url(#${gradId})`}
+                            strokeWidth={2}
+                            isAnimationActive={false}
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+
+            <div className="mt-2 text-[10px] text-muted-foreground font-mono uppercase tracking-wider flex justify-between">
+                <span>{trendLabel}</span>
+                <span>Last: {metric?.as_of_date}</span>
+            </div>
+        </div>
+    );
+};
+
 export const DeDollarizationSection: React.FC = () => {
     const { data: metrics } = useDeDollarization();
     const { data: usdHistory, isLoading: isLoadingUsd } = useDeDollarizationHistory('GLOBAL_USD_SHARE_PCT');
@@ -36,87 +120,6 @@ export const DeDollarizationSection: React.FC = () => {
     const isDeDollarizing = (usdShare?.delta_qoq || 0) < 0;
     const isGoldAccumulating = (goldShare?.delta_yoy_pct || 0) > 5;
 
-    const MetricPanel = ({
-        title,
-        metric,
-        history,
-        color,
-        icon: Icon,
-        trendLabel,
-        isInverse = false
-    }: {
-        title: string,
-        metric: any,
-        history: any[],
-        color: string,
-        icon: any,
-        trendLabel: string,
-        isInverse?: boolean
-    }) => {
-        const isPositive = (metric?.delta_qoq || 0) > 0;
-        const isGood = isInverse ? !isPositive : isPositive;
-        const trendColor = isGood ? 'text-emerald-400' : 'text-rose-400';
-
-        // Dynamic gradient ID
-        const gradId = `grad-${title.replace(/\s+/g, '')}`;
-
-        return (
-            <div className="flex-1 bg-black/20 rounded-xl p-5 border border-white/5 relative overflow-hidden group">
-                <div className="flex justify-between items-start mb-4 relative z-10">
-                    <div className="flex items-center gap-3">
-                        <div className={cn("p-2 rounded-lg bg-white/5", `text-${color}-400`)}>
-                            <Icon className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h3 className="font-serif text-lg text-white">{title}</h3>
-                            <div className="flex items-center gap-2">
-                                <span className={cn("text-2xl font-black tracking-tighter", `text-${color}-400`)}>
-                                    {metric?.value?.toFixed(2)}%
-                                </span>
-                                <div className={cn("flex items-center text-xs font-bold px-1.5 py-0.5 rounded bg-white/5 border border-white/10", trendColor)}>
-                                    {isPositive ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
-                                    {Math.abs(metric?.delta_qoq || 0).toFixed(2)}pp
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Chart */}
-                <div className="h-[120px] w-full -mx-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={history}>
-                            <defs>
-                                <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={color === 'amber' ? '#fbbf24' : '#60a5fa'} stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor={color === 'amber' ? '#fbbf24' : '#60a5fa'} stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <RechartsTooltip
-                                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                                itemStyle={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}
-                                formatter={(value: number) => [`${value.toFixed(2)}%`, title]}
-                                labelFormatter={(label) => new Date(label).toLocaleDateString()}
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="value"
-                                stroke={color === 'amber' ? '#fbbf24' : '#60a5fa'}
-                                fill={`url(#${gradId})`}
-                                strokeWidth={2}
-                                isAnimationActive={false}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
-
-                <div className="mt-2 text-[10px] text-muted-foreground font-mono uppercase tracking-wider flex justify-between">
-                    <span>{trendLabel}</span>
-                    <span>Last: {metric?.as_of_date}</span>
-                </div>
-            </div>
-        );
-    };
 
     return (
         <div className="mb-8">

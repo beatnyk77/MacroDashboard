@@ -6,6 +6,38 @@ import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { cn } from '@/lib/utils';
 import { Info } from 'lucide-react';
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (!active || !payload || !payload.length) return null;
+    return (
+        <div className="bg-slate-950/90 border border-white/10 p-3 rounded-lg shadow-xl backdrop-blur-md">
+            <p className="text-xs font-mono text-muted-foreground mb-2">
+                {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            <div className="space-y-2">
+                {payload.map((entry: any) => (
+                    <div key={entry.name} className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                            <span className="text-xs font-bold text-white/90">{entry.name}</span>
+                        </div>
+                        <div className="text-right">
+                            <div className={cn(
+                                "text-xs font-black",
+                                Math.abs(entry.value) > 1.5 ? "text-amber-400" : "text-emerald-400"
+                            )}>
+                                {entry.value > 0 ? '+' : ''}{entry.value.toFixed(2)}σ
+                            </div>
+                            <div className="text-[0.6rem] text-muted-foreground font-mono">
+                                Raw: {entry.payload[`${entry.dataKey}_raw`]?.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export const GoldRatioRibbon: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
 
@@ -72,37 +104,6 @@ export const GoldRatioRibbon: React.FC = () => {
         { y1: 1.5, y2: 10, label: 'Fiat Extension (Risk)', fill: '#f59e0b', opacity: 0.1 }
     ];
 
-    const CustomTooltip = ({ active, payload, label }: any) => {
-        if (!active || !payload || !payload.length) return null;
-        return (
-            <div className="bg-slate-950/90 border border-white/10 p-3 rounded-lg shadow-xl backdrop-blur-md">
-                <p className="text-xs font-mono text-muted-foreground mb-2">
-                    {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-                </p>
-                <div className="space-y-2">
-                    {payload.map((entry: any) => (
-                        <div key={entry.name} className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                <span className="text-xs font-bold text-white/90">{entry.name}</span>
-                            </div>
-                            <div className="text-right">
-                                <div className={cn(
-                                    "text-xs font-black",
-                                    Math.abs(entry.value) > 1.5 ? "text-amber-400" : "text-emerald-400"
-                                )}>
-                                    {entry.value > 0 ? '+' : ''}{entry.value.toFixed(2)}σ
-                                </div>
-                                <div className="text-[0.6rem] text-muted-foreground font-mono">
-                                    Raw: {entry.payload[`${entry.dataKey}_raw`]?.toFixed(2)}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
 
     return (
         <Card className="p-6 bg-[#0a1929]/80 backdrop-blur-md border border-blue-500/20 rounded-xl mb-8 overflow-hidden relative shadow-2xl">
