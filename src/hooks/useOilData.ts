@@ -29,6 +29,7 @@ export interface OilData {
     capacityData: OilRefiningCapacity[];
     importData: OilImport[];
     sprData: { date: string; value: number }[];
+    utilizationData: { date: string; value: number }[];
     metrics: MetricDefinition[];
 }
 
@@ -62,7 +63,16 @@ export const useOilData = () => {
 
             if (sprError) throw sprError;
 
-            // 4. Fetch Metric Definitions for context
+            // 4. Fetch Refinery Utilization (Metric: OIL_REFINERY_UTILIZATION_US)
+            const { data: utilObs, error: utilError } = await supabase
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', 'OIL_REFINERY_UTILIZATION_US')
+                .order('as_of_date', { ascending: true });
+
+            if (utilError) throw utilError;
+
+            // 5. Fetch Metric Definitions for context
             const { data: metData, error: metError } = await supabase
                 .from('metrics')
                 .select('*')
@@ -73,7 +83,11 @@ export const useOilData = () => {
             return {
                 capacityData: (capData as OilRefiningCapacity[]) || [],
                 importData: (impData as OilImport[]) || [],
-                sprData: (sprObs || []).map(d => ({
+                sprData: (sprObs || []).map((d: any) => ({
+                    date: String(d.as_of_date),
+                    value: Number(d.value)
+                })),
+                utilizationData: (utilObs || []).map((d: any) => ({
                     date: String(d.as_of_date),
                     value: Number(d.value)
                 })),
