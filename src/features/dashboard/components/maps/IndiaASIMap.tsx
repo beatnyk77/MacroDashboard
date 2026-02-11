@@ -113,22 +113,28 @@ export const IndiaASIMap: React.FC<IndiaASIMapProps> = ({ data, metric, onStateC
                                 const asiStats = data.find(s => s.state_name.toLowerCase() === stateName?.toLowerCase());
                                 const geoStats = geoData?.find(s => s.state_name.toLowerCase() === stateName?.toLowerCase());
 
-                                let fill = "#1a1d21";
+                                let fill = "#2a2e35"; // Dark gray but not black
                                 let value = 0;
+                                let hasData = false;
 
                                 if (metric === 'geopolitics' && geoStats) {
                                     value = geoStats.east_share_pct;
                                     fill = colorScale(value);
+                                    hasData = true;
                                 } else if (metric === 'efficiency' && geoStats) {
                                     value = geoStats.loan_job_multiplier;
                                     fill = value > 0 ? colorScale(value) : '#333';
+                                    hasData = true;
                                 } else if (asiStats) {
-                                    // Careful casting here as we know metric is keyof StateASIStats in this branch
                                     const m = metric as keyof StateASIStats;
-                                    if (asiStats[m] !== undefined) {
+                                    if (asiStats[m] !== undefined && asiStats[m] !== null) {
                                         fill = colorScale(Number(asiStats[m]));
+                                        hasData = true;
                                     }
                                 }
+
+                                // Senior dev: maintain professional muted look if no data, instead of pitch black
+                                if (!hasData) fill = "rgba(42, 46, 53, 0.4)";
 
                                 return (
                                     <Tooltip

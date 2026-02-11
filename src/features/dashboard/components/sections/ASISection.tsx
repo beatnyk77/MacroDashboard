@@ -62,7 +62,7 @@ export const ASISection: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Map Interface */}
-                <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5 relative group overflow-hidden">
+                <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5 relative group overflow-hidden z-10">
                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.02] to-transparent pointer-events-none" />
 
                     <div className="flex items-center justify-between mb-8 relative z-10">
@@ -95,7 +95,7 @@ export const ASISection: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="relative h-[550px] w-full bg-slate-900/40 rounded-3xl border border-white/5 flex items-center justify-center z-0">
+                    <div className="relative h-[550px] w-full bg-slate-900/40 rounded-3xl border border-white/5 flex items-center justify-center z-10">
                         <IndiaASIMap
                             data={data || []}
                             metric={selectedMetric}

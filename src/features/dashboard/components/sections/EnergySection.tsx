@@ -54,7 +54,7 @@ export const EnergySection: React.FC = () => {
                     <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Renewable Alpha</span>
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
-                            {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-[0.6rem] text-amber-500/50 uppercase tracking-widest italic font-bold">Data syncing</span>}
+                            {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-[0.6rem] text-muted-foreground/30 uppercase tracking-widest italic font-bold">Latency Mode</span>}
                         </span>
                     </div>
                 </div>

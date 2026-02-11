@@ -93,7 +93,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         </h2>
                     </div>
                     <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
-                        Real-time MoSPI feed tracking institutional credit, industrial production, and balance of payments stability.
+                        Institutional-grade telemetry tracking credit stress, industrial output, and state-level energy transition alpha.
                     </p>
                 </div>
 

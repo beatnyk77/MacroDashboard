@@ -69,12 +69,14 @@ export const UPIAutopayFailureCard: React.FC = () => {
             sx={{
                 height: '100%',
                 position: 'relative',
-                overflow: 'visible',
+                overflow: 'hidden',
+                zIndex: 1,
                 cursor: 'pointer',
                 transition: 'transform 0.2s, box-shadow 0.2s',
                 '&:hover': {
                     transform: 'translateY(-2px)',
-                    boxShadow: 6
+                    boxShadow: 6,
+                    zIndex: 2
                 }
             }}>
             <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
