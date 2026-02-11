@@ -65,6 +65,12 @@ ORDER BY start_time DESC
 LIMIT 10;
 ```
 
+## 6. Email Alert Setup (Resend)
+The `check-data-health` function triggers an email if >10 issues (stale metrics or failed ingestions) are found.
+1. **API Key**: Ensure `RESEND_API_KEY` is set in Supabase Secrets.
+2. **Alert Threshold**: Fixed at > 10 issues total.
+3. **Recipient**: `graphiquestor@gmail.com`.
+
 ## 5. RSS Feed Syndication
 The RSS feed is available at `https://graphiquestor.com/rss.xml`. 
 Use this to syndicate macro signals to news aggregators or Slack/Discord channels.
