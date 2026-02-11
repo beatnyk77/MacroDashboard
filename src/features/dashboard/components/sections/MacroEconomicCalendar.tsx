@@ -69,17 +69,17 @@ export const MacroEconomicCalendar: React.FC = () => {
             </CardHeader>
 
             <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs font-black uppercase tracking-wider text-muted-foreground/50 bg-white/5">
+                <div className="overflow-x-auto overflow-y-auto max-h-[450px] md:max-h-[320px] lg:max-h-[380px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                    <table className="w-full text-sm text-left border-separate border-spacing-0">
+                        <thead className="text-xs font-black uppercase tracking-wider text-muted-foreground/50 sticky top-0 z-20 bg-slate-950/95 backdrop-blur-md">
                             <tr>
-                                <th className="px-6 py-3 w-[120px]">Date / Time</th>
-                                <th className="px-6 py-3 w-[80px]">Curr</th>
-                                <th className="px-6 py-3 w-[80px] text-center">Impact</th>
-                                <th className="px-6 py-3">Event</th>
-                                <th className="px-6 py-3 w-[100px] text-right">Actual</th>
-                                <th className="px-6 py-3 w-[100px] text-right">Forecast</th>
-                                <th className="px-6 py-3 w-[100px] text-right">Previous</th>
+                                <th className="px-6 py-3 w-[120px] border-b border-white/5">Date / Time</th>
+                                <th className="px-6 py-3 w-[80px] border-b border-white/5">Curr</th>
+                                <th className="px-6 py-3 w-[80px] text-center border-b border-white/5">Impact</th>
+                                <th className="px-6 py-3 border-b border-white/5">Event</th>
+                                <th className="px-6 py-3 w-[100px] text-right border-b border-white/5">Actual</th>
+                                <th className="px-6 py-3 w-[100px] text-right border-b border-white/5">Forecast</th>
+                                <th className="px-6 py-3 w-[100px] text-right border-b border-white/5">Previous</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
