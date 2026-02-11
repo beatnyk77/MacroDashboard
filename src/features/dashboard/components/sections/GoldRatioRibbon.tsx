@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ReferenceArea } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ReferenceArea } from 'recharts';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { cn } from '@/lib/utils';
 import { AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
@@ -155,71 +155,99 @@ export const GoldRatioRibbon: React.FC = () => {
                 {/* Main Chart Area */}
                 <div className="h-[480px] w-full relative">
                     <div className="absolute inset-0 bg-white/[0.01] rounded-[2.5rem] -m-4 border border-white/[0.02]" />
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
 
-                            {/* Regime Shading - Institutional Zones */}
-                            <ReferenceArea y1={2} y2={4} fill="rgba(244,63,94,0.05)" /> {/* Extreme High */}
-                            <ReferenceArea y1={1.2} y2={2} fill="rgba(245,158,11,0.03)" /> {/* Warning High */}
-                            <ReferenceArea y1={-1.2} y2={1.2} fill="rgba(16,185,129,0.02)" /> {/* Equilibrium */}
-                            <ReferenceArea y1={-2} y2={-1.2} fill="rgba(245,158,11,0.03)" /> {/* Warning Low */}
-                            <ReferenceArea y1={-4} y2={-2} fill="rgba(244,63,94,0.05)" /> {/* Extreme Low */}
+                    {!chartData || chartData.length === 0 ? (
+                        <div className="h-full w-full flex flex-col items-center justify-center space-y-4">
+                            <div className="p-4 rounded-full bg-white/5 border border-white/10">
+                                <AlertTriangle className="w-8 h-8 text-amber-500/20" />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-sm font-black text-white/40 uppercase tracking-widest">Ribbon visualization temporarily unavailable</p>
+                                <p className="text-[10px] text-muted-foreground/30 italic mt-1">Fetching historical correlation matrix...</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                                <defs>
+                                    {series.map(s => (
+                                        <linearGradient key={`grad-${s.key}`} id={`grad-${s.key}`} x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor={s.color} stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor={s.color} stopOpacity={0} />
+                                        </linearGradient>
+                                    ))}
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
 
-                            {/* Center Pivot */}
-                            <ReferenceArea y1={-0.05} y2={0.05} fill="#fff" fillOpacity={0.1} />
+                                {/* Regime Shading - Institutional Zones */}
+                                <ReferenceArea y1={2} y2={4} fill="rgba(244,63,94,0.05)" /> {/* Extreme High */}
+                                <ReferenceArea y1={1.2} y2={2} fill="rgba(245,158,11,0.03)" /> {/* Warning High */}
+                                <ReferenceArea y1={-1.2} y2={1.2} fill="rgba(16,185,129,0.02)" /> {/* Equilibrium */}
+                                <ReferenceArea y1={-2} y2={-1.2} fill="rgba(245,158,11,0.03)" /> {/* Warning Low */}
+                                <ReferenceArea y1={-4} y2={-2} fill="rgba(244,63,94,0.05)" /> {/* Extreme Low */}
 
-                            <XAxis
-                                dataKey="date"
-                                stroke="rgba(255,255,255,0.1)"
-                                fontSize={9}
-                                tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { year: '2-digit', month: 'short' })}
-                                tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
-                                axisLine={false}
-                                tickLine={false}
-                                dy={10}
-                            />
-                            <YAxis
-                                stroke="rgba(255,255,255,0.1)"
-                                fontSize={9}
-                                domain={[-3.5, 3.5]}
-                                tickFormatter={(v) => `${v > 0 ? '+' : ''}${v}σ`}
-                                tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
-                                axisLine={false}
-                                tickLine={false}
-                            />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend
-                                verticalAlign="top"
-                                align="left"
-                                iconType="circle"
-                                iconSize={8}
-                                wrapperStyle={{
-                                    paddingBottom: '40px',
-                                    fontSize: '9px',
-                                    fontWeight: 900,
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.2em',
-                                    opacity: 0.6
-                                }}
-                            />
+                                {/* Center Pivot */}
+                                <ReferenceArea y1={-0.05} y2={0.05} fill="#fff" fillOpacity={0.1} />
 
-                            {series.map(s => (
-                                <Line
-                                    key={s.key}
-                                    type="monotone"
-                                    dataKey={s.key}
-                                    name={s.label}
-                                    stroke={s.color}
-                                    strokeWidth={s.key === 'M2/Gold' ? 4 : 2.5}
-                                    dot={false}
-                                    activeDot={{ r: 4, strokeWidth: 0, fill: '#fff' }}
-                                    strokeOpacity={0.8}
-                                    animationDuration={2000}
+                                <XAxis
+                                    dataKey="date"
+                                    stroke="rgba(255,255,255,0.1)"
+                                    fontSize={9}
+                                    tickFormatter={(v) => {
+                                        try {
+                                            return new Date(v).toLocaleDateString(undefined, { year: '2-digit', month: 'short' });
+                                        } catch (e) {
+                                            return v;
+                                        }
+                                    }}
+                                    tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    dy={10}
                                 />
-                            ))}
-                        </LineChart>
-                    </ResponsiveContainer>
+                                <YAxis
+                                    stroke="rgba(255,255,255,0.1)"
+                                    fontSize={9}
+                                    domain={[-3.5, 3.5]}
+                                    tickFormatter={(v) => `${v > 0 ? '+' : ''}${v}σ`}
+                                    tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend
+                                    verticalAlign="top"
+                                    align="left"
+                                    iconType="circle"
+                                    iconSize={8}
+                                    wrapperStyle={{
+                                        paddingBottom: '40px',
+                                        fontSize: '9px',
+                                        fontWeight: 900,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.2em',
+                                        opacity: 0.6
+                                    }}
+                                />
+
+                                {series.map(s => (
+                                    <Area
+                                        key={s.key}
+                                        type="monotone"
+                                        dataKey={s.key}
+                                        name={s.label}
+                                        stroke={s.color}
+                                        fill={`url(#grad-${s.key})`}
+                                        strokeWidth={s.key === 'M2/Gold' ? 4 : 2}
+                                        dot={false}
+                                        activeDot={{ r: 4, strokeWidth: 0, fill: '#fff' }}
+                                        animationDuration={2000}
+                                        connectNulls={true}
+                                    />
+                                ))}
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
 
                 {/* Individual Metric Cards Grid - Simplified */}

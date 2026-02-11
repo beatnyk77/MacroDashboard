@@ -29,18 +29,36 @@ export const EnergySecuritySection: React.FC = () => {
     const { data: apiData } = useOilData();
 
     // Merge API data with fallback if API data is empty (temporary fix until ingestion runs)
-    const data = React.useMemo(() => {
-        if (apiData.sprData && apiData.sprData.length > 0) return apiData;
+    const { data, isFallback } = React.useMemo(() => {
+        if (apiData.sprData && apiData.sprData.length > 0) return { data: apiData, isFallback: false };
 
         console.warn('Using fallback energy data for visualization');
         const fallback = generateFallbackData();
-        return {
+        const merged = {
             ...apiData,
             sprData: apiData.sprData.length ? apiData.sprData : fallback.sprData,
             utilizationData: apiData.utilizationData.length ? apiData.utilizationData : fallback.utilizationData,
             importData: apiData.importData.length ? apiData.importData : fallback.importData
         };
+        return { data: merged, isFallback: true };
     }, [apiData]);
+
+    const hasNoData = !data.sprData.length && !data.importData.length && !data.capacityData?.length;
+
+    if (hasNoData) {
+        return (
+            <div className="space-y-8">
+                <SectionHeader
+                    title="Energy Security & Supply Chain"
+                    subtitle="US Refining Capacity, Crude Sourcing, and Supplier Vulnerability"
+                />
+                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-[2.5rem] backdrop-blur-3xl">
+                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-widest mb-2">Energy Security data temporarily unavailable</span>
+                    <p className="text-xs text-muted-foreground/40 italic">System is currently normalizing upstream feeds. Please check back shortly.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">
@@ -48,6 +66,16 @@ export const EnergySecuritySection: React.FC = () => {
                 title="Energy Security & Supply Chain"
                 subtitle="US Refining Capacity, Crude Sourcing, and Supplier Vulnerability"
             />
+            {isFallback && (
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/80">
+                            Live Feed Normalizing — Displaying Institutional Proxies
+                        </p>
+                    </div>
+                </div>
+            )}
 
             <div className="flex flex-col gap-12">
                 {/* Row 1: US Refining Strategic Capacity */}

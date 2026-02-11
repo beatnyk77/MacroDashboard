@@ -96,10 +96,13 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
         );
     }
 
-    // Calculate OPEC Exposure
-    const opecExposure = sankeyData.links
-        .filter(l => sankeyData.nodes[l.source as number].region === 'OPEC')
-        .reduce((sum, l) => sum + l.share, 0);
+    // Calculate OPEC Exposure - defensive guard for node registry
+    const opecExposure = (sankeyData.links || [])
+        .filter(l => {
+            const sourceIdx = l.source as number;
+            return sankeyData.nodes[sourceIdx] && sankeyData.nodes[sourceIdx].region === 'OPEC';
+        })
+        .reduce((sum, l) => sum + (l.share || 0), 0);
 
     return (
         <Card className="bg-black/40 border-white/10 backdrop-blur-md overflow-hidden relative group">
@@ -159,9 +162,9 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
                                     const node = payload[0].payload;
                                     return (
                                         <div className="bg-slate-950 border border-white/10 rounded-lg p-3 shadow-xl">
-                                            <p className="text-sm font-bold text-white mb-1">{node.name}</p>
+                                            <p className="text-sm font-bold text-white mb-1">{node.name || 'Unknown'}</p>
                                             <p className="text-xs text-muted-foreground">
-                                                Volume: <span className="text-white font-mono">{node.value.toFixed(1)} mbbl</span>
+                                                Volume: <span className="text-white font-mono">{(node.value || 0).toFixed(1)} mbbl</span>
                                             </p>
                                         </div>
                                     );
@@ -170,19 +173,19 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
                                 return (
                                     <div className="bg-slate-950 border border-white/10 rounded-lg p-3 shadow-xl">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: link.fill }} />
+                                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: link.fill || '#ccc' }} />
                                             <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                                {link.source.name} → {link.target.name}
+                                                {link.source?.name || 'Unknown'} → {link.target?.name || 'Unknown'}
                                             </span>
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex justify-between gap-4 text-xs">
                                                 <span className="text-muted-foreground">Volume:</span>
-                                                <span className="font-mono text-white">{link.value.toFixed(1)} mbbl</span>
+                                                <span className="font-mono text-white">{(link.value || 0).toFixed(1)} mbbl</span>
                                             </div>
                                             <div className="flex justify-between gap-4 text-xs">
                                                 <span className="text-muted-foreground">Share:</span>
-                                                <span className="font-mono text-emerald-400">{link.share.toFixed(1)}%</span>
+                                                <span className="font-mono text-emerald-400">{(link.share || 0).toFixed(1)}%</span>
                                             </div>
                                         </div>
                                     </div>
