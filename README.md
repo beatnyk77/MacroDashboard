@@ -1,53 +1,81 @@
 # GraphiQuestor: The Sovereign Intelligence Console
 
-> *"In a world of kinetic warfare and monetary debasement, the only alpha left is structural reality."* — **Global Macro CIO Note**
+> *"In a multipolar world of kinetic warfare and monetary debasement, the highest-conviction alpha lies in structural reality."*  
+> — Global Macro CIO Note
 
-**GraphiQuestor** is an institutional-grade surveillance terminal designed for the 0.01% of capital allocators who understand that the post-1971 fiat experiment is ending. As the world fractures into multipolar economic spheres, this dashboard provides the raw, unsanitized telemetry required to navigate the transition from financialization back to hard assets.
+**GraphiQuestor** is an institutional-grade surveillance terminal built for capital allocators who understand that the post-1971 fiat regime is fracturing. From Bhopal to global markets, we deliver the raw, unsanitized telemetry required to navigate the transition from financialization back to hard assets and real economy signals.
 
 ---
 
 ## 🏛️ I. The Liquidity Engine (Central Banking)
 **"Follow the Fed, Ignore the Noise."**
-We track the hydraulic pressure of the global financial system with sub-second precision.
--   **Net Liquidity Z-Scores**: Rolling 25-year deviations of Fed Balance Sheet mechanics. Detect "Stealth QE" before the market prices it.
--   **The Alarm System**: Deterministic triggers for liquidity cliffs. Know exactly when the Treasury General Account (TGA) will drain the interbank market.
--   **Regime Detection**: Algorithmic identification of Neutral, Accommodative, or Restrictive central bank posturing using proprietary spreads.
+Sub-second pressure reading of the global financial plumbing.
+- **Net Liquidity Z-Scores** — 25-year deviations detecting stealth QE before the market does.
+- **Liquidity Alarm System** — Deterministic triggers for TGA drain events.
+- **Regime Classification** — Algorithmic detection of Neutral, Accommodative, or Restrictive posturing.
 
 ## 🥇 II. The Monetary Anchor (Hard Assets)
 **"Gold is money. Everything else is credit." — J.P. Morgan**
-We monitor the systematic debasement of fiat currency against the only asset with zero counterparty risk.
--   **M2 / Gold Ratio**: The true inflation gauge. Tracking the expansion of paper claims against physical reality.
--   **Sovereign Debt / Gold**: A real-time measure of US fiscal dominance and the mathematical certainty of yield curve control.
--   **Silver Cycle Analytics**: Historical Z-score analysis identifying structural undervaluation in the monetary metal complex.
+Real-time debasement surveillance against the only asset with zero counterparty risk.
+- **M2 / Gold Ratio** — True inflation gauge of paper claims vs physical reality.
+- **Sovereign Debt / Gold** — Mathematical certainty of fiscal dominance and yield curve control.
+- **Silver Cycle Z-Scores** — Identifying structural undervaluation in the monetary metal complex.
 
 ## 🌏 III. The Geopolitical Pivot (Spheres of Influence)
 **"Capital has a flag."**
-A live map of the financial war between the G7 Hegemony and the Rising BRICS+ functionality.
--   **The Great Game Map**: Visualizing the loan books of the World Bank/IMF (West) vs. AIIB/NDB (East) across the Global South.
--   **Kinetic Capital Flows**: Tracking the "Loan-to-Job" efficiency of rival power blocs in critical Indian states.
--   **Sphere Dominance Heatmaps**: Algorithmic determination of whether a region is pivoting towards Washington or Beijing based on infrastructure financing velocity.
+Live financial cartography of the G7 vs BRICS+ fracture.
+- **Great Game Loan Map** — World Bank/IMF (West) vs AIIB/NDB (East) financing flows across the Global South.
+- **Loan-to-Job Efficiency** — Real-time attribution of institutional capital to Indian state-level employment and GVA.
+- **Sphere Dominance Heatmaps** — Algorithmic determination of regional pivot direction (Washington or Beijing).
 
 ## ⚡ IV. Energy Security (The Physical Economy)
 **"You cannot print energy."**
-Surveillance of the molecular reality underlying the financial system.
--   **Hydrocarbon Lifelines**: Real-time Sankey diagrams mapping the flow of crude from the Persian Gulf and Urals to global refining hubs.
--   **Strategic Reserve Tracking**: Monitoring the drawdown of the US SPR and the accumulation of strategic stockpiles in China and India.
--   **Refining Spreads**: Tracking the crack spread to identify bottlenecks in the real economy that act as a tax on global growth.
+Molecular reality underlying the financial superstructure.
+- **Hydrocarbon Lifelines** — Sankey mapping of crude from Persian Gulf/Urals to refining hubs.
+- **Strategic Reserve Tracker** — US SPR drawdown vs China/India accumulation.
+- **Refining Spreads** — Identifying bottlenecks that act as a tax on global growth.
 
 ## 🏭 V. Industrial Telemetry (The Real Economy)
 **"Production precedes Consumption."**
-High-frequency observation of the manufacturing base, bypassing manipulated GDP figures.
--   **ASI Surveillance**: Deep-dive analytics into India's Annual Survey of Industries, tracking GVA, Employment, and Capital Formation at the state level.
--   **Capacity Utilization Alpha**: Identifying the exact moment industrial slack tightens, signaling the return of structural inflation.
+High-frequency observation of the manufacturing base — bypassing manipulated GDP figures.
+- **ASI Surveillance** — State-level deep dive into India’s Annual Survey of Industries (GVA, employment, capital formation).
+- **Capacity Utilization Alpha** — Pinpointing the exact moment industrial slack tightens and structural inflation returns.
 
 ---
 
 ## ⚙️ Technical Architecture: Institutional Grade
-Built for zero-trust environments and automated resilience.
--   **Autonomous Ingestion**: Serverless Edge Functions (Deno) harvesting data from opaque sources (BIS, NDB, MoSPI) via `pg_cron`.
--   **Zero-Touch Ops**: Self-healing data pipelines that auto-correct for schema drifts and API rate limits.
--   **Military-Grade Security**: Row Level Security (RLS) and hardened API gateways ensuring data sovereignty.
+- **Autonomous Ingestion** — Serverless Edge Functions harvesting opaque sources (BIS, NDB, MoSPI) via pg_cron.
+- **Zero-Touch Resilience** — Self-healing pipelines that auto-correct schema drifts and API rate limits.
+- **Military-Grade Security** — Row Level Security (RLS) and hardened API gateways ensuring data sovereignty.
 
 ---
 
 *"The era of passive investing is over. Welcome to the age of active survival."*
+
+[Explore the Terminal →](https://graphiquestor.com)
+
+##Data Sources & Credits
+GraphiQuestor aggregates and visualizes public data from multiple authoritative sources. All data is used under fair use and public domain terms where applicable. We are grateful to the following institutions for making high-quality data openly accessible:
+
+MoSPI (Ministry of Statistics and Programme Implementation, Government of India) - https://github.com/nso-india/esankhyiki-mcp 
+Primary source for India-specific macroeconomic and social indicators (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY) via the eSankhyiki-MCP server.
+FRED (Federal Reserve Economic Data)
+St. Louis Fed – Core US and global macro time series (Net Liquidity, Gold, UST yields, DXY, etc.).
+BIS (Bank for International Settlements)
+Global liquidity indicators, cross-border banking statistics, and reserve composition data.
+Finnhub
+Economic calendar events, consensus forecasts, previous/actual values, and institutional news headlines.
+EIA (U.S. Energy Information Administration)
+US and global oil refining capacity, crude imports by origin, and Strategic Petroleum Reserve (SPR) levels.
+IMF (International Monetary Fund)
+COFER reserve currency composition, SDR allocations, and balance of payments statistics.
+Trading Economics
+Supplementary economic calendar data, forecasts, and country-specific indicators.
+Yahoo Finance
+Market pulse indicators and volatility metrics.
+
+All data is fetched automatically via serverless Edge Functions and refreshed according to the cron schedules above. Staleness flags and health checks are in place to maintain reliability. We do not claim ownership of any source data — only the aggregation, visualization, and derived insights presented on the platform.
+
+##RSS Feed Syndication
+The RSS feed is available at https://graphiquestor.com/rss.xml.
+
