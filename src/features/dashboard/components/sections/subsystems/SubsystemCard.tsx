@@ -72,7 +72,7 @@ export const SubsystemCard: React.FC<SubsystemCardProps> = ({
                 <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest">System Dynamics</span>
                 <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map(i => (
-                        <div key={i} className="w-1 h-2 rounded-full bg-white/5" style={{ height: `${4 + Math.random() * 8}px` }} />
+                        <div key={i} className="w-1 h-2 rounded-full bg-white/5" style={{ height: `${4 + (i * 2) % 8}px` }} />
                     ))}
                 </div>
             </div>

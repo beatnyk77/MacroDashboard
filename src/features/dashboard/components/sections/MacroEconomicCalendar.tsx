@@ -12,6 +12,8 @@ export const MacroEconomicCalendar: React.FC = () => {
 
     if (isLoading) return <Skeleton className="w-full h-[400px] rounded-2xl" />;
 
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now();
     const currencies = ['ALL', ...new Set(events?.map(e => e.country) || [])].sort();
 
     const filteredEvents = (events || [])
@@ -83,7 +85,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                         <tbody className="divide-y divide-white/5">
                             {filteredEvents.length > 0 ? filteredEvents.map((event) => {
                                 const eventDate = new Date(event.event_date);
-                                const isLive = Math.abs(Date.now() - eventDate.getTime()) < 3600000; // Within 1 hour
+                                const isLive = Math.abs(now - eventDate.getTime()) < 3600000; // Within 1 hour
 
                                 return (
                                     <tr key={event.id} className="group hover:bg-white/[0.02] transition-colors">

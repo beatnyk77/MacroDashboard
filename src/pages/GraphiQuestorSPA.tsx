@@ -20,6 +20,7 @@ const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/Cockpi
 const NetLiquidityCard = lazy(() => import('@/features/dashboard/components/cards/NetLiquidityCard').then(m => ({ default: m.NetLiquidityCard })));
 const MacroOrientationSection = lazy(() => import('@/features/dashboard/components/sections/MacroOrientationSection').then(m => ({ default: m.MacroOrientationSection })));
 const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquiditySection').then(m => ({ default: m.GlobalLiquiditySection })));
+const SankeyFlowCard = lazy(() => import('@/features/dashboard/components/sections/SankeyFlowCard').then(m => ({ default: m.SankeyFlowCard })));
 
 // Thematic Labs
 const HardAssetValuationSection = lazy(() => import('@/features/dashboard/components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
@@ -129,13 +130,32 @@ export const GraphiQuestorSPA: React.FC = () => {
                 </SPASection>
 
                 {/* Tactical Monitor (Calendar) */}
-                <SPASection id="tactical-monitor" disableAnimation>
-                    <SectionErrorBoundary name="Macro Calendar">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <MacroEconomicCalendar />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </SPASection>
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="xl:col-span-2">
+                        <SPASection id="macro-flows" variant="band" disableAnimation>
+                            <SectionHeader
+                                title="Macro Flow Map"
+                                subtitle="Interstate capital and energy liquidity flow visualization"
+                            />
+                            <div className="mt-8">
+                                <SectionErrorBoundary name="Flow Map">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <SankeyFlowCard />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                            </div>
+                        </SPASection>
+                    </div>
+                    <div className="xl:col-span-1">
+                        <SPASection id="tactical-monitor" disableAnimation>
+                            <SectionErrorBoundary name="Macro Calendar">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <MacroEconomicCalendar />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </SPASection>
+                    </div>
+                </div>
 
                 {/* ═══════════════════════════════════════════════════════════════════
                     THEMATIC LABS

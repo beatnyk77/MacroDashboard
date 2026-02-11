@@ -26,11 +26,16 @@ We monitor the debasement of fiat currency through the lens of Gold—the only f
 - **Frontier Market Capture**: Cross-sectional analysis of lending by recipient income bracket (Low, Lower-Middle, Upper-Middle).
 - **Structural Pivot Alerts**: Automated flags when Eastern lending velocity exceeds Western benchmarks in key regional theater codes.
 
-## IV. De-Dollarization & The BRICS Ascent
-Monitoring the shift in global central bank behavior.
-- **Global Gold Share (%)**: Surveillance of COFER data indicating the shift in reserves from USD to XAU.
-- **BRICS Tracker**: Aggregate GDP, Gold Holdings, and Debt profile of the BRICS+ alliance vs. the G7.
-- **Sovereign Stress**: Monitoring G20 bond yield spreads to detect the next sovereign debt default cycle.
+## IV. Global Economic Surveillance (The Tactical Pulse)
+**[NEW]** Real-time tracking of institutional macro events and high-impact policy decisions.
+- **Global Economic Calendar**: Powered by Finnhub, tracking interest rate decisions, CPI releases, and Central Bank testimony across G7 and EM.
+- **Impact Sensitivity**: Visual filters for high-impact events with live "Active" indicators for ongoing releases.
+
+## V. Macro Flow Mapping (The Capital Engine)
+**[NEW]** Visualizing the movement of global capital and energy liquidity through dynamic Sankey structures.
+- **Interstate Capital Flows**: Mapping the transition between Western and Eastern financial spheres.
+- **Energy Liquidity**: Tracking the structural sourcing of global crude and refining capacity.
+- **Z-Score Dynamics**: Real-time regime signals for individual subsystems (Inflation, Liquidity, Geopolitics).
 
 ---
 
