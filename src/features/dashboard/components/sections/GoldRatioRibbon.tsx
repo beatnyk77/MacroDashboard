@@ -196,7 +196,7 @@ export const GoldRatioRibbon: React.FC = () => {
                                     tickFormatter={(v) => {
                                         try {
                                             return new Date(v).toLocaleDateString(undefined, { year: '2-digit', month: 'short' });
-                                        } catch (e) {
+                                        } catch {
                                             return v;
                                         }
                                     }}
