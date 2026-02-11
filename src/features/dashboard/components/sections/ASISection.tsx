@@ -95,7 +95,7 @@ export const ASISection: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="relative h-[550px] w-full bg-slate-900/40 rounded-3xl border border-white/5 flex items-center justify-center">
+                    <div className="relative h-[550px] w-full bg-slate-900/40 rounded-3xl border border-white/5 flex items-center justify-center z-0">
                         <IndiaASIMap
                             data={data || []}
                             metric={selectedMetric}

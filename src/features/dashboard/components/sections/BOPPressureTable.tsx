@@ -64,8 +64,8 @@ export const BOPPressureTable: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto relative z-10">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto relative z-10 -mx-8 px-8">
+                    <table className="w-full text-left min-w-[600px]">
                         <thead>
                             <tr className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-[0.25em] border-b border-white/5">
                                 <th className="pb-4 font-black">Stability Indicator</th>

@@ -52,12 +52,19 @@ export function useIndiaEnergy() {
                 }
 
                 const stats = stateMap.get(key)!;
+                const val = Number(row.value);
+
                 if (row.source_type === 'coal' && row.metric_type === 'production') {
-                    stats.coal_production = Number(row.value);
+                    stats.coal_production += val;
                 } else if (row.source_type === 'renewable' && row.metric_type === 'production') {
-                    stats.renewable_share = Number(row.value);
+                    stats.renewable_share = val; // Share is usually a percentage, keep latest or average? Latest is safer.
                 } else if (row.source_type === 'electricity' && row.metric_type === 'consumption') {
-                    stats.electricity_consumption = Number(row.value);
+                    stats.electricity_consumption += val;
+                }
+
+                // Heuristic for energy intensity if both data present
+                if (stats.electricity_consumption > 0 && stats.coal_production > 0) {
+                    stats.energy_intensity = (stats.electricity_consumption / stats.coal_production) * 10;
                 }
             });
 

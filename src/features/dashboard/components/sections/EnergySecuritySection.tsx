@@ -189,8 +189,9 @@ export const EnergySecuritySection: React.FC = () => {
                                 {data.importData && data.importData.length > 0 ? (
                                     <OilImportSankeyCard data={data.importData} isLoading={false} />
                                 ) : (
-                                    <div className="h-[400px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
-                                        <span className="text-xs text-muted-foreground uppercase tracking-widest">No Flow Data</span>
+                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
+                                        <span className="text-[0.6rem] text-muted-foreground uppercase tracking-widest mb-2 font-black">Data normalization under protocol...</span>
+                                        <p className="text-[0.6rem] text-muted-foreground/40 italic">Global flows require ingestion from `ingest-oil-global`. Mapping EU+ and Asia nodes.</p>
                                     </div>
                                 )}
                             </Suspense>
@@ -200,8 +201,9 @@ export const EnergySecuritySection: React.FC = () => {
                                 {data.importData && data.importData.length > 0 ? (
                                     <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
                                 ) : (
-                                    <div className="h-[400px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
-                                        <span className="text-xs text-muted-foreground uppercase tracking-widest">No Risk Data</span>
+                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
+                                        <span className="text-[0.6rem] text-rose-500/50 uppercase tracking-widest mb-2 font-black">Vulnerability Analysis Pending</span>
+                                        <p className="text-[0.6rem] text-muted-foreground/40 italic">Run institutional security scanner (ingest-oil-global) to populate risk metrics.</p>
                                     </div>
                                 )}
                             </Suspense>

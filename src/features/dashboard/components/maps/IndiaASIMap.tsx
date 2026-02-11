@@ -79,7 +79,7 @@ export const IndiaASIMap: React.FC<IndiaASIMapProps> = ({ data, metric, onStateC
     }, [data, geoData, metric]);
 
     return (
-        <Box sx={{ width: '100%', height: 500, bgcolor: '#0a0a0a', borderRadius: 2, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+        <Box sx={{ width: '100%', height: '100%', minHeight: 400, bgcolor: 'transparent', borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
 
             {/* Legend */}
             <LegendContainer>

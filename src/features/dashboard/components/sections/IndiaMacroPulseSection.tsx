@@ -181,7 +181,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                     </div>
 
                     {/* Infrastructure & Institutional */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
                         <SectionErrorBoundary name="Annual Survey of Industries">
                             <ASISection />
                         </SectionErrorBoundary>
