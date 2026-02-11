@@ -1,63 +1,53 @@
-# GraphiQuestor: The Institutional Macro Intelligence Terminal
+# GraphiQuestor: The Sovereign Intelligence Console
 
-> "The international monetary system is at a turning point. We are witnessing the end of a 55-year experiment with pure unbacked fiat money and the return of the Golden Anchor." — *Institutional Perspective*
+> *"In a world of kinetic warfare and monetary debasement, the only alpha left is structural reality."* — **Global Macro CIO Note**
 
-**GraphiQuestor** is an elite macro-economic surveillance dashboard designed for the 1% of investors who recognize that global power is moving from G7 dominance to a multi-polar "Money War." This terminal provides the raw data, Z-score analytics, and capital flow mapping required to navigate the transition.
-
----
-
-## I. Global Liquidity Pulse (The Central Bank Engine)
-The dashboard tracks the lifeblood of current markets: **Net Liquidity**.
-- **Net Liquidity Calculation**: `Fed Balance Sheet - (Treasury General Account + Reverse Repo)`.
-- **Surveillance**: Rolling 25-year Z-scores targeting liquidity "cliffs" and "alarms".
-- **The Liquidity Alarm**: Deterministic triggers indicating when the Fed’s "Stealth QE" or "QT" regimes are reaching critical thresholds.
-
-## II. Hard Asset Valuation (The Monetary Anchor)
-We monitor the debasement of fiat currency through the lens of Gold—the only financial asset with no counterparty risk.
-- **M2 / Gold Ratio**: Measuring currency printing relative to the monetary anchor.
-- **DEBT / Gold (Bn)**: Tracking US Total Public Debt scaled by the world's gold supply (Billion Ounces).
-- **SPX / Gold**: Gauging the value of the S&P 500 in real money terms (Pricing the bubble).
-- **Gold / Silver Ratio**: Identifying silver’s structural undervaluation through historical Z-score cycles.
-
-## III. Institutional Money Wars (The Sphere of Influence)
-**[NEW]** Mapping the global battle for market capture between Western Multilateral Development Banks (MDBs) and Eastern Financial Institutions.
-- **Regional Dominance Heatmap**: Tracking total loan commitments (Stock) and annual velocity (Flow) across Africa, SE Asia, and Latin America.
-- **West vs. East Ratio**: Real-time ratio analysis of IMF/World Bank/ADB influence relative to NDB/JICA/Chinese Policy Banks.
-- **Frontier Market Capture**: Cross-sectional analysis of lending by recipient income bracket (Low, Lower-Middle, Upper-Middle).
-- **Structural Pivot Alerts**: Automated flags when Eastern lending velocity exceeds Western benchmarks in key regional theater codes.
-
-## IV. Global Economic Surveillance (The Tactical Pulse)
-**[NEW]** Real-time tracking of institutional macro events and high-impact policy decisions.
-- **Global Economic Calendar**: Powered by Finnhub, tracking interest rate decisions, CPI releases, and Central Bank testimony across G7 and EM.
-- **Impact Sensitivity**: Visual filters for high-impact events with live "Active" indicators for ongoing releases.
-
-## V. Macro Flow Mapping (The Capital Engine)
-**[NEW]** Visualizing the movement of global capital and energy liquidity through dynamic Sankey structures.
-- **Interstate Capital Flows**: Mapping the transition between Western and Eastern financial spheres.
-- **Energy Liquidity**: Tracking the structural sourcing of global crude and refining capacity.
-- **Z-Score Dynamics**: Real-time regime signals for individual subsystems (Inflation, Liquidity, Geopolitics).
+**GraphiQuestor** is an institutional-grade surveillance terminal designed for the 0.01% of capital allocators who understand that the post-1971 fiat experiment is ending. As the world fractures into multipolar economic spheres, this dashboard provides the raw, unsanitized telemetry required to navigate the transition from financialization back to hard assets.
 
 ---
 
-## V. Technical Architecture (The Autonomous Pipeline)
-GraphiQuestor is built for sub-second data integrity and zero-touch automation.
-- **Edge Functions**: Automated Deno-based ingestors for **FRED**, **IMF**, **BIS**, **World Bank (DRS)**, and **US Treasury**.
-- **Smart Scrapers**: Proprietary parsers extracting data from opaque MDB reports (NDB, JICA, ODI/CADTM proxies).
-- **Autonomous Operations**: Scheduled via `pg_cron` and `pg_net` for deterministic quarterly/monthly syncs.
-- **Database Architecture**: Supabase (Postgres) with optimized materialized views and RLS security.
+## 🏛️ I. The Liquidity Engine (Central Banking)
+**"Follow the Fed, Ignore the Noise."**
+We track the hydraulic pressure of the global financial system with sub-second precision.
+-   **Net Liquidity Z-Scores**: Rolling 25-year deviations of Fed Balance Sheet mechanics. Detect "Stealth QE" before the market prices it.
+-   **The Alarm System**: Deterministic triggers for liquidity cliffs. Know exactly when the Treasury General Account (TGA) will drain the interbank market.
+-   **Regime Detection**: Algorithmic identification of Neutral, Accommodative, or Restrictive central bank posturing using proprietary spreads.
 
-## VI. Methodology
-All Z-scores are calculated using a **rolling 25-year window** (9125 observations) to capture more than one full credit cycle. Percentiles are derived from the entire historical observation set since 1971 (Abandonment of Bretton Woods).
+## 🥇 II. The Monetary Anchor (Hard Assets)
+**"Gold is money. Everything else is credit." — J.P. Morgan**
+We monitor the systematic debasement of fiat currency against the only asset with zero counterparty risk.
+-   **M2 / Gold Ratio**: The true inflation gauge. Tracking the expansion of paper claims against physical reality.
+-   **Sovereign Debt / Gold**: A real-time measure of US fiscal dominance and the mathematical certainty of yield curve control.
+-   **Silver Cycle Analytics**: Historical Z-score analysis identifying structural undervaluation in the monetary metal complex.
 
-> "Data is the new gold, but only when refined through the lens of history."
+## 🌏 III. The Geopolitical Pivot (Spheres of Influence)
+**"Capital has a flag."**
+A live map of the financial war between the G7 Hegemony and the Rising BRICS+ functionality.
+-   **The Great Game Map**: Visualizing the loan books of the World Bank/IMF (West) vs. AIIB/NDB (East) across the Global South.
+-   **Kinetic Capital Flows**: Tracking the "Loan-to-Job" efficiency of rival power blocs in critical Indian states.
+-   **Sphere Dominance Heatmaps**: Algorithmic determination of whether a region is pivoting towards Washington or Beijing based on infrastructure financing velocity.
+
+## ⚡ IV. Energy Security (The Physical Economy)
+**"You cannot print energy."**
+Surveillance of the molecular reality underlying the financial system.
+-   **Hydrocarbon Lifelines**: Real-time Sankey diagrams mapping the flow of crude from the Persian Gulf and Urals to global refining hubs.
+-   **Strategic Reserve Tracking**: Monitoring the drawdown of the US SPR and the accumulation of strategic stockpiles in China and India.
+-   **Refining Spreads**: Tracking the crack spread to identify bottlenecks in the real economy that act as a tax on global growth.
+
+## 🏭 V. Industrial Telemetry (The Real Economy)
+**"Production precedes Consumption."**
+High-frequency observation of the manufacturing base, bypassing manipulated GDP figures.
+-   **ASI Surveillance**: Deep-dive analytics into India's Annual Survey of Industries, tracking GVA, Employment, and Capital Formation at the state level.
+-   **Capacity Utilization Alpha**: Identifying the exact moment industrial slack tightens, signaling the return of structural inflation.
 
 ---
 
-## 🛠️ DevOps & Hardening
-- **CI/CD**: Fully automated deployment to Supabase via GitHub Actions.
-- **Data Resilience**: Implemented timeout guards and null-safety across all ingestion pipelines.
-- **Information Density**: Overhauled to a 3-column architecture on professional displays, maximizing scan-speed for institutional analysts.
+## ⚙️ Technical Architecture: Institutional Grade
+Built for zero-trust environments and automated resilience.
+-   **Autonomous Ingestion**: Serverless Edge Functions (Deno) harvesting data from opaque sources (BIS, NDB, MoSPI) via `pg_cron`.
+-   **Zero-Touch Ops**: Self-healing data pipelines that auto-correct for schema drifts and API rate limits.
+-   **Military-Grade Security**: Row Level Security (RLS) and hardened API gateways ensuring data sovereignty.
 
 ---
 
-*GraphiQuestor is a proprietary tool for sophisticated macro analysis. Not financial advice.*
+*"The era of passive investing is over. Welcome to the age of active survival."*
