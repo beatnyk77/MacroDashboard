@@ -18,7 +18,7 @@ export const InstitutionalFooter: React.FC = () => {
                     <div className="flex flex-col md:items-end space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Contact & Intelligence</h3>
                         <div className="flex flex-col md:items-end gap-2">
-                            <span className="text-[0.65rem] font-mono">research@graphiquestor.com</span>
+                            <span className="text-[0.65rem] font-mono">graphiquestor@gmail.com</span>
                             <span className="text-[0.6rem] text-muted-foreground uppercase tracking-widest">Global Macro Strategy Division</span>
                         </div>
                     </div>

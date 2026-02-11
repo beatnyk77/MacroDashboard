@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>GraphiQuestor – Macro Intelligence Feed</title>
+  <link>https://graphiquestor.com</link>
+  <description>Latest macro signals, liquidity regimes, and sovereign stress markers from GraphiQuestor observatory.</description>
+  <language>en-us</language>
+  <item>
+    <title>Macro Heartbeat: Global Liquidity Regime Stable</title>
+    <link>https://graphiquestor.com/#liquidity-hero</link>
+    <description>Net Liquidity remains stable as TGA drain offsets RRP expansion. Gold/Debt ratio holding critical support levels.</description>
+    <pubDate>Wed, 11 Feb 2026 12:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>India Macro Pulse: MoSPI Data Review</title>
+    <link>https://graphiquestor.com/#india-pulse</link>
+    <description>Latest India Macro Pulse signals robust domestic credit growth. BOP pressure remains low despite global rate volatility.</description>
+    <pubDate>Wed, 11 Feb 2026 10:00:00 GMT</pubDate>
+  </item>
+</channel>
+</rss>

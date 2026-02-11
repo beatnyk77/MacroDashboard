@@ -16,7 +16,7 @@ export const FeedbackSection: React.FC = () => {
                             <MessageSquare className="text-emerald-500 w-6 h-6" />
                         </div>
                         <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">
-                            Shape the <span className="text-emerald-500">Intelligence</span>
+                            Help us improve – <span className="text-emerald-500">share feedback</span> (30 seconds)
                         </h2>
                     </div>
                     <p className="text-muted-foreground text-sm leading-relaxed">
@@ -26,10 +26,12 @@ export const FeedbackSection: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                     <a
-                        href="https://forms.gle/placeholder" // Replace with actual Google Form
+                        href="https://forms.gle/tdbeGz4YXMdybDg18"
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={() => trackClick('feedback_form', 'footer')}
+                        onClick={() => {
+                            trackClick('feedback_form', 'footer');
+                        }}
                         className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
