@@ -31,40 +31,46 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
 
     const spread = spreadMetric.value;
     const isPremium = spread > 0;
-    const widthPercent = Math.min(Math.abs(spread) * 20, 100);
+
+    // Dynamic scaling: If spread is extreme (>5%), we cap at 100%, otherwise we scale relative to 5%
+    const maxReference = 5;
+    const widthPercent = Math.min((Math.abs(spread) / maxReference) * 100, 100);
 
     return (
-        <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-3xl p-6 border border-white/5 overflow-hidden">
+        <div className="group/item relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-3xl p-6 border border-white/5 overflow-hidden">
             {/* Background Glow */}
             <div className={cn(
-                "absolute -top-12 -right-12 w-24 h-24 blur-[40px] opacity-0 group-hover:opacity-10 transition-opacity",
-                isPremium ? "bg-emerald-500" : "bg-rose-500"
+                "absolute -top-24 -right-24 w-48 h-48 blur-[60px] opacity-0 group-hover/item:opacity-20 transition-opacity duration-700",
+                isPremium ? "bg-emerald-500/30" : "bg-rose-500/30"
             )} />
 
-            <div className="flex flex-col xl:flex-row gap-8 items-stretch xl:items-center">
+            <div className="flex flex-col xl:flex-row gap-8 items-stretch xl:items-center relative z-10">
                 {/* Header Info - Ticker Style */}
-                <div className="xl:w-1/3 flex items-start gap-4">
-                    <div className={cn("p-3 rounded-2xl bg-white/5 shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-500", iconColor)}>
-                        <Globe className="w-6 h-6" />
+                <div className="xl:w-1/3 flex items-start gap-5">
+                    <div className={cn("p-4 rounded-2xl bg-white/5 shrink-0 shadow-inner group-hover/item:scale-105 transition-transform duration-500 border border-white/5", iconColor)}>
+                        <Globe className="w-7 h-7" />
                     </div>
-                    <div className="min-w-0">
-                        <h3 className="font-black text-xs uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
-                            {title} Arbitrage
-                        </h3>
-                        <div className="flex flex-wrap gap-4 items-center">
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-black text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+                                {title} Arbitrage
+                            </h3>
+                            <div className="h-[1px] flex-1 bg-white/5" />
+                        </div>
+                        <div className="flex flex-wrap gap-6 items-center">
                             <div className="flex flex-col">
-                                <span className="text-[0.6rem] font-bold text-muted-foreground/30 uppercase tracking-tighter">COMEX (West)</span>
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-lg font-black text-white/90 font-mono">${comexMetric?.value?.toLocaleString()}</span>
-                                    <div className="w-1 h-1 rounded-full bg-blue-500/40 animate-pulse" />
+                                <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-tighter mb-1">COMEX (West)</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xl font-black text-white/90 font-mono tracking-tighter tabular-nums">${comexMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
                                 </div>
                             </div>
-                            <div className="w-[1px] h-8 bg-white/5 hidden sm:block" />
+                            <div className="w-[1px] h-10 bg-white/5 hidden sm:block" />
                             <div className="flex flex-col">
-                                <span className="text-[0.6rem] font-bold text-muted-foreground/30 uppercase tracking-tighter">SHANGHAI (East)</span>
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-lg font-black text-emerald-400 font-mono">${shanghaiMetric?.value?.toLocaleString()}</span>
-                                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[0.55rem] font-black text-emerald-500/40 uppercase tracking-tighter mb-1">SHANGHAI (East)</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xl font-black text-emerald-400 font-mono tracking-tighter tabular-nums">${shanghaiMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 </div>
                             </div>
                         </div>
@@ -72,49 +78,54 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                 </div>
 
                 {/* Spread Management */}
-                <div className="xl:flex-1 flex flex-col justify-center gap-3">
-                    <div className="flex justify-between items-baseline">
-                        <div className="flex items-center gap-2">
-                            <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/5">
-                                Global Spread
-                            </span>
-                            {Math.abs(spread) > 1.2 && (
-                                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[0.6rem] font-black text-amber-500 uppercase animate-in zoom-in">
-                                    <Zap className="w-2.5 h-2.5 fill-amber-500" />
-                                    Flow Divergence
-                                </div>
-                            )}
+                <div className="xl:flex-1 flex flex-col justify-center gap-4">
+                    <div className="flex justify-between items-end mb-1">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest px-2.5 py-1 rounded-full bg-white/5 border border-white/5">
+                                    Spread Delta
+                                </span>
+                                {Math.abs(spread) > 1.2 && (
+                                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[0.55rem] font-black text-amber-500 uppercase animate-in fade-in slide-in-from-left-2 transition-all">
+                                        <Zap className="w-2.5 h-2.5 fill-amber-500" />
+                                        Extreme Divergence
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className={cn(
-                            "text-3xl font-black tracking-tighter tabular-nums",
-                            isPremium ? "text-emerald-400" : "text-rose-400"
-                        )}>
-                            {isPremium ? '+' : ''}{spread.toFixed(2)}%
+                        <div className="flex flex-col items-end">
+                            <div className={cn(
+                                "text-4xl font-black tracking-tighter tabular-nums leading-none",
+                                isPremium ? "text-emerald-400" : "text-rose-400"
+                            )}>
+                                {isPremium ? '+' : ''}{spread.toFixed(2)}%
+                            </div>
+                            <span className="text-[0.55rem] font-bold text-muted-foreground/30 uppercase mt-1">LME/LBMA Premium</span>
                         </div>
                     </div>
 
-                    {/* Gauged Bar */}
-                    <div className="relative h-2.5 bg-white/10 rounded-full overflow-hidden shadow-inner">
+                    {/* Gauged Bar - Autofit Center Line */}
+                    <div className="relative h-3 bg-white/[0.03] rounded-full overflow-hidden border border-white/5">
                         <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-white/20 z-10" />
                         <div
                             className={cn(
                                 "absolute top-0 bottom-0 transition-all duration-1000 ease-out",
-                                isPremium ? "left-1/2 bg-gradient-to-r from-emerald-500/50 to-emerald-500" : "right-1/2 bg-gradient-to-l from-rose-500/50 to-rose-500"
+                                isPremium ? "left-1/2 bg-gradient-to-r from-emerald-500/40 to-emerald-500" : "right-1/2 bg-gradient-to-l from-rose-500/40 to-rose-500"
                             )}
                             style={{ width: `${widthPercent / 2}%` }}
                         />
                         {/* Shimmer Effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_3s_infinite]" />
                     </div>
                 </div>
 
-                {/* Narrative Spark */}
-                <div className="xl:w-1/4 h-[80px] group-hover:scale-105 transition-transform duration-500">
+                {/* Narrative Spark - 30D Trend */}
+                <div className="xl:w-1/4 h-[90px] opacity-60 hover:opacity-100 transition-opacity duration-500">
                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={spreadMetric.history?.slice(-30) || []}>
+                        <AreaChart data={spreadMetric.history?.slice(-60) || []}>
                             <defs>
                                 <linearGradient id={`grad-${title}`} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0.3} />
+                                    <stop offset="5%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0.2} />
                                     <stop offset="95%" stopColor={isPremium ? '#10b981' : '#f43f5e'} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
@@ -123,11 +134,14 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                                 dataKey="value"
                                 stroke={isPremium ? '#10b981' : '#f43f5e'}
                                 fill={`url(#grad-${title})`}
-                                strokeWidth={3}
+                                strokeWidth={2.5}
+                                dot={false}
                                 isAnimationActive={true}
+                                animationDuration={2500}
                             />
                         </AreaChart>
                     </ResponsiveContainer>
+                    <div className="text-[0.5rem] font-black text-muted-foreground/30 uppercase tracking-widest text-center mt-2">60D Flow Velocity</div>
                 </div>
             </div>
         </div>
@@ -193,46 +207,72 @@ export const PreciousDivergenceCard: React.FC = () => {
             </div>
 
             {/* Bottom Insight Bar */}
-            <div className="mt-8 p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-full bg-emerald-500/20">
-                        <AlertTriangle className="w-4 h-4 text-emerald-400" />
+            <div className="mt-12 p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 backdrop-blur-md">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-8">
+                    <div className="flex items-center gap-5">
+                        <div className="p-3 rounded-2xl bg-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                            <AlertTriangle className="w-5 h-5 text-emerald-400" />
+                        </div>
+                        <div className="space-y-1">
+                            <div className="text-[0.6rem] font-black text-emerald-400 uppercase tracking-[0.2em]">Institutional Engine Note</div>
+                            <p className="text-sm font-medium text-white/90 leading-relaxed max-w-2xl">
+                                {goldSpread && goldSpread.value > 0.5
+                                    ? "Persistent Shanghai Premium confirmed. Bullion flow velocity remains skewed toward Asian sovereign vaults, potentially front-running a global reserve diversification cycle."
+                                    : "Arbitrage bands remain within historical norms. Capital flows are balanced between LBMA and SGE, suggesting stabilized physical demand in the East."}
+                            </p>
+                        </div>
                     </div>
-                    <div className="text-xs leading-relaxed text-muted-foreground">
-                        <span className="text-emerald-400 font-bold uppercase tracking-wider mr-2">Market Interpretation:</span>
-                        {goldSpread && goldSpread.value > 0.5
-                            ? "Significant premium detected. High incentive for physical metal migration to the East."
-                            : "Standard equilibrium. Macro flows are normalized between major global exchanges."}
-                    </div>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button className="p-3 hover:bg-white/5 rounded-2xl border border-white/5 transition-all group">
+                                    <Info className="w-5 h-5 text-muted-foreground group-hover:text-white" />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-slate-950 border-white/10 p-4 max-w-[250px] rounded-xl shadow-2xl">
+                                <p className="text-[0.7rem] font-medium text-muted-foreground leading-relaxed">
+                                    <span className="text-white font-bold block mb-1 uppercase tracking-wider">Arbitrage Calculation</span>
+                                    Cross-exchange spread calculated as ((Shanghai Cash / USDCNH) - COMEX Front Month) / COMEX * 100. Accounts for offshore currency conversion and physical delivery fees.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-white/10">
                     {[
-                        { label: 'Vault Drainage', content: 'Premiums > 1% signal aggressive metal removal from COMEX to SGE.' },
-                        { label: 'Basis Rotation', content: 'Narrowing spread suggests cooling Asian demand or stronger USD.' },
-                        { label: 'Liquidity Arbitrage', content: 'Incentivizes global bullion banks to move physical bar stock.' }
+                        {
+                            label: 'Vault Drainage',
+                            content: 'Premiums > 1.2% signal aggressive metal removal from West to East, straining Comex delivery capacity.',
+                            status: 'Critical'
+                        },
+                        {
+                            label: 'Basis Rotation',
+                            content: 'Narrowing spread (< 0.2%) suggests cooling Asian retail demand or localized liquidity tightening in SH.',
+                            status: 'Neutral'
+                        },
+                        {
+                            label: 'Liquidity Arbitrage',
+                            content: 'Wide spreads incentivize global bullion desks to physically transport bar stock to capture the basis.',
+                            status: 'Active'
+                        }
                     ].map((bullet, idx) => (
-                        <div key={idx} className="space-y-1">
-                            <div className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/40">{bullet.label}</div>
-                            <p className="text-[0.65rem] text-muted-foreground italic leading-tight">{bullet.content}</p>
+                        <div key={idx} className="group/bullet space-y-2.5">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-white/60 group-hover/bullet:text-white transition-colors">
+                                    {bullet.label}
+                                </span>
+                                <div className="px-2 py-0.5 rounded bg-white/5 text-[0.5rem] font-black text-muted-foreground uppercase">
+                                    {bullet.status}
+                                </div>
+                            </div>
+                            <p className="text-[0.75rem] text-muted-foreground/80 font-medium leading-[1.4] italic border-l-2 border-white/5 pl-4 group-hover/bullet:border-emerald-500/30 transition-colors">
+                                {bullet.content}
+                            </p>
                         </div>
                     ))}
                 </div>
-
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <button className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                                <Info className="w-4 h-4 text-muted-foreground/30" />
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-slate-950 border-white/10 p-3 max-w-[200px]">
-                            <p className="text-[0.6rem] text-muted-foreground leading-relaxed">
-                                Spread is calculated as ((Shanghai / USDCNY) - COMEX) / COMEX * 100.
-                            </p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
             </div>
         </Card>
     );

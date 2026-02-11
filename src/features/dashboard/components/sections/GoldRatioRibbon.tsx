@@ -146,35 +146,55 @@ export const GoldRatioRibbon: React.FC = () => {
                 </div>
 
                 {/* Main Chart Area */}
-                <div className="h-[450px] w-full relative">
-                    <div className="absolute inset-0 bg-white/[0.01] rounded-3xl -m-4 border border-white/[0.02]" />
+                <div className="h-[480px] w-full relative">
+                    <div className="absolute inset-0 bg-white/[0.01] rounded-[2.5rem] -m-4 border border-white/[0.02]" />
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
 
-                            {/* Central Pivot Area */}
-                            <ReferenceArea y1={-1} y2={1} fill="#64748b" fillOpacity={0.03} />
+                            {/* Regime Shading - Institutional Zones */}
+                            <ReferenceArea y1={2} y2={4} fill="rgba(244,63,94,0.05)" /> {/* Extreme High */}
+                            <ReferenceArea y1={1.2} y2={2} fill="rgba(245,158,11,0.03)" /> {/* Warning High */}
+                            <ReferenceArea y1={-1.2} y2={1.2} fill="rgba(16,185,129,0.02)" /> {/* Equilibrium */}
+                            <ReferenceArea y1={-2} y2={-1.2} fill="rgba(245,158,11,0.03)" /> {/* Warning Low */}
+                            <ReferenceArea y1={-4} y2={-2} fill="rgba(244,63,94,0.05)" /> {/* Extreme Low */}
+
+                            {/* Center Pivot */}
+                            <ReferenceArea y1={-0.05} y2={0.05} fill="#fff" fillOpacity={0.1} />
 
                             <XAxis
                                 dataKey="date"
                                 stroke="rgba(255,255,255,0.1)"
-                                fontSize={10}
+                                fontSize={9}
                                 tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { year: '2-digit', month: 'short' })}
-                                tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 600 }}
+                                tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
+                                axisLine={false}
+                                tickLine={false}
+                                dy={10}
                             />
                             <YAxis
                                 stroke="rgba(255,255,255,0.1)"
-                                fontSize={10}
+                                fontSize={9}
                                 domain={[-3.5, 3.5]}
                                 tickFormatter={(v) => `${v > 0 ? '+' : ''}${v}σ`}
-                                tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 600 }}
+                                tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
+                                axisLine={false}
+                                tickLine={false}
                             />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend
                                 verticalAlign="top"
-                                align="right"
+                                align="left"
                                 iconType="circle"
-                                wrapperStyle={{ paddingBottom: '30px', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                iconSize={8}
+                                wrapperStyle={{
+                                    paddingBottom: '40px',
+                                    fontSize: '9px',
+                                    fontWeight: 900,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.2em',
+                                    opacity: 0.6
+                                }}
                             />
 
                             {series.map(s => (
@@ -184,43 +204,43 @@ export const GoldRatioRibbon: React.FC = () => {
                                     dataKey={s.key}
                                     name={s.label}
                                     stroke={s.color}
-                                    strokeWidth={3}
+                                    strokeWidth={s.key === 'M2/Gold' ? 4 : 2.5}
                                     dot={false}
-                                    activeDot={{ r: 6, strokeWidth: 0, fill: '#fff' }}
+                                    activeDot={{ r: 4, strokeWidth: 0, fill: '#fff' }}
+                                    strokeOpacity={0.8}
+                                    animationDuration={2000}
                                 />
                             ))}
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Individual Metric Cards Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Individual Metric Cards Grid - Simplified */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4 border-t border-white/5">
                     {ratios?.filter(r => series.some(s => s.key === r.ratio_name)).map(ratio => {
                         const sConfig = series.find(s => s.key === ratio.ratio_name);
+                        const isExtreme = Math.abs(ratio.z_score) > 2.0;
                         return (
-                            <div key={ratio.ratio_name} className="group/metric p-5 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all duration-300 flex flex-col gap-3">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-[0.15em] transition-colors group-hover/metric:text-muted-foreground">
+                            <div key={ratio.ratio_name} className="group/metric relative p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] transition-all duration-300">
+                                <div className="flex justify-between items-center mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: sConfig?.color }} />
+                                        <span className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-widest">
                                             {ratio.ratio_name}
                                         </span>
-                                        <span className="text-lg font-black text-white/90">
-                                            {ratio.current_value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                                        </span>
                                     </div>
-                                    <div
-                                        className="w-2 h-8 rounded-full opacity-20 group-hover/metric:opacity-40 transition-opacity"
-                                        style={{ backgroundColor: sConfig?.color }}
-                                    />
+                                    {isExtreme && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />}
                                 </div>
-                                <div className={cn(
-                                    "px-3 py-1.5 rounded-xl text-[0.7rem] font-black uppercase tracking-tight flex items-center justify-between",
-                                    Math.abs(ratio.z_score) > 2 ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" :
-                                        Math.abs(ratio.z_score) > 1.2 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" :
-                                            "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-                                )}>
-                                    <span>Z-Score</span>
-                                    <span>{ratio.z_score != null ? (ratio.z_score > 0 ? '+' : '') + ratio.z_score.toFixed(2) + 'σ' : 'N/A'}</span>
+                                <div className="flex items-baseline justify-between">
+                                    <div className="text-xl font-black text-white/90 tabular-nums tracking-tighter">
+                                        {ratio.current_value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                    </div>
+                                    <div className={cn(
+                                        "text-[0.7rem] font-black tabular-nums tracking-tight",
+                                        isExtreme ? "text-rose-500" : Math.abs(ratio.z_score) > 1.2 ? "text-amber-500" : "text-emerald-500"
+                                    )}>
+                                        {ratio.z_score != null ? (ratio.z_score > 0 ? '+' : '') + ratio.z_score.toFixed(2) + 'σ' : '--'}
+                                    </div>
                                 </div>
                             </div>
                         );

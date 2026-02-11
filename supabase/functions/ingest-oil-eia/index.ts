@@ -118,15 +118,25 @@ Deno.serve(async (req: Request) => {
             'PET.MCRIMUSMX2.M': 'MX',
             'PET.MCRIMUSSA2.M': 'SA',
             'PET.MCRIMUSIZ2.M': 'IQ',
-            'PET.MCRIMUSCO2.M': 'CO'
+            'PET.MCRIMUSCO2.M': 'CO',
+            'PET.MCRIMUSVE2.M': 'VE', // Venezuela
+            'PET.MCRIMUSNG2.M': 'NG', // Nigeria
+            'PET.MCRIMUSAU2.M': 'DZ', // Algeria (OPEC)
+            'PET.MCRIMUSKU2.M': 'KW', // Kuwait
+            'PET.MCRIMUSAE2.M': 'AE', // UAE
+            'PET.MCRIMUSAG2.M': 'AO', // Angola
         };
         const importSeriesIds = Object.keys(importSeriesMap).join(';');
         const importsUrl = `${EIA_API_BASE}/series/data/?api_key=${eiaApiKey}&series_id=${importSeriesIds}&frequency=monthly&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=12`;
         try {
-            const res = await withTimeout(fetch(importsUrl), 15000, 'EIA Imports Fetch');
+            const res = await withTimeout(fetch(importsUrl), 20000, 'EIA Imports Fetch');
             if (res.ok) {
                 const json = await res.json();
-                const COUNTRY_MAP: Record<string, string> = { 'CA': 'Canada', 'MX': 'Mexico', 'SA': 'Saudi Arabia', 'IQ': 'Iraq', 'CO': 'Colombia' };
+                const COUNTRY_MAP: Record<string, string> = {
+                    'CA': 'Canada', 'MX': 'Mexico', 'SA': 'Saudi Arabia', 'IQ': 'Iraq',
+                    'CO': 'Colombia', 'VE': 'Venezuela', 'NG': 'Nigeria', 'DZ': 'Algeria',
+                    'KW': 'Kuwait', 'AE': 'UAE', 'AO': 'Angola'
+                };
                 const rows = (json.response.data || []).map((d: any) => {
                     const originCode = importSeriesMap[d.series_id || d.series];
                     if (!originCode) return null;

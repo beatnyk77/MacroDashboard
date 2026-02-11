@@ -7,6 +7,7 @@ import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { NavigationSidebar } from '@/components/NavigationSidebar';
 import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
+import { DataHealthBanner } from '@/components/DataHealthBanner';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -62,6 +63,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 backgroundImage: `radial-gradient(circle at 50% -20%, ${bgTintStyle}, transparent 70%)`
             }}
         >
+            <DataHealthBanner />
             <header className="sticky top-0 z-[1300] w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
                 <div className="flex h-[60px] md:h-[72px] items-center justify-between px-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-6">

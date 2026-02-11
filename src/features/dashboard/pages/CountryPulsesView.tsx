@@ -7,7 +7,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 
 // Lazy load heavy sections
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
-const ChinaMacroPulseSection = lazy(() => import('@/components/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
+const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const ScenarioStudio = lazy(() => import('@/features/dashboard/components/sections/ScenarioStudio').then(m => ({ default: m.ScenarioStudio })));
 
 const LoadingFallback = () => (

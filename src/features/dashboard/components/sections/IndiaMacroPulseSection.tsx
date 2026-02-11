@@ -1,6 +1,5 @@
 import React from 'react';
-import { Grid, Box, Typography } from '@mui/material';
-import { MetricCard } from '@/components/MetricCard';
+import { cn } from "@/lib/utils";
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { useIndiaMacro } from '@/hooks/useIndiaMacro';
 import { UPIAutopayFailureCard } from './UPIAutopayFailureCard';
@@ -12,13 +11,66 @@ import { ASISection } from './ASISection';
 import { CompositeMetricsSection } from './CompositeMetricsSection';
 
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info, ChevronDown, ChevronUp, Activity } from 'lucide-react';
+
+const CompactPulseMetric: React.FC<{
+    label: string,
+    value: number | string,
+    unit: string,
+    delta?: string,
+    trend?: 'up' | 'down',
+    status?: 'safe' | 'warning' | 'danger',
+    description?: string
+}> = ({ label, value, unit, delta, trend, status, description }) => (
+    <div className="group/metric p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] transition-all duration-300">
+        <div className="flex justify-between items-start mb-2">
+            <div className="flex items-center gap-2">
+                <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+                {description && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Info className="w-3 h-3 text-muted-foreground/20 hover:text-muted-foreground/50 transition-colors" />
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-slate-950 border-white/10 p-2 text-[0.6rem] max-w-[150px]">
+                                {description}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
+            </div>
+            {status && (
+                <div className={cn(
+                    "w-1.5 h-1.5 rounded-full shadow-[0_0_8px]",
+                    status === 'safe' ? "bg-emerald-500 shadow-emerald-500/20" :
+                        status === 'warning' ? "bg-amber-500 shadow-amber-500/20" :
+                            "bg-rose-500 shadow-rose-500/20"
+                )} />
+            )}
+        </div>
+        <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black text-white/90 tabular-nums tracking-tighter">{value}</span>
+                <span className="text-[0.6rem] font-bold text-white/20 uppercase tracking-widest">{unit}</span>
+            </div>
+            {delta && (
+                <div className={cn(
+                    "text-[0.6rem] font-black tabular-nums tracking-tight flex items-center gap-0.5",
+                    trend === 'up' ? "text-emerald-500" : "text-rose-500"
+                )}>
+                    {delta}
+                </div>
+            )}
+        </div>
+    </div>
+);
+
 export const IndiaMacroPulseSection: React.FC = () => {
-    const { data, isLoading } = useIndiaMacro();
+    const { data } = useIndiaMacro();
     const [isExpanded, setIsExpanded] = React.useState(false);
 
     const metrics = data?.metrics || [];
-    const history = data?.history || {};
-
     const findMetric = (id: string) => metrics.find(m => m.metric_id === id);
 
     // High-signal India metrics
@@ -27,173 +79,123 @@ export const IndiaMacroPulseSection: React.FC = () => {
     const retailSales = findMetric('IN_RETAIL_SALES_YOY');
     const goldReserves = findMetric('IN_GOLD_RESERVES_TONNES');
 
-    const stalenessToStatus = (flag?: string): 'safe' | 'warning' | 'danger' | 'neutral' => {
-        if (!flag || flag === 'no_data') return 'neutral';
-        if (flag === 'fresh') return 'safe';
-        if (flag === 'lagged') return 'warning';
-        return 'danger';
-    };
-
     return (
+        <div className="space-y-16">
+            {/* Main Header with Contextual Action */}
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/5 pb-8">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                            <Activity className="text-blue-500 w-5 h-5" />
+                        </div>
+                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
+                            India <span className="text-blue-500">Macro Pulse</span>
+                        </h2>
+                    </div>
+                    <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
+                        Real-time MoSPI feed tracking institutional credit, industrial production, and balance of payments stability.
+                    </p>
+                </div>
 
-        <div className="space-y-12">
-            <Grid container spacing={6}>
-                {/* Full-width India Macro Card (Hero/High Fidelity) */}
-                <Grid item xs={12}>
-                    <SectionErrorBoundary name="India Macro Card">
-                        <IndiaMacroCard />
-                    </SectionErrorBoundary>
-                </Grid>
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
+                >
+                    <span className="text-[0.7rem] font-black uppercase tracking-widest text-white/70 group-hover:text-white">
+                        {isExpanded ? 'Collapse Pulse' : 'Expand Full Engine'}
+                    </span>
+                    {isExpanded ? <ChevronUp className="w-4 h-4 text-blue-500" /> : <ChevronDown className="w-4 h-4 text-blue-500" />}
+                </button>
+            </div>
 
-                {/* Energy & Industrial Efficiency Module */}
-                <Grid item xs={12}>
-                    <Box sx={{
-                        borderLeft: '4px solid',
-                        borderColor: 'primary.main',
-                        pl: 4,
-                        py: 2,
-                        bgcolor: 'rgba(255, 255, 255, 0.01)',
-                        borderRadius: 2
-                    }}>
-                        <Typography variant="overline" sx={{
-                            color: 'primary.light',
-                            fontWeight: 900,
-                            letterSpacing: '0.25em',
-                            fontSize: '0.6rem',
-                            display: 'block',
-                            mb: 4
-                        }}>
-                            Energy & Industrial Efficiency
-                        </Typography>
+            <div className="grid grid-cols-1 lg:grid-cols-1 gap-12">
+                {/* Hero Section: India Macro Card */}
+                <SectionErrorBoundary name="India Macro Card">
+                    <IndiaMacroCard />
+                </SectionErrorBoundary>
 
-                        {/* Energy Statistics Section */}
-                        <Box sx={{ mb: 8 }}>
-                            <SectionErrorBoundary name="Energy Statistics">
-                                <EnergySection />
-                            </SectionErrorBoundary>
-                        </Box>
+                {/* Industrial & Energy Efficiency Grid */}
+                <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <div className="h-[2px] w-8 bg-blue-500" />
+                        <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Energy & Efficiency Terminal</h4>
+                    </div>
 
-                        {/* Composite Efficiency Metrics */}
-                        <Box>
+                    <div className="grid grid-cols-1 xl:grid-cols-1 gap-8 p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5">
+                        <SectionErrorBoundary name="Energy Statistics">
+                            <EnergySection />
+                        </SectionErrorBoundary>
+
+                        <div className="border-t border-white/5 pt-8">
                             <SectionErrorBoundary name="Composite Metrics">
                                 <CompositeMetricsSection />
                             </SectionErrorBoundary>
-                        </Box>
-                    </Box>
-                </Grid>
+                        </div>
+                    </div>
+                </div>
 
-                {/* ASI Section (Separate) */}
-                <Grid item xs={12}>
-                    <SectionErrorBoundary name="Annual Survey of Industries">
-                        <ASISection />
-                    </SectionErrorBoundary>
-                </Grid>
+                {/* Collapsible Deep Dives */}
+                <div className={cn(
+                    "grid grid-cols-1 gap-12 transition-all duration-700 ease-in-out overflow-hidden",
+                    isExpanded ? "max-h-[2500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+                )}>
+                    {/* Activity Grid */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                            <div className="h-[2px] w-8 bg-amber-500" />
+                            <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Economic Activity Pulse</h4>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <CompactPulseMetric
+                                label="Industrial Growth (IIP)"
+                                value={iipGrowth?.value?.toFixed(1) || '--'}
+                                unit="%"
+                                delta={iipGrowth?.delta_mom ? `${iipGrowth.delta_mom > 0 ? '+' : ''}${iipGrowth.delta_mom.toFixed(1)}%` : undefined}
+                                trend={iipGrowth?.delta_mom && iipGrowth.delta_mom > 0 ? 'up' : 'down'}
+                                description="Index of Industrial Production: Measures mining, electricity, and manufacturing growth."
+                                status={iipGrowth?.value && iipGrowth.value < 2 ? 'warning' : 'safe'}
+                            />
+                            <CompactPulseMetric
+                                label="WPI Inflation"
+                                value={wpiIndex?.value?.toFixed(1) || '--'}
+                                unit="%"
+                                description="Wholesale Price Index: Tracks price changes in bulk business transactions."
+                                status={wpiIndex?.value && wpiIndex.value > 5 ? 'danger' : 'safe'}
+                            />
+                            <CompactPulseMetric
+                                label="Retail Velocity"
+                                value={retailSales?.value?.toFixed(1) || '--'}
+                                unit="%"
+                                description="YoY change in organized retail turnover."
+                                status="safe"
+                            />
+                            <CompactPulseMetric
+                                label="Gold Accumulation"
+                                value={goldReserves?.value?.toLocaleString() || '--'}
+                                unit="t"
+                                delta={goldReserves?.delta_mom ? `${goldReserves.delta_mom > 0 ? '+' : ''}${goldReserves.delta_mom.toFixed(1)}t` : undefined}
+                                trend={goldReserves?.delta_mom && goldReserves.delta_mom > 0 ? 'up' : 'down'}
+                                description="Official RBI gold holdings in metric tonnes."
+                            />
+                        </div>
+                    </div>
 
-                {/* Full-width BOP Pressure Terminal */}
-                <Grid item xs={12}>
+                    {/* Infrastructure & Institutional */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <SectionErrorBoundary name="Annual Survey of Industries">
+                            <ASISection />
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="UPI Autopay Failure">
+                            <UPIAutopayFailureCard />
+                        </SectionErrorBoundary>
+                    </div>
+
+                    {/* BOP Table */}
                     <SectionErrorBoundary name="BOP Pressure Table">
                         <BOPPressureTable />
                     </SectionErrorBoundary>
-                </Grid>
-
-                {/* Collapsible Content */}
-                {isExpanded && (
-                    <>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <MetricCard
-                                label="Industrial Production (IIP)"
-                                description="Index of Industrial Production: Measures the growth in various sectors of an economy like mining, electricity and manufacturing."
-                                value={iipGrowth?.value || 0}
-                                suffix="%"
-                                delta={iipGrowth?.delta_mom !== undefined && iipGrowth?.delta_mom !== null ? {
-                                    value: `${iipGrowth.delta_mom > 0 ? '+' : ''}${iipGrowth.delta_mom.toFixed(1)}%`,
-                                    period: 'MoM',
-                                    trend: iipGrowth.delta_mom > 0 ? 'up' : 'down'
-                                } : undefined}
-                                status={stalenessToStatus(iipGrowth?.staleness_flag)}
-                                history={history['IN_IIP_GROWTH_YOY']}
-                                isLoading={isLoading}
-                                lastUpdated={iipGrowth?.as_of_date}
-                                source={iipGrowth?.source_name || 'FRED'}
-                                frequency={iipGrowth?.display_frequency || 'Monthly'}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={3}>
-                            <MetricCard
-                                label="WPI Inflation"
-                                description="Wholesale Price Index: Measures the changes in the prices of goods sold and traded in bulk by wholesale businesses to other businesses."
-                                value={wpiIndex?.value || 0}
-                                suffix="%"
-                                status={wpiIndex?.value && wpiIndex.value > 5 ? 'warning' : 'neutral'}
-                                history={history['IN_WPI_YOY']}
-                                isLoading={isLoading}
-                                lastUpdated={wpiIndex?.as_of_date}
-                                source={wpiIndex?.source_name || 'FRED'}
-                                frequency={wpiIndex?.display_frequency || 'Monthly'}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={3}>
-                            <MetricCard
-                                label="Retail Sales YoY"
-                                value={retailSales?.value || 0}
-                                suffix="%"
-                                status="neutral"
-                                history={history['IN_RETAIL_SALES_YOY']}
-                                isLoading={isLoading}
-                                lastUpdated={retailSales?.as_of_date}
-                                source={retailSales?.source_name || 'FRED'}
-                                frequency={retailSales?.display_frequency || 'Monthly'}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={3}>
-                            <MetricCard
-                                label="Gold Reserves"
-                                value={goldReserves?.value || 0}
-                                suffix="t"
-                                delta={goldReserves?.delta_mom !== undefined && goldReserves?.delta_mom !== null ? {
-                                    value: `${goldReserves.delta_mom > 0 ? '+' : ''}${goldReserves.delta_mom.toFixed(1)}t`,
-                                    period: 'MoM',
-                                    trend: goldReserves.delta_mom > 0 ? 'up' : 'down'
-                                } : undefined}
-                                status={goldReserves?.delta_mom && goldReserves.delta_mom > 0 ? 'warning' : 'neutral'}
-                                history={history['IN_GOLD_RESERVES_TONNES']}
-                                isLoading={isLoading}
-                                lastUpdated={goldReserves?.as_of_date}
-                                source={goldReserves?.source_name || 'WGC / FRED'}
-                                frequency={goldReserves?.display_frequency || 'Monthly'}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={3}>
-                            <UPIAutopayFailureCard />
-                        </Grid>
-                    </>
-                )}
-            </Grid>
-
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-                <Typography
-                    variant="button"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    sx={{
-                        cursor: 'pointer',
-                        color: 'primary.main',
-                        fontWeight: 800,
-                        letterSpacing: '0.05em',
-                        fontSize: '0.75rem',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        '&:hover': { color: 'primary.light', textDecoration: 'underline' }
-                    }}
-                >
-                    {isExpanded ? '▲ Show Less' : '▼ View Full India Pulse'}
-                </Typography>
-            </Box>
+                </div>
+            </div>
         </div>
-
     );
 };

@@ -106,7 +106,7 @@ export const SankeyFlowCard: React.FC = () => {
                             title={cat.label}
                             icon={cat.icon}
                             color={cat.color}
-                            delay={idx * 100}
+                            delay={(idx + 1) * 150}
                         >
                             <div className="divide-y divide-white/[0.03]">
                                 {nodes.map((node: any) => (
@@ -128,19 +128,39 @@ export const SankeyFlowCard: React.FC = () => {
             </div>
 
             {/* Interpretation Legend */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pt-8 border-t border-white/5">
                 {[
-                    { label: 'Normal Regime', range: '±1.0σ', color: 'bg-emerald-500/20 text-emerald-500', desc: 'System balanced' },
-                    { label: 'Warning / Transition', range: '±1.2σ to 2.0σ', color: 'bg-amber-500/20 text-amber-500', desc: 'Early shift signal' },
-                    { label: 'Extreme / Crisis', range: '> 2.0σ', color: 'bg-rose-500/20 text-rose-500', desc: 'Structural instability' }
+                    {
+                        label: 'Equilibrium (Normal)',
+                        range: '±1.2σ',
+                        color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+                        desc: 'System in balance. Historical volatility remains within standard standard deviation bounds. No immediate intervention signal.'
+                    },
+                    {
+                        label: 'Distribution Alpha (Transition)',
+                        range: '1.2σ to 2.0σ',
+                        color: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                        desc: 'Escalating skew. The subsystem is migrating away from its historical median. High probability of upcoming regime shift.'
+                    },
+                    {
+                        label: 'Tail Risk (Extreme)',
+                        range: '> 2.0σ',
+                        color: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+                        desc: 'Statistical instability. Probability of structural rupture is high. Historical correlations often break down in this zone.'
+                    }
                 ].map(item => (
-                    <div key={item.label} className="flex items-center gap-3 p-3 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <div className={cn("px-2 py-1 rounded text-[0.55rem] font-black uppercase tracking-tighter", item.color)}>
-                            {item.range}
+                    <div key={item.label} className="group flex flex-col gap-4 p-5 rounded-[2rem] bg-slate-900/40 border border-white/5 backdrop-blur-md hover:bg-slate-900/60 transition-all duration-500">
+                        <div className="flex items-center justify-between">
+                            <div className={cn("px-3 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest border", item.color)}>
+                                {item.range}
+                            </div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-white/40 transition-colors" />
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-[0.65rem] font-bold text-white/90">{item.label}</span>
-                            <span className="text-[0.6rem] text-muted-foreground">{item.desc}</span>
+                        <div className="space-y-2">
+                            <span className="text-[0.8rem] font-black text-white/90 uppercase tracking-wider">{item.label}</span>
+                            <p className="text-[0.65rem] text-muted-foreground leading-relaxed font-medium">
+                                {item.desc}
+                            </p>
                         </div>
                     </div>
                 ))}

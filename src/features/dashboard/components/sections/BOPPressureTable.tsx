@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info, ShieldCheck, Activity } from 'lucide-react';
 
 export const BOPPressureTable: React.FC = () => {
     const indicators = [
@@ -43,62 +44,81 @@ export const BOPPressureTable: React.FC = () => {
 
     return (
         <TooltipProvider>
-            <div className="spa-card bg-slate-900/40 border-white/5 overflow-hidden">
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                            <Tooltip>
-                                <TooltipTrigger className="cursor-help border-b border-dashed border-white/20">BOP</TooltipTrigger>
-                                <TooltipContent>Balance of Payments: A statement of all transactions made between entities in one country and the rest of the world.</TooltipContent>
-                            </Tooltip>
-                            Pressure Terminal
-                        </h3>
-                        <p className="text-[0.65rem] font-black tracking-widest text-blue-400 uppercase">External Sector Stability Matrix</p>
+            <div className="p-8 rounded-[2rem] bg-white/[0.01] border border-white/5 relative group overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.02] to-transparent pointer-events-none" />
+
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6 relative z-10">
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-blue-500 animate-pulse" />
+                            <h3 className="text-xl font-black text-white italic tracking-tight uppercase">BOP Pressure Terminal</h3>
+                        </div>
+                        <p className="text-[0.65rem] font-black tracking-[0.2em] text-muted-foreground/40 uppercase">External Sector Stability Matrix</p>
                     </div>
-                    <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full">
-                        <span className="text-[0.6rem] font-black text-blue-400 uppercase tracking-tighter">Signal: Stable</span>
+
+                    <div className="flex items-center gap-4">
+                        <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                            <span className="text-[0.6rem] font-black text-emerald-500 uppercase tracking-widest">Protocol: Stable</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                        <thead className="border-b border-white/5">
-                            <tr className="text-[0.65rem] font-black text-muted-foreground/50 uppercase tracking-widest">
-                                <th className="pb-4">Indicator</th>
-                                <th className="pb-4">Value</th>
-                                <th className="pb-4">Risk Status</th>
-                                <th className="pb-4 hidden sm:table-cell">Regime Trend</th>
+                <div className="overflow-x-auto relative z-10">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-[0.25em] border-b border-white/5">
+                                <th className="pb-4 font-black">Stability Indicator</th>
+                                <th className="pb-4 font-black">Live Value</th>
+                                <th className="pb-4 font-black">Risk Analysis</th>
+                                <th className="pb-4 hidden sm:table-cell font-black">Regime Delta</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5 font-medium">
+                        <tbody className="divide-y divide-white/5">
                             {indicators.map((item, i) => (
-                                <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
-                                    <td className="py-4">
-                                        <Tooltip>
-                                            <TooltipTrigger className="text-white hover:text-blue-400 transition-colors cursor-help border-b border-dashed border-white/10 decoration-blue-500/20">
+                                <tr key={i} className="group/row hover:bg-white/[0.02] transition-colors">
+                                    <td className="py-5 pr-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-black text-white/80 uppercase tracking-tight group-hover/row:text-blue-400 transition-colors">
                                                 {item.name}
-                                            </TooltipTrigger>
-                                            <TooltipContent className="max-w-xs">{item.definition}</TooltipContent>
-                                        </Tooltip>
+                                            </span>
+                                            <Tooltip>
+                                                <TooltipTrigger className="cursor-help opacity-20 hover:opacity-100 transition-opacity">
+                                                    <Info className="w-3 h-3 text-white" />
+                                                </TooltipTrigger>
+                                                <TooltipContent className="bg-slate-950 border-white/10 p-3 text-[0.65rem] max-w-[200px] leading-relaxed">
+                                                    {item.definition}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
                                     </td>
-                                    <td className="py-4">
-                                        <span className="text-white font-mono font-bold">{item.value}</span>
+                                    <td className="py-5 font-mono">
+                                        <span className="text-sm font-black text-white/90 tracking-tighter">{item.value}</span>
                                     </td>
-                                    <td className="py-4">
-                                        <span className={cn(
-                                            "text-[0.6rem] font-black uppercase px-2 py-0.5 rounded",
-                                            item.status === 'Safe' ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
+                                    <td className="py-5">
+                                        <div className={cn(
+                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-[0.55rem] font-black uppercase tracking-widest border",
+                                            item.status === 'Safe'
+                                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                                                : "bg-amber-400/10 border-amber-400/20 text-amber-400"
                                         )}>
                                             {item.status}
-                                        </span>
+                                        </div>
                                     </td>
-                                    <td className="py-4 hidden sm:table-cell">
-                                        <span className="text-muted-foreground/50 text-[0.7rem] uppercase font-black">{item.trend}</span>
+                                    <td className="py-5 hidden sm:table-cell">
+                                        <span className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/30">
+                                            {item.trend}
+                                        </span>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center relative z-10">
+                    <span className="text-[0.55rem] font-medium text-muted-foreground/40 italic">Aggregated via Reserve Bank telemetry & Custom Flows</span>
+                    <button className="text-[0.55rem] font-black text-blue-500/60 hover:text-blue-400 tracking-[0.1em] uppercase">Export Stability Data</button>
                 </div>
             </div>
         </TooltipProvider>

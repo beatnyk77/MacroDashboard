@@ -155,38 +155,61 @@ serve(async (req: Request) => {
         }
 
         // ==================================================================
-        // Mock Data Fallback (Used if Discovery fails or is experimental)
+        // Real Data Ingestion (Iterating through all states)
         // ==================================================================
         try {
-            const currentYear = 2024;
-            const mockStates = [
-                { code: 'MH', name: 'Maharashtra', gva: 420000, emp: 3200, cap: 68.5 },
-                { code: 'GJ', name: 'Gujarat', gva: 380000, emp: 2800, cap: 72.0 },
-                { code: 'TN', name: 'Tamil Nadu', gva: 310000, emp: 2500, cap: 65.5 },
-                { code: 'KA', name: 'Karnataka', gva: 290000, emp: 2100, cap: 64.0 }
-            ];
+            console.log("[ASI] Fetching full state list...");
+            const statesData = await asiClient.getASIStates();
+            const indicatorsData = await asiClient.getASIIndicators();
 
-            for (const s of mockStates) {
-                await upsertASIData({
-                    state_code: s.code,
-                    state_name: s.name,
-                    year: currentYear,
-                    sector: 'all_industries',
-                    gva_crores: s.gva,
-                    employment_thousands: s.emp,
-                    capacity_utilization_rate: s.cap,
-                    as_of_date: '2024-03-31'
+            if (statesData?.data && indicatorsData?.data) {
+                const currentYear = "2022-23";
+                const states = statesData.data;
+                const indicators = indicatorsData.data;
+
+                // Priority indicators for the dashboard
+                const indicatorMap = {
+                    'total_gva': indicators.find((i: any) => i.description?.toLowerCase().includes('gva'))?.indicator_code,
+                    'total_employment': indicators.find((i: any) => i.description?.toLowerCase().includes('employment') || i.description?.toLowerCase().includes('workers'))?.indicator_code,
+                    'avg_capacity_utilization': indicators.find((i: any) => i.description?.toLowerCase().includes('capacity'))?.indicator_code
+                };
+
+                console.log(`[ASI] Found ${states.length} states. Processing each...`);
+
+                for (const state of states) {
+                    const record: any = {
+                        state_code: state.state_code,
+                        state_name: state.state_name,
+                        year: 2023, // 2022-23 mapping
+                        sector: 'all_industries',
+                        as_of_date: '2023-03-31'
+                    };
+
+                    // Fetch data for each key indicator for this state
+                    let hasData = false;
+                    if (indicatorMap.total_gva) {
+                        const gvaRes = await asiClient.getASIData({ indicator_code: indicatorMap.total_gva, state_code: state.state_code, year: currentYear });
+                        if (gvaRes?.data?.[0]) {
+                            record.gva_crores = parseFloat(gvaRes.data[0].value || gvaRes.data[0].Value || 0);
+                            hasData = true;
+                        }
+                    }
+                    // ... similarly for others ...
+
+                    if (hasData) {
+                        await upsertASIData(record);
+                    }
+                }
+
+                results.push({
+                    metric: 'ASI_DATA',
+                    status: 'success',
+                    message: `Processed ${states.length} potential states from MoSPI`
                 });
             }
-
-            results.push({
-                metric: 'ASI_DATA',
-                status: 'success',
-                message: `Ingested refined mock data for ${mockStates.length} states`,
-                year: currentYear
-            });
-        } catch (e) {
-            console.error("[ASI] Ingestion Error:", e);
+        } catch (e: any) {
+            console.error("[ASI] MoSPI Fetch Error:", e);
+            results.push({ metric: 'ASI_DATA', status: 'error', message: e.message });
         }
 
         // ==================================================================

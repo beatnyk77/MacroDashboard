@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Tooltip, IconButton, Fade, Typography } from '@mui/material';
+import { useState, useEffect } from 'react';
 import { Camera, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const SocialShareMode: React.FC = () => {
     const [isShareMode, setIsShareMode] = useState(false);
@@ -32,59 +33,44 @@ export const SocialShareMode: React.FC = () => {
     }, []);
 
     return (
-        <>
+        <TooltipProvider>
             {/* Toggle Button (Bottom Right) */}
-            <Fade in={!isShareMode}>
-                <Box sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999 }}>
-                    <Tooltip title="Toggle Share Mode (Clean Screenshot View)" arrow placement="left">
-                        <IconButton
+            <div className={cn(
+                "fixed bottom-6 right-6 z-[9999] transition-all duration-300",
+                isShareMode ? "scale-0 opacity-0" : "scale-100 opacity-100"
+            )}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <button
                             onClick={() => setIsShareMode(true)}
-                            sx={{
-                                bgcolor: 'background.paper',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                boxShadow: 4,
-                                color: 'text.primary',
-                                '&:hover': { bgcolor: 'action.hover' }
-                            }}
+                            className="p-3 rounded-full bg-slate-900 border border-white/10 shadow-2xl text-white hover:bg-slate-800 transition-all active:scale-95"
                         >
                             <Camera size={20} />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            </Fade>
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="bg-slate-950 border-white/10 text-[0.6rem] font-black uppercase tracking-widest">
+                        Clean Screenshot View
+                    </TooltipContent>
+                </Tooltip>
+            </div>
 
             {/* Exit Banner (Top Center) - Only Visible in Share Mode */}
-            <Fade in={isShareMode}>
-                <Box sx={{
-                    position: 'fixed',
-                    top: 16,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 9999,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    bgcolor: 'rgba(0,0,0,0.8)',
-                    color: 'white',
-                    px: 3,
-                    py: 1,
-                    borderRadius: 10,
-                    backdropFilter: 'blur(4px)',
-                    border: '1px solid rgba(255,255,255,0.2)'
-                }}>
-                    <Typography variant="caption" sx={{ fontWeight: 800, letterSpacing: '0.1em' }}>
-                        SHARE MODE ACTIVE
-                    </Typography>
-                    <IconButton
-                        size="small"
+            <div className={cn(
+                "fixed top-6 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-500",
+                isShareMode ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
+            )}>
+                <div className="flex items-center gap-3 bg-slate-950/80 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full shadow-2xl">
+                    <span className="text-[0.6rem] font-black text-white uppercase tracking-[0.2em] px-2 italic">
+                        Terminal Active: Capture Mode
+                    </span>
+                    <button
                         onClick={() => setIsShareMode(false)}
-                        sx={{ color: 'white', p: 0.5, '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
+                        className="p-1 rounded-full hover:bg-white/10 transition-colors text-white"
                     >
                         <X size={16} />
-                    </IconButton>
-                </Box>
-            </Fade>
-        </>
+                    </button>
+                </div>
+            </div>
+        </TooltipProvider>
     );
 };

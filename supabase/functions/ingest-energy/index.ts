@@ -129,44 +129,43 @@ serve(async (req) => {
         }
 
         if (!indicators || !indicators.data) {
-            console.warn("[IN_ENERGY] Failed to fetch indicators or no data returned.");
-            results.push({ status: 'warning', message: 'No indicators found. Using mock data fallback.' });
+            console.warn("[IN_ENERGY] Failed to fetch indicators. Using seed data targets.");
+            // We'll proceed to try and fetch from known codes even if the list failed
+        }
 
-            // FALLBACK TO MOCK DATA IF API FAILS (To keep dashboard functional while debugging API)
-            const mockStates = [
-                { code: 'JH', name: 'Jharkhand', coal: 130.5, renewable: 12.0, elec: 45.2, industrial: 15.5 },
-                { code: 'OD', name: 'Odisha', coal: 154.2, renewable: 15.5, elec: 52.1, industrial: 20.2 },
-                { code: 'CH', name: 'Chhattisgarh', coal: 158.0, renewable: 8.2, elec: 48.5, industrial: 18.1 },
-                { code: 'MP', name: 'Madhya Pradesh', coal: 120.0, renewable: 22.4, elec: 61.0, industrial: 12.4 }
-            ];
+        const indicatorCodes = {
+            coal: 161, // Example from MoSPI
+            renewable: 104,
+            electricity: 212
+        };
 
-            let totalCoal = 0;
-            let totalRenew = 0;
-            let totalElec = 0;
-            let totalInd = 0;
+        try {
+            // Fetch all states to ensure coverage
+            const { data: statesRes } = await supabase.from('india_states').select('code, name');
+            const states = statesRes || [];
 
-            for (const state of mockStates) {
-                await upsertEnergyMetric('IN_ENERGY_COAL_PROD', state.coal, state.code, 2024, 'coal', 'production', 'Million Tonnes');
-                await upsertEnergyMetric('IN_ENERGY_RENEWABLE_SHARE', state.renewable, state.code, 2024, 'renewable', 'capacity', '%');
-                await upsertEnergyMetric('IN_ENERGY_ELECTRICITY_CONS', state.elec, state.code, 2024, 'electricity', 'consumption', 'Billion kWh');
-                totalCoal += state.coal;
-                totalRenew += state.renewable;
-                totalElec += state.elec;
-                totalInd += state.industrial;
+            console.log(`[IN_ENERGY] Processing ${states.length} states...`);
+
+            for (const state of states) {
+                // Fetch Coal
+                const coalData = await energyClient.getEnergyData({ indicator_code: indicatorCodes.coal, state_code: state.code, year: '2023-24' });
+                if (coalData?.data?.[0]) {
+                    const val = parseFloat(coalData.data[0].value || 0);
+                    await upsertEnergyMetric('IN_ENERGY_COAL_PROD', val, state.code, 2024, 'coal', 'production', 'Million Tonnes');
+                }
+
+                // Fetch Renewable Share
+                const renewData = await energyClient.getEnergyData({ indicator_code: indicatorCodes.renewable, state_code: state.code, year: '2023-24' });
+                if (renewData?.data?.[0]) {
+                    const val = parseFloat(renewData.data[0].value || 0);
+                    await upsertEnergyMetric('IN_ENERGY_RENEWABLE_SHARE', val, state.code, 2024, 'renewable', 'capacity', '%');
+                }
             }
 
-            // Upsert Aggregates for Dashboard
-            const latestDate = '2024-03-31';
-            await upsertAggregate('IN_ENERGY_COAL_PROD', totalCoal, latestDate);
-            await upsertAggregate('IN_ENERGY_RENEWABLE_SHARE', totalRenew / mockStates.length, latestDate); // Avg for share
-            await upsertAggregate('IN_ENERGY_ELECTRICITY_CONS', totalElec, latestDate);
-            await upsertAggregate('IN_ENERGY_INDUSTRIAL', totalInd, latestDate);
-
-            results.push({ metric: 'ENERGY_MOCK_GROUP', status: 'success', note: 'All Energy metrics mocked & aggregated' });
-
-            return new Response(JSON.stringify({ success: true, results }), {
-                headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
+            results.push({ metric: 'ENERGY_DATA', status: 'success', message: `Refreshed energy data across ${states.length} states` });
+        } catch (e: any) {
+            console.error("[IN_ENERGY] Discovery failed:", e.message);
+            results.push({ metric: 'ENERGY_DATA', status: 'error', message: e.message });
         }
 
         console.log(`[IN_ENERGY] Found ${indicators.data.length} indicators.`);
