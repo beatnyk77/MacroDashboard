@@ -151,7 +151,8 @@ serve(async (req: Request) => {
                 }
             }
         } catch (e) {
-            console.warn("[ASI] Discovery failed, using mock fallback.");
+            console.error("[ASI] Discovery failed: Critical API Error.");
+            throw e;
         }
 
         // ==================================================================

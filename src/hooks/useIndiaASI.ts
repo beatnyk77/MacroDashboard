@@ -23,6 +23,7 @@ export interface StateASIStats {
     manufacturing_gva: number;
     mining_gva: number;
     electricity_gva: number;
+    employment_growth_yoy: number;
 }
 
 export function useIndiaASI() {
@@ -36,13 +37,25 @@ export function useIndiaASI() {
 
             if (error) throw error;
 
-            // Group by state for the latest year
-            const stateMap = new Map<string, StateASIStats>();
-
             if (!data || data.length === 0) return [];
 
-            const latestYear = data[0].year;
+            const years = Array.from(new Set(data.map((d: ASIMetric) => d.year))).sort((a, b) => b - a);
+            const latestYear = years[0];
+            const prevYear = years[1];
 
+            const stateMap = new Map<string, StateASIStats>();
+            const prevStateMap = new Map<string, number>(); // Cache previous total employment
+
+            // First Pass: Get Previous Year Employment
+            if (prevYear) {
+                data.forEach((row: ASIMetric) => {
+                    if (row.year === prevYear && row.sector === 'all_industries') {
+                        prevStateMap.set(row.state_code, row.employment_thousands || 0);
+                    }
+                });
+            }
+
+            // Second Pass: Build Current Stats
             data.forEach((row: ASIMetric) => {
                 if (row.year !== latestYear) return;
 
@@ -59,6 +72,7 @@ export function useIndiaASI() {
                         manufacturing_gva: 0,
                         mining_gva: 0,
                         electricity_gva: 0,
+                        employment_growth_yoy: 0 // Default
                     });
                 }
 
@@ -69,6 +83,12 @@ export function useIndiaASI() {
                     stats.total_gva = row.gva_crores || 0;
                     stats.total_employment = row.employment_thousands || 0;
                     stats.avg_capacity_utilization = row.capacity_utilization_rate || 0;
+
+                    // Calculate Growth
+                    const prevEmp = prevStateMap.get(key) || 0;
+                    if (prevEmp > 0) {
+                        stats.employment_growth_yoy = ((stats.total_employment - prevEmp) / prevEmp) * 100;
+                    }
                 } else if (row.sector === 'manufacturing') {
                     stats.manufacturing_gva = row.gva_crores || 0;
                 } else if (row.sector === 'mining') {

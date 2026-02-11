@@ -129,8 +129,8 @@ serve(async (req) => {
         }
 
         if (!indicators || !indicators.data) {
-            console.warn("[IN_ENERGY] Failed to fetch indicators. Using seed data targets.");
-            // We'll proceed to try and fetch from known codes even if the list failed
+            console.error("[IN_ENERGY] Failed to fetch indicators. Aborting to prevent stale data contamination.");
+            throw new Error("MoSPI API unreachable: unique indicator list not found.");
         }
 
         const indicatorCodes = {

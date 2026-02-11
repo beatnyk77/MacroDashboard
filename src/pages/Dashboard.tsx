@@ -33,6 +33,7 @@ const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const EnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/EnergySecuritySection').then(m => ({ default: m.EnergySecuritySection })));
+const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
 
 // Country Pulses
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
@@ -166,6 +167,11 @@ export const Dashboard: React.FC = () => {
                                 "Physical Premium: Rising"
                             ]}
                         >
+                            <SectionErrorBoundary name="US Debt Gold Backing">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <USDebtGoldBackingCard />
+                                </Suspense>
+                            </SectionErrorBoundary>
                             <SectionErrorBoundary name="Gold Ratio Ribbon">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <GoldRatioRibbon />

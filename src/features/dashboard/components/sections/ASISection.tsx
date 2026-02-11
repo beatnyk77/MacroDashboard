@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { IndiaASIMap } from '../maps/IndiaASIMap';
+import { IndiaASIMap, ASIMapMetric } from '../maps/IndiaASIMap';
 import { useIndiaASI, StateASIStats } from '@/hooks/useIndiaASI';
 import { Factory, Users, TrendingUp, ChevronRight, Activity, Globe } from 'lucide-react';
 
 export const ASISection: React.FC = () => {
     const { data, isLoading, error } = useIndiaASI();
-    const [selectedMetric, setSelectedMetric] = useState<keyof StateASIStats>('total_gva');
+    const [selectedMetric, setSelectedMetric] = useState<ASIMapMetric>('total_gva');
     const [rankingMetric, setRankingMetric] = useState<'total_gva' | 'total_employment' | 'avg_capacity_utilization'>('total_gva');
     const [selectedState, setSelectedState] = useState<StateASIStats | null>(null);
 
@@ -75,11 +75,13 @@ export const ASISection: React.FC = () => {
                             {[
                                 { id: 'total_gva', label: 'GVA' },
                                 { id: 'total_employment', label: 'Labor' },
-                                { id: 'avg_capacity_utilization', label: 'Util' }
+                                { id: 'avg_capacity_utilization', label: 'Capacity' },
+                                { id: 'geopolitics', label: 'Sphere Influence' },
+                                { id: 'efficiency', label: 'Job Efficiency' },
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setSelectedMetric(tab.id as keyof StateASIStats)}
+                                    onClick={() => setSelectedMetric(tab.id as ASIMapMetric)}
                                     className={cn(
                                         "px-3 py-1.5 rounded-lg transition-all text-[0.6rem] font-black uppercase tracking-wider",
                                         selectedMetric === tab.id
