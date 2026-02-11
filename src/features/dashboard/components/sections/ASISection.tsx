@@ -10,13 +10,15 @@ export const ASISection: React.FC = () => {
     const [rankingMetric, setRankingMetric] = useState<'total_gva' | 'total_employment' | 'avg_capacity_utilization'>('total_gva');
     const [selectedState, setSelectedState] = useState<StateASIStats | null>(null);
 
-    if (isLoading) return <div className="flex justify-center p-12"><Activity className="animate-spin text-blue-500" /></div>;
-    if (error) return <div className="p-8 text-rose-400 font-bold bg-rose-500/10 rounded-2xl border border-rose-500/20">Error loading ASI telemetry</div>;
-
+    // ✅ Move useMemo BEFORE early returns to comply with Rules of Hooks
     const topStates = useMemo(() => {
         const stats = [...(data || [])].sort((a, b) => (b[rankingMetric] as number) - (a[rankingMetric] as number));
         return stats.slice(0, 5);
     }, [data, rankingMetric]);
+
+    // NOW safe to do early returns after all hooks have been called
+    if (isLoading) return <div className="flex justify-center p-12"><Activity className="animate-spin text-blue-500" /></div>;
+    if (error) return <div className="p-8 text-rose-400 font-bold bg-rose-500/10 rounded-2xl border border-rose-500/20">Error loading ASI telemetry</div>;
 
     const formatValue = (state: StateASIStats, metric: 'total_gva' | 'total_employment' | 'avg_capacity_utilization') => {
         switch (metric) {
