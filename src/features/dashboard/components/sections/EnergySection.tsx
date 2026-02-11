@@ -53,7 +53,9 @@ export const EnergySection: React.FC = () => {
                 <div className="space-y-1.5 relative z-10">
                     <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Renewable Alpha</span>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">{avgRenewableShare.toFixed(1)}%</span>
+                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
+                            {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-sm text-muted-foreground/30 italic">n/a</span>}
+                        </span>
                     </div>
                 </div>
 
@@ -70,8 +72,12 @@ export const EnergySection: React.FC = () => {
                     <div className="flex items-center gap-2">
                         <span className={cn(
                             "text-2xl font-black font-mono tracking-tighter",
-                            intensityStatus === 'safe' ? "text-emerald-400" : intensityStatus === 'warning' ? "text-amber-400" : "text-rose-400"
-                        )}>{avgEnergyIntensity.toFixed(1)}%</span>
+                            avgEnergyIntensity > 0 ? (
+                                intensityStatus === 'safe' ? "text-emerald-400" : intensityStatus === 'warning' ? "text-amber-400" : "text-rose-400"
+                            ) : "text-muted-foreground/30 text-sm italic"
+                        )}>
+                            {avgEnergyIntensity > 0 ? `${avgEnergyIntensity.toFixed(1)}%` : 'n/a'}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -165,15 +171,17 @@ export const EnergySection: React.FC = () => {
                         ))}
                     </div>
 
-                    <div className="mt-8 p-6 rounded-3xl bg-emerald-500/[0.03] border border-emerald-500/10">
-                        <div className="flex items-center gap-2 mb-4">
-                            <Activity className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="text-[0.6rem] font-black text-emerald-500 uppercase tracking-widest">Protocol Efficiency Note</span>
+                    {avgEnergyIntensity > 0 && (
+                        <div className="mt-8 p-6 rounded-3xl bg-emerald-500/[0.03] border border-emerald-500/10">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Activity className="w-3.5 h-3.5 text-emerald-500" />
+                                <span className="text-[0.6rem] font-black text-emerald-500 uppercase tracking-widest">Protocol Efficiency Note</span>
+                            </div>
+                            <p className="text-[0.7rem] leading-relaxed text-emerald-100/40 font-medium italic">
+                                Aggregate intensity of {avgEnergyIntensity.toFixed(1)}% indicates a strong decoupling between GVA growth and grid reliance.
+                            </p>
                         </div>
-                        <p className="text-[0.7rem] leading-relaxed text-emerald-100/40 font-medium italic">
-                            Aggregate intensity of {avgEnergyIntensity.toFixed(1)}% indicates a strong decoupling between GVA growth and grid reliance.
-                        </p>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -19,31 +19,31 @@ const METRIC_LABELS: Record<string, string> = {
     'INFLATION_CORE_YOY': 'Core Inflation (YoY %)',
     'INFLATION_BREAKEVEN_5Y': '5Y Breakeven Inflation (%)',
     'INFLATION_EXPECTATIONS_UM': 'Inflation Expectations (UM)',
-    'INFLATION_REGIME_SCORE': 'Inflation Regime Score',
+    'INFLATION_REGIME_SCORE': 'Inflation Regime (Index)',
 
     // Balance of Payments
     'BOP_CURRENT_ACCOUNT_GDP': 'Current Account (% GDP)',
-    'BOP_RESERVES_MONTHS': 'Reserves (months)',
+    'BOP_RESERVES_MONTHS': 'FX Reserves (months of import cover)',
     'BOP_SHORT_TERM_DEBT_GDP': 'Short-Term Debt (% GDP)',
-    'BOP_VULNERABILITY_SCORE': 'BOP Vulnerability Score',
+    'BOP_VULNERABILITY_SCORE': 'BOP Vulnerability (Index)',
 
     // Housing Cycle
     'HOUSING_PRICE_INDEX': 'Housing Price Index',
-    'HOUSING_MEDIAN_INCOME_RATIO': 'Price-to-Income Ratio',
+    'HOUSING_MEDIAN_INCOME_RATIO': 'Housing Affordability (Index)',
     'HOUSING_MORTGAGE_RATE_30Y': '30Y Mortgage Rate (%)',
-    'HOUSING_REGIME_SCORE': 'Housing Regime Score',
+    'HOUSING_REGIME_SCORE': 'Housing Regime (Index)',
 
     // Activity Regime
     'PMI_US_MFG': 'US Manufacturing PMI',
     'PMI_US_SERVICES': 'US Services PMI',
     'PMI_EA_COMPOSITE_PROXY': 'EA Composite PMI',
-    'ACTIVITY_REGIME_SCORE': 'Activity Regime Score',
+    'ACTIVITY_REGIME_SCORE': 'Activity Regime (Index)',
 
     // Labor Market
     'LABOR_VACANCIES_JOLTS': 'Job Vacancies (JOLTS)',
     'LABOR_UNEMPLOYMENT_RATE': 'Unemployment Rate (%)',
     'LABOR_WAGE_GROWTH_YOY': 'Wage Growth (YoY %)',
-    'LABOR_TIGHTNESS_SCORE': 'Labor Tightness Score',
+    'LABOR_TIGHTNESS_SCORE': 'Labor Tightness (Index)',
 };
 
 /**

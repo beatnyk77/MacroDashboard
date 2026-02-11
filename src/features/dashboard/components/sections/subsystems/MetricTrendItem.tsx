@@ -15,6 +15,7 @@ interface MetricTrendItemProps {
     zScore?: number;
     change?: number;
     changePeriod?: string;
+    changeUnit?: string;
     color: string;
 }
 
@@ -25,7 +26,10 @@ export const MetricTrendItem: React.FC<MetricTrendItemProps> = ({
     zScore,
     change,
     changePeriod,
+    changeUnit = '%',
 }) => {
+    const isValueMissing = value === undefined || value === null || value === '';
+
     // Normalize Z-score for visualization (-3 to +3 range)
     const normalizedZ = zScore !== undefined ? Math.max(-3, Math.min(3, zScore)) : 0;
     // Offset to percentage (0% to 100%, 50% is 0)
@@ -52,11 +56,15 @@ export const MetricTrendItem: React.FC<MetricTrendItemProps> = ({
                     </span>
                     <div className="flex items-baseline gap-2">
                         <span className="text-xl font-black tracking-tighter text-white/90 tabular-nums">
-                            {typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value}
+                            {isValueMissing
+                                ? <span className="text-sm font-bold text-muted-foreground/30 italic tracking-normal">n/a</span>
+                                : typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value}
                         </span>
-                        <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-widest">
-                            {unit || ''}
-                        </span>
+                        {!isValueMissing && (
+                            <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-widest">
+                                {unit || ''}
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -73,7 +81,7 @@ export const MetricTrendItem: React.FC<MetricTrendItemProps> = ({
                             change > 0 ? "text-emerald-400" : "text-rose-400"
                         )}>
                             {change > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                            {Math.abs(change).toFixed(1)}% <span className="text-[0.55rem] opacity-40 uppercase">{changePeriod}</span>
+                            {Math.abs(change).toFixed(1)}{changeUnit} <span className="text-[0.55rem] opacity-40 uppercase">{changePeriod}</span>
                         </div>
                     )}
                 </div>

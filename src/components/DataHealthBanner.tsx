@@ -29,14 +29,14 @@ export const DataHealthBanner: React.FC = () => {
                 )}
 
                 <span className="text-xs font-bold uppercase tracking-[0.15em]">
-                    {isCritical ? "System Integrity Critical" : "Data Latency Detected"}
+                    {isCritical ? "Data Sync Delayed" : "Data Latency Detected"}
                 </span>
 
                 <div className="h-3 w-[1px] bg-white/10 mx-1" />
 
                 <span className="text-[11px] font-medium opacity-80">
-                    {health.staleCount} {health.staleCount === 1 ? 'metric is' : 'metrics are'} exceeding latency thresholds
-                    {isCritical && " - High confidence systems may be impacted"}
+                    {health.staleCount} of {health.totalHighFrequency} tracked feeds delayed
+                    {isCritical && " — refresh recommended"}
                 </span>
             </div>
 
@@ -46,7 +46,7 @@ export const DataHealthBanner: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
                 >
                     <RefreshCcw className="w-3 h-3" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider">Sync Now</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Refresh Data</span>
                 </button>
 
                 <a

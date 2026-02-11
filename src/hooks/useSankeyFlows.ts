@@ -12,6 +12,7 @@ export interface SankeyNode {
     z_score?: number;
     change?: number;
     change_period?: string;
+    change_unit?: string;
 }
 
 export interface SankeyLink {
@@ -34,6 +35,45 @@ const CATEGORY_COLORS = {
     activity_regime: '#10b981',    // Green
     labor_market: '#f59e0b'        // Amber
 };
+
+// Plausibility bounds: [min, max] per metric_id.
+// Values outside these ranges are treated as data errors and rendered as n/a.
+const SANE_RANGES: Record<string, [number, number]> = {
+    INFLATION_HEADLINE_YOY: [-5, 30],
+    INFLATION_CORE_YOY: [-3, 25],
+    INFLATION_BREAKEVEN_5Y: [-2, 15],
+    INFLATION_EXPECTATIONS_UM: [0, 20],
+    INFLATION_REGIME_SCORE: [-10, 10],
+    BOP_CURRENT_ACCOUNT_GDP: [-20, 20],
+    BOP_RESERVES_MONTHS: [0, 36],
+    BOP_SHORT_TERM_DEBT_GDP: [0, 100],
+    BOP_VULNERABILITY_SCORE: [-10, 10],
+    HOUSING_PRICE_INDEX: [50, 500],
+    HOUSING_MEDIAN_INCOME_RATIO: [0, 30],
+    HOUSING_MORTGAGE_RATE_30Y: [0, 20],
+    HOUSING_REGIME_SCORE: [-10, 10],
+    PMI_US_MFG: [20, 80],
+    PMI_US_SERVICES: [20, 80],
+    PMI_EA_COMPOSITE_PROXY: [20, 80],
+    ACTIVITY_REGIME_SCORE: [-10, 10],
+    LABOR_VACANCIES_JOLTS: [0, 20000],
+    LABOR_UNEMPLOYMENT_RATE: [0, 30],
+    LABOR_WAGE_GROWTH_YOY: [-10, 25],
+    LABOR_TIGHTNESS_SCORE: [-10, 10],
+    CAPITAL_FROM_TREASURIES_BN: [-500, 500],
+    CAPITAL_FROM_EM_DEBT_BN: [-500, 500],
+    CAPITAL_FROM_GOLD_ETF_BN: [-500, 500],
+    CAPITAL_FROM_EQUITY_ETF_BN: [-500, 500],
+    FLOW_TO_RISK_ASSETS: [-500, 500],
+    FLOW_TO_SAFE_HAVENS: [-500, 500],
+};
+
+function isPlausible(metricId: string, value: number | undefined): boolean {
+    if (value === undefined || value === null) return false;
+    const range = SANE_RANGES[metricId];
+    if (!range) return true; // No range defined = trust the value
+    return value >= range[0] && value <= range[1];
+}
 
 export function useSankeyFlows() {
     return useQuery({
@@ -105,17 +145,23 @@ export function useSankeyFlows() {
                     data: metric
                 });
 
+                const rawValue = metric?.value;
+                const unitStr = metric?.unit || '';
+                const saneValue = isPlausible(metricId, rawValue) ? rawValue : undefined;
+                // For %-unit metrics, deltas are in percentage points (pp), not %
+                const changeUnit = unitStr.includes('%') ? 'pp' : '%';
+
                 nodes.push({
                     index: idx,
                     name: getMetricLabel(metricId),
                     category: category as SankeyNode['category'],
                     color: CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS] || '#6b7280',
-                    // Pass through raw data for card display
-                    value: metric?.value,
-                    unit: metric?.unit,
-                    z_score: metric?.z_score,
-                    change: metric?.delta_qoq || metric?.delta_yoy,
-                    change_period: metric?.delta_qoq ? 'QoQ' : 'YoY'
+                    value: saneValue,
+                    unit: unitStr,
+                    z_score: saneValue !== undefined ? metric?.z_score : undefined,
+                    change: saneValue !== undefined ? (metric?.delta_qoq || metric?.delta_yoy) : undefined,
+                    change_period: metric?.delta_qoq ? 'QoQ' : 'YoY',
+                    change_unit: changeUnit,
                 });
             });
 

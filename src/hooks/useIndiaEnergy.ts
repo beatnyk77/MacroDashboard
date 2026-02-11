@@ -19,7 +19,7 @@ export interface StateEnergyStats {
     coal_production: number;
     renewable_share: number;
     electricity_consumption: number;
-    energy_intensity: number; // Calculated or placeholder for now
+    energy_intensity: number; // PLACEHOLDER: No upstream data source wired yet. Hardcoded to 0 in aggregation.
 }
 
 export function useIndiaEnergy() {

@@ -5,6 +5,7 @@ export interface IntegrityReport {
     status: 'healthy' | 'degraded' | 'critical';
     message: string;
     staleCount: number;
+    totalHighFrequency: number;
     lastChecked: string;
 }
 
@@ -12,48 +13,73 @@ export function useDataIntegrity() {
     return useQuery({
         queryKey: ['data-integrity'],
         queryFn: async (): Promise<IntegrityReport> => {
-            // Check for stale metrics
+            // Only count high-frequency metrics (daily/weekly) toward stale count
+            // Monthly/quarterly metrics (GDP, BOP, ASI) will always exceed 7-day threshold
+            const HIGH_FREQUENCY_PREFIXES = [
+                'CAPITAL_FROM_',
+                'FLOW_TO_',
+                'HOUSING_MORTGAGE_',
+                'PMI_',
+                'LABOR_VACANCIES',
+                'LABOR_UNEMPLOYMENT',
+                'INFLATION_HEADLINE',
+                'INFLATION_CORE',
+                'GOLD_PRICE',
+                'COPPER_PRICE',
+                'OIL_PRICE',
+                'USD_',
+                'CNY_',
+            ];
+
             const { data: metrics } = await supabase
                 .from('vw_latest_metrics')
-                .select('as_of_date');
+                .select('metric_id, as_of_date');
 
             if (!metrics || metrics.length === 0) {
                 return {
                     status: 'critical',
                     message: 'No metric data available in the synchronization layer.',
                     staleCount: 0,
+                    totalHighFrequency: 0,
                     lastChecked: new Date().toISOString()
                 };
             }
 
             const now = new Date().getTime();
             const weekInMs = 1000 * 60 * 60 * 24 * 7;
-            const monthInMs = 1000 * 60 * 60 * 24 * 30;
 
-            const staleMetrics = metrics.filter(m => {
+            // Filter to high-frequency metrics only
+            const highFreqMetrics = metrics.filter(m =>
+                HIGH_FREQUENCY_PREFIXES.some(prefix => m.metric_id?.startsWith(prefix))
+            );
+
+            const staleHighFreq = highFreqMetrics.filter(m => {
                 const diff = now - new Date(m.as_of_date).getTime();
                 return diff > weekInMs;
             });
 
-            const criticalMetrics = metrics.filter(m => {
-                const diff = now - new Date(m.as_of_date).getTime();
-                return diff > monthInMs;
-            });
+            const totalHighFreq = highFreqMetrics.length;
+            const staleCount = staleHighFreq.length;
+            const staleRatio = totalHighFreq > 0 ? staleCount / totalHighFreq : 0;
 
-            if (criticalMetrics.length > 5 || metrics.every(m => now - new Date(m.as_of_date).getTime() > weekInMs)) {
+            // CRITICAL: >25% of high-freq metrics stale AND >10 absolute count
+            if (staleRatio > 0.25 && staleCount > 10) {
                 return {
                     status: 'critical',
-                    message: 'Critical data synchronization failure detected.',
-                    staleCount: staleMetrics.length,
+                    message: 'Data sync delayed',
+                    staleCount,
+                    totalHighFrequency: totalHighFreq,
                     lastChecked: new Date().toISOString()
                 };
             }
 
-            if (staleMetrics.length > 0) {
+            // DEGRADED: any high-freq metrics stale
+            if (staleCount > 0) {
                 return {
                     status: 'degraded',
-                    message: 'Some metrics are exceeding latency thresholds.',
-                    staleCount: staleMetrics.length,
+                    message: 'Data latency detected',
+                    staleCount,
+                    totalHighFrequency: totalHighFreq,
                     lastChecked: new Date().toISOString()
                 };
             }
@@ -62,6 +88,7 @@ export function useDataIntegrity() {
                 status: 'healthy',
                 message: 'All core systems operational.',
                 staleCount: 0,
+                totalHighFrequency: totalHighFreq,
                 lastChecked: new Date().toISOString()
             };
         },
