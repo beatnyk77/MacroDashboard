@@ -3,15 +3,35 @@
 This document outlines the setup for passive monitoring and maintenance of the GraphiQuestor dashboard.
 
 ## 1. Data Ingestion Cron Verification
-Ensure all major data pipelines are scheduled in Supabase `pg_cron`.
+Ensure all major data pipelines are scheduled in Supabase `pg_cron`. All schedules are in **UTC**.
 
-| Function | Schedule | Description |
-|----------|----------|-------------|
-| `ingest-fred` | `0 6 * * *` | Daily macro data (Gold, UST, BoJ) |
-| `ingest-fiscaldata` | `30 6 * * *` | US Treasury data |
-| `ingest-mospi` | `0 7 * * *` | India Macro Pulse data |
-| `ingest-asi` | `0 1 * 1 *` | Annual Survey of Industries (Monthly/Yearly) |
-| `check-data-health` | `*/30 * * * *` | Heartbeat & Staleness check |
+| Function Name | Schedule | Frequency | Description |
+|---------------|----------|-----------|-------------|
+| `ingest-market-pulse` | `0 1 * * *` | Daily | Global market pulse and volatility indicators (Yahoo Finance). |
+| `ingest-fred` | `0 6 * * *` | Daily | FRED macro series (Gold, UST, BoJ Assets, etc.). |
+| `ingest-fiscaldata` | `30 6 * * *` | Daily | US Treasury fiscal and debt data. |
+| `ingest-mospi` | `0 7 * * *` | Daily | MoSPI India Pulse (WPI, IIP, CPI, etc.). |
+| `ingest-nyfed-markets` | `0 12 * * *` | Daily | NY Fed market data (RRP, TGA, SOFR). |
+| `ingest-gold` | `0 18 * * *` | Daily | Precious metal pricing and depth tracking. |
+| `ingest-precious-divergence` | `0 19 * * *` | Daily | Shanghai/London physical gold premium tracking. |
+| `ingest-macro-events` | `0 8 * * *` | Daily | Upcoming economic calendar updates (Finnhub). |
+| `ingest-oil-eia` | `0 9 * * 3` | Weekly | US Oil refining, imports, and SPR levels. |
+| `ingest-ecb-balance-sheet` | `0 10 * * 1` | Weekly | ECB balance sheet updates. |
+| `ingest-boj-balance-sheet` | `5 10 * * 1` | Weekly | BoJ balance sheet updates. |
+| `ingest-institutional-loans` | `0 4 * * 1` | Weekly | Institutional credit creation tracking. |
+| `ingest-macro-news-headlines` | `0 */6 * * *` | 6 Hours | Institutional news sentiment and event headlines. |
+| `check-data-health` | `*/30 * * * *` | 30 Mins | Pipeline health and metric staleness check. |
+| `ingest-energy` | `0 2 1 * *` | Monthly | India energy security and supplier vulnerability. |
+| `ingest-china-macro` | `0 5 1 * *` | Monthly | China GDP, CPI, and Credit Impulse. |
+| `ingest-imf-sdr` | `0 8 1 * *` | Monthly | IMF Special Drawing Rights (SDR) allocations. |
+| `ingest-cofer` | `0 9 1 * *` | Monthly | IMF COFER currency composition tracking. |
+| `ingest-brics` | `30 9 1 * *` | Monthly | BRICS+ gold and reserve tracking. |
+| `ingest-tic-foreign-holders`| `0 10 15 * *` | Monthly | Treasury International Capital (TIC) flows. |
+| `ingest-upi-autopay` | `15 4 1 * *` | Monthly | UPI Autopay and credit growth metrics. |
+| `ingest-gfcf` | `0 2 1 * *` | Monthly | Gross Fixed Capital Formation tracking. |
+| `ingest-oil-global` | `0 3 1 * *` | Monthly | Global oil refining (EU, UK, China, India). |
+| `ingest-trade-global` | `0 5 1 * *` | Monthly | Global trade stats (Exports/Imports) by region. |
+| `ingest-asi` | `0 3 1 8 *` | Annual | Annual Survey of Industries. |
 
 ## 2. Uptime Monitoring (UptimeRobot)
 To ensure the site is always live and responsive:
