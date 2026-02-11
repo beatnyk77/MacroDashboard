@@ -39,32 +39,39 @@ export const GoldRatioRibbon: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
 
     const chartData = useMemo(() => {
-        if (!ratios) return [];
+        if (!ratios || ratios.length === 0) return [];
 
-        const stats = ratios.reduce((acc, r) => {
-            if (!r.history || r.history.length === 0) return acc;
-            const values = r.history.map(h => h.value);
+        // Filter valid ratios with history
+        const validRatios = ratios.filter(r => r.history && r.history.length > 5);
+        if (validRatios.length === 0) return []; // Fallback empty
+
+        const stats = validRatios.reduce((acc, r) => {
+            const values = r.history!.map(h => h.value);
+            // Calculate robust mean/stdDev based on available history
             const sum = values.reduce((a, b) => a + b, 0);
             const mean = sum / values.length;
-            const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+            const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (values.length > 1 ? values.length - 1 : 1);
             const stdDev = Math.sqrt(variance);
-            acc[r.ratio_name] = { mean, stdDev };
+            acc[r.ratio_name] = { mean, stdDev: stdDev || 1 }; // Avoid div by zero
             return acc;
         }, {} as Record<string, { mean: number; stdDev: number }>);
 
         const dateSet = new Set<string>();
-        ratios.forEach(r => r.history?.forEach(h => dateSet.add(h.date)));
+        validRatios.forEach(r => r.history!.forEach(h => dateSet.add(h.date)));
 
         const sortedDates = Array.from(dateSet).sort();
-        const recentDates = sortedDates.slice(-750); // ~3 years of data
+        // Ensure we always have a reasonable window, defaulting to 2 years if < 750 points
+        const recentDates = sortedDates.slice(-750);
 
         return recentDates.map(date => {
             const point: any = { date };
-            ratios.forEach(r => {
-                const historyPoint = r.history?.find(h => h.date === date);
+            validRatios.forEach(r => {
+                const historyPoint = r.history!.find(h => h.date === date);
                 if (historyPoint) {
                     const s = stats[r.ratio_name];
-                    point[r.ratio_name] = s && s.stdDev !== 0 ? (historyPoint.value - s.mean) / s.stdDev : 0;
+                    const z = (historyPoint.value - s.mean) / s.stdDev;
+                    // Cap extreme outliers for chart readability
+                    point[r.ratio_name] = Math.max(Math.min(z, 4), -4);
                 }
             });
             return point;

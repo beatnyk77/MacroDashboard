@@ -33,7 +33,7 @@ Deno.serve(async (req: Request) => {
         const { data: staleMetrics, error: staleError } = await supabaseClient
             .from('vw_data_staleness_monitor')
             .select('metric_id, metric_name, days_since_update, status')
-            .gt('days_since_since_update', 30)
+            .gt('days_since_update', 30)
 
         if (staleError) throw staleError
 
