@@ -1,205 +1,190 @@
-import { createClient } from '@supabase/supabase-js'
-import { sendSlackAlert } from '../_shared/slack.ts'
-import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
-import { withTimeout } from '../_shared/timeout-guard.ts'
+import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 
+// --- SHARED UTILS ---
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  taskName: string
+): Promise<T> {
+  let timeoutId: any;
+  const timeoutPromise = new Promise<T>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`${taskName} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+  try {
+    const result = await Promise.race([promise, timeoutPromise]);
+    return result;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
+async function logIngestionStart(
+  supabase: SupabaseClient,
+  functionName: string,
+  metadata: any = {}
+): Promise<number | null> {
+  try {
+    const { data, error } = await supabase
+      .from('ingestion_logs')
+      .insert({
+        function_name: functionName,
+        status: 'started',
+        metadata: metadata,
+        start_time: new Date().toISOString()
+      })
+      .select('id')
+      .single()
+    if (error) return null;
+    return data.id;
+  } catch {
+    return null;
+  }
+}
+
+async function logIngestionEnd(
+  supabase: SupabaseClient,
+  logId: number | null,
+  status: 'success' | 'failed' | 'timeout',
+  details: any
+) {
+  if (!logId) return;
+  try {
+    await supabase
+      .from('ingestion_logs')
+      .update({
+        completed_at: new Date().toISOString(),
+        status: status,
+        ...details
+      })
+      .eq('id', logId);
+  } catch { }
+}
+
 /**
  * Fetch with exponential backoff retry logic
  */
-async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
+async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 2): Promise<Response> {
   let lastError: Error | null = null;
   for (let i = 0; i <= maxRetries; i++) {
     try {
       if (i > 0) {
         const delay = Math.pow(2, i) * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
-        console.log(`Retry ${i}/${maxRetries} for ${url}...`);
       }
       const response = await fetch(url, options);
       if (response.ok) return response;
 
       const errorText = await response.text();
-      if (response.status === 400) {
-        throw new Error(`HTTP 400: Bad Request (Likely invalid Series ID or Parameters). FRED says: ${errorText}`);
+      if (response.status === 400 || response.status === 403 || response.status === 401) {
+        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
       }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error: any) {
       lastError = error;
-      console.warn(`Attempt ${i + 1} failed: ${error.message}`);
     }
   }
-  throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
+  throw lastError || new Error(`Failed to fetch ${url}`);
 }
 
+// --- MAIN FUNCTION ---
 Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  const startTime = Date.now();
+  const runtimeBudget = 50000; // 50s total budget
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // Start logging
   const logId = await logIngestionStart(supabase, 'ingest-fred');
 
   try {
     const fredApiKey = Deno.env.get('FRED_API_KEY');
-
-    if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
+    if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
     // 1. Resolve FRED source_id
-    const { data: source, error: sourceError } = await supabase
-      .from('data_sources')
-      .select('id')
-      .eq('name', 'FRED')
-      .single();
+    const { data: source } = await supabase.from('data_sources').select('id').eq('name', 'FRED').single();
+    if (!source) throw new Error('FRED source not found');
 
-    if (sourceError || !source) throw new Error('FRED data source not found');
-    const sourceId = source.id;
-
-    // 2. Identify target metrics from FRED
-    const { data: metrics, error: metricsError } = await supabase
+    // 2. Prioritize stale metrics
+    const { data: metrics } = await supabase
       .from('metrics')
-      .select('id, metadata')
-      .eq('source_id', sourceId)
-      .eq('is_active', true);
+      .select('id, metadata, updated_at')
+      .eq('source_id', source.id)
+      .eq('is_active', true)
+      .order('updated_at', { ascending: true, nullsFirst: true });
 
-    if (metricsError) throw metricsError;
-    if (!metrics || metrics.length === 0) {
-      const msg = 'No active FRED metrics';
-      await logIngestionEnd(supabase, logId, 'success', { metadata: { message: msg } });
-      return new Response(JSON.stringify({ message: msg }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    const targetMetrics = metrics?.filter((m: any) => (m.metadata as any)?.fred_id) || [];
 
-    // 3. Identify target metrics from FRED (anything with fred_id in metadata)
-    const targetMetrics = metrics.filter((m: any) => (m.metadata as any)?.fred_id);
-
-    const summary: any = {
-      total_attempted: targetMetrics.length,
-      success_count: 0,
-      error_count: 0,
-      details: []
-    };
-
-    let totalInserted = 0;
+    let successCount = 0;
+    let totalRows = 0;
+    const processedMetrics = [];
 
     for (const metric of targetMetrics) {
+      // Check time budget
+      if (Date.now() - startTime > runtimeBudget) {
+        console.log('Runtime budget exceeded, stopping early');
+        break;
+      }
+
       const fredId = (metric.metadata as any).fred_id;
+      const fredUnits = (metric.metadata as any)?.fred_units;
+      const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
+      const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=500${unitsParam}`;
 
       try {
-        // Use timeout guard for per-metric processing (45 seconds)
-        await withTimeout((async () => {
-          // A. Get latest date in DB to skip if current
-          const { data: latestObs } = await supabase
-            .from('metric_observations')
-            .select('as_of_date')
-            .eq('metric_id', metric.id)
-            .order('as_of_date', { ascending: false })
-            .limit(1)
-            .maybeSingle();
+        const response = await withTimeout(fetchWithRetry(url), 15000, `FRED Fetch ${fredId}`);
+        const data = await response.json();
 
-          const lastDate = latestObs?.as_of_date;
-          console.log(`[FRED] ${fredId}: Last DB date = ${lastDate || 'none'}`);
+        const observations = (data.observations || [])
+          .map((obs: any) => ({
+            metric_id: metric.id,
+            as_of_date: obs.date,
+            value: parseFloat(obs.value),
+            last_updated_at: new Date().toISOString()
+          }))
+          .filter((obs: any) => !isNaN(obs.value));
 
-          // B. Fetch from FRED (high limit to ensure 25-year backfill for Z-scores)
-          const fredUnits = (metric.metadata as any)?.fred_units;
-          const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
-          const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=500${unitsParam}`;
-
-          const response = await fetchWithRetry(fredUrl);
-          const data = await response.json();
-
-          if (!data.observations || !Array.isArray(data.observations)) {
-            throw new Error(`Invalid response from FRED for ${fredId}`);
-          }
-
-          console.log(`[FRED] ${fredId}: Received ${data.observations.length} observations from API`);
-
-          // C. Normalize and filter
-          const observations = data.observations
-            .map((obs: any) => ({
-              metric_id: metric.id,
-              as_of_date: obs.date,
-              value: parseFloat(obs.value),
-              last_updated_at: new Date().toISOString()
-            }))
-            .filter((obs: any) => {
-              const isValid = !isNaN(obs.value);
-              if (!isValid) console.log(`[FRED] ${fredId}: Skipping invalid value for ${obs.as_of_date}`);
-              return isValid;
-            });
-
-          if (observations.length === 0) {
-            console.log(`[FRED] ${fredId}: Already up to date, skipping upsert`);
-            summary.details.push({ metric: metric.id, status: 'skipped', message: 'Already up to date' });
-            return;
-          }
-
-          // D. Idempotent UPSERT
+        if (observations.length > 0) {
           const { error: upsertError } = await supabase
             .from('metric_observations')
             .upsert(observations, { onConflict: 'metric_id, as_of_date' });
-
           if (upsertError) throw upsertError;
 
-          totalInserted += observations.length;
-          summary.success_count++;
-          summary.details.push({
-            metric: metric.id,
-            fred_id: fredId,
-            status: 'success',
-            inserted: observations.length
-          });
-        })(), 45000, `FRED Ingestion for ${fredId}`);
+          // Update metric timestamp
+          await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
 
+          totalRows += observations.length;
+        }
+
+        successCount++;
+        processedMetrics.push(metric.id);
       } catch (err: any) {
-        summary.error_count++;
-        summary.details.push({
-          metric: metric.id,
-          fred_id: fredId,
-          status: 'error',
-          error: err.message
-        });
-        console.error(`Error processing ${metric.id} (${fredId}):`, err);
+        console.error(`Error processing ${metric.id}: ${err.message}`);
       }
     }
 
-    // Log final results
-    await logIngestionEnd(supabase, logId, 'success', {
-      rows_inserted: totalInserted,
-      metadata: { summary }
-    });
+    const stats = {
+      attempted: targetMetrics.length,
+      successful: successCount,
+      rows: totalRows,
+      processed: processedMetrics,
+      runtime_ms: Date.now() - startTime
+    };
 
-    return new Response(JSON.stringify(summary), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: summary.error_count === summary.total_attempted ? 500 : 200
-    });
+    await logIngestionEnd(supabase, logId, 'success', { rows_inserted: totalRows, metadata: stats });
+    return new Response(JSON.stringify(stats), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error: any) {
-    console.error('Master ingestion error:', error);
-    await sendSlackAlert(`GraphiQuestor ingestion failed: ingest-fred - ${error.message}`);
-
-    // Ensure log end is recorded
-    try {
-      if (logId) {
-        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-      }
-    } catch (logErr) {
-      console.error('Failed to log ingestion end:', logErr);
-    }
-
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    if (logId) await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
+    return new Response(JSON.stringify({ error: error.message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 });
   }
 });
-

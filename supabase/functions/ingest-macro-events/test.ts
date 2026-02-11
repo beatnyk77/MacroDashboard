@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.211.0/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import { mapFinnhubEvent } from "./utils.ts";
 
 Deno.test("mapFinnhubEvent - maps high impact USD event correctly", () => {

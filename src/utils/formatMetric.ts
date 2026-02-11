@@ -81,7 +81,7 @@ export const formatDelta = (
     delta: number | null | undefined,
     options: { threshold?: number; unit?: string; decimals?: number } = {}
 ): string | null => {
-    const { threshold = 0.01, unit = '', decimals = 2 } = options;
+    const { threshold = 0.00001, unit = '', decimals = 2 } = options;
 
     if (delta == null || Math.abs(delta) < threshold) return null;
 

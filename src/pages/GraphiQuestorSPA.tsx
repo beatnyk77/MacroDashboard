@@ -12,6 +12,8 @@ import { SPASection, SPAAccordion } from '@/components/spa';
 import { SectionHeader } from '@/components/SectionHeader';
 import { DataHealthTicker } from '@/components/DataHealthTicker';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { trackSectionView } from '@/lib/analytics';
+import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 
 // Lazy load heavy sections
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
@@ -23,8 +25,7 @@ const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/component
 const HardAssetValuationSection = lazy(() => import('@/features/dashboard/components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
 const GoldValuationStrip = lazy(() => import('@/features/dashboard/components/sections/GoldValuationStrip').then(m => ({ default: m.GoldValuationStrip })));
 const GoldReturnsSection = lazy(() => import('@/features/dashboard/components/sections/GoldReturnsSection'));
-const BRICSTrackerSection = lazy(() => import('@/features/dashboard/components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
-const DeDollarizationSection = lazy(() => import('@/features/dashboard/components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
+const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
 const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -48,6 +49,21 @@ const LoadingFallback = () => (
  * Desktop-first design with full-width stacked cards and scroll-triggered animations.
  */
 export const GraphiQuestorSPA: React.FC = () => {
+    React.useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    trackSectionView(entry.target.id);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const sections = document.querySelectorAll('section[id]');
+        sections.forEach(s => observer.observe(s));
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <Container maxWidth={false} disableGutters sx={{ py: 4 }}>
             <div className="space-y-16 lg:space-y-24">
@@ -170,19 +186,11 @@ export const GraphiQuestorSPA: React.FC = () => {
                             accentColor="rose"
                             defaultOpen={true}
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <SectionErrorBoundary name="De-Dollarization">
-                                    <Suspense fallback={<LoadingFallback />}>
-                                        <DeDollarizationSection />
-                                    </Suspense>
-                                </SectionErrorBoundary>
-
-                                <SectionErrorBoundary name="BRICS Tracker">
-                                    <Suspense fallback={<LoadingFallback />}>
-                                        <BRICSTrackerSection />
-                                    </Suspense>
-                                </SectionErrorBoundary>
-                            </div>
+                            <SectionErrorBoundary name="Global Reserve Tracker">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GlobalReserveTracker />
+                                </Suspense>
+                            </SectionErrorBoundary>
 
 
                             <SectionErrorBoundary name="Trade Flows">
@@ -320,6 +328,11 @@ export const GraphiQuestorSPA: React.FC = () => {
                             </div>
                         </SPAAccordion>
                     </div>
+                </SPASection>
+
+                {/* FINAL ROW: FEEDBACK & COMMUNITY */}
+                <SPASection id="feedback" className="pb-32" disableAnimation>
+                    <FeedbackSection />
                 </SPASection>
 
             </div>

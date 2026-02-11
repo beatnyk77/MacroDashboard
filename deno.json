@@ -1,11 +1,7 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "lib": [
-            "deno.window",
-            "deno.ns"
-        ]
-    },
+    "workspace": [
+        "./supabase/functions"
+    ],
     "imports": {
         "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.8",
         "@std/assert": "https://deno.land/std@0.211.0/assert/mod.ts"

@@ -95,7 +95,10 @@ export function useSankeyFlows() {
 
             nodeMetrics.forEach((metricId, idx) => {
                 const metric = metricsData?.find(m => m.metric_id === metricId);
-                const category = metric?.category || 'capital_flows';
+                let rawCategory = metric?.category || 'capital_flows';
+
+                // Consistency fix: Normalize category string to match CATEGORY_COLORS keys
+                const category = rawCategory.toLowerCase().replace(/\s+/g, '_') as SankeyNode['category'];
 
                 nodeMap.set(metricId, {
                     index: idx,

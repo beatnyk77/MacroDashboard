@@ -2,6 +2,12 @@ import { RefreshCw, Wifi } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const DataHealthBanner: React.FC = () => {
     const { data: healthIssues, isLoading } = useQuery({
@@ -52,19 +58,32 @@ export const DataHealthBanner: React.FC = () => {
                 </div>
 
                 {!isHealthy && (
-                    <div className="flex items-center gap-3 pl-4 border-l border-white/5">
-                        <span className="text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest">
-                            Lag detected in {healthIssues.length} feeds
+                    <div className="flex flex-col md:flex-row md:items-center gap-3 pl-4 border-l border-white/5">
+                        <span className="text-[0.6rem] font-bold text-amber-500/80 uppercase tracking-widest shrink-0">
+                            Stale Metrics Identified
                         </span>
-                        <div className="flex items-center gap-1">
-                            {healthIssues.slice(0, 2).map((m) => (
-                                <span key={m.id} className="text-[0.55rem] px-1.5 py-0.5 rounded bg-white/5 text-muted-foreground/40 font-black">
-                                    {m.id}
-                                </span>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                            {healthIssues.slice(0, 3).map((m) => (
+                                <TooltipProvider key={m.id}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="text-[0.55rem] px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 font-black cursor-help transition-colors hover:bg-amber-500/20">
+                                                {m.id}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="bg-slate-950 border-white/10 p-2">
+                                            <div className="text-[0.6rem] space-y-1">
+                                                <p className="font-bold text-white">{m.name}</p>
+                                                <p className="text-muted-foreground">Last updated: {m.last_updated_at ? new Date(m.last_updated_at).toLocaleString() : 'Never'}</p>
+                                                <p className="text-amber-400">Expected every {m.expected_interval_days} days</p>
+                                            </div>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             ))}
-                            {healthIssues.length > 2 && (
-                                <span className="text-[0.55rem] text-muted-foreground/20 font-black">
-                                    +{healthIssues.length - 2}
+                            {healthIssues.length > 3 && (
+                                <span className="text-[0.55rem] text-muted-foreground/40 font-black px-1">
+                                    +{healthIssues.length - 3} more
                                 </span>
                             )}
                         </div>

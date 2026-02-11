@@ -3,13 +3,14 @@ import { Container, Box } from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { trackSectionView, trackClick } from '@/lib/analytics';
+import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 
 // Lazy load heavy sections
 const HardAssetValuationSection = lazy(() => import('../components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
 const GoldValuationStrip = lazy(() => import('../components/sections/GoldValuationStrip').then(m => ({ default: m.GoldValuationStrip })));
 const GoldReturnsSection = lazy(() => import('../components/sections/GoldReturnsSection'));
-const BRICSTrackerSection = lazy(() => import('../components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
-const DeDollarizationSection = lazy(() => import('../components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
+const GlobalReserveTracker = lazy(() => import('../components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
 const InstitutionalInfluenceSection = lazy(() => import('../components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
 const TradeSettlementFlows = lazy(() => import('../components/sections/TradeSettlementFlows').then(m => ({ default: m.TradeSettlementFlows })));
 const SovereignRiskMatrix = lazy(() => import('../components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -22,6 +23,21 @@ const LoadingFallback = () => (
 );
 
 export const ThematicLabsView: React.FC = () => {
+    React.useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    trackSectionView(entry.target.id);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const sections = document.querySelectorAll('section[id]');
+        sections.forEach(s => observer.observe(s));
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <Container maxWidth="xl" sx={{ py: 8 }}>
             <SectionHeader
@@ -31,11 +47,11 @@ export const ThematicLabsView: React.FC = () => {
 
             <Tabs defaultValue="gold" className="space-y-12 mt-8">
                 <TabsList className="bg-background/5 border border-border/40 p-1">
-                    <TabsTrigger value="gold">Gold Anchor</TabsTrigger>
-                    <TabsTrigger value="brics">BRICS & De-Dollarization</TabsTrigger>
-                    <TabsTrigger value="boj">BoJ & Yen Pivot</TabsTrigger>
-                    <TabsTrigger value="sovereign">Sovereign Debt Stress</TabsTrigger>
-                    <TabsTrigger value="energy">Energy Security</TabsTrigger>
+                    <TabsTrigger value="gold" onClick={() => trackClick('thematic_tab_gold', 'thematic_labs')}>Gold Anchor</TabsTrigger>
+                    <TabsTrigger value="brics" onClick={() => trackClick('thematic_tab_brics', 'thematic_labs')}>BRICS & De-Dollarization</TabsTrigger>
+                    <TabsTrigger value="boj" onClick={() => trackClick('thematic_tab_boj', 'thematic_labs')}>BoJ & Yen Pivot</TabsTrigger>
+                    <TabsTrigger value="sovereign" onClick={() => trackClick('thematic_tab_sovereign', 'thematic_labs')}>Sovereign Debt Stress</TabsTrigger>
+                    <TabsTrigger value="energy" onClick={() => trackClick('thematic_tab_energy', 'thematic_labs')}>Energy Security</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="gold" className="space-y-32 outline-none">
@@ -90,16 +106,10 @@ export const ThematicLabsView: React.FC = () => {
 
                 <TabsContent value="brics" className="space-y-32 outline-none">
                     <section id="brics-alignment" className="my-16">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                            <SectionErrorBoundary name="De-Dollarization">
+                        <div className="grid grid-cols-1 gap-16">
+                            <SectionErrorBoundary name="Global Reserve Tracker">
                                 <Suspense fallback={<LoadingFallback />}>
-                                    <DeDollarizationSection />
-                                </Suspense>
-                            </SectionErrorBoundary>
-
-                            <SectionErrorBoundary name="BRICS Tracker">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <BRICSTrackerSection />
+                                    <GlobalReserveTracker />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </div>
@@ -166,6 +176,10 @@ export const ThematicLabsView: React.FC = () => {
                     </section>
                 </TabsContent>
             </Tabs>
+
+            <section id="feedback" className="mt-32 pb-16">
+                <FeedbackSection />
+            </section>
         </Container>
     );
 };

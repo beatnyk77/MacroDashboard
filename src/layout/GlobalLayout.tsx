@@ -3,7 +3,7 @@ import { Activity, Clock } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
-import { DashboardFooter } from '@/layout/DashboardFooter';
+import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { NavigationSidebar } from '@/components/NavigationSidebar';
 import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
@@ -139,7 +139,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </div>
 
             {/* Dashboard Footer with Disclaimer & Data Transparency */}
-            <DashboardFooter />
+            <InstitutionalFooter />
 
             <SocialShareMode />
             <MobileNav />

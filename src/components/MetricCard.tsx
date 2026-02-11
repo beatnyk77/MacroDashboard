@@ -8,6 +8,7 @@ import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { useViewContext } from '@/context/ViewContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils'; // Shadcn utility
+import { getStaleness } from '@/hooks/useStaleness';
 
 interface MetricCardProps {
     label: string;
@@ -44,6 +45,7 @@ interface MetricCardProps {
     chartType?: 'line' | 'bar';
     zScore?: number;
     percentile?: number;
+    isStale?: boolean;
 }
 
 export const MetricCard: React.FC<MetricCardProps> = ({
@@ -67,10 +69,15 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     stats = [],
     chartType = 'line',
     zScore,
-    percentile
+    percentile,
+    isStale: isStaleProp
 }) => {
     const { isInstitutionalView } = useViewContext();
     const [isHighlighted, setIsHighlighted] = React.useState(false);
+
+    // Calculate staleness if not explicitly provided
+    const staleness = getStaleness(lastUpdated, frequency);
+    const isStale = isStaleProp ?? (staleness.state === 'overdue' || staleness.state === 'stale');
 
     React.useEffect(() => {
         const handleHighlight = (e: any) => {
@@ -146,6 +153,11 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                     status === 'danger' && "bg-rose-500/10 text-rose-500",
                                 )}>
                                     {status.toUpperCase()}
+                                </div>
+                            )}
+                            {isStale && (
+                                <div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-[0.6rem] font-bold tracking-tight animate-pulse border border-amber-500/20">
+                                    OFFLINE
                                 </div>
                             )}
                         </div>

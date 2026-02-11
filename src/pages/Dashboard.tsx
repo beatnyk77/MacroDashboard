@@ -13,6 +13,8 @@ import { SPASection, SPAAccordion } from '@/components/spa';
 import { SectionHeader } from '@/components/SectionHeader';
 import { DataHealthTicker } from '@/components/DataHealthTicker';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { trackSectionView } from '@/lib/analytics';
+import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
@@ -22,12 +24,12 @@ const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/Cockpi
 const SankeyFlowCard = lazy(() => import('@/features/dashboard/components/sections/SankeyFlowCard').then(m => ({ default: m.SankeyFlowCard })));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 const GeopoliticalRiskPulseCard = lazy(() => import('@/features/dashboard/components/sections/GeopoliticalRiskPulseCard').then(m => ({ default: m.GeopoliticalRiskPulseCard })));
+const MacroEconomicCalendar = lazy(() => import('@/features/dashboard/components/sections/MacroEconomicCalendar').then(m => ({ default: m.MacroEconomicCalendar })));
 
 // Thematic Labs
 const HardAssetValuationSection = lazy(() => import('@/features/dashboard/components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
-const BRICSTrackerSection = lazy(() => import('@/features/dashboard/components/sections/BRICSTrackerSection').then(m => ({ default: m.BRICSTrackerSection })));
-const DeDollarizationSection = lazy(() => import('@/features/dashboard/components/sections/DeDollarizationSection').then(m => ({ default: m.DeDollarizationSection })));
+const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const EnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/EnergySecuritySection').then(m => ({ default: m.EnergySecuritySection })));
@@ -44,6 +46,21 @@ const LoadingFallback = () => (
 );
 
 export const Dashboard: React.FC = () => {
+    React.useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    trackSectionView(entry.target.id);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const sections = document.querySelectorAll('section[id]');
+        sections.forEach(s => observer.observe(s));
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <Container maxWidth={false} disableGutters sx={{ py: 4 }}>
             <div className="space-y-24">
@@ -119,6 +136,14 @@ export const Dashboard: React.FC = () => {
                             </SectionErrorBoundary>
                         </SPAAccordion>
                     </div>
+
+                    <div className="mt-12">
+                        <SectionErrorBoundary name="Economic Calendar">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <MacroEconomicCalendar />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                 </SPASection>
 
                 {/* ROW 5: THEMATIC LABS */}
@@ -167,18 +192,11 @@ export const Dashboard: React.FC = () => {
                             ]}
                         >
                             <div className="space-y-8">
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                    <SectionErrorBoundary name="De-Dollarization">
-                                        <Suspense fallback={<LoadingFallback />}>
-                                            <DeDollarizationSection />
-                                        </Suspense>
-                                    </SectionErrorBoundary>
-                                    <SectionErrorBoundary name="BRICS Tracker">
-                                        <Suspense fallback={<LoadingFallback />}>
-                                            <BRICSTrackerSection />
-                                        </Suspense>
-                                    </SectionErrorBoundary>
-                                </div>
+                                <SectionErrorBoundary name="Global Reserve Tracker">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <GlobalReserveTracker />
+                                    </Suspense>
+                                </SectionErrorBoundary>
                                 <SectionErrorBoundary name="Trade Flows">
                                     <Suspense fallback={<LoadingFallback />}>
                                         <TradeFlowsCard />
@@ -238,12 +256,9 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 6: COUNTRY PULSES */}
                 <SPASection id="country-pulses" className="py-24" disableAnimation>
-                    <SectionHeader
-                        title="Regional Pulse Terminals"
-                        subtitle="Institutional high-frequency coverage of India and China regional macro"
-                    />
-
+                    {/* ... existing content ... */}
                     <div className="mt-16 space-y-12">
+                        {/* India Pulse */}
                         <SPAAccordion
                             id="india-pulse"
                             title="India Macro Pulse"
@@ -263,6 +278,7 @@ export const Dashboard: React.FC = () => {
                             </SectionErrorBoundary>
                         </SPAAccordion>
 
+                        {/* China Pulse */}
                         <SPAAccordion
                             id="china-pulse"
                             title="China Pulse"
@@ -279,8 +295,13 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </SPASection>
 
-            </div>
-        </Container>
+                {/* FINAL ROW: FEEDBACK & COMMUNITY */}
+                <SPASection id="feedback" className="pb-32" disableAnimation>
+                    <FeedbackSection />
+                </SPASection>
+
+            </div >
+        </Container >
     );
 };
 
