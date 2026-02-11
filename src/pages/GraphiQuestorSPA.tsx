@@ -78,6 +78,7 @@ export const GraphiQuestorSPA: React.FC = () => {
                             title="Macro Heartbeat"
                             subtitle="High-frequency liquidity and regime signals"
                             sectionId="heartbeat"
+                            level="h1"
                         />
                         <DataHealthTicker />
                     </div>

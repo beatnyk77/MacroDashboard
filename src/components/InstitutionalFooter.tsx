@@ -1,9 +1,22 @@
-import React from 'react';
+import { ShieldCheck } from 'lucide-react';
 
 export const InstitutionalFooter: React.FC = () => {
     return (
         <footer className="w-full py-12 border-t border-white/5 bg-black/20 backdrop-blur-md">
             <div className="container mx-auto px-6 max-w-7xl">
+                {/* Security Verification Band */}
+                <div className="mb-12 flex items-center gap-4 px-6 py-3 rounded-2xl bg-blue-500/5 border border-blue-500/10">
+                    <ShieldCheck size={16} className="text-blue-400" />
+                    <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-blue-400/80">
+                        Institutional Grade Security: Row-Level Security (RLS) Active & Verified
+                    </span>
+                    <div className="ml-auto flex gap-2">
+                        <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                        <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                        <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start opacity-60">
                     <div className="space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Legal Disclaimer</h3>

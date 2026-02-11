@@ -16,6 +16,7 @@ interface SectionHeaderProps {
     icon?: React.ReactNode;
     action?: React.ReactNode;
     sectionId?: string;
+    level?: 'h1' | 'h2';
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -25,19 +26,21 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     onRefresh,
     isLoading,
     lastUpdated,
-    sectionId
+    sectionId,
+    level = 'h2'
 }) => {
     const dynamicInterpretations = useRegimeInterpretations(sectionId || '');
     const activeInterpretations = interpretations || (sectionId ? dynamicInterpretations : []);
+    const HeadingTag = level;
 
     return (
         <div className="flex flex-col gap-6 mb-12 group">
             <div className="flex items-end justify-between border-l-4 border-blue-500 pl-6 py-2">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground uppercase leading-none">
+                        <HeadingTag className="text-3xl md:text-4xl font-black tracking-tighter text-foreground uppercase leading-none">
                             {title}
-                        </h2>
+                        </HeadingTag>
                         {lastUpdated && (
                             <div className="hidden md:block">
                                 <DataQualityBadge timestamp={lastUpdated} size="small" />

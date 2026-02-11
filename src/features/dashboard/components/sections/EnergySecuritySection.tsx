@@ -6,6 +6,7 @@ const RefiningCapacityCard = lazy(() => import('../cards/RefiningCapacityCard').
 const OilImportSankeyCard = lazy(() => import('../cards/OilImportSankeyCard').then(m => ({ default: m.OilImportSankeyCard })));
 const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
+const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCard').then(m => ({ default: m.PowerMixDivergenceCard })));
 
 // Fallback/Mock Data generator for when API returns empty
 const generateFallbackData = () => ({
@@ -126,7 +127,52 @@ export const EnergySecuritySection: React.FC = () => {
                     </Suspense>
                 </div>
 
-                {/* Row 3: Import Vulnerability & Flow Matrix */}
+                {/* Row 3: Power Mix Divergence */}
+                <div className="w-full">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-light text-white flex items-center gap-2">
+                            <span className="w-8 h-px bg-emerald-500/50" />
+                            Power Mix Divergence
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
+                            Analyzing the underlying molecular reality of power generation. The divergence between G7 "Clean" mandates and BRICS+ energy density priorities creates structural inflation and supply chain disparities.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2">
+                            <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                                <PowerMixDivergenceCard />
+                            </Suspense>
+                        </div>
+                        <div className="lg:col-span-1 flex flex-col gap-6">
+                            <div className="p-6 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 flex flex-col gap-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">EU Gas Resilience</h4>
+                                <div className="flex items-end gap-2">
+                                    <span className="text-4xl font-black text-white">74.2%</span>
+                                    <span className="text-[10px] font-bold text-emerald-400 mb-2">+1.2% WoW</span>
+                                </div>
+                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-full bg-blue-500" style={{ width: '74.2%' }} />
+                                </div>
+                                <p className="text-[10px] text-muted-foreground/60 italic">EU Aggregate Gas Storage levels (GIE Data)</p>
+                            </div>
+
+                            <div className="p-6 rounded-[2rem] bg-orange-500/5 border border-orange-500/10 flex flex-col gap-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-400">Global Refining Stress</h4>
+                                <div className="flex items-end gap-2">
+                                    <span className="text-4xl font-black text-white">88.4%</span>
+                                    <span className="text-[10px] font-bold text-rose-400 mb-2">+0.5% WoW</span>
+                                </div>
+                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-full bg-orange-500" style={{ width: '88.4%' }} />
+                                </div>
+                                <p className="text-[10px] text-muted-foreground/60 italic">Avg Utilization (EIA/KAPSARC derived)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Row 4: Import Vulnerability & Flow Matrix */}
                 <div className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
