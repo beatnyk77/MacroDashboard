@@ -18,7 +18,7 @@ interface FailedIngestion {
     start_time: string;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
         const { data: staleMetrics, error: staleError } = await supabaseClient
             .from('vw_data_staleness_monitor')
             .select('metric_id, metric_name, days_since_update, status')
-            .gt('days_since_update', 30)
+            .gt('days_since_since_update', 30)
 
         if (staleError) throw staleError
 
@@ -75,11 +75,11 @@ Deno.serve(async (req) => {
                             <hr/>
                             <h3>Stale Metrics (>30 days): ${staleMetrics?.length ?? 0}</h3>
                             <ul>
-                                ${staleMetrics?.map(m => `<li>${m.metric_name} (${m.metric_id}): ${m.days_since_update} days since update</li>`).join('')}
+                                ${(staleMetrics as StaleMetric[])?.map(m => `<li>${m.metric_name} (${m.metric_id}): ${m.days_since_update} days since update</li>`).join('')}
                             </ul>
                             <h3>Failed Ingestions (Last 24h): ${failedIngestions?.length ?? 0}</h3>
                             <ul>
-                                ${failedIngestions?.map(f => `<li>${f.function_name}: ${f.error_message} (${new Date(f.start_time).toLocaleString()})</li>`).join('')}
+                                ${(failedIngestions as FailedIngestion[])?.map(f => `<li>${f.function_name}: ${f.error_message} (${new Date(f.start_time).toLocaleString()})</li>`).join('')}
                             </ul>
                             <p><a href="https://graphiquestor.com">View Dashboard</a></p>
                         `
@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
             status: 200,
         })
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Health check failed:', error)
         return new Response(JSON.stringify({ error: error.message }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
