@@ -4,6 +4,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 
 const RefiningCapacityCard = lazy(() => import('../cards/RefiningCapacityCard').then(m => ({ default: m.RefiningCapacityCard })));
 const OilImportSankeyCard = lazy(() => import('../cards/OilImportSankeyCard').then(m => ({ default: m.OilImportSankeyCard })));
+const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({ default: m.OilFlowsSankey })));
 const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
 const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCard').then(m => ({ default: m.PowerMixDivergenceCard })));
@@ -21,7 +22,11 @@ const generateFallbackData = () => ({
     importData: [
         { importer_country_code: 'USA', exporter_country_code: 'CAN', import_volume_mbbl: 4500, as_of_date: '2025-01-01', frequency: 'Monthly' },
         { importer_country_code: 'USA', exporter_country_code: 'MEX', import_volume_mbbl: 650, as_of_date: '2025-01-01', frequency: 'Monthly' },
-        { importer_country_code: 'USA', exporter_country_code: 'SAU', import_volume_mbbl: 320, as_of_date: '2025-01-01', frequency: 'Monthly' }
+        { importer_country_code: 'USA', exporter_country_code: 'SAU', import_volume_mbbl: 320, as_of_date: '2025-01-01', frequency: 'Monthly' },
+        { importer_country_code: 'IN', exporter_country_code: 'RU', exporter_country_name: 'Russia', import_volume_mbbl: 1800, as_of_date: '2024-01-01', frequency: 'Annual' },
+        { importer_country_code: 'IN', exporter_country_code: 'IQ', exporter_country_name: 'Iraq', import_volume_mbbl: 900, as_of_date: '2024-01-01', frequency: 'Annual' },
+        { importer_country_code: 'CN', exporter_country_code: 'RU', exporter_country_name: 'Russia', import_volume_mbbl: 2200, as_of_date: '2024-01-01', frequency: 'Annual' },
+        { importer_country_code: 'CN', exporter_country_code: 'SA', exporter_country_name: 'Saudi Arabia', import_volume_mbbl: 1500, as_of_date: '2024-01-01', frequency: 'Annual' }
     ] as any[],
     capacityData: []
 });
@@ -170,6 +175,22 @@ export const EnergySecuritySection: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Row 3.5: Asia Commodity Flows */}
+                <div className="w-full">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-light text-white flex items-center gap-2">
+                            <span className="w-8 h-px bg-emerald-500/50" />
+                            Asia Commodity Flow Dynamics
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
+                            Visualizing the molecular shift toward the East. Tracking Crude Oil import origins for India and China identifies emerging trade corridors and energy density dependencies.
+                        </p>
+                    </div>
+                    <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                        <OilFlowsSankey data={data.importData} isLoading={false} />
+                    </Suspense>
                 </div>
 
                 {/* Row 4: Import Vulnerability & Flow Matrix */}

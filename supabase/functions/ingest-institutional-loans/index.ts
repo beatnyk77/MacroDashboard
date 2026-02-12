@@ -41,13 +41,15 @@ Deno.serve(async (req: Request) => {
         const regions = [
             { id: 'AFR', label: 'Africa' },
             { id: 'EAS', label: 'SE_Asia' },
-            { id: 'LCN', label: 'Latin_America' }
+            { id: 'LCN', label: 'Latin_America' },
+            { id: 'IND', label: 'India' } // Added India specifically
         ];
 
         const brackets = [
             { id: 'LIC', label: 'Low' },
             { id: 'LMC', label: 'Lower_Middle' },
-            { id: 'UMC', label: 'Upper_Middle' }
+            { id: 'UMC', label: 'Upper_Middle' },
+            { id: 'NA', label: 'Not_Applicable' } // Added bracket for India specific fetch
         ];
 
         const loanData: any[] = [];

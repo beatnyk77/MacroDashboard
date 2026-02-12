@@ -2,10 +2,12 @@ import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { IndiaASIMap, ASIMapMetric } from '../maps/IndiaASIMap';
 import { useIndiaASI, StateASIStats } from '@/hooks/useIndiaASI';
-import { Factory, Users, TrendingUp, ChevronRight, Activity, Globe } from 'lucide-react';
+import { useGeopoliticalExposure } from '@/hooks/useGeopoliticalExposure';
+import { Factory, Users, TrendingUp, ChevronRight, Activity, Globe, DollarSign } from 'lucide-react';
 
 export const ASISection: React.FC = () => {
     const { data, isLoading, error } = useIndiaASI();
+    const { data: geoData } = useGeopoliticalExposure();
     const [selectedMetric, setSelectedMetric] = useState<ASIMapMetric>('total_gva');
     const [rankingMetric, setRankingMetric] = useState<'total_gva' | 'total_employment' | 'avg_capacity_utilization'>('total_gva');
     const [selectedState, setSelectedState] = useState<StateASIStats | null>(null);
@@ -33,15 +35,19 @@ export const ASISection: React.FC = () => {
     const nationalEmployment = (data || []).reduce((sum, s) => sum + s.total_employment, 0);
     const avgCapacityUtil = (data || []).reduce((sum, s) => sum + s.avg_capacity_utilization, 0) / (data?.length || 1);
 
+    const nationalEfficiency = (geoData || []).reduce((sum, s) => sum + s.loan_job_multiplier, 0) / (geoData?.length || 1);
+
     const activeStats = selectedState ? {
         gva: selectedState.total_gva,
         employment: selectedState.total_employment,
         capacity: selectedState.avg_capacity_utilization,
+        efficiency: geoData?.find(s => s.state_code === selectedState.state_code)?.loan_job_multiplier || 0,
         title: selectedState.state_name
     } : {
         gva: nationalGVA,
         employment: nationalEmployment,
         capacity: avgCapacityUtil,
+        efficiency: nationalEfficiency,
         title: "All India Aggregates"
     };
 
@@ -153,13 +159,31 @@ export const ASISection: React.FC = () => {
                                 </div>
                             </div>
                             <div className="col-span-2 space-y-1.5 pt-4 border-t border-white/5">
-                                <div className="flex items-center gap-2 opacity-40">
-                                    <TrendingUp className="w-3 h-3" />
-                                    <span className="text-[0.55rem] font-black uppercase">Capacity Utilization</span>
-                                </div>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-2xl font-black text-emerald-500 font-mono tracking-tighter">{activeStats.capacity.toFixed(1)}%</span>
-                                    <span className="text-[0.6rem] font-bold text-emerald-500/40 uppercase italic tracking-widest pl-2">Nominal Alpha</span>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2 opacity-40">
+                                            <TrendingUp className="w-3 h-3" />
+                                            <span className="text-[0.55rem] font-black uppercase">Capacity Utilization</span>
+                                        </div>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-2xl font-black text-emerald-500 font-mono tracking-tighter">{activeStats.capacity.toFixed(1)}%</span>
+                                        </div>
+                                    </div>
+
+                                    {activeStats.efficiency > 0 && (
+                                        <div className="space-y-1.5 text-right">
+                                            <div className="flex items-center gap-2 opacity-40 justify-end">
+                                                <DollarSign className="w-3 h-3 text-emerald-500" />
+                                                <span className="text-[0.55rem] font-black uppercase">Job Cost Efficiency</span>
+                                            </div>
+                                            <div className="flex items-baseline gap-1 justify-end">
+                                                <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
+                                                    ${Math.round(activeStats.efficiency).toLocaleString()}
+                                                </span>
+                                                <span className="text-[0.5rem] font-bold text-emerald-400/40 uppercase tracking-widest pl-1">/ JOB</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

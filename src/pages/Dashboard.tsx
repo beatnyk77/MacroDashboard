@@ -23,8 +23,9 @@ import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidi
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
 const SankeyFlowCard = lazy(() => import('@/features/dashboard/components/sections/SankeyFlowCard').then(m => ({ default: m.SankeyFlowCard })));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
-const GeopoliticalRiskPulseCard = lazy(() => import('@/features/dashboard/components/sections/GeopoliticalRiskPulseCard').then(m => ({ default: m.GeopoliticalRiskPulseCard })));
-const MacroEconomicCalendar = lazy(() => import('@/features/dashboard/components/sections/MacroEconomicCalendar').then(m => ({ default: m.MacroEconomicCalendar })));
+const GeopoliticalRiskPulseCard = lazy(() => import('../features/dashboard/components/sections/GeopoliticalRiskPulseCard').then(m => ({ default: m.GeopoliticalRiskPulseCard })));
+const EventsMap = lazy(() => import('../features/dashboard/components/maps/EventsMap').then(m => ({ default: m.EventsMap })));
+const MacroEconomicCalendar = lazy(() => import('../features/dashboard/components/sections/MacroEconomicCalendar').then(m => ({ default: m.MacroEconomicCalendar })));
 
 // Thematic Labs
 const HardAssetValuationSection = lazy(() => import('@/features/dashboard/components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
@@ -130,11 +131,18 @@ export const Dashboard: React.FC = () => {
                             icon={<Globe2 className="text-blue-500" />}
                             accentColor="blue"
                         >
-                            <SectionErrorBoundary name="Geopolitics Card">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GeopoliticalRiskPulseCard />
-                                </Suspense>
-                            </SectionErrorBoundary>
+                            <div className="space-y-8">
+                                <SectionErrorBoundary name="Geopolitics Card">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <GeopoliticalRiskPulseCard />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                                <SectionErrorBoundary name="Geopolitical Map">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <EventsMap />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                            </div>
                         </SPAAccordion>
                     </div>
 
