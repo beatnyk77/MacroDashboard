@@ -41,7 +41,16 @@ export const InstitutionalFooter: React.FC = () => {
                     <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.3em]">
                         © 2026 GraphiQuestor. PRO-SERIES TERMINAL.
                     </span>
-                    <div className="flex gap-4">
+                    <div className="flex items-center gap-4">
+                        <a
+                            href="/rss.xml"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors flex items-center gap-1.5"
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500/40" />
+                            Subscribe via RSS
+                        </a>
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20" />
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
                         <div className="w-1.5 h-1.5 rounded-full bg-rose-500/20" />

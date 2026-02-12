@@ -6,7 +6,8 @@ import {
     Building2,
     Coins,
     Globe,
-    BookOpen
+    BookOpen,
+    Rss
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -116,6 +117,18 @@ export const NavigationSidebar: React.FC = () => {
                         <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" />
                         <span className="text-xs font-semibold text-muted-foreground">Danger</span>
                     </div>
+                </div>
+
+                <div className="mt-8">
+                    <a
+                        href="/rss.xml"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-3 px-4 py-2 rounded-lg text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-orange-400 hover:bg-orange-500/5 transition-all duration-300 border border-transparent hover:border-orange-500/10"
+                    >
+                        <Rss size={14} className="text-muted-foreground/40 group-hover:text-orange-500" />
+                        Subscribe via RSS
+                    </a>
                 </div>
             </div>
         </aside>
