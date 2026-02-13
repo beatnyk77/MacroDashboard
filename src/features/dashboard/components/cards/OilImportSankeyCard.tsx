@@ -119,7 +119,11 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
                     <div className="flex items-center gap-3">
                         <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5">
                             <span className={cn("w-1.5 h-1.5 rounded-full", sankeyData.latestDate ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
-                            AS OF {new Date(sankeyData.latestDate || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}
+                            {sankeyData.latestDate ? (
+                                `AS OF ${new Date(sankeyData.latestDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}`
+                            ) : (
+                                "SYNCING METRIC FEEDS..."
+                            )}
                         </span>
                     </div>
                 </div>
