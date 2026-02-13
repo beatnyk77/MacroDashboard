@@ -12,6 +12,7 @@ import { CopperGoldRatioCard } from '../cards/CopperGoldRatioCard';
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { formatNumber } from '@/utils/formatNumber';
 import { MotionCard } from '@/components/MotionCard';
+import { GlobalNetLiquidityHistoricalChart } from '../charts/GlobalNetLiquidityHistoricalChart';
 
 export const GlobalLiquiditySection: React.FC = () => {
     const { data: m2, isLoading: m2Loading } = useLatestMetric('US_M2');
@@ -102,6 +103,12 @@ export const GlobalLiquiditySection: React.FC = () => {
 
                 <Grid item xs={12}>
                     <MotionCard delay={0.8}>
+                        <GlobalNetLiquidityHistoricalChart />
+                    </MotionCard>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <MotionCard delay={0.9}>
                         <CreditCreationPulseCard />
                     </MotionCard>
                 </Grid>
@@ -109,3 +116,4 @@ export const GlobalLiquiditySection: React.FC = () => {
         </Box>
     );
 };
+

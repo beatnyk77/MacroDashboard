@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Container, Box } from '@mui/material';
+import { Container } from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
 import { DataHealthTicker } from '@/components/DataHealthTicker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,7 @@ const CockpitKPIGrid = lazy(() => import('../components/CockpitKPIGrid').then(m 
 const NetLiquidityCard = lazy(() => import('../components/cards/NetLiquidityCard').then(m => ({ default: m.NetLiquidityCard })));
 const MacroOrientationSection = lazy(() => import('@/features/dashboard/components/sections/MacroOrientationSection').then(m => ({ default: m.MacroOrientationSection })));
 const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquiditySection').then(m => ({ default: m.GlobalLiquiditySection })));
+const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -27,7 +28,7 @@ export const DashboardView: React.FC = () => {
             <Tabs defaultValue="heartbeat" className="space-y-8">
                 <TabsList className="bg-muted/20 border border-border/40 p-1 rounded-lg">
                     <TabsTrigger value="heartbeat" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Macro Heartbeat</TabsTrigger>
-                    <TabsTrigger value="flow-map" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">Interstate Flow Map</TabsTrigger>
+                    <TabsTrigger value="flow-map" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">US Macro Pulse</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="heartbeat" className="space-y-16 outline-none">
@@ -79,32 +80,20 @@ export const DashboardView: React.FC = () => {
                 <TabsContent value="flow-map" className="space-y-12 outline-none">
                     <section id="flow-map-container">
                         <SectionHeader
-                            title="Macro Flow Map"
+                            title="US Macro Pulse"
                             subtitle="Systemic capital flows and risk appetite"
                             interpretations={[
                                 "Cross-border capital flows into Emerging Markets are stabilizing.",
                                 "Risk appetite currently in 'Cautious' zone despite liquidity expansion."
                             ]}
                         />
-                        <Box sx={{
-                            height: 700,
-                            width: '100%',
-                            mt: 8,
-                            bgcolor: 'rgba(255,255,255,0.01)',
-                            border: '1px solid rgba(255,255,255,0.05)',
-                            borderRadius: 6,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.3s',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }} className="hover:border-blue-500/10 group bg-card/10">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent opacity-50" />
-                            <span className="text-muted-foreground/40 text-sm tracking-[0.4em] uppercase font-bold mb-4">Capital Flow Visualization</span>
-                            <span className="text-muted-foreground/20 text-xs italic">Sankey Engine Initializing...</span>
-                        </Box>
+                        <div className="mt-12">
+                            <SectionErrorBoundary name="Macro Pulse">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <USMacroPulseSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
                     </section>
                 </TabsContent>
             </Tabs>

@@ -21,7 +21,7 @@ import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidi
 
 // Lazy load feature components
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
-const SankeyFlowCard = lazy(() => import('@/features/dashboard/components/sections/SankeyFlowCard').then(m => ({ default: m.SankeyFlowCard })));
+const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 const GeopoliticalRiskPulseCard = lazy(() => import('../features/dashboard/components/sections/GeopoliticalRiskPulseCard').then(m => ({ default: m.GeopoliticalRiskPulseCard })));
 const EventsMap = lazy(() => import('../features/dashboard/components/maps/EventsMap').then(m => ({ default: m.EventsMap })));
@@ -96,15 +96,15 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* ROW 3: MACRO FLOWS (SANKEY) */}
-                <SPASection id="macro-flows" variant="band" disableAnimation>
+                <SPASection id="us-macro-pulse" variant="band" disableAnimation>
                     <SectionHeader
-                        title="Macro Flow Map"
+                        title="US Macro Pulse"
                         subtitle="Interstate capital and energy liquidity flow visualization"
                     />
                     <div className="mt-12">
-                        <SectionErrorBoundary name="Flow Map">
+                        <SectionErrorBoundary name="Macro Pulse">
                             <Suspense fallback={<LoadingFallback />}>
-                                <SankeyFlowCard />
+                                <USMacroPulseSection />
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>

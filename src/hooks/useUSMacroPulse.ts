@@ -1,0 +1,79 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+
+export interface USMacroMetricPoint {
+    date: string;
+    value: number;
+}
+
+export interface USMacroPulseData {
+    metric_id: string;
+    history: USMacroMetricPoint[];
+    current_value: number;
+    delta_yoy?: number;
+    z_score?: number;
+    percentile?: number;
+}
+
+const US_MACRO_METRICS = [
+    'CAPITAL_FROM_EM_DEBT_BN',
+    'CAPITAL_FROM_GOLD_ETF_BN',
+    'US_CPI_YOY',
+    'INFLATION_CORE_YOY',
+    'BOP_CURRENT_ACCOUNT_GDP',
+    'BOP_RESERVES_MONTHS',
+    'BOP_SHORT_TERM_DEBT_GDP',
+    'HOUSING_PRICE_INDEX',
+    'HOUSING_MORTGAGE_RATE_30Y',
+    'PMI_US_MFG',
+    'LABOR_VACANCIES_JOLTS',
+    'US_UNEMPLOYMENT',
+    'LABOR_WAGE_GROWTH_YOY'
+];
+
+export function useUSMacroPulse() {
+    return useSuspenseQuery({
+        queryKey: ['us-macro-pulse-25y'],
+        queryFn: async (): Promise<USMacroPulseData[]> => {
+            // 1. Fetch historical data (25 years = approx 1300 weeks or 300 months)
+            // To be safe and performant, we'll fetch up to 1500 points per metric in ascending order
+            const { data: historyData, error: historyError } = await supabase
+                .from('metric_observations')
+                .select('metric_id, as_of_date, value')
+                .in('metric_id', US_MACRO_METRICS)
+                .order('as_of_date', { ascending: true });
+
+            if (historyError) throw historyError;
+
+            // 2. Fetch latest stats (z-score, percentile, deltas) from vw_latest_metrics
+            const { data: latestData, error: latestError } = await supabase
+                .from('vw_latest_metrics')
+                .select('*')
+                .in('metric_id', US_MACRO_METRICS);
+
+            if (latestError) throw latestError;
+
+            // 3. Map and group
+            return US_MACRO_METRICS.map(metricId => {
+                const metricHistory = historyData
+                    ?.filter(h => h.metric_id === metricId)
+                    .map(h => ({
+                        date: h.as_of_date,
+                        value: Number(h.value)
+                    })) || [];
+
+                const latest = latestData?.find(l => l.metric_id === metricId);
+
+                return {
+                    metric_id: metricId,
+                    history: metricHistory,
+                    current_value: latest?.value || (metricHistory.length > 0 ? metricHistory[metricHistory.length - 1].value : 0),
+                    delta_yoy: latest?.delta_yoy,
+                    z_score: latest?.z_score,
+                    percentile: latest?.percentile
+                };
+            });
+        },
+        staleTime: 1000 * 60 * 60 * 24, // 24 hours
+    });
+}
