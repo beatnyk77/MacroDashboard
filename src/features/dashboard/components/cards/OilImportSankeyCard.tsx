@@ -149,7 +149,7 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
                 <ResponsiveContainer width="100%" height="100%">
                     <Sankey
                         data={sankeyData}
-                        nodePadding={30}
+                        nodePadding={10}
                         margin={{ left: 10, right: 10, top: 20, bottom: 20 }}
                         node={({ x, y, width, height, payload, containerWidth }) => {
                             const isSource = x < containerWidth / 2;
@@ -159,7 +159,7 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
                                         x={x}
                                         y={y}
                                         width={width}
-                                        height={height}
+                                        height={Math.max(0, height)}
                                         fill={payload.color || '#64748b'}
                                         rx={4}
                                         className="shadow-lg"
