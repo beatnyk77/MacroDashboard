@@ -11,19 +11,45 @@ interface OilImportSankeyCardProps {
 
 // Metadata for styling and labeling
 const COUNTRY_META: Record<string, { name: string; region: string; color: string; risk?: 'Stable' | 'Volatile' | 'At-Risk' }> = {
+    // North America (Blue)
     'CAN': { name: 'Canada', region: 'North America', color: '#60a5fa', risk: 'Stable' },
     'MEX': { name: 'Mexico', region: 'North America', color: '#3b82f6', risk: 'Stable' },
+    'USA': { name: 'United States', region: 'North America', color: '#64748b', risk: 'Stable' },
+
+    // Middle East / OPEC (Emerald/Green + Volatile)
     'SAU': { name: 'Saudi Arabia', region: 'Middle East', color: '#10b981', risk: 'Stable' },
     'IRQ': { name: 'Iraq', region: 'Middle East', color: '#059669', risk: 'Volatile' },
-    'RUS': { name: 'Russia', region: 'OPEC+', color: '#ef4444', risk: 'At-Risk' },
-    'USA': { name: 'United States', region: 'North America', color: '#64748b', risk: 'Stable' },
     'KWT': { name: 'Kuwait', region: 'Middle East', color: '#34d399', risk: 'Stable' },
     'UAE': { name: 'UAE', region: 'Middle East', color: '#10b981', risk: 'Stable' },
-    'KAZ': { name: 'Kazakhstan', region: 'Central Asia', color: '#fbbf24', risk: 'Volatile' },
-    'BRA': { name: 'Brazil', region: 'South America', color: '#fbbf24', risk: 'Stable' },
-    'MYS': { name: 'Malaysia', region: 'Asia', color: '#8b5cf6', risk: 'Stable' },
     'ARE': { name: 'UAE', region: 'Middle East', color: '#10b981', risk: 'Stable' },
     'OMN': { name: 'Oman', region: 'Middle East', color: '#059669', risk: 'Stable' },
+    'QAT': { name: 'Qatar', region: 'Middle East', color: '#059669', risk: 'Stable' },
+    'IRN': { name: 'Iran', region: 'Middle East', color: '#be123c', risk: 'At-Risk' },
+
+    // Russia / CIS (Red)
+    'RUS': { name: 'Russia', region: 'OPEC+', color: '#ef4444', risk: 'At-Risk' },
+    'KAZ': { name: 'Kazakhstan', region: 'Central Asia', color: '#fbbf24', risk: 'Volatile' },
+    'AZE': { name: 'Azerbaijan', region: 'Central Asia', color: '#fbbf24', risk: 'Volatile' },
+
+    // South America (Orange/Amber)
+    'BRA': { name: 'Brazil', region: 'South America', color: '#f59e0b', risk: 'Stable' },
+    'COL': { name: 'Colombia', region: 'South America', color: '#d97706', risk: 'Stable' },
+    'VEN': { name: 'Venezuela', region: 'South America', color: '#be123c', risk: 'At-Risk' },
+    'ECU': { name: 'Ecuador', region: 'South America', color: '#d97706', risk: 'Volatile' },
+
+    // Africa (Purple/Violet)
+    'NGA': { name: 'Nigeria', region: 'Africa', color: '#8b5cf6', risk: 'Volatile' },
+    'AGO': { name: 'Angola', region: 'Africa', color: '#7c3aed', risk: 'Volatile' },
+    'DZA': { name: 'Algeria', region: 'Africa', color: '#8b5cf6', risk: 'Stable' },
+    'LBY': { name: 'Libya', region: 'Africa', color: '#be123c', risk: 'At-Risk' },
+
+    // Asia (Indigo)
+    'MYS': { name: 'Malaysia', region: 'Asia', color: '#6366f1', risk: 'Stable' },
+    'IDN': { name: 'Indonesia', region: 'Asia', color: '#6366f1', risk: 'Stable' },
+
+    // Europe (Slate)
+    'NOR': { name: 'Norway', region: 'Europe', color: '#94a3b8', risk: 'Stable' },
+    'GBR': { name: 'United Kingdom', region: 'Europe', color: '#94a3b8', risk: 'Stable' }
 };
 
 const DESTINATION_META: Record<string, { name: string; color: string }> = {

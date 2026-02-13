@@ -109,7 +109,15 @@ Deno.serve(async (req: Request) => {
                     summary.capacity = rows.length;
                 }
             }
-        } catch (e: any) { console.error('Capacity Error:', e.message); }
+        } catch (e: any) {
+            console.error('Capacity Error:', e.message);
+            // Log to Supabase for debugging
+            await supabase.from('ingestion_logs').insert({
+                function_name: 'ingest-oil-eia',
+                status: 'error',
+                metadata: { step: 'refining_capacity', error: e.message }
+            });
+        }
 
         // --- B. Crude Imports ---
         console.log('Fetching Crude Imports...');

@@ -62,7 +62,14 @@ serve(async (req) => {
             // We fetch for a few representative states or all if possible. 
             // For now, let's target All India (code 00 or similar if exists) and Top States.
             // MoSPI often uses specific state codes. 
-            const stateCodes = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "35"]; // Sample list
+            // Comprehensive State List (Census 2011 Codes generally used by MoSPI)
+            const stateCodes = [
+                "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+                "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+                "31", "32", "33", "34", "35"
+            ];
+            // 00=All India, 27=Maharashtra, 07=Delhi, 33=Tamil Nadu, 24=Gujarat etc.
 
             for (const sc of stateCodes) {
                 const energyResponse = await mospi.getEnergyData({
@@ -101,7 +108,14 @@ serve(async (req) => {
         // ==========================================
         try {
             console.log("[ASI] Starting ingestion...");
-            const stateCodes = ["00", "01", "02", "35"]; // Sample list
+            console.log("[ASI] Starting ingestion...");
+            // Use same comprehensive list as Energy
+            const stateCodes = [
+                "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+                "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+                "31", "32", "33", "34", "35"
+            ];
             for (const sc of stateCodes) {
                 const asiResponse = await mospi.getASIData({
                     classification_year: '2008',

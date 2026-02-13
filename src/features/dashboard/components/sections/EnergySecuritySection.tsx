@@ -1,6 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import { useOilData } from '@/hooks/useOilData';
 import { SectionHeader } from '@/components/SectionHeader';
+import { DataQualityBadge } from '@/components/DataQualityBadge';
+import { MotionCard } from '@/components/MotionCard';
 
 const RefiningCapacityCard = lazy(() => import('../cards/RefiningCapacityCard').then(m => ({ default: m.RefiningCapacityCard })));
 const OilImportSankeyCard = lazy(() => import('../cards/OilImportSankeyCard').then(m => ({ default: m.OilImportSankeyCard })));
@@ -71,11 +73,12 @@ export const EnergySecuritySection: React.FC = () => {
             <SectionHeader
                 title="Energy Security & Supply Chain"
                 subtitle="US Refining Capacity, Crude Sourcing, and Supplier Vulnerability"
+                exportId="energy-security-section"
             />
             {isFallback && (
                 <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between group">
                     <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                        <DataQualityBadge type="simulated" />
                         <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/80">
                             Live Feed Normalizing — Displaying Institutional Proxies
                         </p>
@@ -85,7 +88,7 @@ export const EnergySecuritySection: React.FC = () => {
 
             <div className="flex flex-col gap-12">
                 {/* Row 1: US Refining Strategic Capacity */}
-                <div className="w-full">
+                <MotionCard delay={0.1} className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
                             <span className="w-8 h-px bg-emerald-500/50" />
@@ -108,10 +111,10 @@ export const EnergySecuritySection: React.FC = () => {
                             </div>
                         )}
                     </Suspense>
-                </div>
+                </MotionCard>
 
                 {/* Row 2: Strategic Petroleum Reserve */}
-                <div className="w-full">
+                <MotionCard delay={0.2} className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
                             <span className="w-8 h-px bg-orange-500/50" />
@@ -130,10 +133,10 @@ export const EnergySecuritySection: React.FC = () => {
                             </div>
                         )}
                     </Suspense>
-                </div>
+                </MotionCard>
 
                 {/* Row 3: Power Mix Divergence */}
-                <div className="w-full">
+                <MotionCard delay={0.3} className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
                             <span className="w-8 h-px bg-emerald-500/50" />
@@ -188,10 +191,10 @@ export const EnergySecuritySection: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </MotionCard>
 
                 {/* Row 3.5: Asia Commodity Flows */}
-                <div className="w-full">
+                <MotionCard delay={0.4} className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
                             <span className="w-8 h-px bg-emerald-500/50" />
@@ -204,10 +207,10 @@ export const EnergySecuritySection: React.FC = () => {
                     <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                         <OilFlowsSankey data={data.importData} isLoading={false} />
                     </Suspense>
-                </div>
+                </MotionCard>
 
                 {/* Row 4: Import Vulnerability & Flow Matrix */}
-                <div className="w-full">
+                <MotionCard delay={0.5} className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
                             <span className="w-8 h-px bg-blue-500/50" />
@@ -248,8 +251,9 @@ export const EnergySecuritySection: React.FC = () => {
                             </Suspense>
                         </div>
                     </div>
-                </div>
+                </MotionCard>
             </div>
         </div>
     );
 };
+
