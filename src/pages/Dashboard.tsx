@@ -24,7 +24,7 @@ const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/Cockpi
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 const GeopoliticalRiskPulseCard = lazy(() => import('../features/dashboard/components/sections/GeopoliticalRiskPulseCard').then(m => ({ default: m.GeopoliticalRiskPulseCard })));
-const EventsMap = lazy(() => import('../features/dashboard/components/maps/EventsMap').then(m => ({ default: m.EventsMap })));
+const GeopoliticalEventsRow = lazy(() => import('../features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const MacroEconomicCalendar = lazy(() => import('../features/dashboard/components/sections/MacroEconomicCalendar').then(m => ({ default: m.MacroEconomicCalendar })));
 
 // Thematic Labs
@@ -110,6 +110,7 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </SPASection>
 
+
                 {/* ROW 4: POLICY & GEOPOLITICS */}
                 <SPASection id="policy-geopolitics" disableAnimation>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -132,18 +133,11 @@ export const Dashboard: React.FC = () => {
                             icon={<Globe2 className="text-blue-500" />}
                             accentColor="blue"
                         >
-                            <div className="space-y-8">
-                                <SectionErrorBoundary name="Geopolitics Card">
-                                    <Suspense fallback={<LoadingFallback />}>
-                                        <GeopoliticalRiskPulseCard />
-                                    </Suspense>
-                                </SectionErrorBoundary>
-                                <SectionErrorBoundary name="Geopolitical Map">
-                                    <Suspense fallback={<LoadingFallback />}>
-                                        <EventsMap />
-                                    </Suspense>
-                                </SectionErrorBoundary>
-                            </div>
+                            <SectionErrorBoundary name="Geopolitics Card">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GeopoliticalRiskPulseCard />
+                                </Suspense>
+                            </SectionErrorBoundary>
                         </SPAAccordion>
                     </div>
 
@@ -154,6 +148,15 @@ export const Dashboard: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                </SPASection>
+
+                {/* ROW 4.5: GEOPOLITICAL MATRIX */}
+                <SPASection id="geopolitical-matrix" variant="band" disableAnimation>
+                    <SectionErrorBoundary name="Geopolitical Map">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GeopoliticalEventsRow />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* ROW 5: THEMATIC LABS */}
