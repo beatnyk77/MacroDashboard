@@ -159,8 +159,12 @@ export const IndiaMacroPulseSection: React.FC = () => {
                                 label="WPI Inflation"
                                 value={wpiIndex?.value?.toFixed(1) || '--'}
                                 unit="%"
+                                delta={wpiIndex?.delta_mom ? `${wpiIndex.delta_mom > 0 ? '+' : ''}${wpiIndex.delta_mom.toFixed(1)}%` : undefined}
+                                trend={wpiIndex?.delta_mom && wpiIndex.delta_mom > 0 ? 'up' : 'down'}
                                 description="Wholesale Price Index: Tracks price changes in bulk business transactions."
-                                status={wpiIndex?.value && wpiIndex.value > 5 ? 'danger' : 'safe'}
+                                status={
+                                    wpiIndex?.value ? (wpiIndex.value > 6 ? 'danger' : wpiIndex.value > 4 ? 'warning' : 'safe') : 'safe'
+                                }
                             />
                             <CompactPulseMetric
                                 label="Retail Velocity"

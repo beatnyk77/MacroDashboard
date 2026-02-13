@@ -54,22 +54,43 @@ export const DisruptionMapCard: React.FC = () => {
                     </Geographies>
                     {events?.map((event: any) => (
                         <Marker key={event.id} coordinates={[parseFloat(event.lng), parseFloat(event.lat)]}>
-                            <circle
-                                r={event.severity === 'high' ? 6 : 4}
-                                fill={event.severity === 'high' ? "#ef4444" : "#f59e0b"}
-                                stroke="#fff"
-                                strokeWidth={1}
-                            />
-                            <title>{event.description}</title>
+                            <g className="group cursor-pointer">
+                                <circle
+                                    r={event.severity === 'high' ? 8 : 5}
+                                    fill={event.severity === 'high' ? "rgba(239, 68, 68, 0.3)" : "rgba(245, 158, 11, 0.3)"}
+                                    className="animate-pulse"
+                                />
+                                <circle
+                                    r={event.severity === 'high' ? 4 : 3}
+                                    fill={event.severity === 'high' ? "#ef4444" : "#f59e0b"}
+                                    stroke="#fff"
+                                    strokeWidth={1}
+                                />
+                                <text
+                                    textAnchor="middle"
+                                    y={-10}
+                                    style={{ fontFamily: "system-ui", fill: "#fff", fontSize: "8px", fontWeight: "bold", textShadow: "0px 1px 2px #000" }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                >
+                                    {event.description}
+                                </text>
+                            </g>
                         </Marker>
                     ))}
                 </ComposableMap>
-                <div className="absolute bottom-4 left-4 flex flex-col gap-1 pointer-events-none">
+                <div className="absolute bottom-4 left-4 flex flex-col gap-2 pointer-events-none bg-black/50 p-2 rounded-lg backdrop-blur-sm border border-white/5">
                     <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-                        <div className="w-2 h-2 rounded-full bg-rose-500" /> High Severity
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                        </span>
+                        High Severity (Conflict/Closure)
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-                        <div className="w-2 h-2 rounded-full bg-amber-500" /> Medium Severity
+                        <span className="relative flex h-2 w-2">
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                        Medium Severity (Delay/Weather)
                     </div>
                 </div>
             </CardContent>

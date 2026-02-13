@@ -74,19 +74,43 @@ Deno.serve(async (req) => {
             }
         }
 
-        // 3. Commodity Flows (Mock for India/China expansion)
+        // 3. Commodity Flows (High-Fidelity Mock for Global Trade)
+        // Includes: Oil (China/India/EU), Minerals (Lithium/Cobalt/Nickel), Ag (Wheat/Corn)
         const mockFlows = [
+            // Energy - Oil
+            { source: 'Saudi Arabia', target: 'China', commodity: 'Crude Oil', volume: 1750, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Russia', target: 'China', commodity: 'Crude Oil', volume: 2100, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Iraq', target: 'India', commodity: 'Crude Oil', volume: 1100, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Russia', target: 'India', commodity: 'Crude Oil', volume: 1600, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'US', target: 'Europe', commodity: 'Crude Oil', volume: 1800, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Saudi Arabia', target: 'Europe', commodity: 'Crude Oil', volume: 900, as_of_date: new Date().toISOString().split('T')[0] },
+
+            // Metals - Battery & Infrastructure
             { source: 'Australia', target: 'China', commodity: 'Iron Ore', volume: 750, as_of_date: new Date().toISOString().split('T')[0] },
-            { source: 'Brazil', target: 'China', commodity: 'Soybeans', volume: 420, as_of_date: new Date().toISOString().split('T')[0] },
-            { source: 'DRC', target: 'China', commodity: 'Cobalt', volume: 15, as_of_date: new Date().toISOString().split('T')[0] },
-            { source: 'Australia', target: 'India', commodity: 'Coal', volume: 180, as_of_date: new Date().toISOString().split('T')[0] }
+            { source: 'Brazil', target: 'China', commodity: 'Iron Ore', volume: 420, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Chile', target: 'China', commodity: 'Lithium', volume: 45, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Australia', target: 'China', commodity: 'Lithium', volume: 55, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'DRC', target: 'China', commodity: 'Cobalt', volume: 85, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Indonesia', target: 'China', commodity: 'Nickel', volume: 320, as_of_date: new Date().toISOString().split('T')[0] },
+
+            // Agriculture - Food Security
+            { source: 'Brazil', target: 'China', commodity: 'Soybeans', volume: 550, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'US', target: 'China', commodity: 'Soybeans', volume: 380, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Ukraine', target: 'Europe', commodity: 'Wheat', volume: 120, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'Russia', target: 'Egypt', commodity: 'Wheat', volume: 90, as_of_date: new Date().toISOString().split('T')[0] },
+            { source: 'US', target: 'Mexico', commodity: 'Corn', volume: 210, as_of_date: new Date().toISOString().split('T')[0] }
         ];
         const { error: flowError } = await supabase.from('commodity_flows').upsert(mockFlows, { onConflict: 'source, target, commodity, as_of_date' });
 
-        // 4. Commodity Events (Mock Disruption Events)
+        // 4. Commodity Events (Simulated GDELT/ACLED Data)
         const mockEvents = [
-            { lat: 12.0, lng: 45.0, event_type: 'Disruption', description: 'Red Sea Transit Delay', severity: 'high', as_of_date: new Date().toISOString().split('T')[0] },
-            { lat: -11.0, lng: 26.0, event_type: 'Mine Shutdown', description: 'DRC Cobalt Mine Strike', severity: 'medium', as_of_date: new Date().toISOString().split('T')[0] }
+            { lat: 12.0, lng: 45.0, event_type: 'Disruption', description: 'Red Sea: Houthi Drone Attack - Transit halted', severity: 'high', as_of_date: new Date().toISOString().split('T')[0] },
+            { lat: -11.0, lng: 26.0, event_type: 'Mine Shutdown', description: 'DRC: Tenke Fungurume Cobalt Strike', severity: 'medium', as_of_date: new Date().toISOString().split('T')[0] },
+            { lat: 29.5, lng: 47.5, event_type: 'Geopolitical', description: 'Kuwait: Worker Strike at Export Terminal', severity: 'medium', as_of_date: new Date().toISOString().split('T')[0] },
+            { lat: 9.0, lng: -79.5, event_type: 'Logistics', description: 'Panama Canal: Additional Draft Restrictions', severity: 'medium', as_of_date: new Date().toISOString().split('T')[0] },
+            { lat: 30.5, lng: -90.0, event_type: 'Weather', description: 'US Gulf Coast: Hurricane Watch - Refining Risk', severity: 'high', as_of_date: new Date().toISOString().split('T')[0] },
+            { lat: -25.0, lng: 133.0, event_type: 'Infrastructure', description: 'Australia: Pilbara Rail Maintenance - Iron Ore Delays', severity: 'low', as_of_date: new Date().toISOString().split('T')[0] },
+            { lat: 46.0, lng: 30.0, event_type: 'Conflict', description: 'Black Sea: Grain Corridor Uncertainty', severity: 'high', as_of_date: new Date().toISOString().split('T')[0] }
         ];
         const { error: eventError } = await supabase.from('commodity_events').upsert(mockEvents);
 
