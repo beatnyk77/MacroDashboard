@@ -40,6 +40,7 @@ const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
+const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -237,6 +238,12 @@ export const Dashboard: React.FC = () => {
                                 </Suspense>
                             </SectionErrorBoundary>
                         </SPAAccordion>
+
+                        <SectionErrorBoundary name="Commodity Terminal">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <CommodityTerminalRow />
+                            </Suspense>
+                        </SectionErrorBoundary>
 
                         <SPAAccordion
                             id="sovereign-debt-stress"
