@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OilRefiningCapacity } from '@/hooks/useOilData';
-import { Factory, TrendingDown, TrendingUp, Globe } from 'lucide-react';
+import { Factory, TrendingDown, TrendingUp } from 'lucide-react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -22,36 +22,58 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
         return { usData: us, euData: eu, asiaData: asia };
     }, [data]);
 
-    // Process utilization for chart alignment
-    const combinedUS = useMemo(() => {
-        if (region !== 'US' || !utilizationData.length) return usData;
-
-        // Map utilization to the nearest year for trend overlay
-        return usData.map(d => {
-            const util = utilizationData.find(u => u.date.startsWith(String(d.as_of_year)));
-            return {
-                ...d,
-                utilization: util?.value || null
-            };
-        });
-    }, [usData, utilizationData, region]);
-
     const latestUS = usData[usData.length - 1];
     const previousUS = usData[usData.length - 2];
     const changeUS = latestUS && previousUS ? latestUS.capacity_mbpd - previousUS.capacity_mbpd : 0;
     const isPositiveUS = changeUS >= 0;
 
+    // Aggregated EU capacity (Top 5: FR, DE, IT, GB, ES)
+    const aggregatedEU = useMemo(() => {
+        const byYear = euData.reduce((acc: Record<number, number>, d) => {
+            acc[d.as_of_year] = (acc[d.as_of_year] || 0) + d.capacity_mbpd;
+            return acc;
+        }, {});
+        return Object.entries(byYear).map(([year, capacity]) => ({
+            as_of_year: parseInt(year),
+            capacity_mbpd: capacity as number
+        })).sort((a, b) => a.as_of_year - b.as_of_year);
+    }, [euData]);
+
+    const latestEU = aggregatedEU[aggregatedEU.length - 1];
+    const previousEU = aggregatedEU[aggregatedEU.length - 2];
+    const changeEU = latestEU && previousEU ? latestEU.capacity_mbpd - previousEU.capacity_mbpd : 0;
+    const isPositiveEU = changeEU >= 0;
+
+    // Aggregated Asia capacity (CN, IN)
+    const aggregatedAsia = useMemo(() => {
+        const byYear = asiaData.reduce((acc: Record<number, number>, d) => {
+            acc[d.as_of_year] = (acc[d.as_of_year] || 0) + d.capacity_mbpd;
+            return acc;
+        }, {});
+        return Object.entries(byYear).map(([year, capacity]) => ({
+            as_of_year: parseInt(year),
+            capacity_mbpd: capacity as number
+        })).sort((a, b) => a.as_of_year - b.as_of_year);
+    }, [asiaData]);
+
+    const latestAsia = aggregatedAsia[aggregatedAsia.length - 1];
+    const previousAsia = aggregatedAsia[aggregatedAsia.length - 2];
+    const changeAsia = latestAsia && previousAsia ? latestAsia.capacity_mbpd - previousAsia.capacity_mbpd : 0;
+    const isPositiveAsia = changeAsia >= 0;
+
+    // Process utilization for chart alignment
+    const combinedData = useMemo(() => {
+        if (region === 'US') {
+            return usData.map(d => {
+                const util = utilizationData.find(u => u.date.startsWith(String(d.as_of_year)));
+                return { ...d, utilization: util?.value || null };
+            });
+        }
+        if (region === 'EU') return aggregatedEU;
+        return aggregatedAsia;
+    }, [region, usData, aggregatedEU, aggregatedAsia, utilizationData]);
+
     const latestUtil = utilizationData[utilizationData.length - 1];
-
-    // EU Aggregation
-    const latestEUYear = Math.max(...euData.map(d => d.as_of_year), 0);
-    const euCurrent = euData.filter(d => d.as_of_year === latestEUYear);
-    const euTotal = euCurrent.reduce((sum, d) => sum + d.capacity_mbpd, 0);
-
-    // Asia Aggregation
-    const latestAsiaYear = Math.max(...asiaData.map(d => d.as_of_year), 0);
-    const asiaCurrent = asiaData.filter(d => d.as_of_year === latestAsiaYear);
-    const asiaTotal = asiaCurrent.reduce((sum, d) => sum + d.capacity_mbpd, 0);
 
     if (isLoading) {
         return (
@@ -62,6 +84,12 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
         );
     }
 
+    const currentStats = {
+        US: { latest: latestUS, change: changeUS, isPositive: isPositiveUS, label: 'US Aggregate' },
+        EU: { latest: latestEU, change: changeEU, isPositive: isPositiveEU, label: 'Top 5 EU + UK Aggregate' },
+        Asia: { latest: latestAsia, change: changeAsia, isPositive: isPositiveAsia, label: 'China + India Aggregate' }
+    }[region as 'US' | 'EU' | 'Asia'];
+
     return (
         <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px]">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -70,12 +98,12 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                         <Factory className="h-4 w-4 text-emerald-400" />
                         Atmospheric Crude Distillation Capacity
                     </CardTitle>
-                    {region === 'US' && latestUtil && (
-                        <div className="flex gap-4 mt-1">
+                    <div className="flex gap-4 mt-1">
+                        {region === 'US' && latestUtil && (
                             <span className="text-[10px] text-emerald-400/80 font-mono">UTILIZATION RATE: {latestUtil.value.toFixed(1)}%</span>
-                            <span className="text-[10px] text-blue-400/80 font-mono">AS OF: {latestUtil.date}</span>
-                        </div>
-                    )}
+                        )}
+                        <span className="text-[10px] text-blue-400/80 font-mono">REGION: {region}</span>
+                    </div>
                 </div>
                 <Tabs defaultValue="US" className="w-[180px]" onValueChange={setRegion}>
                     <TabsList className="grid w-full grid-cols-3 h-7 bg-white/5">
@@ -86,55 +114,59 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                 </Tabs>
             </CardHeader>
             <CardContent>
-                {region === 'US' ? (
-                    <div className="space-y-6">
-                        <div className="flex items-baseline justify-between">
-                            <div>
-                                <div className="text-5xl font-light text-white tracking-tighter">
-                                    {latestUS?.capacity_mbpd.toFixed(2)}
-                                    <span className="text-xl text-muted-foreground ml-1">mbpd</span>
-                                </div>
-                                <div className={`flex items-center text-xs mt-1 ${isPositiveUS ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                    {isPositiveUS ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                                    {Math.abs(changeUS).toFixed(2)} mbpd vs prev
-                                </div>
+                <div className="space-y-6">
+                    <div className="flex items-baseline justify-between">
+                        <div>
+                            <div className="text-5xl font-light text-white tracking-tighter">
+                                {currentStats?.latest?.capacity_mbpd.toFixed(2) || '0.00'}
+                                <span className="text-xl text-muted-foreground ml-1">mbpd</span>
                             </div>
+                            <div className={`flex items-center text-xs mt-1 ${currentStats?.isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                {currentStats?.isPositive ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                                {Math.abs(currentStats?.change || 0).toFixed(2)} mbpd vs prev
+                            </div>
+                            <span className="text-[10px] text-muted-foreground/60">{currentStats?.label}</span>
+                        </div>
+                        {region === 'US' && (
                             <div className="text-right">
                                 <span className="text-[0.65rem] uppercase text-muted-foreground block font-mono">Strategic Utilization</span>
                                 <span className="text-2xl font-mono text-emerald-400">{latestUtil?.value.toFixed(1)}%</span>
                             </div>
-                        </div>
+                        )}
+                    </div>
 
-                        <div className="h-[240px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={combinedUS} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                    <defs>
-                                        <linearGradient id="usCapGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                        </linearGradient>
-                                        <linearGradient id="usUtilGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
-                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#f4f4f5', fontSize: '12px' }}
-                                        itemStyle={{ padding: '2px 0' }}
-                                        formatter={(value: number, name: string) => [
-                                            name === 'utilization' ? `${value.toFixed(1)}%` : `${value.toFixed(2)} mbpd`,
-                                            name === 'utilization' ? 'Utilization' : 'Capacity'
-                                        ]}
-                                        labelFormatter={(label) => `Year: ${label}`}
-                                    />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="capacity_mbpd"
-                                        name="capacity"
-                                        stroke="#10b981"
-                                        strokeWidth={2}
-                                        fill="url(#usCapGradient)"
-                                    />
+                    <div className="h-[240px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={combinedData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="capGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="utilGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#f4f4f5', fontSize: '12px' }}
+                                    itemStyle={{ padding: '2px 0' }}
+                                    formatter={(value: number, name: string) => [
+                                        name === 'utilization' ? `${value.toFixed(1)}%` : `${value.toFixed(2)} mbpd`,
+                                        name === 'utilization' ? 'Utilization' : 'Capacity'
+                                    ]}
+                                    labelFormatter={(label) => `Year: ${label}`}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="capacity_mbpd"
+                                    name="capacity"
+                                    stroke="#10b981"
+                                    strokeWidth={2}
+                                    fill="url(#capGradient)"
+                                    animationDuration={1000}
+                                />
+                                {region === 'US' && (
                                     <Area
                                         type="monotone"
                                         dataKey="utilization"
@@ -142,73 +174,14 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                         stroke="#3b82f6"
                                         strokeWidth={1}
                                         strokeDasharray="5 5"
-                                        fill="url(#usUtilGradient)"
+                                        fill="url(#utilGradient)"
+                                        animationDuration={1000}
                                     />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
+                                )}
+                            </AreaChart>
+                        </ResponsiveContainer>
                     </div>
-                ) : region === 'EU' ? (
-                    <div className="space-y-4">
-                        <div className="flex items-baseline justify-between mb-2">
-                            <div>
-                                <div className="text-3xl font-light text-white tracking-tighter">
-                                    {euTotal.toFixed(2)}
-                                    <span className="text-lg text-muted-foreground ml-1">mbpd</span>
-                                </div>
-                                <span className="text-xs text-muted-foreground">Top 5 EU + UK Total ({latestEUYear})</span>
-                            </div>
-                            <Globe className="h-8 w-8 text-blue-500/20" />
-                        </div>
-
-                        <div className="space-y-2">
-                            {euCurrent.sort((a, b) => b.capacity_mbpd - a.capacity_mbpd).map(c => (
-                                <div key={c.country_code} className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-mono text-xs text-muted-foreground w-6">{c.country_code}</span>
-                                        <span className="text-white/80">{c.country_name}</span>
-                                    </div>
-                                    <span className="font-mono">{c.capacity_mbpd.toFixed(2)}</span>
-                                </div>
-                            ))}
-                            {euCurrent.length === 0 && (
-                                <div className="text-sm text-yellow-500/80 italic">
-                                    No data. Run 'ingest-oil-global'.
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        <div className="flex items-baseline justify-between mb-2">
-                            <div>
-                                <div className="text-3xl font-light text-white tracking-tighter">
-                                    {asiaTotal.toFixed(2)}
-                                    <span className="text-lg text-muted-foreground ml-1">mbpd</span>
-                                </div>
-                                <span className="text-xs text-muted-foreground">China + India Total ({latestAsiaYear})</span>
-                            </div>
-                            <Globe className="h-8 w-8 text-rose-500/20" />
-                        </div>
-
-                        <div className="space-y-2">
-                            {asiaCurrent.sort((a, b) => b.capacity_mbpd - a.capacity_mbpd).map(c => (
-                                <div key={c.country_code} className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-mono text-xs text-muted-foreground w-6">{c.country_code}</span>
-                                        <span className="text-white/80">{c.country_name}</span>
-                                    </div>
-                                    <span className="font-mono">{c.capacity_mbpd.toFixed(2)}</span>
-                                </div>
-                            ))}
-                            {asiaCurrent.length === 0 && (
-                                <div className="text-sm text-yellow-500/80 italic">
-                                    No data. Run 'ingest-oil-global'.
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
+                </div>
             </CardContent>
         </Card>
     );
