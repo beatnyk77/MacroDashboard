@@ -12,40 +12,72 @@ import {
     Tooltip as RechartsTooltip,
     ReferenceLine
 } from 'recharts';
-import { useMajorEconomies } from '@/hooks/useMajorEconomies';
+import { useG20SovereignMatrix, G20Region } from '@/hooks/useG20SovereignMatrix';
 import { cn } from '@/lib/utils';
-import { ArrowDown, ShieldAlert, TrendingUp, Anchor, Activity } from 'lucide-react';
+import { ArrowDown, ShieldAlert, TrendingUp, Anchor, Activity, Info } from 'lucide-react';
+
+const REGION_COLORS: Record<G20Region, string> = {
+    'G7': '#3b82f6',     // Blue
+    'BRICS': '#ef4444',  // Red
+    'Other': '#94a3b8',  // Slate
+};
+
+const REGION_LABELS: Record<G20Region, string> = {
+    'G7': 'G7 + EU',
+    'BRICS': 'BRICS',
+    'Other': 'Emerging / Other',
+};
 
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
+        const regionColor = REGION_COLORS[data.region as G20Region] || '#94a3b8';
         return (
-            <div className="bg-slate-950 border border-white/10 p-4 rounded-xl shadow-2xl backdrop-blur-md min-w-[200px]">
+            <div className="bg-slate-950 border border-white/10 p-4 rounded-xl shadow-2xl backdrop-blur-md min-w-[220px]">
                 <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
                     <span className="text-2xl">{data.flag}</span>
-                    <span className="font-black text-white text-lg uppercase tracking-tight">{data.name}</span>
+                    <div>
+                        <span className="font-black text-white text-base uppercase tracking-tight block">{data.name}</span>
+                        <span className="text-[0.55rem] font-bold uppercase tracking-widest" style={{ color: regionColor }}>{data.region}</span>
+                    </div>
                 </div>
                 <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Debt/Gold Risk</span>
-                        <span className="text-sm font-black text-white font-mono">{data.x.toFixed(2)}x</span>
+                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Debt/GDP</span>
+                        <span className={cn("text-sm font-black font-mono", data.debtGdpPct > 100 ? "text-rose-400" : "text-white")}>{data.debtGdpPct.toFixed(1)}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Real Growth</span>
-                        <span className={cn("text-sm font-black font-mono", data.y >= 2 ? "text-emerald-400" : "text-rose-400")}>
-                            {data.y.toFixed(1)}%
+                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">GDP Growth</span>
+                        <span className={cn("text-sm font-black font-mono", data.gdpGrowthPct >= 2 ? "text-emerald-400" : data.gdpGrowthPct < 0 ? "text-rose-400" : "text-amber-400")}>
+                            {data.gdpGrowthPct.toFixed(1)}%
                         </span>
                     </div>
+                    {data.debtGoldRatio > 0 && (
+                        <div className="flex justify-between items-center">
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Debt/Gold</span>
+                            <span className="text-sm font-black text-white font-mono">{data.debtGoldRatio.toFixed(1)}x</span>
+                        </div>
+                    )}
                     <div className="flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Inflation (CPI)</span>
-                        <span className={cn("text-sm font-black font-mono", data.cpi > 5 ? "text-amber-400" : "text-blue-400")}>
-                            {data.cpi.toFixed(1)}%
-                        </span>
+                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Gold Reserves</span>
+                        <span className="text-sm font-black text-amber-400 font-mono">{data.goldTonnes.toFixed(0)}t</span>
                     </div>
-                    <div className="mt-2 pt-2 border-t border-white/5 flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Economy Size</span>
-                        <span className="text-sm font-black text-white font-mono">${data.z.toFixed(1)}T</span>
+                    <div className="mt-2 pt-2 border-t border-white/5">
+                        <div className="flex justify-between items-center">
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Z-Score (Debt)</span>
+                            <span className={cn("text-xs font-black font-mono", data.zDebt > 1 ? "text-rose-400" : data.zDebt < -1 ? "text-emerald-400" : "text-white/70")}>{data.zDebt > 0 ? '+' : ''}{data.zDebt.toFixed(2)}σ</span>
+                        </div>
+                        <div className="flex justify-between items-center mt-1">
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Z-Score (Growth)</span>
+                            <span className={cn("text-xs font-black font-mono", data.zGrowth > 1 ? "text-emerald-400" : data.zGrowth < -1 ? "text-rose-400" : "text-white/70")}>{data.zGrowth > 0 ? '+' : ''}{data.zGrowth.toFixed(2)}σ</span>
+                        </div>
                     </div>
+                    {!data.dataAvailable && (
+                        <div className="mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5">
+                            <Info className="w-3 h-3 text-amber-400" />
+                            <span className="text-[0.6rem] font-bold text-amber-400/80 uppercase tracking-wider">Partial data</span>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -54,34 +86,31 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const SovereignRiskMatrix = React.memo(() => {
-    const { data, isLoading } = useMajorEconomies();
+    const { data, isLoading } = useG20SovereignMatrix();
     const [isExpanded, setIsExpanded] = React.useState(false);
 
-    // Process data and calculate medians for quadrants
-    const { chartData, xMedian, yMedian } = useMemo(() => {
-        if (!data) return { chartData: [], xMedian: 0, yMedian: 0 };
+    const { chartData, xMedian, yMedian, availableCount, totalCount } = useMemo(() => {
+        if (!data) return { chartData: [], xMedian: 0, yMedian: 0, availableCount: 0, totalCount: 0 };
 
         const filtered = data
-            .filter(d => d.debt_gold_ratio > 0 && d.growth !== 0)
+            .filter(d => d.dataAvailable && d.debtGdpPct > 0)
             .map(d => ({
-                name: d.name,
-                code: d.code,
-                x: d.debt_gold_ratio, // Risk
-                y: d.growth,          // Vitality
-                z: d.gdp_nominal,     // Size
-                cpi: d.cpi,
-                flag: d.flag
+                ...d,
+                x: d.debtGdpPct,
+                y: d.gdpGrowthPct,
+                z: Math.max(d.nominalGdpUsd / 1e9, 50), // Scale for bubble size (billions)
             }));
 
-        // Calculate medians
         const xValues = filtered.map(d => d.x).sort((a, b) => a - b);
         const yValues = filtered.map(d => d.y).sort((a, b) => a - b);
         const mid = Math.floor(filtered.length / 2);
 
         return {
             chartData: filtered,
-            xMedian: xValues[mid] || 1, // Default fallback
-            yMedian: yValues[mid] || 2
+            xMedian: xValues[mid] || 60,
+            yMedian: yValues[mid] || 2,
+            availableCount: filtered.length,
+            totalCount: data.length,
         };
     }, [data]);
 
@@ -96,7 +125,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                         Sovereign Risk Matrix
                     </h3>
                     <p className="text-[0.65rem] font-black tracking-widest text-muted-foreground/50 uppercase mt-1">
-                        Fiscal Vulnerability (Debt/Gold) vs Vitality (Growth)
+                        G20 Fiscal Vulnerability (Debt/GDP) vs Vitality (Growth) — {availableCount}/{totalCount} countries
                     </p>
                 </div>
                 <button
@@ -112,7 +141,7 @@ export const SovereignRiskMatrix = React.memo(() => {
 
             <div className={cn(
                 "spa-card bg-[#0a0a0a] border-white/5 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] relative shadow-2xl",
-                isExpanded ? "h-[600px] opacity-100 ring-1 ring-blue-500/20" : "h-[240px] opacity-90 hover:opacity-100"
+                isExpanded ? "h-[650px] opacity-100 ring-1 ring-blue-500/20" : "h-[240px] opacity-90 hover:opacity-100"
             )}>
                 {/* Background Grid Pattern */}
                 <div className="absolute inset-0 bg-grid-slate-800/[0.04] bg-[size:20px_20px] pointer-events-none" />
@@ -139,7 +168,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     <Anchor className="w-3 h-3 text-emerald-500/60" />
                                     <span className="text-[0.6rem] font-black text-emerald-500/60 uppercase tracking-widest">Dynamic Anchors</span>
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-emerald-500/30 uppercase tracking-wider block">Low Risk, High Growth</span>
+                                <span className="text-[0.5rem] font-bold text-emerald-500/30 uppercase tracking-wider block">Low Debt, High Growth</span>
                             </div>
 
                             <div className="absolute top-4 right-8 z-0 pointer-events-none text-right">
@@ -147,40 +176,53 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     <span className="text-[0.6rem] font-black text-amber-500/60 uppercase tracking-widest">Growth at Risk</span>
                                     <TrendingUp className="w-3 h-3 text-amber-500/60" />
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-amber-500/30 uppercase tracking-wider block">High Risk, High Growth</span>
+                                <span className="text-[0.5rem] font-bold text-amber-500/30 uppercase tracking-wider block">High Debt, High Growth</span>
                             </div>
 
-                            <div className="absolute bottom-12 right-8 z-0 pointer-events-none text-right">
+                            <div className="absolute bottom-16 right-8 z-0 pointer-events-none text-right">
                                 <div className="flex items-center gap-1.5 mb-0.5 justify-end">
                                     <span className="text-[0.6rem] font-black text-rose-500/60 uppercase tracking-widest">Fiscal Trap</span>
                                     <ShieldAlert className="w-3 h-3 text-rose-500/60" />
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-rose-500/30 uppercase tracking-wider block">High Risk, Low Growth</span>
+                                <span className="text-[0.5rem] font-bold text-rose-500/30 uppercase tracking-wider block">High Debt, Low Growth</span>
                             </div>
 
-                            <div className="absolute bottom-12 left-16 z-0 pointer-events-none">
+                            <div className="absolute bottom-16 left-16 z-0 pointer-events-none">
                                 <div className="flex items-center gap-1.5 mb-0.5">
                                     <Activity className="w-3 h-3 text-blue-500/60" />
                                     <span className="text-[0.6rem] font-black text-blue-500/60 uppercase tracking-widest">Stagnant Stability</span>
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-blue-500/30 uppercase tracking-wider block">Low Risk, Low Growth</span>
+                                <span className="text-[0.5rem] font-bold text-blue-500/30 uppercase tracking-wider block">Low Debt, Low Growth</span>
+                            </div>
+
+                            {/* Region Legend */}
+                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-5">
+                                {Object.entries(REGION_LABELS).map(([key, label]) => (
+                                    <div key={key} className="flex items-center gap-1.5">
+                                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: REGION_COLORS[key as G20Region] }} />
+                                        <span className="text-[0.55rem] font-black text-white/50 uppercase tracking-widest">{label}</span>
+                                    </div>
+                                ))}
+                                <div className="flex items-center gap-1.5 ml-2 border-l border-white/10 pl-3">
+                                    <Info className="w-3 h-3 text-white/30" />
+                                    <span className="text-[0.5rem] font-bold text-white/30 uppercase tracking-wider">Source: FRED (IMF) + World Bank</span>
+                                </div>
                             </div>
                         </>
                     )}
 
                     <ResponsiveContainer width="100%" height="100%">
-                        <ScatterChart margin={{ top: 30, right: 30, bottom: 30, left: 30 }}>
+                        <ScatterChart margin={{ top: 30, right: 30, bottom: isExpanded ? 40 : 30, left: 30 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} horizontal={false} />
 
-                            {/* Quadrant Dividers */}
                             <ReferenceLine x={xMedian} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
                             <ReferenceLine y={yMedian} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
 
                             <XAxis
                                 type="number"
                                 dataKey="x"
-                                name="Risk"
-                                unit="x"
+                                name="Debt/GDP"
+                                unit="%"
                                 domain={[0, 'auto']}
                                 stroke="rgba(255,255,255,0.1)"
                                 fontSize={10}
@@ -188,7 +230,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 tickLine={false}
                                 axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                                 label={{
-                                    value: 'Debt / Gold Ratio (Risk Proxy)',
+                                    value: 'Government Debt / GDP (%)',
                                     position: 'insideBottom',
                                     offset: -20,
                                     fill: 'rgba(255,255,255,0.3)',
@@ -200,7 +242,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                             <YAxis
                                 type="number"
                                 dataKey="y"
-                                name="Vitality"
+                                name="Growth"
                                 unit="%"
                                 domain={['auto', 'auto']}
                                 stroke="rgba(255,255,255,0.1)"
@@ -218,7 +260,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     letterSpacing: '0.1em'
                                 }}
                             />
-                            <ZAxis type="number" dataKey="z" range={[100, 3000]} /> {/* Increased Z range for better visibility */}
+                            <ZAxis type="number" dataKey="z" range={[80, 2000]} />
 
                             <RechartsTooltip
                                 content={<CustomTooltip />}
@@ -228,17 +270,12 @@ export const SovereignRiskMatrix = React.memo(() => {
 
                             <Scatter data={chartData} animationBegin={0} animationDuration={1000}>
                                 {chartData.map((entry, index) => {
-                                    // Dynamic coloring based on quadrants relative to medians
-                                    let color = '#3b82f6'; // Stagnant (Blue)
-                                    if (entry.x > xMedian && entry.y < yMedian) color = '#f43f5e'; // Fiscal Trap (Rose)
-                                    if (entry.x > xMedian && entry.y >= yMedian) color = '#f59e0b'; // Growth at Risk (Amber)
-                                    if (entry.x <= xMedian && entry.y >= yMedian) color = '#10b981'; // Dynamic (Emerald)
-
+                                    const color = REGION_COLORS[entry.region as G20Region] || '#94a3b8';
                                     return (
                                         <Cell
                                             key={`cell-${index}`}
                                             fill={color}
-                                            fillOpacity={0.6}
+                                            fillOpacity={entry.dataAvailable ? 0.6 : 0.2}
                                             stroke={color}
                                             strokeWidth={2}
                                         />
@@ -248,7 +285,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     dataKey="code"
                                     position="top"
                                     offset={10}
-                                    style={{ fill: 'rgba(255,255,255,0.9)', fontSize: '10px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}
+                                    style={{ fill: 'rgba(255,255,255,0.9)', fontSize: '9px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}
                                 />
                             </Scatter>
                         </ScatterChart>
