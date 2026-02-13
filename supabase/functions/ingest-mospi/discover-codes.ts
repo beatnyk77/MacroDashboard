@@ -21,6 +21,14 @@ async function main() {
     console.log("\n--- NAS (GDP) Indicators ---");
     const nasData = await client.getNASIndicators();
     console.log(JSON.stringify(nasData, null, 2));
+
+    console.log("\n--- ENERGY Indicators ---");
+    const energyData = await client.getEnergyIndicators();
+    console.log(JSON.stringify(energyData, null, 2));
+
+    console.log("\n--- ASI Indicators ---");
+    const asiData = await client.getASIFilters({ classification_year: '2008' });
+    console.log(JSON.stringify(asiData, null, 2));
 }
 
 main();

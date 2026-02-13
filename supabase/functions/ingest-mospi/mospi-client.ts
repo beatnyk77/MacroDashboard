@@ -103,6 +103,30 @@ export class MoSPIClient {
     }
 
     // ==========================================
+    // ENERGY (Power, Coal, Renewables)
+    // ==========================================
+    async getEnergyData(params: {
+        indicator_code: number;
+        use_of_energy_balance_code: number;
+        state_code?: string;
+        year?: string;
+    }) {
+        return this.fetchAPI("/api/energy/getEnergyRecords", params);
+    }
+
+    // ==========================================
+    // ASI (Industrial Survey)
+    // ==========================================
+    async getASIData(params: {
+        classification_year: string;
+        state_code?: string;
+        year?: string;
+        indicator_code?: number;
+    }) {
+        return this.fetchAPI("/api/asi/getASIData", params);
+    }
+
+    // ==========================================
     // Metadata Discovery
     // ==========================================
     async getPLFSIndicators(frequency_code: number = 2) { // Default Quarterly
@@ -119,5 +143,32 @@ export class MoSPIClient {
 
     async getNASIndicators() {
         return this.fetchAPI("/api/nas/getNasIndicatorList");
+    }
+
+    // ==========================================
+    // ENERGY Metadata
+    // ==========================================
+    async getEnergyIndicators() {
+        return this.fetchAPI("/api/energy/getEnergyIndicatorList");
+    }
+
+    async getEnergyFilters(params: {
+        indicator_code: number;
+        use_of_energy_balance_code: number;
+    }) {
+        return this.fetchAPI("/api/energy/getEnergyFilterByIndicatorId", params);
+    }
+
+    // ==========================================
+    // ASI Metadata
+    // ==========================================
+    async getASIFilters(params: {
+        classification_year: string;
+    }) {
+        return this.fetchAPI("/api/asi/getAsiFilter", params);
+    }
+
+    async getASIClassificationYears() {
+        return this.fetchAPI("/api/asi/getNicClassificationYear");
     }
 }

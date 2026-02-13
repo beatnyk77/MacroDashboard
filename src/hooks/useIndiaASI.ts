@@ -39,27 +39,31 @@ export function useIndiaASI() {
 
             if (!data || data.length === 0) return [];
 
-            const years = Array.from(new Set(data.map((d: ASIMetric) => d.year))).sort((a, b) => b - a);
+            const years = Array.from(new Set(data.map((d: any) => d.year))).sort((a, b) => b - a);
             const latestYear = years[0];
             const prevYear = years[1];
 
             const stateMap = new Map<string, StateASIStats>();
-            const prevStateMap = new Map<string, number>(); // Cache previous total employment
+            const prevStateMap = new Map<string, number>();
 
-            // First Pass: Get Previous Year Employment
+            // Normalize sector names (MoSPI has spaces, code often uses underscores)
+            const normalize = (s: string) => s.toLowerCase().replace(/_/g, ' ').trim();
+
+            // First Pass: Get Previous Year Employment for Growth
             if (prevYear) {
-                data.forEach((row: ASIMetric) => {
-                    if (row.year === prevYear && row.sector === 'all_industries') {
+                data.forEach((row: any) => {
+                    if (row.year === prevYear && normalize(row.sector) === 'all industries') {
                         prevStateMap.set(row.state_code, row.employment_thousands || 0);
                     }
                 });
             }
 
             // Second Pass: Build Current Stats
-            data.forEach((row: ASIMetric) => {
+            data.forEach((row: any) => {
                 if (row.year !== latestYear) return;
 
                 const key = row.state_code;
+                const sector = normalize(row.sector);
 
                 if (!stateMap.has(key)) {
                     stateMap.set(key, {
@@ -72,34 +76,32 @@ export function useIndiaASI() {
                         manufacturing_gva: 0,
                         mining_gva: 0,
                         electricity_gva: 0,
-                        employment_growth_yoy: 0 // Default
+                        employment_growth_yoy: 0
                     });
                 }
 
                 const stats = stateMap.get(key)!;
 
-                // Aggregate by sector
-                if (row.sector === 'all_industries') {
-                    stats.total_gva = row.gva_crores || 0;
-                    stats.total_employment = row.employment_thousands || 0;
-                    stats.avg_capacity_utilization = row.capacity_utilization_rate || 0;
+                if (sector === 'all industries') {
+                    stats.total_gva = Number(row.gva_crores) || 0;
+                    stats.total_employment = Number(row.employment_thousands) || 0;
+                    stats.avg_capacity_utilization = Number(row.capacity_utilization_rate) || 0;
 
-                    // Calculate Growth
                     const prevEmp = prevStateMap.get(key) || 0;
                     if (prevEmp > 0) {
                         stats.employment_growth_yoy = ((stats.total_employment - prevEmp) / prevEmp) * 100;
                     }
-                } else if (row.sector === 'manufacturing') {
-                    stats.manufacturing_gva = row.gva_crores || 0;
-                } else if (row.sector === 'mining') {
-                    stats.mining_gva = row.gva_crores || 0;
-                } else if (row.sector === 'electricity') {
-                    stats.electricity_gva = row.gva_crores || 0;
+                } else if (sector === 'manufacturing') {
+                    stats.manufacturing_gva = Number(row.gva_crores) || 0;
+                } else if (sector === 'mining') {
+                    stats.mining_gva = Number(row.gva_crores) || 0;
+                } else if (sector === 'electricity') {
+                    stats.electricity_gva = Number(row.gva_crores) || 0;
                 }
             });
 
             return Array.from(stateMap.values());
         },
-        staleTime: 1000 * 60 * 60, // 1 hour (ASI data is annual)
+        staleTime: 1000 * 60 * 60, // 1 hour
     });
 }
