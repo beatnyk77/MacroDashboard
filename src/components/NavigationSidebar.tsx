@@ -61,7 +61,7 @@ export const NavigationSidebar: React.FC = () => {
     };
 
     return (
-        <aside className="hidden lg:flex w-[260px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/10 bg-background/50 backdrop-blur-xl py-8 z-[1200] overflow-y-auto">
+        <aside className="hidden lg:flex w-[240px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/10 bg-background/50 backdrop-blur-xl py-8 z-[1200] overflow-y-auto">
             <nav className="px-4 flex-1">
                 <div className="mb-6 px-2">
                     <span className="text-[0.65rem] font-black tracking-[0.2em] text-muted-foreground/50 uppercase">

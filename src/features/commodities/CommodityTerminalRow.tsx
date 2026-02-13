@@ -28,29 +28,37 @@ export const CommodityTerminalRow: React.FC = () => {
                 "Flow Disruption: Elevated"
             ]}
         >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <SectionErrorBoundary name="Price Terminal">
-                    <Suspense fallback={<LoadingFallback />}>
-                        <PriceTerminalCard />
-                    </Suspense>
+            <div className="flex flex-col gap-12">
+                <SectionErrorBoundary name="Price Terminal & Forward Signals">
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <PriceTerminalCard />
+                        </Suspense>
+                    </div>
                 </SectionErrorBoundary>
 
-                <SectionErrorBoundary name="Commodity Flows">
-                    <Suspense fallback={<LoadingFallback />}>
-                        <FlowsSankeyCard />
-                    </Suspense>
+                <SectionErrorBoundary name="Physical Flow Network">
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <FlowsSankeyCard />
+                        </Suspense>
+                    </div>
                 </SectionErrorBoundary>
 
                 <SectionErrorBoundary name="Reserve Tracker">
-                    <Suspense fallback={<LoadingFallback />}>
-                        <ReserveTrackerCard />
-                    </Suspense>
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <ReserveTrackerCard />
+                        </Suspense>
+                    </div>
                 </SectionErrorBoundary>
 
                 <SectionErrorBoundary name="Disruption Map">
-                    <Suspense fallback={<LoadingFallback />}>
-                        <DisruptionMapCard />
-                    </Suspense>
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <DisruptionMapCard />
+                        </Suspense>
+                    </div>
                 </SectionErrorBoundary>
             </div>
         </SPAAccordion>

@@ -40,7 +40,7 @@ export const IntelligenceSidebar: React.FC = () => {
     }
 
     return (
-        <aside className="hidden xl:flex w-[320px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/10 bg-background/50 backdrop-blur-xl z-[1100]">
+        <aside className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/10 bg-background/50 backdrop-blur-xl z-[1100]">
             <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
                 <div className="flex items-center gap-2">
                     <Newspaper size={18} className="text-blue-400" />

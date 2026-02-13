@@ -143,35 +143,45 @@ export const EnergySecuritySection: React.FC = () => {
                             Analyzing the underlying molecular reality of power generation. The divergence between G7 "Clean" mandates and BRICS+ energy density priorities creates structural inflation and supply chain disparities.
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2">
+                    {/* STACKED LAYOUT FOR DESKTOP */}
+                    <div className="flex flex-col gap-8">
+                        {/* 1. Main Chart */}
+                        <div className="w-full">
                             <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                                 <PowerMixDivergenceCard />
                             </Suspense>
                         </div>
-                        <div className="lg:col-span-1 flex flex-col gap-6">
-                            <div className="p-6 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 flex flex-col gap-4">
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">EU Gas Resilience</h4>
-                                <div className="flex items-end gap-2">
-                                    <span className="text-4xl font-black text-white">74.2%</span>
-                                    <span className="text-[10px] font-bold text-emerald-400 mb-2">+1.2% WoW</span>
-                                </div>
-                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-blue-500" style={{ width: '74.2%' }} />
-                                </div>
+
+                        {/* 2. KPI Cards as Full Width Rows */}
+                        <div className="w-full p-6 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-1">EU Gas Resilience</h4>
                                 <p className="text-[10px] text-muted-foreground/60 italic">EU Aggregate Gas Storage levels (GIE Data)</p>
                             </div>
-
-                            <div className="p-6 rounded-[2rem] bg-orange-500/5 border border-orange-500/10 flex flex-col gap-4">
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-400">Global Refining Stress</h4>
-                                <div className="flex items-end gap-2">
-                                    <span className="text-4xl font-black text-white">88.4%</span>
-                                    <span className="text-[10px] font-bold text-rose-400 mb-2">+0.5% WoW</span>
+                            <div className="flex items-center gap-6 flex-1 max-w-2xl">
+                                <div className="hidden md:block flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-full bg-blue-500" style={{ width: '74.2%' }} />
                                 </div>
-                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <div className="flex items-end gap-2 shrink-0">
+                                    <span className="text-3xl font-black text-white">74.2%</span>
+                                    <span className="text-[10px] font-bold text-emerald-400 mb-1.5">+1.2% WoW</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full p-6 bg-orange-500/5 border border-orange-500/10 rounded-[2rem] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-400 mb-1">Global Refining Stress</h4>
+                                <p className="text-[10px] text-muted-foreground/60 italic">Avg Utilization (EIA/KAPSARC derived)</p>
+                            </div>
+                            <div className="flex items-center gap-6 flex-1 max-w-2xl">
+                                <div className="hidden md:block flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                                     <div className="h-full bg-orange-500" style={{ width: '88.4%' }} />
                                 </div>
-                                <p className="text-[10px] text-muted-foreground/60 italic">Avg Utilization (EIA/KAPSARC derived)</p>
+                                <div className="flex items-end gap-2 shrink-0">
+                                    <span className="text-3xl font-black text-white">88.4%</span>
+                                    <span className="text-[10px] font-bold text-rose-400 mb-1.5">+0.5% WoW</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,8 +214,11 @@ export const EnergySecuritySection: React.FC = () => {
                             Mapping the origin of US energy imports. Higher concentration from geopolitically volatile regions (OPEC+, Venezuela, Middle East) directly impacts the national risk profile.
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2">
+
+                    {/* STACKED LAYOUT FOR DESKTOP */}
+                    <div className="flex flex-col gap-12">
+                        {/* 1. Sankey Diagram */}
+                        <div className="w-full">
                             <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                                 {data.importData && data.importData.length > 0 ? (
                                     <OilImportSankeyCard data={data.importData} isLoading={false} />
@@ -217,7 +230,9 @@ export const EnergySecuritySection: React.FC = () => {
                                 )}
                             </Suspense>
                         </div>
-                        <div className="lg:col-span-1">
+
+                        {/* 2. Matrix Table - Full Width */}
+                        <div className="w-full h-[500px]">
                             <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                                 {data.importData && data.importData.length > 0 ? (
                                     <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />

@@ -57,8 +57,8 @@ export const DisruptionMapCard: React.FC = () => {
                                     <Geography
                                         key={geo.rsmKey}
                                         geography={geo}
-                                        fill="#0f172a"
-                                        stroke="#1e293b"
+                                        fill="#1e293b"
+                                        stroke="#334155"
                                         strokeWidth={0.5}
                                         style={{
                                             default: { outline: "none" },
