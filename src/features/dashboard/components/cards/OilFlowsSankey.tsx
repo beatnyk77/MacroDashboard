@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Ship, Globe2, ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Ship, ArrowRight } from 'lucide-react';
 import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -114,9 +114,18 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                         <Ship className="h-4 w-4 text-blue-400" />
                         Crude Oil <span className="text-white">Sourcing</span> Flow
                     </CardTitle>
-                    <CardDescription className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-tighter">
-                        Geopolitical supply vector tracking {processedData.latestDate && `— FY ${processedData.latestDate}`}
-                    </CardDescription>
+                    <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest">
+                            {processedData.latestDate ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    AS OF {new Date(processedData.latestDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}
+                                </>
+                            ) : (
+                                "Connecting to Partner Data..."
+                            )}
+                        </span>
+                    </div>
                 </div>
                 <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-white/5 p-1 rounded-xl border border-white/5">
                     <TabsList className="bg-transparent border-0 gap-1 h-7">
@@ -127,9 +136,12 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
             </CardHeader>
             <CardContent className="flex-1 p-8 pt-12 relative overflow-hidden">
                 {!processedData.nodes.length ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center gap-4 opacity-40">
-                        <Globe2 className="w-12 h-12 text-muted-foreground" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Establishing Data Mesh...</span>
+                    <div className="h-full flex flex-col items-center justify-center text-center gap-4 text-muted-foreground">
+                        <div className="w-12 h-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
+                        <div className="space-y-1">
+                            <p className="italic font-medium">Synchronizing {activeTab === 'IN' ? 'India' : 'China'} Partner Feeds...</p>
+                            <p className="text-[10px] uppercase tracking-widest font-black opacity-50">High-Fidelity Upstream Mapping Active</p>
+                        </div>
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">

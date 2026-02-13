@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OilImport } from '@/hooks/useOilData';
-import { Ship, AlertTriangle } from 'lucide-react';
+import { Ship } from 'lucide-react';
 import { ResponsiveContainer, Sankey, Tooltip } from 'recharts';
 
 interface OilImportSankeyCardProps {
@@ -10,182 +10,225 @@ interface OilImportSankeyCardProps {
 }
 
 // Metadata for styling and labeling
-const COUNTRY_META: Record<string, { name: string; region: 'OPEC' | 'Non-OPEC' | 'North America' | 'Other'; color: string }> = {
-    'CA': { name: 'Canada', region: 'North America', color: '#60a5fa' }, // Blue-400
-    'MX': { name: 'Mexico', region: 'North America', color: '#3b82f6' }, // Blue-500
-    'SA': { name: 'Saudi Arabia', region: 'OPEC', color: '#10b981' }, // Emerald-500
-    'IQ': { name: 'Iraq', region: 'OPEC', color: '#059669' }, // Emerald-600
-    'CO': { name: 'Colombia', region: 'Non-OPEC', color: '#f59e0b' }, // Amber-500
-    'EC': { name: 'Ecuador', region: 'OPEC', color: '#34d399' }, // Emerald-400
-    'NG': { name: 'Nigeria', region: 'OPEC', color: '#10b981' },
-    'VE': { name: 'Venezuela', region: 'OPEC', color: '#f43f5e' }, // Rose-500 (Risk)
-    'BR': { name: 'Brazil', region: 'Non-OPEC', color: '#fbbf24' },
-    'RU': { name: 'Russia', region: 'OPEC', color: '#ef4444' }, // Red-500
-    'US': { name: 'United States', region: 'North America', color: '#64748b' },
+const COUNTRY_META: Record<string, { name: string; region: string; color: string; risk?: 'Stable' | 'Volatile' | 'At-Risk' }> = {
+    'CAN': { name: 'Canada', region: 'North America', color: '#60a5fa', risk: 'Stable' },
+    'MEX': { name: 'Mexico', region: 'North America', color: '#3b82f6', risk: 'Stable' },
+    'SAU': { name: 'Saudi Arabia', region: 'Middle East', color: '#10b981', risk: 'Stable' },
+    'IRQ': { name: 'Iraq', region: 'Middle East', color: '#059669', risk: 'Volatile' },
+    'RUS': { name: 'Russia', region: 'OPEC+', color: '#ef4444', risk: 'At-Risk' },
+    'USA': { name: 'United States', region: 'North America', color: '#64748b', risk: 'Stable' },
+    'KWT': { name: 'Kuwait', region: 'Middle East', color: '#34d399', risk: 'Stable' },
+    'UAE': { name: 'UAE', region: 'Middle East', color: '#10b981', risk: 'Stable' },
+    'KAZ': { name: 'Kazakhstan', region: 'Central Asia', color: '#fbbf24', risk: 'Volatile' },
+    'BRA': { name: 'Brazil', region: 'South America', color: '#fbbf24', risk: 'Stable' },
+    'MYS': { name: 'Malaysia', region: 'Asia', color: '#8b5cf6', risk: 'Stable' },
+    'ARE': { name: 'UAE', region: 'Middle East', color: '#10b981', risk: 'Stable' },
+    'OMN': { name: 'Oman', region: 'Middle East', color: '#059669', risk: 'Stable' },
+};
+
+const DESTINATION_META: Record<string, { name: string; color: string }> = {
+    'US': { name: 'US Refineries', color: '#3b82f6' },
+    'IN': { name: 'India Refineries', color: '#f59e0b' },
+    'CN': { name: 'China Refineries', color: '#ef4444' },
 };
 
 export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, isLoading }) => {
-    // Process data: Aggregate latest month's imports by exporter
     const sankeyData = useMemo(() => {
         if (!data.length) return { nodes: [], links: [] };
 
-        const dates = Array.from(new Set(data.map(d => d.as_of_date))).sort();
-        const latestDate = dates[dates.length - 1];
-        const latestImports = data.filter(d => d.as_of_date === latestDate);
+        // Get latest observations per importer/exporter pair
+        const latestPairs = new Map<string, OilImport>();
+        data.forEach(d => {
+            const key = `${d.importer_country_code}-${d.exporter_country_code}`;
+            const existing = latestPairs.get(key);
+            if (!existing || new Date(d.as_of_date) > new Date(existing.as_of_date)) {
+                latestPairs.set(key, d);
+            }
+        });
 
-        // Sort by volume
-        latestImports.sort((a, b) => b.import_volume_mbbl - a.import_volume_mbbl);
+        const latestData = Array.from(latestPairs.values()).filter(d => d.import_volume_mbbl > 0);
+        if (!latestData.length) return { nodes: [], links: [] };
 
-        const TOP_N = 6;
-        const topImports = latestImports.slice(0, TOP_N);
-        const otherImports = latestImports.slice(TOP_N);
-        const otherVolume = otherImports.reduce((sum, d) => sum + d.import_volume_mbbl, 0);
+        const latestDate = latestData.sort((a, b) => new Date(b.as_of_date).getTime() - new Date(a.as_of_date).getTime())[0].as_of_date;
 
-        // Calculate total for percentage
-        const totalVolume = topImports.reduce((sum, d) => sum + d.import_volume_mbbl, 0) + otherVolume;
+        // Construct nodes (Exporters -> Importers)
+        const exporterCodes = Array.from(new Set(latestData.map(d => d.exporter_country_code)));
+        const importerCodes = Array.from(new Set(latestData.map(d => d.importer_country_code)));
 
-        // Construct Nodes
         const nodes = [
-            ...topImports.map(d => {
-                const meta = COUNTRY_META[d.exporter_country_code] || { name: d.exporter_country_code, region: 'Other', color: '#94a3b8' };
-                return { ...meta, value: d.import_volume_mbbl };
+            ...exporterCodes.map(code => {
+                const meta = COUNTRY_META[code] || { name: code, region: 'Other', color: '#94a3b8' };
+                return { ...meta, code };
             }),
-            ...(otherVolume > 0 ? [{ name: 'Rest of World', region: 'Other', color: '#475569', value: otherVolume }] : []),
-            { name: 'US Refineries', region: 'North America', color: '#3b82f6', value: totalVolume } // Destination
+            ...importerCodes.map(code => {
+                const meta = DESTINATION_META[code] || { name: `${code} Refineries`, color: '#64748b' };
+                return { ...meta, code };
+            })
         ];
 
-        const usIndex = nodes.length - 1;
-        const otherIndex = otherVolume > 0 ? topImports.length : -1;
-
-        const links = [
-            ...topImports.map((d, i) => ({
-                source: i,
-                target: usIndex,
+        const exporterCount = exporterCodes.length;
+        const links = latestData.map(d => {
+            const source = exporterCodes.indexOf(d.exporter_country_code);
+            const target = exporterCount + importerCodes.indexOf(d.importer_country_code);
+            const sourceMeta = nodes[source];
+            return {
+                source,
+                target,
                 value: d.import_volume_mbbl,
-                share: (d.import_volume_mbbl / totalVolume) * 100,
-                fill: nodes[i].color // Link color matches source
-            })),
-            ...(otherVolume > 0 ? [{
-                source: otherIndex,
-                target: usIndex,
-                value: otherVolume,
-                share: (otherVolume / totalVolume) * 100,
-                fill: '#475569'
-            }] : [])
-        ];
+                fill: sourceMeta.color,
+                opacity: (sourceMeta as any).risk === 'At-Risk' ? 0.6 : 0.3
+            };
+        });
 
-        return { nodes, links, latestDate, totalVolume };
+        return { nodes, links, latestDate };
     }, [data]);
 
     if (isLoading) {
         return (
-            <Card className="h-[400px] animate-pulse bg-white/5 border-white/10">
+            <Card className="h-[500px] animate-pulse bg-black/40 border-white/10 rounded-[2.5rem]">
                 <CardHeader><div className="h-6 w-1/2 bg-white/10 rounded" /></CardHeader>
-                <CardContent><div className="h-full bg-white/5 rounded" /></CardContent>
+                <CardContent className="h-full pt-10"><div className="h-4/5 w-full bg-white/5 rounded-3xl" /></CardContent>
             </Card>
         );
     }
 
     if (!sankeyData.nodes.length) {
         return (
-            <Card className="h-[400px] bg-black/40 border-white/10">
-                <CardContent className="flex items-center justify-center h-full text-muted-foreground">
-                    No import data available
+            <Card className="h-[500px] bg-black/40 border-white/10 rounded-[2.5rem] overflow-hidden">
+                <CardContent className="flex flex-col items-center justify-center h-full text-muted-foreground gap-4">
+                    <div className="w-12 h-12 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
+                    <div className="text-center space-y-1">
+                        <p className="italic font-medium">Synchronizing global partner feeds...</p>
+                        <p className="text-[10px] uppercase tracking-widest font-black opacity-50">EIA International v2 Connection Active</p>
+                    </div>
                 </CardContent>
             </Card>
         );
     }
 
-    // Calculate OPEC Exposure - defensive guard for node registry
-    const opecExposure = (sankeyData.links || [])
-        .filter(l => {
-            const sourceIdx = l.source as number;
-            return sankeyData.nodes[sourceIdx] && sankeyData.nodes[sourceIdx].region === 'OPEC';
-        })
-        .reduce((sum, l) => sum + (l.share || 0), 0);
-
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md overflow-hidden relative group">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white/[0.02] border-b border-white/5">
-                <div className="space-y-1">
-                    <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                        <Ship className="h-4 w-4 text-blue-500" />
+        <Card className="bg-black/60 border-white/10 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden relative group shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between pb-6 pt-8 px-8 border-b border-white/5 bg-white/[0.01]">
+                <div className="space-y-1.5">
+                    <CardTitle className="text-base font-black text-white uppercase tracking-[0.2em] flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                            <Ship className="h-4 w-4 text-blue-400" />
+                        </div>
                         Crude Oil Sourcing Flow
                     </CardTitle>
                     <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/5 border border-white/5 text-muted-foreground">
-                            {sankeyData.latestDate}
+                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5">
+                            <span className={cn("w-1.5 h-1.5 rounded-full", sankeyData.latestDate ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
+                            AS OF {new Date(sankeyData.latestDate || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}
                         </span>
-                        {opecExposure > 15 && (
-                            <div className="flex items-center gap-1 text-[10px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/10">
-                                <AlertTriangle className="w-3 h-3" />
-                                OPEC Exposure: {opecExposure.toFixed(1)}%
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent className="h-[350px] p-0 relative">
-                {/* Legend Overlay */}
-                <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 pointer-events-none opacity-50">
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-                        <div className="w-2 h-2 rounded-full bg-blue-500" /> North America
-                    </div>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500" /> OPEC
                     </div>
                 </div>
 
+                {/* Risk Legend */}
+                <div className="flex items-center gap-4 bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Stable</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-amber-500" />
+                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Volatile</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-rose-500" />
+                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">At-Risk</span>
+                    </div>
+                </div>
+            </CardHeader>
+
+            <CardContent className="h-[400px] p-8 relative">
                 <ResponsiveContainer width="100%" height="100%">
                     <Sankey
                         data={sankeyData}
-                        nodePadding={50}
-                        margin={{ left: 20, right: 20, top: 40, bottom: 20 }}
-                        link={{ stroke: 'none' }} // We control fill via payload but Sankey API is tricky, standard Recharts Sankey uses 'fill' for links? No, it uses stroke usually.
-                    // Actually Recharts Sankey links are paths. We can color them by passing a custom link component or just mapping stroke.
-                    // Let's try passing 'link={{ stroke: ... }}' with function if supported, or rely on index.
-                    // Recharts Sankey data link objects can have 'fill' or 'stroke' properties?
-                    // If not, we might need a custom Link component.
-                    // For safety, let's use a semi-transparent blue default, but we really want colored links.
+                        nodePadding={30}
+                        margin={{ left: 10, right: 10, top: 20, bottom: 20 }}
+                        node={({ x, y, width, height, payload, containerWidth }) => {
+                            const isSource = x < containerWidth / 2;
+                            return (
+                                <g>
+                                    <rect
+                                        x={x}
+                                        y={y}
+                                        width={width}
+                                        height={height}
+                                        fill={payload.color || '#64748b'}
+                                        rx={4}
+                                        className="shadow-lg"
+                                    />
+                                    <text
+                                        x={isSource ? x - 8 : x + width + 8}
+                                        y={y + height / 2}
+                                        textAnchor={isSource ? 'end' : 'start'}
+                                        fontSize="9"
+                                        fontWeight="900"
+                                        fill="#fff"
+                                        className="uppercase tracking-tighter"
+                                        dominantBaseline="middle"
+                                    >
+                                        {payload.name}
+                                    </text>
+                                    {isSource && (
+                                        <text
+                                            x={x - 8}
+                                            y={y + height / 2 + 12}
+                                            textAnchor="end"
+                                            fontSize="8"
+                                            fill="#94a3b8"
+                                            className="uppercase tracking-widest font-bold"
+                                        >
+                                            {payload.region}
+                                        </text>
+                                    )}
+                                </g>
+                            );
+                        }}
+                        link={{ stroke: 'rgba(255,255,255,0.05)' }} // Base link style
                     >
-                        <defs>
-                            <linearGradient id="linkGradient" x1="0" y1="0" x2="1" y2="0">
-                                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
-                                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1} />
-                            </linearGradient>
-                        </defs>
                         <Tooltip
                             content={({ active, payload }) => {
                                 if (!active || !payload || !payload.length) return null;
-                                const isNode = payload[0].payload.sourceLinks; // Crude check if it's a node
+                                const data = payload[0].payload;
+                                const isNode = data.sourceLinks;
+
                                 if (isNode) {
-                                    const node = payload[0].payload;
                                     return (
-                                        <div className="bg-slate-950 border border-white/10 rounded-lg p-3 shadow-xl">
-                                            <p className="text-sm font-bold text-white mb-1">{node.name || 'Unknown'}</p>
-                                            <p className="text-xs text-muted-foreground">
-                                                Volume: <span className="text-white font-mono">{(node.value || 0).toFixed(1)} mbbl</span>
-                                            </p>
+                                        <div className="bg-slate-950/90 border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
+                                            <p className="text-xs font-black text-white mb-2 uppercase tracking-widest">{data.name}</p>
+                                            <div className="flex justify-between gap-4 text-[10px]">
+                                                <span className="text-muted-foreground uppercase font-bold">Total Flow</span>
+                                                <span className="font-mono text-white">{(data.value || 0).toLocaleString()} MBBL</span>
+                                            </div>
                                         </div>
                                     );
                                 }
-                                const link = payload[0].payload;
+
                                 return (
-                                    <div className="bg-slate-950 border border-white/10 rounded-lg p-3 shadow-xl">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: link.fill || '#ccc' }} />
-                                            <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                                {link.source?.name || 'Unknown'} → {link.target?.name || 'Unknown'}
+                                    <div className="bg-slate-950/90 border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: data.fill }} />
+                                            <span className="text-xs font-black text-white uppercase tracking-[0.1em]">
+                                                {data.source?.name} → {data.target?.name}
                                             </span>
                                         </div>
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between gap-4 text-xs">
-                                                <span className="text-muted-foreground">Volume:</span>
-                                                <span className="font-mono text-white">{(link.value || 0).toFixed(1)} mbbl</span>
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between gap-6 text-[10px]">
+                                                <span className="text-muted-foreground uppercase font-bold">Volume</span>
+                                                <span className="font-mono text-white">{(data.value || 0).toLocaleString()} MBBL</span>
                                             </div>
-                                            <div className="flex justify-between gap-4 text-xs">
-                                                <span className="text-muted-foreground">Share:</span>
-                                                <span className="font-mono text-emerald-400">{(link.share || 0).toFixed(1)}%</span>
+                                            <div className="flex justify-between gap-6 text-[10px]">
+                                                <span className="text-muted-foreground uppercase font-bold">Risk Level</span>
+                                                <span className={cn(
+                                                    "font-black uppercase tracking-widest",
+                                                    data.source?.risk === 'At-Risk' ? 'text-rose-400' :
+                                                        data.source?.risk === 'Volatile' ? 'text-amber-400' : 'text-emerald-400'
+                                                )}>
+                                                    {data.source?.risk || 'STABLE'}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -198,3 +241,6 @@ export const OilImportSankeyCard: React.FC<OilImportSankeyCardProps> = ({ data, 
         </Card>
     );
 };
+
+const cn = (...classes: any[]) => classes.filter(Boolean).join(' ');
+

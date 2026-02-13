@@ -147,8 +147,11 @@ export const EnergySecuritySection: React.FC = () => {
                     <div className="flex flex-col gap-8">
                         {/* 1. Main Chart */}
                         <div className="w-full">
-                            <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                                <PowerMixDivergenceCard />
+                            <Suspense fallback={<div className="h-[450px] animate-pulse bg-white/5 rounded-[2.5rem]" />}>
+                                <PowerMixDivergenceCard
+                                    data={data.powerMixData}
+                                    lastUpdated={data.powerMixLastUpdated}
+                                />
                             </Suspense>
                         </div>
 

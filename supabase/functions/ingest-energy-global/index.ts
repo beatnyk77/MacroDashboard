@@ -24,40 +24,86 @@ Deno.serve(async (req) => {
 
         const results = [];
 
-        // 1. Fetch China/EU Coal & Renewable Share (via Ember Proxy for now)
-        // Note: Ember data is often available via CSV/Download or a hidden API.
-        // For this implementation, we will use a "high-conviction" mock fallback for China if API is rate-limited.
-        const emberData = [
-            { metric_id: 'CN_COAL_GENERATION_TWH', value: 485.2 }, // Realistic monthly avg
-            { metric_id: 'CN_RENEWABLE_SHARE_PCT', value: 32.5 },
-            { metric_id: 'EU_RENEWABLE_SHARE_PCT', value: 44.1 }
+        // 1. Fetch Power Mix Divergence Data (Comparative for US, EU, IN, CN)
+        const entities = [
+            { code: 'USA', region: 'US' },
+            { code: 'EUU', region: 'EU' },
+            { code: 'IND', region: 'India' },
+            { code: 'CHN', region: 'China' }
         ];
 
-        for (const row of emberData) {
-            const { error } = await supabase.from('metric_observations').upsert({
-                metric_id: row.metric_id,
-                value: row.value,
-                as_of_date: new Date().toISOString().split('T')[0],
-                last_updated_at: new Date().toISOString()
-            }, { onConflict: 'metric_id, as_of_date' });
-            if (!error) results.push(row.metric_id);
+        const FETCH_VARIABLES = ['Coal', 'Solar', 'Wind', 'Hydro', 'Bioenergy', 'Nuclear', 'Gas', 'Other fossil', 'Other renewables'];
+        const emberApiKey = Deno.env.get('EMBER_API_KEY');
+
+        console.log(`Using Ember API Key: ${emberApiKey ? 'YES' : 'NO'}`);
+
+        if (emberApiKey) {
+            try {
+                for (const entity of entities) {
+                    const emberUrl = new URL("https://api.ember-climate.org/v1/electricity-generation/monthly");
+                    emberUrl.searchParams.append('entity_code', entity.code);
+                    emberUrl.searchParams.append('unit', 'percentage');
+
+                    const res = await fetch(emberUrl.toString(), {
+                        headers: { 'x-api-key': emberApiKey }
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        // Get latest month's data
+                        const latestDate = Array.isArray(data) ? data[0]?.date : null;
+                        if (latestDate) {
+                            const currentMonthData = data.filter((d: any) => d.date === latestDate);
+
+                            const coal = currentMonthData.find((d: any) => d.variable === 'Coal')?.share_pct || 0;
+                            const renewables = currentMonthData
+                                .filter((d: any) => ['Solar', 'Wind', 'Hydro', 'Bioenergy', 'Other renewables'].includes(d.variable))
+                                .reduce((acc: number, curr: any) => acc + (curr.share_pct || 0), 0);
+                            const other = 100 - coal - renewables;
+
+                            const prefix = entity.region === 'India' ? 'IN' : (entity.region === 'China' ? 'CN' : entity.region);
+
+                            // Upsert metrics
+                            const observations = [
+                                { id: `${prefix}_POWER_COAL_PCT`, val: coal },
+                                { id: `${prefix}_POWER_RENEWABLE_PCT`, val: renewables },
+                                { id: `${prefix}_POWER_OTHER_PCT`, val: other }
+                            ];
+
+                            for (const obs of observations) {
+                                const { error } = await supabase.from('metric_observations').upsert({
+                                    metric_id: obs.id,
+                                    value: obs.val,
+                                    as_of_date: latestDate,
+                                    last_updated_at: new Date().toISOString()
+                                }, { onConflict: 'metric_id, as_of_date' });
+                                if (!error) results.push(obs.id);
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Ember Fetch failed:", e);
+            }
+        } else {
+            console.warn("EMBER_API_KEY missing. Skipping real-time Power Mix ingestion.");
         }
 
         // 2. EU Gas Storage (via GIE AGSI API - Public endpoint)
         try {
-            const gieUrl = "https://agsi.gie.eu/api?type=eu"; // Public stats
+            const gieUrl = "https://agsi.gie.eu/api?type=eu";
             const res = await fetch(gieUrl);
             if (res.ok) {
-                const data = await res.json();
-                const latest = data.data?.[0]; // Usually latest daily
+                const data: any = await res.json();
+                const latest = data.data?.[0];
                 if (latest) {
-                    await supabase.from('metric_observations').upsert({
+                    const { error } = await supabase.from('metric_observations').upsert({
                         metric_id: 'EU_GAS_STORAGE_PCT',
                         value: parseFloat(latest.full),
                         as_of_date: latest.gasDayStart,
                         last_updated_at: new Date().toISOString()
                     }, { onConflict: 'metric_id, as_of_date' });
-                    results.push('EU_GAS_STORAGE_PCT');
+                    if (!error) results.push('EU_GAS_STORAGE_PCT');
                 }
             }
         } catch (e) {

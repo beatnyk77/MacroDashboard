@@ -30,6 +30,8 @@ export interface OilData {
     importData: OilImport[];
     sprData: { date: string; value: number }[];
     utilizationData: { date: string; value: number }[];
+    powerMixData: { region: string; coal: number; renewable: number; other: number }[];
+    powerMixLastUpdated?: string;
     metrics: MetricDefinition[];
 }
 
@@ -72,7 +74,37 @@ export const useOilData = () => {
 
             if (utilError) throw utilError;
 
-            // 5. Fetch Metric Definitions for context
+            // 5. Fetch Power Mix Metrics (Lastest observations)
+            const powerMetrics = [
+                'US_POWER_COAL_PCT', 'US_POWER_RENEWABLE_PCT', 'US_POWER_OTHER_PCT',
+                'EU_POWER_COAL_PCT', 'EU_POWER_RENEWABLE_PCT', 'EU_POWER_OTHER_PCT',
+                'IN_POWER_COAL_PCT', 'IN_POWER_RENEWABLE_PCT', 'IN_POWER_OTHER_PCT',
+                'CN_POWER_COAL_PCT', 'CN_POWER_RENEWABLE_PCT', 'CN_POWER_OTHER_PCT'
+            ];
+
+            const { data: powerObs, error: powerError } = await supabase
+                .from('metric_observations')
+                .select('metric_id, value, as_of_date')
+                .in('metric_id', powerMetrics)
+                .order('as_of_date', { ascending: false });
+
+            if (powerError) throw powerError;
+
+            // Group by region
+            const regions = ['US', 'EU', 'India', 'China'];
+            const regionPrefixes: Record<string, string> = { 'US': 'US', 'EU': 'EU', 'India': 'IN', 'China': 'CN' };
+
+            const powerMixData = regions.map(region => {
+                const prefix = regionPrefixes[region];
+                const coal = powerObs?.find(o => o.metric_id === `${prefix}_POWER_COAL_PCT`)?.value || 0;
+                const renewable = powerObs?.find(o => o.metric_id === `${prefix}_POWER_RENEWABLE_PCT`)?.value || 0;
+                const other = powerObs?.find(o => o.metric_id === `${prefix}_POWER_OTHER_PCT`)?.value || 0;
+                return { region, coal: Number(coal), renewable: Number(renewable), other: Number(other) };
+            });
+
+            const powerMixLastUpdated = powerObs && powerObs.length > 0 ? String(powerObs[0].as_of_date) : undefined;
+
+            // 6. Fetch Metric Definitions for context
             const { data: metData, error: metError } = await supabase
                 .from('metrics')
                 .select('*')
@@ -91,6 +123,8 @@ export const useOilData = () => {
                     date: String(d.as_of_date),
                     value: Number(d.value)
                 })),
+                powerMixData,
+                powerMixLastUpdated,
                 metrics: (metData as MetricDefinition[]) || []
             };
         },

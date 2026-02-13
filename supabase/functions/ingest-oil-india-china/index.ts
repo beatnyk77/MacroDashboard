@@ -30,50 +30,86 @@ Deno.serve(async (req) => {
         console.log("Starting EIA International Ingestion for IND/CHN Partners...");
 
         // Activity: 3 (Imports), Product: 5 (Crude Oil)
-        // We'll fetch for India (IND) and China (CHN)
-        const reporters = ['IND', 'CHN'];
+        // Reporters: IND (India), CHN (China)
+        const reporters = [
+            { id: 'IND', code: 'IN' },
+            { id: 'CHN', code: 'CN' }
+        ];
+
+        // Known top partners to query explicitly if facets are sparse
+        const partners = [
+            { id: 'RUS', name: 'Russia' },
+            { id: 'SAU', name: 'Saudi Arabia' },
+            { id: 'IRQ', name: 'Iraq' },
+            { id: 'ARE', name: 'UAE' },
+            { id: 'USA', name: 'United States' },
+            { id: 'BRA', name: 'Brazil' },
+            { id: 'KWT', name: 'Kuwait' },
+            { id: 'NGA', name: 'Nigeria' }
+        ];
+
         let totalProcessed = 0;
 
         for (const reporter of reporters) {
-            // Note: Not all countries have partner breakdown in the international API v2.
-            // If partnerCountryId facet is not specified, it usually gives 'World'.
-            // To get partners, we might need a different route or facet.
-            // Some series in EIA have partner data.
+            console.log(`Fetching Global Partners for ${reporter.id}...`);
 
-            // Try to fetch with partner breakdown
-            const url = `${EIA_API_BASE}/international/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[activityId][]=3&facets[productId][]=5&facets[countryRegionId][]=${reporter}&sort[0][column]=period&sort[0][direction]=desc&length=200`;
+            // Build URL with multiple partner facets
+            const url = new URL(`${EIA_API_BASE}/international/data/`);
+            url.searchParams.append('api_key', eiaApiKey);
+            url.searchParams.append('frequency', 'annual');
+            url.searchParams.append('data[0]', 'value');
+            url.searchParams.append('facets[activityId][]', '3');
+            url.searchParams.append('facets[productId][]', '5');
+            url.searchParams.append('facets[countryRegionId][]', reporter.id);
+            url.searchParams.append('facets[unit][]', 'TBPD');
 
-            console.log(`Fetching Data for ${reporter}...`);
-            const res = await fetch(url);
-            if (!res.ok) continue;
+            // Add partner facets
+            partners.forEach(p => {
+                url.searchParams.append('facets[partnerCountryId][]', p.id);
+            });
 
-            const json = await res.json();
-            const data: any[] = json.response?.data || [];
+            url.searchParams.append('sort[0][column]', 'period');
+            url.searchParams.append('sort[0][direction]', 'desc');
+            url.searchParams.append('length', '100');
 
-            // EIA International often lacks granular partner labels in the 'international' endpoint
-            // but provides them in specific partner feeds if available.
-            // IF partnerCountryId is missing, we'll use World or try to infer.
+            try {
+                const res = await fetch(url.toString());
+                if (!res.ok) {
+                    console.error(`EIA API Error for ${reporter.id}: ${res.status}`);
+                    continue;
+                }
 
-            if (data.length > 0) {
-                const rows = data.map(d => {
-                    // Try to find partner label in the response
-                    const partnerId = d.partnerCountryId || 'World';
-                    const partnerName = d.partnerCountryName || partnerId;
+                const json = await res.json();
+                const data = json.response?.data || [];
 
-                    return {
-                        importer_country_code: reporter === 'IND' ? 'IN' : 'CN',
-                        exporter_country_code: partnerId,
-                        exporter_country_name: partnerName,
-                        import_volume_mbbl: (Number(d.value) * 365) / 1000, // TBPD to MBBL/year approx
-                        as_of_date: `${d.period}-01-01`,
-                        frequency: 'annual',
-                        source_id: sourceId
-                    };
-                }).filter(r => !isNaN(r.import_volume_mbbl));
+                if (data.length > 0) {
+                    // Extract latest period
+                    const latestPeriod = data[0].period;
+                    const latestData = data.filter((d: any) => d.period === latestPeriod);
 
-                const { error } = await supabase.from('oil_imports_by_origin').upsert(rows, { onConflict: 'importer_country_code, exporter_country_code, as_of_date' });
-                if (error) console.error(`Error upserting for ${reporter}:`, error);
-                else totalProcessed += rows.length;
+                    const rows = latestData.map((d: any) => {
+                        const partner = partners.find(p => p.id === d.partnerCountryId) || { name: d.partnerCountryName || d.partnerCountryId };
+                        return {
+                            importer_country_code: reporter.code,
+                            exporter_country_code: d.partnerCountryId,
+                            exporter_country_name: partner.name,
+                            import_volume_mbbl: (Number(d.value) * 365) / 1000, // TBPD to MBBL/year
+                            as_of_date: `${d.period}-01-01`,
+                            frequency: 'annual',
+                            source_id: sourceId
+                        };
+                    }).filter((r: any) => r.import_volume_mbbl > 0);
+
+                    if (rows.length > 0) {
+                        const { error } = await supabase.from('oil_imports_by_origin').upsert(rows, {
+                            onConflict: 'importer_country_code, exporter_country_code, as_of_date'
+                        });
+                        if (error) throw error;
+                        totalProcessed += rows.length;
+                    }
+                }
+            } catch (e) {
+                console.error(`Failed to process ${reporter.id}:`, e);
             }
         }
 
