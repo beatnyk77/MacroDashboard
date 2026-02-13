@@ -55,14 +55,40 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
         return `$${val.toLocaleString()}`;
     };
 
-    const formatVolume = (val: number, unit: string) => {
-        return `${val.toLocaleString()} ${unit}`;
+    const formatVolume = (val: number) => {
+        if (val >= 1e6) return `${(val / 1e6).toFixed(2)} MMT`;
+        if (val >= 1e3) return `${(val / 1e3).toFixed(1)} kMT`;
+        return `${val.toFixed(0)} MT`;
     };
 
     const getHHILevel = (hhi: number) => {
         if (hhi > 2500) return { label: 'Highly Concentrated', color: 'text-rose-500' };
         if (hhi > 1500) return { label: 'Moderate', color: 'text-amber-500' };
         return { label: 'Diversified', color: 'text-emerald-500' };
+    };
+
+    const ChartTooltip = ({ active, payload, label }: any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-black/90 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
+                    <p className="text-[10px] font-black text-white/40 mb-1 uppercase tracking-widest">{label}</p>
+                    {payload.map((entry: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between gap-8 py-1">
+                            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: entry.color }}>
+                                {entry.name}
+                            </span>
+                            <span className="text-xs font-black text-white tabular-nums">
+                                {viewMode === 'value'
+                                    ? `$${entry.value.toFixed(1)}B`
+                                    : formatVolume(entry.value * 1) // Volume in raw numbers in data
+                                }
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+        return null;
     };
 
     return (
@@ -111,10 +137,10 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                         <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">India Latest</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-4xl font-black tracking-tighter">
+                        <span className="text-3xl sm:text-4xl font-black tracking-tighter truncate">
                             {viewMode === 'value'
                                 ? formatValue(latestIndia?.value_usd || 0)
-                                : formatVolume(latestIndia?.volume || 0, latestIndia?.volume_unit || 'tonnes')
+                                : formatVolume(latestIndia?.volume || 0)
                             }
                         </span>
                         <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
@@ -129,10 +155,10 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                         <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">China Latest</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-4xl font-black tracking-tighter">
+                        <span className="text-3xl sm:text-4xl font-black tracking-tighter truncate">
                             {viewMode === 'value'
                                 ? formatValue(latestChina?.value_usd || 0)
-                                : formatVolume(latestChina?.volume || 0, latestChina?.volume_unit || 'tonnes')
+                                : formatVolume(latestChina?.volume || 0)
                             }
                         </span>
                         <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
@@ -207,10 +233,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                                     tickLine={false}
                                     tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
                                 />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                    itemStyle={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}
-                                />
+                                <Tooltip content={<ChartTooltip />} />
                                 <Legend
                                     iconType="circle"
                                     verticalAlign="top"
