@@ -7,6 +7,7 @@ const PriceTerminalCard = lazy(() => import('./components/PriceTerminalCard').th
 const FlowsSankeyCard = lazy(() => import('./components/FlowsSankeyCard').then(m => ({ default: m.FlowsSankeyCard })));
 const ReserveTrackerCard = lazy(() => import('./components/ReserveTrackerCard').then(m => ({ default: m.ReserveTrackerCard })));
 const DisruptionMapCard = lazy(() => import('./components/DisruptionMapCard').then(m => ({ default: m.DisruptionMapCard })));
+const MetalImportCard = lazy(() => import('./components/MetalImportCard').then(m => ({ default: m.MetalImportCard })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -14,7 +15,11 @@ const LoadingFallback = () => (
     </div>
 );
 
+import { useCommodityImports } from '@/hooks/useCommodityImports';
+
 export const CommodityTerminalRow: React.FC = () => {
+    const { data: importData } = useCommodityImports();
+
     return (
         <SPAAccordion
             id="commodity-terminal"
@@ -23,9 +28,10 @@ export const CommodityTerminalRow: React.FC = () => {
             icon={<Fuel />}
             accentColor="emerald"
             interpretations={[
-                "Copper/Gold Ratio: Bottoming",
-                "SPR Liquidity: Critical",
-                "Flow Disruption: Elevated"
+                "Gold Imports: India/China Parity Rising",
+                "REM Dependency: India Critical (98%)",
+                "Silver Flows: Industrial Demand Spike",
+                "Copper/Gold Ratio: Bottoming"
             ]}
         >
             <div className="flex flex-col gap-12">
@@ -41,6 +47,43 @@ export const CommodityTerminalRow: React.FC = () => {
                     <div className="w-full">
                         <Suspense fallback={<LoadingFallback />}>
                             <FlowsSankeyCard />
+                        </Suspense>
+                    </div>
+                </SectionErrorBoundary>
+
+                {/* NEW ROWS: Gold, Silver, REM Imports */}
+                <SectionErrorBoundary name="Gold Import Terminal">
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <MetalImportCard
+                                metal="Gold"
+                                data={importData || []}
+                                accentColor="gold"
+                            />
+                        </Suspense>
+                    </div>
+                </SectionErrorBoundary>
+
+                <SectionErrorBoundary name="Silver Import Terminal">
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <MetalImportCard
+                                metal="Silver"
+                                data={importData || []}
+                                accentColor="slate"
+                            />
+                        </Suspense>
+                    </div>
+                </SectionErrorBoundary>
+
+                <SectionErrorBoundary name="REM Import Terminal">
+                    <div className="w-full">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <MetalImportCard
+                                metal="Rare Earth Metals"
+                                data={importData || []}
+                                accentColor="emerald"
+                            />
                         </Suspense>
                     </div>
                 </SectionErrorBoundary>
