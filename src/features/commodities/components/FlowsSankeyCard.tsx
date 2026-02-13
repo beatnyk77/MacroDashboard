@@ -22,7 +22,7 @@ const CustomNode = (props: any) => {
                 x={x}
                 y={y}
                 width={width}
-                height={height}
+                height={Math.max(0, height)}
                 fill={payload.color || '#3b82f6'}
                 fillOpacity={0.9}
                 rx={2}
@@ -138,7 +138,7 @@ export const FlowsSankeyCard: React.FC = () => {
                                             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
                                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.color }} />
                                                 <span className="text-[10px] font-black text-white uppercase tracking-wider">
-                                                    {data.source.name} <ArrowRight className="inline w-3 h-3 mx-1" /> {data.target.name}
+                                                    {(data.source?.name || 'Unknown Source')} <ArrowRight className="inline w-3 h-3 mx-1" /> {(data.target?.name || 'Unknown Target')}
                                                 </span>
                                             </div>
                                             <div className="space-y-1">

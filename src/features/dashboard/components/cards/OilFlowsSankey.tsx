@@ -37,7 +37,7 @@ const DemoNode = (props: any) => {
                 x={x}
                 y={y}
                 width={width}
-                height={height}
+                height={Math.max(0, height)}
                 fill={payload.color || '#475569'}
                 fillOpacity={0.8}
                 rx={2}
@@ -163,7 +163,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                                             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
                                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                                                 <span className="text-[10px] font-black text-white uppercase tracking-wider">
-                                                    {item.source.name} <ArrowRight className="inline w-3 h-3 mx-1" /> {item.target.name}
+                                                    {(item.source?.name || 'Unknown Hub')} <ArrowRight className="inline w-3 h-3 mx-1" /> {(item.target?.name || 'Unknown Hub')}
                                                 </span>
                                             </div>
                                             <div className="space-y-1">
