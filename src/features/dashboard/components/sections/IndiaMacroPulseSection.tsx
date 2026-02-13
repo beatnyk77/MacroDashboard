@@ -185,13 +185,15 @@ export const IndiaMacroPulseSection: React.FC = () => {
                     </div>
 
                     {/* Infrastructure & Institutional */}
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                    <div className="flex flex-col gap-16">
                         <SectionErrorBoundary name="Annual Survey of Industries">
                             <ASISection />
                         </SectionErrorBoundary>
-                        <SectionErrorBoundary name="UPI Autopay Failure">
-                            <UPIAutopayFailureCard />
-                        </SectionErrorBoundary>
+                        <div className="border-t border-white/5 pt-16">
+                            <SectionErrorBoundary name="UPI Autopay Failure">
+                                <UPIAutopayFailureCard />
+                            </SectionErrorBoundary>
+                        </div>
                     </div>
 
                     {/* BOP Table */}
