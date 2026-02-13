@@ -3,9 +3,10 @@ import { useOilData } from '@/hooks/useOilData';
 import { SectionHeader } from '@/components/SectionHeader';
 import { DataQualityBadge } from '@/components/DataQualityBadge';
 import { MotionCard } from '@/components/MotionCard';
+import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
 
 const RefiningCapacityCard = lazy(() => import('../cards/RefiningCapacityCard').then(m => ({ default: m.RefiningCapacityCard })));
-const OilImportSankeyCard = lazy(() => import('../cards/OilImportSankeyCard').then(m => ({ default: m.OilImportSankeyCard })));
+const OilImportVulnerabilityCard = lazy(() => import('../cards/OilImportVulnerabilityCard').then(m => ({ default: m.OilImportVulnerabilityCard })));
 const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({ default: m.OilFlowsSankey })));
 const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
@@ -30,7 +31,21 @@ const generateFallbackData = () => ({
         { importer_country_code: 'CN', exporter_country_code: 'RU', exporter_country_name: 'Russia', import_volume_mbbl: 2200, as_of_date: '2024-01-01', frequency: 'Annual' },
         { importer_country_code: 'CN', exporter_country_code: 'SA', exporter_country_name: 'Saudi Arabia', import_volume_mbbl: 1500, as_of_date: '2024-01-01', frequency: 'Annual' }
     ] as any[],
-    capacityData: []
+    powerMixData: [
+        { region: 'US', coal: 19.5, renewable: 22.4, other: 58.1 },
+        { region: 'EU', coal: 12.3, renewable: 44.7, other: 43.0 },
+        { region: 'India', coal: 74.2, renewable: 11.8, other: 14.0 },
+        { region: 'China', coal: 61.4, renewable: 15.6, other: 23.0 }
+    ],
+    powerMixLastUpdated: new Date().toISOString(),
+    capacityData: [],
+    euGasData: Array.from({ length: 48 }, (_, i) => { // 4 years monthly
+        const d = new Date(); d.setMonth(d.getMonth() - (47 - i));
+        // Seasonal Pattern simulation
+        const month = d.getMonth();
+        const seasonal = Math.sin((month / 11) * Math.PI) * 40; // High in summer/fall, low in winter
+        return { date: d.toISOString().split('T')[0], value: 50 + seasonal + Math.random() * 5 };
+    })
 });
 
 export const EnergySecuritySection: React.FC = () => {
@@ -46,7 +61,10 @@ export const EnergySecuritySection: React.FC = () => {
             ...apiData,
             sprData: apiData.sprData.length ? apiData.sprData : fallback.sprData,
             utilizationData: apiData.utilizationData.length ? apiData.utilizationData : fallback.utilizationData,
-            importData: apiData.importData.length ? apiData.importData : fallback.importData
+            importData: apiData.importData.length ? apiData.importData : fallback.importData,
+            powerMixData: apiData.powerMixData.length ? apiData.powerMixData : fallback.powerMixData,
+            euGasData: apiData.euGasData?.length ? apiData.euGasData : fallback.euGasData,
+            powerMixLastUpdated: apiData.powerMixLastUpdated || fallback.powerMixLastUpdated
         };
         return { data: merged, isFallback: true };
     }, [apiData]);
@@ -121,17 +139,11 @@ export const EnergySecuritySection: React.FC = () => {
                             Strategic Petroleum Reserve (SPR)
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            The US emergency buffer. Current inventory levels relative to historical capacity provide a critical signal on national security readiness and energy buffer depletion.
+                            The nation's emergency oil stockpile. Tracking drawdown, inventory levels, and strategic refilling mandates relative to historical baselines.
                         </p>
                     </div>
-                    <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                        {data.sprData && data.sprData.length > 0 ? (
-                            <SPRTrackerCard data={data.sprData} isLoading={false} />
-                        ) : (
-                            <div className="h-[400px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
-                                <span className="text-xs text-muted-foreground uppercase tracking-widest">No SPR Data Found</span>
-                            </div>
-                        )}
+                    <Suspense fallback={<div className="h-[350px] animate-pulse bg-white/5 rounded-[2.5rem]" />}>
+                        <SPRTrackerCard data={data.sprData} isLoading={false} />
                     </Suspense>
                 </MotionCard>
 
@@ -139,22 +151,27 @@ export const EnergySecuritySection: React.FC = () => {
                 <MotionCard delay={0.3} className="w-full">
                     <div className="mb-4">
                         <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-emerald-500/50" />
+                            <span className="w-8 h-px bg-blue-500/50" />
                             Power Mix Divergence
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Analyzing the underlying molecular reality of power generation. The divergence between G7 "Clean" mandates and BRICS+ energy density priorities creates structural inflation and supply chain disparities.
+                            Comparative analysis of electricity generation sources across major economies, highlighting the pace of decarbonization and reliance on fossil baseload.
                         </p>
                     </div>
-                    {/* STACKED LAYOUT FOR DESKTOP */}
                     <div className="flex flex-col gap-8">
                         {/* 1. Main Chart */}
                         <div className="w-full">
                             <Suspense fallback={<div className="h-[450px] animate-pulse bg-white/5 rounded-[2.5rem]" />}>
-                                <PowerMixDivergenceCard
-                                    data={data.powerMixData}
-                                    lastUpdated={data.powerMixLastUpdated}
-                                />
+                                {data.powerMixData && data.powerMixData.length > 0 ? (
+                                    <PowerMixDivergenceCard
+                                        data={data.powerMixData}
+                                        lastUpdated={data.powerMixLastUpdated}
+                                    />
+                                ) : (
+                                    <div className="h-[450px] flex items-center justify-center bg-white/5 rounded-[2.5rem] border border-white/10">
+                                        <span className="text-xs text-muted-foreground uppercase tracking-widest">Loading Power Mix Data...</span>
+                                    </div>
+                                )}
                             </Suspense>
                         </div>
 
@@ -162,31 +179,74 @@ export const EnergySecuritySection: React.FC = () => {
                         <div className="w-full p-6 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-1">EU Gas Resilience</h4>
-                                <p className="text-[10px] text-muted-foreground/60 italic">EU Aggregate Gas Storage levels (GIE Data)</p>
+                                <p className="text-[10px] text-muted-foreground/60 italic">EU Aggregate Gas Storage levels (Historical Trend)</p>
                             </div>
-                            <div className="flex items-center gap-6 flex-1 max-w-2xl">
-                                <div className="hidden md:block flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-blue-500" style={{ width: '74.2%' }} />
+                            <div className="flex items-center gap-6 flex-1 max-w-2xl h-16">
+                                {/* Sparkline Area Chart for EU Gas */}
+                                <div className="flex-1 h-full w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={data.euGasData}>
+                                            <defs>
+                                                <linearGradient id="euGasGradient" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <Area
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="#3b82f6"
+                                                fill="url(#euGasGradient)"
+                                                strokeWidth={2}
+                                            />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
                                 </div>
                                 <div className="flex items-end gap-2 shrink-0">
-                                    <span className="text-3xl font-black text-white">74.2%</span>
-                                    <span className="text-[10px] font-bold text-emerald-400 mb-1.5">+1.2% WoW</span>
+                                    <span className="text-3xl font-black text-white">
+                                        {data.euGasData && data.euGasData.length > 0
+                                            ? Math.round(data.euGasData[data.euGasData.length - 1].value)
+                                            : 'N/A'}%
+                                    </span>
+                                    <span className="text-[10px] font-bold text-emerald-400 mb-1.5">Storage Level</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="w-full p-6 bg-orange-500/5 border border-orange-500/10 rounded-[2rem] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="w-full p-6 rounded-[2rem] bg-rose-500/5 border border-rose-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-400 mb-1">Global Refining Stress</h4>
-                                <p className="text-[10px] text-muted-foreground/60 italic">Avg Utilization (EIA/KAPSARC derived)</p>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 mb-1">Global Refining Stress</h4>
+                                <p className="text-[10px] text-muted-foreground/60 italic">Avg Utilization Rate (20-Year Trend)</p>
                             </div>
-                            <div className="flex items-center gap-6 flex-1 max-w-2xl">
-                                <div className="hidden md:block flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-orange-500" style={{ width: '88.4%' }} />
+                            <div className="flex items-center gap-6 flex-1 max-w-2xl h-16">
+                                {/* Sparkline Area Chart for Refining Stress (Utilization) */}
+                                <div className="flex-1 h-full w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={data.utilizationData}>
+                                            <defs>
+                                                <linearGradient id="utilGradient" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <YAxis domain={['auto', 'auto']} hide />
+                                            <Area
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="#f43f5e"
+                                                fill="url(#utilGradient)"
+                                                strokeWidth={2}
+                                            />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
                                 </div>
                                 <div className="flex items-end gap-2 shrink-0">
-                                    <span className="text-3xl font-black text-white">88.4%</span>
-                                    <span className="text-[10px] font-bold text-rose-400 mb-1.5">+0.5% WoW</span>
+                                    <span className="text-3xl font-black text-white">
+                                        {data.utilizationData && data.utilizationData.length > 0
+                                            ? Math.round(data.utilizationData[data.utilizationData.length - 1].value)
+                                            : 'N/A'}%
+                                    </span>
+                                    <span className="text-[10px] font-bold text-rose-400 mb-1.5">Util. Rate</span>
                                 </div>
                             </div>
                         </div>
@@ -227,7 +287,7 @@ export const EnergySecuritySection: React.FC = () => {
                         <div className="w-full">
                             <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                                 {data.importData && data.importData.length > 0 ? (
-                                    <OilImportSankeyCard data={data.importData} isLoading={false} />
+                                    <OilImportVulnerabilityCard data={data.importData} isLoading={false} />
                                 ) : (
                                     <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
                                         <span className="text-[0.6rem] text-muted-foreground uppercase tracking-widest mb-2 font-black">Data normalization under protocol...</span>

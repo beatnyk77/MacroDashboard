@@ -3,6 +3,7 @@ import { Container } from '@mui/material';
 import { SectionHeader } from '@/components/SectionHeader';
 import { DataHealthTicker } from '@/components/DataHealthTicker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 
 // Lazy load heavy sections
@@ -11,6 +12,7 @@ const NetLiquidityCard = lazy(() => import('../components/cards/NetLiquidityCard
 const MacroOrientationSection = lazy(() => import('@/features/dashboard/components/sections/MacroOrientationSection').then(m => ({ default: m.MacroOrientationSection })));
 const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquiditySection').then(m => ({ default: m.GlobalLiquiditySection })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
+const CommodityTerminal = lazy(() => import('@/features/dashboard/components/sections/CommodityTerminal').then(m => ({ default: m.CommodityTerminal })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -89,8 +91,14 @@ export const DashboardView: React.FC = () => {
                         />
                         <div className="mt-12">
                             <SectionErrorBoundary name="Macro Pulse">
-                                <Suspense fallback={<LoadingFallback />}>
+                                <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-2xl" />}>
                                     <USMacroPulseSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+
+                            <SectionErrorBoundary name="Commodities Terminal">
+                                <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-2xl" />}>
+                                    <CommodityTerminal />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </div>

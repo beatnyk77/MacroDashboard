@@ -12,6 +12,7 @@ export interface OilRefiningCapacity {
 export interface OilImport {
     importer_country_code: string;
     exporter_country_code: string;
+    exporter_country_name?: string;
     import_volume_mbbl: number;
     as_of_date: string;
     frequency: string;
@@ -30,6 +31,7 @@ export interface OilData {
     importData: OilImport[];
     sprData: { date: string; value: number }[];
     utilizationData: { date: string; value: number }[];
+    euGasData: { date: string; value: number }[];
     powerMixData: { region: string; coal: number; renewable: number; other: number }[];
     powerMixLastUpdated?: string;
     metrics: MetricDefinition[];
@@ -104,7 +106,16 @@ export const useOilData = () => {
 
             const powerMixLastUpdated = powerObs && powerObs.length > 0 ? String(powerObs[0].as_of_date) : undefined;
 
-            // 6. Fetch Metric Definitions for context
+            // 6. Fetch EU Gas Storage (Metric: EU_GAS_STORAGE_PCT)
+            const { data: gasObs, error: gasError } = await supabase
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', 'EU_GAS_STORAGE_PCT')
+                .order('as_of_date', { ascending: true });
+
+            if (gasError) console.warn('EU Gas fetch error:', gasError);
+
+            // 7. Fetch Metric Definitions for context
             const { data: metData, error: metError } = await supabase
                 .from('metrics')
                 .select('*')
@@ -120,6 +131,10 @@ export const useOilData = () => {
                     value: Number(d.value)
                 })),
                 utilizationData: (utilObs || []).map((d: any) => ({
+                    date: String(d.as_of_date),
+                    value: Number(d.value)
+                })),
+                euGasData: (gasObs || []).map((d: any) => ({
                     date: String(d.as_of_date),
                     value: Number(d.value)
                 })),

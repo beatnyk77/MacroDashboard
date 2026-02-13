@@ -91,7 +91,8 @@ Deno.serve(async (req: Request) => {
 
         // --- A. Refining Capacity ---
         console.log('Fetching Refining Capacity...');
-        const capacityUrl = `${EIA_API_BASE}/petroleum/pnp/cap1/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[duoarea][]=NUS&facets[process][]=MCR&sort[0][column]=period&sort[0][direction]=desc&length=5`;
+        // Increased length to 50 for multi-decade history
+        const capacityUrl = `${EIA_API_BASE}/petroleum/pnp/cap1/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[duoarea][]=NUS&facets[process][]=MCR&sort[0][column]=period&sort[0][direction]=desc&length=50`;
         try {
             const res = await withTimeout(fetch(capacityUrl), 15000, 'EIA Capacity Fetch');
             if (res.ok) {
@@ -168,7 +169,8 @@ Deno.serve(async (req: Request) => {
 
         // --- C. SPR Levels ---
         console.log('Fetching SPR Levels...');
-        const sprUrl = `${EIA_API_BASE}/petroleum/stoc/spr/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&sort[0][column]=period&sort[0][direction]=desc&length=12`;
+        // Increased length to 480 (40 years) for full history
+        const sprUrl = `${EIA_API_BASE}/petroleum/stoc/spr/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&sort[0][column]=period&sort[0][direction]=desc&length=480`;
         try {
             const res = await withTimeout(fetch(sprUrl), 10000, 'EIA SPR Fetch');
             if (res.ok) {
@@ -188,7 +190,8 @@ Deno.serve(async (req: Request) => {
 
         // --- D. Utilization ---
         console.log('Fetching Utilization...');
-        const utilUrl = `${EIA_API_BASE}/petroleum/pnp/unc/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&facets[process][]=RPU&sort[0][column]=period&sort[0][direction]=desc&length=12`;
+        // Increased length to 240 (20 years)
+        const utilUrl = `${EIA_API_BASE}/petroleum/pnp/unc/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&facets[process][]=RPU&sort[0][column]=period&sort[0][direction]=desc&length=240`;
         try {
             const res = await withTimeout(fetch(utilUrl), 10000, 'EIA Util Fetch');
             if (res.ok) {

@@ -123,7 +123,7 @@ export const FlowsSankeyCard: React.FC = () => {
                         <Sankey
                             data={sankeyData}
                             nodePadding={50}
-                            margin={{ top: 20, bottom: 20, left: 80, right: 80 }}
+                            margin={{ top: 20, bottom: 20, left: 100, right: 100 }}
                             node={<CustomNode containerWidth={800} />}
                             link={{ stroke: '#ffffff0a', strokeWidth: 0 }}
                         >
@@ -169,7 +169,7 @@ export const FlowsSankeyCard: React.FC = () => {
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-blue-500" /> High Yield</span>
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Standard</span>
                     </div>
-                    <span>Data Integrity: Tier 1</span>
+                    <span>Data Integrity: Tier 1 • Benchmark: Logistical Throughput</span>
                 </div>
             </div>
         </Card>

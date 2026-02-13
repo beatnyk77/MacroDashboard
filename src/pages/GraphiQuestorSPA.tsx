@@ -21,6 +21,7 @@ const NetLiquidityCard = lazy(() => import('@/features/dashboard/components/card
 const MacroOrientationSection = lazy(() => import('@/features/dashboard/components/sections/MacroOrientationSection').then(m => ({ default: m.MacroOrientationSection })));
 const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquiditySection').then(m => ({ default: m.GlobalLiquiditySection })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
+const CommodityTerminal = lazy(() => import('@/features/dashboard/components/sections/CommodityTerminal').then(m => ({ default: m.CommodityTerminal })));
 
 // Thematic Labs
 const HardAssetValuationSection = lazy(() => import('@/features/dashboard/components/sections/HardAssetValuationSection').then(m => ({ default: m.HardAssetValuationSection })));
@@ -262,6 +263,22 @@ export const GraphiQuestorSPA: React.FC = () => {
                                     </Suspense>
                                 </SectionErrorBoundary>
                             </div>
+                        </SPAAccordion>
+
+                        {/* Commodities Terminal */}
+                        <SPAAccordion
+                            id="commodities-terminal-tab"
+                            title="Commodities Terminal"
+                            subtitle="Petro-cycles, industrial metal demand, 25-year regime analysis"
+                            icon={<Fuel />}
+                            accentColor="gold"
+                            defaultOpen={true}
+                        >
+                            <SectionErrorBoundary name="Commodities Terminal">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <CommodityTerminal />
+                                </Suspense>
+                            </SectionErrorBoundary>
                         </SPAAccordion>
 
                         {/* Energy Security */}

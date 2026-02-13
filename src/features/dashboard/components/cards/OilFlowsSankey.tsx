@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Ship, ArrowRight } from 'lucide-react';
-import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle } from 'recharts';
+import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle, BarChart, Bar, XAxis, YAxis, Legend, CartesianGrid } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface OilFlow {
     importer_country_code: string;
     exporter_country_code: string;
-    exporter_country_name: string;
+    exporter_country_name?: string;
     import_volume_mbbl: number;
     as_of_date: string;
 }
@@ -60,6 +60,36 @@ const DemoNode = (props: any) => {
 
 export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading }) => {
     const [activeTab, setActiveTab] = useState<'IN' | 'CN'>('IN');
+    const [viewMode, setViewMode] = useState<'sankey' | 'history'>('sankey');
+
+    const historicalData = useMemo(() => {
+        const filtered = data.filter(d => d.importer_country_code === activeTab);
+        if (!filtered.length) return [];
+
+        // Groups data by date and exporter
+        const dateMap = new Map<string, any>();
+        filtered.forEach(d => {
+            if (!dateMap.has(d.as_of_date)) {
+                dateMap.set(d.as_of_date, { date: d.as_of_date });
+            }
+            const dateObj = dateMap.get(d.as_of_date);
+            const countryMeta = RISK_META[d.exporter_country_code] || { name: d.exporter_country_name || d.exporter_country_code };
+            const key = countryMeta.name;
+            dateObj[key] = (dateObj[key] || 0) + d.import_volume_mbbl;
+        });
+
+        return Array.from(dateMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+    }, [data, activeTab]);
+
+    const exporters = useMemo(() => {
+        const set = new Set<string>();
+        historicalData.forEach(d => {
+            Object.keys(d).forEach(k => {
+                if (k !== 'date') set.add(k);
+            });
+        });
+        return Array.from(set);
+    }, [historicalData]);
 
     const processedData = useMemo(() => {
         const filtered = data.filter(d => d.importer_country_code === activeTab);
@@ -127,12 +157,20 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                         </span>
                     </div>
                 </div>
-                <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-white/5 p-1 rounded-xl border border-white/5">
-                    <TabsList className="bg-transparent border-0 gap-1 h-7">
-                        <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter transition-all">India</TabsTrigger>
-                        <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter transition-all">China</TabsTrigger>
-                    </TabsList>
-                </Tabs>
+                <div className="flex items-center gap-3">
+                    <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="bg-white/5 p-1 rounded-xl border border-white/5 mr-2">
+                        <TabsList className="bg-transparent border-0 gap-1 h-7">
+                            <TabsTrigger value="sankey" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">Flow</TabsTrigger>
+                            <TabsTrigger value="history" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">Trend</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                    <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-white/5 p-1 rounded-xl border border-white/5">
+                        <TabsList className="bg-transparent border-0 gap-1 h-7">
+                            <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter transition-all">India</TabsTrigger>
+                            <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter transition-all">China</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
             </CardHeader>
             <CardContent className="flex-1 p-8 pt-12 relative overflow-hidden">
                 {!processedData.nodes.length ? (
@@ -145,42 +183,84 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                        <Sankey
-                            data={processedData}
-                            node={<DemoNode containerWidth={800} />}
-                            nodePadding={40}
-                            margin={{ left: 100, right: 100, top: 20, bottom: 20 }}
-                            link={{ stroke: '#ffffff11', strokeWidth: 0 }}
-                        >
-                            <Tooltip
-                                content={({ active, payload }) => {
-                                    if (!active || !payload || !payload.length) return null;
-                                    const item = payload[0].payload;
-                                    if (item.sourceLinks) return null; // Hide node tooltips for cleaner look
+                        {viewMode === 'sankey' ? (
+                            <Sankey
+                                data={processedData}
+                                node={<DemoNode containerWidth={800} />}
+                                nodePadding={40}
+                                margin={{ left: 100, right: 100, top: 20, bottom: 20 }}
+                                link={{ stroke: '#ffffff11', strokeWidth: 0 }}
+                            >
+                                <Tooltip
+                                    content={({ active, payload }) => {
+                                        if (!active || !payload || !payload.length) return null;
+                                        const item = payload[0].payload;
+                                        if (item.sourceLinks) return null; // Hide node tooltips for cleaner look
 
+                                        return (
+                                            <div className="bg-slate-950/90 border border-white/10 p-3 rounded-xl backdrop-blur-xl shadow-2xl">
+                                                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
+                                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                                                    <span className="text-[10px] font-black text-white uppercase tracking-wider">
+                                                        {(item.source?.name || 'Unknown Hub')} <ArrowRight className="inline w-3 h-3 mx-1" /> {(item.target?.name || 'Unknown Hub')}
+                                                    </span>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between gap-6">
+                                                        <span className="text-[9px] font-bold text-muted-foreground uppercase">Annual Volume</span>
+                                                        <span className="text-[9px] font-mono font-black text-white">{item.value.toFixed(1)} mbbl</span>
+                                                    </div>
+                                                    <div className="flex justify-between gap-6">
+                                                        <span className="text-[9px] font-bold text-muted-foreground uppercase">Supply Share</span>
+                                                        <span className="text-[9px] font-mono font-black text-emerald-400">{item.share.toFixed(1)}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }}
+                                />
+                            </Sankey>
+                        ) : (
+                            <BarChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
+                                <XAxis
+                                    dataKey="date"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 900 }}
+                                    tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }).toUpperCase()}
+                                />
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 500 }}
+                                    unit="M"
+                                />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#020617', border: '1px solid #1e293b', borderRadius: '12px' }}
+                                    itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                                    labelStyle={{ color: '#94a3b8', fontSize: '10px', marginBottom: '8px', fontWeight: 'black', textTransform: 'uppercase' }}
+                                />
+                                <Legend
+                                    iconType="circle"
+                                    wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.05em', paddingTop: '20px' }}
+                                />
+                                {exporters.map((exporter, idx) => {
+                                    // Find color from RISK_META by name if possible, else default
+                                    const meta = Object.values(RISK_META).find(m => m.name === exporter) || { color: '#64748b' };
                                     return (
-                                        <div className="bg-slate-950/90 border border-white/10 p-3 rounded-xl backdrop-blur-xl shadow-2xl">
-                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
-                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                                                <span className="text-[10px] font-black text-white uppercase tracking-wider">
-                                                    {(item.source?.name || 'Unknown Hub')} <ArrowRight className="inline w-3 h-3 mx-1" /> {(item.target?.name || 'Unknown Hub')}
-                                                </span>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between gap-6">
-                                                    <span className="text-[9px] font-bold text-muted-foreground uppercase">Annual Volume</span>
-                                                    <span className="text-[9px] font-mono font-black text-white">{item.value.toFixed(1)} mbbl</span>
-                                                </div>
-                                                <div className="flex justify-between gap-6">
-                                                    <span className="text-[9px] font-bold text-muted-foreground uppercase">Supply Share</span>
-                                                    <span className="text-[9px] font-mono font-black text-emerald-400">{item.share.toFixed(1)}%</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <Bar
+                                            key={exporter}
+                                            dataKey={exporter}
+                                            stackId="a"
+                                            fill={meta.color}
+                                            radius={[idx === exporters.length - 1 ? 4 : 0, idx === exporters.length - 1 ? 4 : 0, 0, 0]}
+                                            barSize={32}
+                                        />
                                     );
-                                }}
-                            />
-                        </Sankey>
+                                })}
+                            </BarChart>
+                        )}
                     </ResponsiveContainer>
                 )}
             </CardContent>
