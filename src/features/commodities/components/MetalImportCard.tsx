@@ -12,6 +12,38 @@ interface MetalImportCardProps {
     accentColor: string;
 }
 
+interface ChartTooltipProps {
+    active?: boolean;
+    payload?: any[];
+    label?: string;
+    viewMode: 'value' | 'volume';
+    formatVolume: (val: number) => string;
+}
+
+const ChartTooltip: React.FC<ChartTooltipProps> = ({ active, payload, label, viewMode, formatVolume }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-black/90 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
+                <p className="text-[10px] font-black text-white/40 mb-1 uppercase tracking-widest">{label}</p>
+                {payload.map((entry: any, index: number) => (
+                    <div key={index} className="flex items-center justify-between gap-8 py-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: entry.color }}>
+                            {entry.name}
+                        </span>
+                        <span className="text-xs font-black text-white tabular-nums">
+                            {viewMode === 'value'
+                                ? `$${entry.value.toFixed(1)}B`
+                                : formatVolume(entry.value * 1)
+                            }
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
+
 export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, accentColor }) => {
     const [viewMode, setViewMode] = useState<'value' | 'volume'>('value');
 
@@ -65,30 +97,6 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
         if (hhi > 2500) return { label: 'Highly Concentrated', color: 'text-rose-500' };
         if (hhi > 1500) return { label: 'Moderate', color: 'text-amber-500' };
         return { label: 'Diversified', color: 'text-emerald-500' };
-    };
-
-    const ChartTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-black/90 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
-                    <p className="text-[10px] font-black text-white/40 mb-1 uppercase tracking-widest">{label}</p>
-                    {payload.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center justify-between gap-8 py-1">
-                            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: entry.color }}>
-                                {entry.name}
-                            </span>
-                            <span className="text-xs font-black text-white tabular-nums">
-                                {viewMode === 'value'
-                                    ? `$${entry.value.toFixed(1)}B`
-                                    : formatVolume(entry.value * 1) // Volume in raw numbers in data
-                                }
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            );
-        }
-        return null;
     };
 
     return (
@@ -233,7 +241,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                                     tickLine={false}
                                     tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
                                 />
-                                <Tooltip content={<ChartTooltip />} />
+                                <Tooltip content={(props) => <ChartTooltip {...props} viewMode={viewMode} formatVolume={formatVolume} />} />
                                 <Legend
                                     iconType="circle"
                                     verticalAlign="top"
