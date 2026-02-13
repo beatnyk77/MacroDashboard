@@ -11,17 +11,19 @@ import {
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
+import { CommodityHistoryPoint } from '@/hooks/useCommodities';
+
 interface CommodityHistoryCardProps {
     title: string;
     category: string;
     price: number;
     unit: string;
-    history: any[];
+    history: CommodityHistoryPoint[];
     color: 'red' | 'orange' | 'slate';
     delta?: number;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/95 backdrop-blur-2xl border border-white/10 p-3 rounded-2xl shadow-2xl">
