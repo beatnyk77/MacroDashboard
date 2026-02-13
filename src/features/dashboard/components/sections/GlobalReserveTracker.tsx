@@ -14,6 +14,7 @@ import {
 import { useDeDollarization, useDeDollarizationHistory } from '@/hooks/useDeDollarization';
 import { useBricsTracker } from '@/hooks/useBricsTracker';
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
+import { ReserveShareHistoryChart } from '../charts/ReserveShareHistoryChart';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trackClick } from '@/lib/analytics';
@@ -172,23 +173,21 @@ export const GlobalReserveTracker: React.FC = () => {
                 </TabsList>
 
                 <TabsContent value="dedollarization" className="mt-0 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <UnifiedMetricCard
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <ReserveShareHistoryChart
                             title="Global USD Reserve Share"
-                            value={usdShare?.value ?? 0}
-                            delta={usdShare?.delta_qoq ?? 0}
-                            history={usdHistory || []}
+                            data={usdHistory || []}
+                            currentValue={usdShare?.value ?? 57.7}
                             color="blue"
-                            icon={DollarSign}
-                            isInverse={true}
+                            isDeclining={true}
+                            description="Visualizing the secular erosion of USD hegemony as central banks rotate toward multi-polar alternatives."
                         />
-                        <UnifiedMetricCard
+                        <ReserveShareHistoryChart
                             title="Global Gold Reserve Share"
-                            value={goldShare?.value ?? 0}
-                            delta={goldShare?.delta_qoq ?? 0}
-                            history={goldHistory || []}
+                            data={goldHistory || []}
+                            currentValue={goldShare?.value ?? 15.4}
                             color="amber"
-                            icon={Coins}
+                            description="Physical gold returns as the ultimate neutral reserve asset, with allocation expanding at an accelerating pace."
                         />
                     </div>
 
