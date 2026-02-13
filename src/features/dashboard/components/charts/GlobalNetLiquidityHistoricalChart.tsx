@@ -107,7 +107,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                 </div>
 
                 {/* Main Chart Area */}
-                <div className="h-[400px] w-full relative">
+                <div className="h-[600px] w-full relative">
                     <div className="absolute inset-0 bg-white/[0.01] rounded-[2.5rem] -m-4 border border-white/[0.02]" />
 
                     <ResponsiveContainer width="100%" height="100%">
@@ -121,20 +121,20 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
                             <XAxis
                                 dataKey="date"
-                                stroke="rgba(255,255,255,0.1)"
-                                fontSize={9}
+                                stroke="rgba(255,255,255,0.15)"
+                                fontSize={11}
                                 tickFormatter={(v) => new Date(v).getFullYear().toString()}
-                                tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
+                                tick={{ fill: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
                                 axisLine={false}
                                 tickLine={false}
                                 dy={10}
-                                interval={window.innerWidth < 768 ? 200 : 100}
+                                interval={window.innerWidth < 768 ? 150 : 80}
                             />
                             <YAxis
-                                stroke="rgba(255,255,255,0.1)"
-                                fontSize={9}
+                                stroke="rgba(255,255,255,0.15)"
+                                fontSize={11}
                                 tickFormatter={(v) => `$${v}T`}
-                                tick={{ fill: 'rgba(255,255,255,0.25)', fontWeight: 800 }}
+                                tick={{ fill: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
                                 axisLine={false}
                                 tickLine={false}
                             />
@@ -172,9 +172,9 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 type="monotone"
                                 dataKey="trend"
                                 name="3Y Moving Trend"
-                                stroke="rgba(255,255,255,0.2)"
-                                strokeWidth={1}
-                                strokeDasharray="5 5"
+                                stroke="#fbbf24"
+                                strokeWidth={2.5}
+                                strokeDasharray="8 4"
                                 fill="transparent"
                             />
                         </AreaChart>
