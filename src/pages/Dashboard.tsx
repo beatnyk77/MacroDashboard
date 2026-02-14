@@ -41,6 +41,7 @@ const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/component
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
+const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -108,6 +109,16 @@ export const Dashboard: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                </SPASection>
+
+
+                {/* ROW 3.5: INDIA MARKET MICROSTRUCTURE */}
+                <SPASection id="india-market-pulse-terminal" className="bg-white/[0.01]" disableAnimation>
+                    <SectionErrorBoundary name="India Market Pulse">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaMarketPulseRow />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
 
