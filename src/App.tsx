@@ -10,6 +10,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // Lazy load page components
 const Dashboard = lazy(() => import('@/pages/Dashboard').then(module => ({ default: module.Dashboard })));
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
+const BlogPage = lazy(() => import('@/pages/BlogPage').then(module => ({ default: module.BlogPage })));
+const ArticlePage = lazy(() => import('@/pages/ArticlePage').then(module => ({ default: module.ArticlePage })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -34,6 +36,8 @@ function App() {
                                     <Routes>
                                         <Route path="/" element={<Dashboard />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
+                                        <Route path="/blog" element={<BlogPage />} />
+                                        <Route path="/blog/:slug" element={<ArticlePage />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />

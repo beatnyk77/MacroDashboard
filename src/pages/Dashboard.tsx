@@ -15,6 +15,9 @@ import { DataHealthTicker } from '@/components/DataHealthTicker';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { trackSectionView } from '@/lib/analytics';
 import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
+import { BlogSection } from '@/features/dashboard/components/sections/BlogSection';
+import { SEOFAQSection } from '@/features/dashboard/components/sections/SEOFAQSection';
+import { SEOManager } from '@/components/SEOManager';
 
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
@@ -67,6 +70,11 @@ export const Dashboard: React.FC = () => {
 
     return (
         <Container maxWidth={false} disableGutters sx={{ py: 4 }}>
+            <SEOManager
+                title="Sovereign Intelligence Console"
+                description="Institutional-grade macro dashboard tracking Debt/Gold ratios, De-Dollarization, Energy Security, and India/China Pulse. 25-year historical pipeline."
+                keywords={['India Macro Pulse', 'MoSPI data', 'Debt Gold Ratio', 'BRICS De-Dollarization', 'Shanghai Divergence', 'Global Net Liquidity', 'G20 Macro Surveillance']}
+            />
             <div className="space-y-24">
 
                 {/* ROW 1: CORE LIQUIDITY SIGNAL */}
@@ -331,10 +339,14 @@ export const Dashboard: React.FC = () => {
                 </SPASection>
 
                 {/* FINAL ROW: FEEDBACK & COMMUNITY */}
-                <SPASection id="feedback" className="pb-32" disableAnimation>
+                <SPASection id="feedback" className="pb-12" disableAnimation>
+                    <BlogSection />
                     <FeedbackSection />
                 </SPASection>
 
+                <SectionErrorBoundary name="SEO FAQ">
+                    <SEOFAQSection />
+                </SectionErrorBoundary>
             </div >
         </Container >
     );
