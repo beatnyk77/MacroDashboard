@@ -2,14 +2,19 @@ import React from 'react';
 import { useIndiaMarketPulse } from '@/hooks/useIndiaMarketPulse';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
+import { Sparkline } from '@/components/Sparkline';
+import { HoverTooltip } from '@/components/HoverTooltip';
+import { AlertBadge } from '@/components/AlertBadge';
 import { formatNumber } from '@/utils/formatNumber';
+import { exportToCSV } from '@/utils/exportCSV';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Activity, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, BarChart3, Download } from 'lucide-react';
 
 export const IndiaMarketPulseRow: React.FC = () => {
     const { data: result, isLoading } = useIndiaMarketPulse();
     const data = result?.current;
+    const history = result?.history || [];
 
     if (isLoading || !data) {
         return (
@@ -38,6 +43,16 @@ export const IndiaMarketPulseRow: React.FC = () => {
         })
     };
 
+    // Prepare sparkline data
+    const fiiSparkline = history.map(h => ({ date: h.date, value: h.fii_cash_net }));
+    const vixSparkline = history.map(h => ({ date: h.date, value: h.india_vix }));
+    const breadthSparkline = history.map(h => ({ date: h.date, value: h.advances - h.declines }));
+    const midcapSparkline = history.map(h => ({ date: h.date, value: h.midcap_perf }));
+
+    const handleExport = () => {
+        exportToCSV(history, 'india_market_pulse');
+    };
+
     return (
         <SPASection id="india-market-pulse-row" className="py-12" disableAnimation>
             <div className="mb-12 flex justify-between items-end">
@@ -46,6 +61,13 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     subtitle="Daily institutional microstructure and capital flow intelligence"
                 />
                 <div className="flex gap-2 mb-2">
+                    <button
+                        onClick={handleExport}
+                        className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/10 transition-all"
+                    >
+                        <Download size={12} />
+                        Export CSV
+                    </button>
                     <div className="px-2 py-1 rounded bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1">
                         <Activity size={10} /> Live NSE Data
                     </div>
@@ -67,15 +89,26 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                 Flow Summary
                             </div>
                             <div className="flex items-baseline gap-6">
-                                <div>
-                                    <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">FII</span>
-                                    <span className={cn(
-                                        "text-2xl font-black tabular-nums",
-                                        data.fii_cash_net > 0 ? "text-emerald-500/90" : "text-rose-500/90"
-                                    )}>
-                                        {data.fii_cash_net > 0 ? '+' : ''}{formatNumber(data.fii_cash_net)} Cr
-                                    </span>
-                                </div>
+                                <HoverTooltip
+                                    metric="FII Cash Net"
+                                    currentValue={data.fii_cash_net}
+                                    percentile={data.fii_percentile}
+                                    zScore={data.fii_zscore}
+                                    unit="Cr"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">FII</span>
+                                            <span className={cn(
+                                                "text-2xl font-black tabular-nums",
+                                                data.fii_cash_net > 0 ? "text-emerald-500/90" : "text-rose-500/90"
+                                            )}>
+                                                {data.fii_cash_net > 0 ? '+' : ''}{formatNumber(data.fii_cash_net)} Cr
+                                            </span>
+                                        </div>
+                                        {data.fii_zscore && <AlertBadge zScore={data.fii_zscore} size="sm" />}
+                                    </div>
+                                </HoverTooltip>
                                 <div>
                                     <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">DII</span>
                                     <span className={cn(
@@ -96,12 +129,19 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                 Net FPI + DII cash segment flows. Absorption = DII/|FII| when FII sells.
                             </div>
                         </div>
-                        {data.fii_percentile && (
-                            <div className="text-right">
-                                <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">10Y Percentile</div>
-                                <div className="text-3xl font-black text-gold-500/80 tabular-nums">{data.fii_percentile.toFixed(0)}%</div>
-                            </div>
-                        )}
+                        <div className="flex flex-col items-end gap-2">
+                            {data.fii_percentile && (
+                                <div className="text-right">
+                                    <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">10Y Percentile</div>
+                                    <div className="text-3xl font-black text-gold-500/80 tabular-nums">{data.fii_percentile.toFixed(0)}%</div>
+                                </div>
+                            )}
+                            {fiiSparkline.length > 0 && (
+                                <div className="w-32">
+                                    <Sparkline data={fiiSparkline} color="#10b981" height={40} />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </motion.div>
 
@@ -134,25 +174,40 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                         {data.pcr?.toFixed(2)}
                                     </span>
                                 </div>
-                                <div>
-                                    <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">VIX</span>
-                                    <span className="text-2xl font-black tabular-nums text-orange-400/80">
-                                        {data.india_vix?.toFixed(1)}
-                                    </span>
-                                    {data.vix_zscore && (
-                                        <span className={cn(
-                                            "ml-2 text-sm font-bold",
-                                            data.vix_zscore > 0 ? "text-rose-500/60" : "text-emerald-500/60"
-                                        )}>
-                                            ({data.vix_zscore > 0 ? '+' : ''}{data.vix_zscore.toFixed(1)}σ)
-                                        </span>
-                                    )}
-                                </div>
+                                <HoverTooltip
+                                    metric="India VIX"
+                                    currentValue={data.india_vix}
+                                    percentile={data.vix_percentile}
+                                    zScore={data.vix_zscore}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">VIX</span>
+                                            <span className="text-2xl font-black tabular-nums text-orange-400/80">
+                                                {data.india_vix?.toFixed(1)}
+                                            </span>
+                                            {data.vix_zscore && (
+                                                <span className={cn(
+                                                    "ml-2 text-sm font-bold",
+                                                    data.vix_zscore > 0 ? "text-rose-500/60" : "text-emerald-500/60"
+                                                )}>
+                                                    ({data.vix_zscore > 0 ? '+' : ''}{data.vix_zscore.toFixed(1)}σ)
+                                                </span>
+                                            )}
+                                        </div>
+                                        {data.vix_zscore && <AlertBadge zScore={data.vix_zscore} size="sm" />}
+                                    </div>
+                                </HoverTooltip>
                             </div>
                             <div className="mt-3 text-[0.6rem] text-muted-foreground/40">
                                 FII Index Futures net positioning + Vol regime. PCR = Put OI / Call OI.
                             </div>
                         </div>
+                        {vixSparkline.length > 0 && (
+                            <div className="w-32">
+                                <Sparkline data={vixSparkline} color="#fb923c" height={40} />
+                            </div>
+                        )}
                     </div>
                 </motion.div>
 
@@ -202,6 +257,11 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                 Market breadth and quality metrics. Breadth Ratio = (Adv - Dec) / (Adv + Dec).
                             </div>
                         </div>
+                        {breadthSparkline.length > 0 && (
+                            <div className="w-32">
+                                <Sparkline data={breadthSparkline} color="#3b82f6" height={40} />
+                            </div>
+                        )}
                     </div>
                 </motion.div>
 
@@ -285,7 +345,12 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                 52W Highs: {data.new_highs_52w || 0} | 52W Lows: {data.new_lows_52w || 0}
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4">
+                            {midcapSparkline.length > 0 && (
+                                <div className="w-32">
+                                    <Sparkline data={midcapSparkline} color="#a855f7" height={40} />
+                                </div>
+                            )}
                             <BarChart3 className="text-muted-foreground/20" size={32} />
                         </div>
                     </div>
