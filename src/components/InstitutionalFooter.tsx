@@ -1,4 +1,5 @@
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const InstitutionalFooter: React.FC = () => {
     return (
@@ -41,7 +42,14 @@ export const InstitutionalFooter: React.FC = () => {
                     <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.3em]">
                         © 2026 GraphiQuestor. PRO-SERIES TERMINAL.
                     </span>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
+                        <Link
+                            to="/blog"
+                            className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
+                        >
+                            <BookOpen size={12} />
+                            Intelligence Journal
+                        </Link>
                         <a
                             href="/rss.xml"
                             target="_blank"
