@@ -16,6 +16,14 @@ export const IndiaMarketPulseRow: React.FC = () => {
     const data = result?.current;
     const history = result?.history || [];
 
+    const [exportStartDate, setExportStartDate] = React.useState<string>(
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    );
+    const [exportEndDate, setExportEndDate] = React.useState<string>(
+        new Date().toISOString().split('T')[0]
+    );
+    const [showToast, setShowToast] = React.useState(false);
+
     if (isLoading || !data) {
         return (
             <div className="space-y-4">
@@ -50,7 +58,20 @@ export const IndiaMarketPulseRow: React.FC = () => {
     const midcapSparkline = history.map(h => ({ date: h.date, value: h.midcap_perf }));
 
     const handleExport = () => {
-        exportToCSV(history, 'india_market_pulse');
+        const filtered = history.filter(h => {
+            const date = h.date;
+            return date >= exportStartDate && date <= exportEndDate;
+        });
+
+        if (filtered.length === 0) {
+            alert('No data found for selected range');
+            return;
+        }
+
+        exportToCSV(filtered, `india_market_pulse_${exportStartDate}_to_${exportEndDate}`);
+
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
     };
 
     return (
@@ -60,10 +81,26 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     title="India Market Pulse"
                     subtitle="Daily institutional microstructure and capital flow intelligence"
                 />
-                <div className="flex gap-2 mb-2">
+                <div className="flex gap-3 mb-2 items-center">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5">
+                        <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest">From</span>
+                        <input
+                            type="date"
+                            value={exportStartDate}
+                            onChange={(e) => setExportStartDate(e.target.value)}
+                            className="bg-transparent text-[0.65rem] font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
+                        />
+                        <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest ml-1">To</span>
+                        <input
+                            type="date"
+                            value={exportEndDate}
+                            onChange={(e) => setExportEndDate(e.target.value)}
+                            className="bg-transparent text-[0.65rem] font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
+                        />
+                    </div>
                     <button
                         onClick={handleExport}
-                        className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/10 transition-all"
+                        className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/10 transition-all active:scale-95"
                     >
                         <Download size={12} />
                         Export CSV
@@ -355,6 +392,19 @@ export const IndiaMarketPulseRow: React.FC = () => {
                         </div>
                     </div>
                 </motion.div>
+            </div>
+
+            {/* Toast Notification */}
+            <div className={cn(
+                "fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 pointer-events-none",
+                showToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}>
+                <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
+                        Data Exported Successfully
+                    </span>
+                </div>
             </div>
         </SPASection>
     );
