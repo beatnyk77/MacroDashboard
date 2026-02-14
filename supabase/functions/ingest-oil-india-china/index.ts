@@ -6,6 +6,33 @@ const corsHeaders = {
 };
 
 const EIA_API_BASE = "https://api.eia.gov/v2";
+const FRED_API_BASE = "https://api.stlouisfed.org/fred";
+
+async function fetchFredSeries(seriesId: string, apiKey: string) {
+    const url = `${FRED_API_BASE}/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&frequency=a&sort_order=desc&limit=10`;
+    console.log(`Fetching FRED ${seriesId}...`);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`FRED Error ${seriesId}: ${res.status}`);
+    const json = await res.json();
+    return json.observations || [];
+}
+
+async function fetchEiaBrent(apiKey: string) {
+    // Try both spt and series/data as backup
+    const url = `${EIA_API_BASE}/petroleum/pri/spt/data/?api_key=${apiKey}&frequency=annual&data[0]=value&facets[series][]=RBRTE&sort[0][column]=period&sort[0][direction]=desc&length=10`;
+    console.log(`Fetching EIA Brent...`);
+    const res = await fetch(url);
+    if (!res.ok) {
+        console.warn(`EIA Brent SPT Error: ${res.status}. Trying series/data...`);
+        const altUrl = `${EIA_API_BASE}/series/data/?api_key=${apiKey}&series_id=PET.RBRTE.A&frequency=annual&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=10`;
+        const altRes = await fetch(altUrl);
+        if (!altRes.ok) throw new Error(`EIA Brent Alt Error: ${altRes.status}`);
+        const altJson = await altRes.json();
+        return altJson.response?.data || [];
+    }
+    const json = await res.json();
+    return json.response?.data || [];
+}
 
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -16,9 +43,10 @@ Deno.serve(async (req) => {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
         const eiaApiKey = Deno.env.get('EIA_API_KEY');
+        const fredApiKey = Deno.env.get('FRED_API_KEY');
 
-        if (!eiaApiKey) {
-            throw new Error('Missing EIA_API_KEY environment variable');
+        if (!eiaApiKey || !fredApiKey) {
+            throw new Error('Missing API keys (EIA or FRED)');
         }
 
         const supabase = createClient(supabaseUrl, supabaseKey);
@@ -27,78 +55,79 @@ Deno.serve(async (req) => {
 
         if (!sourceId) throw new Error("EIA Data Source not found");
 
-        console.log("Starting EIA International Ingestion for IND/CHN Partners...");
+        console.log("Fetching Brent and FX rates...");
+        const [brentData, inrData, cnyData] = await Promise.all([
+            fetchEiaBrent(eiaApiKey),
+            fetchFredSeries('DEXINUS', fredApiKey),
+            fetchFredSeries('DEXCHUS', fredApiKey)
+        ]);
 
-        // Activity: 3 (Imports), Product: 5 (Crude Oil)
-        // Reporters: IND (India), CHN (China)
+        console.log(`Brent Data Points: ${brentData.length}`);
+
+        console.log("Starting EIA International Ingestion for IND/CHN...");
+
         const reporters = [
-            { id: 'IND', code: 'IN' },
-            { id: 'CHN', code: 'CN' }
-        ];
-
-        // Known top partners to query explicitly if facets are sparse
-        const partners = [
-            { id: 'RUS', name: 'Russia' },
-            { id: 'SAU', name: 'Saudi Arabia' },
-            { id: 'IRQ', name: 'Iraq' },
-            { id: 'ARE', name: 'UAE' },
-            { id: 'USA', name: 'United States' },
-            { id: 'BRA', name: 'Brazil' },
-            { id: 'KWT', name: 'Kuwait' },
-            { id: 'NGA', name: 'Nigeria' }
+            { id: 'IND', code: 'IN', fxData: inrData },
+            { id: 'CHN', code: 'CN', fxData: cnyData }
         ];
 
         let totalProcessed = 0;
+        let lastError = "";
 
         for (const reporter of reporters) {
             console.log(`Fetching Global Partners for ${reporter.id}...`);
 
-            // Build URL with multiple partner facets
-            const url = new URL(`${EIA_API_BASE}/international/data/`);
+            // Use the specific crude-oil-imports route if available, or fallback to data with activityId 3
+            // Searching international/crude-oil-imports/data/ proved more reliable in docs
+            const url = new URL(`${EIA_API_BASE}/international/crude-oil-imports/data/`);
             url.searchParams.append('api_key', eiaApiKey);
             url.searchParams.append('frequency', 'annual');
             url.searchParams.append('data[0]', 'value');
-            url.searchParams.append('facets[activityId][]', '3');
-            url.searchParams.append('facets[productId][]', '5');
             url.searchParams.append('facets[countryRegionId][]', reporter.id);
-            url.searchParams.append('facets[unit][]', 'TBPD');
-
-            // Add partner facets
-            partners.forEach(p => {
-                url.searchParams.append('facets[partnerCountryId][]', p.id);
-            });
-
             url.searchParams.append('sort[0][column]', 'period');
             url.searchParams.append('sort[0][direction]', 'desc');
-            url.searchParams.append('length', '100');
+            url.searchParams.append('length', '500');
 
             try {
                 const res = await fetch(url.toString());
-                if (!res.ok) {
-                    console.error(`EIA API Error for ${reporter.id}: ${res.status}`);
-                    continue;
-                }
-
                 const json = await res.json();
                 const data = json.response?.data || [];
 
-                if (data.length > 0) {
-                    // Extract latest period
-                    const latestPeriod = data[0].period;
-                    const latestData = data.filter((d: any) => d.period === latestPeriod);
+                console.log(`${reporter.id} response size: ${data.length}`);
 
-                    const rows = latestData.map((d: any) => {
-                        const partner = partners.find(p => p.id === d.partnerCountryId) || { name: d.partnerCountryName || d.partnerCountryId };
-                        return {
-                            importer_country_code: reporter.code,
-                            exporter_country_code: d.partnerCountryId,
-                            exporter_country_name: partner.name,
-                            import_volume_mbbl: (Number(d.value) * 365) / 1000, // TBPD to MBBL/year
-                            as_of_date: `${d.period}-01-01`,
-                            frequency: 'annual',
-                            source_id: sourceId
-                        };
-                    }).filter((r: any) => r.import_volume_mbbl > 0);
+                if (data.length > 0) {
+                    const rowMap = new Map();
+
+                    for (const d of data) {
+                        const brent = brentData.find((b: any) => b.period === d.period || b.period === d.period?.substring(0, 4));
+                        const fx = reporter.fxData.find((f: any) => f.date.startsWith(d.period));
+
+                        const brentVal = brent ? Number(brent.value) : null;
+                        const fxVal = fx ? Number(fx.value) : null;
+                        const localCost = brentVal && fxVal ? brentVal * fxVal : null;
+
+                        const dateStr = `${d.period}-01-01`;
+                        const key = `${reporter.code}-${d.partnerCountryId || 'TOTAL'}-${dateStr}`;
+
+                        // Ensure uniqueness for upsert
+                        if (!rowMap.has(key)) {
+                            rowMap.set(key, {
+                                importer_country_code: reporter.code,
+                                exporter_country_code: d.partnerCountryId || 'TOTAL',
+                                exporter_country_name: d.partnerCountryName || 'Total Imports',
+                                import_volume_mbbl: (Number(d.value) * 365) / 1000,
+                                as_of_date: dateStr,
+                                frequency: 'annual',
+                                source_id: sourceId,
+                                import_cost_usd: brentVal,
+                                import_cost_local_currency: localCost,
+                                exchange_rate: fxVal,
+                                brent_price_usd: brentVal
+                            });
+                        }
+                    }
+
+                    const rows = Array.from(rowMap.values()).filter((r: any) => r.import_volume_mbbl > 0);
 
                     if (rows.length > 0) {
                         const { error } = await supabase.from('oil_imports_by_origin').upsert(rows, {
@@ -107,15 +136,82 @@ Deno.serve(async (req) => {
                         if (error) throw error;
                         totalProcessed += rows.length;
                     }
+                } else {
+                    // Try the data route as fallback if crude-oil-imports route is not found/empty
+                    const altUrl = new URL(`${EIA_API_BASE}/international/data/`);
+                    altUrl.searchParams.append('api_key', eiaApiKey);
+                    altUrl.searchParams.append('frequency', 'annual');
+                    altUrl.searchParams.append('data[0]', 'value');
+                    altUrl.searchParams.append('facets[activityId][]', '3'); // Imports
+                    altUrl.searchParams.append('facets[countryRegionId][]', reporter.id);
+                    altUrl.searchParams.append('sort[0][column]', 'period');
+                    altUrl.searchParams.append('sort[0][direction]', 'desc');
+                    altUrl.searchParams.append('length', '500');
+
+                    const altRes = await fetch(altUrl.toString());
+                    const altJson = await altRes.json();
+                    const altData = altJson.response?.data || [];
+                    console.log(`${reporter.id} alt response size: ${altData.length}`);
+
+                    if (altData.length > 0) {
+                        const rowMap = new Map();
+                        for (const d of altData) {
+                            const brent = brentData.find((b: any) => b.period === d.period || b.period === d.period?.substring(0, 4));
+                            const fx = reporter.fxData.find((f: any) => f.date.startsWith(d.period));
+                            const brentVal = brent ? Number(brent.value) : null;
+                            const fxVal = fx ? Number(fx.value) : null;
+                            const localCost = brentVal && fxVal ? brentVal * fxVal : null;
+                            const dateStr = `${d.period}-01-01`;
+                            const key = `${reporter.code}-${d.partnerCountryId || 'TOTAL'}-${dateStr}`;
+                            if (!rowMap.has(key)) {
+                                rowMap.set(key, {
+                                    importer_country_code: reporter.code,
+                                    exporter_country_code: d.partnerCountryId || 'TOTAL',
+                                    exporter_country_name: d.partnerCountryName || 'Total Imports',
+                                    import_volume_mbbl: (Number(d.value) * 365) / 1000,
+                                    as_of_date: dateStr,
+                                    frequency: 'annual',
+                                    source_id: sourceId,
+                                    import_cost_usd: brentVal,
+                                    import_cost_local_currency: localCost,
+                                    exchange_rate: fxVal,
+                                    brent_price_usd: brentVal
+                                });
+                            }
+                        }
+                        const rows = Array.from(rowMap.values()).filter((r: any) => r.import_volume_mbbl > 0);
+                        if (rows.length > 0) {
+                            const { error } = await supabase.from('oil_imports_by_origin').upsert(rows, {
+                                onConflict: 'importer_country_code, exporter_country_code, as_of_date'
+                            });
+                            if (error) throw error;
+                            totalProcessed += rows.length;
+                        }
+                    }
                 }
             } catch (e) {
                 console.error(`Failed to process ${reporter.id}:`, e);
+                lastError = e.message;
             }
+        }
+
+        // Also update the OIL_BRENT_PRICE_USD metric
+        if (brentData.length > 0) {
+            const metricObs = brentData.map((b: any) => ({
+                metric_id: 'OIL_BRENT_PRICE_USD',
+                as_of_date: `${b.period}-01-01`,
+                value: Number(b.value),
+                last_updated_at: new Date().toISOString()
+            }));
+            await supabase.from('metric_observations').upsert(metricObs, {
+                onConflict: 'metric_id, as_of_date'
+            });
         }
 
         return new Response(JSON.stringify({
             success: true,
-            processed: totalProcessed
+            processed: totalProcessed,
+            error: lastError
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });

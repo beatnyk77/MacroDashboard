@@ -22,6 +22,7 @@ import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
+const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 
 // Lazy load feature components
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
@@ -84,6 +85,15 @@ export const Dashboard: React.FC = () => {
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <Suspense fallback={<LoadingFallback />}>
                             <USDebtMaturityWall />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* ROW 1.5: US TREASURY AUCTION DEMAND GAUGE */}
+                <SPASection id="treasury-demand" variant="hero" disableAnimation>
+                    <SectionErrorBoundary name="Treasury Demand Gauge">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <USTreasuryDemandGauge />
                         </Suspense>
                     </SectionErrorBoundary>
                 </SPASection>

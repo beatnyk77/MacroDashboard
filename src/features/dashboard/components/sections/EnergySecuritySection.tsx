@@ -10,6 +10,7 @@ const OilImportVulnerabilityCard = lazy(() => import('../cards/OilImportVulnerab
 const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({ default: m.OilFlowsSankey })));
 const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
+const OilImportCostCard = lazy(() => import('../cards/OilImportCostCard').then(m => ({ default: m.OilImportCostCard })));
 const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCard').then(m => ({ default: m.PowerMixDivergenceCard })));
 
 // Fallback/Mock Data generator for when API returns empty
@@ -254,20 +255,30 @@ export const EnergySecuritySection: React.FC = () => {
                 </MotionCard>
 
                 {/* Row 3.5: Asia Commodity Flows */}
-                <MotionCard delay={0.4} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-emerald-500/50" />
-                            Asia Commodity Flow Dynamics
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Visualizing the molecular shift toward the East. Tracking Crude Oil import origins for India and China identifies emerging trade corridors and energy density dependencies.
-                        </p>
-                    </div>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
+                    <MotionCard delay={0.4} className="w-full">
+                        <div className="mb-4">
+                            <h3 className="text-xl font-light text-white flex items-center gap-2">
+                                <span className="w-8 h-px bg-emerald-500/50" />
+                                Asia Commodity Flow Dynamics
+                            </h3>
+                            <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
+                                Visualizing the molecular shift toward the East. Tracking Crude Oil import origins for India and China identifies emerging trade corridors and energy density dependencies.
+                            </p>
+                        </div>
+                        <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                            <OilFlowsSankey data={data.importData} isLoading={false} />
+                        </Suspense>
+                    </MotionCard>
+
                     <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <OilFlowsSankey data={data.importData} isLoading={false} />
+                        <OilImportCostCard
+                            importData={data.importData}
+                            brentPriceData={data.brentPriceData || []}
+                            isLoading={false}
+                        />
                     </Suspense>
-                </MotionCard>
+                </div>
 
                 {/* Row 4: Import Vulnerability & Flow Matrix */}
                 <MotionCard delay={0.5} className="w-full">

@@ -16,6 +16,10 @@ export interface OilImport {
     import_volume_mbbl: number;
     as_of_date: string;
     frequency: string;
+    import_cost_usd?: number;
+    import_cost_local_currency?: number;
+    exchange_rate?: number;
+    brent_price_usd?: number;
 }
 
 export interface MetricDefinition {
@@ -35,6 +39,7 @@ export interface OilData {
     powerMixData: { region: string; coal: number; renewable: number; other: number }[];
     powerMixLastUpdated?: string;
     metrics: MetricDefinition[];
+    brentPriceData: { date: string; value: number }[];
 }
 
 export const useOilData = () => {
@@ -115,6 +120,15 @@ export const useOilData = () => {
 
             if (gasError) console.warn('EU Gas fetch error:', gasError);
 
+            // 6.5. Fetch Brent Price (Metric: OIL_BRENT_PRICE_USD)
+            const { data: brentObs, error: brentError } = await supabase
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', 'OIL_BRENT_PRICE_USD')
+                .order('as_of_date', { ascending: true });
+
+            if (brentError) console.warn('Brent Price fetch error:', brentError);
+
             // 7. Fetch Metric Definitions for context
             const { data: metData, error: metError } = await supabase
                 .from('metrics')
@@ -140,7 +154,11 @@ export const useOilData = () => {
                 })),
                 powerMixData,
                 powerMixLastUpdated,
-                metrics: (metData as MetricDefinition[]) || []
+                metrics: (metData as MetricDefinition[]) || [],
+                brentPriceData: (brentObs || []).map((d: any) => ({
+                    date: String(d.as_of_date),
+                    value: Number(d.value)
+                }))
             };
         },
         staleTime: 1000 * 60 * 60, // 1 hour
