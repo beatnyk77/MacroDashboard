@@ -11,17 +11,16 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Activity, TrendingUp, TrendingDown, BarChart3, Download } from 'lucide-react';
 
+const DEFAULT_EXPORT_START_DATE = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+const DEFAULT_EXPORT_END_DATE = new Date().toISOString().split('T')[0];
+
 export const IndiaMarketPulseRow: React.FC = () => {
     const { data: result, isLoading } = useIndiaMarketPulse();
     const data = result?.current;
     const history = result?.history || [];
 
-    const [exportStartDate, setExportStartDate] = React.useState<string>(
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    );
-    const [exportEndDate, setExportEndDate] = React.useState<string>(
-        new Date().toISOString().split('T')[0]
-    );
+    const [exportStartDate, setExportStartDate] = React.useState<string>(DEFAULT_EXPORT_START_DATE);
+    const [exportEndDate, setExportEndDate] = React.useState<string>(DEFAULT_EXPORT_END_DATE);
     const [showToast, setShowToast] = React.useState(false);
 
     if (isLoading || !data) {
