@@ -3,9 +3,11 @@
 > *"In an age of monetary experimentation and geopolitical realignment, the highest-conviction alpha lies not in forecasting, but in observing structural reality."*  
 > — Global Macro Research, 2026
 
-**GraphiQuestor** is an institutional-grade surveillance terminal built for capital allocators navigating the transition from the post-1971 fiat regime toward a multipolar monetary order. Designed for sovereign wealth funds, central bank research divisions, and generational family offices, this platform delivers real-time telemetry on the forces reshaping global capital flows: liquidity cycles, hard asset revaluation, geopolitical financing patterns, and industrial capacity dynamics.
+**GraphiQuestor** is an institutional-grade surveillance terminal built for capital allocators navigating the transition from the post-1971 fiat regime toward a multipolar monetary order. Designed for sovereign wealth funds, central bank research divisions, and generational family offices, this platform delivers **25-year historical context** on the forces reshaping global capital flows: liquidity cycles, hard asset revaluation, geopolitical financing patterns, and industrial capacity dynamics.
 
-In a world where traditional macro indicators lag reality by quarters, GraphiQuestor provides the high-frequency, unsanitized data infrastructure required to position ahead of regime shifts—not react to them.
+**Our Proprietary Edge**: Deep integration with India and China's official statistical infrastructure—providing state-level granularity unavailable on Bloomberg or Refinitiv. From MoSPI's Annual Survey of Industries to real-time tracking of Shanghai-Beijing policy divergence, GraphiQuestor delivers emerging market intelligence that Western terminals cannot replicate.
+
+In a world where traditional macro indicators lag reality by quarters, GraphiQuestor provides the high-frequency data infrastructure required to position ahead of regime shifts—not react to them.
 
 ---
 
@@ -27,17 +29,21 @@ GraphiQuestor synthesizes these dynamics into actionable intelligence, providing
 
 **"Follow the Fed's balance sheet, not its forward guidance."**
 
-Central bank liquidity is the primary driver of risk asset valuations, yet traditional metrics (M2, monetary base) obscure the true spendable liquidity in the financial system. GraphiQuestor tracks **Global Net Liquidity**—the Federal Reserve's balance sheet adjusted for Treasury General Account (TGA) balances and Reverse Repo Facility (RRP) drains—providing a real-time measure of the actual "oxygen" available to markets.
+Central bank liquidity is the primary driver of risk asset valuations, yet traditional metrics (M2, monetary base) obscure the true spendable liquidity in the financial system. GraphiQuestor tracks **Global Net Liquidity**—the Federal Reserve's balance sheet adjusted for Treasury General Account (TGA) balances and Reverse Repo Facility (RRP) drains—providing a measure of the actual "oxygen" available to markets.
+
+**25-Year Data Pipeline**: Our liquidity metrics span from 2000 to present, capturing the full post-dot-com cycle including the GFC, QE era, COVID stimulus, and current normalization.
 
 ### Key Intelligence Modules
 
-- **25-Year Net Liquidity Context**: Historical visualization showing where current liquidity levels sit relative to the full post-GFC cycle, with 3-year moving trend overlay for regime identification.
+- **25-Year Net Liquidity Context**: Historical visualization showing where current liquidity levels sit relative to the full post-dot-com cycle, with 3-year moving trend overlay for regime identification.
 
-- **Z-Score Deviation Analysis**: Statistical positioning against historical norms, enabling early detection of liquidity inflection points before they manifest in asset prices.
+- **Z-Score Deviation Analysis**: Statistical positioning against 25-year historical norms, enabling detection of liquidity inflection points before they manifest in asset prices.
 
-- **Liquidity Alarm System**: Deterministic triggers for TGA build events and RRP drainage patterns that historically precede volatility spikes.
+- **Liquidity Alarm System**: Rule-based triggers for TGA build events and RRP drainage patterns that historically precede volatility spikes.
 
 - **Multi-Jurisdiction Coverage**: Parallel tracking of ECB, BoJ, and PBoC balance sheet dynamics for global liquidity pulse.
+
+- **Shanghai Divergence Tracker** *(Proprietary)*: Monitors policy divergence between Shanghai (PBOC) and Beijing (fiscal authorities), revealing when monetary accommodation conflicts with deleveraging mandates—a leading indicator for EM capital flows.
 
 **Institutional Application**: Position sizing for risk assets should scale with net liquidity Z-scores. Historical analysis shows that when net liquidity exceeds +1σ, equity drawdowns are statistically rare; conversely, readings below -1σ have preceded every major correction since 2008.
 
@@ -53,11 +59,11 @@ In an era of unprecedented monetary expansion, hard assets serve as the constitu
 
 - **M2 / Gold Ratio**: The true inflation gauge. When broad money supply grows faster than gold's market capitalization, purchasing power is being systematically transferred from savers to debtors. Current reading provides 50-year historical context.
 
-- **Sovereign Debt / Gold Coverage**: Mathematical certainty of fiscal dominance. Tracks the ratio of government debt to official gold reserves, revealing which nations retain monetary optionality versus those locked into perpetual refinancing.
+- **Debt / Gold Z-Score** *(Proprietary)*: Standardized measure of sovereign debt burden relative to official gold reserves, calculated against 25-year historical distribution. Reveals which nations retain monetary optionality (India, Russia, China: negative z-scores) versus those locked into perpetual refinancing (US, Japan: positive z-scores exceeding +2σ).
 
 - **Silver Cycle Analysis**: Z-score positioning of the gold-silver ratio against its 200-year mean, identifying structural dislocations in the monetary metal complex.
 
-- **Central Bank Gold Accumulation**: Real-time tracking of official sector purchases, with particular focus on non-Western central banks (Russia, China, India, Turkey) whose accumulation patterns signal de-dollarization intent.
+- **Central Bank Gold Accumulation**: Tracking of official sector purchases, with particular focus on non-Western central banks (Russia, China, India, Turkey) whose accumulation patterns signal de-dollarization intent. India-specific data sourced directly from RBI disclosures.
 
 **Institutional Application**: Family offices and sovereign wealth funds use these metrics for strategic asset allocation. When M2/Gold ratios exceed historical norms (current: 2.8x vs. 50-year average of 2.1x), it signals elevated debasement risk, warranting increased hard asset allocation.
 
@@ -71,9 +77,9 @@ The post-Cold War unipolar moment is giving way to a multipolar world where infr
 
 ### Geopolitical Intelligence
 
-- **Development Finance Cartography**: Interactive mapping of World Bank vs. AIIB/NDB project financing across Asia, Africa, and Latin America, revealing real-time shifts in institutional alignment.
+- **Development Finance Cartography**: Interactive mapping of World Bank vs. AIIB/NDB project financing across Asia, Africa, and Latin America, revealing shifts in institutional alignment.
 
-- **Loan-to-Job Efficiency Metrics**: Proprietary analysis attributing institutional capital flows to actual employment and GVA creation at the state level (India focus), separating productive investment from rent-seeking.
+- **Loan-to-Job Efficiency Ratio** *(Proprietary)*: Attribution of institutional capital flows to actual employment and GVA creation at the Indian state level, calculated using MoSPI's PLFS (labor force) and ASI (industrial output) data. Separates productive investment (Maharashtra, Gujarat) from rent-seeking (states with high loan inflows but stagnant employment growth).
 
 - **Reserve Currency Composition**: IMF COFER data visualization showing the secular decline of USD reserve share (currently 58%, down from 71% in 2000) and the corresponding rise of gold and RMB allocations.
 
@@ -91,13 +97,13 @@ Energy is the master resource—the physical constraint underlying all economic 
 
 ### Energy Intelligence Modules
 
-- **Crude Import Dependency Mapping**: Sankey diagrams visualizing oil flows from Persian Gulf/Urals to major consuming nations (India, China, EU), revealing chokepoint vulnerabilities.
+- **Crude Import Dependency Mapping**: Sankey diagrams visualizing oil flows from Persian Gulf/Urals to major consuming nations (India, China, EU), revealing chokepoint vulnerabilities. India-specific data sourced from MoSPI's Energy Statistics.
 
-- **Strategic Reserve Dynamics**: Real-time tracking of US SPR drawdowns versus China/India accumulation, providing early warning of supply-demand imbalances.
+- **Energy Dependency Ratio** *(Proprietary)*: Percentage of total energy consumption sourced from imports, calculated at the state level for India using MoSPI data. Reveals which states are vulnerable to external supply shocks (Punjab, Tamil Nadu: >80% import-dependent) versus those with domestic energy security (Jharkhand, Chhattisgarh: coal-rich).
+
+- **Strategic Reserve Dynamics**: Tracking of US SPR drawdowns versus China/India accumulation, providing early warning of supply-demand imbalances.
 
 - **Refining Capacity Utilization**: Bottleneck identification in global refining infrastructure, which acts as a hidden tax on economic growth when capacity constraints bind.
-
-- **Energy Transition Paradox**: Monitoring the gap between renewable capacity additions and fossil fuel retirement, revealing the persistent dependency on hydrocarbons despite ESG narratives.
 
 **Institutional Application**: Energy security is the new currency of geopolitical leverage. Nations with diversified supply sources and strategic reserves (China, India) have greater policy autonomy than those dependent on single suppliers (Europe). This intelligence informs sovereign bond positioning and currency hedging strategies.
 
@@ -109,15 +115,17 @@ Energy is the master resource—the physical constraint underlying all economic 
 
 GDP figures are backward-looking, seasonally adjusted, and subject to perpetual revision. GraphiQuestor bypasses these lagging indicators by tracking high-frequency industrial data—the real economy signals that precede official statistics by quarters.
 
-### Manufacturing Intelligence
+### Manufacturing Intelligence *(India/China Proprietary Edge)*
 
-- **Annual Survey of Industries (ASI) Deep Dive**: State-level analysis of India's industrial base, tracking Gross Value Added (GVA), employment, and capital formation across 23 manufacturing sectors. This granular data reveals structural shifts invisible in aggregate GDP.
+- **Annual Survey of Industries (ASI) Deep Dive**: State-level analysis of India's industrial base via direct MoSPI integration, tracking Gross Value Added (GVA), employment, and capital formation across 23 manufacturing sectors and 35 states/UTs. This granularity is unavailable on Bloomberg or Refinitiv—our exclusive advantage for India positioning.
 
-- **Capacity Utilization Inflection Points**: Identifying the exact moment when industrial slack is exhausted and structural inflation returns—the most critical regime shift for bond and equity positioning.
+- **India Macro Pulse**: Comprehensive dashboard synthesizing MoSPI's PLFS (labor force), CPI (inflation), IIP (industrial production), NAS (national accounts), and WPI (wholesale prices) into a single institutional view. Updated monthly with official releases.
 
-- **Commodity Import Dependency**: Tracking India and China's import volumes of strategic metals (gold, silver, rare earths), revealing real-economy demand that precedes price movements.
+- **China Industrial Pulse**: Provincial-level tracking of manufacturing output, capacity utilization, and export volumes, revealing divergence between coastal (export-oriented) and interior (domestic-focused) regions.
 
-- **Manufacturing PMI Divergence Analysis**: Comparing official PMI surveys against hard production data to identify statistical manipulation or genuine economic acceleration.
+- **Capacity Utilization Inflection Points**: Identifying when industrial slack is exhausted and structural inflation returns—the most critical regime shift for bond and equity positioning.
+
+- **Commodity Import Dependency**: Tracking India and China's import volumes of strategic metals (gold, silver, rare earths) using official customs data, revealing real-economy demand that precedes price movements.
 
 **Institutional Application**: Central bank research divisions use this data to calibrate policy responses. When capacity utilization exceeds 85% (current: 76%), monetary accommodation becomes inflationary rather than stimulative—a critical threshold for bond portfolio positioning.
 
@@ -125,15 +133,17 @@ GDP figures are backward-looking, seasonally adjusted, and subject to perpetual 
 
 ## Technical Architecture: Built for Institutional Rigor
 
-GraphiQuestor is engineered to the standards expected by sovereign wealth funds and central bank research teams:
+GraphiQuestor is engineered to institutional standards:
 
 ### Data Infrastructure
 
-- **Autonomous Ingestion**: Serverless Edge Functions (Supabase/Deno) harvest data from opaque sources (BIS, NDB, MoSPI, FRED, EIA) via scheduled cron jobs, ensuring 24/7 data freshness without manual intervention.
+- **Autonomous Ingestion**: Serverless Edge Functions (Supabase/Deno) harvest data from official sources (BIS, NDB, MoSPI, FRED, EIA, RBI) via scheduled cron jobs, ensuring daily data freshness without manual intervention.
 
-- **Self-Healing Pipelines**: Automatic schema drift detection and API rate limit management ensure zero-touch resilience. When source APIs change structure, the system auto-corrects and logs discrepancies for review.
+- **25-Year Historical Pipeline**: All time-series metrics span from 2000 to present, providing full-cycle context across the dot-com crash, GFC, QE era, COVID stimulus, and current normalization. This longitudinal depth enables proper Z-score calculation and regime identification.
 
-- **Military-Grade Security**: Row-Level Security (RLS) policies and hardened API gateways ensure data sovereignty. All database queries are parameterized to prevent injection attacks, and API keys are rotated on a 90-day cycle.
+- **Resilient Architecture**: Automatic schema drift detection and API rate limit management. When source APIs change structure, the system logs discrepancies for review and continues operation.
+
+- **Secure Infrastructure**: Row-Level Security (RLS) policies and API authentication ensure data integrity. All database queries are parameterized to prevent injection attacks.
 
 ### Data Quality & Governance
 
@@ -145,9 +155,9 @@ GraphiQuestor is engineered to the standards expected by sovereign wealth funds 
 
 ### Performance & Reliability
 
-- **Edge-Optimized Delivery**: Global CDN distribution ensures sub-200ms load times from Singapore to São Paulo.
+- **Global CDN Distribution**: Optimized delivery ensuring fast load times across Asia, Europe, and Americas.
 
-- **99.9% Uptime SLA**: Redundant database replicas and automatic failover ensure continuous availability during market stress events.
+- **High Availability**: Redundant database replicas and automatic failover ensure continuous availability.
 
 - **API-First Architecture**: RESTful endpoints enable institutional clients to integrate GraphiQuestor data into proprietary risk management systems.
 
@@ -170,8 +180,9 @@ GraphiQuestor aggregates and synthesizes data from the world's most authoritativ
 - **World Bank Open Data**: Development project financing, GDP statistics, and institutional lending patterns.
 - **AIIB/NDB Public Disclosures**: Eastern development finance institution project data (where available).
 
-### India-Specific Intelligence
-- **MoSPI (Ministry of Statistics, Govt. of India)**: PLFS (labor force), CPI (inflation), IIP (industrial production), ASI (manufacturing), NAS (national accounts), WPI (wholesale prices), and energy statistics via the eSankhyiki-MCP server.
+### India-Specific Intelligence *(Proprietary Edge)*
+- **MoSPI (Ministry of Statistics, Govt. of India)**: Direct integration via eSankhyiki-MCP server providing PLFS (labor force), CPI (inflation), IIP (industrial production), ASI (Annual Survey of Industries), NAS (national accounts), WPI (wholesale prices), and Energy Statistics. This state-level granularity is unavailable on Western terminals.
+- **RBI (Reserve Bank of India)**: Official gold reserve disclosures, forex intervention data, and monetary policy minutes.
 
 ### Market & Event Data
 - **Finnhub**: Economic calendar events, consensus forecasts, and institutional news headlines.
