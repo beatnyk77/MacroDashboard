@@ -18,6 +18,7 @@ import { FeedbackSection } from '@/features/dashboard/components/sections/Feedba
 import { BlogSection } from '@/features/dashboard/components/sections/BlogSection';
 import { SEOFAQSection } from '@/features/dashboard/components/sections/SEOFAQSection';
 import { SEOManager } from '@/components/SEOManager';
+import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
@@ -45,6 +46,7 @@ const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/component
 const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection })));
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
+const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -77,7 +79,16 @@ export const Dashboard: React.FC = () => {
             />
             <div className="space-y-24">
 
-                {/* ROW 1: CORE LIQUIDITY SIGNAL */}
+                {/* ROW 1: US DEBT MATURITY WALL - HERO SECTION */}
+                <SPASection id="debt-maturity-hero" variant="hero" disableAnimation>
+                    <SectionErrorBoundary name="US Debt Maturity Wall">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <USDebtMaturityWall />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* ROW 2: GLOBAL NET LIQUIDITY SIGNAL */}
                 <SPASection id="liquidity-hero" variant="hero" disableAnimation>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
                         <SectionHeader
@@ -95,7 +106,7 @@ export const Dashboard: React.FC = () => {
                     </SectionErrorBoundary>
                 </SPASection>
 
-                {/* ROW 2: MARKET TERMINAL GRID */}
+                {/* ROW 3: MARKET TERMINAL GRID */}
                 <SPASection id="market-pulse" disableAnimation>
                     <SectionErrorBoundary name="System Heartbeat">
                         <Suspense fallback={<LoadingFallback />}>
@@ -297,7 +308,14 @@ export const Dashboard: React.FC = () => {
                     </SectionErrorBoundary>
                 </SPASection>
 
-                {/* ROW 6: COUNTRY PULSES */}
+                {/* ROW 6: CURRENCY WARS MONITOR */}
+                <SectionErrorBoundary name="Currency Wars Monitor">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <CurrencyWarsMonitor />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                {/* ROW 7: COUNTRY PULSES */}
                 <SPASection id="country-pulses" className="py-24" disableAnimation>
                     {/* ... existing content ... */}
                     <div className="mt-16 space-y-12">
