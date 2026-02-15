@@ -49,6 +49,7 @@ const CommodityTerminalRow = lazy(() => import('@/features/commodities/Commodity
 const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
 const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
 const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
+const IndiaFiscalStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalStressMonitor').then(m => ({ default: m.IndiaFiscalStressMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -356,6 +357,13 @@ export const Dashboard: React.FC = () => {
                                 </Suspense>
                             </SectionErrorBoundary>
                         </SPAAccordion>
+
+                        {/* ROW 7.5: INDIA FISCAL STRESS MONITOR */}
+                        <SectionErrorBoundary name="India Fiscal Stress Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaFiscalStressMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
 
                         {/* China Pulse */}
                         <SPAAccordion
