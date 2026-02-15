@@ -91,8 +91,8 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
     }[region as 'US' | 'EU' | 'Asia'];
 
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px]">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px] p-6">
+            <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
                     <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                         <Factory className="h-4 w-4 text-emerald-400" />
@@ -113,7 +113,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                     </TabsList>
                 </Tabs>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-0 pb-0">
                 <div className="space-y-6">
                     <div className="flex items-baseline justify-between">
                         <div>

@@ -13,7 +13,6 @@ import {
     Wind,
     Scale,
     Home,
-    Activity,
     Briefcase,
     TrendingUp,
     TrendingDown,
@@ -176,7 +175,7 @@ export const USMacroPulseSection: React.FC = () => {
             {CATEGORIES.map((cat) => (
                 <Card
                     key={cat.id}
-                    className="p-8 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group"
+                    className="p-6 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group"
                 >
                     {/* Background Glow */}
                     <div
@@ -186,7 +185,7 @@ export const USMacroPulseSection: React.FC = () => {
 
                     <div className="relative z-10 space-y-6">
                         {/* Section Header */}
-                        <div className="flex items-center gap-4 px-4">
+                        <div className="flex items-center gap-4 px-4 overflow-visible">
                             <div
                                 className="p-2.5 rounded-xl border shadow-inner"
                                 style={{
@@ -198,8 +197,9 @@ export const USMacroPulseSection: React.FC = () => {
                                 <cat.icon className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-black tracking-tight text-white uppercase italic">
-                                    {cat.label} <span className="text-muted-foreground/30 ml-2">Sub-Head</span>
+                                <h3 className="text-xl font-light text-white flex items-center gap-2">
+                                    <span className="w-8 h-px" style={{ backgroundColor: cat.color }} />
+                                    {cat.label}
                                 </h3>
                                 <p className="text-[0.65rem] text-muted-foreground/60 font-medium uppercase tracking-widest mt-0.5">
                                     Institutional Regime Monitoring
@@ -228,7 +228,7 @@ export const USMacroPulseSection: React.FC = () => {
             {/* Methodology Note */}
             <div className="px-8 py-6 rounded-3xl bg-blue-500/[0.02] border border-blue-500/10 flex items-start gap-4">
                 <div className="p-2 rounded-lg bg-blue-500/10">
-                    <Activity color="#3b82f6" size={16} />
+                    <ActivityIcon color="#3b82f6" size={16} />
                 </div>
                 <div>
                     <span className="text-[0.7rem] font-bold text-blue-400 uppercase tracking-widest">Institutional Note:</span>

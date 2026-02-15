@@ -12,7 +12,7 @@ import {
     ReferenceLine
 } from 'recharts';
 import { useNetLiquidityHistory } from '@/hooks/useNetLiquidityHistory';
-import { Info, Zap, BarChart3 } from 'lucide-react';
+import { Info, Zap } from 'lucide-react';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
@@ -70,25 +70,23 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
     const latest = history[history.length - 1];
 
     return (
-        <Card className="p-8 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group">
+        <Card className="p-6 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group">
             {/* Ambient Background Radial */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] -mr-64 -mt-64 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
             <div className="relative z-10 space-y-8">
                 {/* Header Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-3">
+                    <div className="lg:col-span-2 space-y-3 px-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-inner">
-                                <BarChart3 className="text-blue-400 w-5 h-5" />
-                            </div>
-                            <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
-                                Global <span className="text-blue-500">Net Liquidity</span> 25Y Context
-                            </h2>
+                            <h3 className="text-xl font-light text-white flex items-center gap-2">
+                                <span className="w-8 h-px bg-blue-500/50" />
+                                Global Net Liquidity 25Y Context
+                            </h3>
                         </div>
-                        <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
+                        <p className="text-muted-foreground text-xs max-w-2xl leading-relaxed ml-10">
                             Tracking the "spendable" liquidity provided by the Federal Reserve since 2002.
-                            This metric represents the actual oxygen in the financial system after accounting for government cash and repo drains.
+                            This metric represents the actual oxygen in the financial system.
                         </p>
                     </div>
 
@@ -98,18 +96,19 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         </div>
                         <div className="text-4xl font-black text-white tracking-tighter tabular-nums">
-                            ${latest?.value.toFixed(2)}<span className="text-xl text-muted-foreground/60 ml-1">T</span>
+                            ${latest?.value.toFixed(2)}<span className="textxl text-muted-foreground/60 ml-1">T</span>
                         </div>
-                        <div className="text-[0.65rem] text-muted-foreground/60 font-medium mt-1 uppercase italic">
-                            As of {latest ? new Date(latest.date).toLocaleDateString() : '--'}
+                        <div className="mt-3 pt-3 border-t border-white/5">
+                            <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1.5 leading-none">
+                                DATA CURRENT AS OF: {latest ? new Date(latest.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '--'}
+                            </span>
+                            <span className="text-[8px] text-muted-foreground/40 font-bold uppercase tracking-tight mt-1 block">Updated Weekly via Federal Reserve H.4.1</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Main Chart Area */}
-                <div className="h-[600px] w-full relative">
-                    <div className="absolute inset-0 bg-white/[0.01] rounded-[2.5rem] -m-4 border border-white/[0.02]" />
-
+                <div className="h-[500px] w-full relative">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                             <defs>
@@ -122,7 +121,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             <XAxis
                                 dataKey="date"
                                 stroke="rgba(255,255,255,0.15)"
-                                fontSize={11}
+                                fontSize={10}
                                 tickFormatter={(v) => new Date(v).getFullYear().toString()}
                                 tick={{ fill: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
                                 axisLine={false}
@@ -132,7 +131,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             />
                             <YAxis
                                 stroke="rgba(255,255,255,0.15)"
-                                fontSize={11}
+                                fontSize={10}
                                 tickFormatter={(v) => `$${v}T`}
                                 tick={{ fill: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
                                 axisLine={false}
@@ -189,15 +188,11 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             <h3 className="text-xs font-black text-white uppercase tracking-widest">Why It Matters</h3>
                         </div>
                         <div className="space-y-3">
-                            <p className="text-sm text-muted-foreground leading-relaxed">
+                            <p className="text-xs text-muted-foreground leading-relaxed">
                                 Global Net Liquidity represents the actual "spendable" money in the financial system.
                                 While the Fed's Balance Sheet (WALCL) shows total assets, it does not account for money locked in the
-                                <span className="text-white font-bold"> Treasury General Account (TGA)</span> or drained via the
-                                <span className="text-white font-bold"> Reverse Repo Facility (RRP)</span>.
-                            </p>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                High liquidity levels correlate strongly with <span className="text-blue-400 font-bold uppercase">Risk-On</span> environments,
-                                acting as a primary driver for Equities, Bitcoin, and Hard Assets.
+                                <span className="text-white font-bold"> TGA</span> or drained via the
+                                <span className="text-white font-bold"> RRP</span>.
                             </p>
                         </div>
                     </div>
@@ -208,33 +203,20 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             <h3 className="text-xs font-black text-white uppercase tracking-widest">Historical Interpretation</h3>
                         </div>
                         <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-4">
-                            <div className="flex justify-between items-center text-xs">
-                                <span className="text-muted-foreground">Institutional Formula:</span>
-                                <span className="text-white font-mono font-bold">Fed Assets - TGA - RRP</span>
+                            <div className="flex justify-between items-center text-[10px]">
+                                <span className="text-muted-foreground uppercase font-bold">Formula:</span>
+                                <span className="text-white font-mono font-bold">Assets - TGA - RRP</span>
                             </div>
-                            <div className="h-px bg-white/5" />
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                    <p className="text-[0.7rem] text-muted-foreground">
-                                        <span className="text-white font-bold">Expansion Stage:</span> When Net Liquidity rises above its 3Y trend, risk assets typically find floor support.
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                                    <p className="text-[0.7rem] text-muted-foreground">
-                                        <span className="text-white font-bold">Drain Stage:</span> Falling liquidity (QT or TGA builds) leads to volatility and valuation compression.
+                                    <p className="text-[10px] text-muted-foreground">
+                                        <span className="text-white font-bold uppercase">Expansion:</span> Floor support for Risk Assets.
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Footer Notes */}
-                <div className="flex justify-between items-center text-[0.6rem] text-muted-foreground/30 uppercase font-bold tracking-tighter">
-                    <div>Data Source: Federal Reserve Board, US Treasury (Daily Feed)</div>
-                    <div className="italic">Standardized for Trillions USD</div>
                 </div>
             </div>
         </Card>

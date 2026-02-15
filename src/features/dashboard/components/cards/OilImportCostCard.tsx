@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, DollarSign, Globe, Info } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
 import { ResponsiveContainer, ComposedChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Area } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
@@ -22,16 +22,12 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
     const [activeCountry, setActiveCountry] = useState<'IN' | 'CN'>('IN');
 
     const chartData = useMemo(() => {
-        // Create a map of dates to data points
         const dateMap = new Map<string, OilData>();
-
-        // Add Brent data
         brentPriceData.forEach(d => {
-            const date = d.date.substring(0, 4); // Use year for annual data
+            const date = d.date.substring(0, 4);
             dateMap.set(date, { date, brent: d.value });
         });
 
-        // Add Import Cost data
         importData.forEach(d => {
             const date = d.as_of_date.substring(0, 4);
             if (!dateMap.has(date)) {
@@ -57,7 +53,6 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
 
         const currentVal = activeCountry === 'IN' ? latest.cost_inr! : latest.cost_cny!;
         const prevVal = prev ? (activeCountry === 'IN' ? prev.cost_inr! : prev.cost_cny!) : null;
-
         const yoyDelta = prevVal ? ((currentVal - prevVal) / prevVal) * 100 : null;
         const brentVal = latest.brent || 0;
 
@@ -78,28 +73,37 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
         >
-            <Card className="bg-black/60 border-white/5 backdrop-blur-3xl overflow-hidden group">
-                <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-white/5 bg-white/[0.01]">
+            <Card className="bg-black/60 border-white/5 backdrop-blur-3xl overflow-hidden group p-6">
+                <div className="flex flex-row items-center justify-between pb-4 border-b border-white/5 bg-white/[0.01]">
                     <div className="space-y-1">
-                        <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                            <Globe className="h-4 w-4 text-emerald-400" />
-                            Oil Import Cost <span className="text-white">Local Currency</span>
-                        </CardTitle>
-                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                        <h3 className="text-xl font-light text-white flex items-center gap-2">
+                            <span className="w-8 h-px bg-emerald-500/50" />
+                            Oil Import Cost (Local Currency)
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter ml-10">
                             Measuring Local Currency Pressure vs. Global Brent Benchmark
                         </p>
                     </div>
-                    <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-white/5 p-1 rounded-xl border border-white/5">
-                        <TabsList className="bg-transparent border-0 gap-1 h-7">
-                            <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">India (INR)</TabsTrigger>
-                            <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">China (CNY)</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-                </CardHeader>
-                <CardContent className="p-0">
+                    <div className="flex flex-col items-end gap-2">
+                        {stats && (
+                            <div className="flex flex-col items-end gap-1">
+                                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    AS OF {stats.year}
+                                </span>
+                            </div>
+                        )}
+                        <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-white/5 p-1 rounded-xl border border-white/5">
+                            <TabsList className="bg-transparent border-0 gap-1 h-7">
+                                <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">India (INR)</TabsTrigger>
+                                <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">China (CNY)</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                </div>
+                <CardContent className="p-0 mt-6">
                     <div className="grid grid-cols-1 lg:grid-cols-4 min-h-[400px]">
-                        {/* Summary Stats Sidebar */}
-                        <div className="lg:col-span-1 border-r border-white/5 p-8 flex flex-col justify-between bg-white/[0.01]">
+                        <div className="lg:col-span-1 border-r border-white/5 pr-8 flex flex-col justify-between">
                             {stats ? (
                                 <div className="space-y-8">
                                     <div className="space-y-1">
@@ -158,8 +162,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                             </div>
                         </div>
 
-                        {/* Chart Area */}
-                        <div className="lg:col-span-3 p-8 relative">
+                        <div className="lg:col-span-3 pl-8 relative">
                             {chartData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <ComposedChart data={chartData} margin={{ top: 20, right: 60, left: 20, bottom: 20 }}>

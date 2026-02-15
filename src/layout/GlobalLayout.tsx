@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Activity, Clock } from 'lucide-react';
+import { Activity, Clock, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
@@ -105,6 +106,15 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
 
                     <div className="flex items-center gap-4">
+                        <Link to="/admin" className="no-underline">
+                            <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                <ShieldCheck size={12} className="text-emerald-500" />
+                                <span className="text-[0.65rem] font-black text-muted-foreground uppercase">
+                                    TERMINAL HEALTH: <span className="text-emerald-500 ml-1">NOMINAL</span>
+                                </span>
+                            </div>
+                        </Link>
+
                         <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-white/5 border border-white/5">
                             <Clock size={12} className="text-muted-foreground" />
                             <span className="text-[0.65rem] font-black text-muted-foreground">

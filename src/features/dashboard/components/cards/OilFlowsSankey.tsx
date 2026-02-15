@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ship, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowRight } from 'lucide-react';
 import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle, BarChart, Bar, XAxis, YAxis, Legend, CartesianGrid } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -62,11 +62,13 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
     const [activeTab, setActiveTab] = useState<'IN' | 'CN'>('IN');
     const [viewMode, setViewMode] = useState<'sankey' | 'history'>('sankey');
 
+    // Added to fix potential reference error
+    const activeCountry = activeTab;
+
     const historicalData = useMemo(() => {
         const filtered = data.filter(d => d.importer_country_code === activeTab);
         if (!filtered.length) return [];
 
-        // Groups data by date and exporter
         const dateMap = new Map<string, any>();
         filtered.forEach(d => {
             if (!dateMap.has(d.as_of_date)) {
@@ -110,7 +112,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                 return { name: meta.name, color: meta.color };
             }),
             ...(otherVolume > 0 ? [{ name: 'Other Exporters', color: '#334155' }] : []),
-            { name: activeTab === 'IN' ? 'INDIA HUB' : 'CHINA HUB', color: activeTab === 'IN' ? '#3b82f6' : '#ef4444' }
+            { name: activeTab === 'IN' ? 'INDIA HUB' : 'CHINA HUB', color: activeCountry === 'IN' ? '#3b82f6' : '#ef4444' }
         ];
 
         const destIdx = nodes.length - 1;
@@ -132,20 +134,20 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
         ];
 
         return { nodes, links, totalVolume, latestDate };
-    }, [data, activeTab]);
+    }, [data, activeTab, activeCountry]);
 
     if (isLoading) return <div className="h-[450px] animate-pulse bg-white/5 rounded-3xl" />;
 
     return (
-        <Card className="bg-black/60 border-white/5 backdrop-blur-3xl overflow-hidden group h-[450px] flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-white/5 bg-white/[0.01]">
+        <Card className="bg-black/60 border-white/5 backdrop-blur-3xl overflow-hidden group h-[450px] flex flex-col p-6">
+            <div className="flex flex-row items-center justify-between pb-4 border-b border-white/5 bg-white/[0.01]">
                 <div className="space-y-1">
-                    <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                        <Ship className="h-4 w-4 text-blue-400" />
-                        Crude Oil <span className="text-white">Sourcing</span> Flow
-                    </CardTitle>
+                    <h3 className="text-xl font-light text-white flex items-center gap-2">
+                        <span className="w-8 h-px bg-blue-500/50" />
+                        Crude Oil Sourcing Flow
+                    </h3>
                     <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest">
+                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest ml-10">
                             {processedData.latestDate ? (
                                 <>
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -171,9 +173,9 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                         </TabsList>
                     </Tabs>
                 </div>
-            </CardHeader>
-            <CardContent className="flex-1 p-8 pt-12 relative overflow-hidden">
-                {!processedData.nodes.length ? (
+            </div>
+            <CardContent className="flex-1 p-0 mt-8 relative overflow-hidden">
+                {!processedData.nodes?.length ? (
                     <div className="h-full flex flex-col items-center justify-center text-center gap-4 text-muted-foreground">
                         <div className="w-12 h-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
                         <div className="space-y-1">
@@ -195,7 +197,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                                     content={({ active, payload }) => {
                                         if (!active || !payload || !payload.length) return null;
                                         const item = payload[0].payload;
-                                        if (item.sourceLinks) return null; // Hide node tooltips for cleaner look
+                                        if (item.sourceLinks) return null;
 
                                         return (
                                             <div className="bg-slate-950/90 border border-white/10 p-3 rounded-xl backdrop-blur-xl shadow-2xl">
@@ -246,7 +248,6 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                                     wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.05em', paddingTop: '20px' }}
                                 />
                                 {exporters.map((exporter, idx) => {
-                                    // Find color from RISK_META by name if possible, else default
                                     const meta = Object.values(RISK_META).find(m => m.name === exporter) || { color: '#64748b' };
                                     return (
                                         <Bar
@@ -264,7 +265,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                     </ResponsiveContainer>
                 )}
             </CardContent>
-            <div className="px-6 py-4 border-t border-white/5 bg-white/[0.01]">
+            <div className="pt-4 mt-auto border-t border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-between">
                     <div className="flex gap-4 items-center">
                         <span className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest mr-2">Risk Legend</span>

@@ -78,9 +78,10 @@ export const CreditCreationPulseCard: React.FC = () => {
 
     return (
         <Box sx={{ mt: 4 }}>
-            <Typography variant="overline" sx={{ color: 'text.secondary', fontWeight: 800, letterSpacing: '0.1em', mb: 2, display: 'block' }}>
+            <h3 className="text-xl font-light text-white flex items-center gap-2 mb-4">
+                <span className="w-8 h-px bg-emerald-500/50" />
                 Credit Creation Pulse (Z-Score)
-            </Typography>
+            </h3>
             <Grid container spacing={2}>
                 {credit.data?.map((c) => (
                     <Grid item xs={6} sm={4} md={2.4} key={c.country_code}>

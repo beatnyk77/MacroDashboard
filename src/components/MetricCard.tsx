@@ -137,7 +137,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             {/* Subtle Gradient Accent - Simplified */}
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/[0.03] to-transparent blur-2xl -translate-y-8 translate-x-8 group-hover:from-blue-500/10 transition-colors duration-500" />
 
-            <CardContent className="flex flex-col flex-grow p-5 gap-4 relative z-10">
+            <CardContent className="flex flex-col flex-grow p-6 gap-4 relative z-10">
                 {/* Header Section */}
                 <div className="flex justify-between items-start">
                     <div className="space-y-0.5">

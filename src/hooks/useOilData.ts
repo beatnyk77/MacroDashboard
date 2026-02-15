@@ -138,7 +138,10 @@ export const useOilData = () => {
             if (metError) throw metError;
 
             return {
-                capacityData: (capData as OilRefiningCapacity[]) || [],
+                capacityData: (capData || []).map((d: any) => ({
+                    ...d,
+                    capacity_mbpd: Number(d.capacity_mbpd)
+                })),
                 importData: (impData as OilImport[]) || [],
                 sprData: (sprObs || []).map((d: any) => ({
                     date: String(d.as_of_date),

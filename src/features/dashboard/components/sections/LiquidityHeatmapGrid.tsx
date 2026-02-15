@@ -82,11 +82,12 @@ export const LiquidityHeatmapGrid: React.FC = () => {
 
     return (
         <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.secondary', letterSpacing: '0.1em' }}>
-                        G20 LIQUIDITY HEATMAP
-                    </Typography>
+                    <h3 className="text-xl font-light text-white flex items-center gap-2">
+                        <span className="w-8 h-px bg-blue-500/50" />
+                        G20 Liquidity Heatmap
+                    </h3>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     {['SAFE', 'WATCH', 'STRESS'].map((l, i) => (

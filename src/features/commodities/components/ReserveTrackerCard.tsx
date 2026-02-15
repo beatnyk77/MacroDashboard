@@ -31,6 +31,9 @@ export const ReserveTrackerCard: React.FC = () => {
 
     if (isLoading) return <div className="h-48 animate-pulse bg-white/5 rounded-2xl" />;
 
+    // Note: If reserves is empty, the chart will handle it gracefully or we can show a placeholder.
+    // Given we at least have India data now, it should render.
+
     return (
         <Card className="bg-black/40 border-white/10 backdrop-blur-md">
             <CardHeader className="pb-2 bg-white/[0.02] border-b border-white/5 px-4 lg:px-6">

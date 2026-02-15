@@ -31,8 +31,8 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
     }
 
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px]">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px] p-6">
+            <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
                     <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                         <Database className="h-4 w-4 text-orange-400" />
@@ -43,11 +43,15 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                         <span className="text-[10px] text-muted-foreground font-mono uppercase">Reference Cap: 713.5M bbl</span>
                     </div>
                 </div>
-                <span className="text-xs text-muted-foreground font-mono bg-white/5 px-2 py-1 rounded">
-                    LATEST: {latest?.date}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        DATA CURRENT AS OF: {latest?.date}
+                    </span>
+                    <span className="text-[8px] text-muted-foreground/40 font-bold uppercase tracking-tight">Updated Weekly via EIA/FRED</span>
+                </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-0 pb-0">
                 <div className="flex items-baseline justify-between mb-8">
                     <div>
                         <div className="text-5xl font-light text-white tracking-tighter">
