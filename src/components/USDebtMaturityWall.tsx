@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LineChart, Line } from 'recharts';
-import { TrendingUp, Calendar, DollarSign, AlertTriangle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface MaturityBucket {
     bucket: string;
     amount: number;
     total_debt: number;
     date: string;
+    low_cost_amount: number;
+    medium_cost_amount: number;
+    high_cost_amount: number;
 }
 
 interface HistoricalData {
@@ -20,15 +24,11 @@ interface HistoricalData {
 }
 
 const BUCKET_ORDER = ['<1M', '1-3M', '3-6M', '6-12M', '1-2Y', '2-5Y', '5-10Y', '10Y+'];
-const BUCKET_COLORS: Record<string, string> = {
-    '<1M': '#ef4444',      // red-500 - immediate risk
-    '1-3M': '#f97316',     // orange-500
-    '3-6M': '#f59e0b',     // amber-500
-    '6-12M': '#eab308',    // yellow-500
-    '1-2Y': '#84cc16',     // lime-500
-    '2-5Y': '#22c55e',     // green-500
-    '5-10Y': '#14b8a6',    // teal-500
-    '10Y+': '#06b6d4',     // cyan-500 - longest term
+// Solid colors for the stacked bars
+const COST_COLORS = {
+    low: '#22c55e',    // green-500
+    medium: '#f59e0b', // amber-500
+    high: '#ef4444'    // red-500
 };
 
 export const USDebtMaturityWall: React.FC = () => {
@@ -119,10 +119,21 @@ export const USDebtMaturityWall: React.FC = () => {
     const totalDebt = maturityData[0]?.total_debt || 0;
     const totalDebtTrillions = (totalDebt / 1_000_000).toFixed(2); // Convert millions to trillions
 
-    const shortTermDebt = maturityData
-        .filter(d => ['<1M', '1-3M', '3-6M', '6-12M'].includes(d.bucket))
-        .reduce((sum, d) => sum + parseFloat(d.amount.toString()), 0);
+    const shortTermBuckets = ['<1M', '1-3M', '3-6M', '6-12M'];
+    const shortTermData = maturityData.filter(d => shortTermBuckets.includes(d.bucket));
+
+    const shortTermDebt = shortTermData.reduce((sum, d) => sum + parseFloat(d.amount.toString()), 0);
     const shortTermTrillions = (shortTermDebt / 1_000_000).toFixed(2);
+
+    // Calculate Rollover Risk: Low + Medium cost debt maturing in < 1 year
+    // This assumes specific columns exist; fallback to estimate if not yet populated
+    const rolloverRiskAmount = shortTermData.reduce((sum, d) => {
+        const low = d.low_cost_amount || 0;
+        const medium = d.medium_cost_amount || 0;
+        return sum + parseFloat(low.toString()) + parseFloat(medium.toString());
+    }, 0);
+    const rolloverRiskTrillions = (rolloverRiskAmount / 1_000_000).toFixed(2);
+    // Unused: const rolloverRiskPct = ((rolloverRiskAmount / shortTermDebt) * 100).toFixed(1);
 
     const nextYearDebt = maturityData
         .filter(d => ['<1M', '1-3M', '3-6M', '6-12M', '1-2Y'].includes(d.bucket))
@@ -131,22 +142,38 @@ export const USDebtMaturityWall: React.FC = () => {
 
     const chartData = maturityData.map(d => ({
         bucket: d.bucket,
-        amount: parseFloat(d.amount.toString()) / 1_000_000, // Convert to trillions for display
+        amount: parseFloat(d.amount.toString()) / 1_000_000,
+        low: (d.low_cost_amount || 0) / 1_000_000,
+        medium: (d.medium_cost_amount || 0) / 1_000_000,
+        high: (d.high_cost_amount || 0) / 1_000_000,
         amountMillions: parseFloat(d.amount.toString())
     }));
 
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
             const dataPoint = payload[0].payload;
+            const total = dataPoint.amount;
             return (
-                <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl">
-                    <p className="text-slate-300 font-semibold mb-1">{dataPoint.bucket}</p>
-                    <p className="text-cyan-400 font-bold text-lg">
-                        ${dataPoint.amount.toFixed(2)}T
-                    </p>
-                    <p className="text-slate-400 text-xs mt-1">
-                        {((dataPoint.amount / parseFloat(totalDebtTrillions)) * 100).toFixed(1)}% of total
-                    </p>
+                <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
+                    <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{dataPoint.bucket}</p>
+                    <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-4">
+                            <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
+                            <span className="text-white font-mono">${dataPoint.high.toFixed(2)}T</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                            <span className="text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
+                            <span className="text-white font-mono">${dataPoint.medium.toFixed(2)}T</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                            <span className="text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
+                            <span className="text-white font-mono">${dataPoint.low.toFixed(2)}T</span>
+                        </div>
+                        <div className="border-t border-slate-700 pt-1 mt-1 flex items-center justify-between gap-4">
+                            <span className="text-slate-400 text-xs font-semibold">Total</span>
+                            <span className="text-cyan-400 font-bold">${total.toFixed(2)}T</span>
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -163,81 +190,173 @@ export const USDebtMaturityWall: React.FC = () => {
                             <Calendar className="w-8 h-8 text-cyan-400" />
                             US Debt Maturity Wall
                         </h2>
-                        <p className="text-slate-400 text-sm md:text-base">
-                            Treasury Securities Redemption Schedule • Marketable Debt Only
+                        <p className="text-slate-400 text-sm md:text-base max-w-2xl">
+                            Treasury Securities Redemption Schedule • <span className="text-amber-400 font-medium">Highlighting Rollover Risk</span>
                         </p>
                     </div>
                     <div className="flex items-center gap-2 text-slate-400 text-sm">
                         <span>Updated: {new Date(latestDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
                         <span className="text-slate-600">•</span>
-                        <span className="text-xs italic">U.S. Treasury MSPD – Marketable securities only – updated monthly</span>
+                        <span className="text-xs italic">U.S. Treasury MSPD</span>
                     </div>
                 </div>
             </div>
 
             {/* Key Callouts */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 md:p-8 bg-slate-800/30">
-                <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl p-5 hover:scale-105 transition-transform duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 md:p-8 bg-slate-800/30">
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-cyan-500/30 transition-colors"
+                >
                     <div className="flex items-center gap-3 mb-2">
                         <DollarSign className="w-6 h-6 text-cyan-400" />
                         <span className="text-slate-400 text-sm font-medium">Total Marketable Debt</span>
                     </div>
-                    <p className="text-4xl font-bold text-white">${totalDebtTrillions}T</p>
-                    <p className="text-slate-400 text-xs mt-1">Outstanding Treasury Securities</p>
-                </div>
+                    <p className="text-3xl font-bold text-white">${totalDebtTrillions}T</p>
+                    <p className="text-slate-500 text-xs mt-1">Outstanding Securities</p>
+                </motion.div>
 
-                <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-xl p-5 hover:scale-105 transition-transform duration-300">
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-orange-500/30 transition-colors"
+                >
                     <div className="flex items-center gap-3 mb-2">
                         <AlertTriangle className="w-6 h-6 text-orange-400" />
                         <span className="text-slate-400 text-sm font-medium">Maturing &lt;1 Year</span>
                     </div>
-                    <p className="text-4xl font-bold text-white">${shortTermTrillions}T</p>
-                    <p className="text-slate-400 text-xs mt-1">
+                    <p className="text-3xl font-bold text-white">${shortTermTrillions}T</p>
+                    <p className="text-slate-500 text-xs mt-1">
                         {((parseFloat(shortTermTrillions) / parseFloat(totalDebtTrillions)) * 100).toFixed(1)}% of total debt
                     </p>
-                </div>
+                </motion.div>
 
-                <div className="bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-xl p-5 hover:scale-105 transition-transform duration-300">
+                {/* Rollover Risk Card - NEW */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                    className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 rounded-xl p-5 relative overflow-hidden group"
+                >
+                    <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <ArrowUpRight className="w-16 h-16 text-red-500" />
+                    </div>
+                    <div className="flex items-center gap-3 mb-2 relative z-10">
+                        <Activity className="w-6 h-6 text-red-400" />
+                        <span className="text-red-200 text-sm font-medium">Rollover Shock Risk</span>
+                    </div>
+                    <p className="text-3xl font-bold text-white relative z-10">${rolloverRiskTrillions}T</p>
+                    <div className="relative z-10 mt-1">
+                        <div className="flex items-center gap-2">
+                            <span className="text-red-300 text-xs bg-red-500/20 px-1.5 py-0.5 rounded">Low-Cost Debt</span>
+                            <span className="text-slate-400 text-xs">maturing &lt;1Y</span>
+                        </div>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-yellow-500/30 transition-colors"
+                >
                     <div className="flex items-center gap-3 mb-2">
                         <TrendingUp className="w-6 h-6 text-yellow-400" />
                         <span className="text-slate-400 text-sm font-medium">Next 2 Years</span>
                     </div>
-                    <p className="text-4xl font-bold text-white">${nextYearTrillions}T</p>
-                    <p className="text-slate-400 text-xs mt-1">Refinancing pressure ahead</p>
-                </div>
+                    <p className="text-3xl font-bold text-white">${nextYearTrillions}T</p>
+                    <p className="text-slate-500 text-xs mt-1">Refinancing pressure ahead</p>
+                </motion.div>
             </div>
 
-            {/* Main Chart: Maturity Buckets */}
-            <div className="p-6 md:p-8">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span className="w-1 h-6 bg-cyan-400 rounded-full"></span>
-                    Maturity Distribution
-                </h3>
-                <div className="h-[400px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={chartData} layout="vertical" margin={{ top: 20, right: 30, left: 80, bottom: 20 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-                            <XAxis
-                                type="number"
-                                stroke="#94a3b8"
-                                tick={{ fill: '#94a3b8', fontSize: 12 }}
-                                tickFormatter={(value) => `$${value.toFixed(1)}T`}
-                            />
-                            <YAxis
-                                type="category"
-                                dataKey="bucket"
-                                stroke="#94a3b8"
-                                tick={{ fill: '#94a3b8', fontSize: 12 }}
-                                width={70}
-                            />
-                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} />
-                            <Bar dataKey="amount" radius={[0, 8, 8, 0]}>
-                                {chartData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={BUCKET_COLORS[entry.bucket] || '#06b6d4'} />
-                                ))}
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
+            {/* Main Chart: Maturity Buckets with Rollover Stack */}
+            <div className="p-6 md:p-8 grid lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <span className="w-1 h-6 bg-cyan-400 rounded-full"></span>
+                            Maturity & Cost Distribution
+                        </h3>
+                        {/* Legend */}
+                        <div className="flex gap-4">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-sm bg-red-500"></div>
+                                <span className="text-slate-400 text-xs">High Cost (&gt;4%)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-sm bg-amber-500"></div>
+                                <span className="text-slate-400 text-xs">Medium</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-sm bg-green-500"></div>
+                                <span className="text-slate-400 text-xs">Low Cost (&lt;2%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-[400px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={chartData} layout="vertical" margin={{ top: 10, right: 30, left: 40, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} horizontal={false} />
+                                <XAxis
+                                    type="number"
+                                    stroke="#94a3b8"
+                                    tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                    tickFormatter={(value) => `$${value}T`}
+                                />
+                                <YAxis
+                                    type="category"
+                                    dataKey="bucket"
+                                    stroke="#94a3b8"
+                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }}
+                                    width={50}
+                                />
+                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }} />
+                                {/* Stacked Bars */}
+                                <Bar dataKey="low" name="Low Cost (<2%)" stackId="a" fill={COST_COLORS.low} radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="medium" name="Medium Cost" stackId="a" fill={COST_COLORS.medium} />
+                                <Bar dataKey="high" name="High Cost (>4%)" stackId="a" fill={COST_COLORS.high} radius={[0, 4, 4, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Impacts of Rising Yield Curve - Educational Section */}
+                <div className="bg-slate-800/30 border border-slate-700 rounded-xl p-6 space-y-6">
+                    <h4 className="text-lg font-bold text-white border-b border-slate-700 pb-2">Impacts of a Rising Yield Curve</h4>
+
+                    <div className="space-y-4">
+                        <div className="flex gap-4">
+                            <div className="mt-1 bg-red-500/20 p-2 rounded-lg h-fit">
+                                <ArrowUpRight className="w-5 h-5 text-red-400" />
+                            </div>
+                            <div>
+                                <h5 className="text-red-200 font-semibold text-sm">Interest Expense Shock</h5>
+                                <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+                                    Refinancing <strong>${rolloverRiskTrillions}T</strong> of low-cost debt at current rates (~4.5%) significantly increases annual interest payments, consuming more of the federal budget.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <div className="mt-1 bg-amber-500/20 p-2 rounded-lg h-fit">
+                                <Percent className="w-5 h-5 text-amber-400" />
+                            </div>
+                            <div>
+                                <h5 className="text-amber-200 font-semibold text-sm">Crowding Out Effect</h5>
+                                <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+                                    Higher government borrowing costs compete with private sector investment, potentially slowing economic growth and cap-ex cycles.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <div className="mt-1 bg-blue-500/20 p-2 rounded-lg h-fit">
+                                <Activity className="w-5 h-5 text-blue-400" />
+                            </div>
+                            <div>
+                                <h5 className="text-blue-200 font-semibold text-sm">Refinancing Wall</h5>
+                                <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+                                    A high concentration of short-term debt (<strong>{((parseFloat(shortTermTrillions) / parseFloat(totalDebtTrillions)) * 100).toFixed(0)}%</strong> in &lt;1Y) exposes the Treasury to immediate interest rate volatility.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -245,7 +364,7 @@ export const USDebtMaturityWall: React.FC = () => {
             {historicalData.length > 1 && (
                 <div className="p-6 md:p-8 border-t border-slate-700/50 bg-slate-800/20">
                     <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <span className="w-1 h-6 bg-green-400 rounded-full"></span>
+                        <span className="w-1 h-6 bg-cyan-400 rounded-full"></span>
                         Historical Maturity Profile
                     </h3>
                     <div className="h-[300px] w-full">

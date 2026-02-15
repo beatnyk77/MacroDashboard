@@ -66,9 +66,16 @@ Deno.serve(async (req: Request) => {
             }
 
             // 3. Bucket them
-            const buckets: Record<string, number> = {
-                '<1M': 0, '1-3M': 0, '3-6M': 0, '6-12M': 0,
-                '1-2Y': 0, '2-5Y': 0, '5-10Y': 0, '10Y+': 0
+            // Bucket structure: key -> { total, low, medium, high }
+            const buckets: Record<string, { total: number, low: number, medium: number, high: number }> = {
+                '<1M': { total: 0, low: 0, medium: 0, high: 0 },
+                '1-3M': { total: 0, low: 0, medium: 0, high: 0 },
+                '3-6M': { total: 0, low: 0, medium: 0, high: 0 },
+                '6-12M': { total: 0, low: 0, medium: 0, high: 0 },
+                '1-2Y': { total: 0, low: 0, medium: 0, high: 0 },
+                '2-5Y': { total: 0, low: 0, medium: 0, high: 0 },
+                '5-10Y': { total: 0, low: 0, medium: 0, high: 0 },
+                '10Y+': { total: 0, low: 0, medium: 0, high: 0 }
             };
 
             let totalMarketableDebt = 0;
@@ -87,6 +94,9 @@ Deno.serve(async (req: Request) => {
                 const securityDetail = s.security_class2_desc;
                 const outstandingAmt = s.outstanding_amt;
                 const maturityDateStr = s.maturity_date;
+                // Parse interest rate (coupon)
+                // Field is 'interest_rate_pct' in MSPD API, usually a string like "2.500" or "null" or "0.000"
+                const interestRateStr = s.interest_rate_pct;
 
                 if (!TARGET_CLASSES.includes(securityClass)) return;
 
@@ -104,28 +114,50 @@ Deno.serve(async (req: Request) => {
                 const maturityDate = new Date(maturityDateStr);
                 totalMarketableDebt += amount;
 
+                // Coupon Bucket Logic
+                let costType: 'low' | 'medium' | 'high' = 'medium'; // default
+                const rate = parseFloat(interestRateStr);
+
+                // If rate is valid
+                if (!isNaN(rate)) {
+                    if (rate < 2.0) costType = 'low';
+                    else if (rate <= 4.0) costType = 'medium';
+                    else costType = 'high';
+                } else {
+                    // For Bills, interest rate is usually "null" (Zero Coupon)
+                    if (securityClass === 'Bills Maturity Value') {
+                        costType = 'low';
+                    }
+                }
+
                 const diffTime = maturityDate.getTime() - now.getTime();
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 const diffMonths = diffDays / 30.44;
                 const diffYears = diffDays / 365.25;
 
-                if (diffMonths < 1) buckets['<1M'] += amount;
-                else if (diffMonths < 3) buckets['1-3M'] += amount;
-                else if (diffMonths < 6) buckets['3-6M'] += amount;
-                else if (diffMonths < 12) buckets['6-12M'] += amount;
-                else if (diffYears < 2) buckets['1-2Y'] += amount;
-                else if (diffYears < 5) buckets['2-5Y'] += amount;
-                else if (diffYears < 10) buckets['5-10Y'] += amount;
-                else buckets['10Y+'] += amount;
+                let targetBucket = '10Y+';
+                if (diffMonths < 1) targetBucket = '<1M';
+                else if (diffMonths < 3) targetBucket = '1-3M';
+                else if (diffMonths < 6) targetBucket = '3-6M';
+                else if (diffMonths < 12) targetBucket = '6-12M';
+                else if (diffYears < 2) targetBucket = '1-2Y';
+                else if (diffYears < 5) targetBucket = '2-5Y';
+                else if (diffYears < 10) targetBucket = '5-10Y';
+
+                buckets[targetBucket].total += amount;
+                buckets[targetBucket][costType] += amount;
             });
 
             finalTotalDebt = totalMarketableDebt;
 
-            Object.entries(buckets).forEach(([bucket, amount]) => {
+            Object.entries(buckets).forEach(([bucket, data]) => {
                 results.push({
                     date: latestDate,
                     bucket,
-                    amount: amount,
+                    amount: data.total,
+                    low_cost_amount: data.low,
+                    medium_cost_amount: data.medium,
+                    high_cost_amount: data.high,
                     total_debt: totalMarketableDebt
                 });
             });
