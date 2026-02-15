@@ -4,7 +4,7 @@ import { SPAAccordion } from '@/components/spa';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 
 const PriceTerminalCard = lazy(() => import('./components/PriceTerminalCard').then(m => ({ default: m.PriceTerminalCard })));
-const FlowsSankeyCard = lazy(() => import('./components/FlowsSankeyCard').then(m => ({ default: m.FlowsSankeyCard })));
+const PhysicalFlowNetwork = lazy(() => import('./components/PhysicalFlowNetwork').then(m => ({ default: m.PhysicalFlowNetwork })));
 const ReserveTrackerCard = lazy(() => import('./components/ReserveTrackerCard').then(m => ({ default: m.ReserveTrackerCard })));
 const DisruptionMapCard = lazy(() => import('./components/DisruptionMapCard').then(m => ({ default: m.DisruptionMapCard })));
 const MetalImportCard = lazy(() => import('./components/MetalImportCard').then(m => ({ default: m.MetalImportCard })));
@@ -46,7 +46,7 @@ export const CommodityTerminalRow: React.FC = () => {
                 <SectionErrorBoundary name="Physical Flow Network">
                     <div className="w-full">
                         <Suspense fallback={<LoadingFallback />}>
-                            <FlowsSankeyCard />
+                            <PhysicalFlowNetwork />
                         </Suspense>
                     </div>
                 </SectionErrorBoundary>

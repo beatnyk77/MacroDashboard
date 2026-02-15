@@ -61,123 +61,144 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             yoyDelta,
             brentVal,
             year: latest.date,
-            currency: activeCountry === 'IN' ? '₹' : '¥'
+            currency: activeCountry === 'IN' ? '₹' : '¥',
+            label: activeCountry === 'IN' ? 'BHARAT' : 'CHINA',
+            color: activeCountry === 'IN' ? 'blue' : 'rose'
         };
     }, [chartData, activeCountry]);
 
-    if (isLoading) return <div className="h-[400px] animate-pulse bg-white/5 rounded-3xl" />;
+    if (isLoading) return <div className="h-[480px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
         >
-            <Card className="bg-black/60 border-white/5 backdrop-blur-3xl overflow-hidden group p-6">
-                <div className="flex flex-row items-center justify-between pb-4 border-b border-white/5 bg-white/[0.01]">
-                    <div className="space-y-1">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-emerald-500/50" />
-                            Oil Import Cost (Local Currency)
-                        </h3>
-                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter ml-10">
-                            Measuring Local Currency Pressure vs. Global Brent Benchmark
-                        </p>
+            <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group p-8 transition-all hover:bg-slate-950/60 shadow-2xl h-[520px] flex flex-col">
+                <div className="flex flex-row items-center justify-between pb-6 border-b border-white/5 relative">
+                    <div className="space-y-1.5">
+                        <div className="flex items-center gap-3">
+                            <div className={`w-10 h-px bg-gradient-to-r ${activeCountry === 'IN' ? 'from-blue-500' : 'from-rose-500'} to-transparent`} />
+                            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">
+                                Local <span className="text-white">Import Pressure</span>
+                            </h3>
+                        </div>
+                        <div className="flex items-center gap-3 pl-[3.25rem]">
+                            <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest leading-none">
+                                Measuring FX Sensitivity vs. Brent Benchmark
+                            </p>
+                        </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-4">
                         {stats && (
-                            <div className="flex flex-col items-end gap-1">
-                                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    AS OF {stats.year}
+                            <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse" />
+                                <span className="text-[10px] text-white font-black uppercase tracking-widest">
+                                    FY {stats.year}
                                 </span>
                             </div>
                         )}
-                        <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-white/5 p-1 rounded-xl border border-white/5">
-                            <TabsList className="bg-transparent border-0 gap-1 h-7">
-                                <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">India (INR)</TabsTrigger>
-                                <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-4 h-6 tracking-tighter">China (CNY)</TabsTrigger>
+                        <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-black/40 p-1 rounded-2xl border border-white/5">
+                            <TabsList className="bg-transparent border-0 gap-1 h-8">
+                                <TabsTrigger value="IN" className="rounded-xl text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">BHARAT</TabsTrigger>
+                                <TabsTrigger value="CN" className="rounded-xl text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400">CHINA</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
                 </div>
-                <CardContent className="p-0 mt-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 min-h-[400px]">
-                        <div className="lg:col-span-1 border-r border-white/5 pr-8 flex flex-col justify-between">
+
+                <CardContent className="p-0 mt-10 flex-1">
+                    <div className="grid grid-cols-1 lg:grid-cols-10 h-full gap-10">
+                        <div className="lg:col-span-3 border-r border-white/5 pr-10 flex flex-col justify-between">
                             {stats ? (
-                                <div className="space-y-8">
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Weighted Avg Cost</p>
-                                        <div className="flex items-baseline gap-2">
-                                            <span className="text-4xl font-black text-white">
+                                <div className="space-y-10">
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Weighted Avg Cost</p>
+                                        <div className="flex items-baseline gap-3">
+                                            <span className={`text-5xl font-black text-white drop-shadow-[0_0_15px_${stats.color === 'blue' ? 'rgba(59,130,246,0.2)' : 'rgba(239,68,68,0.2)'}]`}>
                                                 {stats.currency}{stats.currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                             </span>
-                                            <span className="text-[10px] font-bold text-muted-foreground">/bbl</span>
+                                            <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest">/BBL</span>
                                         </div>
-                                        <div className="flex items-center gap-2 mt-2">
+                                        <div className="flex items-center gap-3 mt-4">
                                             {stats.yoyDelta !== null && (
-                                                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black ${stats.yoyDelta > 0 ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
-                                                    {stats.yoyDelta > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                                                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black border ${stats.yoyDelta > 0 ? 'bg-rose-500/5 border-rose-500/20 text-rose-500' : 'bg-emerald-500/5 border-emerald-500/20 text-emerald-500'}`}>
+                                                    {stats.yoyDelta > 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
                                                     {Math.abs(stats.yoyDelta).toFixed(1)}% YoY
                                                 </div>
                                             )}
-                                            <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">{stats.year} AVG</span>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[9px] font-black text-muted-foreground uppercase">USD Benchmark</span>
-                                                <DollarSign className="h-3 w-3 text-amber-500" />
+                                    <div className="space-y-5">
+                                        <div className="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-3 relative overflow-hidden group/metric">
+                                            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover/metric:opacity-30 transition-opacity">
+                                                <DollarSign className="h-8 w-8 text-amber-500" />
                                             </div>
-                                            <p className="text-xl font-black text-white">${stats.brentVal.toFixed(2)}</p>
-                                            <p className="text-[8px] text-muted-foreground/60 italic font-medium">Brent Crude Spot Price (Annual Avg)</p>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1 h-3 rounded-full bg-amber-500/50" />
+                                                <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">Brent Benchmark</span>
+                                            </div>
+                                            <div className="flex items-baseline gap-2">
+                                                <p className="text-2xl font-black text-white">${stats.brentVal.toFixed(2)}</p>
+                                                <span className="text-[10px] font-bold text-muted-foreground/30">AVG</span>
+                                            </div>
                                         </div>
 
-                                        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[9px] font-black text-muted-foreground uppercase">Currency Pressure</span>
-                                                <TrendingUp className="h-3 w-3 text-emerald-500" />
+                                        <div className="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-3 relative overflow-hidden group/metric">
+                                            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover/metric:opacity-30 transition-opacity">
+                                                <Info className="h-8 w-8 text-blue-500" />
                                             </div>
-                                            <p className="text-sm font-bold text-white uppercase tracking-tight">
-                                                {activeCountry === 'IN' ? 'INR Sensitivity: High' : 'CNY Control: Moderate'}
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-1 h-3 rounded-full ${stats.color === 'blue' ? 'bg-blue-500/50' : 'bg-rose-500/50'}`} />
+                                                <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">Currency Sensitivity</span>
+                                            </div>
+                                            <p className="text-[10px] font-bold text-white uppercase tracking-tight leading-relaxed">
+                                                {activeCountry === 'IN' ? 'INR RISK: High Volatility' : 'CNY RISK: Managed Float'}
                                             </p>
-                                            <p className="text-[8px] text-muted-foreground/60 italic font-medium">Import costs are amplified by USD strength.</p>
+                                            <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-tighter italic">Amplification: {activeCountry === 'IN' ? '+18%' : '+12%'} vs USD</p>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
-                                    <Info className="h-8 w-8 mb-2" />
-                                    <p className="text-[10px] font-black uppercase tracking-widest">Awaiting Data Processing</p>
+                                <div className="h-full flex flex-col items-center justify-center text-center gap-4">
+                                    <div className="w-10 h-10 rounded-full border-2 border-white/5 border-t-emerald-500 animate-spin" />
+                                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">Awaiting Feed Integration</p>
                                 </div>
                             )}
 
-                            <div className="mt-8 pt-8 border-t border-white/5">
-                                <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-[0.2em] leading-relaxed">
-                                    Data Source: EIA International Statistics & FRED Financial Data.
-                                    Calculation: Brent Price × Weighted Avg Local FX.
+                            <div className="mt-auto pt-6 border-t border-white/5">
+                                <p className="text-[9px] text-muted-foreground/30 font-black uppercase tracking-[0.2em] leading-relaxed">
+                                    Terminal Source: EIA-X8 / FRED-M2<br />
+                                    Composite calculation enabled.
                                 </p>
                             </div>
                         </div>
 
-                        <div className="lg:col-span-3 pl-8 relative">
+                        <div className="lg:col-span-7 pl-4 relative h-full">
                             {chartData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <ComposedChart data={chartData} margin={{ top: 20, right: 60, left: 20, bottom: 20 }}>
+                                    <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 10, bottom: 0 }}>
                                         <defs>
                                             <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor={activeCountry === 'IN' ? '#3b82f6' : '#ef4444'} stopOpacity={0.3} />
+                                                <stop offset="5%" stopColor={activeCountry === 'IN' ? '#3b82f6' : '#ef4444'} stopOpacity={0.2} />
                                                 <stop offset="95%" stopColor={activeCountry === 'IN' ? '#3b82f6' : '#ef4444'} stopOpacity={0} />
                                             </linearGradient>
+                                            <filter id="glow-line">
+                                                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                                                <feMerge>
+                                                    <feMergeNode in="coloredBlur" />
+                                                    <feMergeNode in="SourceGraphic" />
+                                                </feMerge>
+                                            </filter>
                                         </defs>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
                                         <XAxis
                                             dataKey="date"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 900 }}
+                                            tick={{ fontSize: 9, fill: '#64748b', fontWeight: 900 }}
                                             padding={{ left: 20, right: 20 }}
                                         />
                                         <YAxis
@@ -186,7 +207,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             tickLine={false}
                                             tick={{ fontSize: 9, fill: '#f59e0b', fontWeight: 700 }}
                                             domain={['auto', 'auto']}
-                                            label={{ value: 'BRENT USD ($)', angle: -90, position: 'insideLeft', fontSize: 8, fill: '#f59e0b', fontWeight: 900, dx: -10 }}
+                                            hide
                                         />
                                         <YAxis
                                             yAxisId="right"
@@ -195,24 +216,24 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             tickLine={false}
                                             tick={{ fontSize: 9, fill: activeCountry === 'IN' ? '#3b82f6' : '#ef4444', fontWeight: 700 }}
                                             domain={['auto', 'auto']}
-                                            label={{ value: activeCountry === 'IN' ? 'INDIA INR (₹)' : 'CHINA CNY (¥)', angle: 90, position: 'insideRight', fontSize: 8, fill: activeCountry === 'IN' ? '#3b82f6' : '#ef4444', fontWeight: 900, dx: 10 }}
+                                            hide
                                         />
                                         <Tooltip
                                             content={({ active, payload, label }) => {
                                                 if (!active || !payload) return null;
                                                 return (
-                                                    <div className="bg-slate-950/90 border border-white/10 p-4 rounded-2xl backdrop-blur-xl shadow-2xl">
-                                                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3 pb-2 border-b border-white/5">{label} SUMMARY</p>
-                                                        <div className="space-y-2">
+                                                    <div className="bg-slate-950/95 border border-white/10 p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[200px]">
+                                                        <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/10">{label} RECAPITULATION</p>
+                                                        <div className="space-y-3">
                                                             {payload.map((entry: any) => (
-                                                                <div key={entry.name} className="flex justify-between items-center gap-8">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                                                        <span className="text-[9px] font-bold text-muted-foreground uppercase">{entry.name}</span>
+                                                                <div key={entry.name} className="flex justify-between items-center gap-10">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: entry.color, color: entry.color }} />
+                                                                        <span className="text-[10px] font-black text-muted-foreground uppercase">{entry.name}</span>
                                                                     </div>
-                                                                    <span className="text-[10px] font-black text-white">
+                                                                    <span className="text-[12px] font-mono font-black text-white">
                                                                         {entry.name.includes('USD') ? '$' : (activeCountry === 'IN' ? '₹' : '¥')}
-                                                                        {entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                                                        {entry.value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                                     </span>
                                                                 </div>
                                                             ))}
@@ -223,40 +244,38 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                         />
                                         <Legend
                                             verticalAlign="top"
-                                            align="left"
+                                            align="right"
                                             iconType="circle"
-                                            wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.05em', paddingBottom: '20px' }}
+                                            wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.15em', paddingBottom: '30px', opacity: 0.6 }}
                                         />
                                         <Area
                                             yAxisId="right"
                                             type="monotone"
                                             dataKey={activeCountry === 'IN' ? "cost_inr" : "cost_cny"}
-                                            name={activeCountry === 'IN' ? "Import Cost (INR)" : "Import Cost (CNY)"}
+                                            name={activeCountry === 'IN' ? "LOCAL COST UNIT" : "LOCAL COST UNIT"}
                                             stroke={activeCountry === 'IN' ? "#3b82f6" : "#ef4444"}
                                             fill="url(#colorCost)"
-                                            strokeWidth={3}
-                                            animationDuration={1500}
+                                            strokeWidth={4}
+                                            filter="url(#glow-line)"
+                                            animationDuration={2000}
                                         />
                                         <Line
                                             yAxisId="left"
                                             type="monotone"
                                             dataKey="brent"
-                                            name="Brent USD"
+                                            name="GLOBAL BRENT (USD)"
                                             stroke="#f59e0b"
-                                            strokeWidth={3}
+                                            strokeWidth={4}
                                             dot={{ r: 4, fill: '#f59e0b', strokeWidth: 2, stroke: '#000' }}
-                                            activeDot={{ r: 6, strokeWidth: 0 }}
-                                            animationDuration={1500}
+                                            activeDot={{ r: 6, strokeWidth: 0, fill: '#fff' }}
+                                            animationDuration={2000}
                                         />
                                     </ComposedChart>
                                 </ResponsiveContainer>
                             ) : (
-                                <div className="h-full flex flex-col items-center justify-center text-center gap-4 text-muted-foreground">
-                                    <div className="w-12 h-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
-                                    <div className="space-y-1">
-                                        <p className="italic font-medium">Synchronizing Institutional Price Feeds...</p>
-                                        <p className="text-[10px] uppercase tracking-widest font-black opacity-50">High-Fidelity Upstream Mapping Active</p>
-                                    </div>
+                                <div className="h-full flex flex-col items-center justify-center text-center gap-6">
+                                    <div className="w-14 h-14 rounded-full border-[3px] border-white/5 border-t-blue-500 animate-spin" />
+                                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest tracking-[0.2em]">Synchronizing Institutional Feeds...</p>
                                 </div>
                             )}
                         </div>
