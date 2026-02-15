@@ -48,6 +48,7 @@ const InstitutionalInfluenceSection = lazy(() => import('@/features/dashboard/co
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
 const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
+const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -322,6 +323,13 @@ export const Dashboard: React.FC = () => {
                 <SectionErrorBoundary name="Currency Wars Monitor">
                     <Suspense fallback={<LoadingFallback />}>
                         <CurrencyWarsMonitor />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                {/* ROW 6.5: DEFLATION / DEBASEMENT MONITOR */}
+                <SectionErrorBoundary name="Deflation Debasement Monitor">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <DeflationDebasementMonitor />
                     </Suspense>
                 </SectionErrorBoundary>
 
