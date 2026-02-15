@@ -33,8 +33,8 @@ interface PeriodResult {
     sellers_tonnes: number;
     net_tonnes: number;
     net_pct_global_stock: number;
-    top_buyers: CountryData[];
-    top_sellers: CountryData[];
+    top_buyers_json: CountryData[];
+    top_sellers_json: CountryData[];
 }
 
 // Fallback Hardcoded Data (in case IMF API fails or for missing periods)
@@ -223,8 +223,8 @@ Deno.serve(async (req: Request) => {
                             sellers_tonnes: Math.round(grossSell),
                             net_tonnes: Math.round(net),
                             net_pct_global_stock: parseFloat(((net / GLOBAL_ABOVE_GROUND_STOCK) * 100).toFixed(2)),
-                            top_buyers: buyers.slice(0, 10),
-                            top_sellers: sellers.slice(0, 10)
+                            top_buyers_json: buyers.slice(0, 10),
+                            top_sellers_json: sellers.slice(0, 10)
                         });
                     }
 
@@ -262,8 +262,8 @@ Deno.serve(async (req: Request) => {
                         sellers_tonnes: sellersSum + (period.startYear === 2000 ? 500 : 100),
                         net_tonnes: fb.net,
                         net_pct_global_stock: parseFloat(((fb.net / GLOBAL_ABOVE_GROUND_STOCK) * 100).toFixed(2)),
-                        top_buyers: fb.buyers,
-                        top_sellers: fb.sellers
+                        top_buyers_json: fb.buyers,
+                        top_sellers_json: fb.sellers
                     });
                 }
             }
