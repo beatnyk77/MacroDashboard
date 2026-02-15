@@ -79,7 +79,31 @@ export const Dashboard: React.FC = () => {
             <SEOManager
                 title="Sovereign Intelligence Console"
                 description="Institutional-grade macro dashboard tracking Debt/Gold ratios, De-Dollarization, Energy Security, and India/China Pulse. 25-year historical pipeline."
-                keywords={['India Macro Pulse', 'MoSPI data', 'Debt Gold Ratio', 'BRICS De-Dollarization', 'Shanghai Divergence', 'Global Net Liquidity', 'G20 Macro Surveillance']}
+                keywords={[
+                    'India Macro Pulse', 'MoSPI data', 'Debt Gold Ratio', 'BRICS De-Dollarization',
+                    'Shanghai Divergence', 'Global Net Liquidity', 'G20 Macro Surveillance',
+                    'Central Bank Gold Buying', 'Yuan Internationalization', 'US Treasury Demand'
+                ]}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "name": "GraphiQuestor",
+                    "url": "https://graphiquestor.com/",
+                    "description": "Institutional-grade macro intelligence dashboard.",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://graphiquestor.com/logo.png"
+                        }
+                    },
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": "https://graphiquestor.com/?q={search_term_string}",
+                        "query-input": "required name=search_term_string"
+                    }
+                }}
             />
             <div className="space-y-24">
 

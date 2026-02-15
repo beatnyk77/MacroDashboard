@@ -9,6 +9,7 @@ interface SEOManagerProps {
     ogType?: 'website' | 'article';
     canonicalUrl?: string;
     publishedTime?: string;
+    jsonLd?: Record<string, any>;
 }
 
 export const SEOManager: React.FC<SEOManagerProps> = ({
@@ -19,11 +20,19 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     ogType = 'website',
     canonicalUrl,
     publishedTime,
+    jsonLd,
 }) => {
     const fullTitle = `${title} | GraphiQuestor`;
 
     return (
         <Helmet>
+            {/* Structured Data (JSON-LD) */}
+            {jsonLd && (
+                <script type="application/ld+json">
+                    {JSON.stringify(jsonLd)}
+                </script>
+            )}
+
             <title>{fullTitle}</title>
             <meta name="description" content={description} />
             {keywords && <meta name="keywords" content={keywords.join(', ')} />}

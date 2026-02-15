@@ -41,6 +41,8 @@ function App() {
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />
+                                        {/* Catch-all 404 to Home */}
+                                        <Route path="*" element={<Navigate to="/" replace />} />
                                     </Routes>
                                 </Suspense>
                             </GlobalLayout>
