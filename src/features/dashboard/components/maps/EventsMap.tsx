@@ -1,168 +1,237 @@
-import React, { useMemo } from 'react';
-import {
-    ComposableMap,
-    Geographies,
-    Geography,
-    Marker,
-    ZoomableGroup
-} from "react-simple-maps";
+import React, { useState } from 'react';
+import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { useEventsMarkers } from '@/hooks/useEventsMarkers';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe2, ShieldAlert, Users, Zap, ShieldCheck } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Flame, Zap, AlertTriangle, Droplet, Activity, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 
-const geoUrl = "https://raw.githubusercontent.com/lotusms/world-map-data/main/world.json";
+const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
-const TYPE_COLORS = {
-    'Conflict': '#f43f5e', // Rose-500
-    'Protest': '#f59e0b',  // Amber-500
-    'Disruption': '#3b82f6' // Blue-500
+const eventIcons: Record<string, React.ReactNode> = {
+    conflict: <Flame className="w-3 h-3" />,
+    protest: <Zap className="w-3 h-3" />,
+    disruption: <AlertTriangle className="w-3 h-3" />,
+    energy: <Droplet className="w-3 h-3" />,
+    default: <Activity className="w-3 h-3" />
 };
 
-const TYPE_ICONS = {
-    'Conflict': ShieldAlert,
-    'Protest': Users,
-    'Disruption': Zap
+const eventColors: Record<string, string> = {
+    conflict: 'text-rose-500',
+    protest: 'text-amber-500',
+    disruption: 'text-orange-500',
+    energy: 'text-blue-500',
+    default: 'text-emerald-500'
 };
-
 
 export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
-    const { data: markers = [], isLoading } = useEventsMarkers();
+    const { data: events, isLoading, error } = useEventsMarkers();
+    const [hoveredEvent, setHoveredEvent] = useState<any>(null);
 
-    // Group markers by proximity or just show raw points if they are sparse
-    const displayMarkers = useMemo(() => markers, [markers]);
-    const hasData = markers.length > 0;
+    // Query for last ingestion status
+    const { data: lastIngestion } = useQuery({
+        queryKey: ['last-ingestion-events'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('ingestion_logs')
+                .select('*')
+                .eq('function_name', 'ingest-events-markers')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        refetchInterval: 60000 // Refresh every minute
+    });
 
-    if (isLoading) return <div className={cn("h-[600px] animate-pulse bg-white/5 rounded-3xl", className)} />;
+    const hasEvents = events && events.length > 0;
+    const isFeedAvailable = !error && !isLoading;
+    const lastSync = lastIngestion?.created_at ? new Date(lastIngestion.created_at) : null;
+    const ingestionSuccess = lastIngestion?.status === 'success';
 
     return (
-        <Card className={cn("bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group relative", className)}>
-            <CardHeader className="flex flex-row items-center justify-between pb-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="space-y-1">
-                    <CardTitle className="text-lg font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2 italic">
-                        <Globe2 className="h-5 w-5 text-blue-500" />
-                        Geopolitical <span className="text-white">Event</span> Matrix
-                        {!hasData && !isLoading && (
-                            <span className="ml-4 px-2 py-0.5 rounded text-[0.55rem] font-bold bg-white/5 text-muted-foreground uppercase tracking-widest border border-white/5">
-                                No Active Alerts
-                            </span>
-                        )}
-                    </CardTitle>
-                    <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-tight">
-                        Real-time Conflict & Protest Markers (GDELT Feed)
-                    </p>
+        <div className={cn("relative w-full h-full min-h-[500px] bg-slate-950/50 rounded-3xl overflow-hidden border border-white/5", className)}>
+            {/* Header with Status */}
+            <div className="absolute top-4 left-4 z-10 flex items-center gap-3">
+                <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center gap-2">
+                    <Activity className="w-3 h-3 text-emerald-400" />
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">
+                        Live Event Feed
+                    </span>
                 </div>
-                <div className="flex gap-4">
-                    {Object.entries(TYPE_COLORS).map(([type, color]) => {
-                        const Icon = TYPE_ICONS[type as keyof typeof TYPE_ICONS];
-                        return (
-                            <div key={type} className="flex items-center gap-2">
-                                <Icon className="w-3 h-3" style={{ color }} />
-                                <span className="text-[8px] font-black uppercase text-muted-foreground/80 tracking-widest">{type}</span>
-                            </div>
-                        );
-                    })}
+
+                {/* Ingestion Status Indicator */}
+                <div className={cn(
+                    "px-3 py-1.5 rounded-xl backdrop-blur-xl border flex items-center gap-2",
+                    ingestionSuccess
+                        ? "bg-emerald-500/10 border-emerald-500/20"
+                        : "bg-amber-500/10 border-amber-500/20"
+                )}>
+                    {ingestionSuccess ? (
+                        <CheckCircle className="w-3 h-3 text-emerald-400" />
+                    ) : (
+                        <AlertCircle className="w-3 h-3 text-amber-400" />
+                    )}
+                    <span className={cn(
+                        "text-[9px] font-bold uppercase tracking-widest",
+                        ingestionSuccess ? "text-emerald-400" : "text-amber-400"
+                    )}>
+                        {ingestionSuccess ? 'Feed Active' : 'Feed Degraded'}
+                    </span>
                 </div>
-            </CardHeader>
-            <CardContent className="h-[600px] p-0 relative bg-black/20">
-                {!hasData ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                        <div className="w-24 h-24 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4">
-                            <ShieldCheck className="w-10 h-10 text-emerald-500/50" />
+
+                {/* Last Sync Timestamp */}
+                {lastSync && (
+                    <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center gap-2">
+                        <Clock className="w-3 h-3 text-blue-400" />
+                        <span className="text-[9px] font-mono text-muted-foreground">
+                            {new Date().getTime() - lastSync.getTime() < 3600000
+                                ? `${Math.floor((new Date().getTime() - lastSync.getTime()) / 60000)}m ago`
+                                : lastSync.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                            }
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* Event Count Badge */}
+            {hasEvents && (
+                <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10">
+                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">
+                        Active Events
+                    </div>
+                    <div className="text-2xl font-black text-white tabular-nums">
+                        {events.length}
+                    </div>
+                </div>
+            )}
+
+            {/* Map */}
+            <ComposableMap
+                projection="geoMercator"
+                projectionConfig={{
+                    scale: 140,
+                    center: [0, 20]
+                }}
+                className="w-full h-full"
+            >
+                <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                        geographies.map((geo) => (
+                            <Geography
+                                key={geo.rsmKey}
+                                geography={geo}
+                                fill="rgba(255,255,255,0.02)"
+                                stroke="rgba(255,255,255,0.05)"
+                                strokeWidth={0.5}
+                                style={{
+                                    default: { outline: 'none' },
+                                    hover: { fill: 'rgba(255,255,255,0.04)', outline: 'none' },
+                                    pressed: { outline: 'none' }
+                                }}
+                            />
+                        ))
+                    }
+                </Geographies>
+
+                {hasEvents && events.map((event: any, idx: number) => (
+                    <Marker
+                        key={idx}
+                        coordinates={[event.longitude, event.latitude]}
+                        onMouseEnter={() => setHoveredEvent(event)}
+                        onMouseLeave={() => setHoveredEvent(null)}
+                    >
+                        <g className="cursor-pointer">
+                            <circle
+                                r={6}
+                                fill="currentColor"
+                                className={cn(
+                                    eventColors[event.event_type] || eventColors.default,
+                                    "opacity-20 animate-pulse"
+                                )}
+                            />
+                            <circle
+                                r={3}
+                                fill="currentColor"
+                                className={eventColors[event.event_type] || eventColors.default}
+                            />
+                        </g>
+                    </Marker>
+                ))}
+            </ComposableMap>
+
+            {/* Hover Tooltip */}
+            {hoveredEvent && (
+                <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-20 p-4 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/10 shadow-2xl">
+                    <div className="flex items-start gap-3">
+                        <div className={cn(
+                            "p-2 rounded-xl",
+                            eventColors[hoveredEvent.event_type] || eventColors.default
+                        )}>
+                            {eventIcons[hoveredEvent.event_type] || eventIcons.default}
                         </div>
-                        <h3 className="text-lg font-black text-white uppercase tracking-widest mb-2">Global Stability Monitored</h3>
-                        <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
-                            No major conflict or disruption events detected in the last 24 hours via GDELT live feed.
-                            <br />
-                            <span className="text-xs opacity-50 block mt-2">System continues to scan for conflict, civil unrest, and energy disruption signals.</span>
+                        <div className="flex-1">
+                            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                                {hoveredEvent.event_type}
+                            </div>
+                            <div className="text-sm font-bold text-white mb-2">
+                                {hoveredEvent.title || 'Event Detected'}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                                {hoveredEvent.location || `${hoveredEvent.latitude.toFixed(2)}, ${hoveredEvent.longitude.toFixed(2)}`}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Empty State - Distinguish between no events and feed failure */}
+            {!isLoading && !hasEvents && (
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-slate-950/80 backdrop-blur-sm">
+                    <div className="text-center max-w-md px-6">
+                        {isFeedAvailable ? (
+                            <>
+                                <Activity className="w-12 h-12 text-emerald-500/30 mx-auto mb-4" />
+                                <h3 className="text-lg font-black text-white uppercase tracking-widest mb-2">
+                                    All Quiet
+                                </h3>
+                                <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
+                                    No major conflict or disruption events detected in the last 24 hours via GDELT live feed.
+                                </p>
+                                <p className="text-xs opacity-50 text-muted-foreground mt-3">
+                                    System continues to scan for conflict, civil unrest, and energy disruption signals.
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <AlertCircle className="w-12 h-12 text-amber-500/30 mx-auto mb-4" />
+                                <h3 className="text-lg font-black text-white uppercase tracking-widest mb-2">
+                                    Feed Unavailable
+                                </h3>
+                                <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
+                                    Unable to retrieve GDELT event data. The feed may be temporarily unavailable or experiencing issues.
+                                </p>
+                                <p className="text-xs opacity-50 text-muted-foreground mt-3">
+                                    Check ingestion logs or retry the ingest-events-markers function.
+                                </p>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Loading State */}
+            {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-slate-950/80 backdrop-blur-sm">
+                    <div className="text-center">
+                        <Activity className="w-12 h-12 text-blue-500 mx-auto mb-4 animate-pulse" />
+                        <p className="text-sm font-black text-muted-foreground uppercase tracking-widest">
+                            Scanning Global Events...
                         </p>
                     </div>
-                ) : (
-                    <TooltipProvider>
-                        <ComposableMap
-                            projectionConfig={{
-                                rotate: [-10, 0, 0],
-                                scale: 147
-                            }}
-                            width={800}
-                            height={400}
-                            style={{ width: "100%", height: "100%" }}
-                        >
-                            <ZoomableGroup zoom={1}>
-                                <Geographies geography={geoUrl}>
-                                    {({ geographies }) =>
-                                        geographies.map((geo) => (
-                                            <Geography
-                                                key={geo.rsmKey}
-                                                geography={geo}
-                                                fill="#1e293b"
-                                                stroke="#334155"
-                                                strokeWidth={0.5}
-                                                style={{
-                                                    default: { outline: "none" },
-                                                    hover: { fill: "#334155", outline: "none" },
-                                                    pressed: { outline: "none" },
-                                                }}
-                                            />
-                                        ))
-                                    }
-                                </Geographies>
-                                {displayMarkers.map((marker, i) => (
-                                    <Marker key={marker.id || i} coordinates={[marker.longitude, marker.latitude]}>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <circle
-                                                    r={Math.log(marker.count + 1) * 3 + 2}
-                                                    fill={TYPE_COLORS[marker.type] || '#ccc'}
-                                                    fillOpacity={0.6}
-                                                    stroke={TYPE_COLORS[marker.type] || '#ccc'}
-                                                    strokeWidth={1}
-                                                    className="cursor-pointer hover:fill-opacity-100 transition-all duration-300"
-                                                />
-                                            </TooltipTrigger>
-                                            <TooltipContent className="bg-slate-950 border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-xl">
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: TYPE_COLORS[marker.type] }} />
-                                                        <span className="text-[10px] font-black text-white uppercase tracking-wider">{marker.type}</span>
-                                                    </div>
-                                                    <div className="space-y-0.5">
-                                                        <p className="text-xs font-black text-white">{marker.location_name}</p>
-                                                        <p className="text-[8px] font-bold text-muted-foreground uppercase">{marker.event_date}</p>
-                                                    </div>
-                                                    <div className="pt-2 border-t border-white/5">
-                                                        <span className="text-[10px] font-mono text-emerald-400 font-bold">{marker.count} events reported</span>
-                                                    </div>
-                                                </div>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </Marker>
-                                ))}
-                            </ZoomableGroup>
-                        </ComposableMap>
-                    </TooltipProvider>
-                )}
-
-                {/* Legend Overlay for Mobile or Detail */}
-                <div className="absolute bottom-6 left-6 p-4 rounded-2xl bg-slate-950/80 border border-white/5 backdrop-blur-xl space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <p className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] mb-3">Live Intelligence feed</p>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
-                            <span className="text-[10px] font-bold text-white/80">Conflict Zones</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                            <span className="text-[10px] font-bold text-white/80">Civil Unrest</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                            <span className="text-[10px] font-bold text-white/80">Energy Disruption</span>
-                        </div>
-                    </div>
                 </div>
-            </CardContent>
-        </Card>
+            )}
+        </div>
     );
 };

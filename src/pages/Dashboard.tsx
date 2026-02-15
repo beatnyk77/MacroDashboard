@@ -23,6 +23,7 @@ import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
+const TopTreasuryHoldersTable = lazy(() => import('@/features/dashboard/components/tables/TopTreasuryHoldersTable').then(m => ({ default: m.TopTreasuryHoldersTable })));
 
 // Lazy load feature components
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
@@ -121,6 +122,15 @@ export const Dashboard: React.FC = () => {
                     <SectionErrorBoundary name="Treasury Demand Gauge">
                         <Suspense fallback={<LoadingFallback />}>
                             <USTreasuryDemandGauge />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* ROW 1.6: TOP FOREIGN HOLDERS OF US TREASURIES */}
+                <SPASection id="treasury-holders" variant="hero" disableAnimation>
+                    <SectionErrorBoundary name="Top Treasury Holders">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TopTreasuryHoldersTable />
                         </Suspense>
                     </SectionErrorBoundary>
                 </SPASection>
