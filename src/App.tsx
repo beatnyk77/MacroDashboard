@@ -12,6 +12,8 @@ const Dashboard = lazy(() => import('@/pages/Dashboard').then(module => ({ defau
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
 const BlogPage = lazy(() => import('@/pages/BlogPage').then(module => ({ default: module.BlogPage })));
 const ArticlePage = lazy(() => import('@/pages/ArticlePage').then(module => ({ default: module.ArticlePage })));
+const RegimeDigestArchivePage = lazy(() => import('@/pages/RegimeDigestArchivePage').then(module => ({ default: module.RegimeDigestArchivePage })));
+const RegimeDigestPage = lazy(() => import('@/pages/RegimeDigestPage').then(module => ({ default: module.RegimeDigestPage })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -38,6 +40,8 @@ function App() {
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
                                         <Route path="/blog" element={<BlogPage />} />
                                         <Route path="/blog/:slug" element={<ArticlePage />} />
+                                        <Route path="/regime-digest" element={<RegimeDigestArchivePage />} />
+                                        <Route path="/regime-digest/:year/:month" element={<RegimeDigestPage />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />

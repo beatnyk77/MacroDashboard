@@ -7,7 +7,8 @@ import {
     Coins,
     Globe,
     BookOpen,
-    Rss
+    Rss,
+    FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +28,7 @@ const navItems: NavItem[] = [
     { id: 'sovereign', label: 'Sovereign stress', path: '/#sovereign-debt-stress', icon: <Building2 size={18} strokeWidth={2.5} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/#india-pulse', icon: <MapPin size={18} strokeWidth={2.5} /> },
     { id: 'china', label: 'China Pulse', path: '/#china-pulse', icon: <Globe size={18} strokeWidth={2.5} /> },
+    { id: 'digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} strokeWidth={2.5} /> },
     { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
 ];
 
