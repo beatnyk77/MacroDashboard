@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 
 // --- SHARED UTILS ---
 const corsHeaders = {
@@ -127,48 +127,113 @@ Deno.serve(async (req: Request) => {
     let successCount = 0;
     let totalRows = 0;
     const processedMetrics = [];
+    const errors = [];
+    const batchSize = 10; // Increased concurrency
 
-    for (const metric of targetMetrics) {
-      // Check time budget
+    for (let i = 0; i < targetMetrics.length; i += batchSize) {
       if (Date.now() - startTime > runtimeBudget) {
         console.log('Runtime budget exceeded, stopping early');
         break;
       }
 
-      const fredId = (metric.metadata as any).fred_id;
-      const fredUnits = (metric.metadata as any)?.fred_units;
-      const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
-      const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=500${unitsParam}`;
+      const batch = targetMetrics.slice(i, i + batchSize);
+      const resultsArray = await Promise.all(batch.map(async (metric) => {
+        const fredId = (metric.metadata as any).fred_id;
 
-      try {
-        const response = await withTimeout(fetchWithRetry(url), 15000, `FRED Fetch ${fredId}`);
-        const data = await response.json();
+        // --- Special Case: SOFR-OIS Spread Proxy ---
+        if (metric.id === 'SOFR_OIS_SPREAD') {
+          try {
+            console.log('Calculating SOFR-OIS Spread Proxy...');
+            const [sofrRes, effrRes] = await Promise.all([
+              withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=SOFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'SOFR Fetch'),
+              withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=FEDFUNDS&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'EFFR Fetch')
+            ]);
 
-        const observations = (data.observations || [])
-          .map((obs: any) => ({
-            metric_id: metric.id,
-            as_of_date: obs.date,
-            value: parseFloat(obs.value),
-            last_updated_at: new Date().toISOString()
-          }))
-          .filter((obs: any) => !isNaN(obs.value));
+            const [sofrData, effrData] = await Promise.all([sofrRes.json() as Promise<any>, effrRes.json() as Promise<any>]);
+            const sofrObs = sofrData.observations || [];
+            const effrObs = effrData.observations || [];
 
-        if (observations.length > 0) {
-          const { error: upsertError } = await supabase
-            .from('metric_observations')
-            .upsert(observations, { onConflict: 'metric_id, as_of_date' });
-          if (upsertError) throw upsertError;
+            // Map EFFR by date for quick lookup
+            const effrMap = new Map(effrObs.map((o: any) => [o.date, parseFloat(o.value)]));
 
-          // Update metric timestamp
-          await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
+            const spreadObservations = sofrObs
+              .map((s: any) => {
+                const sofrVal = parseFloat(s.value);
+                const effrVal = effrMap.get(s.date);
+                if (isNaN(sofrVal) || effrVal === undefined || isNaN(effrVal)) return null;
+                return {
+                  metric_id: 'SOFR_OIS_SPREAD',
+                  as_of_date: s.date,
+                  value: Math.round((sofrVal - effrVal) * 100), // Convert to bps
+                  last_updated_at: new Date().toISOString()
+                };
+              })
+              .filter((o: any) => o !== null);
 
-          totalRows += observations.length;
+            if (spreadObservations.length > 0) {
+              const { error: upsertError } = await supabase.from('metric_observations').upsert(spreadObservations, { onConflict: 'metric_id, as_of_date' });
+              if (upsertError) throw upsertError;
+              await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', 'SOFR_OIS_SPREAD');
+              return { metricId: 'SOFR_OIS_SPREAD', count: spreadObservations.length, success: true };
+            }
+            return { metricId: 'SOFR_OIS_SPREAD', count: 0, success: true };
+          } catch (err: any) {
+            console.error(`Error calculating SOFR_OIS_SPREAD: ${err.message}`);
+            return { metricId: 'SOFR_OIS_SPREAD', count: 0, success: false, error: err.message };
+          }
         }
 
-        successCount++;
-        processedMetrics.push(metric.id);
-      } catch (err: any) {
-        console.error(`Error processing ${metric.id}: ${err.message}`);
+        const fredUnits = (metric.metadata as any)?.fred_units;
+        const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
+        const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100${unitsParam}`;
+
+        try {
+          const response = await withTimeout(fetchWithRetry(url), 10000, `FRED Fetch ${fredId}`);
+          const data = await response.json() as any;
+
+          if (!data.observations) {
+            console.warn(`FRED: No observations array for ${metric.id} (${fredId})`);
+            return { metricId: metric.id, count: 0, success: false, error: 'No observations array in response' };
+          }
+
+          const rawCount = data.observations.length;
+          const observations = data.observations
+            .map((obs: any) => ({
+              metric_id: metric.id,
+              as_of_date: obs.date,
+              value: parseFloat(obs.value),
+              last_updated_at: new Date().toISOString()
+            }))
+            .filter((obs: any) => !isNaN(obs.value));
+
+          if (observations.length > 0) {
+            const { error: upsertError } = await supabase
+              .from('metric_observations')
+              .upsert(observations, { onConflict: 'metric_id, as_of_date' });
+            if (upsertError) {
+              console.error(`FRED: Upsert error for ${metric.id}:`, upsertError);
+              throw upsertError;
+            }
+
+            await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
+            return { metricId: metric.id, count: observations.length, success: true };
+          }
+          console.warn(`FRED: No valid numeric data for ${metric.id} (Raw count: ${rawCount})`);
+          return { metricId: metric.id, count: 0, success: true, metadata: { rawCount } };
+        } catch (err: any) {
+          console.error(`Error processing ${metric.id}: ${err.message}`);
+          return { metricId: metric.id, count: 0, success: false, error: err.message };
+        }
+      }));
+
+      for (const res of resultsArray) {
+        if (res.success) {
+          successCount++;
+          processedMetrics.push(res.metricId);
+          totalRows += res.count;
+        } else {
+          errors.push({ metric: res.metricId, error: res.error });
+        }
       }
     }
 
@@ -177,6 +242,8 @@ Deno.serve(async (req: Request) => {
       successful: successCount,
       rows: totalRows,
       processed: processedMetrics,
+      errors: errors.slice(0, 20), // Only log first 20 errors
+      error_count: errors.length,
       runtime_ms: Date.now() - startTime
     };
 
