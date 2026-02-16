@@ -47,6 +47,16 @@ const HUB_METRIC_CONFIG = {
         metric: 112.4, // Base 100
         trade_volume: 85.2,
         uae_reserves_change: 2.5
+    },
+    "GIFT City": {
+        label: "Banking Deposits ($ bn)",
+        source: "IFSCA / RBI",
+        metric: 62.4,
+        deposits_yoy: 24.5,
+        bullion_turnover_index: 108.2,
+        offshore_inr_pct: 12.5,
+        bond_issuance_usd: 14.8,
+        vs_singapore_aum_pct: 4.2
     }
 };
 
@@ -122,6 +132,23 @@ Deno.serve(async (req: Request) => {
                 percentile: 98.2,
                 z_score: 3.1,
                 source: HUB_METRIC_CONFIG.Dubai.source
+            },
+            {
+                hub: 'GIFT City',
+                metric_date: metricDate,
+                primary_metric_value: HUB_METRIC_CONFIG["GIFT City"].metric,
+                primary_metric_label: HUB_METRIC_CONFIG["GIFT City"].label,
+                secondary_metrics: {
+                    deposits_yoy_pct: HUB_METRIC_CONFIG["GIFT City"].deposits_yoy,
+                    bullion_turnover_index: HUB_METRIC_CONFIG["GIFT City"].bullion_turnover_index,
+                    offshore_inr_liabilities_pct: HUB_METRIC_CONFIG["GIFT City"].offshore_inr_pct,
+                    bond_issuance_usd_bn: HUB_METRIC_CONFIG["GIFT City"].bond_issuance_usd,
+                    vs_singapore_aum_pct: HUB_METRIC_CONFIG["GIFT City"].vs_singapore_aum_pct
+                },
+                sparkline_data: [45.2, 48.5, 52.1, 55.8, 58.4, 60.5, 62.4],
+                percentile: 74.2,
+                z_score: 1.8,
+                source: HUB_METRIC_CONFIG["GIFT City"].source
             }
         ];
 

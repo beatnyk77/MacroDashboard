@@ -20,14 +20,16 @@ const HUB_ICONS: Record<string, React.ReactNode> = {
     Switzerland: <Landmark className="text-blue-400" />,
     Singapore: <MapPin className="text-emerald-400" />,
     London: <Building2 className="text-purple-400" />,
-    Dubai: <Ship className="text-amber-400" />
+    Dubai: <Ship className="text-amber-400" />,
+    "GIFT City": <Landmark className="text-orange-400" />
 };
 
 const HUB_COLORS: Record<string, string> = {
     Switzerland: '#60a5fa',
     Singapore: '#34d399',
     London: '#a78bfa',
-    Dubai: '#fbbf24'
+    Dubai: '#fbbf24',
+    "GIFT City": '#fb923c'
 };
 
 const containerVariants = {
@@ -95,11 +97,13 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                 <div className="mb-6">
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-black text-white mapping">
+                            {hub.hub === 'GIFT City' ? '$' : ''}
                             {hub.primary_metric_value.toLocaleString()}
                             <span className="text-xs text-neutral-500 ml-1 font-normal uppercase">
                                 {hub.hub === 'Singapore' ? '%' :
                                     hub.hub === 'London' ? 'Moz' :
-                                        hub.hub === 'Switzerland' ? 't' : ''}
+                                        hub.hub === 'Switzerland' ? 't' :
+                                            hub.hub === 'GIFT City' ? 'bn' : ''}
                             </span>
                         </span>
                         <div className={`flex items-center text-xs font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -107,6 +111,13 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                             {hub.z_score > 0 ? '+' : ''}{hub.z_score.toFixed(1)}σ
                         </div>
                     </div>
+                    {hub.hub === 'GIFT City' && hub.secondary_metrics.vs_singapore_aum_pct && (
+                        <div className="mt-1 px-2 py-0.5 bg-neutral-800/50 border border-white/5 rounded-md inline-block">
+                            <p className="text-[0.5rem] text-neutral-400 font-medium">
+                                vs Singapore: <span className="text-emerald-400 font-bold">{hub.secondary_metrics.vs_singapore_aum_pct}%</span> of NR AUM
+                            </p>
+                        </div>
+                    )}
                     <p className="text-[0.6rem] text-neutral-400 uppercase tracking-wider mt-1">
                         {hub.primary_metric_label}
                     </p>
@@ -175,7 +186,7 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
     if (!hubs || hubs.length === 0) return null;
 
     // Ensure they are always in a consistent order
-    const orderedHubs = ['Switzerland', 'Singapore', 'London', 'Dubai']
+    const orderedHubs = ['Switzerland', 'Singapore', 'London', 'Dubai', 'GIFT City']
         .map(name => hubs.find(h => h.hub === name))
         .filter(Boolean) as FinancialHubMetric[];
 
@@ -192,7 +203,7 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
-                className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
             >
                 {orderedHubs.map((hub) => (
                     <HubCard key={hub.id} hub={hub} />
@@ -201,7 +212,7 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
 
             <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6">
                 <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-medium">
-                    Data from SNB, MAS, LBMA, DMCC, UAE CB – Updated Monthly/Quarterly
+                    Data from SNB, MAS, LBMA, DMCC, UAE CB, IFSCA, SEBI – Updated Monthly/Quarterly
                 </p>
                 <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
