@@ -21,21 +21,42 @@ jobs:
         with:
           version: latest
 
-      - name: Debug Project ID
-        env:
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-        run: echo "Project ref length:${#SUPABASE_PROJECT_ID}"
+      - name: Get changed functions
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            ingest-fred: ['supabase/functions/ingest-fred/**']
+            ingest-macro-events: ['supabase/functions/ingest-macro-events/**']
+            ingest-commodity-reserves: ['supabase/functions/ingest-commodity-reserves/**']
+            ingest-mospi: ['supabase/functions/ingest-mospi/**']
+            ingest-nse-flows: ['supabase/functions/ingest-nse-flows/**']
+            ingest-nyfed-markets: ['supabase/functions/ingest-nyfed-markets/**']
+            check-data-health: ['supabase/functions/check-data-health/**']
+            generate-newsletter: ['supabase/functions/generate-newsletter/**']
+            _shared: ['supabase/functions/_shared/**']
 
-      - name: Link and Deploy Functions
+      - name: Deploy Changed Functions
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          supabase link --project-ref "$SUPABASE_PROJECT_ID"
-          for func_dir in supabase/functions/*/ ; do
-            if [ -f "${func_dir}index.ts" ]; then
-              func_name=$(basename "$func_dir")
-              echo "Deploying function: $func_name"
-              supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
-            fi
-          done
+          # If _shared changed, deploy all core functions
+          if [ "${{ steps.filter.outputs._shared }}" = "true" ]; then
+            echo "Shared utils changed, deploying all functions..."
+            for func_dir in supabase/functions/*/ ; do
+              if [ -f "${func_dir}index.ts" ]; then
+                func_name=$(basename "$func_dir")
+                echo "Deploying $func_name..."
+                supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+              fi
+            done
+          else
+            # Deploy only specific changed functions
+            for func in ingest-fred ingest-macro-events ingest-commodity-reserves ingest-mospi ingest-nse-flows ingest-nyfed-markets check-data-health generate-newsletter; do
+              if [ "${{ steps.filter.outputs.$func }}" = "true" ]; then
+                echo "Deploying $func..."
+                supabase functions deploy "$func" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+              fi
+            done
+          fi
