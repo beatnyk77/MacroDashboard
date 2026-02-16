@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import { runIngestion, IngestionContext } from '../_shared/logging.ts'
 import { withTimeout } from '../_shared/timeout-guard.ts'
 
@@ -21,13 +21,13 @@ Deno.serve(async (req: Request) => {
 
         // --- 1. US Strategic Petroleum Reserve (SPR) ---
         try {
-            console.log('Fetching US SPR...');
-            // Building manually to avoid encoding of [ ] which EIA V2 can be sensitive to
-            const sprUrl = `${EIA_API_BASE}/petroleum/stoc/spr/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&sort[0][column]=period&sort[0][direction]=desc&length=1`;
+            console.log('Fetching US SPR (Weekly)...');
+            // Using Weekly Series ID WCSSTUS1 for higher frequency
+            const sprUrl = `${EIA_API_BASE}/seriesid/WCSSTUS1?api_key=${eiaApiKey}&format=json`;
 
             const res = await withTimeout(fetch(sprUrl), 10000, 'US SPR Fetch');
             if (res.ok) {
-                const json = await res.json();
+                const json = await res.json() as any;
                 const latest = json.response?.data?.[0];
                 if (latest) {
                     reservesByCountry.push({
@@ -35,19 +35,19 @@ Deno.serve(async (req: Request) => {
                         commodity: 'Crude Oil',
                         volume: Number(latest.value),
                         reserve_type: 'strategic',
-                        as_of_date: `${latest.period}-01`,
-                        coverage_days: 20
+                        as_of_date: latest.period,
+                        coverage_days: 20 // Placeholder or derived if data allows
                     });
-                    stepLogs.push({ step: 'us_spr', status: 'success', date: latest.period });
+                    stepLogs.push({ step: 'us_spr_weekly', status: 'success', date: latest.period, value: latest.value });
                 } else {
-                    stepLogs.push({ step: 'us_spr', status: 'empty', response: json });
+                    stepLogs.push({ step: 'us_spr_weekly', status: 'empty', response: json });
                 }
             } else {
-                stepLogs.push({ step: 'us_spr', status: 'error_res', code: res.status });
+                stepLogs.push({ step: 'us_spr_weekly', status: 'error_res', code: res.status });
             }
         } catch (e: any) {
             console.error('US SPR Error:', e.message);
-            stepLogs.push({ step: 'us_spr', status: 'error', message: e.message });
+            stepLogs.push({ step: 'us_spr_weekly', status: 'error', message: e.message });
         }
 
         // --- 2. China Estimated Crude Reserves (via EIA) ---
@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
 
             const res = await withTimeout(fetch(chUrl), 10000, 'China Reserves Fetch');
             if (res.ok) {
-                const json = await res.json();
+                const json = await res.json() as any;
                 const latest = json.response?.data?.[0];
                 if (latest) {
                     reservesByCountry.push({
@@ -92,7 +92,7 @@ Deno.serve(async (req: Request) => {
             }), 10000, 'EU Gas Fetch');
 
             if (res.ok) {
-                const json = await res.json();
+                const json = await res.json() as any;
                 const latest = json.data?.[0];
                 if (latest) {
                     reservesByCountry.push({
