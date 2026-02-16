@@ -1,3 +1,4 @@
+
 import { createAdminClient } from './supabaseClient.ts'
 
 export type LogLevel = 'info' | 'warn' | 'error'
@@ -17,26 +18,24 @@ export class Logger {
         errorMessage?: string,
         durationMs?: number
     ) {
-        // Always log to console for realtime debugging
         const message = `[${source}] ${status} - Rows: ${rowsUpserted} ${errorMessage ? `- Error: ${errorMessage}` : ''} (${durationMs}ms)`
-        if (status === 'error') {
+        if (status === 'error' || status === 'failed') {
             console.error(message)
-            // TODO: ALERTING STUB
-            // Send to Slack/Discord/Email
-            // await fetch('https://hooks.slack.com/...', { method: 'POST', body: JSON.stringify({ text: message }) })
         } else {
             console.log(message)
         }
 
-        // Write to DB
+        // Map internal status to standard status
+        const dbStatus = status === 'processing' ? 'started' : (status === 'error' ? 'failed' : status);
+
         try {
             await this.client.from('ingestion_logs').insert({
-                run_id: this.runId,
-                source,
-                status,
-                rows_upserted: rowsUpserted,
+                function_name: source,
+                status: dbStatus,
+                rows_inserted: rowsUpserted,
                 error_message: errorMessage,
-                duration_ms: durationMs,
+                metadata: { run_id: this.runId, duration_ms: durationMs },
+                start_time: new Date().toISOString()
             })
         } catch (err) {
             console.error('Failed to write log to DB:', err)
