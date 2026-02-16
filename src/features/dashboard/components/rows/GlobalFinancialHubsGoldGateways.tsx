@@ -70,11 +70,14 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                             {HUB_ICONS[hub.hub] || <Coins className="text-yellow-400" />}
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-white tracking-tight">{hub.hub}</h3>
+                            <h3 className="text-lg font-bold text-white tracking-tight">
+                                {hub.hub === 'GIFT City' ? 'GIFT City IFSC Pulse' : hub.hub}
+                            </h3>
                             <p className="text-[0.65rem] text-neutral-500 uppercase tracking-widest font-black">
                                 {hub.hub === 'Switzerland' ? 'Safe-Haven' :
                                     hub.hub === 'Singapore' ? 'Asian Wealth' :
-                                        hub.hub === 'London' ? 'Financial Plumbing' : 'Trade Gateway'}
+                                        hub.hub === 'London' ? 'Financial Plumbing' :
+                                            hub.hub === 'GIFT City' ? "India's Offshore Hub" : 'Trade Gateway'}
                             </p>
                         </div>
                     </div>
