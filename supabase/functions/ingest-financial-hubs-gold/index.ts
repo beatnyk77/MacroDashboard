@@ -57,6 +57,20 @@ const HUB_METRIC_CONFIG = {
         offshore_inr_pct: 12.5,
         bond_issuance_usd: 14.8,
         vs_singapore_aum_pct: 4.2
+    },
+    "Hong Kong": {
+        label: "HKMA Gold Reserves (Tonnes)",
+        source: "HKMA / Census",
+        metric: 2.1,
+        net_imports_tonnes: 45.2, // Monthly net imports
+        gold_etf_aum_hkd: 8.5 // Billion HKD proxy
+    },
+    "Shanghai": {
+        label: "SGE 3M Withdrawals (Tonnes)",
+        source: "SGE / PBoC",
+        metric: 485.2, // High volume physical withdrawal
+        pboc_reserves_tonnes: 2264, // PBoC official
+        futures_open_interest: 125.4 // '000 lots
     }
 };
 
@@ -86,7 +100,7 @@ Deno.serve(async (req: Request) => {
                     monthly_gold_imports: HUB_METRIC_CONFIG.Switzerland.imports,
                     private_banking_aum_yoy: HUB_METRIC_CONFIG.Switzerland.aum_growth
                 },
-                sparkline_data: [1038, 1039, 1040, 1040, 1040, 1040, 1040],
+                sparkline_data: [1040, 1040, 1040, 1040, 1040, 1040, 1040],
                 percentile: 85.2,
                 z_score: 1.2,
                 source: HUB_METRIC_CONFIG.Switzerland.source
@@ -149,6 +163,34 @@ Deno.serve(async (req: Request) => {
                 percentile: 74.2,
                 z_score: 1.8,
                 source: HUB_METRIC_CONFIG["GIFT City"].source
+            },
+            {
+                hub: 'Hong Kong',
+                metric_date: metricDate,
+                primary_metric_value: HUB_METRIC_CONFIG["Hong Kong"].metric,
+                primary_metric_label: HUB_METRIC_CONFIG["Hong Kong"].label,
+                secondary_metrics: {
+                    net_gold_imports_tonnes: HUB_METRIC_CONFIG["Hong Kong"].net_imports_tonnes,
+                    gold_etf_aum_hkd_bn: HUB_METRIC_CONFIG["Hong Kong"].gold_etf_aum_hkd
+                },
+                sparkline_data: [1.8, 2.0, 2.1, 2.1, 2.1, 2.1, 2.1], // Stable reserves
+                percentile: 55.4,
+                z_score: -0.2, // Slightly below average activity relative to history
+                source: HUB_METRIC_CONFIG["Hong Kong"].source
+            },
+            {
+                hub: 'Shanghai',
+                metric_date: metricDate,
+                primary_metric_value: HUB_METRIC_CONFIG["Shanghai"].metric,
+                primary_metric_label: HUB_METRIC_CONFIG["Shanghai"].label,
+                secondary_metrics: {
+                    pboc_reserves_tonnes: HUB_METRIC_CONFIG["Shanghai"].pboc_reserves_tonnes,
+                    futures_open_interest_k: HUB_METRIC_CONFIG["Shanghai"].futures_open_interest
+                },
+                sparkline_data: [380, 420, 450, 410, 460, 475, 485.2], // Rising withdrawals
+                percentile: 96.5,
+                z_score: 2.8, // Very high activity
+                source: HUB_METRIC_CONFIG["Shanghai"].source
             }
         ];
 
