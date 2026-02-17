@@ -51,9 +51,14 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
         const latest = sorted[sorted.length - 1];
         const prev = sorted.length > 1 ? sorted[sorted.length - 2] : null;
 
-        const currentVal = activeCountry === 'IN' ? latest.cost_inr! : latest.cost_cny!;
-        const prevVal = prev ? (activeCountry === 'IN' ? prev.cost_inr! : prev.cost_cny!) : null;
-        const yoyDelta = prevVal ? ((currentVal - prevVal) / prevVal) * 100 : null;
+        const currentVal = (activeCountry === 'IN' ? latest.cost_inr : latest.cost_cny) ?? 0;
+        const prevVal = prev ? ((activeCountry === 'IN' ? prev.cost_inr : prev.cost_cny) ?? 0) : 0;
+
+        let yoyDelta: number | null = null;
+        if (prevVal > 0) {
+            yoyDelta = ((currentVal - prevVal) / prevVal) * 100;
+        }
+
         const brentVal = latest.brent || 0;
 
         return {

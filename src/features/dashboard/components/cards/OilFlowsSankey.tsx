@@ -151,17 +151,20 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
     }, [historicalData]);
 
     const processedData = useMemo(() => {
-        const filtered = data.filter(d => d.importer_country_code === activeTab);
+        const filtered = data.filter(d => d.importer_country_code === activeTab && d.import_volume_mbbl > 0);
         if (!filtered.length) return { nodes: [], links: [] };
 
         const latestDate = Array.from(new Set(filtered.map(d => d.as_of_date))).sort().pop();
         const latest = filtered.filter(d => d.as_of_date === latestDate);
 
         latest.sort((a, b) => b.import_volume_mbbl - a.import_volume_mbbl);
+        const totalVolume = latest.reduce((sum, d) => sum + d.import_volume_mbbl, 0);
+
+        if (totalVolume <= 0) return { nodes: [], links: [], totalVolume: 0, latestDate };
+
         const topN = 6;
         const top = latest.slice(0, topN);
         const otherVolume = latest.slice(topN).reduce((sum, d) => sum + d.import_volume_mbbl, 0);
-        const totalVolume = latest.reduce((sum, d) => sum + d.import_volume_mbbl, 0);
 
         const nodes = [
             ...top.map(d => {
@@ -178,14 +181,14 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                 source: i,
                 target: destIdx,
                 value: d.import_volume_mbbl,
-                share: (d.import_volume_mbbl / totalVolume) * 100,
+                share: totalVolume > 0 ? (d.import_volume_mbbl / totalVolume) * 100 : 0,
                 color: nodes[i].color
             })),
             ...(otherVolume > 0 ? [{
                 source: nodes.length - 2,
                 target: destIdx,
                 value: otherVolume,
-                share: (otherVolume / totalVolume) * 100,
+                share: totalVolume > 0 ? (otherVolume / totalVolume) * 100 : 0,
                 color: '#475569'
             }] : [])
         ];
