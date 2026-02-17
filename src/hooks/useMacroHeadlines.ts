@@ -24,7 +24,7 @@ export const useMacroHeadlines = () => {
             if (error) throw error;
             return data || [];
         },
-        refetchInterval: 1000 * 60 * 30, // 30 minutes
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        refetchInterval: 1000 * 60 * 2, // 2 minutes
+        staleTime: 1000 * 60 * 1, // 1 minute
     });
 };

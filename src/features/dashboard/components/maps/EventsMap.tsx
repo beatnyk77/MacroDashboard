@@ -147,14 +147,14 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                                 r={6}
                                 fill="currentColor"
                                 className={cn(
-                                    eventColors[event.event_type] || eventColors.default,
+                                    eventColors[event.type] || eventColors.default,
                                     "opacity-20 animate-pulse"
                                 )}
                             />
                             <circle
                                 r={3}
                                 fill="currentColor"
-                                className={eventColors[event.event_type] || eventColors.default}
+                                className={eventColors[event.type] || eventColors.default}
                             />
                         </g>
                     </Marker>
@@ -167,19 +167,19 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                     <div className="flex items-start gap-3">
                         <div className={cn(
                             "p-2 rounded-xl",
-                            eventColors[hoveredEvent.event_type] || eventColors.default
+                            eventColors[hoveredEvent.type] || eventColors.default
                         )}>
-                            {eventIcons[hoveredEvent.event_type] || eventIcons.default}
+                            {eventIcons[hoveredEvent.type] || eventIcons.default}
                         </div>
                         <div className="flex-1">
                             <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
-                                {hoveredEvent.event_type}
+                                {hoveredEvent.type}
                             </div>
-                            <div className="text-sm font-bold text-white mb-2">
-                                {hoveredEvent.title || 'Event Detected'}
+                            <div className="text-sm font-bold text-white mb-2 line-clamp-2">
+                                {hoveredEvent.location_name || 'Event Detected'}
                             </div>
                             <div className="text-xs text-muted-foreground">
-                                {hoveredEvent.location || `${hoveredEvent.latitude.toFixed(2)}, ${hoveredEvent.longitude.toFixed(2)}`}
+                                {hoveredEvent.latitude.toFixed(2)}, {hoveredEvent.longitude.toFixed(2)}
                             </div>
                         </div>
                     </div>

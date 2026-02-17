@@ -6,7 +6,7 @@ export interface EventMarker {
     event_date: string;
     latitude: number;
     longitude: number;
-    type: 'Conflict' | 'Protest' | 'Disruption';
+    type: 'conflict' | 'protest' | 'disruption' | 'energy';
     count: number;
     location_name: string;
     source: string;

@@ -32,7 +32,7 @@ const CATEGORIES = [
         label: 'Inflation Regime',
         icon: Wind,
         color: '#f97316',
-        metrics: ['US_CPI_YOY', 'INFLATION_CORE_YOY']
+        metrics: ['INFLATION_HEADLINE_YOY', 'INFLATION_CORE_YOY']
     },
     {
         id: 'balance_of_payments',
@@ -60,14 +60,14 @@ const CATEGORIES = [
         label: 'Labor Market',
         icon: Briefcase,
         color: '#f59e0b',
-        metrics: ['LABOR_VACANCIES_JOLTS', 'US_UNEMPLOYMENT', 'LABOR_WAGE_GROWTH_YOY']
+        metrics: ['LABOR_VACANCIES_JOLTS', 'LABOR_UNEMPLOYMENT_RATE', 'LABOR_WAGE_GROWTH_YOY']
     }
 ];
 
 const METRIC_LABELS: Record<string, { label: string, unit: string }> = {
     CAPITAL_FROM_EM_DEBT_BN: { label: 'EM Debt Flows', unit: 'bn USD' },
     CAPITAL_FROM_GOLD_ETF_BN: { label: 'Gold ETF Flows', unit: 'bn USD' },
-    US_CPI_YOY: { label: 'Headline Inflation', unit: 'YoY %' },
+    INFLATION_HEADLINE_YOY: { label: 'Headline Inflation', unit: 'YoY %' },
     INFLATION_CORE_YOY: { label: 'Core Inflation', unit: 'YoY %' },
     BOP_CURRENT_ACCOUNT_GDP: { label: 'Current Account', unit: '% GDP' },
     BOP_RESERVES_MONTHS: { label: 'FX Reserves', unit: 'm cover' },
@@ -76,7 +76,7 @@ const METRIC_LABELS: Record<string, { label: string, unit: string }> = {
     HOUSING_MORTGAGE_RATE_30Y: { label: '30Y Mortgage Rate', unit: '%' },
     PMI_US_MFG: { label: 'Manufacturing PMI', unit: 'pts' },
     LABOR_VACANCIES_JOLTS: { label: 'JOLTS Vacancies', unit: 'k' },
-    US_UNEMPLOYMENT: { label: 'Unemployment Rate', unit: '%' },
+    LABOR_UNEMPLOYMENT_RATE: { label: 'Unemployment Rate', unit: '%' },
     LABOR_WAGE_GROWTH_YOY: { label: 'Wage Growth', unit: 'YoY %' }
 };
 

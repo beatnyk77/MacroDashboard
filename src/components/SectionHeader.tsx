@@ -17,6 +17,7 @@ interface SectionHeaderProps {
     action?: React.ReactNode;
     sectionId?: string;
     level?: 'h1' | 'h2';
+    className?: string;
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -27,14 +28,15 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     isLoading,
     lastUpdated,
     sectionId,
-    level = 'h2'
+    level = 'h2',
+    className
 }) => {
     const dynamicInterpretations = useRegimeInterpretations(sectionId || '');
     const activeInterpretations = interpretations || (sectionId ? dynamicInterpretations : []);
     const HeadingTag = level;
 
     return (
-        <div className="flex flex-col gap-6 mb-12 group">
+        <div className={cn("flex flex-col gap-6 mb-12 group", className)}>
             <div className="flex items-end justify-between border-l-4 border-blue-500 pl-6 py-2">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">

@@ -32,13 +32,55 @@ Deno.serve(async (req: Request) => {
     await logger.log('nse-flows', 'processing', 0, `Starting NSE ingestion: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`)
     const start = performance.now()
 
-    // NSE requires specific headers to avoid 403
-    const headers = {
+    // NSE requires specific headers and valid cookies
+    const baseHeaders = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
         'Accept-Language': 'en-US,en;q=0.9',
         'Referer': 'https://www.nseindia.com/',
-        'X-Requested-With': 'XMLHttpRequest'
+        'Origin': 'https://www.nseindia.com',
+        'Connection': 'keep-alive',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+    }
+
+    let cookies = '';
+
+    async function getSessionCookies() {
+        try {
+            const resp = await fetch('https://www.nseindia.com/', { headers: baseHeaders });
+            if (!resp.ok) throw new Error(`Homepage fetch failed: ${resp.status}`);
+
+            // Extract cookies (Deno fetch handles Set-Cookie in headers if available)
+            // Note: In Deno Deploy/Edge, headers.getSetCookie() might be available or we parse 'set-cookie'
+            const setCookie = resp.headers.get('set-cookie');
+            if (setCookie) {
+                // Simple parsing, taking the first part of multiple path cookies if needed
+                // But usually we just need to pass them back.
+                // However, fetch might merge multiple Set-Cookie headers into one comma-separated string
+                // or we might need to iterate.
+                cookies = setCookie;
+            } else {
+                // Try getting all entries if getSetCookie is available (newer Deno)
+                // @ts-ignore
+                if (typeof resp.headers.getSetCookie === 'function') {
+                    // @ts-ignore
+                    cookies = resp.headers.getSetCookie().join('; ');
+                }
+            }
+            console.log('NSE Cookies obtained:', cookies ? 'Yes' : 'No');
+        } catch (e) {
+            console.warn('Failed to get NSE cookies:', e);
+        }
+    }
+
+    // Initialize session
+    await getSessionCookies();
+
+    const headers = {
+        ...baseHeaders,
+        'Cookie': cookies
     }
 
     const processedDates: string[] = []
