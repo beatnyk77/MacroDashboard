@@ -255,22 +255,32 @@ export const EnergySecuritySection: React.FC = () => {
                 </MotionCard>
 
                 {/* Row 3.5: Asia Commodity Flows */}
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
-                    <MotionCard delay={0.4} className="w-full">
-                        <div className="mb-4">
-                            <h3 className="text-xl font-light text-white flex items-center gap-2">
-                                <span className="w-8 h-px bg-emerald-500/50" />
-                                Asia Commodity Flow Dynamics
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                                Visualizing the molecular shift toward the East. Tracking Crude Oil import origins for India and China identifies emerging trade corridors and energy density dependencies.
-                            </p>
-                        </div>
-                        <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                            <OilFlowsSankey data={data.importData} isLoading={false} />
-                        </Suspense>
-                    </MotionCard>
+                <MotionCard delay={0.4} className="w-full">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-light text-white flex items-center gap-2">
+                            <span className="w-8 h-px bg-emerald-500/50" />
+                            Asia Commodity Flow Dynamics
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
+                            Visualizing the molecular shift toward the East. Tracking Crude Oil import origins for India and China identifies emerging trade corridors and energy density dependencies.
+                        </p>
+                    </div>
+                    <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                        <OilFlowsSankey data={data.importData} isLoading={false} />
+                    </Suspense>
+                </MotionCard>
 
+                {/* Row 3.6: Local Import Pressure */}
+                <MotionCard delay={0.45} className="w-full">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-light text-white flex items-center gap-2">
+                            <span className="w-8 h-px bg-rose-500/50" />
+                            Local Import Pressure
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
+                            Measuring the economic impact of energy sourcing. Tracking weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
+                        </p>
+                    </div>
                     <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                         <OilImportCostCard
                             importData={data.importData}
@@ -278,7 +288,7 @@ export const EnergySecuritySection: React.FC = () => {
                             isLoading={false}
                         />
                     </Suspense>
-                </div>
+                </MotionCard>
 
                 {/* Row 4: Import Vulnerability & Flow Matrix */}
                 <MotionCard delay={0.5} className="w-full">
@@ -327,4 +337,3 @@ export const EnergySecuritySection: React.FC = () => {
         </div>
     );
 };
-
