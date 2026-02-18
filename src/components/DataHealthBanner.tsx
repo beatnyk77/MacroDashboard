@@ -14,11 +14,12 @@ export const DataHealthBanner: React.FC = () => {
 
     return (
         <div
+            role="alert"
             className={cn(
-                "sticky top-0 z-[100] w-full py-2 px-6 flex items-center justify-between border-b transition-all duration-500",
+                "sticky top-0 z-[100] w-full py-2.5 px-4 md:px-8 flex flex-wrap gap-x-6 gap-y-3 items-center justify-between border-b transition-all duration-500 shadow-lg",
                 isCritical
-                    ? "bg-red-500/10 border-red-500/20 text-red-400 backdrop-blur-md"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-400 backdrop-blur-md"
+                    ? "bg-red-500/15 border-red-500/30 text-red-400 backdrop-blur-xl"
+                    : "bg-amber-500/15 border-amber-500/30 text-amber-400 backdrop-blur-xl"
             )}
         >
             <div className="flex items-center gap-3">

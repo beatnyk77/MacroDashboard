@@ -273,17 +273,17 @@ export const USDebtMaturityWall: React.FC = () => {
                             Maturity & Cost Distribution
                         </h3>
                         {/* Legend */}
-                        <div className="flex gap-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-sm bg-red-500"></div>
+                        <div className="flex gap-4" role="legend" aria-label="Maturity Cost Legend">
+                            <div className="flex items-center gap-2" role="listitem">
+                                <div className="w-3 h-3 rounded-sm bg-red-500" aria-hidden="true"></div>
                                 <span className="text-slate-400 text-xs">High Cost (&gt;4%)</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-sm bg-amber-500"></div>
+                            <div className="flex items-center gap-2" role="listitem">
+                                <div className="w-3 h-3 rounded-sm bg-amber-500" aria-hidden="true"></div>
                                 <span className="text-slate-400 text-xs">Medium</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-sm bg-green-500"></div>
+                            <div className="flex items-center gap-2" role="listitem">
+                                <div className="w-3 h-3 rounded-sm bg-green-500" aria-hidden="true"></div>
                                 <span className="text-slate-400 text-xs">Low Cost (&lt;2%)</span>
                             </div>
                         </div>

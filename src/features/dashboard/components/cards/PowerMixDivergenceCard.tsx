@@ -7,8 +7,7 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
-    Legend
+    ResponsiveContainer
 } from 'recharts';
 
 interface PowerMixDivergenceCardProps {
@@ -65,67 +64,76 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                         Connecting to Ember Global Electricity Review...
                     </div>
                 ) : (
-                    <div className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                data={data}
-                                layout="vertical"
-                                margin={{ top: 0, right: 40, left: 40, bottom: 0 }}
-                                barSize={32}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" horizontal={false} />
-                                <XAxis
-                                    type="number"
-                                    domain={[0, 100]}
-                                    stroke="rgba(255,255,255,0.1)"
-                                    fontSize={9}
-                                    fontWeight="900"
-                                    tickFormatter={(v) => `${v}%`}
-                                    className="uppercase tracking-tighter"
-                                />
-                                <YAxis
-                                    dataKey="region"
-                                    type="category"
-                                    stroke="rgba(255,255,255,0.1)"
-                                    fontSize={10}
-                                    fontWeight="900"
-                                    width={80}
-                                    className="uppercase tracking-widest text-white"
-                                />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                                    content={({ active, payload, label }) => {
-                                        if (!active || !payload) return null;
-                                        return (
-                                            <div className="bg-slate-950/90 border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
-                                                <p className="text-xs font-black text-white mb-3 uppercase tracking-widest border-b border-white/5 pb-2">{label}</p>
-                                                <div className="space-y-2 min-w-[140px]">
-                                                    {payload.map((p: any) => (
-                                                        <div key={p.name} className="flex justify-between items-center gap-4">
-                                                            <div className="flex items-center gap-2">
-                                                                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.fill }} />
-                                                                <span className="text-[10px] text-muted-foreground uppercase font-bold">{p.name}</span>
+                    <>
+                        <div className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    data={data}
+                                    layout="vertical"
+                                    margin={{ top: 10, right: 40, left: 40, bottom: 20 }}
+                                    barSize={32}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" horizontal={false} />
+                                    <XAxis
+                                        type="number"
+                                        domain={[0, 100]}
+                                        stroke="rgba(255,255,255,0.1)"
+                                        fontSize={9}
+                                        fontWeight="900"
+                                        tickFormatter={(v) => `${v}%`}
+                                        className="uppercase tracking-tighter"
+                                    />
+                                    <YAxis
+                                        dataKey="region"
+                                        type="category"
+                                        stroke="rgba(255,255,255,0.1)"
+                                        fontSize={10}
+                                        fontWeight="900"
+                                        width={80}
+                                        className="uppercase tracking-widest text-white"
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                                        content={({ active, payload, label }) => {
+                                            if (!active || !payload) return null;
+                                            return (
+                                                <div className="bg-slate-950/90 border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
+                                                    <p className="text-xs font-black text-white mb-3 uppercase tracking-widest border-b border-white/5 pb-2">{label}</p>
+                                                    <div className="space-y-2 min-w-[140px]">
+                                                        {payload.map((p: any) => (
+                                                            <div key={p.name} className="flex justify-between items-center gap-4">
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.fill }} />
+                                                                    <span className="text-[10px] text-muted-foreground uppercase font-bold">{p.name}</span>
+                                                                </div>
+                                                                <span className="text-[10px] font-mono font-black text-white">{p.value.toFixed(1)}%</span>
                                                             </div>
-                                                            <span className="text-[10px] font-mono font-black text-white">{p.value.toFixed(1)}%</span>
-                                                        </div>
-                                                    ))}
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    }}
-                                />
-                                <Legend
-                                    verticalAlign="top"
-                                    align="right"
-                                    iconType="circle"
-                                    wrapperStyle={{ paddingBottom: '30px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-                                />
-                                <Bar dataKey="coal" stackId="a" fill="#334155" name="Coal" radius={[4, 0, 0, 4]} />
-                                <Bar dataKey="renewable" stackId="a" fill="#10b981" name="Renewables" />
-                                <Bar dataKey="other" stackId="a" fill="#3b82f6" name="Nuclear/Gas/Other" radius={[0, 4, 4, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+                                            );
+                                        }}
+                                    />
+                                    <Bar dataKey="coal" stackId="a" fill="#334155" name="Coal" radius={[4, 0, 0, 4]} />
+                                    <Bar dataKey="renewable" stackId="a" fill="#10b981" name="Renewables" />
+                                    <Bar dataKey="other" stackId="a" fill="#3b82f6" name="Nuclear/Gas/Other" radius={[0, 4, 4, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        <div className="flex items-center gap-6 mb-8 px-10">
+                            {[
+                                { color: '#334155', label: 'Coal' },
+                                { color: '#10b981', label: 'Renewables' },
+                                { color: '#3b82f6', label: 'Nuclear/Gas/Other' }
+                            ].map(legend => (
+                                <div key={legend.label} className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full border border-white/10" style={{ backgroundColor: legend.color }} />
+                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{legend.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 )}
 
                 <div className="mt-8 p-6 rounded-3xl bg-white/[0.02] border border-white/5 relative group/insight overflow-hidden">

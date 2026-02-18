@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { useMacroEvents } from '@/hooks/useMacroEvents';
 import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
 import { formatBillions } from '@/utils/formatNumber';
 import { cn } from '@/lib/utils';
@@ -16,7 +15,6 @@ interface TodaysBriefPanelProps {
 export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className }) => {
     const { data: regime } = useRegime();
     const { data: liquidity } = useNetLiquidity();
-    const { data: events } = useMacroEvents();
     const { data: headlines } = useMacroHeadlines();
 
     // Restoration of missing variables for JSX
@@ -29,15 +27,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
         return liquidityDelta > 0 ? 'text-emerald-500' : 'text-rose-500';
     };
 
-    const today = useMemo(() => new Date(), []);
-    const keyEvent = useMemo(() => {
-        if (!events) return null;
-        return events
-            .filter(e => new Date(e.event_date).toDateString() === today.toDateString())
-            .sort((a) => a.impact_level === 'High' ? -1 : 1)[0];
-    }, [events, today]);
-
-    // Mapping headlines to briefing items
+    // Tailwind text color classes instead of hex values
     const dynamicBriefing = useMemo(() => {
         if (!headlines || headlines.length === 0) return [];
         return headlines.slice(0, 5).map((h: MacroHeadline) => ({
@@ -132,7 +122,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             {formatDate(new Date())}
                         </h3>
                     </div>
-                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-[0.65rem] font-black tracking-wider uppercase">
+                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-[0.7rem] font-black tracking-wider uppercase">
                         Proprietary View
                     </div>
                 </div>
@@ -143,14 +133,14 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                         <div className="p-5 rounded-lg bg-white/5 border border-white/10">
                             <div className="flex items-center gap-2 mb-3">
                                 {getStatusIcon(getRegimeStatus())}
-                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
+                                <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase" aria-label="Current Market Regime Status">
                                     Regime Consensus
                                 </span>
                             </div>
                             <h5 className={cn("text-xl font-black mb-1", getRegimeColorClass())}>
                                 {regime?.regimeLabel || 'Neutral Persistence'}
                             </h5>
-                            <span className="text-xs font-semibold text-muted-foreground">
+                            <span className="text-[0.7rem] font-semibold text-muted-foreground">
                                 {regime?.timestamp ? `Model updated ${new Date(regime.timestamp).toLocaleDateString()}` : 'Real-time detection active'}
                             </span>
                         </div>
@@ -162,34 +152,34 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                 ) : (
                                     <TrendingDown size={16} className="text-rose-500" />
                                 )}
-                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
+                                <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase" aria-label="Liquidity Signal">
                                     Liquidity Impulse
                                 </span>
                             </div>
                             <h5 className={cn("text-xl font-black mb-1", getLiquidityColorClass())}>
                                 {liquidityStatus}
                             </h5>
-                            <span className="text-xs font-semibold text-muted-foreground">
+                            <span className="text-[0.7rem] font-semibold text-muted-foreground">
                                 {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${formatBillions(liquidityDelta / 1e9, { decimals: 1 })} net change (7D)` : 'Awaiting fresh feed'}
                             </span>
                         </div>
                     </div>
 
-                    {/* Column 2: Market Briefing (5 cols) */}
-                    <div className="md:col-span-5">
+                    {/* Column 2: Market Briefing (Expanded to 8 cols) */}
+                    <div className="md:col-span-8">
                         <div className="p-5 rounded-lg bg-white/5 border border-white/10 h-full">
                             <div className="flex items-center gap-2 mb-4">
                                 <Newspaper size={16} className="text-primary" />
-                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
+                                <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase" aria-label="Intelligence Feed">
                                     LIVE INTELLIGENCE FEED
                                 </span>
                             </div>
                             <div className="space-y-4 divide-y divide-white/5">
                                 {dynamicBriefing.length > 0 ? (
-                                    dynamicBriefing.map((item, idx) => {
+                                    dynamicBriefing.map((item: { label: string; trend: string; anchor: string }, idx: number) => {
                                         const rawHeadline = headlines?.find(h => h.title === item.label);
                                         return (
-                                            <div key={idx} className="flex items-start gap-3 pt-3 first:pt-0">
+                                            <div key={idx} className="flex items-start gap-4 pt-3 first:pt-0">
                                                 <div className={cn(
                                                     "mt-1.5 w-1.5 h-1.5 rounded-full shrink-0",
                                                     item.trend === 'up' ? 'bg-emerald-500' : item.trend === 'down' ? 'bg-rose-500' : 'bg-muted-foreground'
@@ -204,7 +194,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                                             handleHighlight(item.label, item.anchor);
                                                         }
                                                     }}
-                                                    className="text-xs font-semibold text-foreground hover:text-primary transition-colors line-clamp-3 leading-relaxed cursor-pointer"
+                                                    className="text-[0.75rem] font-semibold text-foreground hover:text-primary transition-colors line-clamp-3 leading-relaxed cursor-pointer"
                                                     title={item.label}
                                                 >
                                                     {item.label}
@@ -213,70 +203,11 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                         );
                                     })
                                 ) : (
-                                    <span className="text-xs text-muted-foreground text-center block py-4">
+                                    <span className="text-[0.7rem] text-muted-foreground text-center block py-4">
                                         Awaiting institutional signal ingest...
                                     </span>
                                 )}
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Column 3: Scheduled Focus (3 cols) */}
-                    <div className="md:col-span-3">
-                        <div className="p-5 rounded-lg bg-blue-500/5 border border-dashed border-primary/50 h-full flex flex-col">
-                            <div className="flex items-center gap-2 mb-4">
-                                <Calendar size={16} className="text-secondary" />
-                                <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">
-                                    Today's Key Alpha
-                                </span>
-                            </div>
-
-                            {keyEvent ? (
-                                <div>
-                                    <h6 className="text-base font-black text-foreground mb-2 leading-tight">
-                                        {keyEvent.event_name}
-                                    </h6>
-                                    <div className="flex gap-2 mb-4">
-                                        <span className="px-1.5 py-0.5 bg-white/10 rounded text-[0.55rem] font-black uppercase">
-                                            {keyEvent.country}
-                                        </span>
-                                        <span className={cn(
-                                            "px-1.5 py-0.5 rounded text-[0.55rem] font-black uppercase text-white",
-                                            keyEvent.impact_level === 'High' ? 'bg-rose-500' : 'bg-amber-500'
-                                        )}>
-                                            {keyEvent.impact_level}
-                                        </span>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between">
-                                            <span className="text-xs font-semibold text-muted-foreground">Forecast</span>
-                                            <span className="text-xs font-black font-mono text-foreground capitalize">{keyEvent.forecast || '-'}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-xs font-semibold text-muted-foreground">Previous</span>
-                                            <span className="text-xs font-black font-mono text-foreground">{keyEvent.previous || '-'}</span>
-                                        </div>
-                                        <div className="flex justify-between mt-2 pt-2 border-t border-white/5">
-                                            <span className="text-xs font-black text-muted-foreground uppercase">ACTUAL</span>
-                                            <span className="text-xs font-black font-mono text-primary">{keyEvent.actual || 'PENDING'}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-50 text-center py-6">
-                                    <AlertCircle size={24} />
-                                    <span className="text-xs font-bold">
-                                        No high-impact releases scheduled for today.
-                                    </span>
-                                </div>
-                            )}
-
-                            <span
-                                onClick={() => handleScrollTo('#macro-calendar')}
-                                className="mt-auto pt-4 text-right text-[0.6rem] font-black text-primary cursor-pointer hover:underline uppercase block ml-auto"
-                            >
-                                VIEW FULL CALENDAR →
-                            </span>
                         </div>
                     </div>
                 </div>

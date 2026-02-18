@@ -78,6 +78,12 @@ const CustomTooltip = ({ active, payload }: any) => {
                             <span className="text-[0.6rem] font-bold text-amber-400/80 uppercase tracking-wider">Partial data</span>
                         </div>
                     )}
+                    {data.isStale && (
+                        <div className="mt-1 flex items-center gap-1.5">
+                            <ShieldAlert className="w-3 h-3 text-rose-400 animate-pulse" />
+                            <span className="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest">Data Delayed</span>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -194,22 +200,18 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 </div>
                                 <span className="text-[0.5rem] font-bold text-blue-500/60 uppercase tracking-wider block">Low Debt, Low Growth</span>
                             </div>
-
-                            {/* Region Legend */}
-                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-5">
-                                {Object.entries(REGION_LABELS).map(([key, label]) => (
-                                    <div key={key} className="flex items-center gap-1.5">
-                                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: REGION_COLORS[key as G20Region] }} />
-                                        <span className="text-[0.55rem] font-black text-white/50 uppercase tracking-widest">{label}</span>
-                                    </div>
-                                ))}
-                                <div className="flex items-center gap-1.5 ml-2 border-l border-white/10 pl-3">
-                                    <Info className="w-3 h-3 text-white/30" />
-                                    <span className="text-[0.5rem] font-bold text-white/30 uppercase tracking-wider">Source: FRED (IMF) + World Bank</span>
-                                </div>
-                            </div>
                         </>
                     )}
+
+                    {/* Region Legend - Always Visible */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-5">
+                        {Object.entries(REGION_LABELS).map(([key, label]) => (
+                            <div key={key} className="flex items-center gap-1.5">
+                                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: REGION_COLORS[key as G20Region] }} />
+                                <span className="text-[0.7rem] font-black text-white/50 uppercase tracking-widest">{label}</span>
+                            </div>
+                        ))}
+                    </div>
 
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart margin={{ top: 30, right: 30, bottom: isExpanded ? 40 : 30, left: 30 }}>

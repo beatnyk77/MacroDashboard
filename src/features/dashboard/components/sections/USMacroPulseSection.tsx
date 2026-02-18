@@ -138,12 +138,18 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                 </div>
 
                 {/* Status Indicator */}
-                <div className={cn(
-                    "w-2 h-2 rounded-full shrink-0 shadow-[0_0_10px_currentcolor]",
-                    (data.z_score || 0) > 1.5 ? "text-rose-500 bg-rose-500" :
-                        (data.z_score || 0) < -1.5 ? "text-amber-500 bg-amber-500" :
-                            "text-emerald-500 bg-emerald-500"
-                )} />
+                <div className="flex flex-col items-end gap-1">
+                    <div className={cn(
+                        "w-2 h-2 rounded-full shrink-0 shadow-[0_0_10px_currentcolor]",
+                        data.isStale ? "text-amber-500 bg-amber-500 animate-pulse" :
+                            (data.z_score || 0) > 1.5 ? "text-rose-500 bg-rose-500" :
+                                (data.z_score || 0) < -1.5 ? "text-amber-500 bg-amber-500" :
+                                    "text-emerald-500 bg-emerald-500"
+                    )} />
+                    {data.isStale && (
+                        <span className="text-[0.5rem] font-black text-amber-500/60 uppercase tracking-tighter">Delay</span>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -203,6 +209,9 @@ export const USMacroPulseSection: React.FC = () => {
                                 </h3>
                                 <p className="text-[0.65rem] text-muted-foreground/60 font-medium uppercase tracking-widest mt-0.5">
                                     Institutional Regime Monitoring
+                                    {cat.metrics.some(m => pulseData.find(pd => pd.metric_id === m)?.isStale) && (
+                                        <span className="ml-2 text-amber-500/80 font-black">• DATA DELAYED</span>
+                                    )}
                                 </p>
                             </div>
                         </div>

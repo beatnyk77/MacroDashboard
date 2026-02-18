@@ -123,20 +123,42 @@ Deno.serve(async (req) => {
         console.log("Fetching metrics...");
 
         // Parallel Fetching
+        const STALENESS_THRESHOLD_DAYS = 7;
+        const now = new Date();
+        const staleMetrics: string[] = [];
+
         await Promise.all(Object.entries(metricsToFetch).map(async ([key, id]) => {
             // Get snapshot (last 2)
             const snap = await fetchLatestMetric(supabaseClient, id);
+            const current = snap[0]?.value;
+            const date = snap[0]?.as_of_date;
+
+            // Staleness Check
+            if (date) {
+                const diffDays = (now.getTime() - new Date(date).getTime()) / (1000 * 3600 * 24);
+                if (diffDays > STALENESS_THRESHOLD_DAYS) {
+                    staleMetrics.push(id);
+                }
+            } else {
+                staleMetrics.push(id); // Missing data is considered stale
+            }
+
             data[key] = {
-                current: snap[0]?.value,
+                current: current,
                 prev: snap[1]?.value,
-                date: snap[0]?.as_of_date,
-                change: snap[0] && snap[1] ? snap[0].value - snap[1].value : 0
+                date: date,
+                change: snap[0] && snap[1] ? snap[0].value - snap[1].value : 0,
+                isStale: date ? (now.getTime() - new Date(date).getTime()) / (1000 * 3600 * 24) > STALENESS_THRESHOLD_DAYS : true
             };
 
             // Get series (last 25 points for sparkline)
             const series = await fetchMetricSeries(supabaseClient, id, 25);
             seriesData[key] = series.map(x => x.value);
         }));
+
+        if (staleMetrics.length > 5) {
+            console.warn(`Critical Staleness Detected: ${staleMetrics.length} metrics are overdue. Proceeding with warnings.`);
+        }
 
         // Specific Table Fetches
         const { data: events } = await supabaseClient.from('upcoming_events')

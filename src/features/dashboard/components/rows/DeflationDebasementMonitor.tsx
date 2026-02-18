@@ -173,6 +173,9 @@ export const DeflationDebasementMonitor: React.FC = () => {
                         <Info size={14} className="text-blue-400" />
                         <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest text-center">
                             Source: FRED / U.S. Treasury Fiscal Data – updated quarterly
+                            {latest?.date && (
+                                <span className="opacity-40 italic ml-2">• Latest: {new Date(latest.date).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
+                            )}
                         </span>
                     </div>
                 </div>

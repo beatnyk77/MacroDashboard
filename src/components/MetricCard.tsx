@@ -39,8 +39,8 @@ interface MetricCardProps {
     source?: string;
     frequency?: string;
     zScoreWindow?: string;
-    description?: string;
-    methodology?: string;
+    description?: string | React.ReactNode;
+    methodology?: string | React.ReactNode;
     stats?: { label: string; value: string | number; color?: string }[];
     chartType?: 'line' | 'bar';
     zScore?: number;

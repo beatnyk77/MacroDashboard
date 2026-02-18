@@ -9,10 +9,10 @@ interface HoverDetailProps {
     subtitle?: string;
     children: React.ReactElement; // The card/row to wrap
     detailContent: {
-        description?: string;
+        description?: string | React.ReactNode;
         stats?: { label: string; value: string | number; color?: string }[];
         history?: { date: string; value: number }[];
-        methodology?: string;
+        methodology?: string | React.ReactNode;
         source?: string;
         chartType?: 'line' | 'bar';
     };
