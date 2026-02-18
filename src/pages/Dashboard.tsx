@@ -82,9 +82,11 @@ export const Dashboard: React.FC = () => {
                 title="Sovereign Intelligence Console"
                 description="Institutional-grade macro dashboard tracking Debt/Gold ratios, De-Dollarization, Energy Security, and India/China Pulse. 25-year historical pipeline."
                 keywords={[
-                    'India Macro Pulse', 'MoSPI data', 'Debt Gold Ratio', 'BRICS De-Dollarization',
-                    'Shanghai Divergence', 'Global Net Liquidity', 'G20 Macro Surveillance',
-                    'Central Bank Gold Buying', 'Yuan Internationalization', 'US Treasury Demand'
+                    'India Macro Pulse', 'MoSPI telemetry India', 'RBI Monetary Policy Analysis',
+                    'BRICS De-Dollarization', 'Sovereign Risk Matrix', 'Global Net Liquidity',
+                    'Central Bank Gold Buying', 'Yuan Internationalization', 'US Treasury Demand',
+                    'Sticky Inflation Monitor', 'AI Supercycle Macro', 'Fiscal Sustainability',
+                    'Currency Debasement Hedge', 'Hard Asset Valuation', 'Institutional Macro Intelligence'
                 ]}
                 jsonLd={{
                     "@context": "https://schema.org",
@@ -143,6 +145,7 @@ export const Dashboard: React.FC = () => {
                             title="Macro Heartbeat"
                             subtitle="High-frequency liquidity and regime signals"
                             sectionId="heartbeat"
+                            level="h1"
                         />
                         <DataHealthTicker />
                     </div>

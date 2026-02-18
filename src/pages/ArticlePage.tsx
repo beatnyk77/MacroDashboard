@@ -24,7 +24,54 @@ export const ArticlePage: React.FC = () => {
                 ogType="article"
                 publishedTime={article.date}
                 canonicalUrl={`https://graphiquestor.com/blog/${article.slug}`}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    "headline": article.title,
+                    "description": article.description,
+                    "image": "https://graphiquestor.com/og-preview.png",
+                    "datePublished": article.date,
+                    "author": {
+                        "@type": "Person",
+                        "name": article.author
+                    },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://graphiquestor.com/logo.png"
+                        }
+                    },
+                    "mainEntityOfPage": {
+                        "@type": "WebPage",
+                        "@id": `https://graphiquestor.com/blog/${article.slug}`
+                    }
+                }}
             />
+            {/* Breadcrumb Schema */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [{
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://graphiquestor.com"
+                    }, {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Intelligence Journal",
+                        "item": "https://graphiquestor.com/blog"
+                    }, {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": article.title,
+                        "item": `https://graphiquestor.com/blog/${article.slug}`
+                    }]
+                })}
+            </script>
 
             <Container maxWidth="md">
                 <Button

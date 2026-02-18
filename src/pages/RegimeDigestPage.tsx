@@ -62,7 +62,50 @@ export const RegimeDigestPage: React.FC = () => {
                 title={digest.subject_line}
                 description={digest.plain_text.substring(0, 160)}
                 canonicalUrl={`https://graphiquestor.com/regime-digest/${year}/${month}`}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "NewsArticle",
+                    "headline": digest.subject_line,
+                    "dateline": digest.year_month,
+                    "description": digest.plain_text.substring(0, 160) + "...",
+                    "datePublished": digest.generated_at,
+                    "author": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor Macro Team"
+                    },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://graphiquestor.com/logo.png"
+                        }
+                    }
+                }}
             />
+            {/* Breadcrumb Schema */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [{
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://graphiquestor.com"
+                    }, {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Regime Digest Archive",
+                        "item": "https://graphiquestor.com/regime-digest"
+                    }, {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": digest.year_month,
+                        "item": `https://graphiquestor.com/regime-digest/${year}/${month}`
+                    }]
+                })}
+            </script>
             <Container maxWidth="md" sx={{ py: 4 }}>
                 <Box mb={4}>
                     <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>

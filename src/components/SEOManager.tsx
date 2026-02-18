@@ -47,6 +47,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             {/* Twitter */}
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={description} />
+            <meta name="twitter:card" content="summary_large_image" />
 
             {/* Article Schema */}
             {ogType === 'article' && publishedTime && (
@@ -55,12 +56,10 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta name="geo.region" content="IN" />
             <meta name="target_country" content="IN" />
 
-            {/* Hreflang for G20 Focus */}
+            {/* Optimized Hreflang for Core Institutional Focus */}
             <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-IN" />
             <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-US" />
             <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-GB" />
-            <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-AU" />
-            <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-CA" />
             <link rel="alternate" href="https://graphiquestor.com/" hrefLang="x-default" />
         </Helmet>
     );
