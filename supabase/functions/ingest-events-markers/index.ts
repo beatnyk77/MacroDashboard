@@ -127,6 +127,8 @@ Deno.serve(async (req) => {
 
             const { error } = await supabase.from('events_markers').upsert(rows);
             if (error) throw error;
+        } else {
+            console.warn('GDELT returned no events for the current query/timespan');
         }
 
         // Log successful ingestion
@@ -136,7 +138,7 @@ Deno.serve(async (req) => {
                     status: 'success',
                     completed_at: new Date().toISOString(),
                     rows_inserted: recordCount,
-                    metadata: { source: 'GDELT', timespan: '24h', api_url: geoApiUrl, count: recordCount }
+                    metadata: { source: 'GDELT', timespan: '24h', api_url: geoApiUrl, count: recordCount, status: recordCount === 0 ? 'empty' : 'success' }
                 })
                 .eq('id', logId);
         }

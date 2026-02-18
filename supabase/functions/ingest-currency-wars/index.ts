@@ -11,7 +11,7 @@ interface FredObservation {
 }
 
 async function fetchFRED(seriesId: string, apiKey: string): Promise<FredObservation[]> {
-    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=500`;
+    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=2000`;
     const response = await fetch(url);
     if (!response.ok) {
         const errorText = await response.text();

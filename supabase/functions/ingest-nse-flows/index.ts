@@ -113,15 +113,18 @@ Deno.serve(async (req: Request) => {
                 const url = 'https://www.nseindia.com/api/fiidiiTradeReact'
                 const res = await retry(() => fetch(url, { headers }))
                 if (res.ok) {
-                    const data = await res.json()
+                    const data = (await res.json()) as any
+                    console.log(`FII/DII Raw Data: ${JSON.stringify(data).slice(0, 500)}...`)
                     for (const item of data) {
-                        if (item.category === 'FII/FPI*' || item.category === 'FII') {
+                        const cat = (item.category || '').toUpperCase()
+                        if (cat.includes('FII') || cat.includes('FPI')) {
                             fiiNet = parseFloat(item.netValue) || 0
                         }
-                        if (item.category === 'DII**' || item.category === 'DII') {
+                        if (cat.includes('DII')) {
                             diiNet = parseFloat(item.netValue) || 0
                         }
                     }
+                    console.log(`Parsed for ${dateStr}: FII=${fiiNet}, DII=${diiNet}`)
                 }
             } catch (err: any) {
                 console.warn(`FII/DII failed for ${dateStr}: ${err.message}`)
@@ -132,7 +135,7 @@ Deno.serve(async (req: Request) => {
                 const url = 'https://www.nseindia.com/api/allIndices'
                 const res = await retry(() => fetch(url, { headers }))
                 if (res.ok) {
-                    const data = await res.json()
+                    const data = (await res.json()) as any
                     const indices = data.data || []
 
                     for (const idx of indices) {
@@ -174,7 +177,7 @@ Deno.serve(async (req: Request) => {
                 const url = 'https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY'
                 const res = await retry(() => fetch(url, { headers }))
                 if (res.ok) {
-                    const data = await res.json()
+                    const data = (await res.json()) as any
                     const filtered = data.filtered || {}
                     const putOI = parseFloat(filtered.PE?.totOI || 0)
                     const callOI = parseFloat(filtered.CE?.totOI || 0)
@@ -191,7 +194,7 @@ Deno.serve(async (req: Request) => {
                 const url = 'https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%2050'
                 const res = await retry(() => fetch(url, { headers }))
                 if (res.ok) {
-                    const data = await res.json()
+                    const data = (await res.json()) as any
                     const metadata = data.metadata || {}
                     advances = parseInt(metadata.advances || advances)
                     declines = parseInt(metadata.declines || declines)
@@ -210,6 +213,9 @@ Deno.serve(async (req: Request) => {
                     }
                     if (count > 0) {
                         deliveryPct = totalDelivery / count
+                        console.log(`Calculated delivery % for ${count} stocks: ${deliveryPct.toFixed(2)}`)
+                    } else {
+                        console.warn(`No delivery data found in ${stocks.length} stocks for ${dateStr}`)
                     }
                 }
             } catch (err: any) {
