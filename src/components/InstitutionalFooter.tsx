@@ -43,6 +43,14 @@ export const InstitutionalFooter: React.FC = () => {
                         © 2026 GraphiQuestor. PRO-SERIES TERMINAL.
                     </span>
                     <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-4 border-r border-white/5 pr-6">
+                            <Link to="/api-access" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Access</Link>
+                            <Link to="/api-docs" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Docs</Link>
+                        </div>
+                        <div className="flex items-center gap-4 border-r border-white/5 pr-6">
+                            <Link to="/terms" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Terms</Link>
+                            <Link to="/privacy" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Privacy</Link>
+                        </div>
                         <Link
                             to="/blog"
                             className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
@@ -59,9 +67,6 @@ export const InstitutionalFooter: React.FC = () => {
                             <div className="w-1.5 h-1.5 rounded-full bg-orange-500/40" />
                             Subscribe via RSS
                         </a>
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500/20" />
                     </div>
                 </div>
             </div>
