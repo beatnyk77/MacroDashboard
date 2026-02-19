@@ -13,6 +13,8 @@ const MacroOrientationSection = lazy(() => import('@/features/dashboard/componen
 const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquiditySection').then(m => ({ default: m.GlobalLiquiditySection })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 const CommodityTerminal = lazy(() => import('@/features/dashboard/components/sections/CommodityTerminal').then(m => ({ default: m.CommodityTerminal })));
+const PredictionMarketsSection = lazy(() => import('../components/sections/PredictionMarketsSection').then(m => ({ default: m.PredictionMarketsSection })));
+
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -62,7 +64,14 @@ export const DashboardView: React.FC = () => {
                         </div>
                     </section>
 
+                    <SectionErrorBoundary name="Prediction Markets Discovery">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <PredictionMarketsSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+
                     <section id="regime-context" className="shaded-band py-16 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-black/20">
+
                         <div className="max-w-[1920px] mx-auto px-4 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
                             <SectionErrorBoundary name="Macro Orientation">
                                 <Suspense fallback={<LoadingFallback />}>

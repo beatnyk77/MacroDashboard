@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { useCurrencyWars } from '@/hooks/useCurrencyWars';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
+import { KalshiFedFundsCard } from '../cards/KalshiFedFundsCard';
+
 
 import {
     ResponsiveContainer,
@@ -180,9 +182,15 @@ export const CurrencyWarsMonitor: React.FC = () => {
                     />
                 </div>
             </div>
+
+            {/* Kalshi Prediction Market Integration */}
+            <div className="mt-12 pt-12 border-t border-white/5">
+                <KalshiFedFundsCard />
+            </div>
         </SPASection>
     );
 };
+
 
 const MetricMiniCard = ({ label, value, sub, icon }: any) => (
     <div className="px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-4 hover:bg-white/[0.05] transition-all">
