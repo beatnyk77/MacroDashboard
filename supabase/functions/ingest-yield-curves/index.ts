@@ -100,8 +100,8 @@ async function fetchECBYields() {
   const maturities = ['3M', '6M', '1Y', '2Y', '5Y', '10Y', '30Y']
 
   for (const tenor of maturities) {
-    const key = `YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_${tenor}`
-    const url = `https://data-api.ecb.europa.eu/service/data/${key}?format=jsondata&lastNObservations=5`
+    const key = `B.U2.EUR.4F.G_N_A.SV_C_YM.SR_${tenor}`
+    const url = `https://data-api.ecb.europa.eu/service/data/YC/${key}?format=jsondata&lastNObservations=5`
 
     try {
       const res = await fetchWithRetry(url, {
