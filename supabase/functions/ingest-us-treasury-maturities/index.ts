@@ -39,11 +39,45 @@ Deno.serve(async (req: Request) => {
         let debugSecuritiesCount = 0;
         let finalTotalDebt = 0;
 
+        let fredYieldProxy = 4.3; // Default fallback
+
         await withTimeout((async () => {
+            // 0. Fetch FRED proxy yield for T-bills (DGS3MO)
+            try {
+                const fredApiKey = Deno.env.get('FRED_API_KEY');
+                if (fredApiKey) {
+                    const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=DGS3MO&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`;
+                    const fredResp = await fetch(fredUrl);
+                    if (fredResp.ok) {
+                        const fredJson = await fredResp.json() as any;
+                        if (fredJson.observations && fredJson.observations.length > 0) {
+                            const val = parseFloat(fredJson.observations[0].value);
+                            if (!isNaN(val)) {
+                                fredYieldProxy = val;
+                                console.log(`Using FRED DGS3MO yield proxy: ${fredYieldProxy}%`);
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Error fetching FRED proxy yield, using fallback:', err);
+                // Try to get last known yield from DB
+                const { data: lastData } = await supabase
+                    .from('us_debt_maturities')
+                    .select('tbill_avg_yield')
+                    .not('tbill_avg_yield', 'eq', 0)
+                    .order('date', { ascending: false })
+                    .limit(1);
+                if (lastData && lastData.length > 0) {
+                    fredYieldProxy = lastData[0].tbill_avg_yield;
+                    console.log(`Using last known T-bill yield from DB: ${fredYieldProxy}%`);
+                }
+            }
+
             // 1. Get latest date from MSPD Marketable table
             const latestDateUrl = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/debt/mspd/mspd_table_3_market?sort=-record_date&page[size]=1';
             const latestDateResp = await fetchWithRetry(latestDateUrl);
-            const latestDateJson = await latestDateResp.json();
+            const latestDateJson = await latestDateResp.json() as any;
 
             if (!latestDateJson.data || latestDateJson.data.length === 0) {
                 throw new Error("No data found in MSPD API");
@@ -56,7 +90,7 @@ Deno.serve(async (req: Request) => {
             // 2. Fetch all securities for that date
             const detailsUrl = `https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/debt/mspd/mspd_table_3_market?filter=record_date:eq:${latestDate}&page[size]=10000`;
             const detailsResp = await fetchWithRetry(detailsUrl);
-            const detailsJson = await detailsResp.json();
+            const detailsJson = await detailsResp.json() as any;
             const securities = detailsJson.data;
 
             debugSecuritiesCount = securities ? securities.length : 0;
@@ -66,16 +100,16 @@ Deno.serve(async (req: Request) => {
             }
 
             // 3. Bucket them
-            // Bucket structure: key -> { total, low, medium, high }
-            const buckets: Record<string, { total: number, low: number, medium: number, high: number }> = {
-                '<1M': { total: 0, low: 0, medium: 0, high: 0 },
-                '1-3M': { total: 0, low: 0, medium: 0, high: 0 },
-                '3-6M': { total: 0, low: 0, medium: 0, high: 0 },
-                '6-12M': { total: 0, low: 0, medium: 0, high: 0 },
-                '1-2Y': { total: 0, low: 0, medium: 0, high: 0 },
-                '2-5Y': { total: 0, low: 0, medium: 0, high: 0 },
-                '5-10Y': { total: 0, low: 0, medium: 0, high: 0 },
-                '10Y+': { total: 0, low: 0, medium: 0, high: 0 }
+            // Bucket structure: key -> { total, tbill, tbill_yield_sum, low, medium, high }
+            const buckets: Record<string, { total: number, tbill: number, tbill_yield_sum: number, low: number, medium: number, high: number }> = {
+                '<1M': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '1-3M': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '3-6M': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '6-12M': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '1-2Y': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '2-5Y': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '5-10Y': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 },
+                '10Y+': { total: 0, tbill: 0, tbill_yield_sum: 0, low: 0, medium: 0, high: 0 }
             };
 
             let totalMarketableDebt = 0;
@@ -91,11 +125,10 @@ Deno.serve(async (req: Request) => {
 
             securities.forEach((s: any) => {
                 const securityClass = s.security_class1_desc;
+                const securityType = s.security_type_desc || '';
                 const securityDetail = s.security_class2_desc;
                 const outstandingAmt = s.outstanding_amt;
                 const maturityDateStr = s.maturity_date;
-                // Parse interest rate (coupon)
-                // Field is 'interest_rate_pct' in MSPD API, usually a string like "2.500" or "null" or "0.000"
                 const interestRateStr = s.interest_rate_pct;
 
                 if (!TARGET_CLASSES.includes(securityClass)) return;
@@ -114,21 +147,25 @@ Deno.serve(async (req: Request) => {
                 const maturityDate = new Date(maturityDateStr);
                 totalMarketableDebt += amount;
 
-                // Coupon Bucket Logic
-                let costType: 'low' | 'medium' | 'high' = 'medium'; // default
-                const rate = parseFloat(interestRateStr);
+                // T-Bill detection
+                const isTBill = securityClass === 'Bills Maturity Value' || securityType.includes('Bill');
 
-                // If rate is valid
-                if (!isNaN(rate)) {
-                    if (rate < 2.0) costType = 'low';
-                    else if (rate <= 4.0) costType = 'medium';
-                    else costType = 'high';
-                } else {
-                    // For Bills, interest rate is usually "null" (Zero Coupon)
-                    if (securityClass === 'Bills Maturity Value') {
-                        costType = 'low';
+                // Effective yield calculation
+                let effectiveYield = parseFloat(interestRateStr);
+                if (isTBill) {
+                    // T-bills usually have null or 0 coupon in MSPD
+                    if (isNaN(effectiveYield) || effectiveYield === 0) {
+                        effectiveYield = fredYieldProxy;
                     }
+                } else if (isNaN(effectiveYield)) {
+                    effectiveYield = 0;
                 }
+
+                // Cost classification based on effective yield
+                let costType: 'low' | 'medium' | 'high' = 'medium';
+                if (effectiveYield < 2.0) costType = 'low';
+                else if (effectiveYield <= 4.0) costType = 'medium';
+                else costType = 'high';
 
                 const diffTime = maturityDate.getTime() - now.getTime();
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -145,7 +182,13 @@ Deno.serve(async (req: Request) => {
                 else if (diffYears < 10) targetBucket = '5-10Y';
 
                 buckets[targetBucket].total += amount;
-                buckets[targetBucket][costType] += amount;
+
+                if (isTBill) {
+                    buckets[targetBucket].tbill += amount;
+                    buckets[targetBucket].tbill_yield_sum += (amount * effectiveYield);
+                } else {
+                    buckets[targetBucket][costType] += amount;
+                }
             });
 
             finalTotalDebt = totalMarketableDebt;
@@ -155,6 +198,8 @@ Deno.serve(async (req: Request) => {
                     date: latestDate,
                     bucket,
                     amount: data.total,
+                    tbill_amount: data.tbill,
+                    tbill_avg_yield: data.tbill > 0 ? (data.tbill_yield_sum / data.tbill) : 0,
                     low_cost_amount: data.low,
                     medium_cost_amount: data.medium,
                     high_cost_amount: data.high,

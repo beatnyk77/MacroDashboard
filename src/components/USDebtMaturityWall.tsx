@@ -13,6 +13,8 @@ interface MaturityBucket {
     low_cost_amount: number;
     medium_cost_amount: number;
     high_cost_amount: number;
+    tbill_amount: number;
+    tbill_avg_yield: number;
 }
 
 interface HistoricalData {
@@ -28,7 +30,8 @@ const BUCKET_ORDER = ['<1M', '1-3M', '3-6M', '6-12M', '1-2Y', '2-5Y', '5-10Y', '
 const COST_COLORS = {
     low: '#22c55e',    // green-500
     medium: '#f59e0b', // amber-500
-    high: '#ef4444'    // red-500
+    high: '#ef4444',   // red-500
+    tbill: '#94a3b8'    // slate-400
 };
 
 export const USDebtMaturityWall: React.FC = () => {
@@ -135,14 +138,15 @@ export const USDebtMaturityWall: React.FC = () => {
     const rolloverRiskTrillions = (rolloverRiskAmount / 1_000_000).toFixed(2);
     // Unused: const rolloverRiskPct = ((rolloverRiskAmount / shortTermDebt) * 100).toFixed(1);
 
-    const nextYearDebt = maturityData
-        .filter(d => ['<1M', '1-3M', '3-6M', '6-12M', '1-2Y'].includes(d.bucket))
-        .reduce((sum, d) => sum + parseFloat(d.amount.toString()), 0);
-    const nextYearTrillions = (nextYearDebt / 1_000_000).toFixed(2);
+    const tbillShortTerm = shortTermData.reduce((sum, d) => sum + (d.tbill_amount || 0), 0);
+    const tbillShortTermTrillions = (tbillShortTerm / 1_000_000).toFixed(2);
+    const tbillAvgYield = shortTermData.reduce((sum, d) => sum + ((d.tbill_amount || 0) * (d.tbill_avg_yield || 0)), 0) / (tbillShortTerm || 1);
 
     const chartData = maturityData.map(d => ({
         bucket: d.bucket,
         amount: parseFloat(d.amount.toString()) / 1_000_000,
+        tbill: (d.tbill_amount || 0) / 1_000_000,
+        tbillYield: d.tbill_avg_yield || 0,
         low: (d.low_cost_amount || 0) / 1_000_000,
         medium: (d.medium_cost_amount || 0) / 1_000_000,
         high: (d.high_cost_amount || 0) / 1_000_000,
@@ -157,6 +161,15 @@ export const USDebtMaturityWall: React.FC = () => {
                 <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
                     <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{dataPoint.bucket}</p>
                     <div className="space-y-1">
+                        {dataPoint.tbill > 0 && (
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-slate-400 text-xs flex items-center gap-1">
+                                    <div className="w-2 h-2 rounded-full bg-slate-400 border border-dashed border-slate-200"></div>
+                                    T-bills (discount, {dataPoint.tbillYield.toFixed(2)}%)
+                                </span>
+                                <span className="text-white font-mono">${dataPoint.tbill.toFixed(2)}T</span>
+                            </div>
+                        )}
                         <div className="flex items-center justify-between gap-4">
                             <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
                             <span className="text-white font-mono">${dataPoint.high.toFixed(2)}T</span>
@@ -253,14 +266,14 @@ export const USDebtMaturityWall: React.FC = () => {
 
                 <motion.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-yellow-500/30 transition-colors"
+                    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-slate-500/30 transition-colors"
                 >
                     <div className="flex items-center gap-3 mb-2">
-                        <TrendingUp className="w-6 h-6 text-yellow-400" />
-                        <span className="text-slate-400 text-sm font-medium">Next 2 Years</span>
+                        <TrendingUp className="w-6 h-6 text-slate-400" />
+                        <span className="text-slate-400 text-sm font-medium">T-Bills Maturing ≤1Y</span>
                     </div>
-                    <p className="text-3xl font-bold text-white">${nextYearTrillions}T</p>
-                    <p className="text-slate-500 text-xs mt-1">Refinancing pressure ahead</p>
+                    <p className="text-3xl font-bold text-white">${tbillShortTermTrillions}T</p>
+                    <p className="text-slate-500 text-xs mt-1">Issued @ avg. {tbillAvgYield.toFixed(2)}% yield</p>
                 </motion.div>
             </div>
 
@@ -274,6 +287,10 @@ export const USDebtMaturityWall: React.FC = () => {
                         </h3>
                         {/* Legend */}
                         <div className="flex gap-4" role="legend" aria-label="Maturity Cost Legend">
+                            <div className="flex items-center gap-2" role="listitem">
+                                <div className="w-3 h-3 rounded-sm bg-slate-400 border border-dashed border-slate-200" aria-hidden="true"></div>
+                                <span className="text-slate-400 text-xs">T-Bills (discount)</span>
+                            </div>
                             <div className="flex items-center gap-2" role="listitem">
                                 <div className="w-3 h-3 rounded-sm bg-red-500" aria-hidden="true"></div>
                                 <span className="text-slate-400 text-xs">High Cost (&gt;4%)</span>
@@ -308,12 +325,16 @@ export const USDebtMaturityWall: React.FC = () => {
                                 />
                                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }} />
                                 {/* Stacked Bars */}
-                                <Bar dataKey="low" name="Low Cost (<2%)" stackId="a" fill={COST_COLORS.low} radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="tbill" name="T-Bills (discount)" stackId="a" fill={COST_COLORS.tbill} radius={[0, 0, 0, 0]} stroke="#cbd5e1" strokeDasharray="3 3" />
+                                <Bar dataKey="low" name="Low Cost" stackId="a" fill={COST_COLORS.low} />
                                 <Bar dataKey="medium" name="Medium Cost" stackId="a" fill={COST_COLORS.medium} />
-                                <Bar dataKey="high" name="High Cost (>4%)" stackId="a" fill={COST_COLORS.high} radius={[0, 4, 4, 0]} />
+                                <Bar dataKey="high" name="High Cost" stackId="a" fill={COST_COLORS.high} radius={[0, 4, 4, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
+                    <p className="text-slate-500 text-[10px] italic mt-2 text-center">
+                        Low-cost = effective yield at issuance (&lt;2%). T-bills use discount rate/yield at auction, not coupon.
+                    </p>
                 </div>
 
                 {/* Impacts of Rising Yield Curve - Educational Section */}
