@@ -52,6 +52,7 @@ const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/r
 const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
 const IndiaFiscalStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalStressMonitor').then(m => ({ default: m.IndiaFiscalStressMonitor })));
 const IndiaDebtMaturityWall = lazy(() => import('@/features/dashboard/components/rows/IndiaDebtMaturityWall').then(m => ({ default: m.IndiaDebtMaturityWall })));
+const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
@@ -433,6 +434,13 @@ export const Dashboard: React.FC = () => {
                         <SectionErrorBoundary name="India Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
                                 <IndiaDebtMaturityWall />
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        {/* ROW 7.7: INDIA CREDIT CYCLE CLOCK */}
+                        <SectionErrorBoundary name="India Credit Cycle Clock">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaCreditCycleClock />
                             </Suspense>
                         </SectionErrorBoundary>
 
