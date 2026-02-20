@@ -1,0 +1,23 @@
+export const INITIAL_DIGITIZATION_DATA = [
+    { date: '2022-01-01', upi_volume_bn: 4.61, upi_value_inr_trillion: 8.32, rbi_dpi_index: 349.30, fi_index: 56.4, g20_digital_baseline: 120.0 },
+    { date: '2022-02-01', upi_volume_bn: 4.52, upi_value_inr_trillion: 8.27, rbi_dpi_index: 355.10, fi_index: 56.4, g20_digital_baseline: 121.5 },
+    { date: '2022-03-01', upi_volume_bn: 5.40, upi_value_inr_trillion: 9.60, rbi_dpi_index: 377.46, fi_index: 56.4, g20_digital_baseline: 123.0 },
+    { date: '2022-06-01', upi_volume_bn: 5.86, upi_value_inr_trillion: 10.14, rbi_dpi_index: 395.57, fi_index: 56.4, g20_digital_baseline: 126.0 },
+    { date: '2022-09-01', upi_volume_bn: 6.78, upi_value_inr_trillion: 11.16, rbi_dpi_index: 410.20, fi_index: 56.4, g20_digital_baseline: 129.0 },
+    { date: '2022-12-01', upi_volume_bn: 7.82, upi_value_inr_trillion: 12.82, rbi_dpi_index: 425.40, fi_index: 56.4, g20_digital_baseline: 132.0 },
+    { date: '2023-01-01', upi_volume_bn: 8.03, upi_value_inr_trillion: 12.98, rbi_dpi_index: 435.60, fi_index: 60.1, g20_digital_baseline: 134.0 },
+    { date: '2023-02-01', upi_volume_bn: 7.53, upi_value_inr_trillion: 12.35, rbi_dpi_index: 440.10, fi_index: 60.1, g20_digital_baseline: 135.5 },
+    { date: '2023-03-01', upi_volume_bn: 8.68, upi_value_inr_trillion: 14.10, rbi_dpi_index: 462.15, fi_index: 60.1, g20_digital_baseline: 137.0 },
+    { date: '2023-04-01', upi_volume_bn: 8.89, upi_value_inr_trillion: 14.07, rbi_dpi_index: 468.40, fi_index: 60.1, g20_digital_baseline: 138.5 },
+    { date: '2023-05-01', upi_volume_bn: 9.41, upi_value_inr_trillion: 14.89, rbi_dpi_index: 475.20, fi_index: 60.1, g20_digital_baseline: 140.0 },
+    { date: '2023-06-01', upi_volume_bn: 9.33, upi_value_inr_trillion: 14.75, rbi_dpi_index: 480.50, fi_index: 60.1, g20_digital_baseline: 141.5 },
+    { date: '2023-07-01', upi_volume_bn: 9.96, upi_value_inr_trillion: 15.34, rbi_dpi_index: 488.20, fi_index: 60.1, g20_digital_baseline: 143.0 },
+    { date: '2023-08-01', upi_volume_bn: 10.58, upi_value_inr_trillion: 15.76, rbi_dpi_index: 495.60, fi_index: 60.1, g20_digital_baseline: 144.5 },
+    { date: '2023-09-01', upi_volume_bn: 10.56, upi_value_inr_trillion: 15.80, rbi_dpi_index: 502.40, fi_index: 60.1, g20_digital_baseline: 146.0 },
+    { date: '2023-10-01', upi_volume_bn: 11.41, upi_value_inr_trillion: 17.16, rbi_dpi_index: 512.10, fi_index: 60.1, g20_digital_baseline: 147.5 },
+    { date: '2023-11-01', upi_volume_bn: 11.24, upi_value_inr_trillion: 17.40, rbi_dpi_index: 518.50, fi_index: 60.1, g20_digital_baseline: 149.0 },
+    { date: '2023-12-01', upi_volume_bn: 12.02, upi_value_inr_trillion: 18.23, rbi_dpi_index: 525.80, fi_index: 60.1, g20_digital_baseline: 150.5 },
+    { date: '2024-01-01', upi_volume_bn: 12.20, upi_value_inr_trillion: 18.41, rbi_dpi_index: 535.20, fi_index: 64.2, g20_digital_baseline: 152.0 },
+    { date: '2024-02-01', upi_volume_bn: 12.10, upi_value_inr_trillion: 18.28, rbi_dpi_index: 540.50, fi_index: 64.2, g20_digital_baseline: 153.5 },
+    { date: '2024-03-01', upi_volume_bn: 13.44, upi_value_inr_trillion: 19.78, rbi_dpi_index: 555.20, fi_index: 64.2, g20_digital_baseline: 155.0 }
+];

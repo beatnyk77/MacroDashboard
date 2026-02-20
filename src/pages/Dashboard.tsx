@@ -56,6 +56,7 @@ const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components
 const RBIFXDefenseMonitor = lazy(() => import('@/features/dashboard/components/rows/RBIFXDefenseMonitor').then(m => ({ default: m.RBIFXDefenseMonitor })));
 const IndiaLiquidityStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaLiquidityStressMonitor').then(m => ({ default: m.IndiaLiquidityStressMonitor })));
 const IndiaInflationPulseMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaInflationPulseMonitor').then(m => ({ default: m.IndiaInflationPulseMonitor })));
+const IndiaDigitizationPremiumMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor').then(m => ({ default: m.IndiaDigitizationPremiumMonitor })));
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
@@ -465,6 +466,13 @@ export const Dashboard: React.FC = () => {
                         <SectionErrorBoundary name="India Inflation Pulse Monitor">
                             <Suspense fallback={<LoadingFallback />}>
                                 <IndiaInflationPulseMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        {/* ROW 7.11: INDIA DIGITIZATION PREMIUM MONITOR */}
+                        <SectionErrorBoundary name="India Digitization Premium Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaDigitizationPremiumMonitor />
                             </Suspense>
                         </SectionErrorBoundary>
 
