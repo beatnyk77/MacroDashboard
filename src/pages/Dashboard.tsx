@@ -53,6 +53,7 @@ const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/compo
 const IndiaFiscalStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalStressMonitor').then(m => ({ default: m.IndiaFiscalStressMonitor })));
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
+const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -362,6 +363,15 @@ export const Dashboard: React.FC = () => {
                             </SectionErrorBoundary>
                         </SPAAccordion>
                     </div>
+                </SPASection>
+
+                {/* ROW 4.5: YIELD CURVE MONITOR */}
+                <SPASection id="yield-curve-monitor" disableAnimation>
+                    <SectionErrorBoundary name="Yield Curve Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <YieldCurveMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* ROW 5.5: SPHERES OF INFLUENCE */}
