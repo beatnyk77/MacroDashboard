@@ -30,7 +30,8 @@ const US_MACRO_METRICS = [
     'PMI_US_SERVICES',
     'LABOR_VACANCIES_JOLTS',
     'LABOR_UNEMPLOYMENT_RATE',
-    'LABOR_WAGE_GROWTH_YOY'
+    'LABOR_WAGE_GROWTH_YOY',
+    'US_10Y_YIELD'
 ];
 
 export function useUSMacroPulse() {

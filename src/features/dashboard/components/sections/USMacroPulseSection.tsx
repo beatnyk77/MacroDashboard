@@ -29,10 +29,10 @@ const CATEGORIES = [
     },
     {
         id: 'inflation_regime',
-        label: 'Inflation Regime',
+        label: 'Inflation & Rates',
         icon: Wind,
         color: '#f97316',
-        metrics: ['INFLATION_HEADLINE_YOY', 'INFLATION_CORE_YOY']
+        metrics: ['INFLATION_HEADLINE_YOY', 'INFLATION_CORE_YOY', 'US_10Y_YIELD']
     },
     {
         id: 'balance_of_payments',
@@ -77,7 +77,8 @@ const METRIC_LABELS: Record<string, { label: string, unit: string }> = {
     PMI_US_MFG: { label: 'Manufacturing PMI', unit: 'pts' },
     LABOR_VACANCIES_JOLTS: { label: 'JOLTS Vacancies', unit: 'k' },
     LABOR_UNEMPLOYMENT_RATE: { label: 'Unemployment Rate', unit: '%' },
-    LABOR_WAGE_GROWTH_YOY: { label: 'Wage Growth', unit: 'YoY %' }
+    LABOR_WAGE_GROWTH_YOY: { label: 'Wage Growth', unit: 'YoY %' },
+    US_10Y_YIELD: { label: '10Y Treasury Yield', unit: '%' }
 };
 
 interface MetricRowProps {
