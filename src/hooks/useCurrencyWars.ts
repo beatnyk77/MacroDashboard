@@ -32,12 +32,11 @@ export const useCurrencyWars = () => {
 
             if (error) throw error;
 
-            // Pivot data by date
+            // Pivot data by date with fill-forward for latest view
             const pivoted: Record<string, any> = {};
+            const latestValues: Record<string, number> = {};
+
             data.forEach(obs => {
-                if (!pivoted[obs.as_of_date]) {
-                    pivoted[obs.as_of_date] = { date: obs.as_of_date };
-                }
                 const keyMap: Record<string, string> = {
                     'FED_FUNDS_RATE': 'fed_rate',
                     'IN_REPO_RATE': 'rbi_rate',
@@ -46,10 +45,32 @@ export const useCurrencyWars = () => {
                     'RUPEE_PRESSURE_SCORE': 'pressure',
                     'FLOW_TENSION_INDEX': 'tension'
                 };
-                pivoted[obs.as_of_date][keyMap[obs.metric_id]] = obs.value;
+
+                const key = keyMap[obs.metric_id];
+                if (!key) return;
+
+                latestValues[key] = obs.value;
+
+                if (!pivoted[obs.as_of_date]) {
+                    pivoted[obs.as_of_date] = { date: obs.as_of_date };
+                }
+
+                // For the chart, we want the actual observation on that date
+                pivoted[obs.as_of_date][key] = obs.value;
             });
 
-            return Object.values(pivoted) as CurrencyWarsData[];
+            // Ensure the last record has all the latest values for the dashboard summaries
+            const result = Object.values(pivoted).sort((a: any, b: any) => a.date.localeCompare(b.date)) as CurrencyWarsData[];
+            if (result.length > 0) {
+                const last = result[result.length - 1];
+                Object.keys(latestValues).forEach(key => {
+                    if (last[key as keyof CurrencyWarsData] === undefined) {
+                        (last as any)[key] = latestValues[key];
+                    }
+                });
+            }
+
+            return result;
         }
     });
 };

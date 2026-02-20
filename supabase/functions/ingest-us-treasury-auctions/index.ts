@@ -43,16 +43,18 @@ Deno.serve(async (req: Request) => {
             const dateStr = oneYearAgo.toISOString().split('T')[0];
 
             // Primary endpoint: https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query
-            const apiUrl = `https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query?filter=auction_date:gte:${dateStr}&sort=-auction_date&page[size]=10000`;
+            // Filter by security_type to reduce payload size
+            const apiUrl = `https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query?filter=auction_date:gte:${dateStr},security_type:in:(Bill,Note,Bond)&sort=-auction_date&page[size]=1000`;
 
             console.log(`Fetching auctions since ${dateStr}...`);
             const response = await fetchWithRetry(apiUrl);
             const json = await response.json();
 
             if (!json.data || json.data.length === 0) {
-                console.warn("No auction data found in the response.");
+                console.warn("No matching auction data found.");
                 return;
             }
+            console.log(`Found ${json.data.length} records to filter locally.`);
 
             // Key securities we want to track
             const TARGET_SECURITIES = [

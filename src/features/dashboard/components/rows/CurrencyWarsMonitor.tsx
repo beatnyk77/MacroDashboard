@@ -89,7 +89,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
 
                     <div className="h-[450px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                            <ComposedChart data={filteredData} margin={{ top: 20, right: 60, left: 40, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                 <XAxis
                                     dataKey="date"
@@ -105,6 +105,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
                                     tickLine={false}
                                     tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
                                     unit="%"
+                                    label={{ value: 'POLICY RATES', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
                                 />
                                 <YAxis
                                     yAxisId="right"
@@ -113,6 +114,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
                                     tickLine={false}
                                     tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
                                     domain={['auto', 'auto']}
+                                    label={{ value: 'USD/INR SPOT', angle: 90, position: 'insideRight', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
                                 />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Legend

@@ -8,6 +8,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 // Lazy load heavy sections
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
+const IndiaFiscalAllocationTracker = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalAllocationTracker').then(m => ({ default: m.IndiaFiscalAllocationTracker })));
 const ScenarioStudio = lazy(() => import('@/features/dashboard/components/sections/ScenarioStudio').then(m => ({ default: m.ScenarioStudio })));
 
 const LoadingFallback = () => (
@@ -35,6 +36,14 @@ export const CountryPulsesView: React.FC = () => {
                         <SectionErrorBoundary name="India Pulse">
                             <Suspense fallback={<LoadingFallback />}>
                                 <IndiaMacroPulseSection />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </section>
+
+                    <section id="india-fiscal-allocation" className="my-16">
+                        <SectionErrorBoundary name="India Fiscal Allocation">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaFiscalAllocationTracker />
                             </Suspense>
                         </SectionErrorBoundary>
                     </section>

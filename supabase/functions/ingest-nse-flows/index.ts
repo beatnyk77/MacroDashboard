@@ -108,6 +108,11 @@ Deno.serve(async (req: Request) => {
             let midcapPerf = 0, smallcapPerf = 0, niftyPerf = 0
             let newHighs52w = 0, newLows52w = 0
 
+            const parseNum = (val: any) => {
+                if (typeof val === 'string') return parseFloat(val.replace(/,/g, '')) || 0;
+                return parseFloat(val) || 0;
+            }
+
             // 1. FII/DII Cash Flows
             try {
                 const url = 'https://www.nseindia.com/api/fiidiiTradeReact'
@@ -118,10 +123,10 @@ Deno.serve(async (req: Request) => {
                     for (const item of data) {
                         const cat = (item.category || '').toUpperCase()
                         if (cat.includes('FII') || cat.includes('FPI')) {
-                            fiiNet = parseFloat(item.netValue) || 0
+                            fiiNet = parseNum(item.netValue)
                         }
                         if (cat.includes('DII')) {
-                            diiNet = parseFloat(item.netValue) || 0
+                            diiNet = parseNum(item.netValue)
                         }
                     }
                     console.log(`Parsed for ${dateStr}: FII=${fiiNet}, DII=${diiNet}`)
@@ -140,10 +145,10 @@ Deno.serve(async (req: Request) => {
 
                     for (const idx of indices) {
                         const name = idx.index || idx.indexSymbol || ''
-                        const pChange = parseFloat(idx.percentChange || idx.pChange || 0)
+                        const pChange = parseNum(idx.percentChange || idx.pChange || 0)
 
                         if (name === 'INDIA VIX') {
-                            indiaVix = parseFloat(idx.last || idx.lastPrice || 0)
+                            indiaVix = parseNum(idx.last || idx.lastPrice || 0)
                         }
 
                         if (name === 'NIFTY 50') {
