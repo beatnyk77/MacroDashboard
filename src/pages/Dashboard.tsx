@@ -56,7 +56,9 @@ const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components
 const RBIFXDefenseMonitor = lazy(() => import('@/features/dashboard/components/rows/RBIFXDefenseMonitor').then(m => ({ default: m.RBIFXDefenseMonitor })));
 const IndiaLiquidityStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaLiquidityStressMonitor').then(m => ({ default: m.IndiaLiquidityStressMonitor })));
 const IndiaInflationPulseMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaInflationPulseMonitor').then(m => ({ default: m.IndiaInflationPulseMonitor })));
+const StateFiscalHeatmap = lazy(() => import('@/features/dashboard/components/rows/StateFiscalHeatmap').then(m => ({ default: m.StateFiscalHeatmap })));
 const IndiaDigitizationPremiumMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor').then(m => ({ default: m.IndiaDigitizationPremiumMonitor })));
+const IndiaFiscalAllocationTracker = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalAllocationTracker').then(m => ({ default: m.IndiaFiscalAllocationTracker })));
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
@@ -473,6 +475,18 @@ export const Dashboard: React.FC = () => {
                         <SectionErrorBoundary name="India Digitization Premium Monitor">
                             <Suspense fallback={<LoadingFallback />}>
                                 <IndiaDigitizationPremiumMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        {/* ROW 7.12: INDIA FISCAL ALLOCATION & STATE HEATMAP */}
+                        <SectionErrorBoundary name="India Fiscal Health & Allocation">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="space-y-12">
+                                    <IndiaFiscalAllocationTracker />
+                                    <div className="px-4 lg:px-12">
+                                        <StateFiscalHeatmap />
+                                    </div>
+                                </div>
                             </Suspense>
                         </SectionErrorBoundary>
 

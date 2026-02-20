@@ -23,19 +23,47 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
     const [timeRange, setTimeRange] = useState<'5Y' | 'ALL'>('ALL');
     const [selectedState, setSelectedState] = useState<any>(null);
 
-    const { centralData, stateData } = useMemo(() => {
+    const { centralData, stateData, consolidatedData } = useMemo(() => {
+        const center = data?.centralData || [];
+        const stateRaw = data?.stateData || [];
+
+        // Group states by FY for consolidation
+        const stateYearly = stateRaw.reduce((acc: any, curr: any) => {
+            if (!acc[curr.fy]) acc[curr.fy] = { capex: 0, revenue: 0, total: 0, gdp: 0 };
+            acc[curr.fy].capex += curr.capex_lakh_cr || 0;
+            acc[curr.fy].revenue += curr.revenue_exp_lakh_cr || 0;
+            acc[curr.fy].total += curr.total_exp_lakh_cr || 0;
+            acc[curr.fy].gdp += curr.gdp_lakh_cr || 0;
+            return acc;
+        }, {});
+
+        const consolidated = center.map(c => {
+            const s = stateYearly[c.fy] || { capex: 0, revenue: 0, total: 0, gdp: 0 };
+            const totalCapex = (c.capex_lakh_cr || 0) + s.capex;
+            const totalRevenue = (c.revenue_exp_lakh_cr || 0) + s.revenue;
+            const combinedGdp = c.gdp_lakh_cr || s.gdp || 1; // Fallback to avoid div by zero
+
+            return {
+                fy: c.fy,
+                capex_pct_gdp: (totalCapex / combinedGdp) * 100,
+                revenue_pct_gdp: (totalRevenue / combinedGdp) * 100,
+                freebies_pct_receipts: c.freebies_pct_receipts // Keep center as proxy for subsidy stress
+            };
+        });
+
         return {
-            centralData: data?.centralData || [],
-            stateData: data?.stateData || []
+            centralData: center,
+            stateData: stateRaw,
+            consolidatedData: consolidated
         };
     }, [data]);
 
-    const latestCentral = centralData[centralData.length - 1];
+    const latestCentral = useMemo(() => centralData[centralData.length - 1] || {}, [centralData]);
 
-    const filteredCentral = useMemo(() => {
-        if (timeRange === '5Y') return centralData.slice(-5);
-        return centralData;
-    }, [centralData, timeRange]);
+    const filteredTrends = useMemo(() => {
+        if (timeRange === '5Y') return consolidatedData.slice(-5);
+        return consolidatedData;
+    }, [consolidatedData, timeRange]);
 
     const getMapColor = (val: number) => {
         if (val >= 4) return '#10b981'; // High Capex
@@ -204,7 +232,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-black text-white uppercase tracking-widest">Efficiency Trends</h4>
-                                    <p className="text-[0.6rem] text-muted-foreground/60 italic">Central Government Allocation Mix</p>
+                                    <p className="text-[0.6rem] text-muted-foreground/60 italic">Consolidated General Govt (Center + States)</p>
                                 </div>
                             </div>
                             <div className="flex gap-2">
@@ -228,7 +256,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 <span className="text-[0.5rem] font-black text-white/20 uppercase tracking-[0.3em]">Capital vs Revenue Dynamics</span>
                             </div>
                             <ResponsiveContainer width="100%" height="100%">
-                                <ComposedChart data={filteredCentral} margin={{ top: 60, right: 30, left: 0, bottom: 20 }}>
+                                <ComposedChart data={filteredTrends} margin={{ top: 60, right: 30, left: 0, bottom: 20 }}>
                                     <defs>
                                         <linearGradient id="capexGradient" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
@@ -267,7 +295,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                     <Bar
                                         yAxisId="left"
                                         dataKey="revenue_pct_gdp"
-                                        name="Rev Exp / GDP %"
+                                        name="Combined Rev Exp %"
                                         fill="rgba(245, 158, 11, 0.1)"
                                         radius={[4, 4, 0, 0]}
                                         barSize={40}
@@ -275,11 +303,11 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                     <Bar
                                         yAxisId="left"
                                         dataKey="capex_pct_gdp"
-                                        name="Capex / GDP %"
+                                        name="Combined Capex %"
                                         radius={[4, 4, 0, 0]}
                                         barSize={40}
                                     >
-                                        {filteredCentral.map((_entry, index) => (
+                                        {filteredTrends.map((_entry, index) => (
                                             <Cell key={`cell-${index}`} fill="url(#capexGradient)" />
                                         ))}
                                     </Bar>
@@ -287,7 +315,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                         yAxisId="left"
                                         type="monotone"
                                         dataKey="freebies_pct_receipts"
-                                        name="Freebie Multiplier"
+                                        name="Center Subsidy Burden"
                                         stroke="#f43f5e"
                                         strokeWidth={3}
                                         dot={{ r: 3, fill: '#f43f5e', strokeWidth: 0 }}
