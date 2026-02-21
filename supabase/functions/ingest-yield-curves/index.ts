@@ -28,15 +28,8 @@ const ECB_TENORS: { tenor: string; maturity: string }[] = [
   { tenor: '30Y', maturity: '30Y' },
 ]
 
-/* ─── India RBI DBIE known benchmark yields ───────────────────── */
-const INDIA_BENCHMARK_YIELDS: { tenor: string; label: string }[] = [
-  { tenor: '3M', label: '91 Day' },
-  { tenor: '6M', label: '182 Day' },
-  { tenor: '1Y', label: '364 Day' },
-  { tenor: '5Y', label: '5 Year' },
-  { tenor: '10Y', label: '10 Year' },
-  { tenor: '30Y', label: '30 Year' },
-]
+/* ─── India RBI DBIE SDMX tenors ──────────────────────────────── */
+const INDIA_TENOR_SET = ['P3M', 'P6M', 'P1Y', 'P2Y', 'P5Y', 'P10Y', 'P30Y']
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 2): Promise<Response> {
@@ -151,68 +144,76 @@ async function fetchECBYields() {
   return results
 }
 
-/* ─── India RBI yield fallback (use FRED proxy + static benchmarks) ─ */
-async function fetchIndiaYields(fredApiKey: string) {
+/* ─── India RBI DBIE SDMX fetcher (Direct) ─────────────────────── */
+async function fetchIndiaYields() {
   const results: any[] = []
 
-  // Primary: RBI DBIE API attempt
-  try {
-    const rbiUrl = 'https://api.data.gov.in/resource/9698dcc0-6554-4e49-8e35-1b567a3e9c39?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&limit=10'
-    const rbiRes = await fetchWithRetry(rbiUrl)
-    const rbiData = await rbiRes.json() as any
+  // Tenors provided by user. ISO 8601 or numeric shorthand.
+  // IRFCY dataset: Government Securities Yield Curve
+  const tenors = ['P3M', 'P6M', 'P1Y', 'P2Y', 'P5Y', 'P10Y', 'P30Y']
+  const tenorMap: Record<string, string> = {
+    'P3M': '3M', 'P6M': '6M', 'P1Y': '1Y', 'P2Y': '2Y', 'P5Y': '5Y', 'P10Y': '10Y', 'P30Y': '30Y',
+    '003M': '3M', '006M': '6M', '01Y': '1Y', '02Y': '2Y', '05Y': '5Y'
+  }
 
-    if (rbiData?.records && rbiData.records.length > 0) {
-      // Parse government securities data
-      for (const record of rbiData.records) {
-        const tenor = record.tenor || record.security_type
-        const yieldVal = parseFloat(record.yield || record.rate)
-        if (tenor && !isNaN(yieldVal)) {
-          // Map tenor names
-          let mappedTenor: string | null = null
-          for (const ib of INDIA_BENCHMARK_YIELDS) {
-            if (tenor.includes(ib.label) || tenor.includes(ib.tenor)) {
-              mappedTenor = ib.tenor
-              break
-            }
-          }
-          if (mappedTenor) {
-            results.push({
-              country: 'IN',
-              tenor: mappedTenor,
-              yield_pct: yieldVal,
-              prev_yield: null,
-              as_of_date: record.date || new Date().toISOString().split('T')[0],
-              source: 'RBI',
-            })
-          }
-        }
+  // Use a startPeriod 3 months back to ensure we get data even if there's a reporting lag
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const startPeriod = threeMonthsAgo.toISOString().split('T')[0];
+
+  const url = `https://data.rbi.org.in/DBIE/SDMX/JSON/RBI/IRFCY/?TENOR=${tenors.join(',')}&startPeriod=${startPeriod}`
+
+  try {
+    const res = await fetchWithRetry(url, {
+      headers: { 'Accept': 'application/json' }
+    })
+    const data = await res.json() as any
+
+    const dataset = data?.dataSets?.[0]
+    const series = dataset?.series
+    const dimensions = data?.structure?.dimensions?.series
+    const timePeriods = data?.structure?.dimensions?.observation?.[0]?.values
+
+    if (!series || !dimensions || !timePeriods) {
+      throw new Error('Malformed SDMX response from RBI')
+    }
+
+    // Find the tenor dimension index
+    const tenorDimIndex = dimensions.findIndex((d: any) => d.id === 'TENOR' || d.id === 'MATURITY')
+    if (tenorDimIndex === -1) throw new Error('Could not find TENOR dimension in RBI response')
+
+    for (const [key, value] of Object.entries(series)) {
+      const keyParts = key.split(':')
+      const rawTenor = dimensions[tenorDimIndex].values[parseInt(keyParts[tenorDimIndex])].id
+      const mappedTenor = tenorMap[rawTenor] || rawTenor
+
+      const observations = (value as any).observations
+      if (!observations) continue
+
+      const obsKeys = Object.keys(observations).sort((a, b) => parseInt(b) - parseInt(a))
+      if (obsKeys.length === 0) continue
+
+      const latestKey = obsKeys[0]
+      const prevKey = obsKeys.length > 1 ? obsKeys[1] : null
+
+      const latestVal = parseFloat(observations[latestKey][0])
+      const prevVal = prevKey ? parseFloat(observations[prevKey][0]) : null
+      const latestDate = timePeriods[parseInt(latestKey)]?.id
+
+      if (!isNaN(latestVal) && latestDate) {
+        results.push({
+          country: 'IN',
+          tenor: mappedTenor,
+          yield_pct: latestVal,
+          prev_yield: prevVal && !isNaN(prevVal) ? prevVal : null,
+          as_of_date: latestDate,
+          source: 'RBI DBIE',
+        })
       }
     }
   } catch (err: any) {
-    console.warn(`RBI API not available, falling back to FRED: ${err.message}`)
-  }
-
-  // Fallback: Use FRED for India 10Y if RBI didn't return it
-  const has10Y = results.some(r => r.tenor === '10Y')
-  if (!has10Y) {
-    try {
-      const url = `https://api.stlouisfed.org/fred/series/observations?series_id=INDIRLTLT01STM&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`
-      const res = await fetchWithRetry(url)
-      const data = await res.json() as any
-      const obs = (data.observations || []).filter((o: any) => o.value !== '.' && !isNaN(parseFloat(o.value)))
-      if (obs.length > 0) {
-        results.push({
-          country: 'IN',
-          tenor: '10Y',
-          yield_pct: parseFloat(obs[0].value),
-          prev_yield: obs.length > 1 ? parseFloat(obs[1].value) : null,
-          as_of_date: obs[0].date,
-          source: 'FRED',
-        })
-      }
-    } catch (err: any) {
-      console.error(`India FRED fallback error: ${err.message}`)
-    }
+    console.error(`RBI SDMX error: ${err.message}`)
+    // We could add FRED fallback here if needed, but better to fix direct access
   }
 
   return results
@@ -249,8 +250,8 @@ Deno.serve(async (req: Request) => {
     const ecbResults = await fetchECBYields()
     console.log(`ECB: ${ecbResults.length} records`)
 
-    console.log('Fetching India yields (RBI + FRED fallback)...')
-    const indiaResults = await fetchIndiaYields(fredApiKey)
+    console.log('Fetching India yields (Direct RBI SDMX)...')
+    const indiaResults = await fetchIndiaYields()
     console.log(`India: ${indiaResults.length} records`)
 
     const allRecords = [...fredResults, ...ecbResults, ...indiaResults]
