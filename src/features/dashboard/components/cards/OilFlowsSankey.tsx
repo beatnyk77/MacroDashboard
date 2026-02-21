@@ -29,8 +29,8 @@ const RISK_META: Record<string, { name: string, score: number, color: string, gl
 };
 
 const CustomNode = (props: any) => {
-    const { x, y, width, height, index, payload, containerWidth } = props;
-    const isOut = x + width < containerWidth / 2;
+    const { x, y, width, height, index, payload } = props;
+    const isSource = x < 400; // Simplified logic for 2-column Sankey alignment
 
     return (
         <Layer key={`node-${index}`}>
@@ -51,28 +51,28 @@ const CustomNode = (props: any) => {
                 rx={1}
             />
             <text
-                x={isOut ? x - 12 : x + width + 12}
+                x={isSource ? x - 12 : x + width + 12}
                 y={y + height / 2}
-                textAnchor={isOut ? 'end' : 'start'}
+                textAnchor={isSource ? 'end' : 'start'}
                 fontSize="10px"
                 fontWeight="900"
                 fill="#f8fafc"
-                className="uppercase tracking-[0.1em] drop-shadow-sm"
+                className="uppercase tracking-[0.1em] drop-shadow-sm select-none"
                 dominantBaseline="middle"
             >
                 {payload.name}
             </text>
             <text
-                x={isOut ? x - 12 : x + width + 12}
+                x={isSource ? x - 12 : x + width + 12}
                 y={y + height / 2 + 12}
-                textAnchor={isOut ? 'end' : 'start'}
+                textAnchor={isSource ? 'end' : 'start'}
                 fontSize="8px"
                 fontWeight="bold"
                 fill={payload.color}
-                className="uppercase tracking-widest opacity-80"
+                className="uppercase tracking-widest opacity-80 select-none"
                 dominantBaseline="middle"
             >
-                {isOut ? 'Source Hub' : 'Primary Sink'}
+                {isSource ? 'Source Hub' : 'Primary Sink'}
             </text>
         </Layer>
     );
@@ -91,13 +91,6 @@ const CustomLink = (props: any) => {
                     <stop offset="50%" stopColor={color} stopOpacity={0.5} />
                     <stop offset="100%" stopColor={color} stopOpacity={0.2} />
                 </linearGradient>
-                <filter id="glow">
-                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                    <feMerge>
-                        <feMergeNode in="coloredBlur" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                </filter>
             </defs>
             <path
                 d={`
@@ -110,8 +103,7 @@ const CustomLink = (props: any) => {
                 fill={`url(#${id})`}
                 stroke={color}
                 strokeWidth={0.5}
-                strokeOpacity={0.3}
-                filter="url(#glow)"
+                strokeOpacity={0.2}
                 className="transition-opacity duration-300 hover:fill-opacity-80"
             />
         </Layer>
@@ -199,7 +191,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
     if (isLoading) return <div className="h-[480px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
 
     return (
-        <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group h-[480px] flex flex-col p-8 transition-all hover:bg-slate-950/60 shadow-2xl">
+        <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group min-h-[480px] h-auto lg:h-[520px] flex flex-col p-4 sm:p-6 lg:p-8 transition-all hover:bg-slate-950/60 shadow-2xl">
             <div className="flex flex-row items-center justify-between pb-6 border-b border-white/5">
                 <div className="space-y-1.5">
                     <div className="flex items-center gap-3">
@@ -237,7 +229,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                 </div>
             </div>
 
-            <CardContent className="flex-1 p-0 mt-10 relative overflow-hidden">
+            <CardContent className="flex-1 p-0 mt-6 sm:mt-10 relative overflow-hidden min-h-[300px]">
                 {!processedData.nodes?.length ? (
                     <div className="h-full flex flex-col items-center justify-center text-center gap-6">
                         <div className="relative">
@@ -254,9 +246,9 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                         {viewMode === 'sankey' ? (
                             <Sankey
                                 data={processedData}
-                                node={<CustomNode containerWidth={800} />}
+                                node={<CustomNode />}
                                 nodePadding={60}
-                                margin={{ left: 140, right: 140, top: 40, bottom: 40 }}
+                                margin={{ top: 20, bottom: 20, left: 140, right: 140 }}
                                 link={<CustomLink />}
                             >
                                 <Tooltip

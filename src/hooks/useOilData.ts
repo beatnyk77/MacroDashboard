@@ -52,7 +52,7 @@ export const useOilData = () => {
                 .select('*')
                 .order('capacity_mbpd', { ascending: false });
 
-            if (capError) throw capError;
+            if (capError) console.warn('Refining Capacity fetch error:', capError);
 
             // 2. Fetch Imports (Last 12 months)
             const { data: impData, error: impError } = await supabase
@@ -61,7 +61,7 @@ export const useOilData = () => {
                 .order('as_of_date', { ascending: false })
                 .limit(500);
 
-            if (impError) throw impError;
+            if (impError) console.warn('Oil Imports fetch error:', impError);
 
             // 3. Fetch SPR Levels (Metric: OIL_SPR_LEVEL_US)
             const { data: sprObs, error: sprError } = await supabase
@@ -70,7 +70,7 @@ export const useOilData = () => {
                 .eq('metric_id', 'OIL_SPR_LEVEL_US')
                 .order('as_of_date', { ascending: true });
 
-            if (sprError) throw sprError;
+            if (sprError) console.warn('SPR Levels fetch error:', sprError);
 
             // 4. Fetch Refinery Utilization (Metric: OIL_REFINERY_UTILIZATION_US)
             const { data: utilObs, error: utilError } = await supabase
@@ -79,7 +79,7 @@ export const useOilData = () => {
                 .eq('metric_id', 'OIL_REFINERY_UTILIZATION_US')
                 .order('as_of_date', { ascending: true });
 
-            if (utilError) throw utilError;
+            if (utilError) console.warn('Refinery Utilization fetch error:', utilError);
 
             // 5. Fetch Power Mix Metrics (Lastest observations)
             const powerMetrics = [
@@ -95,7 +95,7 @@ export const useOilData = () => {
                 .in('metric_id', powerMetrics)
                 .order('as_of_date', { ascending: false });
 
-            if (powerError) throw powerError;
+            if (powerError) console.warn('Power Mix fetch error:', powerError);
 
             // Group by region
             const regions = ['US', 'EU', 'India', 'China'];
@@ -135,7 +135,7 @@ export const useOilData = () => {
                 .select('*')
                 .eq('category', 'energy');
 
-            if (metError) throw metError;
+            if (metError) console.warn('Metric Definitions fetch error:', metError);
 
             return {
                 capacityData: (capData || []).map((d: any) => ({

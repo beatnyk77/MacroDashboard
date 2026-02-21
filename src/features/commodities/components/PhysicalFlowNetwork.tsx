@@ -15,8 +15,8 @@ const FLOW_COLORS: Record<string, string> = {
 };
 
 const CustomNode = (props: any) => {
-    const { x, y, width, height, index, payload, containerWidth } = props;
-    const isOut = x + width < containerWidth / 2;
+    const { x, y, width, height, index, payload } = props;
+    const isSource = x < 400; // Simple threshold-based alignment for 2-column Sankey
 
     return (
         <Layer key={`node-${index}`}>
@@ -37,13 +37,13 @@ const CustomNode = (props: any) => {
                 rx={1}
             />
             <text
-                x={isOut ? x - 12 : x + width + 12}
+                x={isSource ? x - 12 : x + width + 12}
                 y={y + height / 2}
-                textAnchor={isOut ? 'end' : 'start'}
+                textAnchor={isSource ? 'end' : 'start'}
                 fontSize="10px"
                 fontWeight="900"
                 fill="#f8fafc"
-                className="uppercase tracking-[0.1em] drop-shadow-sm"
+                className="uppercase tracking-[0.1em] drop-shadow-sm select-none"
                 dominantBaseline="middle"
             >
                 {payload.name}
@@ -65,13 +65,6 @@ const CustomLink = (props: any) => {
                     <stop offset="50%" stopColor={color} stopOpacity={0.4} />
                     <stop offset="100%" stopColor={color} stopOpacity={0.1} />
                 </linearGradient>
-                <filter id="flow-glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                    <feMerge>
-                        <feMergeNode in="coloredBlur" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                </filter>
             </defs>
             <path
                 d={`
@@ -85,7 +78,6 @@ const CustomLink = (props: any) => {
                 stroke={color}
                 strokeWidth={0.5}
                 strokeOpacity={0.2}
-                filter="url(#flow-glow)"
                 className="transition-opacity duration-300 hover:fill-opacity-80"
             />
         </Layer>
@@ -96,9 +88,17 @@ export const PhysicalFlowNetwork: React.FC = () => {
     const { data: rawFlows, isLoading } = useQuery({
         queryKey: ['commodity-flows'],
         queryFn: async () => {
-            const { data, error } = await supabase.from('commodity_flows').select('*');
-            if (error) throw error;
-            return data;
+            try {
+                const { data, error } = await supabase.from('commodity_flows').select('*');
+                if (error) {
+                    console.warn('PhysicalFlowNetwork fetch error:', error);
+                    return [];
+                }
+                return data || [];
+            } catch (err) {
+                console.warn('PhysicalFlowNetwork fetch execution error:', err);
+                return [];
+            }
         }
     });
 
@@ -126,7 +126,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                 target: nodesMap[flow.target],
                 value: flow.volume,
                 commodity: flow.commodity,
-                share: (flow.volume / totalVolume) * 100,
+                share: totalVolume > 0 ? (flow.volume / totalVolume) * 100 : 0,
                 color: FLOW_COLORS[flow.commodity] || FLOW_COLORS.Default
             });
         });
@@ -142,11 +142,11 @@ export const PhysicalFlowNetwork: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
         >
-            <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group h-[520px] flex flex-col shadow-2xl relative">
+            <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group min-h-[500px] lg:h-[560px] flex flex-col shadow-2xl relative transition-all duration-500 hover:bg-slate-950/60">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.02] via-transparent to-emerald-500/[0.02] pointer-events-none" />
 
-                <CardHeader className="pb-6 border-b border-white/5 bg-white/[0.01] relative z-10">
-                    <div className="flex items-center justify-between">
+                <CardHeader className="pb-6 border-b border-white/5 bg-white/[0.01] relative z-10 px-6 sm:px-8">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="space-y-1">
                             <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em] flex items-center gap-3">
                                 <div className="w-8 h-px bg-blue-500/50" />
@@ -156,7 +156,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                 Benchmarking transit corridors & Logistical Throughput
                             </CardDescription>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 self-end sm:self-auto">
                             <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] animate-pulse" />
                                 <span className="text-[10px] text-white font-black uppercase tracking-widest">LIVE MESH</span>
@@ -168,7 +168,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                             <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent className="bg-slate-900/95 border-white/10 max-w-xs p-4 backdrop-blur-xl">
+                                    <TooltipContent className="bg-slate-900/95 border-white/10 max-w-xs p-4 backdrop-blur-xl z-[100]">
                                         <p className="text-[10px] leading-relaxed text-muted-foreground font-medium uppercase tracking-tight">
                                             Mapping top 10 physical commodity corridors. Volumes indexed in KT (kilotonnes).
                                         </p>
@@ -179,9 +179,9 @@ export const PhysicalFlowNetwork: React.FC = () => {
                     </div>
                 </CardHeader>
 
-                <CardContent className="flex-1 p-10 relative z-10">
+                <CardContent className="flex-1 p-4 sm:p-10 relative z-10 min-h-[350px]">
                     {!sankeyData.nodes.length ? (
-                        <div className="h-full flex flex-col items-center justify-center gap-4 opacity-30">
+                        <div className="h-full flex flex-col items-center justify-center gap-4 opacity-30 py-20">
                             <Ship className="w-8 h-8 animate-bounce text-blue-500" />
                             <p className="text-[10px] font-black uppercase tracking-[0.3em]">Initializing Logistical Feed...</p>
                         </div>
@@ -189,9 +189,9 @@ export const PhysicalFlowNetwork: React.FC = () => {
                         <ResponsiveContainer width="100%" height="100%">
                             <Sankey
                                 data={sankeyData}
-                                nodePadding={60}
-                                margin={{ top: 20, bottom: 20, left: 160, right: 160 }}
-                                node={<CustomNode containerWidth={800} />}
+                                nodePadding={40}
+                                margin={{ top: 20, bottom: 20, left: 140, right: 140 }}
+                                node={<CustomNode />}
                                 link={<CustomLink />}
                             >
                                 <Tooltip
@@ -201,7 +201,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                         if (data.sourceLinks) return null;
 
                                         return (
-                                            <div className="bg-slate-950/95 border border-white/10 p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[220px]">
+                                            <div className="bg-slate-950/95 border border-white/10 p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[220px] z-[100]">
                                                 <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
                                                     <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor]" style={{ backgroundColor: data.color, color: data.color }} />
                                                     <span className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2">
@@ -231,9 +231,9 @@ export const PhysicalFlowNetwork: React.FC = () => {
                     )}
                 </CardContent>
 
-                <div className="px-8 py-5 border-t border-white/5 bg-black/20 relative z-10">
-                    <div className="flex items-center justify-between">
-                        <div className="flex gap-6">
+                <div className="px-6 sm:px-8 py-5 border-t border-white/5 bg-black/20 relative z-10">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex flex-wrap gap-4 sm:gap-6 justify-center sm:justify-start">
                             {Object.entries(FLOW_COLORS).map(([name, color]) => (
                                 <div key={name} className="flex items-center gap-2 group cursor-default">
                                     <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]" style={{ backgroundColor: color, color: color }} />
