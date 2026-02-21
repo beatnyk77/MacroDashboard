@@ -188,57 +188,68 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
         return { nodes, links, totalVolume, latestDate };
     }, [data, activeTab]);
 
-    if (isLoading) return <div className="h-[480px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
+    if (isLoading) return <div className="h-[520px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
 
     return (
-        <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group min-h-[480px] h-auto lg:h-[520px] flex flex-col p-4 sm:p-6 lg:p-8 transition-all hover:bg-slate-950/60 shadow-2xl">
-            <div className="flex flex-row items-center justify-between pb-6 border-b border-white/5">
-                <div className="space-y-1.5">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-px bg-gradient-to-r from-blue-500 to-transparent" />
-                        <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">
-                            Global Oil <span className="text-white">Transit Hubs</span>
+        <Card className="bg-slate-900/60 border-white/10 backdrop-blur-3xl overflow-hidden group min-h-[520px] h-auto flex flex-col p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative">
+            {/* Background Decorative Gradients - Tamed */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/5 blur-[120px] -ml-48 -mb-48 pointer-events-none" />
+
+            <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-white/10 gap-6">
+                <div className="space-y-2 text-center md:text-left">
+                    <div className="flex items-center justify-center md:justify-start gap-4">
+                        <div className={`w-12 h-1 bg-gradient-to-r ${activeTab === 'IN' ? 'from-blue-500' : 'from-rose-500'} to-transparent rounded-full`} />
+                        <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-none">
+                            Asia Commodity <span className="text-muted-foreground/40 font-light">Flow Dynamics</span>
                         </h3>
                     </div>
-                    <div className="flex items-center gap-3 pl-[3.25rem]">
-                        <span className="text-[10px] font-bold text-muted-foreground/60 flex items-center gap-2 uppercase tracking-widest leading-none">
-                            {processedData.latestDate ? (
-                                <>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse" />
-                                    Terminal Synced: {new Date(processedData.latestDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase()}
-                                </>
-                            ) : (
-                                "Connecting High-Fidelity Feeds..."
-                            )}
-                        </span>
+                    <div className="flex items-center justify-center md:justify-start gap-3 md:pl-[4rem]">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />
+                            <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em]">
+                                {processedData.latestDate ? `Synced: ${new Date(processedData.latestDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : "Connecting Feeds..."}
+                            </span>
+                        </div>
+                        <div className="w-1 h-1 rounded-full bg-white/20" />
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">EIA International Analytics</span>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="bg-black/40 p-1 rounded-2xl border border-white/5">
+
+                <div className="flex items-center gap-4 bg-black/30 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
+                    <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
-                            <TabsTrigger value="sankey" className="rounded-xl text-[10px] font-black uppercase px-5 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white">Flow</TabsTrigger>
-                            <TabsTrigger value="history" className="rounded-xl text-[10px] font-black uppercase px-5 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white">Trends</TabsTrigger>
+                            <TabsTrigger value="sankey" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Flow</TabsTrigger>
+                            <TabsTrigger value="history" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Trends</TabsTrigger>
                         </TabsList>
                     </Tabs>
-                    <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-black/40 p-1 rounded-2xl border border-white/5">
+                    <div className="w-px h-6 bg-white/10" />
+                    <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
-                            <TabsTrigger value="IN" className="rounded-xl text-[10px] font-black uppercase px-5 h-7 tracking-wider transition-all data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">BHARAT</TabsTrigger>
-                            <TabsTrigger value="CN" className="rounded-xl text-[10px] font-black uppercase px-5 h-7 tracking-wider transition-all data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400">CHINA</TabsTrigger>
+                            <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(37,99,235,0.4)]">INDIA</TabsTrigger>
+                            <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(225,29,72,0.4)]">CHINA</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
             </div>
 
-            <CardContent className="flex-1 p-0 mt-6 sm:mt-10 relative overflow-hidden min-h-[300px]">
+            <CardContent className="flex-1 p-0 mt-8 relative overflow-hidden min-h-[350px]">
+                {/* Sub-section Heading */}
+                <div className="absolute top-0 left-0 z-20">
+                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] bg-slate-900/50 backdrop-blur-sm px-3 py-1 rounded-full border border-white/5">
+                        {viewMode === 'sankey' ? 'Real-time Supply Corridors' : 'Annual Sourcing Trajectory'}
+                    </span>
+                </div>
+
                 {!processedData.nodes?.length ? (
                     <div className="h-full flex flex-col items-center justify-center text-center gap-6">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full" />
-                            <div className="w-16 h-16 rounded-full border-[3px] border-white/5 border-t-blue-500 animate-[spin_1s_linear_infinite] relative z-10" />
+                            <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full animate-pulse" />
+                            <div className="w-16 h-16 rounded-full border-[3px] border-white/5 border-t-white animate-[spin_1.5s_linear_infinite] relative z-10" />
                         </div>
                         <div className="space-y-2 relative z-10">
-                            <p className="text-xs font-black text-white uppercase tracking-[0.2em] italic">Building Supply Chain Mesh...</p>
-                            <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground/40">Securing High-Fidelity Upstream Records</p>
+                            <p className="text-sm font-black text-white uppercase tracking-[0.3em]">Normalizing Trade Data</p>
+                            <p className="text-[10px] uppercase tracking-[0.4em] font-medium text-muted-foreground/40">Protocol: EIA-INT-V2-ANNUAL</p>
                         </div>
                     </div>
                 ) : (
@@ -247,8 +258,8 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                             <Sankey
                                 data={processedData}
                                 node={<CustomNode />}
-                                nodePadding={60}
-                                margin={{ top: 20, bottom: 20, left: 140, right: 140 }}
+                                nodePadding={40}
+                                margin={{ top: 60, bottom: 40, left: 160, right: 160 }}
                                 link={<CustomLink />}
                             >
                                 <Tooltip
@@ -258,25 +269,25 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                                         if (item.sourceLinks) return null;
 
                                         return (
-                                            <div className="bg-slate-950/95 border border-white/10 p-4 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20">
-                                                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
-                                                    <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor]" style={{ backgroundColor: item.color, color: item.color }} />
-                                                    <span className="text-[11px] font-black text-white uppercase tracking-[0.15em] flex items-center gap-2">
-                                                        {(item.source?.name || 'HUB')} <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/50" /> {(item.target?.name || 'SINK')}
+                                            <div className="bg-slate-900 border border-white/20 p-5 rounded-2xl backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] min-w-[240px]">
+                                                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/10">
+                                                    <div className="w-3 h-3 rounded-full shadow-[0_0_12px_currentColor]" style={{ backgroundColor: item.color, color: item.color }} />
+                                                    <span className="text-[12px] font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                                        {(item.source?.name || 'HUB')} <ArrowRight className="w-4 h-4 text-white/30" /> {(item.target?.name || 'TERMINAL')}
                                                     </span>
                                                 </div>
-                                                <div className="space-y-2.5">
-                                                    <div className="flex justify-between gap-12 items-center">
-                                                        <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">Throughput</span>
-                                                        <span className="text-[11px] font-mono font-black text-white">{item.value.toFixed(1)} <span className="text-[9px] opacity-40">M·BBL</span></span>
+                                                <div className="space-y-4">
+                                                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                                                        <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Annual Volume</span>
+                                                        <span className="text-sm font-mono font-black text-white">{item.value.toFixed(1)} <span className="text-[10px] opacity-30 font-sans">M·BBL</span></span>
                                                     </div>
-                                                    <div className="flex justify-between gap-12 items-center">
-                                                        <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">Supply Weight</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-24 h-1 rounded-full bg-white/5 overflow-hidden">
-                                                                <div className="h-full bg-gradient-to-r from-blue-500 to-emerald-500" style={{ width: `${item.share}%` }} />
-                                                            </div>
-                                                            <span className="text-[11px] font-mono font-black text-emerald-400">{item.share.toFixed(1)}%</span>
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between items-center px-1">
+                                                            <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Network Share</span>
+                                                            <span className="text-xs font-mono font-black text-emerald-400">{item.share.toFixed(1)}%</span>
+                                                        </div>
+                                                        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                                            <div className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all duration-1000" style={{ width: `${item.share}%` }} />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -286,30 +297,47 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                                 />
                             </Sankey>
                         ) : (
-                            <BarChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
+                            <BarChart data={historicalData} margin={{ top: 60, right: 30, left: 30, bottom: 20 }}>
+                                <defs>
+                                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#ffffff" stopOpacity={0.1} />
+                                        <stop offset="100%" stopColor="#ffffff" stopOpacity={0.02} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="8 8" vertical={false} stroke="#ffffff08" />
                                 <XAxis
                                     dataKey="date"
-                                    axisLine={false}
+                                    axisLine={{ stroke: '#ffffff10' }}
                                     tickLine={false}
-                                    tick={{ fontSize: 9, fill: '#64748b', fontWeight: 900 }}
-                                    tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }).toUpperCase()}
+                                    tick={{ fontSize: 11, fill: '#f8fafc', fontWeight: 900, opacity: 0.6 }}
+                                    dy={15}
+                                    tickFormatter={(val) => new Date(val).getFullYear().toString()}
                                 />
                                 <YAxis
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 9, fill: '#64748b', fontWeight: 500 }}
+                                    tick={{ fontSize: 11, fill: '#f8fafc', fontWeight: 600, opacity: 0.4 }}
                                     unit="M"
+                                    dx={-10}
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(2, 6, 23, 0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', backdropFilter: 'blur(10px)' }}
-                                    itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
-                                    labelStyle={{ color: '#94a3b8', fontSize: '10px', marginBottom: '8px', fontWeight: 'black', textTransform: 'uppercase' }}
+                                    cursor={{ fill: 'url(#barGradient)' }}
+                                    contentStyle={{
+                                        backgroundColor: '#0f172a',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        borderRadius: '16px',
+                                        backdropFilter: 'blur(16px)',
+                                        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                                        padding: '16px'
+                                    }}
+                                    itemStyle={{ fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                                    labelStyle={{ color: '#ffffff', fontSize: '12px', marginBottom: '12px', fontWeight: '900', textTransform: 'uppercase', opacity: 0.7 }}
                                 />
                                 <Legend
                                     iconType="circle"
                                     verticalAlign="bottom"
-                                    wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: '30px' }}
+                                    align="center"
+                                    wrapperStyle={{ fontSize: '10px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', paddingTop: '40px', color: '#64748b' }}
                                 />
                                 {exporters.map((exporter, idx) => {
                                     const meta = Object.values(RISK_META).find(m => m.name === exporter) || { color: '#475569' };
@@ -320,7 +348,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                                             stackId="a"
                                             fill={meta.color}
                                             radius={[idx === exporters.length - 1 ? 4 : 0, idx === exporters.length - 1 ? 4 : 0, 0, 0]}
-                                            barSize={32}
+                                            barSize={48}
                                         />
                                     );
                                 })}
@@ -330,26 +358,28 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading 
                 )}
             </CardContent>
 
-            <div className="mt-auto pt-6 border-t border-white/5">
-                <div className="flex items-center justify-between">
-                    <div className="flex gap-6 items-center">
-                        <span className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-[0.2em] mr-2">Risk Stratification</span>
+            <div className="mt-8 pt-8 border-t border-white/10">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="flex flex-wrap justify-center gap-8 items-center">
+                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mr-2">Market Risk Tiering</span>
                         {[
-                            { color: '#10b981', label: 'Tier 1 / Stable' },
-                            { color: '#f59e0b', label: 'Tier 2 / Volatile' },
-                            { color: '#f43f5e', label: 'Tier 3 / At-Risk' }
+                            { color: '#10b981', label: 'Tier 1 / Optimal' },
+                            { color: '#f59e0b', label: 'Tier 2 / Diversify' },
+                            { color: '#ef4444', label: 'Tier 3 / Critical' }
                         ].map(legend => (
-                            <div key={legend.label} className="flex items-center gap-2 group/legend">
-                                <div className="w-2 h-2 rounded-full border border-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)] transition-shadow group-hover/legend:shadow-[0_0_15px_currentColor]" style={{ backgroundColor: legend.color, color: legend.color }} />
-                                <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest">{legend.label}</span>
+                            <div key={legend.label} className="flex items-center gap-3 group/legend">
+                                <div className="w-2.5 h-2.5 rounded-full border border-white/10 shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all group-hover/legend:scale-125" style={{ backgroundColor: legend.color, color: legend.color }} />
+                                <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">{legend.label}</span>
                             </div>
                         ))}
                     </div>
-                    <div className="flex items-center gap-3">
-                        <span className="px-2 py-0.5 rounded bg-white/5 border border-white/5 text-[9px] font-black text-muted-foreground/40 uppercase tracking-tighter">
-                            Tier 1 Intelligence
-                        </span>
-                        <span className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">WEST → EAST</span>
+                    <div className="flex items-center gap-4">
+                        <div className="flex flex-col items-end gap-1">
+                            <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Processing Standard</span>
+                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-0.5 rounded-full border border-blue-500/20">
+                                West ↔ East Corridor
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

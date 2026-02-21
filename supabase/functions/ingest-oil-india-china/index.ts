@@ -9,7 +9,7 @@ const EIA_API_BASE = "https://api.eia.gov/v2";
 const FRED_API_BASE = "https://api.stlouisfed.org/fred";
 
 async function fetchFredSeries(seriesId: string, apiKey: string) {
-    const url = `${FRED_API_BASE}/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&frequency=a&sort_order=desc&limit=10`;
+    const url = `${FRED_API_BASE}/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&frequency=a&sort_order=desc&limit=30`;
     console.log(`Fetching FRED ${seriesId}...`);
     const res = await fetch(url);
     if (!res.ok) throw new Error(`FRED Error ${seriesId}: ${res.status}`);
@@ -19,12 +19,12 @@ async function fetchFredSeries(seriesId: string, apiKey: string) {
 
 async function fetchEiaBrent(apiKey: string) {
     // Try both spt and series/data as backup
-    const url = `${EIA_API_BASE}/petroleum/pri/spt/data/?api_key=${apiKey}&frequency=annual&data[0]=value&facets[series][]=RBRTE&sort[0][column]=period&sort[0][direction]=desc&length=10`;
+    const url = `${EIA_API_BASE}/petroleum/pri/spt/data/?api_key=${apiKey}&frequency=annual&data[0]=value&facets[series][]=RBRTE&sort[0][column]=period&sort[0][direction]=desc&length=30`;
     console.log(`Fetching EIA Brent...`);
     const res = await fetch(url);
     if (!res.ok) {
         console.warn(`EIA Brent SPT Error: ${res.status}. Trying series/data...`);
-        const altUrl = `${EIA_API_BASE}/series/data/?api_key=${apiKey}&series_id=PET.RBRTE.A&frequency=annual&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=10`;
+        const altUrl = `${EIA_API_BASE}/series/data/?api_key=${apiKey}&series_id=PET.RBRTE.A&frequency=annual&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=30`;
         const altRes = await fetch(altUrl);
         if (!altRes.ok) throw new Error(`EIA Brent Alt Error: ${altRes.status}`);
         const altJson = await altRes.json();
@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
             url.searchParams.append('facets[countryRegionId][]', reporter.id);
             url.searchParams.append('sort[0][column]', 'period');
             url.searchParams.append('sort[0][direction]', 'desc');
-            url.searchParams.append('length', '500');
+            url.searchParams.append('length', '2000');
 
             try {
                 const res = await fetch(url.toString());
@@ -146,7 +146,7 @@ Deno.serve(async (req) => {
                     altUrl.searchParams.append('facets[countryRegionId][]', reporter.id);
                     altUrl.searchParams.append('sort[0][column]', 'period');
                     altUrl.searchParams.append('sort[0][direction]', 'desc');
-                    altUrl.searchParams.append('length', '500');
+                    altUrl.searchParams.append('length', '2000');
 
                     const altRes = await fetch(altUrl.toString());
                     const altJson = await altRes.json();

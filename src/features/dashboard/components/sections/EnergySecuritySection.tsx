@@ -105,16 +105,15 @@ export const EnergySecuritySection: React.FC = () => {
                 </div>
             )}
 
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-16">
                 {/* Row 1: US Refining Strategic Capacity */}
                 <MotionCard delay={0.1} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-emerald-500/50" />
+                    <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Refining Strategic Capacity
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Monitoring the industrial backbone of US energy independence. Operable capacity vs. utilization rates indicates system stress and supply-side resilience.
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Industrial backbone of US energy independence. Operable capacity vs. utilization rates indicates system stress and supply-side resilience.
                         </p>
                     </div>
                     <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
@@ -132,15 +131,16 @@ export const EnergySecuritySection: React.FC = () => {
                     </Suspense>
                 </MotionCard>
 
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
                 {/* Row 2: Strategic Petroleum Reserve */}
                 <MotionCard delay={0.2} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-orange-500/50" />
-                            Strategic Petroleum Reserve (SPR)
+                    <div className="mb-8 pl-4 border-l-4 border-orange-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                            Strategic Petroleum Reserve <span className="text-orange-500/40">(SPR)</span>
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            The nation's emergency oil stockpile. Tracking drawdown, inventory levels, and strategic refilling mandates relative to historical baselines.
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Emergency oil stockpile metrics. Tracking drawdown, inventory levels, and strategic refilling mandates relative to historical baselines.
                         </p>
                     </div>
                     <Suspense fallback={<div className="h-[350px] animate-pulse bg-white/5 rounded-[2.5rem]" />}>
@@ -148,15 +148,16 @@ export const EnergySecuritySection: React.FC = () => {
                     </Suspense>
                 </MotionCard>
 
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
                 {/* Row 3: Power Mix Divergence */}
                 <MotionCard delay={0.3} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-blue-500/50" />
+                    <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Power Mix Divergence
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Comparative analysis of electricity generation sources across major economies, highlighting the pace of decarbonization and reliance on fossil baseload.
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Comparative analysis of electricity generation sources. Highlighting decarbonization pace and reliance on fossil baseload across G4 economies.
                         </p>
                     </div>
                     <div className="flex flex-col gap-8">
@@ -177,108 +178,108 @@ export const EnergySecuritySection: React.FC = () => {
                         </div>
 
                         {/* 2. KPI Cards as Full Width Rows */}
-                        <div className="w-full p-6 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div>
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-1">EU Gas Resilience</h4>
-                                <p className="text-[10px] text-muted-foreground/60 italic">EU Aggregate Gas Storage levels (Historical Trend)</p>
-                            </div>
-                            <div className="flex items-center gap-6 flex-1 max-w-2xl h-16">
-                                {/* Sparkline Area Chart for EU Gas */}
-                                <div className="flex-1 h-full w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={data.euGasData}>
-                                            <defs>
-                                                <linearGradient id="euGasGradient" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                                </linearGradient>
-                                            </defs>
-                                            <Area
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="#3b82f6"
-                                                fill="url(#euGasGradient)"
-                                                strokeWidth={2}
-                                            />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="w-full p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-6 backdrop-blur-sm">
+                                <div>
+                                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">EU Gas Resilience</h4>
+                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-wider">Aggregate Storage Trend</p>
                                 </div>
-                                <div className="flex items-end gap-2 shrink-0">
-                                    <span className="text-3xl font-black text-white">
-                                        {data.euGasData && data.euGasData.length > 0
-                                            ? Math.round(data.euGasData[data.euGasData.length - 1].value)
-                                            : 'N/A'}%
-                                    </span>
-                                    <span className="text-[10px] font-bold text-emerald-400 mb-1.5">Storage Level</span>
+                                <div className="flex items-center gap-6 flex-1 max-w-md h-16">
+                                    <div className="flex-1 h-full w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={data.euGasData}>
+                                                <defs>
+                                                    <linearGradient id="euGasGradient" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="value"
+                                                    stroke="#3b82f6"
+                                                    fill="url(#euGasGradient)"
+                                                    strokeWidth={2}
+                                                />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <div className="flex items-end gap-2 shrink-0">
+                                        <span className="text-4xl font-black text-white italic">
+                                            {data.euGasData && data.euGasData.length > 0
+                                                ? Math.round(data.euGasData[data.euGasData.length - 1].value)
+                                                : 'N/A'}%
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="w-full p-6 rounded-[2rem] bg-rose-500/5 border border-rose-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div>
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 mb-1">Global Refining Stress</h4>
-                                <p className="text-[10px] text-muted-foreground/60 italic">Avg Utilization Rate (20-Year Trend)</p>
-                            </div>
-                            <div className="flex items-center gap-6 flex-1 max-w-2xl h-16">
-                                {/* Sparkline Area Chart for Refining Stress (Utilization) */}
-                                <div className="flex-1 h-full w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={data.utilizationData}>
-                                            <defs>
-                                                <linearGradient id="utilGradient" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
-                                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
-                                                </linearGradient>
-                                            </defs>
-                                            <YAxis domain={['auto', 'auto']} hide />
-                                            <Area
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="#f43f5e"
-                                                fill="url(#utilGradient)"
-                                                strokeWidth={2}
-                                            />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
+                            <div className="w-full p-8 rounded-[2rem] bg-rose-500/[0.03] border border-rose-500/10 flex flex-col md:flex-row md:items-center justify-between gap-6 backdrop-blur-sm">
+                                <div>
+                                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-rose-400 mb-2">Refining Stress</h4>
+                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-wider">Historical Utilization Rate</p>
                                 </div>
-                                <div className="flex items-end gap-2 shrink-0">
-                                    <span className="text-3xl font-black text-white">
-                                        {data.utilizationData && data.utilizationData.length > 0
-                                            ? Math.round(data.utilizationData[data.utilizationData.length - 1].value)
-                                            : 'N/A'}%
-                                    </span>
-                                    <span className="text-[10px] font-bold text-rose-400 mb-1.5">Util. Rate</span>
+                                <div className="flex items-center gap-6 flex-1 max-w-md h-16">
+                                    <div className="flex-1 h-full w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={data.utilizationData}>
+                                                <defs>
+                                                    <linearGradient id="utilGradient" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                                                        <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <YAxis domain={['auto', 'auto']} hide />
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="value"
+                                                    stroke="#f43f5e"
+                                                    fill="url(#utilGradient)"
+                                                    strokeWidth={2}
+                                                />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <div className="flex items-end gap-2 shrink-0">
+                                        <span className="text-4xl font-black text-white italic">
+                                            {data.utilizationData && data.utilizationData.length > 0
+                                                ? Math.round(data.utilizationData[data.utilizationData.length - 1].value)
+                                                : 'N/A'}%
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </MotionCard>
 
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
                 {/* Row 3.5: Asia Commodity Flows */}
                 <MotionCard delay={0.4} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-emerald-500/50" />
+                    <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Asia Commodity Flow Dynamics
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Visualizing the molecular shift toward the East. Tracking Crude Oil import origins for India and China identifies emerging trade corridors and energy density dependencies.
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Molecular shift toward the East. Tracking Crude import origins for Bharat & China identifies emerging trade corridors and energy density dependencies.
                         </p>
                     </div>
-                    <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                    <Suspense fallback={<div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />}>
                         <OilFlowsSankey data={data.importData} isLoading={false} />
                     </Suspense>
                 </MotionCard>
 
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
                 {/* Row 3.6: Local Import Pressure */}
                 <MotionCard delay={0.45} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-rose-500/50" />
+                    <div className="mb-8 pl-4 border-l-4 border-rose-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Local Import Pressure
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Measuring the economic impact of energy sourcing. Tracking weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Economic impact of energy sourcing. Weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
                         </p>
                     </div>
                     <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
@@ -290,19 +291,19 @@ export const EnergySecuritySection: React.FC = () => {
                     </Suspense>
                 </MotionCard>
 
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
                 {/* Row 4: Import Vulnerability & Flow Matrix */}
                 <MotionCard delay={0.5} className="w-full">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-light text-white flex items-center gap-2">
-                            <span className="w-8 h-px bg-blue-500/50" />
+                    <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Global Supply Vulnerability
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 ml-10 max-w-2xl">
-                            Mapping the origin of US energy imports. Higher concentration from geopolitically volatile regions (OPEC+, Venezuela, Middle East) directly impacts the national risk profile.
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Mapping US energy import concentration. Higher reliance on volatile regions (OPEC+, Middle East) directly impacts the national risk profile.
                         </p>
                     </div>
 
-                    {/* STACKED LAYOUT FOR DESKTOP */}
                     <div className="flex flex-col gap-12">
                         {/* 1. Sankey Diagram */}
                         <div className="w-full">
