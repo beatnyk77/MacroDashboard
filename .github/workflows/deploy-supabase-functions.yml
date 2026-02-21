@@ -43,23 +43,48 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          # Export each filter result as a named env var — avoids invalid
+          # dynamic expression syntax (${{ steps.filter.outputs.$var }})
+          CHANGED_SHARED: ${{ steps.filter.outputs._shared }}
+          CHANGED_INGEST_FRED: ${{ steps.filter.outputs['ingest-fred'] }}
+          CHANGED_INGEST_MACRO_EVENTS: ${{ steps.filter.outputs['ingest-macro-events'] }}
+          CHANGED_INGEST_COMMODITY_RESERVES: ${{ steps.filter.outputs['ingest-commodity-reserves'] }}
+          CHANGED_INGEST_MOSPI: ${{ steps.filter.outputs['ingest-mospi'] }}
+          CHANGED_INGEST_NSE_FLOWS: ${{ steps.filter.outputs['ingest-nse-flows'] }}
+          CHANGED_INGEST_NYFED_MARKETS: ${{ steps.filter.outputs['ingest-nyfed-markets'] }}
+          CHANGED_INGEST_UN_COMTRADE: ${{ steps.filter.outputs['ingest-un-comtrade'] }}
+          CHANGED_INGEST_SHADOW_TRADE: ${{ steps.filter.outputs['ingest-shadow-trade'] }}
+          CHANGED_INGEST_TRADE_GRAVITY: ${{ steps.filter.outputs['ingest-trade-gravity'] }}
+          CHANGED_CHECK_DATA_HEALTH: ${{ steps.filter.outputs['check-data-health'] }}
+          CHANGED_GENERATE_NEWSLETTER: ${{ steps.filter.outputs['generate-newsletter'] }}
         run: |
-          # If _shared changed, deploy all core functions
-          if [ "${{ steps.filter.outputs._shared }}" = "true" ]; then
-            echo "Shared utils changed, deploying all functions..."
-            for func_dir in supabase/functions/*/ ; do
+          deploy_func() {
+            local func_name="$1"
+            echo "Deploying $func_name..."
+            supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+          }
+
+          # If _shared changed, redeploy all functions
+          if [ "$CHANGED_SHARED" = "true" ]; then
+            echo "Shared utils changed — deploying all functions..."
+            for func_dir in supabase/functions/*/; do
               if [ -f "${func_dir}index.ts" ]; then
                 func_name=$(basename "$func_dir")
-                echo "Deploying $func_name..."
-                supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+                deploy_func "$func_name"
               fi
             done
           else
-            # Deploy only specific changed functions
-            for func in ingest-fred ingest-macro-events ingest-commodity-reserves ingest-mospi ingest-nse-flows ingest-nyfed-markets ingest-un-comtrade ingest-shadow-trade ingest-trade-gravity check-data-health generate-newsletter; do
-              if [ "${{ steps.filter.outputs.$func }}" = "true" ]; then
-                echo "Deploying $func..."
-                supabase functions deploy "$func" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
-              fi
-            done
+            # Deploy only changed functions using named env vars (not dynamic expressions)
+            [ "$CHANGED_INGEST_FRED" = "true" ]                && deploy_func "ingest-fred"
+            [ "$CHANGED_INGEST_MACRO_EVENTS" = "true" ]        && deploy_func "ingest-macro-events"
+            [ "$CHANGED_INGEST_COMMODITY_RESERVES" = "true" ]  && deploy_func "ingest-commodity-reserves"
+            [ "$CHANGED_INGEST_MOSPI" = "true" ]               && deploy_func "ingest-mospi"
+            [ "$CHANGED_INGEST_NSE_FLOWS" = "true" ]           && deploy_func "ingest-nse-flows"
+            [ "$CHANGED_INGEST_NYFED_MARKETS" = "true" ]       && deploy_func "ingest-nyfed-markets"
+            [ "$CHANGED_INGEST_UN_COMTRADE" = "true" ]         && deploy_func "ingest-un-comtrade"
+            [ "$CHANGED_INGEST_SHADOW_TRADE" = "true" ]        && deploy_func "ingest-shadow-trade"
+            [ "$CHANGED_INGEST_TRADE_GRAVITY" = "true" ]       && deploy_func "ingest-trade-gravity"
+            [ "$CHANGED_CHECK_DATA_HEALTH" = "true" ]          && deploy_func "check-data-health"
+            [ "$CHANGED_GENERATE_NEWSLETTER" = "true" ]        && deploy_func "generate-newsletter"
+            echo "Selective deployment complete."
           fi
