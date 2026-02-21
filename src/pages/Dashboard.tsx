@@ -65,6 +65,7 @@ const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/row
 const CriticalChokepointsCard = lazy(() => import('@/features/dashboard/components/rows/CriticalChokepointsCard').then(m => ({ default: m.CriticalChokepointsCard })));
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
+const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -426,6 +427,13 @@ export const Dashboard: React.FC = () => {
                 <SectionErrorBoundary name="Shadow Trade Monitor">
                     <Suspense fallback={<LoadingFallback />}>
                         <ShadowTradeCard />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                {/* ROW 6.9: AI COMPUTE & ENERGY CAPEX MONITOR */}
+                <SectionErrorBoundary name="AI Compute & Energy Monitor">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <AIComputeEnergyMonitor />
                     </Suspense>
                 </SectionErrorBoundary>
 
