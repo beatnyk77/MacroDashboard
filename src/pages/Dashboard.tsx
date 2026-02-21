@@ -62,6 +62,7 @@ const IndiaFiscalAllocationTracker = lazy(() => import('@/features/dashboard/com
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
+const CriticalChokepointsCard = lazy(() => import('@/features/dashboard/components/rows/CriticalChokepointsCard').then(m => ({ default: m.CriticalChokepointsCard })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -402,6 +403,13 @@ export const Dashboard: React.FC = () => {
                 <SectionErrorBoundary name="Deflation Debasement Monitor">
                     <Suspense fallback={<LoadingFallback />}>
                         <DeflationDebasementMonitor />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                {/* ROW 6.7: CRITICAL CHOKEPOINTS MONITOR */}
+                <SectionErrorBoundary name="Critical Chokepoints Monitor">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <CriticalChokepointsCard />
                     </Suspense>
                 </SectionErrorBoundary>
 
