@@ -64,6 +64,7 @@ const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const CriticalChokepointsCard = lazy(() => import('@/features/dashboard/components/rows/CriticalChokepointsCard').then(m => ({ default: m.CriticalChokepointsCard })));
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
+const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -392,6 +393,13 @@ export const Dashboard: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                 </SPASection>
+
+                {/* ROW 5.6: BRICS+ vs G7 TRADE GRAVITY */}
+                <SectionErrorBoundary name="Trade Gravity Shift">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <TradeGravityCard />
+                    </Suspense>
+                </SectionErrorBoundary>
 
                 {/* ROW 6: CURRENCY WARS MONITOR */}
                 <SectionErrorBoundary name="Currency Wars Monitor">
