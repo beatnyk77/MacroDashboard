@@ -22,6 +22,8 @@ const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy').then(module => 
 const About = lazy(() => import('@/pages/About').then(module => ({ default: module.About })));
 const GlossaryIndexPage = lazy(() => import('@/pages/GlossaryIndexPage').then(module => ({ default: module.GlossaryIndexPage })));
 const GlossaryTermPage = lazy(() => import('@/pages/GlossaryTermPage').then(module => ({ default: module.GlossaryTermPage })));
+const IntelIndiaPage = lazy(() => import('@/pages/IntelIndiaPage').then(module => ({ default: module.IntelIndiaPage })));
+const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module => ({ default: module.IntelChinaPage })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -58,6 +60,8 @@ function App() {
                                         <Route path="/about" element={<About />} />
                                         <Route path="/glossary" element={<GlossaryIndexPage />} />
                                         <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
+                                        <Route path="/intel/india" element={<IntelIndiaPage />} />
+                                        <Route path="/intel/china" element={<IntelChinaPage />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />
