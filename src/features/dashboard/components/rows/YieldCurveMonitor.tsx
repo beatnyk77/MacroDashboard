@@ -11,9 +11,10 @@ import {
     CartesianGrid,
     Tooltip,
 } from 'recharts';
-import { TrendingUp, TrendingDown, AlertTriangle, Info } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, Info, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 /* ── Tenor ordering for x-axis ────────────────────────────────── */
 const TENOR_ORDER = ['3M', '6M', '1Y', '2Y', '5Y', '10Y', '30Y'];
@@ -284,6 +285,11 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
                     <span className="text-[0.5rem] font-bold text-muted-foreground/40 ml-1">bps</span>
                 </span>
             </div>
+
+            {/* Term Premium Glossary Link */}
+            <Link to="/glossary/term-premium" className="flex items-center gap-1.5 text-[0.55rem] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest transition-colors mb-2">
+                <BookOpen size={10} /> Read Term Premium Definition
+            </Link>
 
             {/* 2s10s Spread */}
             <div className="flex items-center justify-between">

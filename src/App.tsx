@@ -19,6 +19,9 @@ const APIAccessPage = lazy(() => import('@/pages/APIAccessPage').then(module => 
 const APIDocsPage = lazy(() => import('@/pages/APIDocsPage').then(module => ({ default: module.APIDocsPage })));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService').then(module => ({ default: module.TermsOfService })));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const About = lazy(() => import('@/pages/About').then(module => ({ default: module.About })));
+const GlossaryIndexPage = lazy(() => import('@/pages/GlossaryIndexPage').then(module => ({ default: module.GlossaryIndexPage })));
+const GlossaryTermPage = lazy(() => import('@/pages/GlossaryTermPage').then(module => ({ default: module.GlossaryTermPage })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -52,6 +55,9 @@ function App() {
                                         <Route path="/api-docs" element={<APIDocsPage />} />
                                         <Route path="/terms" element={<TermsOfService />} />
                                         <Route path="/privacy" element={<PrivacyPolicy />} />
+                                        <Route path="/about" element={<About />} />
+                                        <Route path="/glossary" element={<GlossaryIndexPage />} />
+                                        <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />

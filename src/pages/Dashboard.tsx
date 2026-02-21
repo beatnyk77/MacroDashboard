@@ -68,7 +68,7 @@ const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
 
 const LoadingFallback = () => (
-    <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
+    <div className="w-full min-h-[400px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
         <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Signal...</span>
     </div>
 );
@@ -159,6 +159,7 @@ export const Dashboard: React.FC = () => {
                             subtitle="High-frequency liquidity and regime signals"
                             sectionId="heartbeat"
                             level="h1"
+                            lastUpdated={new Date().toISOString()}
                         />
                         <DataHealthTicker />
                     </div>

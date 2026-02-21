@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity } from 'lucide-react';
+import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface MaturityBucket {
     bucket: string;
@@ -246,22 +247,30 @@ export const USDebtMaturityWall: React.FC = () => {
                 {/* Rollover Risk Card - NEW */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                    className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 rounded-xl p-5 relative overflow-hidden group"
                 >
-                    <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <ArrowUpRight className="w-16 h-16 text-red-500" />
-                    </div>
-                    <div className="flex items-center gap-3 mb-2 relative z-10">
-                        <Activity className="w-6 h-6 text-red-400" />
-                        <span className="text-red-200 text-sm font-medium">Rollover Shock Risk</span>
-                    </div>
-                    <p className="text-3xl font-bold text-white relative z-10">${rolloverRiskTrillions}T</p>
-                    <div className="relative z-10 mt-1">
-                        <div className="flex items-center gap-2">
-                            <span className="text-red-300 text-xs bg-red-500/20 px-1.5 py-0.5 rounded">Low-Cost Debt</span>
-                            <span className="text-slate-400 text-xs">maturing &lt;1Y</span>
+                    <Link
+                        to="/glossary/sovereign-rollover-risk"
+                        className="block bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 rounded-xl p-5 relative overflow-hidden group hover:border-red-400/50 transition-colors cursor-pointer"
+                        title="View Glossary Definition"
+                    >
+                        <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <ArrowUpRight className="w-16 h-16 text-red-500" />
                         </div>
-                    </div>
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <BookOpen className="w-4 h-4 text-red-400" />
+                        </div>
+                        <div className="flex items-center gap-3 mb-2 relative z-10">
+                            <Activity className="w-6 h-6 text-red-400" />
+                            <span className="text-red-200 text-sm font-medium">Rollover Shock Risk</span>
+                        </div>
+                        <p className="text-3xl font-bold text-white relative z-10">${rolloverRiskTrillions}T</p>
+                        <div className="relative z-10 mt-1">
+                            <div className="flex items-center gap-2">
+                                <span className="text-red-300 text-xs bg-red-500/20 px-1.5 py-0.5 rounded">Low-Cost Debt</span>
+                                <span className="text-slate-400 text-xs">maturing &lt;1Y</span>
+                            </div>
+                        </div>
+                    </Link>
                 </motion.div>
 
                 <motion.div

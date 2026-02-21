@@ -12,7 +12,8 @@ import {
     ReferenceLine
 } from 'recharts';
 import { useNetLiquidityHistory } from '@/hooks/useNetLiquidityHistory';
-import { Info, Zap } from 'lucide-react';
+import { Info, Zap, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
@@ -194,6 +195,9 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 <span className="text-white font-bold"> TGA</span> or drained via the
                                 <span className="text-white font-bold"> RRP</span>.
                             </p>
+                            <Link to="/glossary/stealth-qe" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-[10px] font-black uppercase tracking-widest mt-2 transition-colors">
+                                <BookOpen size={12} /> Learn about Stealth QE
+                            </Link>
                         </div>
                     </div>
 

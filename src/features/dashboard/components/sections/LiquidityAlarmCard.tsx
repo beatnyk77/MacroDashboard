@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ShieldAlert, ShieldCheck, X, Info, Target, TrendingDown, Activity, AlertTriangle } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, X, Info, Target, TrendingDown, Activity, AlertTriangle, BookOpen } from 'lucide-react';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
 import { cn } from '@/lib/utils';
 import { formatBillions } from '@/utils/formatNumber';
+import { Link } from 'react-router-dom';
 
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -252,9 +253,18 @@ export const LiquidityAlarmCard: React.FC = () => {
                                     <code className="block text-sm font-bold text-primary mb-2 font-mono">
                                         Net Liquidity = WALCL - TGA - RRP
                                     </code>
-                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                    <p className="text-xs text-muted-foreground leading-relaxed mt-2">
                                         Calculated as the Federal Reserve Total Assets (WALCL) minus the Treasury General Account (TGA) and Reverse Repo Facility (RRP). Data ingested daily from NY Fed Markets API for high-fidelity signal.
                                     </p>
+                                    <div className="flex gap-4 mt-3">
+                                        <Link to="/glossary/tga" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-[10px] font-black uppercase tracking-widest transition-colors">
+                                            <BookOpen size={12} /> What is the TGA?
+                                        </Link>
+                                        <Link to="/glossary/reverse-repo-facility-rrp" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-[10px] font-black uppercase tracking-widest transition-colors">
+                                            <BookOpen size={12} /> What is RRP?
+                                        </Link>
+                                    </div>
+
                                 </div>
                             </div>
 

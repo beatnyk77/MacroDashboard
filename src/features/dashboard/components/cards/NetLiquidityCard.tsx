@@ -3,6 +3,8 @@ import { MetricCard } from '@/components/MetricCard';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { formatMetric } from '@/utils/formatMetric';
 import { formatNumber } from '@/utils/formatNumber';
+import { Link } from 'react-router-dom';
+import { BookOpen } from 'lucide-react';
 
 export const NetLiquidityCard: React.FC = () => {
     const { data: netLiq } = useNetLiquidity();
@@ -20,7 +22,14 @@ export const NetLiquidityCard: React.FC = () => {
             zScore={netLiq?.z_score}
             percentile={netLiq?.percentile}
             description="Global Net Liquidity estimates the actual 'spendable' liquidity provided by the Federal Reserve, adjusted for the TGA and Repo drains."
-            methodology="Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Z-Score provides the deviation from the 3-year trend."
+            methodology={
+                <div className="space-y-2">
+                    <p>Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Z-Score provides the deviation from the 3-year trend.</p>
+                    <Link to="/glossary/net-liquidity-z-score" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-wider mt-2 transition-colors">
+                        <BookOpen size={14} /> Read Full Definition
+                    </Link>
+                </div>
+            }
             source="Fed, US Treasury"
             stats={[
                 { label: 'Fed Assets', value: `$${formatNumber(netLiq?.fed_assets ? netLiq.fed_assets / 1e6 : 0, { decimals: 2 })}T`, color: 'primary.main' },

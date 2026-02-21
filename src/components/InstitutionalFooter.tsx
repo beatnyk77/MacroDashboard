@@ -52,11 +52,24 @@ export const InstitutionalFooter: React.FC = () => {
                             <Link to="/privacy" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Privacy</Link>
                         </div>
                         <Link
+                            to="/about"
+                            className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/80 hover:text-white transition-colors"
+                        >
+                            About Team
+                        </Link>
+                        <Link
                             to="/blog"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
+                            className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
                             <BookOpen size={12} />
                             Intelligence Journal
+                        </Link>
+                        <Link
+                            to="/glossary"
+                            className="text-[0.6rem] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                        >
+                            <BookOpen size={12} />
+                            Glossary
                         </Link>
                         <a
                             href="/rss.xml"

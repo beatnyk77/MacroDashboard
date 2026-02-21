@@ -14,6 +14,47 @@ export const SEOFAQSection: React.FC = () => {
             border: '1px solid',
             borderColor: 'divider'
         }}>
+            {/* FAQ Schema for AI Extractability and Rich Snippets */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    "mainEntity": [
+                        {
+                            "@type": "Question",
+                            "name": "What is a macro liquidity dashboard?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "A macro liquidity dashboard, like GraphiQuestor, tracks the availability and flow of capital within the global financial system, focusing on central bank balance sheets, RRP, and TGA levels to identify expansionary or contractionary regimes."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "How does GraphiQuestor track gold valuation vs real rates?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "We analyze gold prices against 10-year real yields to calculate z-scores that signal over or undervaluation relative to historical norms, providing a dedicated gold macro valuation lens for institutional analysis."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "How often is BRICS de-dollarization and gold accumulation data updated?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Data for BRICS+ gold reserves and USD reserve shares are updated as quarterly IMF and central bank reports are released, offering a consistent de-dollarization tracker for institutional analysis."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Who is this macro risk dashboard for?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "GraphiQuestor is built for institutional macro researchers, portfolio managers, and financial professionals who require a high-signal sovereign bond stress monitor and liquidity-driven regime tracking for global macro risk management."
+                            }
+                        }
+                    ]
+                })}
+            </script>
             <Typography variant="h2" sx={{ fontSize: '1.2rem', fontWeight: 700, mb: 3, color: 'text.primary' }}>
                 Frequently Asked Questions
             </Typography>

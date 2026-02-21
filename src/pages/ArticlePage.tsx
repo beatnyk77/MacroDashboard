@@ -33,7 +33,14 @@ export const ArticlePage: React.FC = () => {
                     "datePublished": article.date,
                     "author": {
                         "@type": "Person",
-                        "name": article.author
+                        "name": article.author,
+                        ...(article.author === 'Kartikay Sharma' ? {
+                            "jobTitle": "Chartered Accountant & Macro Analyst",
+                            "url": "https://graphiquestor.com/about",
+                            "sameAs": [
+                                "https://www.linkedin.com/in/kartikay-sharma-b9190214/"
+                            ]
+                        } : {})
                     },
                     "publisher": {
                         "@type": "Organization",
