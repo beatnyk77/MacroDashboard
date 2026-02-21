@@ -44,6 +44,7 @@ serve(async (req) => {
             if (!metricObs.length) return null;
 
             const latest = metricObs[0];
+            const isStale = (new Date().getTime() - new Date(latest.as_of_date).getTime()) > 7 * 24 * 60 * 60 * 1000;
             // Find observation closest to 30 days ago
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -66,7 +67,8 @@ serve(async (req) => {
                 past: pastValue,
                 delta: delta,
                 pctChange: pctChange.toFixed(2),
-                insight
+                insight,
+                isStale
             };
         }).filter(Boolean);
 

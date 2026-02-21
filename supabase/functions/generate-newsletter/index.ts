@@ -156,8 +156,12 @@ Deno.serve(async (req) => {
             seriesData[key] = series.map(x => x.value);
         }));
 
+        let stalenessWarningHtml = '';
+        let stalenessWarningText = '';
         if (staleMetrics.length > 5) {
             console.warn(`Critical Staleness Detected: ${staleMetrics.length} metrics are overdue. Proceeding with warnings.`);
+            stalenessWarningHtml = `<div style="background-color: ${colors.danger}20; border: 1px solid ${colors.danger}; color: ${colors.danger}; padding: 12px; margin-bottom: 20px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 14px;">⚠️ WARNING: ${staleMetrics.length} core metrics are currently stale (>${STALENESS_THRESHOLD_DAYS} days old). Data may not reflect real-time conditions.</div>`;
+            stalenessWarningText = `\n⚠️ WARNING: ${staleMetrics.length} core metrics are currently stale (>${STALENESS_THRESHOLD_DAYS} days old). Data may not reflect real-time conditions.\n`;
         }
 
         // Specific Table Fetches
@@ -236,7 +240,7 @@ Deno.serve(async (req) => {
             </div>
 
             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 20px;">
-                
+                ${stalenessWarningHtml ? `<tr><td colspan="4">${stalenessWarningHtml}</td></tr>` : ''}
                 <!-- 1. MACRO HEARTBEAT -->
                 ${SectionHeader('1. Macro Heartbeat & Global Liquidity')}
                 <tr><td colspan="4" style="padding: 12px 0; color: ${colors.text}; text-align: justify;">
@@ -309,7 +313,7 @@ Deno.serve(async (req) => {
         const text = `
     GRAPHIESTOR MACRO REGIME DIGEST - ${currentMonth}
     ${preview}
-
+    ${stalenessWarningText}
     --------------------------------------------------
     1. MACRO HEARTBEAT
     --------------------------------------------------

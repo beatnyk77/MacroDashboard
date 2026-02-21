@@ -21,7 +21,7 @@ export const Sparkline: React.FC<SparklineProps> = ({ data, color, height = 40 }
                             <stop offset="95%" stopColor={strokeColor} stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <YAxis domain={['dataMin', 'dataMax']} hide />
+                    <YAxis domain={['dataMin - 1', 'dataMax + 1']} hide />
                     <Area
                         type="monotone"
                         dataKey="value"

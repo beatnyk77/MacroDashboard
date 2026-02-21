@@ -214,14 +214,15 @@ Deno.serve(async (req: Request) => {
               console.error(`FRED: Upsert error for ${metric.id}:`, upsertError);
               throw upsertError;
             }
-
             await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
             return { metricId: metric.id, count: observations.length, success: true };
           }
           console.warn(`FRED: No valid numeric data for ${metric.id} (Raw count: ${rawCount})`);
+          await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
           return { metricId: metric.id, count: 0, success: true, metadata: { rawCount } };
         } catch (err: any) {
           console.error(`Error processing ${metric.id}: ${err.message}`);
+          await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
           return { metricId: metric.id, count: 0, success: false, error: err.message };
         }
       }));

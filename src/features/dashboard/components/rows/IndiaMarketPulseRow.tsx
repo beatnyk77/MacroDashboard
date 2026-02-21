@@ -80,7 +80,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     title="India Market Pulse"
                     subtitle="Daily institutional microstructure and capital flow intelligence"
                 />
-                <div className="flex gap-3 mb-2 items-center">
+                <div className="flex gap-4 mb-2 items-center">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5">
                         <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest">From</span>
                         <input
@@ -99,12 +99,12 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     </div>
                     <button
                         onClick={handleExport}
-                        className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/10 transition-all active:scale-95"
+                        className="ml-2 px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/10 transition-all active:scale-95"
                     >
                         <Download size={12} />
                         Export CSV
                     </button>
-                    <div className="px-2 py-1 rounded bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1">
+                    <div className="ml-2 px-3 py-1.5 rounded bg-white/[0.03] border border-white/5 text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-2">
                         <Activity size={10} /> Live NSE Data
                     </div>
                 </div>
@@ -377,8 +377,16 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                             </div>
-                            <div className="mt-3 text-[0.6rem] text-muted-foreground/40">
-                                52W Highs: {data.new_highs_52w || 0} | 52W Lows: {data.new_lows_52w || 0}
+                            <div className="mt-4 text-[0.7rem] font-bold text-muted-foreground/60 uppercase tracking-wider flex items-center gap-3">
+                                <span className="flex items-center gap-1.5">
+                                    <span className="text-white/20">52W Highs:</span>
+                                    <span className="text-emerald-500/80">{data.new_highs_52w || 0}</span>
+                                </span>
+                                <span className="w-px h-2 bg-white/5" />
+                                <span className="flex items-center gap-1.5">
+                                    <span className="text-white/20">52W Lows:</span>
+                                    <span className="text-rose-500/80">{data.new_lows_52w || 0}</span>
+                                </span>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
@@ -391,20 +399,22 @@ export const IndiaMarketPulseRow: React.FC = () => {
                         </div>
                     </div>
                 </motion.div>
-            </div>
+            </div >
 
             {/* Toast Notification */}
-            <div className={cn(
-                "fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 pointer-events-none",
-                showToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            )}>
+            < div className={
+                cn(
+                    "fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 pointer-events-none",
+                    showToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                )
+            } >
                 <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
                         Data Exported Successfully
                     </span>
                 </div>
-            </div>
-        </SPASection>
+            </div >
+        </SPASection >
     );
 };

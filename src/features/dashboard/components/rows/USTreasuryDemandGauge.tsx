@@ -9,13 +9,13 @@ import { formatNumber } from '@/utils/formatNumber';
 
 const REGIMES = {
     WEAK: { min: 0, max: 1.0, color: 'text-rose-500', bg: 'bg-rose-500', fill: '#f43f5e', label: 'Weak Demand' },
-    NORMAL: { min: 1.0, max: 1.8, color: 'text-amber-500', bg: 'bg-amber-500', fill: '#f59e0b', label: 'Healthy Demand' },
-    STRONG: { min: 1.8, max: 2.5, color: 'text-emerald-500', bg: 'bg-emerald-500', fill: '#10b981', label: 'Strong Demand' }
+    NORMAL: { min: 1.0, max: 1.6, color: 'text-amber-500', bg: 'bg-amber-500', fill: '#f59e0b', label: 'Healthy Demand' },
+    STRONG: { min: 1.6, max: 2.5, color: 'text-emerald-500', bg: 'bg-emerald-500', fill: '#10b981', label: 'Strong Demand' }
 };
 
 const getRegime = (score: number) => {
     if (score < 1.0) return REGIMES.WEAK;
-    if (score < 1.8) return REGIMES.NORMAL;
+    if (score < 1.6) return REGIMES.NORMAL;
     return REGIMES.STRONG;
 };
 
@@ -117,7 +117,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                 lastUpdated={processedData.current?.auction_date}
                 interpretations={[
                     "Demand Strength Score weights Bid-to-Cover by Indirect (Foreign/Institutional) participation.",
-                    "Higher scores (>1.8) signal strong foreign/private demand, neutralizing de-dollarization risks.",
+                    "Higher scores (>1.6) signal strong foreign/private demand, neutralizing de-dollarization risks.",
                     "Scores < 1.0 (Weak) indicate primary dealer absorption, flagging liquidity strain or auctions tails.",
                     "Primary Dealer 'Tail' Alert: Triggered when dealers must absorb >12.5% of benchmark auctions, signaling failed private interest."
                 ]}
@@ -268,8 +268,8 @@ export const USTreasuryDemandGauge: React.FC = () => {
                                 />
                                 {/* Regime Background Bands */}
                                 <ReferenceArea y1={0} y2={1.0} fill="#f43f5e" fillOpacity={0.03} />
-                                <ReferenceArea y1={1.0} y2={1.8} fill="#f59e0b" fillOpacity={0.03} />
-                                <ReferenceArea y1={1.8} y2={2.5} fill="#10b981" fillOpacity={0.03} />
+                                <ReferenceArea y1={1.0} y2={1.6} fill="#f59e0b" fillOpacity={0.03} />
+                                <ReferenceArea y1={1.6} y2={2.5} fill="#10b981" fillOpacity={0.03} />
 
                                 <Area
                                     type="monotone"

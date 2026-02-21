@@ -213,7 +213,7 @@ export const CockpitKPIGrid = React.memo(() => {
                         'index',
                         '',
                         '',
-                        (vix?.value || 0) > 20 ? 'warning' : (vix?.value || 0) > 30 ? 'danger' : 'safe'
+                        (vix?.value || 0) >= 35 ? 'danger' : (vix?.value || 0) >= 25 ? 'warning' : 'safe'
                     )}
                 </div>
             </div>
