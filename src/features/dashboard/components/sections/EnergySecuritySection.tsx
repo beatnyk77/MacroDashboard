@@ -282,7 +282,7 @@ export const EnergySecuritySection: React.FC = () => {
                             Economic impact of energy sourcing. Weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
                         </p>
                     </div>
-                    <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                    <Suspense fallback={<div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />}>
                         <OilImportCostCard
                             importData={data.importData}
                             brentPriceData={data.brentPriceData || []}

@@ -80,7 +80,10 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
         >
-            <Card className="bg-slate-950/40 border-white/5 backdrop-blur-3xl overflow-hidden group p-4 sm:p-6 lg:p-8 transition-all hover:bg-slate-950/60 shadow-2xl min-h-[500px] h-auto lg:h-[520px] flex flex-col">
+            <Card className="bg-slate-900/60 border-white/10 backdrop-blur-3xl overflow-hidden group p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] min-h-[520px] h-auto flex flex-col relative">
+                {/* Background Decorative Gradients - Tamed */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 blur-[120px] -ml-48 -mb-48 pointer-events-none" />
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-white/5 relative gap-4">
                     <div className="space-y-1.5 font-sans">
                         <div className="flex items-center gap-3">
@@ -113,8 +116,8 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                     </div>
                 </div>
 
-                <CardContent className="p-0 mt-6 sm:mt-10 flex-1 min-h-0">
-                    <div className="grid grid-cols-1 lg:grid-cols-10 h-full gap-8 lg:gap-10">
+                <CardContent className="p-0 mt-8 flex-1 min-h-0 relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-10 h-full gap-8 lg:gap-12">
                         <div className="lg:col-span-3 lg:border-r border-white/5 lg:pr-10 flex flex-col justify-between gap-8">
                             {stats ? (
                                 <div className="space-y-6 sm:space-y-10">
@@ -181,10 +184,10 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                             </div>
                         </div>
 
-                        <div className="lg:col-span-7 lg:pl-4 relative h-[300px] sm:h-[350px] lg:h-full">
+                        <div className="lg:col-span-7 lg:pl-6 relative min-h-[350px] lg:min-h-[400px] h-full">
                             {chartData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <ComposedChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                                    <ComposedChart data={chartData} margin={{ top: 40, right: 10, left: -20, bottom: 20 }}>
                                         <defs>
                                             <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="5%" stopColor={activeCountry === 'IN' ? '#3b82f6' : '#ef4444'} stopOpacity={0.2} />
@@ -252,7 +255,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             verticalAlign="top"
                                             align="right"
                                             iconType="circle"
-                                            wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.15em', paddingBottom: '30px', opacity: 0.6 }}
+                                            wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.15em', paddingBottom: '20px', top: -20, opacity: 0.6 }}
                                         />
                                         <Area
                                             yAxisId="right"
