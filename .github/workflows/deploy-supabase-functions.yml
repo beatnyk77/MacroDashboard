@@ -32,6 +32,9 @@ jobs:
             ingest-mospi: ['supabase/functions/ingest-mospi/**']
             ingest-nse-flows: ['supabase/functions/ingest-nse-flows/**']
             ingest-nyfed-markets: ['supabase/functions/ingest-nyfed-markets/**']
+            ingest-un-comtrade: ['supabase/functions/ingest-un-comtrade/**']
+            ingest-shadow-trade: ['supabase/functions/ingest-shadow-trade/**']
+            ingest-trade-gravity: ['supabase/functions/ingest-trade-gravity/**']
             check-data-health: ['supabase/functions/check-data-health/**']
             generate-newsletter: ['supabase/functions/generate-newsletter/**']
             _shared: ['supabase/functions/_shared/**']
@@ -53,7 +56,7 @@ jobs:
             done
           else
             # Deploy only specific changed functions
-            for func in ingest-fred ingest-macro-events ingest-commodity-reserves ingest-mospi ingest-nse-flows ingest-nyfed-markets check-data-health generate-newsletter; do
+            for func in ingest-fred ingest-macro-events ingest-commodity-reserves ingest-mospi ingest-nse-flows ingest-nyfed-markets ingest-un-comtrade ingest-shadow-trade ingest-trade-gravity check-data-health generate-newsletter; do
               if [ "${{ steps.filter.outputs.$func }}" = "true" ]; then
                 echo "Deploying $func..."
                 supabase functions deploy "$func" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
