@@ -30,6 +30,7 @@ const G20_COUNTRIES = [
     { code: 'DEU', name: 'Germany', color: '#10b981' },
     { code: 'BRA', name: 'Brazil', color: '#8b5cf6' },
     { code: 'JPN', name: 'Japan', color: '#ec4899' },
+    { code: 'EU27', name: 'EU', color: '#6366f1' },
     { code: 'IDN', name: 'Indonesia', color: '#06b6d4' },
     { code: 'RUS', name: 'Russia', color: '#4b5563' },
 ];
@@ -39,7 +40,7 @@ const BASE_YEARS = [2008, 2015, 2020];
 export const G20GdpPerCapitaConvergence: React.FC = () => {
     const { data, isLoading } = useG20GdpConvergence();
     const [baseYear, setBaseYear] = useState(2008);
-    const [selectedCountries, setSelectedCountries] = useState(['USA', 'IND']);
+    const [selectedCountries, setSelectedCountries] = useState(['USA', 'IND', 'CHN', 'EU27', 'JPN']);
 
     const chartData = useMemo(() => {
         if (!data) return [];
@@ -79,6 +80,7 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
     // Highlights for the callouts
     const indiaGrowth = chartData.length > 0 ? (chartData[chartData.length - 1]['IND'] - 100).toFixed(0) : 0;
     const usaGrowth = chartData.length > 0 ? (chartData[chartData.length - 1]['USA'] - 100).toFixed(0) : 0;
+    const chinaGrowth = chartData.length > 0 ? (chartData[chartData.length - 1]['CHN'] - 100).toFixed(0) : 0;
 
     return (
         <Card sx={{
@@ -214,27 +216,38 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
                 ))}
             </Box>
 
-            <Box sx={{ mt: 6, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 4 }}>
+            <Box sx={{ mt: 6, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 4 }}>
                 <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha('#f59e0b', 0.05), border: '1px solid ' + alpha('#f59e0b', 0.1) }}>
                     <Typography variant="caption" sx={{ color: '#f59e0b', fontWeight: 800, textTransform: 'uppercase', mb: 1, display: 'block' }}>
-                        Emerging Force
+                        Emerging Force (IND)
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white' }}>
-                        India Growth: +{indiaGrowth}%
+                        India: +{indiaGrowth}%
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Cumulative Real GDP per capita expansion since {baseYear}. One of the fastest convergence rates in the G20.
+                        Fastest convergence trajectory in the group.
+                    </Typography>
+                </Box>
+                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha('#ef4444', 0.05), border: '1px solid ' + alpha('#ef4444', 0.1) }}>
+                    <Typography variant="caption" sx={{ color: '#ef4444', fontWeight: 800, textTransform: 'uppercase', mb: 1, display: 'block' }}>
+                        Economic Titan (CHN)
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white' }}>
+                        China: +{chinaGrowth}%
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Massive scale shift since {baseYear}.
                     </Typography>
                 </Box>
                 <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha('#3b82f6', 0.05), border: '1px solid ' + alpha('#3b82f6', 0.1) }}>
                     <Typography variant="caption" sx={{ color: '#3b82f6', fontWeight: 800, textTransform: 'uppercase', mb: 1, display: 'block' }}>
-                        Advanced Benchmark
+                        Advanced Benchmark (USA)
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white' }}>
-                        USA Growth: +{usaGrowth}%
+                        USA: +{usaGrowth}%
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Resilient but slower per-capita growth typical of high-income economies during this period.
+                        Resilient baseline for advanced economies.
                     </Typography>
                 </Box>
             </Box>
