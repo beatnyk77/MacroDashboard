@@ -66,6 +66,7 @@ const CriticalChokepointsCard = lazy(() => import('@/features/dashboard/componen
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
+const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[400px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -372,6 +373,12 @@ export const Dashboard: React.FC = () => {
                             <SectionErrorBoundary name="Sovereign Risk">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <SovereignRiskMatrix />
+                                </Suspense>
+                            </SectionErrorBoundary>
+
+                            <SectionErrorBoundary name="G20 GDP Convergence">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <G20GdpPerCapitaConvergence />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </SPAAccordion>
