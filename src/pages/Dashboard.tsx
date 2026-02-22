@@ -162,6 +162,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 1.6: TOP FOREIGN HOLDERS OF US TREASURIES */}
                 <SPASection id="treasury-holders" variant="hero" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#treasury-holders" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Top Foreign Treasury Holders</h2>
                     <SectionErrorBoundary name="Top Treasury Holders">
                         <Suspense fallback={<LoadingFallback />}>
                             <TopTreasuryHoldersTable />
@@ -194,6 +196,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 3: MARKET TERMINAL GRID */}
                 <SPASection id="market-pulse" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#market-pulse" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Market Pulse Terminal</h2>
                     <SectionErrorBoundary name="System Heartbeat">
                         <Suspense fallback={<LoadingFallback />}>
                             <CockpitKPIGrid />
@@ -203,6 +207,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 3: MACRO FLOWS (SANKEY) */}
                 <SPASection id="us-macro-pulse" variant="band" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#us-macro-pulse" />
+                    <h2 className="text-2xl font-bold text-white mb-6">US Macro Pulse</h2>
                     <SectionHeader
                         title="US Macro Pulse"
                         subtitle="Interstate capital and energy liquidity flow visualization"
@@ -272,6 +278,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 4.5: GEOPOLITICAL MATRIX */}
                 <SPASection id="geopolitical-matrix" variant="band" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#geopolitical-matrix" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Geopolitical Matrix</h2>
                     <SectionErrorBoundary name="Geopolitical Map">
                         <Suspense fallback={<LoadingFallback />}>
                             <GeopoliticalEventsRow />
@@ -476,7 +484,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 7: COUNTRY PULSES */}
                 <SPASection id="country-pulses" className="py-24" disableAnimation>
-                    {/* ... existing content ... */}
+                    <link rel="canonical" href="https://graphiquestor.com/#country-pulses" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Global Country Pulses</h2>
                     <div className="mt-16 space-y-12">
                         {/* India Pulse */}
                         <SPAAccordion
