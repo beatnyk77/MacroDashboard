@@ -8,8 +8,8 @@ interface ShadowTradeCardProps {
     className?: string;
 }
 
-const ORIGINS = ['USA', 'Germany'];
-const DESTINATIONS = ['United Arab Emirates', 'Turkey', 'Kazakhstan'];
+const ORIGINS = ['USA', 'Germany', 'United Kingdom', 'Japan'];
+const DESTINATIONS = ['United Arab Emirates', 'Turkey', 'Kazakhstan', 'India', 'Serbia'];
 
 const getSpikeColor = (ratio: number): string => {
     if (ratio >= 7) return 'bg-red-500/80 text-red-100';

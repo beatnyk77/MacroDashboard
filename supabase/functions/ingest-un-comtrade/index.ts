@@ -5,17 +5,6 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-type TradeRecord = {
-    reporterCode: number;
-    reporterName: string;
-    partnerCode: number;
-    partnerName: string;
-    period: string;
-    primaryValue: number;
-    netWgt: number;
-    isFlowIn: boolean;
-};
-
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
@@ -27,22 +16,20 @@ Deno.serve(async (req) => {
         const comtradeKey = Deno.env.get('COMTRADE_API_KEY') || Deno.env.get('contrade_api_key');
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        console.log("Starting UN Comtrade Ingestion for Semiconductors (HS 8542)...");
+        const urlParams = new URL(req.url).searchParams;
+        const category = urlParams.get('category') || 'Semiconductors';
+        const hsCode = urlParams.get('hsCode') || '8542';
 
-        // HS 8542: Electronic integrated circuits
-        // For MVP, we'll fetch data for the top exporters and their partners
-        // Reporters: 156 (China), 410 (Korea), 490 (Taiwan), 528 (Netherlands), 840 (USA)
-        // We'll fetch the most recent annual data available (usually 2023 or 2024)
+        console.log(`Starting UN Comtrade Ingestion for ${category} (HS ${hsCode})...`);
 
-        // HS 8542: Electronic integrated circuits
+        // Period: 2023
+        // Add 699 (India) to reporters
+        const reporterCode = "156,410,490,528,840,699";
         const period = "2023";
-        const reporterCode = "156,410,490,528,840";
-        const cmdCode = "8542";
         const flowCode = "X"; // Exports
         const partnerCode = "0"; // World
 
-        // Attempting the 'data/v1/get' endpoint which is common for authenticated v1 calls
-        let url = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterCode}&period=${period}&cmdCode=${cmdCode}&flowCode=${flowCode}&partnerCode=${partnerCode}`;
+        let url = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterCode}&period=${period}&cmdCode=${hsCode}&flowCode=${flowCode}&partnerCode=${partnerCode}`;
 
         if (comtradeKey) {
             url += `&subscription-key=${comtradeKey}`;
@@ -62,8 +49,8 @@ Deno.serve(async (req) => {
         console.log(`Received ${records.length} records from UN Comtrade.`);
 
         const tradeData = records.map((record: any) => ({
-            category: 'Semiconductors',
-            hs_code: cmdCode,
+            category: category,
+            hs_code: hsCode,
             reporter_code: record.reporterCode.toString(),
             reporter_name: record.reporterName,
             partner_code: record.partnerCode.toString(),
@@ -80,8 +67,6 @@ Deno.serve(async (req) => {
         }));
 
         if (tradeData.length > 0) {
-            // Filter out 'World' partner if we want bilateral only, but keep it for reference if needed
-            // For Sankey, we need specific partners.
             const bilateralData = tradeData.filter(r => r.partner_code !== '0');
 
             const { error } = await supabase
@@ -92,13 +77,13 @@ Deno.serve(async (req) => {
 
             if (error) throw error;
 
-            console.log(`Successfully upserted ${bilateralData.length} bilateral trade records.`);
+            console.log(`Successfully upserted ${bilateralData.length} records.`);
         }
 
         return new Response(JSON.stringify({
             success: true,
             count: tradeData.length,
-            message: `Ingested ${tradeData.length} records for HS 8542.`
+            message: `Ingested ${tradeData.length} records for ${category}.`
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });

@@ -30,6 +30,9 @@ const STATE_GEO: Record<string, { lat: number; lng: number }> = {
     'Saudi Arabia': { lat: 23.8859, lng: 45.0792 },
     'Turkey': { lat: 38.9637, lng: 35.2433 },
     'Vietnam': { lat: 14.0583, lng: 108.2772 },
+    'Indonesia': { lat: -0.7893, lng: 113.9213 },
+    'Mexico': { lat: 23.6345, lng: -102.5528 },
+    'South Africa': { lat: -30.5595, lng: 22.9375 },
 };
 
 export const useTradeGravityData = () => {

@@ -14,7 +14,7 @@ export const CriticalChokepointsCard: React.FC<CriticalChokepointsCardProps> = (
 
     // For MVP, we only implemented Semiconductors (HS 8542)
     const hsCode = selectedCategory === 'Semiconductors' ? '8542' :
-        selectedCategory === 'Energy' ? '2709' : '280530';
+        selectedCategory === 'Energy' ? '2709' : '1006'; // HS 1006 is Rice
 
     const { data, loading, error, lastUpdated } = useComtradeData(selectedCategory, hsCode);
 
@@ -61,13 +61,12 @@ export const CriticalChokepointsCard: React.FC<CriticalChokepointsCardProps> = (
                             <button
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
-                                disabled={category !== 'Semiconductors'} // Disable others for MVP
                                 className={cn(
                                     "px-3 py-1.5 text-xs font-mono uppercase rounded-md transition-all duration-300",
                                     selectedCategory === category
                                         ? "bg-white/10 text-white shadow-sm ring-1 ring-white/20"
                                         : "text-muted-foreground hover:text-white/70 hover:bg-white/5",
-                                    category !== 'Semiconductors' && "opacity-50 cursor-not-allowed"
+                                    category !== 'Semiconductors' && category !== 'Energy' && category !== 'Rare Earths' && "opacity-50 cursor-not-allowed" // Enable all for now
                                 )}
                             >
                                 {category}
@@ -87,7 +86,9 @@ export const CriticalChokepointsCard: React.FC<CriticalChokepointsCardProps> = (
                         <p className="text-xs text-red-300/80 mt-1">
                             {selectedCategory === 'Semiconductors'
                                 ? "High concentration risk observed in advanced semiconductor exports originating from Taiwan (HS 8542)."
-                                : "Data analysis in progress for this highly strategic vector."}
+                                : selectedCategory === 'Energy'
+                                    ? "Disruption in Brent Crude flows (HS 2709) detected across Eurasian pipelines."
+                                    : "India (Global Market Leader) has implemented Rice export quotas, impacting food security for 40+ nations."}
                         </p>
                     </div>
                 </div>
