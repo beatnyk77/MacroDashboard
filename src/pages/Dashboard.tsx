@@ -106,6 +106,7 @@ export const Dashboard: React.FC = () => {
                 jsonLd={{
                     "@context": "https://schema.org",
                     "@type": "WebSite",
+                    "@id": "https://graphiquestor.com/#website",
                     "name": "GraphiQuestor",
                     "url": "https://graphiquestor.com/",
                     "description": "Institutional-grade macro intelligence dashboard.",

@@ -19,6 +19,7 @@ export const SEOFAQSection: React.FC = () => {
                 {JSON.stringify({
                     "@context": "https://schema.org",
                     "@type": "FAQPage",
+                    "mainEntityOfPage": { "@id": "https://graphiquestor.com/#website" },
                     "mainEntity": [
                         {
                             "@type": "Question",
