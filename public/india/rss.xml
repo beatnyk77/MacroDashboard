@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>GraphiQuestor – India Intelligence Feed</title>
+  <link>https://graphiquestor.com/intel/india</link>
+  <description>Institutional-grade macro telemetry for India: RBI liquidity, MoSPI real-time CPI/IIP, and fiscal stress monitor.</description>
+  <language>en-us</language>
+  <lastBuildDate>Mon, 23 Feb 2026 01:00:00 GMT</lastBuildDate>
+  <atom:link href="https://graphiquestor.com/india/rss.xml" rel="self" type="application/rss+xml" />
+  
+  <item>
+    <title>India Macro Pulse Dashboard</title>
+    <link>https://graphiquestor.com/#india-pulse</link>
+    <description>MoSPI Industrial Production, CPI, and Credit creation velocity data.</description>
+    <pubDate>Mon, 23 Feb 2026 01:00:00 GMT</pubDate>
+    <guid>https://graphiquestor.com/#india-pulse</guid>
+    <category>India Macro</category>
+  </item>
+
+  <item>
+    <title>India Fiscal Stress Monitor</title>
+    <link>https://graphiquestor.com/#india-fiscal-stress</link>
+    <description>Tracking Interest Payments as % of Revenue Receipts for sovereign sustainability.</description>
+    <pubDate>Mon, 23 Feb 2026 01:00:00 GMT</pubDate>
+    <guid>https://graphiquestor.com/#india-fiscal-stress</guid>
+    <category>Fiscal Policy</category>
+  </item>
+
+  <item>
+    <title>India Market Pulse Terminal</title>
+    <link>https://graphiquestor.com/#india-market-pulse-terminal</link>
+    <description>Market microstructure, liquidity, and FII/DII flow tracking.</description>
+    <pubDate>Mon, 23 Feb 2026 01:00:00 GMT</pubDate>
+    <guid>https://graphiquestor.com/#india-market-pulse-terminal</guid>   
+    <category>Market Microstructure</category>
+  </item>
+</channel>
+</rss>

@@ -139,6 +139,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 1: US DEBT MATURITY WALL - HERO SECTION */}
                 <SPASection id="debt-maturity-hero" variant="hero" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#debt-maturity-hero" />
+                    <h2 className="text-2xl font-bold text-white mb-6">US Debt Maturity Wall</h2>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <Suspense fallback={<LoadingFallback />}>
                             <USDebtMaturityWall />
@@ -149,6 +151,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 1.5: US TREASURY AUCTION DEMAND GAUGE */}
                 <SPASection id="treasury-demand" variant="hero" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#treasury-demand" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Treasury Auction Demand</h2>
                     <SectionErrorBoundary name="Treasury Demand Gauge">
                         <Suspense fallback={<LoadingFallback />}>
                             <USTreasuryDemandGauge />
@@ -167,6 +171,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 2: GLOBAL NET LIQUIDITY SIGNAL */}
                 <SPASection id="liquidity-hero" variant="hero" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#liquidity-hero" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Global Net Liquidity Pulse</h2>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
                         <SectionHeader
                             title="Macro Heartbeat"
@@ -213,6 +219,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 3.5: INDIA MARKET MICROSTRUCTURE */}
                 <SPASection id="india-market-pulse-terminal" className="bg-white/[0.01]" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#india-market-pulse-terminal" />
+                    <h2 className="text-2xl font-bold text-white mb-6">India Market Pulse Terminal</h2>
                     <SectionErrorBoundary name="India Market Pulse">
                         <Suspense fallback={<LoadingFallback />}>
                             <IndiaMarketPulseRow />
@@ -223,6 +231,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 4: POLICY & GEOPOLITICS */}
                 <SPASection id="policy-geopolitics" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#policy-geopolitics" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Policy & Geopolitics</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         <SPAAccordion
                             title="Trump Action Monitor"
@@ -271,6 +281,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 5: THEMATIC LABS */}
                 <SPASection id="thematic-labs" variant="band" className="py-24" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#thematic-labs" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Thematic Labs</h2>
                     <SectionHeader
                         title="Thematic Deep Dives"
                         subtitle="Detailed signal intelligence for Hard Assets, De-Dollarization, and Sovereign Sustainability"
@@ -389,6 +401,8 @@ export const Dashboard: React.FC = () => {
                                     <SovereignRiskMatrix />
                                 </Suspense>
                             </SectionErrorBoundary>
+                            <link rel="canonical" href="https://graphiquestor.com/#sovereign-debt-stress" />
+                            <h2 className="text-2xl font-bold text-white mb-6">Sovereign Debt Stress Matrix</h2>
                             <ChartInsightSummary id="insight-sovereign-risk" insight="The Sovereign Risk Matrix scores G20 nations across debt/GDP, CDS spreads, and refinancing risk. Italy, Japan, and the US occupy elevated risk zones with debt/GDP above 110%. Emerging markets show a bifurcating trend — India and Indonesia demonstrate fiscal discipline, while frontier economies face widening CDS spreads. The heatmap integrates IMF fiscal monitor data with real-time credit default swap pricing." />
 
                             <SectionErrorBoundary name="G20 GDP Convergence">
@@ -482,6 +496,8 @@ export const Dashboard: React.FC = () => {
                                     <IndiaMacroPulseSection />
                                 </Suspense>
                             </SectionErrorBoundary>
+                            <link rel="canonical" href="https://graphiquestor.com/#india-pulse" />
+                            <h2 className="text-2xl font-bold text-white mb-6">India Macro Pulse</h2>
                             <ChartInsightSummary id="insight-india-pulse" insight="India's macro pulse integrates MoSPI Industrial Production (IIP), CPI inflation tracking, credit creation velocity, and BOP pressure indicators in real-time. With domestic credit growth running above trend and inflation cooling below 4.5%, the RBI's policy stance remains pivotal. These signals capture India's unique macro position — simultaneously managing capital account liberalization, fiscal consolidation, and growth acceleration." />
                         </SPAAccordion>
 
