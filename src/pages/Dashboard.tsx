@@ -365,6 +365,8 @@ export const Dashboard: React.FC = () => {
                                     </Suspense>
                                 </SectionErrorBoundary>
                             </div>
+                            <link rel="canonical" href="https://graphiquestor.com/#brics-dedollarization" />
+                            <h2 className="text-2xl font-bold text-white mb-6">BRICS & De-Dollarization</h2>
                         </SPAAccordion>
 
                         <SPAAccordion
@@ -424,6 +426,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 4.5: YIELD CURVE MONITOR */}
                 <SPASection id="yield-curve-monitor" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#yield-curve-monitor" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Yield Curve Monitor</h2>
                     <SectionErrorBoundary name="Yield Curve Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <YieldCurveMonitor />
@@ -433,6 +437,8 @@ export const Dashboard: React.FC = () => {
 
                 {/* ROW 5.5: SPHERES OF INFLUENCE */}
                 <SPASection id="spheres-of-influence" disableAnimation>
+                    <link rel="canonical" href="https://graphiquestor.com/#spheres-of-influence" />
+                    <h2 className="text-2xl font-bold text-white mb-6">Spheres of Institutional Influence</h2>
                     <SectionErrorBoundary name="Spheres of Influence">
                         <Suspense fallback={<LoadingFallback />}>
                             <InstitutionalInfluenceSection />
@@ -579,12 +585,19 @@ export const Dashboard: React.FC = () => {
                             subtitle="GDP, CPI, credit impulse, PBoC intervention"
                             icon={<MapPin />}
                             accentColor="rose"
+                            interpretations={[
+                                "PBoC Liquidity: High",
+                                "Credit Impulse: Expanding",
+                                "Growth Focus: Tech/Green"
+                            ]}
                         >
                             <SectionErrorBoundary name="China Macro">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <ChinaMacroPulseSection />
                                 </Suspense>
                             </SectionErrorBoundary>
+                            <link rel="canonical" href="https://graphiquestor.com/#china-pulse" />
+                            <h2 className="text-2xl font-bold text-white mb-6">China Macro Pulse</h2>
                         </SPAAccordion>
                     </div>
                 </SPASection>
