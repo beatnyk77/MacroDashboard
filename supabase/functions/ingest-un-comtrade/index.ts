@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
             const { error } = await supabase
                 .from('trade_chokepoints')
                 .upsert(bilateralData, {
-                    onConflict: 'category, hs_code, reporter_code, partner_code, period, reporter_is_exporter'
+                    onConflict: 'category,hs_code,reporter_code,partner_code,period,reporter_is_exporter'
                 });
 
             if (error) throw error;

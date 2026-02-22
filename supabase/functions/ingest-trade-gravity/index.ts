@@ -67,7 +67,7 @@ Deno.serve(async (req: any) => {
 
         const { error } = await supabase
             .from('trade_gravity')
-            .upsert(tradeData, { onConflict: 'swing_state_code, bloc, period' });
+            .upsert(tradeData, { onConflict: 'swing_state_code,bloc,period' });
 
         if (error) throw error;
 

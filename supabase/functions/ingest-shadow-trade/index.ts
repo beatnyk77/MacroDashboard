@@ -41,7 +41,7 @@ Deno.serve(async (req: any) => {
 
         const { error } = await supabase
             .from('shadow_trade_anomalies')
-            .upsert(anomalies, { onConflict: 'origin_code, destination_code, category, current_period' });
+            .upsert(anomalies, { onConflict: 'origin_code,destination_code,category,hs_code,current_period' });
 
         if (error) throw error;
 
