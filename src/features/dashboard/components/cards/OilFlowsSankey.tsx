@@ -3,6 +3,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
 import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle, BarChart, Bar, XAxis, YAxis, Legend, CartesianGrid } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/lib/supabase';
+import { useQuery } from '@tanstack/react-query';
 
 interface OilFlow {
     importer_country_code: string;
@@ -13,8 +15,8 @@ interface OilFlow {
 }
 
 interface OilFlowsSankeyProps {
-    data: OilFlow[];
-    isLoading: boolean;
+    data?: OilFlow[];
+    isLoading?: boolean;
 }
 
 const RISK_META: Record<string, { name: string, score: number, color: string, glow: string }> = {
@@ -110,9 +112,40 @@ const CustomLink = (props: any) => {
     );
 };
 
-export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data, isLoading }) => {
+
+export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, isLoading: propLoading }) => {
     const [activeTab, setActiveTab] = useState<'IN' | 'CN'>('IN');
     const [viewMode, setViewMode] = useState<'sankey' | 'history'>('sankey');
+
+    // Fetch from commodity_flows as secondary source if propData is missing/empty
+    const { data: commodityFlows, isLoading: flowsLoading } = useQuery({
+        queryKey: ['commodity-flows-oil'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('commodity_flows')
+                .select('*')
+                .eq('commodity', 'Crude Oil');
+            if (error) throw error;
+            return data;
+        },
+        enabled: !propData || propData.length === 0
+    });
+
+    const data = useMemo(() => {
+        if (propData && propData.length > 0) return propData;
+        if (!commodityFlows) return [];
+
+        // Map commodity_flows to OilFlow interface
+        return commodityFlows.map((f: any) => ({
+            importer_country_code: f.target === 'India' ? 'IN' : f.target === 'China' ? 'CN' : f.target,
+            exporter_country_code: f.source === 'Saudi Arabia' ? 'SA' : f.source === 'Russia' ? 'RU' : f.source === 'Iraq' ? 'IQ' : f.source,
+            exporter_country_name: f.source,
+            import_volume_mbbl: Number(f.volume),
+            as_of_date: f.as_of_date
+        }));
+    }, [propData, commodityFlows]);
+
+    const isLoading = propLoading || flowsLoading;
 
     const historicalData = useMemo(() => {
         const filtered = data.filter(d => d.importer_country_code === activeTab);

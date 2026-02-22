@@ -10,6 +10,7 @@ const OilImportVulnerabilityCard = lazy(() => import('../cards/OilImportVulnerab
 const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({ default: m.OilFlowsSankey })));
 const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
+const ReserveTrackerCard = lazy(() => import('@/features/commodities/components/ReserveTrackerCard').then(m => ({ default: m.ReserveTrackerCard })));
 const OilImportCostCard = lazy(() => import('../cards/OilImportCostCard').then(m => ({ default: m.OilImportCostCard })));
 const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCard').then(m => ({ default: m.PowerMixDivergenceCard })));
 
@@ -98,7 +99,8 @@ export const EnergySecuritySection: React.FC = () => {
                 <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between group">
                     <div className="flex items-center gap-3">
                         <DataQualityBadge type="simulated" />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/80">
+                        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-500/90 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                             Live Feed Normalizing — Displaying Institutional Proxies
                         </p>
                     </div>
@@ -145,6 +147,23 @@ export const EnergySecuritySection: React.FC = () => {
                     </div>
                     <Suspense fallback={<div className="h-[350px] animate-pulse bg-white/5 rounded-[2.5rem]" />}>
                         <SPRTrackerCard data={data.sprData} isLoading={false} />
+                    </Suspense>
+                </MotionCard>
+
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
+                {/* Row 2.5: Global Strategic Reserves & Stockpiles */}
+                <MotionCard delay={0.25} className="w-full">
+                    <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                            Strategic Reserve & Stockpile Tracker
+                        </h3>
+                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                            Comprehensive monitoring of critical resource inventories. India Grains (Rice/Wheat) and Global Crude Oil strategic/commercial levels.
+                        </p>
+                    </div>
+                    <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
+                        <ReserveTrackerCard />
                     </Suspense>
                 </MotionCard>
 

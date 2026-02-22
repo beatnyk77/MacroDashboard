@@ -5,7 +5,6 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 
 const PriceTerminalCard = lazy(() => import('./components/PriceTerminalCard').then(m => ({ default: m.PriceTerminalCard })));
 const PhysicalFlowNetwork = lazy(() => import('./components/PhysicalFlowNetwork').then(m => ({ default: m.PhysicalFlowNetwork })));
-const ReserveTrackerCard = lazy(() => import('./components/ReserveTrackerCard').then(m => ({ default: m.ReserveTrackerCard })));
 const DisruptionMapCard = lazy(() => import('./components/DisruptionMapCard').then(m => ({ default: m.DisruptionMapCard })));
 const MetalImportCard = lazy(() => import('./components/MetalImportCard').then(m => ({ default: m.MetalImportCard })));
 
@@ -88,13 +87,6 @@ export const CommodityTerminalRow: React.FC = () => {
                     </div>
                 </SectionErrorBoundary>
 
-                <SectionErrorBoundary name="Reserve Tracker">
-                    <div className="w-full">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <ReserveTrackerCard />
-                        </Suspense>
-                    </div>
-                </SectionErrorBoundary>
 
                 <SectionErrorBoundary name="Disruption Map">
                     <div className="w-full">

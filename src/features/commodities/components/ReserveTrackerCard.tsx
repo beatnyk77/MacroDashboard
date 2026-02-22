@@ -81,18 +81,20 @@ export const ReserveTrackerCard: React.FC = () => {
         <Card className="bg-black/40 border-white/10 backdrop-blur-md shadow-2xl">
             <CardHeader className="pb-4 bg-white/[0.02] border-b border-white/5 px-6">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                        <Box className="w-4 h-4 text-emerald-500" />
-                        Strategic Reserve & Stockpile Tracker
+                    <CardTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                        <Box className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60">
+                            Resource Security & Stockpile Tracker
+                        </span>
                     </CardTitle>
-                    <div className="flex gap-2">
-                        <div className="flex items-center gap-1.5">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                            <span className="text-[8px] font-bold text-muted-foreground uppercase">Strategic</span>
+                    <div className="flex gap-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest leading-none">Strategic</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                            <div className="w-2 h-2 rounded-full bg-blue-500" />
-                            <span className="text-[8px] font-bold text-muted-foreground uppercase">Commercial</span>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)]" />
+                            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest leading-none">Commercial</span>
                         </div>
                     </div>
                 </div>
@@ -102,39 +104,40 @@ export const ReserveTrackerCard: React.FC = () => {
             </CardHeader>
             <CardContent className="p-6">
                 {/* Big Number Tiles */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     {chartData.slice(0, 4).map((item, idx) => (
-                        <div key={idx} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.03] transition-all">
-                            <div className="flex items-start justify-between mb-2">
-                                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
+                        <div key={idx} className="p-5 rounded-[1.5rem] bg-white/[0.03] border border-white/10 hover:bg-white/[0.05] transition-all group/stat relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-white/5 to-transparent blur-xl pointer-events-none" />
+                            <div className="flex items-start justify-between mb-3">
+                                <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] group-hover/stat:text-white/50 transition-colors">
                                     {item.commodity}
                                 </span>
                                 <span className={cn(
-                                    "text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest",
-                                    item.stressRegime === 'Comfortable' ? "bg-emerald-500/10 text-emerald-400" :
-                                        item.stressRegime === 'Watch' ? "bg-amber-500/10 text-amber-400" :
-                                            "bg-rose-500/10 text-rose-400"
+                                    "text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border",
+                                    item.stressRegime === 'Comfortable' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                                        item.stressRegime === 'Watch' ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
+                                            "bg-rose-500/10 text-rose-400 border-rose-500/20"
                                 )}>
                                     {item.stressRegime}
                                 </span>
                             </div>
-                            <div className="text-2xl font-black text-white tabular-nums leading-none mb-1">
+                            <div className="text-3xl font-black text-white italic tabular-nums leading-none mb-2 tracking-tighter">
                                 {item.volume.toLocaleString()}
                             </div>
-                            <div className="flex items-center justify-between text-[10px]">
-                                <span className="text-muted-foreground/60">{item.country}</span>
+                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wide mt-1">
+                                <span className="text-white/40">{item.country}</span>
                                 <div className={cn(
-                                    "flex items-center gap-0.5 font-bold",
+                                    "flex items-center gap-1",
                                     item.delta >= 0 ? "text-emerald-400" : "text-rose-400"
                                 )}>
-                                    {item.delta >= 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                                    {item.delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                                     {Math.abs(item.delta).toFixed(1)}%
                                 </div>
                             </div>
                             {item.coverage && (
-                                <div className="mt-2 pt-2 border-t border-white/5">
-                                    <span className="text-[8px] text-muted-foreground/40 uppercase tracking-widest">Coverage: </span>
-                                    <span className="text-[10px] font-mono text-emerald-400">{item.coverage} days</span>
+                                <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                                    <span className="text-[9px] text-white/20 font-black uppercase tracking-widest">Inventory Coverage</span>
+                                    <span className="text-[11px] font-mono font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{item.coverage} <span className="text-[8px] opacity-40 italic">DAYS</span></span>
                                 </div>
                             )}
                         </div>
@@ -149,10 +152,12 @@ export const ReserveTrackerCard: React.FC = () => {
                             <YAxis
                                 dataKey="name"
                                 type="category"
-                                width={75}
-                                fontSize={9}
-                                fontWeight="bold"
-                                tick={{ fill: '#94a3b8' }}
+                                width={120}
+                                fontSize={10}
+                                fontWeight="900"
+                                tick={{ fill: '#f8fafc', opacity: 0.6 }}
+                                axisLine={false}
+                                tickLine={false}
                             />
                             <Tooltip
                                 content={({ active, payload }) => {
