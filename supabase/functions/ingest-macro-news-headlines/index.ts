@@ -9,14 +9,30 @@ const corsHeaders = {
 }
 
 const FEEDS = [
-    { url: 'https://www.ft.com/markets?format=rss', source: 'Financial Times' },
-    { url: 'https://www.bloomberg.com/feeds/markets/news.rss', source: 'Bloomberg' },
-    { url: 'https://www.reuters.com/arc/outboundfeeds/news-rss/?outputType=xml', source: 'Reuters' }
+    // Global Feeds
+    { url: 'https://www.ft.com/markets?format=rss', source: 'Financial Times', region: 'global' },
+    { url: 'https://www.bloomberg.com/feeds/markets/news.rss', source: 'Bloomberg', region: 'global' },
+    { url: 'https://www.reuters.com/arc/outboundfeeds/news-rss/?outputType=xml', source: 'Reuters', region: 'global' },
+    // India-Focused Feeds
+    { url: 'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms', source: 'Economic Times', region: 'india' },
+    { url: 'https://www.livemint.com/rss/markets', source: 'Mint', region: 'india' },
+    { url: 'https://news.google.com/rss/search?q=RBI+monetary+policy&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (RBI)', region: 'india' },
+    { url: 'https://news.google.com/rss/search?q=india+macro+economy+fiscal&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (India Macro)', region: 'india' },
 ]
 
 const KEYWORDS = [
+    // Global macro
     'liquidity', 'gold', 'treasury', 'BRICS', 'China', 'Fed', 'ECB',
-    'dollar', 'reserves', 'sovereign', 'de-dollarization'
+    'dollar', 'reserves', 'sovereign', 'de-dollarization',
+    // India-specific
+    'India', 'RBI', 'SEBI', 'rupee', 'INR', 'MoSPI', 'fiscal deficit',
+    'GST', 'NIFTY', 'Sensex', 'inflation India', 'credit growth',
+    'FII', 'DII', 'G-Sec', 'repo rate', 'SBI', 'HDFC',
+]
+
+const INDIA_KEYWORDS = [
+    'India', 'RBI', 'SEBI', 'rupee', 'INR', 'MoSPI', 'NIFTY', 'Sensex',
+    'fiscal deficit', 'GST', 'FII', 'DII', 'G-Sec', 'repo rate',
 ]
 
 function isValidUrl(url: string): boolean {
@@ -87,6 +103,7 @@ Deno.serve(async (req: Request) => {
                                     title: item.title?.['#text'] || item.title || 'Untitled Article',
                                     link: link,
                                     source: feed.source,
+                                    region: feed.region,
                                     published_at: item.pubDate || item.updated || item.published || new Date().toISOString()
                                 };
                             }).filter(a => isValidUrl(a.link));
@@ -130,13 +147,22 @@ Deno.serve(async (req: Request) => {
             const { error: upsertError } = await supabase
                 .from('macro_news_headlines')
                 .upsert(
-                    filteredArticles.map(a => ({
-                        title: a.title,
-                        link: a.link,
-                        source: a.source,
-                        published_at: new Date(a.published_at).toISOString(),
-                        keywords: a.keywords
-                    })),
+                    filteredArticles.map(a => {
+                        // Classify as India or Global based on source region + keyword match
+                        const textLower = a.title.toLowerCase();
+                        const isIndiaSource = a.region === 'india';
+                        const hasIndiaKeyword = INDIA_KEYWORDS.some(k => textLower.includes(k.toLowerCase()));
+                        const category = (isIndiaSource || hasIndiaKeyword) ? 'India' : 'Global';
+
+                        return {
+                            title: a.title,
+                            link: a.link,
+                            source: a.source,
+                            published_at: new Date(a.published_at).toISOString(),
+                            keywords: a.keywords,
+                            category: category,
+                        };
+                    }),
                     { onConflict: 'link', ignoreDuplicates: true }
                 )
 

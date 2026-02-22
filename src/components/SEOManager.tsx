@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
 interface SEOManagerProps {
     title: string;
@@ -10,6 +11,7 @@ interface SEOManagerProps {
     canonicalUrl?: string;
     publishedTime?: string;
     jsonLd?: Record<string, any>;
+    robots?: string;
 }
 
 export const SEOManager: React.FC<SEOManagerProps> = ({
@@ -21,8 +23,13 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     canonicalUrl,
     publishedTime,
     jsonLd,
+    robots = 'index, follow',
 }) => {
+    const location = useLocation();
     const fullTitle = `${title} | GraphiQuestor`;
+
+    // Auto-generate canonical if not provided — self-referencing per Google best practice
+    const resolvedCanonical = canonicalUrl || `https://graphiquestor.com${location.pathname}`;
 
     return (
         <Helmet>
@@ -36,13 +43,17 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <title>{fullTitle}</title>
             <meta name="description" content={description} />
             {keywords && <meta name="keywords" content={keywords.join(', ')} />}
+            <meta name="robots" content={robots} />
 
             {/* Open Graph */}
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={description} />
             <meta property="og:type" content={ogType} />
             <meta property="og:image" content={ogImage} />
-            {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+            <meta property="og:url" content={resolvedCanonical} />
+            <meta property="og:site_name" content="GraphiQuestor" />
+            <meta property="og:locale" content="en_IN" />
+            <link rel="canonical" href={resolvedCanonical} />
 
             {/* Twitter */}
             <meta name="twitter:title" content={fullTitle} />
@@ -57,10 +68,11 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta name="target_country" content="IN" />
 
             {/* Optimized Hreflang for Core Institutional Focus */}
-            <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-IN" />
-            <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-US" />
-            <link rel="alternate" href="https://graphiquestor.com/" hrefLang="en-GB" />
-            <link rel="alternate" href="https://graphiquestor.com/" hrefLang="x-default" />
+            <link rel="alternate" href={resolvedCanonical} hrefLang="en-IN" />
+            <link rel="alternate" href={resolvedCanonical} hrefLang="en-US" />
+            <link rel="alternate" href={resolvedCanonical} hrefLang="en-GB" />
+            <link rel="alternate" href={resolvedCanonical} hrefLang="x-default" />
         </Helmet>
     );
 };
+

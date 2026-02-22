@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { TrendingUp, TrendingDown, Activity, AlertCircle, Newspaper, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useRegime } from '@/hooks/useRegime';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { useMacroHeadlines, MacroHeadline } from '@/hooks/useMacroHeadlines';
+import { useMacroHeadlines, MacroHeadline, isHeadlineStale, timeAgo } from '@/hooks/useMacroHeadlines';
 import { formatBillions } from '@/utils/formatNumber';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,31 +12,34 @@ interface TodaysBriefPanelProps {
     sx?: any; // Deprecated, kept for compatibility
 }
 
+type FeedTab = 'all' | 'india' | 'global';
+
 export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className }) => {
     const { data: regime } = useRegime();
     const { data: liquidity } = useNetLiquidity();
     const { data: headlines } = useMacroHeadlines();
+    const [activeTab, setActiveTab] = useState<FeedTab>('all');
 
     // Restoration of missing variables for JSX
     const liquidityDelta = liquidity?.delta || null;
     const liquidityStatus = liquidityDelta ? (liquidityDelta > 0 ? 'Expanding' : 'Contracting') : 'Awaiting Data';
 
-    // Tailwind text color classes instead of hex values
     const getLiquidityColorClass = () => {
         if (!liquidityDelta) return 'text-muted-foreground';
         return liquidityDelta > 0 ? 'text-emerald-500' : 'text-rose-500';
     };
 
-    // Tailwind text color classes instead of hex values
-    const dynamicBriefing = useMemo(() => {
+    // Filter headlines by tab
+    const filteredHeadlines = useMemo(() => {
         if (!headlines || headlines.length === 0) return [];
-        return headlines.slice(0, 5).map((h: MacroHeadline) => ({
-            label: h.title,
-            anchor: '#macro-orientation-section', // Default anchor
-            trend: h.title.includes('↑') || h.title.includes('positive') ? 'up' :
-                (h.title.includes('↓') || h.title.includes('negative') ? 'down' : 'neutral')
-        }));
-    }, [headlines]);
+        let filtered = headlines;
+        if (activeTab === 'india') {
+            filtered = headlines.filter(h => h.category === 'India');
+        } else if (activeTab === 'global') {
+            filtered = headlines.filter(h => h.category === 'Global' || !h.category);
+        }
+        return filtered.slice(0, 8);
+    }, [headlines, activeTab]);
 
     const handleScrollTo = (anchor: string) => {
         const element = document.querySelector(anchor);
@@ -46,10 +49,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
     };
 
     const handleHighlight = (label: string, anchor: string) => {
-        // 1. Scroll to section
         handleScrollTo(anchor);
-
-        // 2. Map keywords to Metric IDs
         let metricId = '';
         const lowerLabel = label.toLowerCase();
 
@@ -61,7 +61,6 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
         else if (lowerLabel.includes('volatility') || lowerLabel.includes('vix') || lowerLabel.includes('fear')) metricId = 'VIX_INDEX';
 
         if (metricId) {
-            // Give a small delay for scroll to start
             setTimeout(() => {
                 window.dispatchEvent(new CustomEvent('macro-dashboard-highlight', {
                     detail: { metricId }
@@ -102,6 +101,22 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
             day: 'numeric'
         });
     };
+
+    /** Source color badge */
+    const getSourceColor = (source: string): string => {
+        if (source.includes('Economic Times') || source.includes('Mint')) return 'text-emerald-400 bg-emerald-500/10';
+        if (source.includes('RBI') || source.includes('India')) return 'text-blue-400 bg-blue-500/10';
+        if (source.includes('Bloomberg')) return 'text-purple-400 bg-purple-500/10';
+        if (source.includes('Reuters')) return 'text-orange-400 bg-orange-500/10';
+        if (source.includes('FT') || source.includes('Financial')) return 'text-pink-400 bg-pink-500/10';
+        return 'text-muted-foreground bg-white/5';
+    };
+
+    const tabs: { key: FeedTab; label: string; emoji?: string }[] = [
+        { key: 'all', label: 'All' },
+        { key: 'india', label: 'India', emoji: '🇮🇳' },
+        { key: 'global', label: 'Global', emoji: '🌍' },
+    ];
 
     return (
         <Card className={cn(
@@ -165,54 +180,94 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                         </div>
                     </div>
 
-                    {/* Column 2: Market Briefing (Expanded to 8 cols) */}
+                    {/* Column 2: Market Briefing with India/Global Tabs */}
                     <div className="md:col-span-8">
-                        <div className="p-5 rounded-lg bg-white/5 border border-white/10 h-full">
-                            <div className="flex items-center gap-2 mb-4">
-                                <Newspaper size={16} className="text-primary" />
-                                <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase" aria-label="Intelligence Feed">
-                                    LIVE INTELLIGENCE FEED
-                                </span>
+                        <section className="p-5 rounded-lg bg-white/5 border border-white/10 h-full" aria-label="India Macro News Feed">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <Newspaper size={16} className="text-primary" />
+                                    <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase">
+                                        LIVE INTELLIGENCE FEED
+                                    </span>
+                                </div>
+                                {/* Category Tabs */}
+                                <div className="flex gap-1 bg-white/5 rounded-lg p-0.5">
+                                    {tabs.map(tab => (
+                                        <button
+                                            key={tab.key}
+                                            onClick={() => setActiveTab(tab.key)}
+                                            className={cn(
+                                                "px-2.5 py-1 rounded-md text-[0.6rem] font-bold uppercase tracking-wider transition-all duration-200",
+                                                activeTab === tab.key
+                                                    ? "bg-blue-500/20 text-blue-400 shadow-sm"
+                                                    : "text-muted-foreground/60 hover:text-muted-foreground"
+                                            )}
+                                        >
+                                            {tab.emoji && <span className="mr-1">{tab.emoji}</span>}
+                                            {tab.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="space-y-4 divide-y divide-white/5">
-                                {dynamicBriefing.length > 0 ? (
-                                    dynamicBriefing.map((item: { label: string; trend: string; anchor: string }, idx: number) => {
-                                        const rawHeadline = headlines?.find(h => h.title === item.label);
+                            <div className="space-y-3 divide-y divide-white/5">
+                                {filteredHeadlines.length > 0 ? (
+                                    filteredHeadlines.map((headline: MacroHeadline, idx: number) => {
+                                        const stale = isHeadlineStale(headline.published_at);
                                         return (
-                                            <div key={idx} className="flex items-start gap-4 pt-3 first:pt-0">
+                                            <div key={headline.id || idx} className="flex items-start gap-3 pt-3 first:pt-0">
                                                 <div className={cn(
                                                     "mt-1.5 w-1.5 h-1.5 rounded-full shrink-0",
-                                                    item.trend === 'up' ? 'bg-emerald-500' : item.trend === 'down' ? 'bg-rose-500' : 'bg-muted-foreground'
+                                                    stale ? 'bg-amber-500/50' : (headline.category === 'India' ? 'bg-emerald-500' : 'bg-blue-500')
                                                 )} />
-                                                <a
-                                                    href={rawHeadline?.link || '#'}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    onClick={(e) => {
-                                                        if (!rawHeadline?.link || rawHeadline.link.includes('example.com')) {
-                                                            e.preventDefault();
-                                                            handleHighlight(item.label, item.anchor);
-                                                        }
-                                                    }}
-                                                    className="text-[0.75rem] font-semibold text-foreground hover:text-primary transition-colors line-clamp-3 leading-relaxed cursor-pointer"
-                                                    title={item.label}
-                                                >
-                                                    {item.label}
-                                                </a>
+                                                <div className="flex-1 min-w-0">
+                                                    <a
+                                                        href={headline.link || '#'}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => {
+                                                            if (!headline.link || headline.link.includes('example.com')) {
+                                                                e.preventDefault();
+                                                                handleHighlight(headline.title, '#macro-orientation-section');
+                                                            }
+                                                        }}
+                                                        className="text-[0.75rem] font-semibold text-foreground hover:text-primary transition-colors line-clamp-2 leading-relaxed cursor-pointer inline-flex items-start gap-1.5"
+                                                        title={headline.title}
+                                                    >
+                                                        {headline.title}
+                                                        {headline.link && !headline.link.includes('example.com') && (
+                                                            <ExternalLink size={10} className="text-muted-foreground/40 shrink-0 mt-1" />
+                                                        )}
+                                                    </a>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className={cn("text-[0.55rem] font-bold px-1.5 py-0.5 rounded", getSourceColor(headline.source))}>
+                                                            {headline.source}
+                                                        </span>
+                                                        <span className="text-[0.55rem] text-muted-foreground/50 font-medium">
+                                                            {timeAgo(headline.published_at)}
+                                                        </span>
+                                                        {stale && (
+                                                            <span className="text-[0.5rem] text-amber-400/80 font-bold flex items-center gap-0.5" title="This headline is older than 48 hours">
+                                                                <AlertTriangle size={8} />
+                                                                Stale
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         );
                                     })
                                 ) : (
                                     <span className="text-[0.7rem] text-muted-foreground text-center block py-4">
-                                        Awaiting institutional signal ingest...
+                                        {activeTab === 'india' ? 'No India-specific headlines yet — awaiting next ingest cycle...' :
+                                            activeTab === 'global' ? 'No global headlines yet — awaiting next ingest cycle...' :
+                                                'Awaiting institutional signal ingest...'}
                                     </span>
                                 )}
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </CardContent>
         </Card>
     );
 };
-

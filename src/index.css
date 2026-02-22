@@ -161,4 +161,86 @@
             animation: none !important;
         }
     }
+
+    /* ── Mobile-First Responsive Enhancements ── */
+
+    /* Responsive headings using clamp() for fluid scaling */
+    .spa-section-title {
+        font-size: clamp(1.25rem, 4vw, 1.875rem);
+    }
+
+    .spa-hero-value {
+        font-size: clamp(2rem, 6vw, 3.75rem);
+    }
+
+    /* Chart containers: horizontal scroll with momentum on mobile */
+    .chart-scroll-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+    }
+
+    .chart-scroll-container::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .chart-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chart-scroll-container::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+    }
+
+    /* Data tables horizontal scroll */
+    .data-table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Loading skeleton with min-height to prevent CLS */
+    .chart-skeleton {
+        min-height: 300px;
+    }
+}
+
+/* ── Mobile Breakpoint Overrides ── */
+@media (max-width: 480px) {
+    /* Reduce section spacing on small screens */
+    .space-y-24 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(3rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(3rem * var(--tw-space-y-reverse));
+    }
+
+    /* Increase base font size for legibility on iPhone SE */
+    body {
+        font-size: 15px;
+    }
+
+    /* Stack badge rows vertically */
+    .flex-wrap {
+        gap: 0.5rem;
+    }
+
+    /* Ensure charts don't clip — set minimum scrollable width */
+    .recharts-responsive-container {
+        min-width: 320px;
+    }
+
+    /* Improve touch targets */
+    button, a, [role="button"] {
+        min-height: 36px;
+    }
+}
+
+/* ── Tablet Breakpoint ── */
+@media (min-width: 481px) and (max-width: 768px) {
+    .space-y-24 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(4rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(4rem * var(--tw-space-y-reverse));
+    }
 }

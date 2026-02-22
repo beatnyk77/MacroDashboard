@@ -9,18 +9,40 @@ export interface MacroHeadline {
     published_at: string;
     ingested_at: string;
     keywords: string[];
+    category: 'India' | 'Global' | null;
 }
 
-export const useMacroHeadlines = () => {
+/** Compute staleness — >48h is stale */
+export function isHeadlineStale(publishedAt: string): boolean {
+    const diff = Date.now() - new Date(publishedAt).getTime();
+    return diff > 48 * 60 * 60 * 1000;
+}
+
+/** Relative time label */
+export function timeAgo(dateStr: string): string {
+    const ms = Date.now() - new Date(dateStr).getTime();
+    const hrs = Math.floor(ms / (1000 * 60 * 60));
+    if (hrs < 1) return 'Just now';
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d ago`;
+}
+
+export const useMacroHeadlines = (category?: 'India' | 'Global') => {
     return useQuery<MacroHeadline[]>({
-        queryKey: ['macro-headlines'],
+        queryKey: ['macro-headlines', category],
         queryFn: async () => {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('macro_news_headlines')
                 .select('*')
                 .order('published_at', { ascending: false })
-                .limit(10);
+                .limit(15);
 
+            if (category) {
+                query = query.eq('category', category);
+            }
+
+            const { data, error } = await query;
             if (error) throw error;
             return data || [];
         },

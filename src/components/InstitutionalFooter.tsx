@@ -38,6 +38,21 @@ export const InstitutionalFooter: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Crawlable Hash Deep-Links — native <a> tags for search engine discovery */}
+                <nav className="mt-8 pt-6 border-t border-white/[0.03]" aria-label="Dashboard Sections">
+                    <h3 className="text-[0.55rem] font-black uppercase tracking-[0.3em] text-muted-foreground/30 mb-3">Dashboard Deep Dives</h3>
+                    <div className="flex flex-wrap gap-x-6 gap-y-2">
+                        <a href="/#liquidity-hero" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Net Liquidity</a>
+                        <a href="/#debt-maturity-hero" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Debt Maturity Wall</a>
+                        <a href="/#india-pulse" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-emerald-400/80 transition-colors">India Macro Pulse</a>
+                        <a href="/#thematic-labs" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Thematic Labs</a>
+                        <a href="/#policy-geopolitics" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Geopolitics</a>
+                        <a href="/#sovereign-debt-stress" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Sovereign Debt</a>
+                        <a href="/#country-pulses" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Country Pulses</a>
+                        <a href="/#yield-curve-monitor" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Yield Curves</a>
+                    </div>
+                </nav>
+
                 <div className="mt-12 pt-8 border-t border-white/[0.03] flex justify-between items-center">
                     <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.3em]">
                         © 2026 GraphiQuestor. PRO-SERIES TERMINAL.

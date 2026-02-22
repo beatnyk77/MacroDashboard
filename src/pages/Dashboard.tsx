@@ -19,6 +19,7 @@ import { BlogSection } from '@/features/dashboard/components/sections/BlogSectio
 import { SEOFAQSection } from '@/features/dashboard/components/sections/SEOFAQSection';
 import { SEOManager } from '@/components/SEOManager';
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
+import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
@@ -125,6 +126,17 @@ export const Dashboard: React.FC = () => {
             />
             <div className="space-y-24">
 
+                {/* Per-Section JSON-LD for Crawlability — signals each hash section as a distinct WebPage */}
+                <script type="application/ld+json" dangerouslySetInnerHTML={{
+                    __html: JSON.stringify([
+                        { "@context": "https://schema.org", "@type": "WebPage", "name": "US Debt Maturity Wall", "url": "https://graphiquestor.com/#debt-maturity-hero", "description": "Real-time visualization of US Treasury debt maturity schedule, rollover risk, and coupon rate distribution.", "isPartOf": { "@type": "WebSite", "name": "GraphiQuestor" } },
+                        { "@context": "https://schema.org", "@type": "WebPage", "name": "Global Net Liquidity Signal", "url": "https://graphiquestor.com/#liquidity-hero", "description": "Fed balance sheet minus TGA and RRP — institutional net liquidity regime tracking with Z-score alerts.", "isPartOf": { "@type": "WebSite", "name": "GraphiQuestor" } },
+                        { "@context": "https://schema.org", "@type": "WebPage", "name": "India Macro Pulse", "url": "https://graphiquestor.com/#india-pulse", "description": "MoSPI real-time data, India credit creation, BOP pressure, RBI FX defense, fiscal stress, and inflation pulse.", "isPartOf": { "@type": "WebSite", "name": "GraphiQuestor" } },
+                        { "@context": "https://schema.org", "@type": "WebPage", "name": "Thematic Deep Dives", "url": "https://graphiquestor.com/#thematic-labs", "description": "Gold Anchor ratios, BRICS de-dollarization tracker, energy security, sovereign debt stress matrix.", "isPartOf": { "@type": "WebSite", "name": "GraphiQuestor" } },
+                        { "@context": "https://schema.org", "@type": "WebPage", "name": "Sovereign Debt Stress", "url": "https://graphiquestor.com/#sovereign-debt-stress", "description": "G20 debt sustainability, credit spreads, rollover risk, and GDP per capita convergence analysis.", "isPartOf": { "@type": "WebSite", "name": "GraphiQuestor" } }
+                    ])
+                }} />
+
                 {/* ROW 1: US DEBT MATURITY WALL - HERO SECTION */}
                 <SPASection id="debt-maturity-hero" variant="hero" disableAnimation>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
@@ -132,6 +144,7 @@ export const Dashboard: React.FC = () => {
                             <USDebtMaturityWall />
                         </Suspense>
                     </SectionErrorBoundary>
+                    <ChartInsightSummary id="insight-debt-maturity" insight="The US Debt Maturity Wall tracks $9.2 trillion in Treasury securities rolling over within 12 months at weighted average coupon rates near 4.5%. This is the largest refinancing cycle in US history — higher-for-longer rates translate directly into accelerating interest expense, now exceeding $1 trillion annually. The coupon distribution shows a dangerous concentration of low-rate debt from 2020-2021 being repriced at current market yields." />
                 </SPASection>
 
                 {/* ROW 1.5: US TREASURY AUCTION DEMAND GAUGE */}
@@ -170,6 +183,7 @@ export const Dashboard: React.FC = () => {
                             <NetLiquidityRow />
                         </Suspense>
                     </SectionErrorBoundary>
+                    <ChartInsightSummary id="insight-net-liquidity" insight="Global Net Liquidity = Fed Balance Sheet − TGA − RRP. This institutional-grade formula strips out sterilized reserves to reveal the true liquidity available to risk assets. A Z-score above +1σ signals regime expansion (risk-on), while below −1σ warns of contraction. The current reading integrates daily FRED data to give a real-time pulse of the monetary plumbing that drives equity, bond, and commodity markets globally." />
                 </SPASection>
 
                 {/* ROW 3: MARKET TERMINAL GRID */}
@@ -375,6 +389,7 @@ export const Dashboard: React.FC = () => {
                                     <SovereignRiskMatrix />
                                 </Suspense>
                             </SectionErrorBoundary>
+                            <ChartInsightSummary id="insight-sovereign-risk" insight="The Sovereign Risk Matrix scores G20 nations across debt/GDP, CDS spreads, and refinancing risk. Italy, Japan, and the US occupy elevated risk zones with debt/GDP above 110%. Emerging markets show a bifurcating trend — India and Indonesia demonstrate fiscal discipline, while frontier economies face widening CDS spreads. The heatmap integrates IMF fiscal monitor data with real-time credit default swap pricing." />
 
                             <SectionErrorBoundary name="G20 GDP Convergence">
                                 <Suspense fallback={<LoadingFallback />}>
@@ -467,6 +482,7 @@ export const Dashboard: React.FC = () => {
                                     <IndiaMacroPulseSection />
                                 </Suspense>
                             </SectionErrorBoundary>
+                            <ChartInsightSummary id="insight-india-pulse" insight="India's macro pulse integrates MoSPI Industrial Production (IIP), CPI inflation tracking, credit creation velocity, and BOP pressure indicators in real-time. With domestic credit growth running above trend and inflation cooling below 4.5%, the RBI's policy stance remains pivotal. These signals capture India's unique macro position — simultaneously managing capital account liberalization, fiscal consolidation, and growth acceleration." />
                         </SPAAccordion>
 
                         {/* ROW 7.5: INDIA FISCAL STRESS MONITOR */}
@@ -474,6 +490,7 @@ export const Dashboard: React.FC = () => {
                             <Suspense fallback={<LoadingFallback />}>
                                 <IndiaFiscalStressMonitor />
                             </Suspense>
+                            <ChartInsightSummary id="insight-india-fiscal" insight="India's fiscal stress monitor tracks the interest payments-to-revenue ratio, the primary fiscal barometer for sovereign sustainability. States with high capex commitments show elevated stress readings, while the Centre's fiscal glide path targets 4.5% deficit/GDP. The interest burden at current levels consumes a rising share of gross tax revenue, making the trajectory of G-Sec yields and rollover management by RBI critically important." />
                         </SectionErrorBoundary>
 
                         {/* ROW 7.6: INDIA DEBT MATURITY WALL */}
