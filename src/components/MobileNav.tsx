@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
-import { Activity, Coins, FileText, LayoutDashboard } from 'lucide-react';
+import { Globe, ShieldAlert, FileText, LayoutDashboard } from 'lucide-react';
 
 export const MobileNav: React.FC = () => {
     const [value, setValue] = useState(0);
-
-    const scrollToSection = (id: string) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            // Fallback to top if 'dashboard-top' or similar
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
 
     return (
         <Paper sx={{
@@ -30,12 +20,11 @@ export const MobileNav: React.FC = () => {
                 value={value}
                 onChange={(_, newValue) => {
                     setValue(newValue);
-                    // Map generic indexes to section IDs
                     switch (newValue) {
-                        case 0: scrollToSection('liquidity-hero'); break;
-                        case 1: scrollToSection('policy-geopolitics'); break;
-                        case 2: scrollToSection('thematic-labs'); break;
-                        case 3: scrollToSection('india-pulse'); break;
+                        case 0: window.location.href = '/'; break;
+                        case 1: window.location.href = '/regime-digest'; break;
+                        case 2: window.location.href = '/macro-observatory'; break;
+                        case 3: window.location.href = '/institutional'; break;
                     }
                 }}
                 sx={{
@@ -50,10 +39,10 @@ export const MobileNav: React.FC = () => {
                     }
                 }}
             >
-                <BottomNavigationAction label="Macro" icon={<LayoutDashboard size={20} />} />
-                <BottomNavigationAction label="Policy" icon={<FileText size={20} />} />
-                <BottomNavigationAction label="Labs" icon={<Coins size={20} />} />
-                <BottomNavigationAction label="India" icon={<Activity size={20} />} />
+                <BottomNavigationAction label="Home" icon={<LayoutDashboard size={20} />} />
+                <BottomNavigationAction label="Digest" icon={<FileText size={20} />} />
+                <BottomNavigationAction label="Labs" icon={<Globe size={20} />} />
+                <BottomNavigationAction label="Institutional" icon={<ShieldAlert size={20} />} />
             </BottomNavigation>
         </Paper>
     );

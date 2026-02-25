@@ -24,6 +24,17 @@ const GlossaryIndexPage = lazy(() => import('@/pages/GlossaryIndexPage').then(mo
 const GlossaryTermPage = lazy(() => import('@/pages/GlossaryTermPage').then(module => ({ default: module.GlossaryTermPage })));
 const IntelIndiaPage = lazy(() => import('@/pages/IntelIndiaPage').then(module => ({ default: module.IntelIndiaPage })));
 const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module => ({ default: module.IntelChinaPage })));
+const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
+const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
+
+// Labs
+const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
+const IndiaLab = lazy(() => import('@/pages/labs/IndiaLab').then(module => ({ default: module.IndiaLab })));
+const ChinaLab = lazy(() => import('@/pages/labs/ChinaLab').then(module => ({ default: module.ChinaLab })));
+const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
+const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLab').then(module => ({ default: module.EnergyCommoditiesLab })));
+const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').then(module => ({ default: module.SovereignStressLab })));
+const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(module => ({ default: module.ShadowSystemLab })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -62,6 +73,17 @@ function App() {
                                         <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
+                                        <Route path="/macro-observatory" element={<MacroObservatory />} />
+                                        <Route path="/institutional" element={<ForInstitutional />} />
+
+                                        {/* Labs */}
+                                        <Route path="/labs/us-macro-fiscal" element={<USMacroFiscalLab />} />
+                                        <Route path="/labs/india" element={<IndiaLab />} />
+                                        <Route path="/labs/china" element={<ChinaLab />} />
+                                        <Route path="/labs/de-dollarization-gold" element={<DeDollarizationGoldLab />} />
+                                        <Route path="/labs/energy-commodities" element={<EnergyCommoditiesLab />} />
+                                        <Route path="/labs/sovereign-stress" element={<SovereignStressLab />} />
+                                        <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />

@@ -2,13 +2,10 @@ import React from 'react';
 import {
     LayoutDashboard,
     ShieldAlert,
-    MapPin,
-    Building2,
-    Coins,
-    Globe,
     BookOpen,
     Rss,
-    FileText
+    FileText,
+    Eye
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -22,13 +19,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Macro Heartbeat', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
-    { id: 'policy', label: 'Geopolitics & Policy', path: '/#policy-geopolitics', icon: <ShieldAlert size={18} strokeWidth={2.5} /> },
-    { id: 'thematics', label: 'Thematic Deep Dives', path: '/#thematic-labs', icon: <Coins size={18} strokeWidth={2.5} /> },
-    { id: 'sovereign', label: 'Sovereign stress', path: '/#sovereign-debt-stress', icon: <Building2 size={18} strokeWidth={2.5} /> },
-    { id: 'india', label: 'India Macro Pulse', path: '/#india-pulse', icon: <MapPin size={18} strokeWidth={2.5} /> },
-    { id: 'china', label: 'China Pulse', path: '/#china-pulse', icon: <Globe size={18} strokeWidth={2.5} /> },
+    { id: 'home', label: 'Home', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
     { id: 'digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} strokeWidth={2.5} /> },
+    { id: 'notes', label: 'Research Notes', path: '/blog', icon: <Rss size={18} strokeWidth={2.5} /> },
+    { id: 'observatory', label: 'Macro Observatory', path: '/macro-observatory', icon: <Eye size={18} strokeWidth={2.5} /> },
+    { id: 'institutional', label: 'Institutional', path: '/institutional', icon: <ShieldAlert size={18} strokeWidth={2.5} /> },
     { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
 ];
 
@@ -55,7 +50,6 @@ export const NavigationSidebar: React.FC = () => {
                         behavior: 'smooth'
                     });
 
-                    // Update URL hash without reload
                     window.history.pushState(null, '', path);
                 }
             }
