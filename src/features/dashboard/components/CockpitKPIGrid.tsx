@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from '@mui/material';
+import { ChevronRight } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { MetricCard } from '@/components/MetricCard';
 import { useMarketPulse } from '@/hooks/useMarketPulse';
@@ -8,7 +10,7 @@ import { DataQualityBadge } from '@/components/DataQualityBadge';
 import { formatMetric, formatDelta } from '@/utils/formatMetric';
 import { getRiskInterpretation, getMetricConfig } from '@/lib/metricRiskConfig';
 
-export const CockpitKPIGrid = React.memo(() => {
+export const CockpitKPIGrid = React.memo(({ simplified = false }: { simplified?: boolean }) => {
     const { data: marketPulse, isLoading: isMarketLoading } = useMarketPulse();
     const { data: integrity } = useDataIntegrity();
 
@@ -74,33 +76,35 @@ export const CockpitKPIGrid = React.memo(() => {
             <div className="absolute inset-0 bg-blue-500/5 blur-3xl -z-10 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
             {/* Hero Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-10 gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                        <div className="text-xs font-bold tracking-[0.2em] text-blue-400 uppercase">
-                            Live Market Terminal
+            {!simplified && (
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-10 gap-4">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            <div className="text-xs font-bold tracking-[0.2em] text-blue-400 uppercase">
+                                Live Market Terminal
+                            </div>
                         </div>
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter mt-1 text-white">
+                            System <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Heartbeat</span>
+                        </h2>
+                        <p className="text-muted-foreground text-sm font-medium mt-2 max-w-xl">
+                            Real-time cross-asset monitoring of liquidity conditions, volatility, and sovereign stress.
+                        </p>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-black tracking-tighter mt-1 text-white">
-                        System <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Heartbeat</span>
-                    </h2>
-                    <p className="text-muted-foreground text-sm font-medium mt-2 max-w-xl">
-                        Real-time cross-asset monitoring of liquidity conditions, volatility, and sovereign stress.
-                    </p>
-                </div>
 
-                {/* Data Integrity Badge */}
-                <div className="flex flex-col items-end">
-                    <div className="text-[10px] font-bold tracking-widest text-muted-foreground/50 uppercase mb-2">
-                        Signal Integrity
+                    {/* Data Integrity Badge */}
+                    <div className="flex flex-col items-end">
+                        <div className="text-[10px] font-bold tracking-widest text-muted-foreground/50 uppercase mb-2">
+                            Signal Integrity
+                        </div>
+                        <DataQualityBadge
+                            timestamp={integrity?.lastChecked || null}
+                            size="medium"
+                        />
                     </div>
-                    <DataQualityBadge
-                        timestamp={integrity?.lastChecked || null}
-                        size="medium"
-                    />
                 </div>
-            </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 {/* 2. US 10Y Yield */}
@@ -131,18 +135,22 @@ export const CockpitKPIGrid = React.memo(() => {
                     )}
                 </div>
 
-                {/* 4. SOFR Rate */}
-                <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
-                    {renderMetricWithEnhancedDelta(
-                        sofr,
-                        'SOFR_RATE',
-                        'SOFR Rate',
-                        'Secured Overnight Financing',
-                        'percent',
-                        '',
-                        ' %'
-                    )}
-                </div>
+                {!simplified && (
+                    <>
+                        {/* 4. SOFR Rate */}
+                        <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
+                            {renderMetricWithEnhancedDelta(
+                                sofr,
+                                'SOFR_RATE',
+                                'SOFR Rate',
+                                'Secured Overnight Financing',
+                                'percent',
+                                '',
+                                ' %'
+                            )}
+                        </div>
+                    </>
+                )}
 
                 {/* 5. DXY Index */}
                 <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
@@ -167,41 +175,45 @@ export const CockpitKPIGrid = React.memo(() => {
                     )}
                 </div>
 
-                {/* 7. Silver */}
-                <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
-                    {renderMetricWithEnhancedDelta(
-                        silver,
-                        'SILVER_PRICE_USD',
-                        'Silver',
-                        'Spot / USD',
-                        'currency',
-                        '$'
-                    )}
-                </div>
+                {!simplified && (
+                    <>
+                        {/* 7. Silver */}
+                        <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
+                            {renderMetricWithEnhancedDelta(
+                                silver,
+                                'SILVER_PRICE_USD',
+                                'Silver',
+                                'Spot / USD',
+                                'currency',
+                                '$'
+                            )}
+                        </div>
 
-                {/* 8. WTI Crude */}
-                <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
-                    {renderMetricWithEnhancedDelta(
-                        oil,
-                        'WTI_CRUDE_PRICE',
-                        'Oil',
-                        'WTI Crude',
-                        'currency',
-                        '$'
-                    )}
-                </div>
+                        {/* 8. WTI Crude */}
+                        <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
+                            {renderMetricWithEnhancedDelta(
+                                oil,
+                                'WTI_CRUDE_PRICE',
+                                'Oil',
+                                'WTI Crude',
+                                'currency',
+                                '$'
+                            )}
+                        </div>
 
-                {/* 9. Bitcoin */}
-                <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
-                    {renderMetricWithEnhancedDelta(
-                        btc,
-                        'BITCOIN_PRICE_USD',
-                        'Bitcoin',
-                        'BTC / USD',
-                        'currency',
-                        '$'
-                    )}
-                </div>
+                        {/* 9. Bitcoin */}
+                        <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
+                            {renderMetricWithEnhancedDelta(
+                                btc,
+                                'BITCOIN_PRICE_USD',
+                                'Bitcoin',
+                                'BTC / USD',
+                                'currency',
+                                '$'
+                            )}
+                        </div>
+                    </>
+                )}
 
                 {/* 10. VIX Index */}
                 <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
@@ -217,6 +229,19 @@ export const CockpitKPIGrid = React.memo(() => {
                     )}
                 </div>
             </div>
+
+            {simplified && (
+                <div className="mt-8 text-center border-t border-white/5 pt-8">
+                    <Button
+                        variant="text"
+                        href="/macro-observatory"
+                        endIcon={<ChevronRight size={16} />}
+                        sx={{ color: '#3b82f6', fontWeight: 700 }}
+                    >
+                        View full Macro Heartbeat in Macro Observatory
+                    </Button>
+                </div>
+            )}
         </div>
     );
 });

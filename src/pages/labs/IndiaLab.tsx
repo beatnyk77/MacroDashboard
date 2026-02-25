@@ -93,7 +93,7 @@ export const IndiaLab: React.FC = () => {
                 </section>
 
                 {/* 3. Monetary & Credit Cycle */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="space-y-24">
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <Zap className="text-amber-500" size={24} />
@@ -120,7 +120,7 @@ export const IndiaLab: React.FC = () => {
                 </div>
 
                 {/* 4. Fiscal Stress & Debt */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="space-y-24">
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <Activity className="text-rose-500" size={24} />
@@ -163,7 +163,7 @@ export const IndiaLab: React.FC = () => {
                 </section>
 
                 {/* 6. Liquidity & Inflation */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="space-y-24">
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <Zap className="text-amber-500" size={24} />

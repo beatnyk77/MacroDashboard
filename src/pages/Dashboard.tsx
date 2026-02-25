@@ -4,13 +4,11 @@ import {
     ShieldAlert,
     Globe,
     Zap,
-    TrendingUp,
     ChevronRight,
     Lock
 } from 'lucide-react';
 import { SPASection } from '@/components/spa';
 import { SectionHeader } from '@/components/SectionHeader';
-import { DataHealthTicker } from '@/components/DataHealthTicker';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { SEOManager } from '@/components/SEOManager';
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
@@ -22,10 +20,10 @@ import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidi
 // Lazy load key components for the homepage
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
-const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
+const CompactIndiaCard = lazy(() => import('@/features/dashboard/components/cards/CompactIndiaCard').then(m => ({ default: m.CompactIndiaCard })));
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
-const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
+const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
 const BlogSection = lazy(() => import('@/features/dashboard/components/sections/BlogSection').then(m => ({ default: m.BlogSection })));
 
 const LoadingFallback = () => (
@@ -109,7 +107,6 @@ export const Dashboard: React.FC = () => {
                             subtitle="High-frequency liquidity and regime signals"
                             sectionId="heartbeat"
                         />
-                        <DataHealthTicker />
                     </div>
 
                     <div className="space-y-12">
@@ -119,7 +116,7 @@ export const Dashboard: React.FC = () => {
 
                         <SectionErrorBoundary name="Cockpit KPI">
                             <Suspense fallback={<LoadingFallback />}>
-                                <CockpitKPIGrid />
+                                <CockpitKPIGrid simplified={true} />
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
@@ -156,27 +153,14 @@ export const Dashboard: React.FC = () => {
                         title="Emerging Giants"
                         subtitle="Counter-cyclical telemetry for India and China"
                     />
-                    <div className="mt-12 space-y-12">
+                    <div className="mt-12 space-y-6">
                         <SectionErrorBoundary name="India Market Pulse">
                             <Suspense fallback={<LoadingFallback />}>
-                                <IndiaMarketPulseRow />
+                                <CompactIndiaCard />
                             </Suspense>
                         </SectionErrorBoundary>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Box
-                                onClick={() => window.location.href = '/labs/india'}
-                                className="group cursor-pointer p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-xl font-black uppercase text-white">India Lab</h3>
-                                    <TrendingUp className="text-emerald-500" />
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-6">Deep dive into MoSPI telemetry, credit cycles, and RBI defense mechanisms.</p>
-                                <span className="text-blue-400 text-xs font-black uppercase tracking-widest flex items-center gap-2">
-                                    Analyze India <ChevronRight size={14} />
-                                </span>
-                            </Box>
                             <Box
                                 onClick={() => window.location.href = '/labs/china'}
                                 className="group cursor-pointer p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all"
@@ -235,19 +219,9 @@ export const Dashboard: React.FC = () => {
                     <div className="mt-12">
                         <SectionErrorBoundary name="Commodity Terminal">
                             <Suspense fallback={<LoadingFallback />}>
-                                <CommodityTerminalRow />
+                                <CompactCommodityCard />
                             </Suspense>
                         </SectionErrorBoundary>
-                    </div>
-                    <div className="mt-8 text-center">
-                        <Button
-                            variant="text"
-                            href="/labs/energy-commodities"
-                            endIcon={<ChevronRight size={16} />}
-                            sx={{ color: '#3b82f6', fontWeight: 700 }}
-                        >
-                            Explore Commodity Labs
-                        </Button>
                     </div>
                 </SPASection>
 
