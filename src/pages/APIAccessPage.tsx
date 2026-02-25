@@ -42,8 +42,25 @@ export const APIAccessPage = () => {
         }
     };
 
+    const pricingSchema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "GraphiQuestor Professional API Access",
+        "description": "Professional-grade macro intelligence delivered via REST API. 10,000 requests per day, 25 years of historical data.",
+        "offers": {
+            "@type": "Offer",
+            "url": "https://graphiquestor.com/api-access",
+            "priceCurrency": "USD",
+            "price": "299.00",
+            "availability": "https://schema.org/InStock"
+        }
+    };
+
     return (
         <Container maxWidth="lg" sx={{ py: 8 }}>
+            <script type="application/ld+json">
+                {JSON.stringify(pricingSchema)}
+            </script>
             <Typography variant="h2" align="center" gutterBottom sx={{ fontWeight: 800 }}>Institutional API Access</Typography>
             <Typography variant="h5" align="center" color="text.secondary" paragraph sx={{ mb: 6 }}>
                 Professional-grade macro intelligence delivered via REST API.

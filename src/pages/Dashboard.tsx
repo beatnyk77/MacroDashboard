@@ -106,27 +106,47 @@ export const Dashboard: React.FC = () => {
                     'Sticky Inflation Monitor', 'AI Supercycle Macro', 'Fiscal Sustainability',
                     'Currency Debasement Hedge', 'Hard Asset Valuation', 'Institutional Macro Intelligence'
                 ]}
-                jsonLd={{
-                    "@context": "https://schema.org",
-                    "@type": "WebSite",
-                    "@id": "https://graphiquestor.com/#website",
-                    "name": "GraphiQuestor",
-                    "url": "https://graphiquestor.com/",
-                    "description": "Institutional-grade macro intelligence dashboard.",
-                    "publisher": {
-                        "@type": "Organization",
+                jsonLd={[
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "@id": "https://graphiquestor.com/#website",
                         "name": "GraphiQuestor",
-                        "logo": {
-                            "@type": "ImageObject",
-                            "url": "https://graphiquestor.com/logo.png"
+                        "url": "https://graphiquestor.com/",
+                        "description": "Institutional-grade macro intelligence dashboard.",
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "GraphiQuestor",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://graphiquestor.com/logo.png"
+                            }
+                        },
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://graphiquestor.com/?q={search_term_string}",
+                            "query-input": "required name=search_term_string"
                         }
                     },
-                    "potentialAction": {
-                        "@type": "SearchAction",
-                        "target": "https://graphiquestor.com/?q={search_term_string}",
-                        "query-input": "required name=search_term_string"
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Dataset",
+                        "name": "Global Net Liquidity & Sovereign Debt Telemetry",
+                        "description": "High-frequency macro dataset tracking G7/EM net liquidity, US Treasury maturity walls, and gold anchor ratios. 25-year historical coverage.",
+                        "url": "https://graphiquestor.com/",
+                        "creator": {
+                            "@type": "Organization",
+                            "name": "GraphiQuestor Intelligence"
+                        },
+                        "distribution": {
+                            "@type": "DataDownload",
+                            "encodingFormat": "application/json",
+                            "contentUrl": "https://graphiquestor.com/api-access"
+                        },
+                        "keywords": ["Liquidity", "Gold", "Debt", "Macroeconomics", "India", "China"]
                     }
-                }}
+                ]}
+                isApp={true}
             />
             <div className="space-y-24">
 
@@ -144,6 +164,15 @@ export const Dashboard: React.FC = () => {
                 {/* ROW 1: US DEBT MATURITY WALL - HERO SECTION */}
                 <SPASection id="debt-maturity-hero" variant="hero" disableAnimation>
                     <link rel="canonical" href="https://graphiquestor.com/#debt-maturity-hero" />
+                    <div className="mb-12">
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none mb-4">
+                            Sovereign Intelligence<br />
+                            <span className="text-blue-500">Console</span>
+                        </h1>
+                        <p className="text-sm text-muted-foreground max-w-2xl uppercase font-bold tracking-widest opacity-60">
+                            Institutional-grade macro telemetry tracking Debt/Gold ratios, De-Dollarization, and Global Net Liquidity.
+                        </p>
+                    </div>
                     <h2 className="text-2xl font-bold text-white mb-6">US Debt Maturity Wall</h2>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <Suspense fallback={<LoadingFallback />}>
@@ -371,6 +400,7 @@ export const Dashboard: React.FC = () => {
                             </div>
                             <link rel="canonical" href="https://graphiquestor.com/#brics-dedollarization" />
                             <h2 className="text-2xl font-bold text-white mb-6">BRICS & De-Dollarization</h2>
+                            <ChartInsightSummary id="insight-brics-dedollarization" insight="This monitor tracks the structural shift in global reserves and trade settlement. It visualizes the gradual decline of USD share in global FX reserves against the systemic rise in central bank gold accumulation, specifically by BRICS+ nations. Trade misinvoicing and local currency settlement volumes provide real-time telemetry on de-dollarization momentum among emerging market 'swing states'." />
                         </SPAAccordion>
 
                         <SPAAccordion
@@ -390,6 +420,7 @@ export const Dashboard: React.FC = () => {
                                     <EnergySecuritySection />
                                 </Suspense>
                             </SectionErrorBoundary>
+                            <ChartInsightSummary id="insight-energy-security" insight="The Energy Security monitor analyzes refining capacity, crude sourcing diversity, and strategic petroleum reserve (SPR) levels. High scores indicate high dependence on critical chokepoints or limited refining elasticity. The tool tracks supplier concentration risk across the G20, highlighting vulnerabilities in the global energy supply chain and institutional stockpiling behaviors." />
                         </SPAAccordion>
 
                         <SectionErrorBoundary name="Commodity Terminal">
@@ -397,6 +428,7 @@ export const Dashboard: React.FC = () => {
                                 <CommodityTerminalRow />
                             </Suspense>
                         </SectionErrorBoundary>
+                        <ChartInsightSummary id="insight-commodity-terminal" insight="The Commodity Terminal provides a cross-asset view of physical flow dynamics, tracking real-time price signals for major commodity baskets including Energy, Metals, and Agriculture. It integrates supply-side indicators with global shipping telemetry to identify arbitrage opportunities and inflation pass-through risks across the G20 trade network." />
 
                         <SPAAccordion
                             id="sovereign-debt-stress"

@@ -71,12 +71,26 @@ export const IntelChinaPage: React.FC = () => {
         ]
     };
 
+    const datasetSchema = {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "China Macro-Activity & De-Dollarization Telemetry",
+        "description": "High-frequency activity monitor for China tracking credit impulse, deflation risk, industrial production velocity, PBoC monetary policy, and gold reserves accumulation.",
+        "url": "https://graphiquestor.com/intel/china",
+        "creator": {
+            "@type": "Organization",
+            "name": "GraphiQuestor Intelligence"
+        },
+        "keywords": ["China", "PBoC", "Credit Impulse", "Deflation", "De-Dollarization"]
+    };
+
     return (
         <div className="min-h-screen bg-[#050810]">
             {/* Schema Injection */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
                 title="China Macro Intelligence Hub — PBoC, Credit Impulse & Deflation Risk"

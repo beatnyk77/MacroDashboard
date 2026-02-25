@@ -92,12 +92,26 @@ export const IntelIndiaPage: React.FC = () => {
         ]
     };
 
+    const datasetSchema = {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "India Macroeconomic & Sovereign Debt Telemetry",
+        "description": "High-frequency macro dataset for India, tracking the RBI credit cycle, fiscal stress ratios, sovereign debt maturity walls, and liquidity surplus/deficit. Includes MoSPI and RBI DBIE data integration.",
+        "url": "https://graphiquestor.com/intel/india",
+        "creator": {
+            "@type": "Organization",
+            "name": "GraphiQuestor Intelligence"
+        },
+        "keywords": ["India", "RBI", "Sovereign Debt", "Fiscal Stress", "MoSPI"]
+    };
+
     return (
         <div className="min-h-screen bg-[#050810]">
             {/* Place Schema */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
                 title="India Macro Intelligence Hub — RBI, Fiscal Stress & Credit Cycle"

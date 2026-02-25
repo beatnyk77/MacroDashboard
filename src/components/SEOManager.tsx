@@ -10,8 +10,9 @@ interface SEOManagerProps {
     ogType?: 'website' | 'article';
     canonicalUrl?: string;
     publishedTime?: string;
-    jsonLd?: Record<string, any>;
+    jsonLd?: Record<string, any> | any[];
     robots?: string;
+    isApp?: boolean;
 }
 
 export const SEOManager: React.FC<SEOManagerProps> = ({
@@ -24,6 +25,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     publishedTime,
     jsonLd,
     robots = 'index, follow',
+    isApp = false,
 }) => {
     const location = useLocation();
     const fullTitle = `${title} | GraphiQuestor`;
@@ -37,6 +39,24 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             {jsonLd && (
                 <script type="application/ld+json">
                     {JSON.stringify(jsonLd)}
+                </script>
+            )}
+
+            {isApp && (
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "SoftwareApplication",
+                        "name": "GraphiQuestor Macro Terminal",
+                        "operatingSystem": "All",
+                        "applicationCategory": "FinanceApplication",
+                        "description": description,
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "299.00",
+                            "priceCurrency": "USD"
+                        }
+                    })}
                 </script>
             )}
 

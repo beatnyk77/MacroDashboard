@@ -54,8 +54,10 @@ GraphiQuestor offers structural alpha by bypassing financial noise. It is essent
 ## Technical Architecture
 - **Autonomous Ingestion**: Serverless Edge Functions harvesting data from BIS, MoSPI, FRED.
 - **25-Year Historical Pipeline**: Deep context for all core indicators.
+- **API Discovery**: `/rest/v1/net_liquidity`, `/rest/v1/sovereign_debt_yields`, `/rest/v1/india_macro_pulse`.
 
 ---
 [Explore the Terminal](https://graphiquestor.com)
 [Intelligence Journal](https://graphiquestor.com/blog)
 [India Intelligence Hub](https://graphiquestor.com/intel/india)
+[Commercial API Access ($299/mo)](https://graphiquestor.com/api-access)
