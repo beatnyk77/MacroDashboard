@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Globe2, AlertTriangle, Loader2, Zap } from 'lucide-react';
+import { Globe, AlertTriangle, Loader2, Zap } from 'lucide-react';
 import { useTradeGravityData, SwingStateData } from '@/hooks/useTradeGravityData';
 import { cn } from '@/lib/utils';
 import 'leaflet/dist/leaflet.css';
@@ -42,7 +42,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                            <Globe2 className="w-5 h-5 text-orange-400" />
+                            <Globe className="w-5 h-5 text-orange-400" />
                             <CardTitle className="text-xl font-medium tracking-tight text-white/90 font-mono uppercase">
                                 BRICS+ vs. G7 Trade Gravity Shift
                             </CardTitle>

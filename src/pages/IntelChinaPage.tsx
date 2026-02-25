@@ -4,7 +4,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { motion } from 'framer-motion';
-import { Globe2, TrendingDown, Zap, BarChart2, Shield, ArrowRight } from 'lucide-react';
+import { Globe, TrendingDown, Zap, BarChart2, Shield, ArrowRight } from 'lucide-react';
 
 // Lazy-load heavy sub-sections
 const ChinaMacroPulseSection = lazy(() =>
@@ -16,7 +16,7 @@ const SectionSkeleton = () => (
 );
 
 const SIGNAL_CARDS = [
-    { icon: Globe2, label: 'Macro Pulse', desc: 'GDP growth, credit impulse & PBoC policy', color: 'red' },
+    { icon: Globe, label: 'Macro Pulse', desc: 'GDP growth, credit impulse & PBoC policy', color: 'red' },
     { icon: TrendingDown, label: 'Deflation Risk', desc: 'CPI & PPI deflation pressure monitor', color: 'rose' },
     { icon: BarChart2, label: 'Credit Impulse', desc: 'New credit as % of GDP — leading indicator', color: 'amber' },
     { icon: Zap, label: 'Industrial Velocity', desc: 'Industrial production & retail sales YoY', color: 'orange' },

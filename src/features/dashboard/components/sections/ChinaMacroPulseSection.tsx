@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useMajorEconomies } from '@/hooks/useMajorEconomies';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, ChevronDown, ChevronUp, Globe2 } from 'lucide-react';
+import { Info, ChevronDown, ChevronUp, Globe } from 'lucide-react';
 
 const CompactPulseMetric: React.FC<{
     label: string,
@@ -82,7 +82,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
                         <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
-                            <Globe2 className="text-red-500 w-5 h-5" />
+                            <Globe className="text-red-500 w-5 h-5" />
                         </div>
                         <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
                             China <span className="text-red-500">Macro Pulse</span>

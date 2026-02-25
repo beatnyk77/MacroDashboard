@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Container } from '@mui/material';
 import {
     Coins,
-    Globe2,
+    Globe,
     Building2,
     Fuel,
     TrendingUp,
@@ -204,7 +204,7 @@ export const GraphiQuestorSPA: React.FC = () => {
                             id="brics-dedollarization"
                             title="BRICS & De-Dollarization"
                             subtitle="USD share decline, gold accumulation, East vs West influence"
-                            icon={<Globe2 />}
+                            icon={<Globe />}
                             accentColor="rose"
                             defaultOpen={true}
                         >

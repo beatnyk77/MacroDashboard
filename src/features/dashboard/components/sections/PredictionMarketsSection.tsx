@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from "@/components/ui/card";
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
-import { FileText, ExternalLink, Quote, BarChart3, Globe2, Sparkles } from 'lucide-react';
+import { FileText, ExternalLink, Quote, BarChart3, Globe, Sparkles } from 'lucide-react';
 
 
 // The generated image path
@@ -59,7 +59,7 @@ export const PredictionMarketsSection: React.FC = () => {
                                 text="Prediction markets reduce Mean Absolute Error (MAE) by 14% vs. professional forecasts for one-month horizons."
                             />
                             <KeyFactor
-                                icon={<Globe2 size={18} className="text-emerald-400" />}
+                                icon={<Globe size={18} className="text-emerald-400" />}
                                 title="Macro Discovery"
                                 text="Kalshi provides instantaneous reaction to NFP/CPI prints, serving as a live 'Macro Heartbeat' for liquidity providers."
                             />

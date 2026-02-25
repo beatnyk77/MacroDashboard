@@ -1,4 +1,4 @@
-import { ShieldCheck, BookOpen, Globe2 } from 'lucide-react';
+import { ShieldCheck, BookOpen, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const InstitutionalFooter: React.FC = () => {
@@ -90,14 +90,14 @@ export const InstitutionalFooter: React.FC = () => {
                             to="/intel/india"
                             className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
-                            <Globe2 size={12} />
+                            <Globe size={12} />
                             🇮🇳 India Intel
                         </Link>
                         <Link
                             to="/intel/china"
                             className="text-[0.6rem] font-black uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
-                            <Globe2 size={12} />
+                            <Globe size={12} />
                             🇨🇳 China Intel
                         </Link>
                         <a

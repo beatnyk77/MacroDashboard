@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Container } from '@mui/material';
 import {
     Coins,
-    Globe2,
+    Globe,
     Building2,
     MapPin,
     ShieldAlert,
@@ -260,7 +260,7 @@ export const Dashboard: React.FC = () => {
                         <SPAAccordion
                             title="Geopolitical Pulse"
                             subtitle="Global conflict risk and institutional sentiment"
-                            icon={<Globe2 className="text-blue-500" />}
+                            icon={<Globe className="text-blue-500" />}
                             accentColor="blue"
                         >
                             <SectionErrorBoundary name="Geopolitics Card">

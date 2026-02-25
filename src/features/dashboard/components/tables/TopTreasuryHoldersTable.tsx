@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Globe2, TrendingUp, TrendingDown } from 'lucide-react';
+import { Globe, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TICHolder {
@@ -82,7 +82,7 @@ export const TopTreasuryHoldersTable: React.FC = () => {
             <Card className="bg-white/[0.02] border-white/5 backdrop-blur-3xl">
                 <CardHeader className="pb-4 border-b border-white/5 bg-white/[0.01]">
                     <div className="flex items-center gap-3">
-                        <Globe2 className="h-5 w-5 text-blue-500" />
+                        <Globe className="h-5 w-5 text-blue-500" />
                         <div>
                             <h3 className="text-lg font-black text-muted-foreground uppercase tracking-widest italic">
                                 Top Foreign <span className="text-white">Holders</span> of US Treasuries
@@ -104,7 +104,7 @@ export const TopTreasuryHoldersTable: React.FC = () => {
         <Card className="bg-white/[0.02] border-white/5 backdrop-blur-3xl overflow-hidden">
             <CardHeader className="pb-4 border-b border-white/5 bg-white/[0.01] p-6">
                 <div className="flex items-center gap-3">
-                    <Globe2 className="h-5 w-5 text-blue-500" />
+                    <Globe className="h-5 w-5 text-blue-500" />
                     <div>
                         <h3 className="text-lg font-black text-muted-foreground uppercase tracking-widest italic">
                             Top Foreign <span className="text-white">Holders</span> of US Treasuries

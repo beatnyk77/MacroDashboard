@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import {
     ShieldAlert,
-    Globe2,
+    Globe,
     TrendingUp,
     ArrowUpRight,
     Zap,
@@ -171,7 +171,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                     <Card className="bg-neutral-900/40 backdrop-blur-md border border-white/5 rounded-3xl overflow-hidden relative">
                         <div className="absolute top-6 left-8 z-20">
                             <div className="flex items-center gap-3">
-                                <Globe2 className="w-5 h-5 text-rose-500" />
+                                <Globe className="w-5 h-5 text-rose-500" />
                                 <div>
                                     <h3 className="text-sm font-black text-white uppercase tracking-wider">Flight Trajectory Map</h3>
                                     <p className="text-[0.6rem] text-neutral-500 uppercase font-black tracking-widest">Real-time Capital Migration Flows</p>
