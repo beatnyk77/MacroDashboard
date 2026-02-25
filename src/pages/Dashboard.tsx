@@ -2,7 +2,6 @@ import React, { Suspense, lazy } from 'react';
 import { Container, Box, Button } from '@mui/material';
 import {
     ShieldAlert,
-    Globe,
     Zap,
     ChevronRight,
     Lock
@@ -21,6 +20,7 @@ import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidi
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const CompactIndiaCard = lazy(() => import('@/features/dashboard/components/cards/CompactIndiaCard').then(m => ({ default: m.CompactIndiaCard })));
+const CompactChinaCard = lazy(() => import('@/features/dashboard/components/cards/CompactChinaCard').then(m => ({ default: m.CompactChinaCard })));
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
@@ -160,21 +160,11 @@ export const Dashboard: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Box
-                                onClick={() => window.location.href = '/labs/china'}
-                                className="group cursor-pointer p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-xl font-black uppercase text-white">China Lab</h3>
-                                    <Globe className="text-rose-500" />
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-6">Tracking PBoC liquidity, credit impulse, and the Yuan internationalization curve.</p>
-                                <span className="text-blue-400 text-xs font-black uppercase tracking-widest flex items-center gap-2">
-                                    Analyze China <ChevronRight size={14} />
-                                </span>
-                            </Box>
-                        </div>
+                        <SectionErrorBoundary name="China Market Pulse">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <CompactChinaCard />
+                            </Suspense>
+                        </SectionErrorBoundary>
                     </div>
                 </SPASection>
 
