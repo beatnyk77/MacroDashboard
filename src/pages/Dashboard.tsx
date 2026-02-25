@@ -70,6 +70,7 @@ const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/component
 const EliteWealthFlightIndex = lazy(() => import('@/features/dashboard/components/rows/EliteWealthFlightIndex').then(m => ({ default: m.EliteWealthFlightIndex })));
 const IllicitFlowsTracker = lazy(() => import('@/features/dashboard/components/rows/IllicitFlowsTracker').then(m => ({ default: m.IllicitFlowsTracker })));
 const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
+const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[400px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -421,6 +422,12 @@ export const Dashboard: React.FC = () => {
                             <SectionErrorBoundary name="G20 GDP Convergence">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <G20GdpPerCapitaConvergence />
+                                </Suspense>
+                            </SectionErrorBoundary>
+
+                            <SectionErrorBoundary name="Corporate Profit Capture">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <CorporateProfitCapture />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </SPAAccordion>
