@@ -67,6 +67,7 @@ const CriticalChokepointsCard = lazy(() => import('@/features/dashboard/componen
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
+const EliteWealthFlightIndex = lazy(() => import('@/features/dashboard/components/rows/EliteWealthFlightIndex').then(m => ({ default: m.EliteWealthFlightIndex })));
 const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
 
 const LoadingFallback = () => (
@@ -479,6 +480,13 @@ export const Dashboard: React.FC = () => {
                 <SectionErrorBoundary name="Shadow Trade Monitor">
                     <Suspense fallback={<LoadingFallback />}>
                         <ShadowTradeCard />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                {/* ROW 6.85: ELITE OFFSHORE WEALTH FLIGHT */}
+                <SectionErrorBoundary name="Elite Offshore Wealth Flight">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <EliteWealthFlightIndex />
                     </Suspense>
                 </SectionErrorBoundary>
 
