@@ -68,6 +68,7 @@ const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
 const EliteWealthFlightIndex = lazy(() => import('@/features/dashboard/components/rows/EliteWealthFlightIndex').then(m => ({ default: m.EliteWealthFlightIndex })));
+const IllicitFlowsTracker = lazy(() => import('@/features/dashboard/components/rows/IllicitFlowsTracker').then(m => ({ default: m.IllicitFlowsTracker })));
 const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
 
 const LoadingFallback = () => (
@@ -487,6 +488,13 @@ export const Dashboard: React.FC = () => {
                 <SectionErrorBoundary name="Elite Offshore Wealth Flight">
                     <Suspense fallback={<LoadingFallback />}>
                         <EliteWealthFlightIndex />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                {/* ROW 6.87: ILLICIT FLOWS VIA TRADE MISINVOICING */}
+                <SectionErrorBoundary name="Illicit Flows Tracker">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <IllicitFlowsTracker />
                     </Suspense>
                 </SectionErrorBoundary>
 
