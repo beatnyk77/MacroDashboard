@@ -14,6 +14,8 @@ import {
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Link } from 'react-router-dom';
 import { Screener } from '@/features/CIE/Screener';
+import { QuarterlyAggregator } from '@/features/CIE/QuarterlyAggregator';
+import { InstitutionalWatchlists } from '@/features/CIE/InstitutionalWatchlists';
 
 export const CorporateIndiaEngine: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'screener' | 'aggregates' | 'watchlists'>('screener');
@@ -129,11 +131,8 @@ export const CorporateIndiaEngine: React.FC = () => {
                                 transition={{ duration: 0.3 }}
                             >
                                 {activeTab === 'screener' && <Screener />}
-                                {activeTab !== 'screener' && (
-                                    <div className="p-12 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-3xl">
-                                        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white/20">Module Under Construction</h3>
-                                    </div>
-                                )}
+                                {activeTab === 'aggregates' && <QuarterlyAggregator />}
+                                {activeTab === 'watchlists' && <InstitutionalWatchlists />}
                             </motion.div>
                         </AnimatePresence>
                     </SectionErrorBoundary>
