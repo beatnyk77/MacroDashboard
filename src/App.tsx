@@ -23,6 +23,7 @@ const About = lazy(() => import('@/pages/About').then(module => ({ default: modu
 const GlossaryIndexPage = lazy(() => import('@/pages/GlossaryIndexPage').then(module => ({ default: module.GlossaryIndexPage })));
 const GlossaryTermPage = lazy(() => import('@/pages/GlossaryTermPage').then(module => ({ default: module.GlossaryTermPage })));
 const IntelIndiaPage = lazy(() => import('@/pages/IntelIndiaPage').then(module => ({ default: module.IntelIndiaPage })));
+const CorporateIndiaEngine = lazy(() => import('@/pages/CorporateIndiaEngine').then(module => ({ default: module.CorporateIndiaEngine })));
 const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module => ({ default: module.IntelChinaPage })));
 const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
 const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
@@ -73,6 +74,8 @@ function App() {
                                         <Route path="/glossary" element={<GlossaryIndexPage />} />
                                         <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
+                                        <Route path="/intel/india/corporate-engine" element={<CorporateIndiaEngine />} />
+                                        <Route path="/intel/india/corporate-engine/:ticker" element={<CorporateIndiaEngine />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
                                         <Route path="/institutional" element={<ForInstitutional />} />

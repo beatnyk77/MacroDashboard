@@ -4,7 +4,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2 } from 'lucide-react';
+import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, Building2 } from 'lucide-react';
 
 // Lazy-load heavy sub-sections
 const IndiaMacroPulseSection = lazy(() =>
@@ -147,52 +147,85 @@ export const IntelIndiaPage: React.FC = () => {
                         className="flex items-start gap-6 mb-10"
                     >
                         <span className="text-6xl md:text-8xl select-none">🇮🇳</span>
-                        <div>
-                            <p className="text-[0.65rem] font-black text-blue-400 uppercase tracking-[0.3em] mb-2">GraphiQuestor Intelligence Series</p>
-                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-none">
-                                India<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-orange-400">
-                                    Macro Hub
+                        <div className="flex-1">
+                            <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-white leading-[0.9] mb-4">
+                                India <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-orange-400">
+                                    Intelligence
                                 </span>
-                            </h1>
-                            <p className="mt-4 text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
-                                Institutional-grade telemetry tracking India's credit cycle, fiscal stress, sovereign debt rollover risk, RBI liquidity dynamics, and de-dollarization strategy — sourced from MoSPI, RBI DBIE, and FRED.
+                            </h2>
+                            <p className="max-w-xl text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
+                                Institutional-grade telemetry for the world's fastest-growing major economy.
+                                Monitoring the RBI credit cycle, fiscal stress, and sovereign debt maturity walls in real-time.
                             </p>
-                            <div className="flex flex-wrap gap-3 mt-6">
-                                <a href="#macro" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-black uppercase tracking-widest hover:bg-blue-500/20 transition-colors">
-                                    Macro Pulse <ArrowRight size={12} />
-                                </a>
-                                <a href="#fiscal" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                                    Fiscal Stress <ArrowRight size={12} />
-                                </a>
-                                <a href="#credit" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                                    Credit Cycle <ArrowRight size={12} />
-                                </a>
-                            </div>
                         </div>
                     </motion.div>
 
-                    {/* Signal Preview Cards */}
+                    {/* CIE Integration Card */}
                     <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.2 }}
-                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                        className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500/10 via-transparent to-orange-500/5 border border-white/10 overflow-hidden hover:border-blue-500/30 transition-all mb-16"
                     >
-                        {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color }) => (
-                            <div key={label} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-default`}>
-                                <Icon size={18} className="mb-3 opacity-80" />
-                                <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
-                                <p className="text-[0.6rem] text-muted-foreground/60 leading-relaxed">{desc}</p>
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Building2 size={120} className="text-blue-500" />
+                        </div>
+
+                        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 justify-between">
+                            <div className="max-w-xl">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.6rem] font-black uppercase tracking-widest mb-4">
+                                    <Zap size={10} /> New Institutional Module
+                                </div>
+                                <h3 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-3">Corporate India Engine v1.0</h3>
+                                <p className="text-sm text-muted-foreground leading-relaxed">
+                                    Deep fundamental research integrated with macro telemetry. Filter Nifty 500 stocks by **State-wise Capex Exposure**, **Formalization Premium**, and **Oil Sensitivity**.
+                                </p>
                             </div>
-                        ))}
+                            <Link
+                                to="/intel/india/corporate-engine"
+                                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black text-[0.7rem] font-black uppercase tracking-widest hover:bg-blue-400 hover:text-white transition-all shadow-xl shadow-white/5 group/btn whitespace-nowrap"
+                            >
+                                Enter Engine <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                            </Link>
+                        </div>
                     </motion.div>
+
+                    {/* Fast Signal Bar */}
+                    <div className="flex flex-wrap gap-3 mt-6">
+                        <a href="#macro" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-black uppercase tracking-widest hover:bg-blue-500/20 transition-colors">
+                            Macro Pulse <ArrowRight size={12} />
+                        </a>
+                        <a href="#fiscal" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                            Fiscal Stress <ArrowRight size={12} />
+                        </a>
+                        <a href="#credit" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                            Credit Cycle <ArrowRight size={12} />
+                        </a>
+                    </div>
                 </div>
             </section>
 
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-8 relative z-20">
+                {/* Signal Preview Cards */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.2 }}
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
+                >
+                    {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color }) => (
+                        <div key={label} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-default`}>
+                            <Icon size={18} className="mb-3 opacity-80" />
+                            <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
+                            <p className="text-[0.6rem] text-muted-foreground/60 leading-relaxed">{desc}</p>
+                        </div>
+                    ))}
+                </motion.div>
+            </div>
+
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
-
                 {/* India Macro Pulse */}
                 <section id="macro">
                     <SectionErrorBoundary name="India Macro Pulse">
@@ -267,7 +300,6 @@ export const IntelIndiaPage: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
-
             </div>
 
             <InstitutionalFooter />
