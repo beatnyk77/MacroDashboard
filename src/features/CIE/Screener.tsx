@@ -1,4 +1,3 @@
-```
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -33,11 +32,7 @@ export const Screener: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('cie_companies')
-                .select(`
-    *,
-    cie_fundamentals(*),
-    cie_macro_signals(*)
-        `)
+                .select('*, cie_fundamentals(*), cie_macro_signals(*)')
                 .order('ticker');
 
             if (error) throw error;
@@ -156,17 +151,16 @@ export const Screener: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex flex-col items-center gap-1">
-                                                <div className={`text - lg font - black ${
-    latestSignal.macro_impact_score > 70 ? 'text-emerald-400' :
-    latestSignal.macro_impact_score > 40 ? 'text-amber-400' : 'text-rose-400'
-} `}>
+                                                <div className={`text-lg font-black ${latestSignal.macro_impact_score > 70 ? 'text-emerald-400' :
+                                                        latestSignal.macro_impact_score > 40 ? 'text-amber-400' : 'text-rose-400'
+                                                    }`}>
                                                     {latestSignal.macro_impact_score || 'N/A'}
                                                 </div>
                                                 <div className="w-16 h-1 rounded-full bg-white/5 overflow-hidden">
                                                     <div
                                                         className="h-full bg-current opacity-60"
                                                         style={{
-                                                            width: `${ latestSignal.macro_impact_score }% `,
+                                                            width: `${latestSignal.macro_impact_score || 0}%`,
                                                             color: latestSignal.macro_impact_score > 70 ? '#10b981' :
                                                                 latestSignal.macro_impact_score > 40 ? '#f59e0b' : '#f43f5e'
                                                         }}
