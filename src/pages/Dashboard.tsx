@@ -36,13 +36,59 @@ export const Dashboard: React.FC = () => {
     return (
         <Container maxWidth={false} disableGutters sx={{ py: 4 }}>
             <SEOManager
-                title="Macro Research Hub | Sovereign Intelligence"
-                description="Narrative-first macro research platform tracking Debt, Liquidity, and Sovereign Risk for institutional investors."
+                title="Institutional Macro & Sovereign Debt Terminal"
+                description="Institutional-grade macro telemetry tracking Global Net Liquidity, Debt maturity, and BRICS de-dollarization. Access proprietary hard-money signals."
                 keywords={['Macro Research', 'Institutional Intelligence', 'Sovereign Debt', 'Liquidity Signal']}
                 isApp={true}
+                jsonLd={[
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "GraphiQuestor",
+                        "url": "https://graphiquestor.com",
+                        "logo": "https://graphiquestor.com/logo.png",
+                        "sameAs": [
+                            "https://twitter.com/GraphiQuestor",
+                            "https://linkedin.com/company/graphiquestor"
+                        ]
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "GraphiQuestor",
+                        "url": "https://graphiquestor.com",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://graphiquestor.com/?q={search_term_string}",
+                            "query-input": "required name=search_term_string"
+                        }
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "FAQPage",
+                        "mainEntity": [
+                            {
+                                "@type": "Question",
+                                "name": "What is the Sovereign Debt to Gold ratio?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "The Sovereign Debt to Gold (SDG) ratio is a mathematical gauge used to track fiscal dominance and currency debasement by comparing total sovereign liabilities to physical gold reserves."
+                                }
+                            },
+                            {
+                                "@type": "Question",
+                                "name": "How does GraphiQuestor track Global Net Liquidity?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "GraphiQuestor synthesizes real-time balance sheet data from the Federal Reserve, TGA, and Reverse Repo facilities to identify liquidity regime shifts."
+                                }
+                            }
+                        ]
+                    }
+                ]}
             />
 
-            <div className="space-y-32">
+            <main className="space-y-32">
                 {/* 1. HERO SECTION */}
                 <SPASection id="hero" variant="hero" disableAnimation className="pt-12">
                     <div className="max-w-4xl mx-auto text-center mb-20">
@@ -200,6 +246,46 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </SPASection>
 
+                {/* 10. METHODOLOGY & NETWORK (SEO/AEO Text Expansion) */}
+                <SPASection id="methodology" className="pt-24 pb-32 border-t border-white/5">
+                    <div className="max-w-4xl mx-auto space-y-12">
+                        <header className="space-y-4">
+                            <h2 className="text-3xl font-black text-white tracking-tighter uppercase">Institutional Intelligence Methodology</h2>
+                            <p className="text-muted-foreground text-sm leading-relaxed">
+                                GraphiQuestor operates as a sovereign intelligence console, specializing in the transition from debt-monopoly systems to hard-money telemetry. Our methodology integrates three core signal layers to provide capital allocators with structural alpha.
+                            </p>
+                        </header>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <article className="space-y-4">
+                                <h3 className="text-lg font-bold text-blue-400 uppercase tracking-tight">I. The Liquidity Plumbing</h3>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    We track global net liquidity by synthesizing balance sheet data from the <a href="https://www.federalreserve.gov" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Federal Reserve</a>, <a href="https://www.ecb.europa.eu" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">ECB</a>, and <a href="https://www.pboc.gov.cn" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">PBoC</a>. By monitoring the Treasury General Account (TGA) and Reverse Repo (RRP) facilities, GraphiQuestor identifies stealth QE and liquidity drain cycles before they manifest in spot markets.
+                                </p>
+                            </article>
+                            <article className="space-y-4">
+                                <h3 className="text-lg font-bold text-amber-500 uppercase tracking-tight">II. The Hard Money Anchor</h3>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    Our "Sovereign Debt to Gold" (SDG) ratio provides a mathematical gauge of fiscal dominance. As G20 nations navigate the <a href="/labs/de-dollarization-gold" className="text-amber-500 hover:underline">De-Dollarization</a> vector, we track central bank gold accumulation (CBGA) as the ultimate hedge against paper claim inflation.
+                                </p>
+                            </article>
+                        </div>
+
+                        <div className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl space-y-6">
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Global Intelligence Nodes</h3>
+                            <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none">
+                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> <a href="/labs/india" className="hover:text-white">India Hub</a></li>
+                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <a href="/labs/china" className="hover:text-white">China Pulse</a></li>
+                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span> <a href="/labs/energy" className="hover:text-white">Energy Security</a></li>
+                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <a href="/api-access" className="hover:text-white">API Access</a></li>
+                            </ul>
+                            <p className="text-[0.65rem] text-muted-foreground/40 leading-relaxed font-medium pt-4 border-t border-white/5">
+                                Data for GraphiQuestor is autonomously ingested from authoritative sources including the <a href="https://www.imf.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">IMF</a>, <a href="https://www.bis.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">BIS</a>, and <a href="https://www.mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">MoSPI</a>. Our 25-year historical pipeline ensures all regime signals are grounded in structural reality.
+                            </p>
+                        </div>
+                    </div>
+                </SPASection>
+
                 {/* 6. ENERGY & COMMODITY SECURITY */}
                 <SPASection id="commodities">
                     <SectionHeader
@@ -300,7 +386,7 @@ export const Dashboard: React.FC = () => {
                         </Button>
                     </div>
                 </SPASection>
-            </div>
+            </main>
         </Container>
     );
 };

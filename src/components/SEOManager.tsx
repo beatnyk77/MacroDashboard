@@ -79,6 +79,9 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={description} />
             <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:image" content={ogImage} />
+            <meta name="twitter:site" content="@GraphiQuestor" />
+            <meta name="twitter:creator" content="@GraphiQuestor" />
 
             {/* Article Schema */}
             {ogType === 'article' && publishedTime && (
