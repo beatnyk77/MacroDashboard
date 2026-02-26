@@ -26,6 +26,7 @@ const IntelIndiaPage = lazy(() => import('@/pages/IntelIndiaPage').then(module =
 const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module => ({ default: module.IntelChinaPage })));
 const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
 const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
+const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
 
 // Labs
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
@@ -75,6 +76,7 @@ function App() {
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
                                         <Route path="/institutional" element={<ForInstitutional />} />
+                                        <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
 
                                         {/* Labs */}
                                         <Route path="/labs/us-macro-fiscal" element={<USMacroFiscalLab />} />

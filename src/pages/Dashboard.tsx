@@ -25,6 +25,7 @@ const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/secti
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
 const BlogSection = lazy(() => import('@/features/dashboard/components/sections/BlogSection').then(m => ({ default: m.BlogSection })));
+const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -166,6 +167,15 @@ export const Dashboard: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                </SPASection>
+
+                {/* 2.5 WEEKLY MACRO NARRATIVE */}
+                <SPASection id="weekly-narrative">
+                    <SectionErrorBoundary name="Weekly Narrative">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <WeeklyNarrativeSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* 3. US FISCAL & MACRO STRESS */}
