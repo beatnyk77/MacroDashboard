@@ -183,10 +183,10 @@ export const IntelIndiaPage: React.FC = () => {
                                 </p>
                             </div>
                             <Link
-                                to="/intel/india/corporate-engine"
+                                to="/india-equities"
                                 className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black text-[0.7rem] font-black uppercase tracking-widest hover:bg-blue-400 hover:text-white transition-all shadow-xl shadow-white/5 group/btn whitespace-nowrap"
                             >
-                                Enter Engine <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                                Explore Corporate India Engine <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                             </Link>
                         </div>
                     </motion.div>
