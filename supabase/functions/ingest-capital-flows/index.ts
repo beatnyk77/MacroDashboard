@@ -23,9 +23,9 @@ Deno.serve(async (req: Request) => {
         try {
             const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${ticker}&apikey=${AV_API_KEY}`
             const resp = await fetch(url)
-            const data = await resp.json()
+            const data = await resp.json() as any
 
-            if (data['Time Series (Daily)']) {
+            if (data && data['Time Series (Daily)']) {
                 const latestDate = Object.keys(data['Time Series (Daily)'])[0]
                 const latestData = data['Time Series (Daily)'][latestDate]
 

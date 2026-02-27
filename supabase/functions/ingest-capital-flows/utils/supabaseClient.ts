@@ -1,13 +1,12 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-client@2.39.3'
+import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 export const createAdminClient = () => {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
-    return createClient(supabaseUrl, supabaseServiceKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
-    })
+    if (!supabaseUrl || !supabaseServiceKey) {
+        throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
+    }
+
+    return createClient(supabaseUrl, supabaseServiceKey)
 }
