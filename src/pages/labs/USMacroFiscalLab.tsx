@@ -58,7 +58,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 </Typography>
             </Box>
 
-            <div className="space-y-24">
+            <div className="space-y-32">
                 {/* Section 1: Debt Maturity Wall */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
@@ -73,34 +73,33 @@ export const USMacroFiscalLab: React.FC = () => {
                     <ChartInsightSummary id="lab-us-debt-maturity" insight="The maturity wall tracks $9.2T in rolling securities. The 2025-2027 window represents a critical refinancing regime where low-coupon pandemic-era debt is re-priced at structurally higher market yields." />
                 </section>
 
-                {/* Section 2: Treasury Demand & Holders */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <Zap className="text-amber-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Auction Demand</h2>
-                        </div>
-                        <SectionErrorBoundary name="Treasury Demand Gauge">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <USTreasuryDemandGauge />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
+                {/* Section 2: Treasury Demand */}
+                <section>
+                    <div className="flex items-center gap-3 mb-8">
+                        <Zap className="text-amber-500" size={24} />
+                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Auction Demand</h2>
+                    </div>
+                    <SectionErrorBoundary name="Treasury Demand Gauge">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <USTreasuryDemandGauge />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                    <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <ShieldAlert className="text-emerald-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Foreign Holders</h2>
-                        </div>
-                        <SectionErrorBoundary name="Top Treasury Holders">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <TopTreasuryHoldersTable />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
-                </div>
+                {/* Section 3: Foreign Holders */}
+                <section>
+                    <div className="flex items-center gap-3 mb-8">
+                        <ShieldAlert className="text-emerald-500" size={24} />
+                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Foreign Holders</h2>
+                    </div>
+                    <SectionErrorBoundary name="Top Treasury Holders">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TopTreasuryHoldersTable />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                {/* Section 3: US Macro Pulse (Sankey) */}
+                {/* Section 4: US Macro Pulse (Sankey) */}
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
@@ -115,7 +114,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 4: Policy Tracker */}
+                {/* Section 5: Policy Tracker */}
                 <section className="pt-12 border-t border-white/5">
                     <div className="flex items-center gap-3 mb-8">
                         <ShieldAlert className="text-rose-500" size={24} />

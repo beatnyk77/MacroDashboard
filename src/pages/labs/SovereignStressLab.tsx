@@ -55,7 +55,7 @@ export const SovereignStressLab: React.FC = () => {
                 </Typography>
             </Box>
 
-            <div className="space-y-24">
+            <div className="space-y-32">
                 {/* 1. Sovereign Risk Matrix */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">

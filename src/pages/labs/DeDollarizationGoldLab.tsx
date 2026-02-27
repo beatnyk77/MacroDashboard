@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Container, Typography, Box, Button, Breadcrumbs, Link, Grid } from '@mui/material';
+import { Container, Typography, Box, Button, Breadcrumbs, Link } from '@mui/material';
 import {
     ChevronRight,
     ArrowLeft,
@@ -59,29 +59,25 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 </Typography>
             </Box>
 
-            <div className="space-y-24">
+            <div className="space-y-32">
                 {/* 1. Gold Anchor Ratios */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-amber-500" size={28} />
                         <h2 className="text-3xl font-black uppercase tracking-tight text-white">Gold Anchor Ratios</h2>
                     </div>
-                    <Grid container spacing={6}>
-                        <Grid item xs={12} lg={4}>
-                            <SectionErrorBoundary name="US Debt Gold Backing">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <USDebtGoldBackingCard />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </Grid>
-                        <Grid item xs={12} lg={8}>
-                            <SectionErrorBoundary name="Gold Ratio Ribbon">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GoldRatioRibbon />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </Grid>
-                    </Grid>
+                    <div className="space-y-12">
+                        <SectionErrorBoundary name="US Debt Gold Backing">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <USDebtGoldBackingCard />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="Gold Ratio Ribbon">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GoldRatioRibbon />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                     <ChartInsightSummary id="lab-gold-ratios" insight="The M2/Gold ratio tracks the relative debasement of the monetary supply against the hard asset anchor. Structurally rising ratios indicate a regime change in sovereign preference for physical liquidity." />
                 </section>
 
@@ -99,7 +95,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 </section>
 
                 {/* 3. Central Bank & Hubs */}
-                <div className="space-y-12">
+                <div className="space-y-32">
                     <section>
                         <div className="flex items-center gap-3 mb-10">
                             <Zap className="text-amber-500" size={24} />
