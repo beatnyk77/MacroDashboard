@@ -26,6 +26,7 @@ const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/s
 const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
 const BlogSection = lazy(() => import('@/features/dashboard/components/sections/BlogSection').then(m => ({ default: m.BlogSection })));
 const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
+const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -159,6 +160,14 @@ export const Dashboard: React.FC = () => {
                     <div className="space-y-12">
                         <SectionErrorBoundary name="Net Liquidity">
                             <NetLiquidityRow />
+                        </SectionErrorBoundary>
+
+                        <SectionErrorBoundary name="Capital Flows Terminal">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="pt-12 border-t border-white/5">
+                                    <CapitalFlowsTerminal />
+                                </div>
+                            </Suspense>
                         </SectionErrorBoundary>
 
                         <SectionErrorBoundary name="Cockpit KPI">
