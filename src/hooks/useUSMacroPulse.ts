@@ -55,22 +55,14 @@ export function useUSMacroPulse() {
             if (latestError) throw latestError;
 
             return US_MACRO_METRICS.map(metricId => {
-                let metricHistory = historyData
+                const metricHistory = historyData
                     ?.filter(h => h.metric_id === metricId)
                     .map(h => ({
                         date: h.as_of_date,
                         value: Number(h.value)
                     })) || [];
 
-                let latest = latestData?.find(l => l.metric_id === metricId);
-
-                // FALLBACK: PMI_US_SERVICES (Top 5 Stale)
-                // If stale or missing, inject the latest S&P Global release value (52.5 for Jan 2024 as placeholder/last known)
-                if (metricId === 'PMI_US_SERVICES' && (!latest || (new Date().getTime() - new Date(latest.last_updated_at).getTime()) / (1000 * 3600 * 24) > 30)) {
-                    if (metricHistory.length === 0) {
-                        metricHistory = [{ date: '2024-01-01', value: 52.5 }];
-                    }
-                }
+                const latest = latestData?.find(l => l.metric_id === metricId);
 
                 const lastDate = latest?.last_updated_at ? new Date(latest.last_updated_at) : (metricHistory.length > 0 ? new Date(metricHistory[metricHistory.length - 1].date) : null);
                 const isStale = lastDate ? (new Date().getTime() - lastDate.getTime()) / (1000 * 3600 * 24) > 35 : true;
@@ -78,7 +70,7 @@ export function useUSMacroPulse() {
                 return {
                     metric_id: metricId,
                     history: metricHistory,
-                    current_value: latest?.value || (metricHistory.length > 0 ? metricHistory[metricHistory.length - 1].value : (metricId === 'PMI_US_SERVICES' ? 52.5 : 0)),
+                    current_value: latest?.value !== undefined ? Number(latest.value) : (metricHistory.length > 0 ? metricHistory[metricHistory.length - 1].value : 0),
                     delta_yoy: latest?.delta_yoy,
                     z_score: latest?.z_score,
                     percentile: latest?.percentile,

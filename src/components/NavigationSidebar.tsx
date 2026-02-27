@@ -13,7 +13,8 @@ import {
     Zap,
     TrendingUp,
     Anchor,
-    Box
+    Box,
+    Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
@@ -49,6 +50,7 @@ const navItems: NavItem[] = [
     },
     { id: 'institutional', label: 'For Funds & Family Offices', path: '/institutional', icon: <ShieldAlert size={18} strokeWidth={2.5} /> },
     { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
+    { id: 'data-health', label: 'Data Health', path: '/admin/data-health', icon: <Activity size={18} strokeWidth={2.5} /> },
 ];
 
 export const NavigationSidebar: React.FC = () => {

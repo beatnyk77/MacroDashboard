@@ -15,6 +15,7 @@ const ArticlePage = lazy(() => import('@/pages/ArticlePage').then(module => ({ d
 const RegimeDigestArchivePage = lazy(() => import('@/pages/RegimeDigestArchivePage').then(module => ({ default: module.RegimeDigestArchivePage })));
 const RegimeDigestPage = lazy(() => import('@/pages/RegimeDigestPage').then(module => ({ default: module.RegimeDigestPage })));
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+const DataHealthDashboard = lazy(() => import('@/pages/DataHealthDashboard').then(module => ({ default: module.DataHealthDashboard })));
 const APIAccessPage = lazy(() => import('@/pages/APIAccessPage').then(module => ({ default: module.APIAccessPage })));
 const APIDocsPage = lazy(() => import('@/pages/APIDocsPage').then(module => ({ default: module.APIDocsPage })));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService').then(module => ({ default: module.TermsOfService })));
@@ -67,6 +68,7 @@ function App() {
                                         <Route path="/regime-digest" element={<RegimeDigestArchivePage />} />
                                         <Route path="/regime-digest/:year/:month" element={<RegimeDigestPage />} />
                                         <Route path="/admin" element={<AdminDashboard />} />
+                                        <Route path="/admin/data-health" element={<DataHealthDashboard />} />
                                         <Route path="/api-access" element={<APIAccessPage />} />
                                         <Route path="/api-docs" element={<APIDocsPage />} />
                                         <Route path="/terms" element={<TermsOfService />} />
