@@ -171,13 +171,25 @@ Deno.serve(async (req: Request) => {
                         sector: targetSector,
                         industry: industry,
                         price_to_book: pb,
-                        last_price: meta.price
+                        last_price: meta.price,
+                        market_cap: meta.mcap,
+                        shares_outstanding: meta.price > 0 ? (meta.mcap / meta.price) : 0
                     }
                 }));
 
                 const { error: fundError } = await client
                     .from('cie_fundamentals')
                     .upsert(recordsToInsert, { onConflict: 'company_id, quarter_date', ignoreDuplicates: false })
+
+                // 4. Update Daily Price History
+                const todayStr = new Date().toISOString().split('T')[0]
+                await client
+                    .from('cie_price_history')
+                    .upsert({
+                        company_id: company.id,
+                        date: todayStr,
+                        price: meta.price
+                    }, { onConflict: 'company_id,date' })
 
                 if (fundError) {
                     errors.push({ ticker, reason: 'Fundamentals Upsert Error', error: fundError })

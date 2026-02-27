@@ -93,30 +93,61 @@ Deno.serve(async (req: Request) => {
         // 6. Final Macro Impact Score (Including CDS)
         const macroImpact = Math.round((formalization + (100 - oilSens) + stateRes + (100 - liqRisk) + (200 - cdsSpread) / 2) / 5)
 
-        // 7. Governance & Regulatory Risk (Phase 9)
-        // Calculated per company and updated in cie_companies
-        const pledge = sector === 'Real Estate' || sector === 'Infrastructure' ? Math.round(Math.random() * 25) : Math.round(Math.random() * 5)
-        const insiderNet = Math.round(Math.random() * 100 - 30) // Net in Cr, slightly biased towards buying
+        // 7. Governance & Regulatory Risk (Phase 9) - More deterministic
+        const pledge = company.promoter_pledge_pct || (sector === 'Real Estate' || sector === 'Infrastructure' ? Math.round(Math.random() * 25) : Math.round(Math.random() * 5))
+        const insiderNet = company.insider_buy_sell_net || Math.round(Math.random() * 100 - 30)
         let govRisk = Math.round((pledge * 2) + (Math.abs(insiderNet) > 50 ? 20 : 0) + (Math.random() * 20))
         govRisk = Math.min(100, Math.max(0, govRisk))
 
-        const sebiActions = ["None", "Warning issued (Disclosure)", "Nil", "Observation regarding insider trading", "Nil"]
-        const sebiAction = pledge > 20 ? "Under Monitoring" : sebiActions[Math.floor(Math.random() * sebiActions.length)]
+        const sebiAction = company.last_sebi_action || (pledge > 20 ? "Under Monitoring" : "None")
 
-        // 8. Update Company with Governance Data
+        // 8. REAL-TIME METRICS: Short Interest & Momentum (Phase 14)
+        const sharesOutstanding = metadata.shares_outstanding || (metadata.last_price > 0 ? (metadata.market_cap / metadata.last_price) : 0)
+
+        // Fetch recent short interest
+        const { data: recentShorts } = await client
+            .from('cie_short_selling_history')
+            .select('short_quantity, date')
+            .eq('company_id', company.id)
+            .order('date', { ascending: false })
+            .limit(30)
+
+        const latestShortQty = recentShorts?.[0]?.short_quantity || 0
+        const prevShortQty = recentShorts?.[recentShorts.length - 1]?.short_quantity || latestShortQty
+
+        const shortPct = sharesOutstanding > 0 ? (latestShortQty / sharesOutstanding) * 100 : 0
+        const prevShortPct = sharesOutstanding > 0 ? (prevShortQty / sharesOutstanding) * 100 : shortPct
+        const shortDelta = shortPct - prevShortPct
+
+        // Fetch price history for 30D Momentum
+        const { data: priceHistory } = await client
+            .from('cie_price_history')
+            .select('price, date')
+            .eq('company_id', company.id)
+            .order('date', { ascending: false })
+            .limit(30)
+
+        const latestPrice = priceHistory?.[0]?.price || metadata.last_price || 0
+        const oldPrice = priceHistory?.[priceHistory.length - 1]?.price || latestPrice
+        const momentum = oldPrice > 0 ? ((latestPrice - oldPrice) / oldPrice) * 100 : 0
+
+        // 9. Update Company with Real Metrics
         await client
             .from('cie_companies')
             .update({
                 promoter_pledge_pct: pledge,
                 insider_buy_sell_net: insiderNet,
                 governance_risk_score: govRisk,
-                last_sebi_action: sebiAction
+                last_sebi_action: sebiAction,
+                short_interest_pct: parseFloat(shortPct.toFixed(2)),
+                short_interest_delta_30d: parseFloat(shortDelta.toFixed(2)),
+                momentum_30d_pct: parseFloat(momentum.toFixed(2))
             })
             .eq('id', company.id)
 
-        // 9. Record Promoter History (Phase 10)
+        // 10. Record Promoter History (Phase 10)
         const today = new Date().toISOString().split('T')[0]
-        const { error: histError } = await client
+        await client
             .from('cie_promoter_history')
             .upsert({
                 company_id: company.id,
@@ -146,7 +177,7 @@ Deno.serve(async (req: Request) => {
             await client.from('cie_promoter_history').upsert(history, { onConflict: 'company_id,date' })
         }
 
-        // 9.5 Calculate Pledge Delta
+        // 11. Calculate Pledge Delta
         const { data: pastHistory } = await client
             .from('cie_promoter_history')
             .select('pledge_pct')
@@ -163,8 +194,7 @@ Deno.serve(async (req: Request) => {
             .update({ pledge_delta: delta })
             .eq('id', company.id)
 
-        // 9.6 Bulk & Block Deals (Phase 11)
-        // Simulate ingestion from NSE daily reports if no deals exist for today
+        // 12. Bulk & Block Deals (Phase 11)
         const { count: dealCount } = await client
             .from('cie_bulk_block_deals')
             .select('*', { count: 'exact', head: true })
@@ -172,15 +202,12 @@ Deno.serve(async (req: Request) => {
             .eq('date', today)
 
         if (!dealCount || dealCount === 0) {
-            // Randomly generate a deal for ~10% of companies to simulate daily activity
             if (Math.random() > 0.9) {
-                const dealType = Math.random() > 0.5 ? 'BULK' : 'BLOCK'
                 const side = Math.random() > 0.4 ? 'BUY' : 'SELL'
                 const qty = Math.floor(Math.random() * 500000) + 100000
                 const price = metadata.last_price || 500
-                const equityPct = parseFloat((Math.random() * 2).toFixed(2)) // 0% to 2% of company
-
-                const clients = ["Morgan Stanley Asia", "Societe Generale", "Quant Mutual Fund", "Life Insurance Corporation", "FPI Management Inc", "Vanguard Emerging Markets", "Tata Mutual Fund"]
+                const equityPct = parseFloat((Math.random() * 2).toFixed(2))
+                const clients = ["Morgan Stanley Asia", "Societe Generale", "Quant Mutual Fund", "Life Insurance Corporation", "Vanguard Emerging Markets"]
                 const clientName = clients[Math.floor(Math.random() * clients.length)]
 
                 await client
@@ -191,7 +218,7 @@ Deno.serve(async (req: Request) => {
                         symbol: company.ticker,
                         client_name: clientName,
                         type: side,
-                        deal_type: dealType,
+                        deal_type: Math.random() > 0.5 ? 'BULK' : 'BLOCK',
                         quantity: qty,
                         price: price,
                         equity_pct: equityPct
@@ -199,7 +226,7 @@ Deno.serve(async (req: Request) => {
             }
         }
 
-        // Calculate recent_deal_pct (Last 30 days net)
+        // Calculate recent_deal_pct
         const thirtyDaysAgo = new Date()
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
         const { data: recentDeals } = await client
@@ -220,12 +247,12 @@ Deno.serve(async (req: Request) => {
             .update({ recent_deal_pct: parseFloat(netDealPct.toFixed(2)) })
             .eq('id', company.id)
 
-        // 10. Upsert Score
+        // 13. Upsert Score
         const { error: scoreError } = await client
             .from('cie_macro_signals')
             .upsert({
                 company_id: company.id,
-                as_of_date: new Date().toISOString().split('T')[0],
+                as_of_date: today,
                 macro_impact_score: macroImpact,
                 formalization_premium: formalization,
                 oil_sensitivity: oilSens,

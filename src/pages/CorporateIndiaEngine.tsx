@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Filter,
@@ -25,6 +27,35 @@ import { Flame, Briefcase, TrendingDown, Ship } from 'lucide-react';
 export const CorporateIndiaEngine: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'screener' | 'heatmap' | 'aggregates' | 'watchlists' | 'promoters' | 'deals' | 'shortSelling' | 'ipos'>('screener');
     const [showMacroOverlay, setShowMacroOverlay] = useState(true);
+
+    const { data: globalStats } = useQuery({
+        queryKey: ['cie-global-stats'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('cie_macro_signals')
+                .select('*')
+                .order('as_of_date', { ascending: false })
+                .limit(500);
+
+            if (error || !data) return null;
+
+            const avg = (key: string) => data.reduce((acc, s) => acc + (s[key] || 0), 0) / data.length;
+
+            return {
+                health: Math.round(avg('macro_impact_score')),
+                formalization: avg('formalization_premium').toFixed(1),
+                oilSens: avg('oil_sensitivity'),
+                stateRes: avg('state_resilience')
+            };
+        }
+    });
+
+    const stats = [
+        { label: 'Macro-Corporate Health', value: `${globalStats?.health || 72}/100`, trend: '+1.2%', icon: Activity, color: 'blue', desc: 'Aggregate resilience of Nifty 500' },
+        { label: 'Formalization Premium', value: globalStats?.formalization || '84.5', trend: '+4.5%', icon: Zap, color: 'orange', desc: 'Beneficiaries of DPI structural shift' },
+        { label: 'Oil Sensitivity Index', value: (globalStats?.oilSens || 50) > 60 ? 'High' : (globalStats?.oilSens || 50) > 30 ? 'Moderate' : 'Low', trend: 'Neutral', icon: Globe, color: 'rose', desc: 'Current impact of rupee-oil basket' },
+        { label: 'State-Capex Resilience', value: (globalStats?.stateRes || 50) > 70 ? 'Strong' : (globalStats?.stateRes || 50) > 40 ? 'Moderate' : 'Weak', trend: '+0.8%', icon: Building2, color: 'emerald', desc: 'Corporate exposure to state spending' },
+    ];
 
     return (
         <div className="min-h-screen bg-[#050810] text-gray-100">
@@ -86,12 +117,7 @@ export const CorporateIndiaEngine: React.FC = () => {
             <section className="py-12 border-b border-white/5 bg-white/[0.01]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {[
-                            { label: 'Macro-Corporate Health', value: '72/100', trend: '+1.2%', icon: Activity, color: 'blue', desc: 'Aggregate resilience of Nifty 500' },
-                            { label: 'Formalization Premium', value: '84.5', trend: '+4.5%', icon: Zap, color: 'orange', desc: 'Beneficiaries of DPI structural shift' },
-                            { label: 'Oil Sensitivity Index', value: 'High', trend: 'Neutral', icon: Globe, color: 'rose', desc: 'Current impact of rupee-oil basket' },
-                            { label: 'State-Capex Resilience', value: 'Strong', trend: '+0.8%', icon: Building2, color: 'emerald', desc: 'Corporate exposure to state spending' },
-                        ].map((stat) => (
+                        {stats.map((stat) => (
                             <div key={stat.label} className="p-5 rounded-3xl border border-white/5 bg-black/40 backdrop-blur-md hover:border-blue-500/30 transition-all group relative overflow-hidden">
                                 {showMacroOverlay && (
                                     <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">

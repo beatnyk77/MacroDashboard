@@ -10,7 +10,7 @@ export const ShortSellingReport: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('cie_companies')
-                .select('sector, short_interest_pct, short_interest_delta_30d');
+                .select('sector, short_interest_pct, momentum_30d_pct, cie_macro_signals(cds_spread_bps, liquidity_transmission_lag)');
             if (error) throw error;
             return data;
         }
@@ -18,23 +18,43 @@ export const ShortSellingReport: React.FC = () => {
 
     const sectorStats = useMemo(() => {
         if (!companies) return [];
-        const sectors: Record<string, { count: number, totalShort: number, totalDelta: number }> = {};
+        const sectors: Record<string, { count: number, totalShort: number, totalMomentum: number, totalCDS: number, totalLiq: number }> = {};
 
-        companies.forEach(c => {
+        companies.forEach((c: any) => {
             if (!c.sector) return;
-            if (!sectors[c.sector]) sectors[c.sector] = { count: 0, totalShort: 0, totalDelta: 0 };
+            if (!sectors[c.sector]) sectors[c.sector] = { count: 0, totalShort: 0, totalMomentum: 0, totalCDS: 0, totalLiq: 0 };
+
+            const signal = c.cie_macro_signals?.[0] || {};
             sectors[c.sector].count += 1;
             sectors[c.sector].totalShort += (c.short_interest_pct || 0);
-            sectors[c.sector].totalDelta += (c.short_interest_delta_30d || 0);
+            sectors[c.sector].totalMomentum += (c.momentum_30d_pct || 0);
+            sectors[c.sector].totalCDS += (signal.cds_spread_bps || 75);
+            sectors[c.sector].totalLiq += (signal.liquidity_transmission_lag || 30);
         });
 
         return Object.entries(sectors).map(([name, stats]) => ({
             name,
             avgShort: stats.totalShort / stats.count,
-            avgDelta: stats.totalDelta / stats.count,
+            avgMomentum: stats.totalMomentum / stats.count,
+            avgCDS: stats.totalCDS / stats.count,
+            avgLiq: stats.totalLiq / stats.count,
             count: stats.count
         })).sort((a, b) => b.avgShort - a.avgShort);
     }, [companies]);
+
+    const getSystemicRiskLabel = (avgShort: number, avgCDS: number, avgLiq: number) => {
+        // Composite risk score: Weighted average of Short (40%), CDS (30%), Liquidity (30%)
+        // Normalized: Short (base 10%), CDS (base 75bps), Liq (base 40)
+        const shortRisk = Math.min(100, (avgShort / 20) * 100);
+        const cdsRisk = Math.min(100, ((avgCDS - 75) / 100) * 100);
+        const liqRisk = Math.min(100, (avgLiq / 80) * 100);
+
+        const composite = (shortRisk * 0.4) + (cdsRisk * 0.3) + (liqRisk * 0.3);
+
+        if (composite > 60) return 'HIGH';
+        if (composite > 30) return 'MODERATE';
+        return 'LOW';
+    };
 
     if (isLoading) return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -45,64 +65,70 @@ export const ShortSellingReport: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sectorStats.map((sector) => (
-                    <motion.div
-                        key={sector.name}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="p-6 rounded-2xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all cursor-default group"
-                    >
-                        <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-sm font-black uppercase tracking-widest text-white/50">{sector.name}</h3>
-                            <div className={`p-2 rounded-lg ${sector.avgShort > 10 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                {sector.avgShort > 10 ? <AlertTriangle size={16} /> : <ShieldAlert size={16} />}
-                            </div>
-                        </div>
+                {sectorStats.map((sector) => {
+                    const riskLabel = getSystemicRiskLabel(sector.avgShort, sector.avgCDS, sector.avgLiq);
 
-                        <div className="space-y-4">
-                            <div>
-                                <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
-                                    <span>Avg Short Interest</span>
-                                    <span className={sector.avgShort > 10 ? 'text-rose-400' : 'text-emerald-400'}>
-                                        {sector.avgShort.toFixed(1)}%
-                                    </span>
-                                </div>
-                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full ${sector.avgShort > 15 ? 'bg-rose-600' : sector.avgShort > 10 ? 'bg-rose-400' : 'bg-emerald-500'}`}
-                                        style={{ width: `${Math.min(100, sector.avgShort * 4)}%` }}
-                                    />
+                    return (
+                        <motion.div
+                            key={sector.name}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="p-6 rounded-2xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all cursor-default group"
+                        >
+                            <div className="flex justify-between items-start mb-4">
+                                <h3 className="text-sm font-black uppercase tracking-widest text-white/50">{sector.name}</h3>
+                                <div className={`p-2 rounded-lg ${riskLabel === 'HIGH' ? 'bg-rose-500/10 text-rose-400' : riskLabel === 'MODERATE' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                                    {riskLabel === 'HIGH' ? <AlertTriangle size={16} /> : <ShieldAlert size={16} />}
                                 </div>
                             </div>
 
-                            <div>
-                                <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
-                                    <span>30D Momentum</span>
-                                    <span className={sector.avgDelta > 0 ? 'text-rose-400' : 'text-emerald-400'}>
-                                        {sector.avgDelta > 0 ? '+' : ''}{sector.avgDelta.toFixed(2)}%
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div className="space-y-4">
+                                <div>
+                                    <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
+                                        <span>Avg Short Interest</span>
+                                        <span className={sector.avgShort > 10 ? 'text-rose-400' : 'text-emerald-400'}>
+                                            {sector.avgShort.toFixed(1)}%
+                                        </span>
+                                    </div>
+                                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                                         <div
-                                            className={`h-full ${sector.avgDelta > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`}
-                                            style={{ width: `${Math.min(100, Math.abs(sector.avgDelta) * 10)}%` }}
+                                            className={`h-full ${sector.avgShort > 15 ? 'bg-rose-600' : sector.avgShort > 10 ? 'bg-rose-400' : 'bg-emerald-500'}`}
+                                            style={{ width: `${Math.min(100, sector.avgShort * 4)}%` }}
                                         />
                                     </div>
-                                    {sector.avgDelta > 0 && <TrendingUp size={12} className="text-rose-400 animate-pulse" />}
+                                </div>
+
+                                <div>
+                                    <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
+                                        <span>30D Momentum</span>
+                                        <span className={sector.avgMomentum > 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                                            {sector.avgMomentum > 0 ? '+' : ''}{sector.avgMomentum.toFixed(2)}%
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full ${sector.avgMomentum > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}
+                                                style={{ width: `${Math.min(100, Math.abs(sector.avgMomentum) * 10)}%` }}
+                                            />
+                                        </div>
+                                        {sector.avgMomentum > 0 && <TrendingUp size={12} className="text-emerald-400 animate-pulse" />}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center text-[0.6rem] font-medium text-white/20">
-                            <span>{sector.count} Companies Analyzed</span>
-                            <div className="text-white/40 group-hover:text-rose-400 transition-colors">
-                                Systemic Risk: {sector.avgShort > 15 ? 'HIGH' : sector.avgShort > 8 ? 'MODERATE' : 'LOW'}
+                            <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center text-[0.6rem] font-medium text-white/20">
+                                <span>{sector.count} Companies Analyzed</span>
+                                <div className={`px-2 py-0.5 rounded ${riskLabel === 'HIGH' ? 'text-rose-400 bg-rose-500/5' : riskLabel === 'MODERATE' ? 'text-amber-400 bg-amber-500/5' : 'text-emerald-400 bg-emerald-500/5'} transition-colors font-black uppercase tracking-tighter`}>
+                                    Systemic Risk: {riskLabel}
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                ))}
+                        </motion.div>
+                    );
+                })}
             </div>
         </div>
     );
 };
+
+export default ShortSellingReport;

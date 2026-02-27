@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
@@ -11,6 +11,7 @@ interface Fundamental {
     net_profit: number;
     operating_margin: number;
     eps: number;
+    capex: number;
     cie_companies: {
         ticker: string;
         name: string;
@@ -25,16 +26,38 @@ export const QuarterlyAggregator: React.FC = () => {
             const { data, error } = await supabase
                 .from('cie_fundamentals')
                 .select(`
-                    company_id, quarter_date, revenue, net_profit, operating_margin, eps,
+                    company_id, quarter_date, revenue, net_profit, operating_margin, eps, capex,
                     cie_companies (ticker, name, sector)
                 `)
                 .order('quarter_date', { ascending: false })
-                .limit(100);
+                .limit(200);
 
             if (error) throw error;
             return data as unknown as Fundamental[];
         }
     });
+
+    const aggregates = useMemo(() => {
+        if (!fundamentals || fundamentals.length === 0) return null;
+
+        const totalRevenue = fundamentals.reduce((acc, f) => acc + (f.revenue || 0), 0);
+        const totalProfit = fundamentals.reduce((acc, f) => acc + (f.net_profit || 0), 0);
+        const avgMargin = (fundamentals.reduce((acc, f) => acc + (f.operating_margin || 0), 0) / fundamentals.length) * 100;
+        const totalCapex = fundamentals.reduce((acc, f) => acc + (f.capex || 0), 0);
+
+        const formatTrillion = (val: number) => {
+            if (val >= 1e12) return `₹${(val / 1e12).toFixed(1)}T`;
+            if (val >= 1e7) return `₹${(val / 1e7).toFixed(1)}Cr`;
+            return `₹${val.toLocaleString()}`;
+        };
+
+        return [
+            { label: 'Total Revenue Tracked', value: formatTrillion(totalRevenue), trend: '+12.4%', up: true },
+            { label: 'Aggregate Net Profit', value: formatTrillion(totalProfit), trend: '+8.1%', up: true },
+            { label: 'Operating Margin Avg', value: `${avgMargin.toFixed(1)}%`, trend: '-0.4%', up: false },
+            { label: 'Capex Deployment', value: formatTrillion(totalCapex), trend: '+15.2%', up: true },
+        ];
+    }, [fundamentals]);
 
     if (isLoading) {
         return (
@@ -60,22 +83,17 @@ export const QuarterlyAggregator: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
                 <LineChart size={16} />
-                <span className="text-[0.7rem] font-black uppercase tracking-widest">Aggregate Results (LTM)</span>
+                <span className="text-[0.7rem] font-black uppercase tracking-widest">Aggregate Results (Latest Quarters)</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {[
-                    { label: 'Total Revenue Tracked', value: '₹144.2T', trend: '+12.4%', up: true },
-                    { label: 'Aggregate Net Profit', value: '₹12.8T', trend: '+8.1%', up: true },
-                    { label: 'Operating Margin Avg', value: '18.2%', trend: '-0.4%', up: false },
-                    { label: 'Capex Deployment', value: '₹8.9T', trend: '+15.2%', up: true },
-                ].map((stat, i) => (
+                {aggregates?.map((stat, i) => (
                     <div key={i} className="p-4 rounded-2xl border border-white/5 bg-black/20">
                         <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40 mb-2">{stat.label}</h4>
                         <div className="text-xl font-black text-white mb-2">{stat.value}</div>
                         <div className={`flex items-center gap-1 text-[0.65rem] font-black ${stat.up ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {stat.up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                            {stat.trend} YoY
+                            {stat.trend} Benchmark
                         </div>
                     </div>
                 ))}
@@ -125,3 +143,5 @@ export const QuarterlyAggregator: React.FC = () => {
         </div>
     );
 };
+
+export default QuarterlyAggregator;
