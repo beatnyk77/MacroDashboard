@@ -1,159 +1,183 @@
 import React from 'react';
-import { Container, Typography, Box, Button, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Container, Typography, Box, Button } from '@mui/material';
 import {
     Mail,
-    Globe,
     Database,
-    ChevronDown,
-    Lock,
-    Crown
+    Crown,
+    Zap,
+    Building2,
+    Shield
 } from 'lucide-react';
-
-const PremiumCard = ({ icon: Icon, title, description, features }: any) => (
-    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/10 hover:border-blue-500/30 transition-all duration-500 group">
-        <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-            <Icon size={24} className="text-blue-500" />
-        </div>
-        <Typography variant="h5" sx={{ fontWeight: 900, mb: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            {title}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', mb: 4, lineHeight: 1.6 }}>
-            {description}
-        </Typography>
-        <ul className="space-y-3">
-            {features.map((f: string, i: number) => (
-                <li key={i} className="flex items-center gap-2 text-[0.8rem] text-white/70 font-medium">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    {f}
-                </li>
-            ))}
-        </ul>
-    </div>
-);
 
 export const ForInstitutional: React.FC = () => {
     return (
-        <Container maxWidth="lg" sx={{ py: 12 }}>
-            <Box sx={{ textAlign: 'center', mb: 12 }}>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.7rem] font-black uppercase tracking-[0.2em] mb-6">
-                    <Crown size={14} /> Institutional Intelligence Tier
-                </div>
-                <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '4.5rem' }, letterSpacing: '-0.03em', lineHeight: 1, mb: 3 }}>
-                    Institutional <span className="text-blue-500">Solutions</span>
-                </Typography>
-                <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '800px', mx: 'auto', fontWeight: 500, lineHeight: 1.5 }}>
-                    Providing the missing telemetry for funds, family offices, and central banks navigating the fragmentation of the global financial system.
-                </Typography>
-            </Box>
-
-            <Grid container spacing={4} sx={{ mb: 16 }}>
-                <Grid item xs={12} md={4}>
-                    <PremiumCard
-                        icon={Database}
-                        title="Quantum API"
-                        description="Direct high-frequency access to our proprietary data pipeline."
-                        features={[
-                            "25-year historical G20 data",
-                            "Real-time PBoC credit impulse",
-                            "Shadow trade misinvoicing indices",
-                            "99.9% uptime SLA"
-                        ]}
-                    />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <PremiumCard
-                        icon={Globe}
-                        title="Bespoke Alpha"
-                        description="Custom telemetry modules built for your specific trade mandates."
-                        features={[
-                            "Private Lab environments",
-                            "Custom Sankey flow modeling",
-                            "State-level India fiscal deep-dives",
-                            "Geopolitical risk mapping"
-                        ]}
-                    />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <PremiumCard
-                        icon={Lock}
-                        title="Advisory"
-                        description="Direct access to our senior macro research desk and analysts."
-                        features={[
-                            "Quarterly strategy sessions",
-                            "Private research notes",
-                            "Regime change alerts",
-                            "Hard-money allocation strategy"
-                        ]}
-                    />
-                </Grid>
-            </Grid>
-
-            {/* CTA Section */}
-            <Box sx={{
-                p: { xs: 6, md: 10 },
-                borderRadius: '4rem',
-                background: 'radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent)',
-                border: '1px solid white/5',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-            }}>
-                <div className="relative z-10">
-                    <Typography variant="h3" sx={{ fontWeight: 900, textTransform: 'uppercase', mb: 3 }}>
-                        Ready to <span className="text-blue-500">Secure</span> Your Edge?
+        <div className="min-h-screen pt-24 pb-32">
+            <Container maxWidth="lg">
+                <Box sx={{ textAlign: 'center', mb: 16 }}>
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.7rem] font-black uppercase tracking-[0.2em] mb-8 animate-fade-in">
+                        <Crown size={14} /> Institutional Intelligence Console
+                    </div>
+                    <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
+                        Macro <span className="text-blue-500">Sovereignty</span><br />
+                        <span className="text-white/40">For Professionals</span>
                     </Typography>
-                    <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.5)', mb: 6, maxWidth: '600px', mx: 'auto' }}>
-                        Join a select group of institutional partners who utilize GraphiQuestor telemetry to navigate sovereign stress and reserve shifts.
+                    <Typography variant="h5" sx={{
+                        color: 'rgba(255,255,255,0.6)',
+                        maxWidth: '800px',
+                        mx: 'auto',
+                        fontWeight: 500,
+                        lineHeight: 1.5,
+                        fontSize: '1.2rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.02em',
+                        '& span': { color: 'white' }
+                    }}>
+                        The first terminal for navigating the transition from debt-monopoly to hard-money telemetry.
                     </Typography>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        startIcon={<Mail />}
-                        sx={{
-                            borderRadius: '1.5rem',
-                            px: 8,
-                            py: 2.5,
-                            bgcolor: '#3b82f6',
-                            '&:hover': { bgcolor: '#2563eb', transform: 'translateY(-2px)' },
-                            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                            fontWeight: 900,
-                            textTransform: 'uppercase',
-                            fontSize: '1rem',
-                            boxShadow: '0 20px 40px -10px rgba(59,130,246,0.3)'
-                        }}
-                    >
-                        Contact Institutional Desk
-                    </Button>
+                </Box>
+
+                {/* Pricing Tiers Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
+                    {/* Tier 1: Retail/Analyst */}
+                    <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/10 transition-all">
+                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Analyst Tier</h4>
+                        <div className="flex items-baseline gap-1 mb-8">
+                            <span className="text-4xl font-black text-white">$0</span>
+                            <span className="text-muted-foreground/40 text-sm font-bold uppercase">/Mo</span>
+                        </div>
+                        <ul className="space-y-4 mb-10 flex-1">
+                            {['Public Labs Access', 'Weekly Macro Narrative', 'Institutional Digest Preview', 'Community Discord Access'].map(f => (
+                                <li key={f} className="flex items-center gap-3 text-xs font-bold text-white/50 uppercase text-left">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-white/20 flex-shrink-0" /> {f}
+                                </li>
+                            ))}
+                        </ul>
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            sx={{ borderColor: 'rgba(255,255,255,0.1)', color: 'white', fontWeight: 900, py: 1.5, borderRadius: '12px' }}
+                        >
+                            Get Started
+                        </Button>
+                    </div>
+
+                    {/* Tier 2: The Core API Offer */}
+                    <div className="p-10 rounded-[2.5rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] flex flex-col relative group md:scale-105 z-10">
+                        <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-[0.6rem] font-black uppercase tracking-widest shadow-xl">Most Popular</div>
+                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-blue-400 mb-6">Quantum Intelligence</h4>
+                        <div className="flex items-baseline gap-1 mb-2">
+                            <span className="text-5xl font-black text-white">$28</span>
+                            <span className="text-blue-500 text-sm font-black uppercase">/Mo</span>
+                        </div>
+                        <p className="text-[0.65rem] font-black text-blue-400/60 uppercase tracking-widest mb-8 text-left">Billed Monthly • Cancel Anytime</p>
+
+                        <ul className="space-y-4 mb-10 flex-1">
+                            {[
+                                'Full Quantum API Access',
+                                'India Corporate Engine Pro',
+                                'Sovereign Debt Maturity Wall',
+                                'Real-time Macro Sentiment',
+                                'Private Institutional Archives'
+                            ].map(f => (
+                                <li key={f} className="flex items-center gap-3 text-xs font-black text-white uppercase text-left">
+                                    <Zap size={14} className="text-blue-500 flex-shrink-0" /> {f}
+                                </li>
+                            ))}
+                        </ul>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{ bgcolor: '#3b82f6', fontWeight: 900, py: 2, borderRadius: '16px', boxShadow: '0 20px 40px -10px rgba(59,130,246,0.3)', '&:hover': { bgcolor: '#2563eb' } }}
+                        >
+                            Unlock Institutional Access
+                        </Button>
+                    </div>
+
+                    {/* Tier 3: Bespoke/Enterprise */}
+                    <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/10 transition-all">
+                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Bespoke Advisory</h4>
+                        <div className="flex items-baseline gap-1 mb-8">
+                            <span className="text-3xl font-black text-white italic">Contact Us</span>
+                        </div>
+                        <ul className="space-y-4 mb-10 flex-1">
+                            {['White-label Dashboards', 'Custom Data Pipelines', '1-on-1 Strategy Desk', 'Private Geopolitical Audit'].map(f => (
+                                <li key={f} className="flex items-center gap-3 text-xs font-bold text-white/50 uppercase text-left">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-white/20 flex-shrink-0" /> {f}
+                                </li>
+                            ))}
+                        </ul>
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            sx={{ borderColor: 'rgba(255,255,255,0.1)', color: 'white', fontWeight: 900, py: 1.5, borderRadius: '12px' }}
+                        >
+                            Contact Desk
+                        </Button>
+                    </div>
                 </div>
 
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 blur-[100px] rounded-full" />
-            </Box>
-
-            {/* FAQ / Details */}
-            <Box sx={{ mt: 16 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, textTransform: 'uppercase', mb: 6, textAlign: 'center' }}>
-                    Institutional <span className="text-blue-500">FAQ</span>
-                </Typography>
-                <div className="max-w-3xl mx-auto space-y-4">
-                    {[
-                        { q: "Is individual data available via API?", a: "Yes, our Quantum API provides REST endpoints for all technical modules including the India Market Pulse and US Debt Maturity Wall." },
-                        { q: "Do you offer white-labeling for family offices?", a: "We provide bespoke private dashboard instances for family offices with custom UI branding and integrated internal mandates." },
-                        { q: "How often is the proprietary data refreshed?", a: "Telemetric data is refreshed in real-time or at the source resolution (daily/weekly for MoSPI/PBoC, real-time for market pulses)." }
-                    ].map((item, i) => (
-                        <Accordion key={i} sx={{ bgcolor: 'white/[0.02]', color: 'white', border: '1px solid white/5', borderRadius: '1rem !important', '&:before': { display: 'none' } }}>
-                            <AccordionSummary expandIcon={<ChevronDown className="text-blue-500" />}>
-                                <Typography sx={{ fontWeight: 800, textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>{item.q}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>{item.a}</Typography>
-                            </AccordionDetails>
-                        </Accordion>
-                    ))}
+                {/* Value Pillars */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-32">
+                    <div className="space-y-6">
+                        <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <Database size={28} />
+                        </div>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tight">Direct API Feed</h3>
+                        <p className="text-muted-foreground/60 text-sm leading-relaxed font-medium">
+                            Don't wait for reports. Access the raw telemetric feed that powers our terminal. Direct REST access to all our proprietary data structures including the US Debt Maturity Wall and India Fiscal Matrix.
+                        </p>
+                    </div>
+                    <div className="space-y-6">
+                        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                            <Building2 size={28} />
+                        </div>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tight">CI Engine Pro</h3>
+                        <p className="text-muted-foreground/60 text-sm leading-relaxed font-medium">
+                            Full unlocked access to the Corporate India Engine. Deep fundamental analysis on 500+ Indian large caps with an integrated Macro Overlay for regime-based filtering.
+                        </p>
+                    </div>
+                    <div className="space-y-6">
+                        <div className="w-14 h-14 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500">
+                            <Shield size={28} />
+                        </div>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tight">Proof of Sovereign</h3>
+                        <p className="text-muted-foreground/60 text-sm leading-relaxed font-medium">
+                            Navigating the US Treasury maturity wall. We provide the institutional tracking necessary for identifying the shift into hard-money and reserve multi-polarity.
+                        </p>
+                    </div>
                 </div>
-            </Box>
-        </Container>
+
+                <div className="p-16 rounded-[4rem] border border-blue-500/20 bg-blue-500/[0.02] text-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-500/5 blur-3xl rounded-full translate-x-1/2" />
+                    <div className="relative z-10">
+                        <Typography variant="h3" sx={{ fontWeight: 900, textTransform: 'uppercase', mb: 3 }}>
+                            Institutional <span className="text-blue-500">Desk</span>
+                        </Typography>
+                        <p className="text-muted-foreground text-lg mb-10 max-w-2xl mx-auto font-medium">
+                            Custom solutions for sovereign funds, family offices, and institutional traders. Reach out for team access or bespoke integration.
+                        </p>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            startIcon={<Mail />}
+                            sx={{
+                                borderRadius: '1.5rem',
+                                px: 8,
+                                py: 2.5,
+                                bgcolor: '#3b82f6',
+                                fontWeight: 900,
+                                textTransform: 'uppercase',
+                                fontSize: '1rem',
+                                boxShadow: '0 20px 40px -10px rgba(59,130,246,0.3)',
+                                '&:hover': { bgcolor: '#2563eb' }
+                            }}
+                        >
+                            Email Institutional Desk
+                        </Button>
+                    </div>
+                </div>
+            </Container>
+        </div>
     );
 };
 

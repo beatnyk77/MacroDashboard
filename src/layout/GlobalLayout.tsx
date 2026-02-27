@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Activity, Clock, ShieldCheck } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Activity } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
@@ -17,7 +17,6 @@ interface GlobalLayoutProps {
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
     const [currentTime, setCurrentTime] = useState(new Date());
-    const [refreshCountdown, setRefreshCountdown] = useState(60);
     const location = useLocation();
     const isObservatory = location.pathname.includes('/macro-observatory');
 
@@ -27,12 +26,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
         return () => clearInterval(timer);
     }, []);
 
-    useEffect(() => {
-        const countdown = setInterval(() => {
-            setRefreshCountdown((prev) => (prev <= 1 ? 60 : prev - 1));
-        }, 1000);
-        return () => clearInterval(countdown);
-    }, []);
+
 
     const regimeColorClass = useMemo(() => {
         if (!regime) return 'text-blue-500';
@@ -109,25 +103,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {isObservatory && (
-                            <>
-                                <Link to="/admin" className="no-underline">
-                                    <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <ShieldCheck size={12} className="text-emerald-500" />
-                                        <span className="text-[0.65rem] font-black text-muted-foreground uppercase">
-                                            TERMINAL HEALTH: <span className="text-emerald-500 ml-1">NOMINAL</span>
-                                        </span>
-                                    </div>
-                                </Link>
-
-                                <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-white/5 border border-white/5">
-                                    <Clock size={12} className="text-muted-foreground" />
-                                    <span className="text-[0.65rem] font-black text-muted-foreground">
-                                        NEXT REFRESH: <span className="text-blue-500 font-black ml-1">{refreshCountdown}s</span>
-                                    </span>
-                                </div>
-                            </>
-                        )}
+                        {/* Institutional status elements removed from public view for cleaner UI */}
 
                         {regime && (
                             <div className={cn(

@@ -1,10 +1,10 @@
 import React, { Suspense, lazy } from 'react';
 import { Container, Box, Button } from '@mui/material';
 import {
-    ShieldAlert,
     Zap,
     ChevronRight,
-    Lock
+    Lock,
+    Building2
 } from 'lucide-react';
 import { SPASection } from '@/components/spa';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -24,7 +24,6 @@ const CompactChinaCard = lazy(() => import('@/features/dashboard/components/card
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
-const BlogSection = lazy(() => import('@/features/dashboard/components/sections/BlogSection').then(m => ({ default: m.BlogSection })));
 const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
 const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
 
@@ -92,33 +91,35 @@ export const Dashboard: React.FC = () => {
 
             <main className="space-y-32">
                 {/* 1. HERO SECTION */}
-                <SPASection id="hero" variant="hero" disableAnimation className="pt-12">
-                    <div className="max-w-4xl mx-auto text-center mb-20">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-black uppercase tracking-widest mb-8">
+                <SPASection id="hero" variant="hero" disableAnimation className="pt-20">
+                    <div className="max-w-5xl mx-auto text-center mb-16 px-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-black uppercase tracking-widest mb-10 animate-fade-in">
                             <Zap size={12} /> Institutional Intelligence Console
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none mb-6">
-                            The Sovereignty<br />
-                            <span className="text-blue-500">Narrative</span>
+                        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase leading-[0.9] mb-8">
+                            MACRO<br />
+                            <span className="text-blue-500">SOVEREIGNTY</span>
                         </h1>
-                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto uppercase font-bold tracking-tight opacity-70 mb-10">
+                        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto uppercase font-bold tracking-tight opacity-70 mb-12 leading-tight">
                             Navigating the transition from fiat-monopoly to hard-money telemetry and sovereign multi-polarity.
                         </p>
-                        <div className="flex flex-wrap justify-center gap-4">
+
+                        <div className="flex flex-wrap justify-center gap-6 mb-20">
                             <Button
                                 variant="contained"
                                 size="large"
-                                onClick={() => window.location.href = '/macro-observatory'}
+                                onClick={() => window.location.href = '#weekly-narrative'}
                                 sx={{
                                     bgcolor: '#3b82f6',
                                     fontWeight: 900,
-                                    px: 4,
-                                    py: 1.5,
-                                    borderRadius: '12px',
+                                    px: 6,
+                                    py: 2,
+                                    borderRadius: '16px',
+                                    fontSize: '1rem',
                                     '&:hover': { bgcolor: '#2563eb' }
                                 }}
                             >
-                                Enter The Labs
+                                Read Weekly Narrative
                             </Button>
                             <Button
                                 variant="outlined"
@@ -128,26 +129,52 @@ export const Dashboard: React.FC = () => {
                                     borderColor: 'rgba(255,255,255,0.1)',
                                     color: 'white',
                                     fontWeight: 900,
-                                    px: 4,
-                                    borderRadius: '12px',
+                                    px: 6,
+                                    py: 2,
+                                    borderRadius: '16px',
+                                    fontSize: '1rem',
                                     backdropFilter: 'blur(10px)',
                                     '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.05)' }
                                 }}
                             >
-                                Institutional Solutions
+                                Institutional $28/mo API
                             </Button>
+                        </div>
+
+                        {/* Curated Hero Metrics */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                            <SectionErrorBoundary name="Hero Metrics">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <CockpitKPIGrid simplified={true} />
+                                </Suspense>
+                            </SectionErrorBoundary>
                         </div>
                     </div>
 
-                    <SectionErrorBoundary name="Hero Metrics">
+                    <SectionErrorBoundary name="Maturity Wall">
                         <Suspense fallback={<LoadingFallback />}>
-                            <USDebtMaturityWall />
+                            <div className="mt-20 pt-20 border-t border-white/5">
+                                <USDebtMaturityWall />
+                            </div>
                         </Suspense>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="hero-insight" insight="US Debt rollover remains the primary gravitational force in global markets. Tracking the $9.2T maturity wall is essential for regime identification." />
                 </SPASection>
 
-                {/* 2. MACRO HEARTBEAT */}
+                {/* 2. WEEKLY MACRO NARRATIVE - Moved Higher */}
+                <SPASection id="weekly-narrative">
+                    <SectionHeader
+                        title="Weekly Narrative"
+                        subtitle="What changed in the macro structure this week?"
+                    />
+                    <SectionErrorBoundary name="Weekly Narrative">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <WeeklyNarrativeSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* 3. MACRO HEARTBEAT (Simplified) */}
                 <SPASection id="heartbeat">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                         <SectionHeader
@@ -157,161 +184,216 @@ export const Dashboard: React.FC = () => {
                         />
                     </div>
 
-                    <div className="space-y-12">
-                        <SectionErrorBoundary name="Net Liquidity">
-                            <NetLiquidityRow />
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="Capital Flows Terminal">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div className="pt-12 border-t border-white/5">
-                                    <CapitalFlowsTerminal />
+                    <div className="space-y-16">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                            <SectionErrorBoundary name="Net Liquidity">
+                                <div className="space-y-6">
+                                    <NetLiquidityRow />
+                                    <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium">
+                                        <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
+                                        Net liquidity dictates the short-term path of risk assets. We monitor the TGA and RRP to detect stealth-QE before it manifests.
+                                    </p>
                                 </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
+                            </SectionErrorBoundary>
 
-                        <SectionErrorBoundary name="Cockpit KPI">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CockpitKPIGrid simplified={true} />
-                            </Suspense>
-                        </SectionErrorBoundary>
+                            <SectionErrorBoundary name="Capital Flows Terminal">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <div className="space-y-6">
+                                        <CapitalFlowsTerminal />
+                                        <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium">
+                                            <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
+                                            Relative capital velocity between USD, Gold, and Emerging Markets reveals the current regime's destination.
+                                        </p>
+                                    </div>
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
                     </div>
                 </SPASection>
 
-                {/* 2.5 WEEKLY MACRO NARRATIVE */}
-                <SPASection id="weekly-narrative">
-                    <SectionErrorBoundary name="Weekly Narrative">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <WeeklyNarrativeSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </SPASection>
-
-                {/* 3. US FISCAL & MACRO STRESS */}
+                {/* 4. US FISCAL & MACRO STRESS */}
                 <SPASection id="us-fiscal">
                     <SectionHeader
                         title="US Fiscal & Macro Stress"
                         subtitle="Treasury demand dynamics and auction stress levels"
                     />
-                    <div className="mt-12 grid grid-cols-1 gap-12">
+                    <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                         <SectionErrorBoundary name="Treasury Demand">
                             <Suspense fallback={<LoadingFallback />}>
                                 <USTreasuryDemandGauge />
                             </Suspense>
                         </SectionErrorBoundary>
-                    </div>
-                    <div className="mt-8 text-center">
-                        <Button
-                            variant="text"
-                            href="/labs/us-macro-fiscal"
-                            endIcon={<ChevronRight size={16} />}
-                            sx={{ color: '#3b82f6', fontWeight: 700 }}
-                        >
-                            View Full US Macro Lab
-                        </Button>
+                        <div className="lg:pt-20">
+                            <p className="text-lg text-white font-bold uppercase tracking-tight mb-4">The US Maturity Wall is now a structural issue.</p>
+                            <p className="text-muted-foreground leading-relaxed text-sm mb-8">
+                                <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
+                                As US interest expense exceeds defense spending, the "Auction Stress" signal becomes the primary driver for yields. We monitor primary dealer absorption and indirect-bid ratios to detect when the market stops absorbing the supply.
+                            </p>
+                            <Button
+                                variant="text"
+                                href="/labs/us-macro-fiscal"
+                                endIcon={<ChevronRight size={16} />}
+                                sx={{ color: '#3b82f6', fontWeight: 900, fontSize: '0.7rem' }}
+                            >
+                                Enter US Macro & Fiscal Lab
+                            </Button>
+                        </div>
                     </div>
                 </SPASection>
 
-                {/* 4. INDIA & CHINA MACRO PULSE */}
-                <SPASection id="asia-pulse">
+                {/* 5. INDIA EQUITIES ENGINE TEASER - Flagship Section */}
+                <SPASection id="india-equities">
+                    <div className="p-12 md:p-16 rounded-[40px] border border-blue-500/20 bg-blue-500/[0.02] relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 animate-pulse" />
+
+                        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                            <div>
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[0.65rem] font-black uppercase tracking-widest mb-6">
+                                    <Building2 size={12} /> Flagship Equities Lab
+                                </div>
+                                <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none mb-8">
+                                    Corporate India<br />
+                                    <span className="text-blue-500">Engine</span>
+                                </h1>
+                                <p className="text-xl text-muted-foreground leading-snug font-bold mb-10 max-w-lg">
+                                    The first fundamental terminal for Indian equities with a proprietary Macro Overlay.
+                                </p>
+                                <ul className="space-y-4 mb-12">
+                                    {[
+                                        'Deep-dive Fundamental Analytics',
+                                        'Macro-Overlay Signal Testing',
+                                        'Institutional Block/Bulk flow telemetry',
+                                        'Governance & Promoter Risk Heatmaps'
+                                    ].map(item => (
+                                        <li key={item} className="flex items-center gap-3 text-sm font-black text-white/70 uppercase">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Button
+                                    variant="contained"
+                                    href="/india-equities"
+                                    sx={{
+                                        bgcolor: '#3b82f6',
+                                        fontWeight: 900,
+                                        px: 6,
+                                        py: 2,
+                                        borderRadius: '16px',
+                                        fontSize: '1rem',
+                                        '&:hover': { bgcolor: '#2563eb' }
+                                    }}
+                                >
+                                    Access Equity Lab
+                                </Button>
+                            </div>
+                            <div className="relative">
+                                <div className="rounded-2xl border border-white/10 bg-black/40 overflow-hidden shadow-3xl transform group-hover:scale-[1.02] transition-transform duration-700">
+                                    <SectionErrorBoundary name="India Teaser Card">
+                                        <Suspense fallback={<LoadingFallback />}>
+                                            <CompactIndiaCard />
+                                        </Suspense>
+                                    </SectionErrorBoundary>
+                                </div>
+                                {/* Decorative elements */}
+                                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl" />
+                            </div>
+                        </div>
+                    </div>
+                </SPASection>
+
+                {/* 6. CHINA PULSE */}
+                <SPASection id="china-pulse">
                     <SectionHeader
-                        title="Emerging Giants"
-                        subtitle="Counter-cyclical telemetry for India and China"
+                        title="The China Vector"
+                        subtitle="Counter-cyclical telemetry for the world's second economy"
                     />
-                    <div className="mt-12 space-y-6">
-                        <SectionErrorBoundary name="India Market Pulse">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CompactIndiaCard />
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="China Market Pulse">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CompactChinaCard />
-                            </Suspense>
-                        </SectionErrorBoundary>
+                    <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div className="order-2 lg:order-1">
+                            <SectionErrorBoundary name="China Market Pulse">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <CompactChinaCard />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
+                        <div className="order-1 lg:order-2">
+                            <p className="text-lg text-white font-bold uppercase tracking-tight mb-4">China is shifting from credit-growth to technology-sovereignty.</p>
+                            <p className="text-muted-foreground leading-relaxed text-sm mb-8">
+                                <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
+                                As the PBoC maintains a divergence from the Fed, the China Pulse tracks domestic liquidity and deflationary export pressures affecting global EM portfolios.
+                            </p>
+                            <Button
+                                variant="text"
+                                href="/labs/china"
+                                endIcon={<ChevronRight size={16} />}
+                                sx={{ color: '#3b82f6', fontWeight: 900, fontSize: '0.7rem' }}
+                            >
+                                Enter China Lab
+                            </Button>
+                        </div>
                     </div>
                 </SPASection>
 
-                {/* 5. HARD MONEY & RESERVE SHIFT */}
+                {/* 7. HARD MONEY & RESERVE SHIFT */}
                 <SPASection id="hard-money">
                     <SectionHeader
                         title="Hard Money & Reserve Shift"
                         subtitle="Gold anchor ratios and the de-dollarization vector"
                     />
-                    <div className="mt-12 space-y-12">
-                        <SectionErrorBoundary name="Gold Ratio">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GoldRatioRibbon />
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <Box className="p-12 rounded-3xl border border-amber-500/20 bg-amber-500/[0.02] text-center relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <Lock size={120} />
+                    <div className="mt-12 space-y-16">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div className="space-y-8">
+                                <p className="text-lg text-amber-400 font-bold uppercase tracking-tight mb-4">The Sovereign Debt to Gold Ratio is the ultimate system-gauge.</p>
+                                <p className="text-muted-foreground leading-relaxed text-sm">
+                                    <span className="text-amber-500 font-bold uppercase mr-2">So what?</span>
+                                    As central banks diversify away from USD-denominated paper, the "SDG Ratio" tracks the structural re-anchoring to physical reserves. Physical gold purchases by G20 central banks are now at 50-year highs.
+                                </p>
+                                <SectionErrorBoundary name="Gold Ratio">
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <GoldRatioRibbon />
+                                    </Suspense>
+                                </SectionErrorBoundary>
                             </div>
-                            <h3 className="text-2xl font-black text-amber-500 uppercase mb-4">Sovereign De-Dollarization</h3>
-                            <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-                                Detailed tracking of G20 central bank gold net purchases and the structural shift in global reserve compositions.
+                            <Box className="p-12 rounded-3xl border border-amber-500/20 bg-amber-500/[0.02] text-center relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-10">
+                                    <Lock size={120} />
+                                </div>
+                                <h3 className="text-2xl font-black text-amber-500 uppercase mb-4">Sovereign De-Dollarization</h3>
+                                <p className="text-muted-foreground max-w-xl mx-auto mb-8 text-sm">
+                                    Detailed tracking of G20 central bank gold net purchases and the structural shift in global reserve compositions.
+                                </p>
+                                <Button
+                                    variant="contained"
+                                    href="/labs/de-dollarization-gold"
+                                    sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 900, px: 4, '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.2)' } }}
+                                >
+                                    Access De-Dollarization Lab
+                                </Button>
+                            </Box>
+                        </div>
+                    </div>
+                </SPASection>
+
+                {/* 8. ENERGY & COMMODITY SECURITY */}
+                <SPASection id="commodities">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                        <div className="space-y-8">
+                            <SectionHeader
+                                title="Resource Security"
+                                subtitle="Geopolitical chokepoints and physical flows"
+                            />
+                            <p className="text-muted-foreground leading-relaxed text-sm">
+                                <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
+                                Physical flow dynamics and geopolitical chokepoints now dictate commodity pricing more than paper markets. We track 14 critical nodes from the Malacca Strait to the Suez Canal.
                             </p>
                             <Button
-                                variant="contained"
-                                href="/labs/de-dollarization-gold"
-                                sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 900, px: 4, '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.2)' } }}
+                                variant="outlined"
+                                href="/labs/energy-commodities"
+                                sx={{ borderColor: 'white/10', color: 'white', fontWeight: 900, px: 4, borderRadius: '12px' }}
                             >
-                                Access De-Dollarization Lab
+                                Enter Energy Lab
                             </Button>
-                        </Box>
-                    </div>
-                </SPASection>
-
-                {/* 10. METHODOLOGY & NETWORK (SEO/AEO Text Expansion) */}
-                <SPASection id="methodology" className="pt-24 pb-32 border-t border-white/5">
-                    <div className="max-w-4xl mx-auto space-y-12">
-                        <header className="space-y-4">
-                            <h2 className="text-3xl font-black text-white tracking-tighter uppercase">Institutional Intelligence Methodology</h2>
-                            <p className="text-muted-foreground text-sm leading-relaxed">
-                                GraphiQuestor operates as a sovereign intelligence console, specializing in the transition from debt-monopoly systems to hard-money telemetry. Our methodology integrates three core signal layers to provide capital allocators with structural alpha.
-                            </p>
-                        </header>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                            <article className="space-y-4">
-                                <h3 className="text-lg font-bold text-blue-400 uppercase tracking-tight">I. The Liquidity Plumbing</h3>
-                                <p className="text-xs text-muted-foreground leading-relaxed">
-                                    We track global net liquidity by synthesizing balance sheet data from the <a href="https://www.federalreserve.gov" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Federal Reserve</a>, <a href="https://www.ecb.europa.eu" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">ECB</a>, and <a href="https://www.pboc.gov.cn" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">PBoC</a>. By monitoring the Treasury General Account (TGA) and Reverse Repo (RRP) facilities, GraphiQuestor identifies stealth QE and liquidity drain cycles before they manifest in spot markets.
-                                </p>
-                            </article>
-                            <article className="space-y-4">
-                                <h3 className="text-lg font-bold text-amber-500 uppercase tracking-tight">II. The Hard Money Anchor</h3>
-                                <p className="text-xs text-muted-foreground leading-relaxed">
-                                    Our "Sovereign Debt to Gold" (SDG) ratio provides a mathematical gauge of fiscal dominance. As G20 nations navigate the <a href="/labs/de-dollarization-gold" className="text-amber-500 hover:underline">De-Dollarization</a> vector, we track central bank gold accumulation (CBGA) as the ultimate hedge against paper claim inflation.
-                                </p>
-                            </article>
                         </div>
-
-                        <div className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl space-y-6">
-                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Global Intelligence Nodes</h3>
-                            <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none">
-                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> <a href="/labs/india" className="hover:text-white">India Hub</a></li>
-                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <a href="/labs/china" className="hover:text-white">China Pulse</a></li>
-                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span> <a href="/labs/energy" className="hover:text-white">Energy Security</a></li>
-                                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <a href="/api-access" className="hover:text-white">API Access</a></li>
-                            </ul>
-                            <p className="text-[0.65rem] text-muted-foreground/40 leading-relaxed font-medium pt-4 border-t border-white/5">
-                                Data for GraphiQuestor is autonomously ingested from authoritative sources including the <a href="https://www.imf.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">IMF</a>, <a href="https://www.bis.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">BIS</a>, and <a href="https://www.mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">MoSPI</a>. Our 25-year historical pipeline ensures all regime signals are grounded in structural reality.
-                            </p>
-                        </div>
-                    </div>
-                </SPASection>
-
-                {/* 6. ENERGY & COMMODITY SECURITY */}
-                <SPASection id="commodities">
-                    <SectionHeader
-                        title="Resource Security"
-                        subtitle="Geopolitical chokepoints and physical flow dynamics"
-                    />
-                    <div className="mt-12">
                         <SectionErrorBoundary name="Commodity Terminal">
                             <Suspense fallback={<LoadingFallback />}>
                                 <CompactCommodityCard />
@@ -320,89 +402,44 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </SPASection>
 
-                {/* 7. SOVEREIGN STRESS & INEQUALITY */}
-                <SPASection id="sovereign-stress">
+                {/* 9. SOVEREIGN STRESS & FRAGILITY */}
+                <SPASection id="sovereign-stress" className="pb-32">
                     <SectionHeader
                         title="Sovereign Fragility"
-                        subtitle="Debt sustainability and global convergence tracking"
+                        subtitle="Debt sustainability and global risk matrix"
                     />
-                    <div className="mt-12">
+                    <div className="space-y-12">
                         <SectionErrorBoundary name="Risk Matrix">
                             <Suspense fallback={<LoadingFallback />}>
                                 <SovereignRiskMatrix />
                             </Suspense>
                         </SectionErrorBoundary>
-                    </div>
-                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="p-6 rounded-xl border border-white/5 bg-white/[0.01]">
-                            <h4 className="text-white font-bold mb-2">Shadow System</h4>
-                            <p className="text-xs text-muted-foreground mb-4">Offshore wealth flight and illicit flow telemetry.</p>
-                            <Button size="small" href="/labs/shadow-system" sx={{ fontSize: '0.65rem', fontWeight: 900 }}>Enter Lab</Button>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { title: 'Shadow System', desc: 'Offshore wealth flight and illicit flow telemetry.', path: '/labs/shadow-system' },
+                                { title: 'Sovereign Stress', desc: 'G20 debt maturity walls and CDS spread matrix.', path: '/labs/sovereign-stress' },
+                                { title: 'Observatory', desc: 'Unified index of all thematic signal monitors.', path: '/macro-observatory' }
+                            ].map(card => (
+                                <div key={card.title} className="p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors group">
+                                    <h4 className="text-lg font-black text-white uppercase mb-3">{card.title}</h4>
+                                    <p className="text-xs text-muted-foreground mb-6 leading-relaxed">{card.desc}</p>
+                                    <Button
+                                        variant="text"
+                                        href={card.path}
+                                        sx={{
+                                            fontSize: '0.65rem',
+                                            fontWeight: 900,
+                                            color: '#3b82f6',
+                                            p: 0,
+                                            '&:hover': { background: 'none', color: 'white' }
+                                        }}
+                                        endIcon={<ChevronRight size={14} />}
+                                    >
+                                        Access Data
+                                    </Button>
+                                </div>
+                            ))}
                         </div>
-                        <div className="p-6 rounded-xl border border-white/5 bg-white/[0.01]">
-                            <h4 className="text-white font-bold mb-2">Sovereign Stress</h4>
-                            <p className="text-xs text-muted-foreground mb-4">G20 debt maturity walls and CDS spread matrix.</p>
-                            <Button size="small" href="/labs/sovereign-stress" sx={{ fontSize: '0.65rem', fontWeight: 900 }}>Enter Lab</Button>
-                        </div>
-                        <div className="p-6 rounded-xl border border-white/5 bg-white/[0.01]">
-                            <h4 className="text-white font-bold mb-2">Observatory</h4>
-                            <p className="text-xs text-muted-foreground mb-4">Unified index of all thematic signal monitors.</p>
-                            <Button size="small" href="/macro-observatory" sx={{ fontSize: '0.65rem', fontWeight: 900 }}>Explore All</Button>
-                        </div>
-                    </div>
-                </SPASection>
-
-                {/* 8. RESEARCH & DIGEST TEASER */}
-                <SPASection id="research">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-blue-600/5 rounded-3xl p-12 border border-blue-500/10">
-                        <div>
-                            <h2 className="text-3xl font-black text-white uppercase mb-6">Regime Digest</h2>
-                            <p className="text-muted-foreground mb-8 text-lg">
-                                Weekly synthesis of global liquidity cycles, geopolitical escalation, and proprietary signal shifts.
-                            </p>
-                            <Button
-                                variant="contained"
-                                href="/regime-digest"
-                                sx={{ bgcolor: '#3b82f6', fontWeight: 900, px: 4 }}
-                            >
-                                Read Latest Digest
-                            </Button>
-                        </div>
-                        <div className="space-y-4">
-                            <SectionErrorBoundary name="Blog Feed">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <BlogSection />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-                    </div>
-                </SPASection>
-
-                {/* 9. FOR FUNDS & FAMILY OFFICES TEASER */}
-                <SPASection id="institutional-teaser" className="pb-24">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <ShieldAlert className="mx-auto mb-6 text-blue-500" size={48} />
-                        <h2 className="text-4xl font-black text-white uppercase mb-6">Institutional Solutions</h2>
-                        <p className="text-muted-foreground text-lg mb-10">
-                            Custom data pipelines, white-labeled research hubs, and private telemetry for family offices and sovereign funds.
-                        </p>
-                        <Button
-                            variant="outlined"
-                            size="large"
-                            href="/institutional"
-                            sx={{
-                                borderColor: '#3b82f6',
-                                color: '#3b82f6',
-                                fontWeight: 900,
-                                px: 6,
-                                py: 1.5,
-                                borderRadius: '14px',
-                                borderHeight: 2,
-                                '&:hover': { borderColor: '#2563eb', bgcolor: 'rgba(59, 130, 246, 0.05)' }
-                            }}
-                        >
-                            Request Access <ChevronRight size={18} />
-                        </Button>
                     </div>
                 </SPASection>
             </main>

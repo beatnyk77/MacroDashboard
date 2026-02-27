@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Search,
     Filter,
     Activity,
     Shield,
@@ -25,6 +24,7 @@ import { Flame, Briefcase, TrendingDown, Ship } from 'lucide-react';
 
 export const CorporateIndiaEngine: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'screener' | 'heatmap' | 'aggregates' | 'watchlists' | 'promoters' | 'deals' | 'shortSelling' | 'ipos'>('screener');
+    const [showMacroOverlay, setShowMacroOverlay] = useState(true);
 
     return (
         <div className="min-h-screen bg-[#050810] text-gray-100">
@@ -60,11 +60,22 @@ export const CorporateIndiaEngine: React.FC = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-4 py-2">
-                            <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-500 text-white text-[0.7rem] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/10">
-                                <Download size={14} /> Export signals
-                            </button>
+                            <div className="flex items-center bg-white/5 border border-white/10 rounded-2xl p-1">
+                                <button
+                                    onClick={() => setShowMacroOverlay(true)}
+                                    className={`px-4 py-2 rounded-xl text-[0.65rem] font-black uppercase tracking-widest transition-all ${showMacroOverlay ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'text-muted-foreground/60 hover:text-white'}`}
+                                >
+                                    Macro Overlay On
+                                </button>
+                                <button
+                                    onClick={() => setShowMacroOverlay(false)}
+                                    className={`px-4 py-2 rounded-xl text-[0.65rem] font-black uppercase tracking-widest transition-all ${!showMacroOverlay ? 'bg-white/10 text-white' : 'text-muted-foreground/60 hover:text-white'}`}
+                                >
+                                    Pure Fundamentals
+                                </button>
+                            </div>
                             <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/80 text-[0.7rem] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
-                                <Search size={14} /> Global Search
+                                <Download size={14} /> Export CSV
                             </button>
                         </div>
                     </div>
@@ -81,16 +92,21 @@ export const CorporateIndiaEngine: React.FC = () => {
                             { label: 'Oil Sensitivity Index', value: 'High', trend: 'Neutral', icon: Globe, color: 'rose', desc: 'Current impact of rupee-oil basket' },
                             { label: 'State-Capex Resilience', value: 'Strong', trend: '+0.8%', icon: Building2, color: 'emerald', desc: 'Corporate exposure to state spending' },
                         ].map((stat) => (
-                            <div key={stat.label} className="p-5 rounded-2xl border border-white/5 bg-black/20 hover:border-white/10 transition-all group">
+                            <div key={stat.label} className="p-5 rounded-3xl border border-white/5 bg-black/40 backdrop-blur-md hover:border-blue-500/30 transition-all group relative overflow-hidden">
+                                {showMacroOverlay && (
+                                    <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <Activity size={40} className="text-blue-500" />
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-start mb-4">
                                     <div className={`p-2 rounded-xl bg-${stat.color}-500/10 text-${stat.color}-400`}>
                                         <stat.icon size={18} />
                                     </div>
-                                    <span className="text-[0.6rem] font-black text-emerald-400">{stat.trend}</span>
+                                    <span className="text-[0.6rem] font-black text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">{stat.trend}</span>
                                 </div>
                                 <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-white/40 mb-1">{stat.label}</h4>
                                 <div className="text-2xl font-black text-white mb-2">{stat.value}</div>
-                                <p className="text-[0.6rem] text-muted-foreground/40 leading-tight">{stat.desc}</p>
+                                <p className="text-[0.6rem] text-muted-foreground/40 leading-tight font-medium">{stat.desc}</p>
                             </div>
                         ))}
                     </div>
