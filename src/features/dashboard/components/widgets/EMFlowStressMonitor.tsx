@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Sparkline } from '@/components/Sparkline';
 import { TrendingDown, AlertCircle } from 'lucide-react';
 
 export const EMFlowStressMonitor: React.FC = () => {
     // Mock time-series data for capital flows
-    const mockFlowData = Array.from({ length: 30 }, (_, i) => ({
+    const mockFlowData = useMemo(() => Array.from({ length: 30 }, (_, i) => ({
         date: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         value: 50 + Math.sin(i / 3) * 20 + Math.random() * 10 - (i > 20 ? 30 : 0) // Simulated shock at the end
-    }));
+    })), []);
 
     const isStress = true; // Signal stress based on recent data
 

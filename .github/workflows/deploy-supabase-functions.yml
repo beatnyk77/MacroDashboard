@@ -37,6 +37,7 @@ jobs:
             ingest-trade-gravity: ['supabase/functions/ingest-trade-gravity/**']
             check-data-health: ['supabase/functions/check-data-health/**']
             generate-newsletter: ['supabase/functions/generate-newsletter/**']
+            ingest-capital-flows: ['supabase/functions/ingest-capital-flows/**']
             _shared: ['supabase/functions/_shared/**']
 
       - name: Deploy Changed Functions
@@ -57,6 +58,7 @@ jobs:
           CHANGED_INGEST_TRADE_GRAVITY: ${{ steps.filter.outputs['ingest-trade-gravity'] }}
           CHANGED_CHECK_DATA_HEALTH: ${{ steps.filter.outputs['check-data-health'] }}
           CHANGED_GENERATE_NEWSLETTER: ${{ steps.filter.outputs['generate-newsletter'] }}
+          CHANGED_INGEST_CAPITAL_FLOWS: ${{ steps.filter.outputs['ingest-capital-flows'] }}
         run: |
           deploy_func() {
             local func_name="$1"
@@ -86,5 +88,6 @@ jobs:
             [ "$CHANGED_INGEST_TRADE_GRAVITY" = "true" ]       && deploy_func "ingest-trade-gravity"
             [ "$CHANGED_CHECK_DATA_HEALTH" = "true" ]          && deploy_func "check-data-health"
             [ "$CHANGED_GENERATE_NEWSLETTER" = "true" ]        && deploy_func "generate-newsletter"
+            [ "$CHANGED_INGEST_CAPITAL_FLOWS" = "true" ]       && deploy_func "ingest-capital-flows"
             echo "Selective deployment complete."
           fi
