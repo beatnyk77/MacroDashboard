@@ -18,6 +18,12 @@ interface Company {
     state_hq: string;
     cie_fundamentals: any[];
     cie_macro_signals: any[];
+    governance_risk_score?: number;
+    promoter_pledge_pct?: number;
+    insider_buy_sell_net?: number;
+    last_sebi_action?: string;
+    pledge_delta?: number;
+    recent_deal_pct?: number;
 }
 
 export const Screener: React.FC = () => {
@@ -25,8 +31,29 @@ export const Screener: React.FC = () => {
     const [filters, setFilters] = useState({
         minMarketCap: 0,
         minMacroScore: 0,
-        sector: 'All'
+        sector: 'All',
+        minStateResilience: 0,
+        minCapexEfficiency: 0,
+        minFormalization: 0,
+        maxOilSensitivity: 100,
+        maxGovRisk: 100,
+        minInsiderNet: -1000,
+        onlyRisingPledge: false,
+        minInstitutionalBuy: 0
     });
+
+    const [savedViews, setSavedViews] = useState<{ name: string; filters: any }[]>(() => {
+        const saved = localStorage.getItem('cie_saved_views');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    const saveView = (name: string) => {
+        if (!name) return;
+        const newViews = [...savedViews, { name, filters }];
+        setSavedViews(newViews);
+        localStorage.setItem('cie_saved_views', JSON.stringify(newViews));
+    };
+
 
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'macro_impact', direction: 'desc' });
 
@@ -51,14 +78,24 @@ export const Screener: React.FC = () => {
                 company.ticker.toLowerCase().includes(searchTerm.toLowerCase());
 
             const latestFund = company.cie_fundamentals?.[0] || {};
-            const mcap = latestFund.metadata?.last_price ? (latestFund.revenue * latestFund.metadata.last_price / 1000) / 10000000 : 0; // rough mcap approx in Cr
+            const mcap = latestFund.metadata?.last_price ? (latestFund.revenue * latestFund.metadata.last_price / 1000) / 10000000 : 0;
 
-            const latestSignal = company.cie_macro_signals?.[0];
+            const latestSignal = company.cie_macro_signals?.[0] || {};
             const matchesMacroScore = (latestSignal?.macro_impact_score || 0) >= filters.minMacroScore;
             const matchesMcap = mcap >= filters.minMarketCap;
             const matchesSector = filters.sector === 'All' || company.sector === filters.sector;
 
-            return matchesSearch && matchesMacroScore && matchesSector && matchesMcap;
+            const matchesState = (latestSignal?.state_resilience || 0) >= filters.minStateResilience;
+            const matchesCapex = (latestSignal?.capex_efficiency || 0) >= filters.minCapexEfficiency;
+            const matchesFormalization = (latestSignal?.formalization_premium || 0) >= filters.minFormalization;
+            const matchesOil = (latestSignal?.oil_sensitivity || 0) <= filters.maxOilSensitivity;
+            const matchesGov = (company.governance_risk_score || 0) <= filters.maxGovRisk;
+            const matchesInsider = (company.insider_buy_sell_net || 0) >= filters.minInsiderNet;
+            const matchesRising = !filters.onlyRisingPledge || (company.pledge_delta || 0) > 0;
+            const matchesInst = (company.recent_deal_pct || 0) >= filters.minInstitutionalBuy;
+
+            return matchesSearch && matchesMacroScore && matchesSector && matchesMcap &&
+                matchesState && matchesCapex && matchesFormalization && matchesOil && matchesGov && matchesInsider && matchesRising && matchesInst;
         });
 
         filtered.sort((a, b) => {
@@ -79,6 +116,8 @@ export const Screener: React.FC = () => {
             if (sortConfig.key === 'margin') { valA = latestFundA.operating_margin || 0; valB = latestFundB.operating_margin || 0; }
             if (sortConfig.key === 'roe') { valA = latestFundA.return_on_equity || 0; valB = latestFundB.return_on_equity || 0; }
             if (sortConfig.key === 'macro_impact') { valA = latestSignalA.macro_impact_score || 0; valB = latestSignalB.macro_impact_score || 0; }
+            if (sortConfig.key === 'gov_risk') { valA = a.governance_risk_score || 0; valB = b.governance_risk_score || 0; }
+            if (sortConfig.key === 'insider') { valA = a.insider_buy_sell_net || 0; valB = b.insider_buy_sell_net || 0; }
 
             if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
             if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -115,6 +154,9 @@ export const Screener: React.FC = () => {
         </th>
     );
 
+    const [showMacroFilters, setShowMacroFilters] = useState(false);
+    const [viewName, setViewName] = useState('');
+
     if (isLoading) {
         return (
             <div className="space-y-4">
@@ -127,40 +169,157 @@ export const Screener: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/[0.02] p-4 rounded-2xl border border-white/5">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={16} />
-                    <input
-                        type="text"
-                        placeholder="Search Company..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded-xl bg-black/40 border border-white/10 text-sm focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-white/20"
-                    />
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10">
-                        <span className="text-[0.6rem] uppercase tracking-wider text-white/40">Sector:</span>
-                        <select
-                            value={filters.sector}
-                            onChange={(e) => setFilters({ ...filters, sector: e.target.value })}
-                            className="bg-transparent text-[0.7rem] text-white focus:outline-none cursor-pointer"
-                        >
-                            {sectors.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                    </div>
-
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10">
-                        <span className="text-[0.6rem] uppercase tracking-wider text-white/40">Min Score:</span>
+            {/* Filter Bar */}
+            <div className="flex flex-col gap-6 bg-white/[0.02] p-5 rounded-2xl border border-white/5">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={16} />
                         <input
-                            type="number"
-                            value={filters.minMacroScore}
-                            onChange={(e) => setFilters({ ...filters, minMacroScore: parseInt(e.target.value) || 0 })}
-                            className="bg-transparent w-10 text-[0.7rem] font-bold text-emerald-400 focus:outline-none text-right"
+                            type="text"
+                            placeholder="Search Name or Symbol..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-sm focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-white/20"
                         />
                     </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10">
+                            <span className="text-[0.6rem] uppercase tracking-wider text-white/40">Sector:</span>
+                            <select
+                                value={filters.sector}
+                                onChange={(e) => setFilters({ ...filters, sector: e.target.value })}
+                                className="bg-transparent text-[0.7rem] text-white focus:outline-none cursor-pointer"
+                            >
+                                {sectors.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10">
+                            <span className="text-[0.6rem] uppercase tracking-wider text-white/40">Saved Views:</span>
+                            <div className="flex items-center gap-1">
+                                <select
+                                    onChange={(e) => {
+                                        const view = savedViews.find(v => v.name === e.target.value);
+                                        if (view) setFilters(view.filters);
+                                    }}
+                                    className="bg-transparent text-[0.7rem] text-blue-400 font-bold focus:outline-none cursor-pointer"
+                                >
+                                    <option value="">Select View</option>
+                                    {savedViews.map(v => <option key={v.name} value={v.name}>{v.name}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowMacroFilters(!showMacroFilters)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[0.65rem] font-bold uppercase tracking-widest transition-all ${showMacroFilters ? 'bg-blue-500 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
+                        >
+                            Macro Filters {showMacroFilters ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
+                    </div>
                 </div>
+
+                <AnimatePresence>
+                    {showMacroFilters && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4 border-t border-white/5">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <label className="text-[0.6rem] uppercase font-black text-white/40">Min State Resilience</label>
+                                        <span className="text-[0.65rem] font-bold text-emerald-400">{filters.minStateResilience}</span>
+                                    </div>
+                                    <input
+                                        type="range" min="0" max="100"
+                                        value={filters.minStateResilience}
+                                        onChange={(e) => setFilters({ ...filters, minStateResilience: parseInt(e.target.value) })}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <label className="text-[0.6rem] uppercase font-black text-white/40">Min Capex Efficiency</label>
+                                        <span className="text-[0.65rem] font-bold text-blue-400">{filters.minCapexEfficiency}</span>
+                                    </div>
+                                    <input
+                                        type="range" min="0" max="100"
+                                        value={filters.minCapexEfficiency}
+                                        onChange={(e) => setFilters({ ...filters, minCapexEfficiency: parseInt(e.target.value) })}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <label className="text-[0.6rem] uppercase font-black text-white/40">Min Insider Net</label>
+                                        <span className={`text-[0.65rem] font-bold ${filters.minInsiderNet > 0 ? 'text-emerald-400' : 'text-blue-400'}`}>{filters.minInsiderNet} Cr</span>
+                                    </div>
+                                    <input
+                                        type="range" min="-100" max="100" step="5"
+                                        value={filters.minInsiderNet}
+                                        onChange={(e) => setFilters({ ...filters, minInsiderNet: parseInt(e.target.value) })}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[0.6rem] uppercase font-black text-white/40 block mb-2">Promoter Stress</label>
+                                    <label className="flex items-center gap-2 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            checked={filters.onlyRisingPledge}
+                                            onChange={(e) => setFilters({ ...filters, onlyRisingPledge: e.target.checked })}
+                                            className="w-4 h-4 rounded border-white/10 bg-black/40 checked:bg-blue-500 focus:ring-0 transition-all"
+                                        />
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <label className="text-[0.6rem] uppercase font-black text-white/40">Min Institutional Buy (30D)</label>
+                                        <span className="text-[0.65rem] font-bold text-emerald-400">{filters.minInstitutionalBuy}%</span>
+                                    </div>
+                                    <input
+                                        type="range" min="0" max="5" step="0.1"
+                                        value={filters.minInstitutionalBuy}
+                                        onChange={(e) => setFilters({ ...filters, minInstitutionalBuy: parseFloat(e.target.value) })}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    />
+                                </div>
+
+                                <div className="lg:col-span-4 flex items-center justify-between gap-4 pt-4 border-t border-white/5">
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="text"
+                                            placeholder="View Name..."
+                                            value={viewName}
+                                            onChange={(e) => setViewName(e.target.value)}
+                                            className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-[0.7rem] text-white focus:outline-none"
+                                        />
+                                        <button
+                                            onClick={() => { saveView(viewName); setViewName(''); }}
+                                            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-[0.65rem] font-black uppercase tracking-widest text-white/60"
+                                        >
+                                            Save Current View
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => setFilters({
+                                            minMarketCap: 0, minMacroScore: 0, sector: 'All',
+                                            minStateResilience: 0, minCapexEfficiency: 0, minFormalization: 0, maxOilSensitivity: 100, maxGovRisk: 100,
+                                            minInsiderNet: -1000, onlyRisingPledge: false, minInstitutionalBuy: 0
+                                        })}
+                                        className="text-[0.6rem] uppercase font-black text-rose-400/60 hover:text-rose-400 transition-colors"
+                                    >
+                                        Reset All Filters
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/40 backdrop-blur-md">
@@ -171,25 +330,19 @@ export const Screener: React.FC = () => {
                             {renderSortHeader("Name", "name")}
                             <th className="px-4 py-3 text-[0.65rem] font-bold uppercase tracking-wider text-white/50">Sector</th>
                             {renderSortHeader("Market Cap", "mcap")}
-                            <th className="px-4 py-3 text-[0.65rem] font-bold uppercase tracking-wider text-white/50 text-right">Price</th>
-                            {renderSortHeader("P/E", "pe")}
-                            {renderSortHeader("OPM (%)", "margin")}
-                            {renderSortHeader("ROE (%)", "roe")}
                             {renderSortHeader("Macro Score", "macro_impact")}
+                            {renderSortHeader("Insider Net", "insider")}
+                            {renderSortHeader("Gov Risk", "gov_risk")}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         <AnimatePresence mode="popLayout">
                             {filteredCompanies.map((company, idx) => {
-                                const latestFund = company.cie_fundamentals?.[0] || {};
                                 const latestSignal = company.cie_macro_signals?.[0] || {};
-
-                                const price = latestFund.metadata?.last_price || 0;
-                                const mcap = price ? (latestFund.revenue * price / 1000) / 10000000 : 0; // rough Cr approx
-                                const pe = latestFund.eps && price ? price / latestFund.eps : 0;
-                                const opm = (latestFund.operating_margin || 0) * 100;
-                                const roe = (latestFund.return_on_equity || 0) * 100;
                                 const score = latestSignal.macro_impact_score || 0;
+                                const govRisk = company.governance_risk_score || 0;
+                                const insider = company.insider_buy_sell_net || 0;
+                                const pDelta = company.pledge_delta || 0;
 
                                 return (
                                     <motion.tr
@@ -208,18 +361,31 @@ export const Screener: React.FC = () => {
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-xs text-white/60">{company.sector || 'N/A'}</td>
-                                        <td className="px-4 py-3 text-sm text-white/80">₹{mcap.toFixed(2)}</td>
-                                        <td className="px-4 py-3 text-sm text-white/80 text-right">₹{price.toFixed(2)}</td>
-                                        <td className="px-4 py-3 text-sm text-white/80">{pe > 0 ? pe.toFixed(1) : '-'}</td>
-                                        <td className="px-4 py-3 text-sm text-white/80">{opm.toFixed(1)}%</td>
-                                        <td className="px-4 py-3 text-sm text-white/80">{roe.toFixed(1)}%</td>
+                                        <td className="px-4 py-3 text-sm text-white/80">₹{((company.cie_fundamentals?.[0]?.revenue || 0) * (company.cie_fundamentals?.[0]?.metadata?.last_price || 0) / 1000 / 10000000).toFixed(2)}Cr</td>
                                         <td className="px-4 py-3">
-                                            <div className="flex items-center gap-2">
-                                                <span className={`text-sm font-bold ${score > 70 ? 'text-emerald-400' : score > 50 ? 'text-amber-400' : 'text-rose-400'
-                                                    }`}>
-                                                    {score}
+                                            <span className={`text-sm font-bold ${score > 70 ? 'text-emerald-400' : score > 50 ? 'text-amber-400' : 'text-rose-400'}`}>
+                                                {score}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex flex-col">
+                                                <span className={`text-xs font-bold ${insider > 0 ? 'text-emerald-400' : insider < 0 ? 'text-rose-400' : 'text-white/40'}`}>
+                                                    {insider > 0 ? '+' : ''}{insider} Cr
                                                 </span>
+                                                {pDelta !== 0 && (
+                                                    <span className={`text-[0.6rem] ${pDelta > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                                        {pDelta > 0 ? '▲' : '▼'} {Math.abs(pDelta).toFixed(1)}% Pledge
+                                                    </span>
+                                                )}
                                             </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={`text-[0.7rem] font-black px-2 py-0.5 rounded-md ${govRisk < 30 ? 'bg-emerald-500/10 text-emerald-400' :
+                                                govRisk < 60 ? 'bg-amber-500/10 text-amber-400' :
+                                                    'bg-rose-500/10 text-rose-400'
+                                                }`}>
+                                                {govRisk}
+                                            </span>
                                         </td>
                                     </motion.tr>
                                 );
@@ -227,10 +393,9 @@ export const Screener: React.FC = () => {
                         </AnimatePresence>
                     </tbody>
                 </table>
-                {filteredCompanies.length === 0 && (
-                    <div className="py-16 text-center text-white/30 text-sm">No companies match your filters.</div>
-                )}
             </div>
         </div>
     );
 };
+
+export default Screener;

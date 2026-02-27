@@ -16,9 +16,13 @@ import { Link } from 'react-router-dom';
 import { Screener } from '@/features/CIE/Screener';
 import { QuarterlyAggregator } from '@/features/CIE/QuarterlyAggregator';
 import { InstitutionalWatchlists } from '@/features/CIE/InstitutionalWatchlists';
+import { RiskExposureHeatmap } from '@/features/CIE/RiskExposureHeatmap';
+import { PromoterActivityHeatmap } from '@/features/CIE/PromoterActivityHeatmap';
+import { BulkBlockReport } from '@/features/CIE/BulkBlockReport';
+import { Flame, Briefcase } from 'lucide-react';
 
 export const CorporateIndiaEngine: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'screener' | 'aggregates' | 'watchlists'>('screener');
+    const [activeTab, setActiveTab] = useState<'screener' | 'heatmap' | 'aggregates' | 'watchlists' | 'promoters' | 'deals'>('screener');
 
     return (
         <div className="min-h-screen bg-[#050810] text-gray-100">
@@ -99,8 +103,11 @@ export const CorporateIndiaEngine: React.FC = () => {
                     <div className="flex items-center gap-8 border-b border-white/5 pb-1">
                         {[
                             { id: 'screener', label: 'Macro Screener', icon: Filter },
+                            { id: 'heatmap', label: 'Risk Exposure', icon: Flame },
                             { id: 'aggregates', label: 'Quarterly Results Aggregator', icon: LineChart },
                             { id: 'watchlists', label: 'Institutional Watchlists', icon: Shield },
+                            { id: 'promoters', label: 'Promoter Activity', icon: Activity },
+                            { id: 'deals', label: 'Institutional Deals', icon: Briefcase },
                         ].map((tab) => (
                             <button
                                 key={tab.id}
@@ -131,8 +138,11 @@ export const CorporateIndiaEngine: React.FC = () => {
                                 transition={{ duration: 0.3 }}
                             >
                                 {activeTab === 'screener' && <Screener />}
+                                {activeTab === 'heatmap' && <RiskExposureHeatmap />}
                                 {activeTab === 'aggregates' && <QuarterlyAggregator />}
                                 {activeTab === 'watchlists' && <InstitutionalWatchlists />}
+                                {activeTab === 'promoters' && <PromoterActivityHeatmap />}
+                                {activeTab === 'deals' && <BulkBlockReport />}
                             </motion.div>
                         </AnimatePresence>
                     </SectionErrorBoundary>

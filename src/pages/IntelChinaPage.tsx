@@ -77,6 +77,7 @@ export const IntelChinaPage: React.FC = () => {
         "name": "China Macro-Activity & De-Dollarization Telemetry",
         "description": "High-frequency activity monitor for China tracking credit impulse, deflation risk, industrial production velocity, PBoC monetary policy, and gold reserves accumulation.",
         "url": "https://graphiquestor.com/intel/china",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
         "creator": {
             "@type": "Organization",
             "name": "GraphiQuestor Intelligence"

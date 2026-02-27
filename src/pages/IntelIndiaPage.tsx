@@ -98,6 +98,7 @@ export const IntelIndiaPage: React.FC = () => {
         "name": "India Macroeconomic & Sovereign Debt Telemetry",
         "description": "High-frequency macro dataset for India, tracking the RBI credit cycle, fiscal stress ratios, sovereign debt maturity walls, and liquidity surplus/deficit. Includes MoSPI and RBI DBIE data integration.",
         "url": "https://graphiquestor.com/intel/india",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
         "creator": {
             "@type": "Organization",
             "name": "GraphiQuestor Intelligence"
