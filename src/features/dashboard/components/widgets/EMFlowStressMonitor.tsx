@@ -1,16 +1,23 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { Sparkline } from '@/components/Sparkline';
 import { TrendingDown, AlertCircle } from 'lucide-react';
 
-export const EMFlowStressMonitor: React.FC = () => {
-    // Mock time-series data for capital flows
-    const mockFlowData = useMemo(() => Array.from({ length: 30 }, (_, i) => ({
-        date: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        value: 50 + Math.sin(i / 3) * 20 + Math.random() * 10 - (i > 20 ? 30 : 0) // Simulated shock at the end
-    })), []);
+// Production Note: In a real institutional terminal, this data would be fetched from the 'capital_flows_proxies' table.
+// Moving mock generation outside the component body to ensure render purity for CI/CD.
+const MOCK_FLOW_DATA = Array.from({ length: 30 }, (_, i) => {
+    // Use a fixed reference point for "now" to ensure deterministic mock data
+    const baseTime = 1709030400000; // Fixed timestamp (Feb 27, 2024)
+    const date = new Date(baseTime - (30 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    const isStress = true; // Signal stress based on recent data
+    // Seeded-like randomness using sine waves for stability
+    const value = 50 + Math.sin(i / 3) * 20 + Math.cos(i / 2) * 5 - (i > 20 ? 30 : 0);
+
+    return { date, value };
+});
+
+export const EMFlowStressMonitor: React.FC = () => {
+    const isStress = true; // Signal stress based on the simulated shock in MOCK_FLOW_DATA
 
     return (
         <Box sx={{ p: 4, borderRadius: '24px', bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
@@ -31,9 +38,9 @@ export const EMFlowStressMonitor: React.FC = () => {
                 )}
             </Box>
 
-            <Box sx={{ h: 120, mb: 4 }}>
+            <Box sx={{ height: 120, mb: 4 }}>
                 <Sparkline
-                    data={mockFlowData}
+                    data={MOCK_FLOW_DATA}
                     color={isStress ? '#f43f5e' : '#3b82f6'}
                     height={120}
                 />
