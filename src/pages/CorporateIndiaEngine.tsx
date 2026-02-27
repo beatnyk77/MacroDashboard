@@ -19,10 +19,11 @@ import { InstitutionalWatchlists } from '@/features/CIE/InstitutionalWatchlists'
 import { RiskExposureHeatmap } from '@/features/CIE/RiskExposureHeatmap';
 import { PromoterActivityHeatmap } from '@/features/CIE/PromoterActivityHeatmap';
 import { BulkBlockReport } from '@/features/CIE/BulkBlockReport';
-import { Flame, Briefcase } from 'lucide-react';
+import { ShortSellingReport } from '@/features/CIE/ShortSellingReport';
+import { Flame, Briefcase, TrendingDown } from 'lucide-react';
 
 export const CorporateIndiaEngine: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'screener' | 'heatmap' | 'aggregates' | 'watchlists' | 'promoters' | 'deals'>('screener');
+    const [activeTab, setActiveTab] = useState<'screener' | 'heatmap' | 'aggregates' | 'watchlists' | 'promoters' | 'deals' | 'shortSelling'>('screener');
 
     return (
         <div className="min-h-screen bg-[#050810] text-gray-100">
@@ -108,6 +109,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                             { id: 'watchlists', label: 'Institutional Watchlists', icon: Shield },
                             { id: 'promoters', label: 'Promoter Activity', icon: Activity },
                             { id: 'deals', label: 'Institutional Deals', icon: Briefcase },
+                            { id: 'shortSelling', label: 'Short Interest', icon: TrendingDown },
                         ].map((tab) => (
                             <button
                                 key={tab.id}
@@ -143,6 +145,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                                 {activeTab === 'watchlists' && <InstitutionalWatchlists />}
                                 {activeTab === 'promoters' && <PromoterActivityHeatmap />}
                                 {activeTab === 'deals' && <BulkBlockReport />}
+                                {activeTab === 'shortSelling' && <ShortSellingReport />}
                             </motion.div>
                         </AnimatePresence>
                     </SectionErrorBoundary>

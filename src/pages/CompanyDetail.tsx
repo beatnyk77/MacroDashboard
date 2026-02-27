@@ -66,6 +66,21 @@ export const CompanyDetail: React.FC = () => {
         enabled: !!company?.id
     });
 
+    const { data: shortHistory } = useQuery({
+        queryKey: ['cie-short-history', company?.id],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('cie_short_selling_history')
+                .select('*')
+                .eq('company_id', company?.id)
+                .order('date', { ascending: true })
+                .limit(90);
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!company?.id
+    });
+
 
     const peerComparison = useMemo(() => {
         if (!sectorPeers || !company) return null;
@@ -155,6 +170,12 @@ export const CompanyDetail: React.FC = () => {
         insider: Number(h.insider_net_buying?.toFixed(1) || 0)
     }));
 
+    const shortTrendData = (shortHistory || []).map(h => ({
+        date: new Date(h.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short' }),
+        shortQty: Number(h.short_quantity || 0),
+        ratio: Number(h.pct_of_delivery || 0)
+    }));
+
     return (
         <div className="min-h-screen bg-[#020202] text-white pt-24 pb-20">
             <div className="max-w-7xl mx-auto px-6">
@@ -183,9 +204,9 @@ export const CompanyDetail: React.FC = () => {
                                 <p className="text-2xl font-black text-blue-400">₹{latestFund.metadata?.last_price?.toFixed(2) || 'N/A'}</p>
                             </div>
                             <div>
-                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">Inst. Buying (30D)</p>
-                                <p className={`text-2xl font-black ${(company.recent_deal_pct || 0) > 0 ? 'text-emerald-400' : 'text-white/40'}`}>
-                                    {company.recent_deal_pct > 0 ? '+' : ''}{company.recent_deal_pct || 0}%
+                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">Short Interest</p>
+                                <p className={`text-2xl font-black ${(company.short_interest_pct || 0) > 20 ? 'text-rose-400' : 'text-white/40'}`}>
+                                    {(company.short_interest_pct || 0).toFixed(1)}%
                                 </p>
                             </div>
                         </div>
@@ -340,6 +361,28 @@ export const CompanyDetail: React.FC = () => {
 
                         {/* Benchmark & Radar */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 mb-6 flex items-center">
+                                    <Activity size={16} className="mr-2 text-rose-400" /> Short Selling Trend
+                                </h3>
+                                <div className="h-64 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={shortTrendData}>
+                                            <defs>
+                                                <linearGradient id="colorShort" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <XAxis dataKey="date" stroke="#ffffff10" fontSize={9} interval={Math.floor(shortTrendData.length / 5)} />
+                                            <YAxis stroke="#ffffff10" fontSize={10} />
+                                            <Tooltip contentStyle={{ backgroundColor: '#000', borderColor: '#ffffff10' }} />
+                                            <Area type="monotone" dataKey="shortQty" stroke="#f43f5e" strokeWidth={2} fillOpacity={1} fill="url(#colorShort)" />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
                             <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
                                 <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 mb-6 flex items-center">
                                     <Activity size={16} className="mr-2 text-orange-400" /> Macro Risk Radar

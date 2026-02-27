@@ -24,6 +24,7 @@ interface Company {
     last_sebi_action?: string;
     pledge_delta?: number;
     recent_deal_pct?: number;
+    short_interest_pct?: number;
 }
 
 export const Screener: React.FC = () => {
@@ -39,7 +40,8 @@ export const Screener: React.FC = () => {
         maxGovRisk: 100,
         minInsiderNet: -1000,
         onlyRisingPledge: false,
-        minInstitutionalBuy: 0
+        minInstitutionalBuy: 0,
+        minShortRatio: 0
     });
 
     const [savedViews, setSavedViews] = useState<{ name: string; filters: any }[]>(() => {
@@ -93,9 +95,10 @@ export const Screener: React.FC = () => {
             const matchesInsider = (company.insider_buy_sell_net || 0) >= filters.minInsiderNet;
             const matchesRising = !filters.onlyRisingPledge || (company.pledge_delta || 0) > 0;
             const matchesInst = (company.recent_deal_pct || 0) >= filters.minInstitutionalBuy;
+            const matchesShort = (company.short_interest_pct || 0) >= filters.minShortRatio;
 
             return matchesSearch && matchesMacroScore && matchesSector && matchesMcap &&
-                matchesState && matchesCapex && matchesFormalization && matchesOil && matchesGov && matchesInsider && matchesRising && matchesInst;
+                matchesState && matchesCapex && matchesFormalization && matchesOil && matchesGov && matchesInsider && matchesRising && matchesInst && matchesShort;
         });
 
         filtered.sort((a, b) => {
@@ -118,6 +121,7 @@ export const Screener: React.FC = () => {
             if (sortConfig.key === 'macro_impact') { valA = latestSignalA.macro_impact_score || 0; valB = latestSignalB.macro_impact_score || 0; }
             if (sortConfig.key === 'gov_risk') { valA = a.governance_risk_score || 0; valB = b.governance_risk_score || 0; }
             if (sortConfig.key === 'insider') { valA = a.insider_buy_sell_net || 0; valB = b.insider_buy_sell_net || 0; }
+            if (sortConfig.key === 'short') { valA = a.short_interest_pct || 0; valB = b.short_interest_pct || 0; }
 
             if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
             if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -288,6 +292,18 @@ export const Screener: React.FC = () => {
                                         className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500"
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <label className="text-[0.6rem] uppercase font-black text-white/40">Min Short Ratio (%)</label>
+                                        <span className="text-[0.65rem] font-bold text-rose-400">{filters.minShortRatio}%</span>
+                                    </div>
+                                    <input
+                                        type="range" min="0" max="100" step="1"
+                                        value={filters.minShortRatio}
+                                        onChange={(e) => setFilters({ ...filters, minShortRatio: parseFloat(e.target.value) })}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                                    />
+                                </div>
 
                                 <div className="lg:col-span-4 flex items-center justify-between gap-4 pt-4 border-t border-white/5">
                                     <div className="flex items-center gap-3">
@@ -309,7 +325,7 @@ export const Screener: React.FC = () => {
                                         onClick={() => setFilters({
                                             minMarketCap: 0, minMacroScore: 0, sector: 'All',
                                             minStateResilience: 0, minCapexEfficiency: 0, minFormalization: 0, maxOilSensitivity: 100, maxGovRisk: 100,
-                                            minInsiderNet: -1000, onlyRisingPledge: false, minInstitutionalBuy: 0
+                                            minInsiderNet: -1000, onlyRisingPledge: false, minInstitutionalBuy: 0, minShortRatio: 0
                                         })}
                                         className="text-[0.6rem] uppercase font-black text-rose-400/60 hover:text-rose-400 transition-colors"
                                     >
@@ -332,6 +348,7 @@ export const Screener: React.FC = () => {
                             {renderSortHeader("Market Cap", "mcap")}
                             {renderSortHeader("Macro Score", "macro_impact")}
                             {renderSortHeader("Insider Net", "insider")}
+                            {renderSortHeader("Short %", "short")}
                             {renderSortHeader("Gov Risk", "gov_risk")}
                         </tr>
                     </thead>
@@ -378,6 +395,11 @@ export const Screener: React.FC = () => {
                                                     </span>
                                                 )}
                                             </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={`text-xs font-bold ${(company.short_interest_pct || 0) > 20 ? 'text-rose-400' : 'text-white/60'}`}>
+                                                {(company.short_interest_pct || 0).toFixed(1)}%
+                                            </span>
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className={`text-[0.7rem] font-black px-2 py-0.5 rounded-md ${govRisk < 30 ? 'bg-emerald-500/10 text-emerald-400' :
