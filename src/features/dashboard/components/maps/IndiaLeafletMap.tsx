@@ -40,9 +40,17 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
             .catch(err => console.error("Error loading GeoJSON:", err));
     }, []);
 
+    const normalizeName = (name: string) => {
+        if (!name) return "";
+        return name.toLowerCase()
+            .replace(/&/g, 'and')
+            .replace(/[^a-z]/g, '');
+    };
+
     const onEachFeature = (feature: any, layer: any) => {
         const stateName = feature.properties.STNAME || feature.properties.stname || feature.properties.NAME_1;
-        const stateData = data.find(s => s.state_name.toLowerCase() === stateName?.toLowerCase());
+
+        const stateData = data.find(s => normalizeName(s.state_name) === normalizeName(stateName));
         const isSelected = selectedStateCode && stateData?.state_code === selectedStateCode;
 
         const value = stateData ? getValue(stateData) : 0;

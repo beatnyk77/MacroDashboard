@@ -17,11 +17,11 @@ const eventIcons: Record<string, React.ReactNode> = {
 };
 
 const eventColors: Record<string, string> = {
-    conflict: 'text-rose-500',
-    protest: 'text-amber-500',
-    disruption: 'text-orange-500',
-    energy: 'text-blue-500',
-    default: 'text-emerald-500'
+    conflict: 'text-rose-500 drop-shadow-[0_0_12px_rgba(244,63,94,0.8)] filter',
+    protest: 'text-amber-500 drop-shadow-[0_0_12px_rgba(245,158,11,0.8)] filter',
+    disruption: 'text-orange-500 drop-shadow-[0_0_12px_rgba(249,115,22,0.8)] filter',
+    energy: 'text-blue-500 drop-shadow-[0_0_12px_rgba(59,130,246,0.8)] filter',
+    default: 'text-emerald-500 drop-shadow-[0_0_12px_rgba(16,185,129,0.8)] filter'
 };
 
 export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
@@ -144,17 +144,24 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                     >
                         <g className="cursor-pointer">
                             <circle
-                                r={6}
+                                r={10}
                                 fill="currentColor"
                                 className={cn(
                                     eventColors[event.type] || eventColors.default,
-                                    "opacity-20 animate-pulse"
+                                    "opacity-30 animate-ping"
                                 )}
                             />
                             <circle
-                                r={3}
+                                r={5}
                                 fill="currentColor"
-                                className={eventColors[event.type] || eventColors.default}
+                                className={cn(
+                                    eventColors[event.type] || eventColors.default,
+                                    "opacity-80"
+                                )}
+                            />
+                            <circle
+                                r={2}
+                                fill="#ffffff"
                             />
                         </g>
                     </Marker>
