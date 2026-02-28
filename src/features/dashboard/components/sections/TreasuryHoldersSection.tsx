@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from '@/lib/utils';
 import { TreasuryHoldersChart } from '../charts/TreasuryHoldersChart';
+import { TICWorldMapModule } from '../widgets/TICWorldMapModule';
+
 
 const COUNTRY_FLAGS: Record<string, string> = {
     'Japan': '🇯🇵',
@@ -40,7 +42,7 @@ const COUNTRY_FLAGS: Record<string, string> = {
 
 export const TreasuryHoldersSection: React.FC = () => {
     const { data, isLoading, error } = useTreasuryHolders();
-    const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart');
+    const [viewMode, setViewMode] = useState<'chart' | 'table' | 'map'>('map');
     const [isExpanded, setIsExpanded] = useState(false);
 
     if (isLoading) return <Skeleton className="h-[600px] w-full rounded-xl mb-12" />;
@@ -85,6 +87,17 @@ export const TreasuryHoldersSection: React.FC = () => {
                 {/* View Toggle */}
                 <div className="bg-slate-950/50 p-1 rounded-lg border border-white/10 flex items-center">
                     <button
+                        onClick={() => setViewMode('map')}
+                        className={cn(
+                            "px-3 py-1.5 rounded-md text-xs font-bold transition-all",
+                            viewMode === 'map'
+                                ? "bg-primary/20 text-primary shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        Map
+                    </button>
+                    <button
                         onClick={() => setViewMode('chart')}
                         className={cn(
                             "px-3 py-1.5 rounded-md text-xs font-bold transition-all",
@@ -110,7 +123,11 @@ export const TreasuryHoldersSection: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-                {viewMode === 'chart' ? (
+                {viewMode === 'map' ? (
+                    <div className="w-full animate-in fade-in duration-500">
+                        <TICWorldMapModule />
+                    </div>
+                ) : viewMode === 'chart' ? (
                     <div className="w-full animate-in fade-in duration-500">
                         <TreasuryHoldersChart data={chartData} height={600} />
                         <div className="mt-4 flex justify-end">

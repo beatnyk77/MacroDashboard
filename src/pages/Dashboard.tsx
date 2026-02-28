@@ -35,6 +35,9 @@ const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/s
 const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
 const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
 const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
+const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketTerminal').then(m => ({ default: m.PredictionMarketTerminal })));
+const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
+const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -425,6 +428,28 @@ export const Dashboard: React.FC = () => {
                 <SPASection id="geopolitical-map" className="py-24">
                     <div className="max-w-6xl mx-auto px-4">
                         <GeopoliticalEventsRow />
+                    </div>
+                </SPASection>
+
+                {/* 8.6 PREDICTION MARKET TERMINAL (DOME API) */}
+                <SPASection id="prediction-terminal" className="py-24 bg-blue-500/[0.01] border-y border-white/5">
+                    <div className="max-w-7xl mx-auto px-4 space-y-16">
+                        <SectionHeader
+                            title="Prediction Market Terminal"
+                            subtitle="Real-time multi-platform probability aggregation via DomeAPI"
+                        />
+
+                        <SectionErrorBoundary name="Prediction Markets">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="space-y-12">
+                                    <PredictionMarketTerminal />
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        <ArbitrageScanner />
+                                        <PredictionMarketHeatmap />
+                                    </div>
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
                     </div>
                 </SPASection>
 
