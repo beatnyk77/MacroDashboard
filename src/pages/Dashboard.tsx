@@ -23,6 +23,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 
 // Row Components
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
+import { GeopoliticalEventsRow } from '@/features/dashboard/components/rows/GeopoliticalEventsRow';
 
 // Lazy load key components for the homepage
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
@@ -417,6 +418,13 @@ export const Dashboard: React.FC = () => {
                                 <WeeklyNarrativeSection />
                             </Suspense>
                         </SectionErrorBoundary>
+                    </div>
+                </SPASection>
+
+                {/* 8.5 GEOPOLITICAL EVENT MATRIX (GDELT) */}
+                <SPASection id="geopolitical-map" className="py-24">
+                    <div className="max-w-6xl mx-auto px-4">
+                        <GeopoliticalEventsRow />
                     </div>
                 </SPASection>
 

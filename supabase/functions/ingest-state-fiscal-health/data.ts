@@ -11,5 +11,16 @@ export const STATE_FISCAL_DATA = [
     { state_name: 'Bihar', state_code: 'BR', date: '2024-03-31', debt_to_gsdp: 38.1, gfd_to_gsdp: 8.2 },
     { state_name: 'Madhya Pradesh', state_code: 'MP', date: '2024-03-31', debt_to_gsdp: 28.5, gfd_to_gsdp: 4.0 },
     { state_name: 'Andhra Pradesh', state_code: 'AP', date: '2024-03-31', debt_to_gsdp: 33.3, gfd_to_gsdp: 3.6 },
-    { state_name: 'Telangana', state_code: 'TS', date: '2024-03-31', debt_to_gsdp: 27.8, gfd_to_gsdp: 3.2 }
+    { state_name: 'Telangana', state_code: 'TS', date: '2024-03-31', debt_to_gsdp: 27.8, gfd_to_gsdp: 3.2 },
+    { state_name: 'Odisha', state_code: 'OD', date: '2024-03-31', debt_to_gsdp: 16.4, gfd_to_gsdp: 2.1 },
+    { state_name: 'Chhattisgarh', state_code: 'CG', date: '2024-03-31', debt_to_gsdp: 17.5, gfd_to_gsdp: 2.8 },
+    { state_name: 'Jharkhand', state_code: 'JH', date: '2024-03-31', debt_to_gsdp: 25.2, gfd_to_gsdp: 3.1 },
+    { state_name: 'Haryana', state_code: 'HR', date: '2024-03-31', debt_to_gsdp: 24.8, gfd_to_gsdp: 2.9 },
+    { state_name: 'Assam', state_code: 'AS', date: '2024-03-31', debt_to_gsdp: 23.4, gfd_to_gsdp: 3.5 },
+    { state_name: 'Uttarakhand', state_code: 'UT', date: '2024-03-31', debt_to_gsdp: 30.2, gfd_to_gsdp: 2.7 },
+    { state_name: 'Himachal Pradesh', state_code: 'HP', date: '2024-03-31', debt_to_gsdp: 42.5, gfd_to_gsdp: 4.5 },
+    { state_name: 'Jammu & Kashmir', state_code: 'JK', date: '2024-03-31', debt_to_gsdp: 48.2, gfd_to_gsdp: 5.2 },
+    { state_name: 'Goa', state_code: 'GA', date: '2024-03-31', debt_to_gsdp: 32.1, gfd_to_gsdp: 2.4 },
+    { state_name: 'Tripura', state_code: 'TR', date: '2024-03-31', debt_to_gsdp: 34.5, gfd_to_gsdp: 3.2 },
+    { state_name: 'Sikkim', state_code: 'SK', date: '2024-03-31', debt_to_gsdp: 25.8, gfd_to_gsdp: 3.0 }
 ];

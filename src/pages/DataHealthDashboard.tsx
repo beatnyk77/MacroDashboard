@@ -59,6 +59,7 @@ export const DataHealthDashboard: React.FC = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Metric ID</TableCell>
+                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Frequency</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Days Lag</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Status</TableCell>
                                     </TableRow>
@@ -67,14 +68,27 @@ export const DataHealthDashboard: React.FC = () => {
                                     {staleness?.map((row) => (
                                         <TableRow key={row.metric_id} hover>
                                             <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.metric_id}</TableCell>
-                                            <TableCell sx={{ color: 'text.secondary' }}>
-                                                {row.days_since_update} <span style={{ fontSize: '0.7em', color: '#666' }}>/ {row.expected_interval_days}</span>
+                                            <TableCell>
+                                                <Chip
+                                                    label={row.frequency_type || 'hf'}
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{
+                                                        height: 20,
+                                                        fontSize: '0.65rem',
+                                                        borderColor: row.frequency_type === 'structural' ? 'rgba(139, 92, 246, 0.4)' : 'rgba(255,255,255,0.1)',
+                                                        color: row.frequency_type === 'structural' ? '#a78bfa' : '#94a3b8'
+                                                    }}
+                                                />
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>
+                                                {Math.round(row.days_since_update)} <span style={{ fontSize: '0.7em', color: '#666' }}>/ {row.expected_interval_days}</span>
                                             </TableCell>
                                             <TableCell>{renderStalenessStatus(row.status || '')}</TableCell>
                                         </TableRow>
                                     ))}
                                     {!stalenessLoading && !staleness?.length && (
-                                        <TableRow><TableCell colSpan={3} align="center" sx={{ py: 3, color: 'text.secondary' }}>No metrics found</TableCell></TableRow>
+                                        <TableRow><TableCell colSpan={4} align="center" sx={{ py: 3, color: 'text.secondary' }}>No metrics found</TableCell></TableRow>
                                     )}
                                 </TableBody>
                             </Table>

@@ -29,11 +29,11 @@ Deno.serve(async (req: Request) => {
             Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
         )
 
-        // 1. Check for stale metrics (> 30 days)
+        // 1. Check for stale metrics (Based on computed status)
         const { data: staleMetrics, error: staleError } = await supabaseClient
             .from('vw_data_staleness_monitor')
             .select('metric_id, metric_name, days_since_update, status')
-            .gt('days_since_update', 30)
+            .neq('status', 'FRESH')
 
         if (staleError) throw staleError
 

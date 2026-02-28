@@ -22,17 +22,23 @@ const FEEDS = [
 
 const KEYWORDS = [
     // Global macro
-    'liquidity', 'gold', 'treasury', 'BRICS', 'China', 'Fed', 'ECB',
-    'dollar', 'reserves', 'sovereign', 'de-dollarization',
+    'liquidity', 'gold', 'treasury', 'BRICS', 'China', 'Fed', 'ECB', 'BoJ', 'PBoC',
+    'dollar', 'reserves', 'sovereign', 'de-dollarization', 'yield', 'inflation',
+    'growth', 'GDP', 'recession', 'debt', 'fiscal', 'deficit', 'rates', 'hike',
+    'cut', 'oil', 'energy', 'commodities', 'tariff', 'trade', 'war', 'geopolitical',
+    'sanctions', 'energy security', 'crude', 'natural gas', 'OPEC', 'crisis',
+    'stagflation', 'hard landing', 'soft landing', 'carry trade', 'volatility',
     // India-specific
     'India', 'RBI', 'SEBI', 'rupee', 'INR', 'MoSPI', 'fiscal deficit',
     'GST', 'NIFTY', 'Sensex', 'inflation India', 'credit growth',
-    'FII', 'DII', 'G-Sec', 'repo rate', 'SBI', 'HDFC',
+    'FII', 'DII', 'G-Sec', 'repo rate', 'SBI', 'HDFC', 'capex',
+    'IIP', 'WPI', 'CPI', 'gift city', 'corporate india', 'earnings',
 ]
 
 const INDIA_KEYWORDS = [
     'India', 'RBI', 'SEBI', 'rupee', 'INR', 'MoSPI', 'NIFTY', 'Sensex',
-    'fiscal deficit', 'GST', 'FII', 'DII', 'G-Sec', 'repo rate',
+    'fiscal deficit', 'GST', 'FII', 'DII', 'G-Sec', 'repo rate', 'capex',
+    'IIP', 'WPI', 'CPI', 'gift city',
 ]
 
 function isValidUrl(url: string): boolean {
@@ -66,7 +72,9 @@ Deno.serve(async (req: Request) => {
 
         for (const feed of FEEDS) {
             try {
-                await withTimeout(async () => {
+                // BUG FIX: withTimeout takes a Promise, not a function.
+                // Wrapped the logic in an IIFE to return a promise.
+                await withTimeout((async () => {
                     let attempt = 0;
                     const maxRetries = 2;
                     let success = false;
@@ -74,7 +82,12 @@ Deno.serve(async (req: Request) => {
                     while (attempt < maxRetries && !success) {
                         try {
                             console.log(`Fetching ${feed.source} feed (attempt ${attempt + 1})...`)
-                            const response = await fetch(feed.url)
+                            const response = await fetch(feed.url, {
+                                headers: {
+                                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                                    'Accept': 'application/rss+xml, application/xml, text/xml, */*'
+                                }
+                            })
                             if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`)
 
                             const xml = await response.text()
@@ -110,7 +123,7 @@ Deno.serve(async (req: Request) => {
 
                             articles.push(...feedArticles)
                             success = true
-                        } catch (e) {
+                        } catch (e: any) {
                             attempt++
                             console.error(`Error fetching ${feed.source}:`, e.message)
                             if (attempt < maxRetries) {
@@ -118,7 +131,7 @@ Deno.serve(async (req: Request) => {
                             }
                         }
                     }
-                }, 45000, `News Ingestion for ${feed.source}`);
+                })(), 45000, `News Ingestion for ${feed.source}`);
             } catch (err: any) {
                 console.error(`Feed ${feed.source} timed out or failed:`, err.message);
             }

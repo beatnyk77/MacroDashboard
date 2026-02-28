@@ -42,16 +42,16 @@ Deno.serve(async (req: Request) => {
 
         if (sourceError || !source) throw new Error('IMF data source not found');
 
-        // 2. Get Target Metrics
+        // 2. Get All Active Target Metrics for IMF
         const { data: metrics, error: metricsError } = await supabase
             .from('metrics')
             .select('id, metadata')
             .eq('source_id', source.id)
-            .ilike('id', 'G20_%');
+            .eq('is_active', true);
 
         if (metricsError) throw metricsError;
         if (!metrics || metrics.length === 0) {
-            return new Response(JSON.stringify({ message: 'No G20 metrics found' }), {
+            return new Response(JSON.stringify({ message: 'No active IMF metrics found' }), {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             });
         }
@@ -180,4 +180,7 @@ async function upsertMetric(supabase: any, metricId: string, data: Record<string
         .upsert(observations, { onConflict: 'metric_id, as_of_date' });
 
     if (error) throw error;
+
+    // Refresh metrics.updated_at
+    await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metricId);
 }

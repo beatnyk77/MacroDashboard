@@ -36,6 +36,20 @@ const STATE_FISCAL_DATA = [
     { code: 'PB', name: 'Punjab', fy: '2023-24', capex_pct_gsdp: 1.1, rev_exp_pct_gsdp: 15.8, comm_pct_receipts: 72, subsidies_pct_gsdp: 4.2 },
     { code: 'KL', name: 'Kerala', fy: '2023-24', capex_pct_gsdp: 1.3, rev_exp_pct_gsdp: 14.2, comm_pct_receipts: 68, subsidies_pct_gsdp: 0.8 },
     { code: 'OD', name: 'Odisha', fy: '2023-24', capex_pct_gsdp: 5.2, rev_exp_pct_gsdp: 15.5, comm_pct_receipts: 35, subsidies_pct_gsdp: 1.2 },
+    { code: 'CG', name: 'Chhattisgarh', fy: '2023-24', capex_pct_gsdp: 4.8, rev_exp_pct_gsdp: 16.4, comm_pct_receipts: 42, subsidies_pct_gsdp: 1.4 },
+    { code: 'JH', name: 'Jharkhand', fy: '2023-24', capex_pct_gsdp: 3.2, rev_exp_pct_gsdp: 15.8, comm_pct_receipts: 44, subsidies_pct_gsdp: 0.9 },
+    { code: 'HR', name: 'Haryana', fy: '2023-24', capex_pct_gsdp: 1.8, rev_exp_pct_gsdp: 12.4, comm_pct_receipts: 35, subsidies_pct_gsdp: 1.1 },
+    { code: 'AS', name: 'Assam', fy: '2023-24', capex_pct_gsdp: 2.4, rev_exp_pct_gsdp: 18.2, comm_pct_receipts: 52, subsidies_pct_gsdp: 2.1 },
+    { code: 'UT', name: 'Uttarakhand', fy: '2023-24', capex_pct_gsdp: 2.1, rev_exp_pct_gsdp: 14.8, comm_pct_receipts: 46, subsidies_pct_gsdp: 0.6 },
+    { code: 'HP', name: 'Himachal Pradesh', fy: '2023-24', capex_pct_gsdp: 1.9, rev_exp_pct_gsdp: 17.5, comm_pct_receipts: 58, subsidies_pct_gsdp: 1.2 },
+    { code: 'JK', name: 'Jammu & Kashmir', fy: '2023-24', capex_pct_gsdp: 4.2, rev_exp_pct_gsdp: 24.5, comm_pct_receipts: 65, subsidies_pct_gsdp: 1.5 },
+    { code: 'GA', name: 'Goa', fy: '2023-24', capex_pct_gsdp: 2.8, rev_exp_pct_gsdp: 11.5, comm_pct_receipts: 32, subsidies_pct_gsdp: 0.4 },
+    { code: 'TR', name: 'Tripura', fy: '2023-24', capex_pct_gsdp: 3.5, rev_exp_pct_gsdp: 19.8, comm_pct_receipts: 55, subsidies_pct_gsdp: 1.8 },
+    { code: 'MN', name: 'Manipur', fy: '2023-24', capex_pct_gsdp: 4.1, rev_exp_pct_gsdp: 22.4, comm_pct_receipts: 62, subsidies_pct_gsdp: 2.1 },
+    { code: 'ML', name: 'Meghalaya', fy: '2023-24', capex_pct_gsdp: 3.8, rev_exp_pct_gsdp: 20.2, comm_pct_receipts: 58, subsidies_pct_gsdp: 1.9 },
+    { code: 'NL', name: 'Nagaland', fy: '2023-24', capex_pct_gsdp: 3.6, rev_exp_pct_gsdp: 24.8, comm_pct_receipts: 68, subsidies_pct_gsdp: 1.4 },
+    { code: 'MZ', name: 'Mizoram', fy: '2023-24', capex_pct_gsdp: 4.5, rev_exp_pct_gsdp: 26.2, comm_pct_receipts: 64, subsidies_pct_gsdp: 1.7 },
+    { code: 'SK', name: 'Sikkim', fy: '2023-24', capex_pct_gsdp: 3.7, rev_exp_pct_gsdp: 18.2, comm_pct_receipts: 48, subsidies_pct_gsdp: 0.9 }
 ];
 
 Deno.serve(async (req: Request) => {

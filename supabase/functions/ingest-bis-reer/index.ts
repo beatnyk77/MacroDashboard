@@ -20,50 +20,63 @@ Deno.serve(async (req: Request) => {
     )
 
     return runIngestion(supabaseClient, 'ingest-bis-reer', async (ctx) => {
-        console.log('Fetching BIS REER data...');
+        const fredApiKey = Deno.env.get('FRED_API_KEY');
+        if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
-        // BIS REER API is complex, mapping to standardized codes for priority EMs
-        // India, China, Brazil, Turkey
+        console.log('Fetching BIS REER data from FRED...');
+
+        // FRED IDs for Broad REER indices
         const targetCountries = [
-            { id: 'REER_INDEX_IN', bis_code: 'IN', name: 'India' },
-            { id: 'REER_INDEX_CN', bis_code: 'CN', name: 'China' },
-            { id: 'REER_INDEX_BR', bis_code: 'BR', name: 'Brazil' },
-            { id: 'REER_INDEX_TR', bis_code: 'TR', name: 'Turkey' }
+            { id: 'REER_INDEX_IN', fred_id: 'RBIRREER01NAV', name: 'India' },
+            { id: 'REER_INDEX_CN', fred_id: 'RBICREER01NAV', name: 'China' },
+            { id: 'REER_INDEX_BR', fred_id: 'RBBRREER01NAV', name: 'Brazil' },
+            { id: 'REER_INDEX_TR', fred_id: 'RBTRREER01NAV', name: 'Turkey' }
         ];
 
-        // For this implementation, we will fetch the Broad REER indices
-        // Using a mock-integrated approach for stability in demo if BIS API is throttled
-        // Realistic REER values for Jan 2026 based on typical volatility and recent trends
-        const results: any[] = [];
-        const baseDate = '2025-12-31';
-
-        const mockValues: Record<string, number> = {
-            'REER_INDEX_IN': 105.4, // India: Slight overvalued trend
-            'REER_INDEX_CN': 98.2,  // China: Currency weakness
-            'REER_INDEX_BR': 102.8, // Brazil: Neutral-strong
-            'REER_INDEX_TR': 135.6  // Turkey: High inflation / REER pressure
-        };
+        const results = [];
+        const errors = [];
 
         for (const country of targetCountries) {
-            results.push({
-                metric_id: country.id,
-                as_of_date: baseDate,
-                value: mockValues[country.id],
-                last_updated_at: new Date().toISOString()
-            });
+            try {
+                const response = await fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=${country.fred_id}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=12`);
+                const data = await response.json() as any;
+
+                if (data.observations && data.observations.length > 0) {
+                    for (const obs of data.observations) {
+                        const val = parseFloat(obs.value);
+                        if (!isNaN(val)) {
+                            results.push({
+                                metric_id: country.id,
+                                as_of_date: obs.date,
+                                value: val,
+                                last_updated_at: new Date().toISOString()
+                            });
+                        }
+                    }
+                }
+            } catch (err: any) {
+                console.error(`Error fetching REER for ${country.name}:`, err.message);
+                errors.push({ country: country.name, error: err.message });
+            }
         }
 
-        const { error } = await ctx.supabase
-            .from('metric_observations')
-            .upsert(results, { onConflict: 'metric_id, as_of_date' });
+        if (results.length > 0) {
+            const { error } = await ctx.supabase
+                .from('metric_observations')
+                .upsert(results, { onConflict: 'metric_id, as_of_date' });
+            if (error) throw error;
 
-        if (error) throw error;
+            // Update metrics updated_at
+            for (const country of targetCountries) {
+                await ctx.supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', country.id);
+            }
+        }
 
         return {
             rows_inserted: results.length,
             metadata: {
-                as_of_date: baseDate,
-                countries: targetCountries.map(c => ({ id: c.id, val: mockValues[c.id] }))
+                processed_countries: targetCountries.length,
+                errors: errors.length > 0 ? errors : undefined
             }
         };
     });

@@ -28,13 +28,37 @@ export const IntelligenceSidebar: React.FC = () => {
         refetchInterval: 300000 // 5m
     });
 
+    const { data: lastIngestion } = useQuery({
+        queryKey: ['last-ingestion-news'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('ingestion_logs')
+                .select('completed_at, status')
+                .eq('function_name', 'ingest-macro-news-headlines')
+                .eq('status', 'success')
+                .order('completed_at', { ascending: false })
+                .limit(1)
+                .single();
+            if (error) return null;
+            return data;
+        },
+        refetchInterval: 60000 // 1m
+    });
+
+    const lastUpdatedDate = lastIngestion?.completed_at ? new Date(lastIngestion.completed_at) : null;
+    const diffMin = lastUpdatedDate ? Math.floor((new Date().getTime() - lastUpdatedDate.getTime()) / 60000) : null;
+    const isStale = diffMin !== null && diffMin > 60;
+
     if (isCollapsed) {
         return (
             <button
                 onClick={() => setIsCollapsed(false)}
                 className="fixed right-0 top-1/2 -translate-y-1/2 bg-background border border-r-0 border-white/10 p-2 rounded-l-xl hover:bg-white/5 transition-all z-[1100] shadow-2xl"
             >
-                <ChevronLeft size={20} className="text-muted-foreground" />
+                <div className="relative">
+                    <ChevronLeft size={20} className="text-muted-foreground" />
+                    {isStale && <div className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full animate-pulse" />}
+                </div>
             </button>
         );
     }
@@ -42,9 +66,19 @@ export const IntelligenceSidebar: React.FC = () => {
     return (
         <aside className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/10 bg-background/50 backdrop-blur-xl z-[1100]">
             <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
-                <div className="flex items-center gap-2">
-                    <Newspaper size={18} className="text-blue-400" />
-                    <span className="text-xs font-black tracking-widest uppercase text-primary">Intelligence</span>
+                <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-2">
+                        <Newspaper size={18} className="text-blue-400" />
+                        <span className="text-xs font-black tracking-widest uppercase text-primary">Intelligence</span>
+                    </div>
+                    {lastUpdatedDate && (
+                        <div className="flex items-center gap-1.5 mt-1">
+                            <div className={`w-1.5 h-1.5 rounded-full ${isStale ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
+                            <span className={`text-[9px] font-bold uppercase tracking-tighter ${isStale ? 'text-rose-400' : 'text-muted-foreground/60'}`}>
+                                {isStale ? `STALE: ${diffMin}m AGO` : `LIVE: ${diffMin}m AGO`}
+                            </span>
+                        </div>
+                    )}
                 </div>
                 <button
                     onClick={() => setIsCollapsed(true)}

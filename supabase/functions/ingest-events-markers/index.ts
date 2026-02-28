@@ -44,38 +44,39 @@ Deno.serve(async (req) => {
     try {
         console.log("Fetching GDELT GeoJSON data with 24h timespan...");
 
-        // Add explicit timespan=24h to ensure we get last 24 hours
-        // Query for conflict, protest, and energy disruption events
-        // Added 'sanction' and 'trade war' for economic conflict
-        const geoApiUrl = `https://api.gdeltproject.org/api/v2/geo/geo?query=(protest OR conflict OR "energy disruption" OR "civil unrest" OR attack OR strike OR sanction OR "trade war")&mode=artlist&format=geojson&timespan=24h`;
+        // Construct query with proper encoding
+        const query = '(protest OR conflict OR "civil unrest" OR attack OR strike OR sanction OR "trade war")';
+        const geoApiUrl = `https://api.gdeltproject.org/api/v2/geo/geo?query=${encodeURIComponent(query)}&mode=artlist&format=geojson&timespan=24h`;
 
-        console.log(`Requesting: ${geoApiUrl}`);
+        console.log(`Requesting GDELT Geo: ${geoApiUrl}`);
 
         // Implement retry logic with exponential backoff
         let geoRes;
         let retries = 3;
-        let delay = 1000; // Start with 1 second
+        let delay = 1000;
 
         for (let attempt = 1; attempt <= retries; attempt++) {
             try {
                 geoRes = await fetch(geoApiUrl, {
                     headers: {
-                        'User-Agent': 'GraphiQuestor-Sovereign-Console/1.0'
+                        'User-Agent': 'GraphiQuestor-Sovereign-Console/1.1'
                     }
                 });
 
                 if (geoRes.ok) break;
 
+                const errorText = await geoRes.text();
+                console.warn(`GDELT API Attempt ${attempt} HTTP ${geoRes.status}: ${errorText.substring(0, 100)}`);
+
                 if (attempt < retries) {
-                    console.log(`Attempt ${attempt} failed with status ${geoRes.status}, retrying in ${delay}ms...`);
                     await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2; // Exponential backoff
+                    delay *= 2;
                 } else {
-                    throw new Error(`GDELT API failed after ${retries} attempts: ${geoRes.status} ${geoRes.statusText}`);
+                    throw new Error(`GDELT API failed after ${retries} attempts: ${geoRes.status}`);
                 }
             } catch (fetchError: any) {
                 if (attempt === retries) throw fetchError;
-                console.log(`Attempt ${attempt} failed with error: ${fetchError.message}, retrying in ${delay}ms...`);
+                console.log(`Attempt ${attempt} error: ${fetchError.message}, retrying...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
             }
@@ -83,32 +84,33 @@ Deno.serve(async (req) => {
 
         const geoJson = await geoRes!.json();
         const features = geoJson.features || [];
-        console.log(`Found ${features.length} events from GDELT`);
+        console.log(`Successfully retrieved ${features.length} features from GDELT`);
 
         const rows = features.map((f: any) => {
             const props = f.properties || {};
             const coords = f.geometry?.coordinates || [0, 0];
 
-            // Improved type inference from GDELT properties
-            const rawHtml = (props.html || '').toLowerCase();
-            const rawName = (props.name || '').toLowerCase();
-            const combinedText = rawHtml + ' ' + rawName;
+            // Normalize type inference
+            const title = (props.name || props.html || '').toLowerCase();
 
-            // Types mapped to lowercase for frontend compatibility
-            const type =
-                (combinedText.includes('energy') || combinedText.includes('pipeline') || combinedText.includes('oil') || combinedText.includes('gas') || combinedText.includes('grid')) ? 'energy' :
-                    (combinedText.includes('conflict') || combinedText.includes('fight') || combinedText.includes('attack') || combinedText.includes('war') || combinedText.includes('military') || combinedText.includes('sanction')) ? 'conflict' :
-                        (combinedText.includes('protest') || combinedText.includes('demonstration') || combinedText.includes('rally') || combinedText.includes('strike') || combinedText.includes('riot')) ? 'protest' :
-                            (combinedText.includes('disruption') || combinedText.includes('outage') || combinedText.includes('halt')) ? 'disruption' :
-                                'protest'; // Default fallback
+            let type: 'conflict' | 'protest' | 'energy' | 'disruption' = 'protest';
+            if (title.includes('energy') || title.includes('pipeline') || title.includes('oil') || title.includes('gas')) {
+                type = 'energy';
+            } else if (title.includes('conflict') || title.includes('attack') || title.includes('war') || title.includes('military') || title.includes('sanction')) {
+                type = 'conflict';
+            } else if (title.includes('disruption') || title.includes('outage') || title.includes('halt')) {
+                type = 'disruption';
+            } else if (title.includes('protest') || title.includes('strike') || title.includes('riot')) {
+                type = 'protest';
+            }
 
             return {
                 event_date: new Date().toISOString().split('T')[0],
                 latitude: coords[1],
                 longitude: coords[0],
-                type: type, // lowercase: conflict, protest, energy, disruption
+                type: type,
                 count: props.count || 1,
-                location_name: props.name || 'Unknown Location',
+                location_name: props.name || 'Active Marker',
                 source: 'GDELT',
                 raw_metadata: props
             };
