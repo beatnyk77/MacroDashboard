@@ -53,7 +53,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
                         "description": description,
                         "offers": {
                             "@type": "Offer",
-                            "price": "299.00",
+                            "price": "28.00",
                             "priceCurrency": "USD"
                         }
                     })}

@@ -8,17 +8,26 @@ import {
     Building2,
     Shield
 } from 'lucide-react';
+import { SEOManager } from '@/components/SEOManager';
 
 export const ForInstitutional: React.FC = () => {
     return (
         <div className="min-h-screen pt-24 pb-32">
+            <SEOManager
+                title="Institutional API Access"
+                description="GraphiQuestor's $28/mo Institutional API provides direct telemetry for global liquidity, sovereign debt stress, and the Corporate India Engine."
+                keywords={[
+                    'Institutional Macro API', 'Macro Telemetry', 'Quantitative Macro Analysis',
+                    'Sovereign Debt Monitoring', 'Liquidity Tracker'
+                ]}
+            />
             <Container maxWidth="lg">
                 <Box sx={{ textAlign: 'center', mb: 16 }}>
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.7rem] font-black uppercase tracking-[0.2em] mb-8 animate-fade-in">
                         <Crown size={14} /> Institutional Intelligence Console
                     </div>
                     <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
-                        Macro <span className="text-blue-500">Sovereignty</span><br />
+                        Macro <span className="text-blue-500">Intelligence</span><br />
                         <span className="text-white/40">For Professionals</span>
                     </Typography>
                     <Typography variant="h5" sx={{
@@ -64,7 +73,7 @@ export const ForInstitutional: React.FC = () => {
                     {/* Tier 2: The Core API Offer */}
                     <div className="p-10 rounded-[2.5rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] flex flex-col relative group md:scale-105 z-10">
                         <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-[0.6rem] font-black uppercase tracking-widest shadow-xl">Most Popular</div>
-                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-blue-400 mb-6">Quantum Intelligence</h4>
+                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-blue-400 mb-6">Institutional API Access</h4>
                         <div className="flex items-baseline gap-1 mb-2">
                             <span className="text-5xl font-black text-white">$28</span>
                             <span className="text-blue-500 text-sm font-black uppercase">/Mo</span>
