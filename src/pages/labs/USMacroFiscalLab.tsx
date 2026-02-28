@@ -16,7 +16,7 @@ import { LazyRender } from '@/components/LazyRender';
 
 // Lazy loaded components
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
-const TopTreasuryHoldersTable = lazy(() => import('@/features/dashboard/components/tables/TopTreasuryHoldersTable').then(m => ({ default: m.TopTreasuryHoldersTable })));
+const TreasuryHoldersSection = lazy(() => import('@/features/dashboard/components/sections/TreasuryHoldersSection').then(m => ({ default: m.TreasuryHoldersSection })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 
@@ -98,9 +98,9 @@ export const USMacroFiscalLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">Foreign Holders</h2>
                     </div>
                     <SectionErrorBoundary name="Top Treasury Holders">
-                        <LazyRender minHeight="400px">
+                        <LazyRender minHeight="700px">
                             <Suspense fallback={<LoadingFallback />}>
-                                <TopTreasuryHoldersTable />
+                                <TreasuryHoldersSection />
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
