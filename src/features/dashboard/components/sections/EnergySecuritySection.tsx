@@ -15,6 +15,10 @@ const OilImportCostCard = lazy(() => import('../cards/OilImportCostCard').then(m
 const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCard').then(m => ({ default: m.PowerMixDivergenceCard })));
 
 // Fallback/Mock Data generator for when API returns empty
+// NOTE: Uses stable, non-random values so UI doesn't flicker on re-renders.
+// The 'simulated' DataQualityBadge is always shown when isFallback === true.
+const STABLE_UTILIZATION_VALUES = [85.1, 85.4, 85.0, 85.7, 86.1, 85.9, 85.3, 84.8, 85.2, 85.6, 86.2, 85.8, 85.5, 85.1, 84.9, 85.3, 85.7, 86.0, 85.4, 84.7, 85.0, 85.5, 86.1, 85.9, 85.2, 84.6, 85.3, 85.8, 86.2, 85.6];
+const STABLE_EU_GAS_SEASONAL = [29.2, 31.4, 35.8, 42.1, 68.2, 82.5, 91.4, 93.1, 87.6, 74.3, 55.2, 38.7, 28.9, 30.1, 34.6, 41.8, 67.3, 81.9, 90.8, 92.4, 86.7, 73.2, 54.1, 37.5, 27.8, 29.4, 33.9, 40.5, 66.1, 80.7, 89.9, 91.8, 85.9, 72.1, 53.0, 36.3, 27.1, 28.7, 33.2, 39.8, 65.0, 79.6, 89.1, 91.2, 85.2, 71.0, 52.1, 35.2];
 const generateFallbackData = () => ({
     sprData: Array.from({ length: 30 }, (_, i) => {
         const d = new Date(); d.setDate(d.getDate() - (29 - i) * 7);
@@ -22,7 +26,7 @@ const generateFallbackData = () => ({
     }),
     utilizationData: Array.from({ length: 30 }, (_, i) => {
         const d = new Date(); d.setDate(d.getDate() - (29 - i) * 7);
-        return { date: d.toISOString().split('T')[0], value: 85 + Math.random() * 5 };
+        return { date: d.toISOString().split('T')[0], value: STABLE_UTILIZATION_VALUES[i] };
     }),
     importData: [
         { importer_country_code: 'USA', exporter_country_code: 'CAN', import_volume_mbbl: 4500, as_of_date: '2025-01-01', frequency: 'Monthly' },
@@ -41,14 +45,12 @@ const generateFallbackData = () => ({
     ],
     powerMixLastUpdated: new Date().toISOString(),
     capacityData: [],
-    euGasData: Array.from({ length: 48 }, (_, i) => { // 4 years monthly
+    euGasData: Array.from({ length: 48 }, (_, i) => {
         const d = new Date(); d.setMonth(d.getMonth() - (47 - i));
-        // Seasonal Pattern simulation
-        const month = d.getMonth();
-        const seasonal = Math.sin((month / 11) * Math.PI) * 40; // High in summer/fall, low in winter
-        return { date: d.toISOString().split('T')[0], value: 50 + seasonal + Math.random() * 5 };
+        return { date: d.toISOString().split('T')[0], value: STABLE_EU_GAS_SEASONAL[i] ?? 50 };
     })
 });
+
 
 export const EnergySecuritySection: React.FC = () => {
     const { data: apiData } = useOilData();

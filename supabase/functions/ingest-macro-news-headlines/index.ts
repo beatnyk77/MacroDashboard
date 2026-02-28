@@ -9,15 +9,20 @@ const corsHeaders = {
 }
 
 const FEEDS = [
-    // Global Feeds
-    { url: 'https://www.ft.com/markets?format=rss', source: 'Financial Times', region: 'global' },
-    { url: 'https://www.bloomberg.com/feeds/markets/news.rss', source: 'Bloomberg', region: 'global' },
-    { url: 'https://www.reuters.com/arc/outboundfeeds/news-rss/?outputType=xml', source: 'Reuters', region: 'global' },
-    // India-Focused Feeds
+    // Google News RSS — publicly accessible, no paywall
+    { url: 'https://news.google.com/rss/search?q=global+liquidity+fed+reserve&hl=en-US&gl=US&ceid=US:en', source: 'Google News (Liquidity)', region: 'global' },
+    { url: 'https://news.google.com/rss/search?q=ECB+monetary+policy+interest+rates&hl=en-US&gl=US&ceid=US:en', source: 'Google News (ECB)', region: 'global' },
+    { url: 'https://news.google.com/rss/search?q=BRICS+gold+reserves+de-dollarization&hl=en-US&gl=US&ceid=US:en', source: 'Google News (BRICS)', region: 'global' },
+    { url: 'https://news.google.com/rss/search?q=US+treasury+yield+fiscal+deficit&hl=en-US&gl=US&ceid=US:en', source: 'Google News (US Treasury)', region: 'global' },
+    { url: 'https://news.google.com/rss/search?q=Fed+interest+rate+inflation+outlook&hl=en-US&gl=US&ceid=US:en', source: 'Google News (Fed)', region: 'global' },
+    { url: 'https://news.google.com/rss/search?q=China+economy+PBoC+yuan&hl=en-US&gl=US&ceid=US:en', source: 'Google News (China)', region: 'global' },
+    { url: 'https://news.google.com/rss/search?q=oil+crude+OPEC+energy+commodities&hl=en-US&gl=US&ceid=US:en', source: 'Google News (Energy)', region: 'global' },
+    // India-Focused Google News RSS
+    { url: 'https://news.google.com/rss/search?q=RBI+monetary+policy+repo+rate&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (RBI)', region: 'india' },
+    { url: 'https://news.google.com/rss/search?q=India+macro+economy+fiscal+capex&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (India Macro)', region: 'india' },
+    { url: 'https://news.google.com/rss/search?q=NIFTY+Sensex+FII+DII+flows&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (India Markets)', region: 'india' },
+    // Economic Times RSS (publicly accessible)
     { url: 'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms', source: 'Economic Times', region: 'india' },
-    { url: 'https://www.livemint.com/rss/markets', source: 'Mint', region: 'india' },
-    { url: 'https://news.google.com/rss/search?q=RBI+monetary+policy&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (RBI)', region: 'india' },
-    { url: 'https://news.google.com/rss/search?q=india+macro+economy+fiscal&hl=en-IN&gl=IN&ceid=IN:en', source: 'Google News (India Macro)', region: 'india' },
 ]
 
 const KEYWORDS = [
