@@ -12,6 +12,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 
 // Components
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
+import { LazyRender } from '@/components/LazyRender';
 
 // Lazy loaded components
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
@@ -66,9 +67,11 @@ export const USMacroFiscalLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">US Debt Maturity Wall</h2>
                     </div>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <USDebtMaturityWall />
-                        </Suspense>
+                        <LazyRender minHeight="500px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <USDebtMaturityWall />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-us-debt-maturity" insight="The maturity wall tracks $9.2T in rolling securities. The 2025-2027 window represents a critical refinancing regime where low-coupon pandemic-era debt is re-priced at structurally higher market yields." />
                 </section>
@@ -80,9 +83,11 @@ export const USMacroFiscalLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">Auction Demand</h2>
                     </div>
                     <SectionErrorBoundary name="Treasury Demand Gauge">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <USTreasuryDemandGauge />
-                        </Suspense>
+                        <LazyRender minHeight="300px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <USTreasuryDemandGauge />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </section>
 
@@ -93,9 +98,11 @@ export const USMacroFiscalLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">Foreign Holders</h2>
                     </div>
                     <SectionErrorBoundary name="Top Treasury Holders">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TopTreasuryHoldersTable />
-                        </Suspense>
+                        <LazyRender minHeight="400px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <TopTreasuryHoldersTable />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </section>
 
@@ -108,9 +115,11 @@ export const USMacroFiscalLab: React.FC = () => {
                         </div>
                     </div>
                     <SectionErrorBoundary name="US Macro Pulse">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <USMacroPulseSection />
-                        </Suspense>
+                        <LazyRender minHeight="500px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <USMacroPulseSection />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </section>
 
@@ -121,12 +130,30 @@ export const USMacroFiscalLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">Trump Action Monitor</h2>
                     </div>
                     <SectionErrorBoundary name="Policy Tracker">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <PresidentialPolicyTracker />
-                        </Suspense>
+                        <LazyRender minHeight="300px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <PresidentialPolicyTracker />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </section>
             </div>
+
+            {/* SEO Structural Analysis Text Block */}
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of US Fiscal Trajectory">
+                <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6">Structural Analysis: The US Fiscal Trajectory & Sovereign Debt</h3>
+                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                    <p>
+                        The <strong>US Macro & Fiscal Lab</strong> provides high-frequency telemetry on the structural constraints facing the United States Treasury and the Federal Reserve. Over the past decade, the reliance on short-term debt issuance (Treasury Bills) has created a significant <em>maturity wall</em>, forcing the sovereign to constantly refinance obligations rather than lock in long-term capital.
+                    </p>
+                    <p>
+                        Our predictive telemetry indicates that as interest expense on the national debt supersedes major discretionary categories (such as defense spending), the likelihood of <strong>fiscal dominance</strong> increases. Fiscal dominance occurs when the central bank is forced to subordinate its inflation target to maintain the solvency of the government, often leading to <a href="/glossary/stealth-qe" className="text-blue-400 hover:underline">Stealth QE</a> or Yield Curve Control (YCC). By tracking <em>Treasury Auction Demand Metrics</em> natively through GraphiQuestor, institutional participants can monitor the exact inflection point of buyer exhaustion.
+                    </p>
+                    <p>
+                        Simultaneously, the <a href="/glossary/tga" className="text-blue-400 hover:underline">Treasury General Account (TGA)</a> and the Overnight Reverse Repo Facility (RRP) act as critical hydraulic valves for global liquidity. By synthesizing direct data feeds from the Federal Reserve Economic Data (FRED) API with our custom capital flow Sankey architectures, analysts can isolate the precise velocity at which liquidity is injected or drained from risk assets.
+                    </p>
+                </div>
+            </article>
 
             <Box sx={{ mt: 12, pt: 8, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
                 <Button

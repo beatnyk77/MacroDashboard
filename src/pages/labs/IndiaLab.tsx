@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
+import { LazyRender } from '@/components/LazyRender';
 
 // Lazy loaded components
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
@@ -85,9 +86,11 @@ export const IndiaLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">Macro Pulse & BOP Pressure</h2>
                     </div>
                     <SectionErrorBoundary name="India Macro Pulse">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <IndiaMacroPulseSection />
-                        </Suspense>
+                        <LazyRender minHeight="500px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaMacroPulseSection />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-india-macro" insight="India's macro pulse integrates IIP, CPI, and capital account flows. Real-time BOP pressure metrics track the structural resilience of the 'India Stack' economy." />
                 </section>
@@ -153,12 +156,14 @@ export const IndiaLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white">State Fiscal Heatmap</h2>
                     </div>
                     <SectionErrorBoundary name="State Fiscal Heatmap">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <div className="space-y-12">
-                                <IndiaFiscalAllocationTracker />
-                                <StateFiscalHeatmap />
-                            </div>
-                        </Suspense>
+                        <LazyRender minHeight="600px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="space-y-12">
+                                    <IndiaFiscalAllocationTracker />
+                                    <StateFiscalHeatmap />
+                                </div>
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </section>
 
@@ -202,6 +207,22 @@ export const IndiaLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
             </div>
+
+            {/* SEO Structural Analysis Text Block */}
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of India Macro Telemetry">
+                <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6">Structural Analysis: India's Macro Resilience & Fiscal Quality</h3>
+                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                    <p>
+                        The <strong>India Lab</strong> monitors highly granular, state-level macroeconomic indicators to evaluate the fundamental structural transition of the Indian economy. Unlike traditional emerging market (EM) trackers that rely on lagging, aggregated national data, GraphiQuestor connects directly to the <a href="/glossary/mospi" className="text-blue-400 hover:underline">Ministry of Statistics and Programme Implementation (MoSPI)</a>. This zero-lag integration enables real-time observation of the Index of Industrial Production (IIP), Consumer Price Index (CPI), and capital expenditure velocities across all 28 states.
+                    </p>
+                    <p>
+                        A critical differentiator in India's sovereign health is the quality of its fiscal expenditure. The <em>State Fiscal Heatmap</em> tracks the ratio of productive capital expenditure (Capex) against recurring revenue expenditure (subsidies and freebies). States demonstrating high Capex velocity generally command a lower structural risk premium and drive the nation's broader industrial upgrading capacity.
+                    </p>
+                    <p>
+                        Furthermore, the Lab actively monitors the Reserve Bank of India's (RBI) FX defense posture. By combining Balance of Payments (BOP) pressure gauges with <a href="/glossary/stealth-qe" className="text-blue-400 hover:underline">liquidity stress monitors</a>, institutional investors can pinpoint precise entry and exit windows for Indian equities and sovereign debt, insulated from short-term narrative noise.
+                    </p>
+                </div>
+            </article>
 
             <Box sx={{ mt: 12, pt: 8, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
                 <Button

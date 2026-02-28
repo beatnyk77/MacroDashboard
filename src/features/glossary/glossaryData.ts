@@ -71,5 +71,29 @@ export const glossaryData: GlossaryTerm[] = [
         category: 'Sovereign Debt',
         definition: 'The extra yield that investors demand to hold a longer-term bond instead of a series of shorter-term bonds. It compensates investors for the risk of tying up their capital for a longer period, primarily inflation and interest rate uncertainty. A rising term premium often coincides with increased fears of fiscal profligacy or sovereign supply indigestion.',
         relatedMetrics: ['Yield Curve Slope', '10Y Treasury Yield']
+    },
+    {
+        id: '9',
+        term: 'MoSPI (Ministry of Statistics and Programme Implementation)',
+        slug: 'mospi',
+        category: 'Geopolitics',
+        definition: 'The official agency of the Government of India responsible for the release of macroeconomic indicators, including GDP, Index of Industrial Production (IIP), and Consumer Price Index (CPI). Direct integration with MoSPI allows for zero-lag, state-level fundamental analysis of India\'s fiscal and industrial performance, bypassing traditional delayed data aggregators.',
+        relatedMetrics: ['India Fiscal Matrix', 'Capex Velocity']
+    },
+    {
+        id: '10',
+        term: 'mBridge (Multiple CBDC Bridge)',
+        slug: 'mbridge',
+        category: 'Geopolitics',
+        definition: 'A multi-central bank digital currency (CBDC) platform developed by the BIS Innovation Hub in collaboration with the central banks of China, Hong Kong, Thailand, and the UAE. It functions as a structural alternative to the SWIFT network, facilitating real-time, peer-to-peer cross-border payments in local currencies, thereby serving as a core mechanism for de-dollarization.',
+        relatedMetrics: ['Shadow Trade Flows', 'De-Dollarization']
+    },
+    {
+        id: '11',
+        term: 'GRIT Index',
+        slug: 'grit-index',
+        category: 'Sovereign Debt',
+        definition: 'GraphiQuestor\'s proprietary composite score for Geopolitical Risk and Institutional Transition. The GRIT Index serves as an overarching macroeconomic barometer, synthetically combining sovereign debt stress markers (like debt-to-gold ratios), reserve diversification velocity, and global liquidity drain signals to quantify the systemic transition away from the pre-2008 multipolar consensus.',
+        relatedMetrics: ['Sovereign Debt', 'Central Bank Gold Net Purchases', 'Net Liquidity']
     }
 ];
