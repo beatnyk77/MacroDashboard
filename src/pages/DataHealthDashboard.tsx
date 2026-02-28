@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, Typography, Grid, Paper, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress } from '@mui/material';
+import { Box, Typography, Grid, Paper, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, LinearProgress, IconButton, CircularProgress, Tooltip } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { CheckCircle, AlertCircle, Clock, Activity } from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, Activity, RefreshCcw } from 'lucide-react';
 
 export const DataHealthDashboard: React.FC = () => {
     const { data: staleness, isLoading: stalenessLoading } = useQuery({
@@ -25,6 +25,27 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000 // 1 min
     });
 
+    const [refreshing, setRefreshing] = React.useState<string | null>(null);
+
+    const handleForceRefresh = async (functionName: string) => {
+        setRefreshing(functionName);
+        try {
+            const { error } = await supabase.functions.invoke(functionName);
+            if (error) throw error;
+            // Could add toast here for success
+        } catch (err) {
+            console.error('Refresh failed:', err);
+        } finally {
+            setRefreshing(null);
+        }
+    };
+
+    const overallScore = React.useMemo(() => {
+        if (!staleness || staleness.length === 0) return 100;
+        const freshCount = staleness.filter(r => r.status === 'FRESH').length;
+        return Math.round((freshCount / staleness.length) * 100);
+    }, [staleness]);
+
     const renderStalenessStatus = (status: string) => {
         if (status === 'FRESH') return <Chip label="Fresh" size="small" sx={{ bgcolor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700 }} icon={<CheckCircle size={14} color="#10b981" />} />;
         if (status === 'LAGGED') return <Chip label="Lagged" size="small" sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 700 }} icon={<Clock size={14} color="#f59e0b" />} />;
@@ -39,13 +60,21 @@ export const DataHealthDashboard: React.FC = () => {
 
     return (
         <Box sx={{ maxWidth: 1400, mx: 'auto', p: 4 }}>
-            <Box sx={{ mb: 6 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, mb: 1, textTransform: 'uppercase', tracking: '-0.02em', color: 'white' }}>
-                    Data Health Operations
-                </Typography>
-                <Typography sx={{ color: 'text.secondary' }}>
-                    System telemetry, staleness monitoring, and ingestion pipeline status.
-                </Typography>
+            <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 900, mb: 1, textTransform: 'uppercase', tracking: '-0.02em', color: 'white' }}>
+                        Data Health Operations
+                    </Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>
+                        System telemetry, staleness monitoring, and ingestion pipeline status.
+                    </Typography>
+                </Box>
+                <Paper sx={{ p: 2, px: 4, borderRadius: '16px', bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography variant="overline" sx={{ color: 'text.secondary', fontWeight: 700 }}>Overall Freshness</Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 900, color: overallScore > 90 ? '#10b981' : overallScore > 75 ? '#f59e0b' : '#f43f5e' }}>
+                        {overallScore}%
+                    </Typography>
+                </Paper>
             </Box>
 
             <Grid container spacing={4}>
@@ -109,6 +138,7 @@ export const DataHealthDashboard: React.FC = () => {
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Rows</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Status</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }}>Last Run</TableCell>
+                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 600 }} align="right">Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -119,6 +149,18 @@ export const DataHealthDashboard: React.FC = () => {
                                             <TableCell>{renderIngestionStatus(row.status)}</TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
                                                 {new Date(row.start_time).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Tooltip title="Force Refresh Pipeline">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleForceRefresh(row.function_name)}
+                                                        disabled={refreshing === row.function_name}
+                                                        sx={{ color: 'rgba(255,255,255,0.3)', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' } }}
+                                                    >
+                                                        {refreshing === row.function_name ? <CircularProgress size={16} color="inherit" /> : <RefreshCcw size={16} />}
+                                                    </IconButton>
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     ))}
