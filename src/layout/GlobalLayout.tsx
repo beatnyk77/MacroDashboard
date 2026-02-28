@@ -9,6 +9,8 @@ import { NavigationSidebar } from '@/components/NavigationSidebar';
 import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
+import { QuickTourModal } from '@/components/QuickTourModal';
+import { Button } from '@mui/material';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -74,9 +76,9 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                             <div className="hidden sm:block text-2xl font-black tracking-tighter leading-none">
                                 <span className="text-foreground">Graphi</span>
                                 <span className="text-blue-500">Questor</span>
-                                <span className="hidden md:inline ml-2 text-sm font-semibold text-muted-foreground tracking-widest align-middle">
-                                    – MACRO OBSERVATORY
-                                </span>
+                                <div className="text-[0.6rem] font-bold text-muted-foreground/50 tracking-widest mt-1 uppercase">
+                                    Macro Observatory · Not Sovereign AI
+                                </div>
                             </div>
                         </div>
 
@@ -103,18 +105,38 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {/* Institutional status elements removed from public view for cleaner UI */}
-
                         {regime && (
                             <div className={cn(
                                 "flex items-center px-2 py-0.5 rounded border text-[0.65rem] font-black tracking-wider uppercase h-6",
-                                regimeColorClass.replace('text-', 'text-'), // Ensures text color applies
-                                regimeColorClass.replace('text-', 'bg-').replace('500', '500/10'), // Background tint
-                                regimeColorClass.replace('text-', 'border-').replace('500', '500/30') // Border tint
+                                regimeColorClass,
+                                regimeColorClass.replace('text-', 'bg-').replace('500', '500/10'),
+                                regimeColorClass.replace('text-', 'border-').replace('500', '500/30')
                             )}>
                                 DETECTION: {regime.regimeLabel.toUpperCase()}
                             </div>
                         )}
+
+                        <Button
+                            variant="contained"
+                            size="small"
+                            onClick={() => {
+                                const el = document.getElementById('weekly-narrative');
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                else window.location.href = '/#weekly-narrative';
+                            }}
+                            sx={{
+                                display: { xs: 'none', sm: 'flex' },
+                                bgcolor: '#3b82f6',
+                                fontWeight: 900,
+                                fontSize: '0.65rem',
+                                borderRadius: '10px',
+                                px: 3,
+                                py: 1,
+                                '&:hover': { bgcolor: '#2563eb' }
+                            }}
+                        >
+                            Subscribe
+                        </Button>
                     </div>
                 </div>
             </header>
@@ -138,7 +160,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
             <SocialShareMode />
             <MobileNav />
+            <QuickTourModal />
         </div>
     );
 };
-

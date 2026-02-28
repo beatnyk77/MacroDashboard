@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
-import { Globe, ShieldAlert, FileText, LayoutDashboard } from 'lucide-react';
+import { Globe, ShieldAlert, FileText, LayoutDashboard, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const MobileNav: React.FC = () => {
@@ -25,8 +25,9 @@ export const MobileNav: React.FC = () => {
                     switch (newValue) {
                         case 0: navigate('/'); break;
                         case 1: navigate('/regime-digest'); break;
-                        case 2: navigate('/macro-observatory'); break;
-                        case 3: navigate('/institutional'); break;
+                        case 2: navigate('/labs/us-macro-fiscal'); break;
+                        case 3: navigate('/intel/india'); break;
+                        case 4: navigate('/institutional'); break;
                     }
                 }}
                 sx={{
@@ -35,16 +36,25 @@ export const MobileNav: React.FC = () => {
                     borderTop: '1px solid rgba(255,255,255,0.05)',
                     '& .MuiBottomNavigationAction-root': {
                         color: 'rgba(255,255,255,0.4)',
+                        padding: '6px 0',
+                        minWidth: 'auto',
                         '&.Mui-selected': {
                             color: '#3b82f6',
+                        },
+                        '& .MuiBottomNavigationAction-label': {
+                            fontSize: '0.6rem',
+                            '&.Mui-selected': {
+                                fontSize: '0.6rem',
+                            }
                         }
                     }
                 }}
             >
-                <BottomNavigationAction label="Home" icon={<LayoutDashboard size={20} />} />
-                <BottomNavigationAction label="Digest" icon={<FileText size={20} />} />
-                <BottomNavigationAction label="Observatory" icon={<Globe size={20} />} />
-                <BottomNavigationAction label="Institutional" icon={<ShieldAlert size={20} />} />
+                <BottomNavigationAction label="Home" icon={<LayoutDashboard size={18} />} />
+                <BottomNavigationAction label="Digest" icon={<FileText size={18} />} />
+                <BottomNavigationAction label="Labs" icon={<FlaskConical size={18} />} />
+                <BottomNavigationAction label="India" icon={<Globe size={18} />} />
+                <BottomNavigationAction label="Insti" icon={<ShieldAlert size={18} />} />
             </BottomNavigation>
         </Paper>
     );

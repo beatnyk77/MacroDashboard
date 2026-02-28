@@ -31,7 +31,8 @@ const navItems: NavItem[] = [
     { id: 'home', label: 'Home', path: '/', icon: <LayoutDashboard size={18} strokeWidth={2.5} /> },
     { id: 'digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} strokeWidth={2.5} /> },
     { id: 'notes', label: 'Research Notes', path: '/blog', icon: <Rss size={18} strokeWidth={2.5} /> },
-    { id: 'observatory', label: 'Macro Observatory', path: '/macro-observatory', icon: <Eye size={18} strokeWidth={2.5} /> },
+    { id: 'intel-india', label: 'Intel: India', path: '/intel/india', icon: <Globe size={18} strokeWidth={2.5} /> },
+    { id: 'intel-china', label: 'Intel: China', path: '/intel/china', icon: <TrendingUp size={18} strokeWidth={2.5} /> },
     { id: 'india-equities', label: 'India Equities', path: '/india-equities', icon: <Building2 size={18} strokeWidth={2.5} /> },
     {
         id: 'labs',
@@ -48,6 +49,7 @@ const navItems: NavItem[] = [
             { label: 'Shadow System', path: '/labs/shadow-system', icon: <Box size={14} /> },
         ]
     },
+    { id: 'observatory', label: 'Macro Observatory', path: '/macro-observatory', icon: <Eye size={18} strokeWidth={2.5} /> },
     { id: 'institutional', label: 'For Funds & Family Offices', path: '/institutional', icon: <ShieldAlert size={18} strokeWidth={2.5} /> },
     { id: 'methodology', label: 'Methodology & Data', path: '/methodology', icon: <BookOpen size={18} strokeWidth={2.5} /> },
     { id: 'data-health', label: 'Data Health', path: '/admin/data-health', icon: <Activity size={18} strokeWidth={2.5} /> },
