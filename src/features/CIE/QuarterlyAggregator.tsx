@@ -86,54 +86,72 @@ export const QuarterlyAggregator: React.FC = () => {
                 <span className="text-[0.7rem] font-black uppercase tracking-widest">Aggregate Results (Latest Quarters)</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 {aggregates?.map((stat, i) => (
-                    <div key={i} className="p-4 rounded-2xl border border-white/5 bg-black/20">
-                        <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40 mb-2">{stat.label}</h4>
-                        <div className="text-xl font-black text-white mb-2">{stat.value}</div>
-                        <div className={`flex items-center gap-1 text-[0.65rem] font-black ${stat.up ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <div key={i} className="p-8 rounded-[2rem] border border-white/5 bg-black/40 backdrop-blur-3xl group hover:border-blue-500/30 transition-all flex flex-col justify-between min-h-[160px]">
+                        <div>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-4">{stat.label}</h4>
+                            <div className="text-3xl font-black text-white italic tracking-tight">{stat.value}</div>
+                        </div>
+                        <div className={`mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest w-fit ${stat.up ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
                             {stat.up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                            {stat.trend} Benchmark
+                            {stat.trend} v/s Prev
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="overflow-x-auto rounded-3xl border border-white/5 bg-black/20">
+            <div className="overflow-x-auto rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-white/5 bg-white/[0.02]">
-                            <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30">Company</th>
-                            <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 text-right">Quarter</th>
-                            <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 text-right">Revenue</th>
-                            <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 text-right">Net Profit</th>
-                            <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 text-right">Margin</th>
+                        <tr className="border-b border-white/5 bg-white/[0.01]">
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Entity</th>
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Reporting Period</th>
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Revenue</th>
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Net Profit</th>
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Op. Margin</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-white/[0.03]">
                         {fundamentals.map((fund, i) => (
                             <motion.tr
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: i * 0.05 }}
                                 key={`${fund.company_id}-${fund.quarter_date}`}
-                                className="group hover:bg-white/[0.02] transition-colors border-b border-white/[0.02] last:border-0"
+                                className="group hover:bg-blue-500/[0.02] transition-colors"
                             >
-                                <td className="px-6 py-4">
-                                    <div className="font-black text-sm tracking-tight text-white">{fund.cie_companies?.ticker.split('.')[0]}</div>
-                                    <div className="text-[0.6rem] text-muted-foreground/60 uppercase tracking-widest">{fund.cie_companies?.sector}</div>
+                                <td className="px-8 py-6">
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-black text-white tracking-tight group-hover:text-blue-400 transition-colors">{fund.cie_companies?.name}</span>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">{fund.cie_companies?.ticker.split('.')[0]}</span>
+                                            <span className="text-[10px] text-white/10">|</span>
+                                            <span className="text-[10px] font-medium text-white/20 italic">{fund.cie_companies?.sector}</span>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="text-xs font-medium text-white/80">{new Date(fund.quarter_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short' })}</div>
+                                <td className="px-8 py-6 text-right">
+                                    <div className="text-[11px] font-black text-white italic uppercase tracking-tighter">
+                                        {new Date(fund.quarter_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short' })}
+                                    </div>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="text-sm font-black text-white">{fund.revenue ? `₹${(fund.revenue / 10000000).toFixed(1)}Cr` : 'N/A'}</div>
+                                <td className="px-8 py-6 text-right">
+                                    <div className="text-sm font-black text-white italic tracking-tighter">
+                                        {fund.revenue ? `₹${(fund.revenue / 10000000).toFixed(0)}` : 'N/A'}
+                                        <span className="text-[10px] text-white/20 ml-1">Cr</span>
+                                    </div>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="text-sm font-black text-white">{fund.net_profit ? `₹${(fund.net_profit / 10000000).toFixed(1)}Cr` : 'N/A'}</div>
+                                <td className="px-8 py-6 text-right">
+                                    <div className="text-sm font-black text-emerald-400 italic tracking-tighter">
+                                        {fund.net_profit ? `₹${(fund.net_profit / 10000000).toFixed(0)}` : 'N/A'}
+                                        <span className="text-[10px] text-white/20 ml-1">Cr</span>
+                                    </div>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="text-sm font-black text-white">{fund.operating_margin ? `${(fund.operating_margin * 100).toFixed(1)}%` : 'N/A'}</div>
+                                <td className="px-8 py-6 text-right">
+                                    <div className={`px-3 py-1 rounded-lg inline-flex text-xs font-black italic tracking-tighter ${fund.operating_margin > 0.15 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-white/5 text-white/40 border border-white/10'}`}>
+                                        {fund.operating_margin ? `${(fund.operating_margin * 100).toFixed(1)}%` : 'N/A'}
+                                    </div>
                                 </td>
                             </motion.tr>
                         ))}

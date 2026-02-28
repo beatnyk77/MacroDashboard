@@ -167,14 +167,17 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                         </div>
 
                         {/* 2. KPI Cards as Full Width Rows */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="w-full p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-6 backdrop-blur-sm">
-                                <div>
-                                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">EU Gas Resilience</h4>
-                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-wider">Aggregate Storage Trend</p>
+                        <div className="space-y-6">
+                            <div className="w-full p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-8 backdrop-blur-sm hover:bg-blue-500/[0.05] transition-all group">
+                                <div className="min-w-[200px]">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                                        <h4 className="text-xs font-black uppercase tracking-[0.3em] text-blue-400">EU Gas Resilience</h4>
+                                    </div>
+                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest pl-4">Aggregate Storage Trend</p>
                                 </div>
-                                <div className="flex items-center gap-6 flex-1 max-w-md h-16">
-                                    <div className="flex-1 h-full w-full">
+                                <div className="flex items-center gap-12 flex-1 h-20">
+                                    <div className="flex-1 h-full w-full opacity-60 group-hover:opacity-100 transition-opacity">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <AreaChart data={data.euGasData}>
                                                 <defs>
@@ -188,28 +191,36 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                                     dataKey="value"
                                                     stroke="#3b82f6"
                                                     fill="url(#euGasGradient)"
-                                                    strokeWidth={2}
+                                                    strokeWidth={3}
+                                                    dot={false}
                                                 />
                                             </AreaChart>
                                         </ResponsiveContainer>
                                     </div>
-                                    <div className="flex items-end gap-2 shrink-0">
-                                        <span className="text-4xl font-black text-white italic">
-                                            {data.euGasData && data.euGasData.length > 0
-                                                ? Math.round(data.euGasData[data.euGasData.length - 1].value)
-                                                : 'N/A'}%
-                                        </span>
+                                    <div className="flex flex-col items-end shrink-0">
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-5xl font-black text-white tracking-tighter italic">
+                                                {data.euGasData && data.euGasData.length > 0
+                                                    ? Math.round(data.euGasData[data.euGasData.length - 1].value)
+                                                    : 'N/A'}
+                                            </span>
+                                            <span className="text-xl font-black text-blue-500/40">%</span>
+                                        </div>
+                                        <span className="text-[10px] font-black text-blue-500/40 uppercase tracking-widest">Storage Level</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="w-full p-8 rounded-[2rem] bg-rose-500/[0.03] border border-rose-500/10 flex flex-col md:flex-row md:items-center justify-between gap-6 backdrop-blur-sm">
-                                <div>
-                                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-rose-400 mb-2">Refining Stress</h4>
-                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-wider">Historical Utilization Rate</p>
+                            <div className="w-full p-8 rounded-[2rem] bg-rose-500/[0.03] border border-rose-500/10 flex flex-col md:flex-row md:items-center justify-between gap-8 backdrop-blur-sm hover:bg-rose-500/[0.05] transition-all group">
+                                <div className="min-w-[200px]">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+                                        <h4 className="text-xs font-black uppercase tracking-[0.3em] text-rose-400">Refining Stress</h4>
+                                    </div>
+                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest pl-4">Historical Utilization Rate</p>
                                 </div>
-                                <div className="flex items-center gap-6 flex-1 max-w-md h-16">
-                                    <div className="flex-1 h-full w-full">
+                                <div className="flex items-center gap-12 flex-1 h-20">
+                                    <div className="flex-1 h-full w-full opacity-60 group-hover:opacity-100 transition-opacity">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <AreaChart data={data.utilizationData}>
                                                 <defs>
@@ -224,17 +235,22 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                                     dataKey="value"
                                                     stroke="#f43f5e"
                                                     fill="url(#utilGradient)"
-                                                    strokeWidth={2}
+                                                    strokeWidth={3}
+                                                    dot={false}
                                                 />
                                             </AreaChart>
                                         </ResponsiveContainer>
                                     </div>
-                                    <div className="flex items-end gap-2 shrink-0">
-                                        <span className="text-4xl font-black text-white italic">
-                                            {data.utilizationData && data.utilizationData.length > 0
-                                                ? Math.round(data.utilizationData[data.utilizationData.length - 1].value)
-                                                : 'N/A'}%
-                                        </span>
+                                    <div className="flex flex-col items-end shrink-0">
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-5xl font-black text-white tracking-tighter italic">
+                                                {data.utilizationData && data.utilizationData.length > 0
+                                                    ? Math.round(data.utilizationData[data.utilizationData.length - 1].value)
+                                                    : 'N/A'}
+                                            </span>
+                                            <span className="text-xl font-black text-rose-500/40">%</span>
+                                        </div>
+                                        <span className="text-[10px] font-black text-rose-500/40 uppercase tracking-widest">Util Rate</span>
                                     </div>
                                 </div>
                             </div>

@@ -40,58 +40,66 @@ export const PromoterActivityHeatmap: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sectorStats.map((sector) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {sectorStats.map((sector, i) => (
                     <motion.div
                         key={sector.name}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="p-6 rounded-2xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all cursor-default group"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="p-8 rounded-[2rem] border border-white/5 bg-black/40 backdrop-blur-3xl hover:border-blue-500/30 transition-all cursor-default group flex flex-col justify-between min-h-[280px]"
                     >
-                        <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-sm font-black uppercase tracking-widest text-white/50">{sector.name}</h3>
-                            <div className={`p-2 rounded-lg ${sector.netInsider > 0 ? 'bg-emerald-500/10 text-emerald-400' : sector.netInsider < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-white/5 text-white/40'}`}>
-                                {sector.netInsider > 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                        <div>
+                            <div className="flex justify-between items-start mb-8">
+                                <div>
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">{sector.name}</h3>
+                                    <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mt-1">{sector.count} Entities Monitored</div>
+                                </div>
+                                <div className={`p-3 rounded-2xl border ${sector.netInsider > 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : sector.netInsider < 0 ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-white/5 text-white/40 border-white/10'}`}>
+                                    {sector.netInsider > 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+                                </div>
+                            </div>
+
+                            <div className="space-y-8">
+                                <div>
+                                    <div className="flex justify-between items-end mb-3">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Insider Net Velocity</span>
+                                        <span className={`text-lg font-black italic tracking-tighter ${sector.netInsider >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            {sector.netInsider > 0 ? '+' : ''}{sector.netInsider.toFixed(1)}
+                                            <span className="text-[10px] ml-1 opacity-40">Cr</span>
+                                        </span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min(100, Math.abs(sector.netInsider) / 5)}%` }}
+                                            className={`h-full ${sector.netInsider >= 0 ? 'bg-emerald-500' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}`}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="flex justify-between items-end mb-3">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Avg Pledging Intensity</span>
+                                        <span className={`text-lg font-black italic tracking-tighter ${sector.avgPledge > 20 ? 'text-rose-400' : sector.avgPledge > 10 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                            {sector.avgPledge.toFixed(1)}%
+                                        </span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min(100, sector.avgPledge * 2.5)}%` }}
+                                            className={`h-full ${sector.avgPledge > 20 ? 'bg-rose-500' : sector.avgPledge > 10 ? 'bg-amber-500' : 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'}`}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <div>
-                                <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
-                                    <span>Insider Net (Cr)</span>
-                                    <span className={sector.netInsider >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
-                                        {sector.netInsider > 0 ? '+' : ''}{sector.netInsider.toFixed(1)}
-                                    </span>
-                                </div>
-                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full ${sector.netInsider >= 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}
-                                        style={{ width: `${Math.min(100, Math.abs(sector.netInsider) / 5)}%` }}
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
-                                    <span>Avg Pledging (%)</span>
-                                    <span className={sector.avgPledge > 20 ? 'text-rose-400' : sector.avgPledge > 10 ? 'text-amber-400' : 'text-emerald-400'}>
-                                        {sector.avgPledge.toFixed(1)}%
-                                    </span>
-                                </div>
-                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full ${sector.avgPledge > 20 ? 'bg-rose-500' : sector.avgPledge > 10 ? 'bg-amber-500' : 'bg-emerald-500'}`}
-                                        style={{ width: `${Math.min(100, sector.avgPledge * 2)}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center text-[0.6rem] font-medium text-white/20">
-                            <span>{sector.count} Companies Monitored</span>
-                            <div className="flex items-center gap-1 group-hover:text-blue-400 transition-colors">
-                                View Leaders <Activity size={10} />
-                            </div>
+                        <div className="mt-10 pt-6 border-t border-white/5 flex justify-end">
+                            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/20 group-hover:text-blue-400 transition-all">
+                                Analyze Leaders <Activity size={14} className="group-hover:rotate-12 transition-transform" />
+                            </button>
                         </div>
                     </motion.div>
                 ))}

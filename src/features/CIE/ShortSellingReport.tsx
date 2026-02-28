@@ -64,64 +64,74 @@ export const ShortSellingReport: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sectorStats.map((sector) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {sectorStats.map((sector, i) => {
                     const riskLabel = getSystemicRiskLabel(sector.avgShort, sector.avgCDS, sector.avgLiq);
 
                     return (
                         <motion.div
                             key={sector.name}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="p-6 rounded-2xl border border-white/5 bg-black/20 hover:bg-black/40 transition-all cursor-default group"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.05 }}
+                            className="p-8 rounded-[2rem] border border-white/5 bg-black/40 backdrop-blur-3xl hover:border-blue-500/30 transition-all cursor-default group flex flex-col justify-between min-h-[300px]"
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <h3 className="text-sm font-black uppercase tracking-widest text-white/50">{sector.name}</h3>
-                                <div className={`p-2 rounded-lg ${riskLabel === 'HIGH' ? 'bg-rose-500/10 text-rose-400' : riskLabel === 'MODERATE' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                    {riskLabel === 'HIGH' ? <AlertTriangle size={16} /> : <ShieldAlert size={16} />}
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
-                                        <span>Avg Short Interest</span>
-                                        <span className={sector.avgShort > 10 ? 'text-rose-400' : 'text-emerald-400'}>
-                                            {sector.avgShort.toFixed(1)}%
-                                        </span>
+                            <div>
+                                <div className="flex justify-between items-start mb-8">
+                                    <div>
+                                        <h3 className="text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">{sector.name}</h3>
+                                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mt-1">{sector.count} Entities Analyzed</div>
                                     </div>
-                                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full ${sector.avgShort > 15 ? 'bg-rose-600' : sector.avgShort > 10 ? 'bg-rose-400' : 'bg-emerald-500'}`}
-                                            style={{ width: `${Math.min(100, sector.avgShort * 4)}%` }}
-                                        />
+                                    <div className={`p-3 rounded-2xl border ${riskLabel === 'HIGH' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)]' : riskLabel === 'MODERATE' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                                        {riskLabel === 'HIGH' ? <AlertTriangle size={20} /> : <ShieldAlert size={20} />}
                                     </div>
                                 </div>
 
-                                <div>
-                                    <div className="flex justify-between text-[0.6rem] uppercase font-black tracking-widest text-white/30 mb-1">
-                                        <span>30D Momentum</span>
-                                        <span className={sector.avgMomentum > 0 ? 'text-emerald-400' : 'text-rose-400'}>
-                                            {sector.avgMomentum > 0 ? '+' : ''}{sector.avgMomentum.toFixed(2)}%
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full ${sector.avgMomentum > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}
-                                                style={{ width: `${Math.min(100, Math.abs(sector.avgMomentum) * 10)}%` }}
+                                <div className="space-y-8">
+                                    <div>
+                                        <div className="flex justify-between items-end mb-3">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Short Intensity</span>
+                                            <span className={`text-lg font-black italic tracking-tighter ${sector.avgShort > 10 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                                {sector.avgShort.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${Math.min(100, sector.avgShort * 4)}%` }}
+                                                className={`h-full ${sector.avgShort > 15 ? 'bg-rose-600' : sector.avgShort > 10 ? 'bg-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.3)]' : 'bg-emerald-500'}`}
                                             />
                                         </div>
-                                        {sector.avgMomentum > 0 && <TrendingUp size={12} className="text-emerald-400 animate-pulse" />}
+                                    </div>
+
+                                    <div>
+                                        <div className="flex justify-between items-end mb-3">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-white/30">30D Momentum Pulse</span>
+                                            <span className={`text-lg font-black italic tracking-tighter ${sector.avgMomentum > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                {sector.avgMomentum > 0 ? '+' : ''}{sector.avgMomentum.toFixed(2)}%
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${Math.min(100, Math.abs(sector.avgMomentum) * 10)}%` }}
+                                                    className={`h-full ${sector.avgMomentum > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500'}`}
+                                                />
+                                            </div>
+                                            {sector.avgMomentum > 0 && <TrendingUp size={16} className="text-emerald-400/60" />}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center text-[0.6rem] font-medium text-white/20">
-                                <span>{sector.count} Companies Analyzed</span>
-                                <div className={`px-2 py-0.5 rounded ${riskLabel === 'HIGH' ? 'text-rose-400 bg-rose-500/5' : riskLabel === 'MODERATE' ? 'text-amber-400 bg-amber-500/5' : 'text-emerald-400 bg-emerald-500/5'} transition-colors font-black uppercase tracking-tighter`}>
+                            <div className="mt-10 pt-6 border-t border-white/5 flex justify-between items-center">
+                                <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${riskLabel === 'HIGH' ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : riskLabel === 'MODERATE' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
                                     Systemic Risk: {riskLabel}
                                 </div>
+                                <button className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-blue-400 transition-colors">
+                                    Details
+                                </button>
                             </div>
                         </motion.div>
                     );

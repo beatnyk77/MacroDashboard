@@ -73,21 +73,29 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Main Chart Section */}
-                    <div className="lg:col-span-2 bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group">
-                        <div className="absolute top-8 left-8 z-10">
-                            <h3 className="text-xs font-black text-white/40 uppercase tracking-[0.3em]">Interest Payments % of Revenue Receipts</h3>
-                            <p className="text-[0.6rem] text-muted-foreground/60 mt-1">Union Government Interest Burden</p>
+                <div className="space-y-12">
+                    {/* Narrative Insight */}
+                    <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 max-w-6xl mx-auto">
+                        <p className="text-lg text-muted-foreground/80 leading-relaxed font-medium">
+                            <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-xs">Fiscal Thesis:</span>
+                            India's interest-to-revenue ratio remains the primary structural constraint on capital expenditure. While GST collections show formalization, the interest burden consumes over {interestRevenuePercent}% of revenue receipts, requiring a sustained "Goldilocks" growth-inflation mix for debt sustainability.
+                        </p>
+                    </div>
+
+                    {/* Main Chart Section - Full Width */}
+                    <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group max-w-7xl mx-auto shadow-2xl">
+                        <div className="absolute top-10 left-10 z-10">
+                            <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.3em]">Interest Payments % of Revenue Receipts</h3>
+                            <p className="text-xs text-muted-foreground/60 mt-2 font-medium">Union Government Fiscal Sustainability Gauge</p>
                         </div>
 
-                        <div className="absolute top-8 right-8 z-10 flex items-center gap-4">
-                            <div className="flex gap-2">
+                        <div className="absolute top-10 right-10 z-10 flex items-center gap-6">
+                            <div className="flex gap-2 bg-black/40 p-1.5 rounded-xl border border-white/5">
                                 <button
                                     onClick={() => setTimeRange('5Y')}
                                     className={cn(
-                                        "px-3 py-1 rounded-lg text-[0.6rem] font-bold uppercase tracking-wider transition-all",
-                                        timeRange === '5Y' ? "bg-white/10 text-white" : "bg-white/[0.02] text-white/40 hover:bg-white/5"
+                                        "px-4 py-1.5 rounded-lg text-[0.65rem] font-black uppercase tracking-widest transition-all",
+                                        timeRange === '5Y' ? "bg-white/10 text-white shadow-xl" : "text-white/30 hover:text-white"
                                     )}
                                 >
                                     5Y
@@ -95,30 +103,30 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                 <button
                                     onClick={() => setTimeRange('ALL')}
                                     className={cn(
-                                        "px-3 py-1 rounded-lg text-[0.6rem] font-bold uppercase tracking-wider transition-all",
-                                        timeRange === 'ALL' ? "bg-white/10 text-white" : "bg-white/[0.02] text-white/40 hover:bg-white/5"
+                                        "px-4 py-1.5 rounded-lg text-[0.65rem] font-black uppercase tracking-widest transition-all",
+                                        timeRange === 'ALL' ? "bg-white/10 text-white shadow-xl" : "text-white/30 hover:text-white"
                                     )}
                                 >
                                     ALL
                                 </button>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className={cn("text-3xl font-black tabular-nums", isCrisisZone ? "text-rose-500" : "text-amber-500")}>
+                            <div className="flex items-center gap-3">
+                                <span className={cn("text-4xl font-black tabular-nums tracking-tighter", isCrisisZone ? "text-rose-500" : "text-amber-500")}>
                                     {interestRevenuePercent}%
                                 </span>
                                 <div className="flex flex-col">
-                                    <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-tighter">Current</span>
-                                    <span className="text-[0.5rem] font-black text-rose-500/60 uppercase">Crisis: &gt;35%</span>
+                                    <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-widest">Current</span>
+                                    <span className="text-[0.55rem] font-black text-rose-500/50 uppercase tracking-tighter whitespace-nowrap">Crisis: &gt;35%</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="h-[450px] w-full mt-12">
+                        <div className="h-[500px] w-full mt-24">
                             <ResponsiveContainer width="100%" height="100%">
                                 <ComposedChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="indiaInterestGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.15} />
+                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.2} />
                                             <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
@@ -127,8 +135,8 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                         dataKey="date"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)' }}
-                                        minTickGap={40}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 600 }}
+                                        minTickGap={60}
                                         tickFormatter={(str) => {
                                             const date = new Date(str);
                                             return `FY${date.getFullYear().toString().slice(-2)}`;
@@ -137,13 +145,18 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)' }}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 600 }}
                                         tickFormatter={(val) => `${val.toFixed(0)}%`}
                                     />
-                                    <Tooltip content={<CustomTooltip />} />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
 
-                                    {/* Crisis Zone Reference Line */}
-                                    <ReferenceLine y={35} stroke="#ef4444" strokeDasharray="5 5" strokeOpacity={0.5} label={{ value: 'FISCAL STRESS', position: 'right', fill: '#ef4444', fontSize: 8, fontWeight: 'bold' }} />
+                                    <ReferenceLine
+                                        y={35}
+                                        stroke="#ef4444"
+                                        strokeDasharray="10 10"
+                                        strokeOpacity={0.4}
+                                        label={{ value: 'CRITICAL STRESS THRESHOLD', position: 'insideTopRight', fill: '#ef4444', fontSize: 10, fontWeight: 900 }}
+                                    />
 
                                     <Area
                                         type="monotone"
@@ -156,17 +169,17 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                         dataKey="interest_revenue_pct"
                                         name="Interest/Revenue %"
                                         stroke={isCrisisZone ? "#ef4444" : "#f59e0b"}
-                                        strokeWidth={3}
+                                        strokeWidth={4}
                                         dot={false}
-                                        activeDot={{ r: 4, strokeWidth: 0 }}
+                                        activeDot={{ r: 6, strokeWidth: 0, fill: '#fff' }}
                                     />
                                 </ComposedChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
 
-                    {/* Supporting Metrics Column */}
-                    <div className="flex flex-col gap-6">
+                    {/* Supporting Metrics - Horizontal Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
                         <MetricCard
                             title="Interest/Expenditure"
                             value={latest?.interest_expenditure_pct?.toFixed(1) || '0.0'}

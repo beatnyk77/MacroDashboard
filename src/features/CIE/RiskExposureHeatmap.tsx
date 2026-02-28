@@ -105,95 +105,93 @@ export const RiskExposureHeatmap: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4 py-3 rounded-2xl bg-white/[0.02] border border-white/5">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
-                        <ShieldAlert size={18} />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 px-8 py-6 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-3xl">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                        <ShieldAlert size={20} />
                     </div>
                     <div>
-                        <h2 className="text-sm font-black uppercase tracking-widest text-white">Macro Risk Gameboard</h2>
-                        <p className="text-[0.65rem] text-muted-foreground/60 font-medium">Sectoral exposure to systemic macro risks</p>
+                        <h2 className="text-xl font-black uppercase tracking-tight text-white leading-tight">Macro Risk Gameboard</h2>
+                        <p className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mt-1">Sectoral exposure to systemic macro shocks</p>
                     </div>
                 </div>
 
-                <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
                     <button
                         onClick={() => setViewMode('sector')}
-                        className={`px-4 py-1.5 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider transition-all ${viewMode === 'sector' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${viewMode === 'sector' ? 'bg-white/10 text-white shadow-lg' : 'text-white/30 hover:text-white/60'}`}
                     >
                         Sector Averages
                     </button>
                     <button
                         onClick={() => setViewMode('company')}
-                        className={`px-4 py-1.5 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider transition-all disabled:opacity-50 cursor-not-allowed`}
+                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all opacity-30 cursor-not-allowed`}
                         disabled
-                        title="Coming soon"
                     >
-                        Company Drill-down
+                        Drill-down
                     </button>
                 </div>
             </div>
 
-            <div className="overflow-x-auto border border-white/5 rounded-3xl bg-black/20">
+            <div className="overflow-x-auto rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-white/5 bg-white/[0.02]">
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 max-w-[200px]">Sector</th>
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 text-center">Oil Sensitivity</th>
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 text-center">State Fiscal Risk</th>
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 text-center">Formalization Risk</th>
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 text-center">Liquidity Transmission</th>
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 text-center">CDS Risk Premium</th>
-                            <th className="p-4 text-[0.65rem] font-black uppercase tracking-widest text-white/40 text-center">Overall Risk (Inverse Score)</th>
+                        <tr className="border-b border-white/5 bg-white/[0.01]">
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Sector Structure</th>
+                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">Oil Sensitivity</th>
+                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">Fiscal Risk</th>
+                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">Formalization</th>
+                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">Liquidity</th>
+                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">CDS Spread</th>
+                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Risk Pulse</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-white/[0.03]">
                         {sectorAverages.map((row) => {
                             if (!row) return null;
                             const handleFilterClick = () => {
-                                // Navigate to screener with this sector selected
-                                // Using state to pass filters could be done, or URL params
-                                // For now, we can write to localStorage view or just navigate
                                 navigate('/india-equities', { state: { filterSector: row.sector } });
                             };
 
                             return (
-                                <tr key={row.sector} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group cursor-pointer" onClick={handleFilterClick}>
-                                    <td className="p-4">
-                                        <div className="font-bold text-sm text-white group-hover:text-blue-400 transition-colors flex items-center gap-2">
-                                            {row.sector}
-                                            <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <tr key={row.sector} className="group hover:bg-blue-500/[0.02] transition-all cursor-pointer" onClick={handleFilterClick}>
+                                    <td className="px-8 py-6">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-black text-white group-hover:text-blue-400 transition-colors tracking-tight flex items-center gap-2">
+                                                {row.sector}
+                                                <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </span>
+                                            <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mt-1">{row.companyCount} Equities</div>
                                         </div>
-                                        <div className="text-[0.65rem] text-white/40">{row.companyCount} Equities</div>
                                     </td>
 
-                                    <td className="p-4 text-center">
-                                        <div className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-xs font-black w-14 ${getColorScore(row.oilSensitivity)}`}>
+                                    <td className="px-6 py-6 text-center">
+                                        <div className={`inline-flex items-center justify-center px-4 py-2 rounded-xl border text-xs font-black italic tracking-tighter w-16 ${getColorScore(row.oilSensitivity)}`}>
                                             {row.oilSensitivity}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        <div className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-xs font-black w-14 ${getColorScore(row.stateFiscalRisk)}`}>
+                                    <td className="px-6 py-6 text-center">
+                                        <div className={`inline-flex items-center justify-center px-4 py-2 rounded-xl border text-xs font-black italic tracking-tighter w-16 ${getColorScore(row.stateFiscalRisk)}`}>
                                             {row.stateFiscalRisk}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        <div className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-xs font-black w-14 ${getColorScore(row.formalizationRisk)}`}>
+                                    <td className="px-6 py-6 text-center">
+                                        <div className={`inline-flex items-center justify-center px-4 py-2 rounded-xl border text-xs font-black italic tracking-tighter w-16 ${getColorScore(row.formalizationRisk)}`}>
                                             {row.formalizationRisk}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-center cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); setSelectedSectorPanel(row); }}>
-                                        <div className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-xs font-black w-14 shadow-lg ${getColorScore(row.liquidityRisk)}`}>
+                                    <td className="px-6 py-6 text-center" onClick={(e) => { e.stopPropagation(); setSelectedSectorPanel(row); }}>
+                                        <div className={`inline-flex items-center justify-center px-4 py-2 rounded-xl border text-xs font-black italic tracking-tighter w-16 shadow-[0_0_15px_rgba(0,0,0,0.2)] hover:scale-105 transition-transform ${getColorScore(row.liquidityRisk)}`}>
                                             {row.liquidityRisk}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-center cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); setSelectedCDSPanel(row); }}>
-                                        <div className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-xs font-black w-14 shadow-lg ${getColorScore(row.cdsRisk, false, true)}`}>
+                                    <td className="px-6 py-6 text-center" onClick={(e) => { e.stopPropagation(); setSelectedCDSPanel(row); }}>
+                                        <div className={`inline-flex items-center justify-center px-4 py-2 rounded-xl border text-xs font-black italic tracking-tighter w-16 shadow-[0_0_15px_rgba(0,0,0,0.2)] hover:scale-105 transition-transform ${getColorScore(row.cdsRisk, false, true)}`}>
                                             {row.cdsRisk}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        <div className={`inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-xs font-black w-14 ${getColorScore(row.macroScore, true)}`}>
+                                    <td className="px-8 py-6 text-right">
+                                        <div className={`inline-flex items-center justify-center px-4 py-2 rounded-xl border text-xs font-black italic tracking-tighter w-16 ${getColorScore(row.macroScore, true)}`}>
                                             {row.macroScore}
                                         </div>
                                     </td>
@@ -204,11 +202,16 @@ export const RiskExposureHeatmap: React.FC = () => {
                 </table>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/[0.01] border border-dashed border-white/10 flex items-start gap-4 text-white/40">
-                <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
-                <p className="text-[0.65rem] font-medium leading-relaxed">
-                    <strong className="text-white">How to read this board:</strong> Higher scores (Red) indicate elevated structural risk exposure to the specified macro factor. Click on any sector to instantly filter the main screener for drill-down analysis. Scores are derived from our proprietary aggregation of underlying company filings, forex sensitivity analysis, and state-level capex intensity. Click on a Liquidity score to view context.
-                </p>
+            <div className="p-8 rounded-[2rem] bg-white/[0.01] border border-dashed border-white/10 flex items-start gap-6 text-white/40">
+                <div className="p-2 rounded-lg bg-white/5 border border-white/10 mt-0.5">
+                    <AlertCircle size={18} className="flex-shrink-0" />
+                </div>
+                <div>
+                    <h6 className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">Protocol Brief: Risk Gameboard Intelligence</h6>
+                    <p className="text-[0.65rem] font-medium leading-relaxed max-w-4xl">
+                        Higher scores (Red) indicate elevated structural risk exposure to the specified macro factor. Sectoral scores are derived from our proprietary aggregation of underlying company filings, forex sensitivity analysis, and state-level capex intensity. <span className="text-blue-400 font-bold">Interactivity:</span> Click on any sector to instantly filter the main screener. Click on Liquidity or CDS scores to view granular exposure profiles.
+                    </p>
+                </div>
             </div>
 
             {/* Liquidity Risk Side Panel */}
@@ -217,70 +220,70 @@ export const RiskExposureHeatmap: React.FC = () => {
                     <>
                         <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100]"
                             onClick={() => setSelectedSectorPanel(null)}
                         />
                         <motion.div
                             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-[#0A0D14] border-l border-white/10 z-50 p-6 flex flex-col shadow-2xl overflow-y-auto"
+                            transition={{ type: 'spring', damping: 30, stiffness: 200 }}
+                            className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/10 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
                         >
-                            <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400">
-                                        <Activity size={18} />
+                            <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                        <Activity size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-black text-white leading-none">{selectedSectorPanel.sector}</h3>
-                                        <span className="text-[0.65rem] font-bold uppercase tracking-widest text-emerald-400">Liquidity Exposure Profile</span>
+                                        <h3 className="text-2xl font-black text-white leading-none tracking-tight">{selectedSectorPanel.sector}</h3>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mt-2 block">Liquidity Exposure Profile</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedSectorPanel(null)} className="p-2 text-white/40 hover:text-white bg-white/5 rounded-full transition-colors">
-                                    <X size={16} />
+                                <button onClick={() => setSelectedSectorPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/10 hover:border-white/20">
+                                    <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                        <div className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-1">Transmission Risk</div>
-                                        <div className={`text-2xl font-black ${selectedSectorPanel.liquidityRisk > 66 ? 'text-rose-400' : selectedSectorPanel.liquidityRisk > 33 ? 'text-yellow-400' : 'text-emerald-400'}`}>
-                                            {selectedSectorPanel.liquidityRisk}/100
+                            <div className="space-y-10">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Transmission</div>
+                                        <div className={`text-4xl font-black italic tracking-tighter ${selectedSectorPanel.liquidityRisk > 66 ? 'text-rose-400' : selectedSectorPanel.liquidityRisk > 33 ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                                            {selectedSectorPanel.liquidityRisk}<span className="text-sm ml-1 opacity-20">/100</span>
                                         </div>
                                     </div>
-                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                        <div className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-1">Sector Companies</div>
-                                        <div className="text-2xl font-black text-white">{selectedSectorPanel.companyCount}</div>
+                                    <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Constituents</div>
+                                        <div className="text-4xl font-black text-white italic tracking-tighter">{selectedSectorPanel.companyCount}</div>
                                     </div>
                                 </div>
 
-                                <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl">
-                                    <h4 className="text-[0.65rem] font-bold uppercase tracking-widest text-blue-400 mb-2">Fundamental Driver</h4>
-                                    <p className="text-sm text-blue-100/70 leading-relaxed font-medium">
+                                <div className="bg-blue-500/5 border border-blue-500/20 p-8 rounded-[2rem]">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-4">Fundamental Driver</h4>
+                                    <p className="text-xs text-blue-100/60 leading-relaxed font-medium mb-6">
                                         This sector's score is computed by correlating the current banking system CD ratio and RBI LAF net injection status against the sector's historical reliance on continuous credit expansion.
                                     </p>
                                     <button
                                         onClick={() => navigate('/funding')}
-                                        className="mt-4 flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors"
+                                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors group/btn"
                                     >
-                                        View Live Liquidity Gauge <ArrowUpRight size={14} />
+                                        Live Liquidity Gauge <ArrowUpRight size={14} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                     </button>
                                 </div>
 
                                 <div>
-                                    <h4 className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-3 border-b border-white/5 pb-2">Top 5 Most Exposed Constituents</h4>
-                                    <div className="space-y-2">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-6 border-b border-white/5 pb-4">High Exposure Constituents</h4>
+                                    <div className="space-y-3">
                                         {selectedSectorPanel.topExposed.map((comp: any) => (
-                                            <div key={comp.ticker} className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
+                                            <div key={comp.ticker} className="flex justify-between items-center p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group/comp cursor-pointer" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{comp.ticker.replace('.NS', '')}</div>
-                                                    <div className="text-[0.65rem] text-white/40 truncate max-w-[200px]">{comp.name}</div>
+                                                    <div className="text-sm font-black text-white group-hover/comp:text-blue-400 transition-colors tracking-tight">{comp.ticker.replace('.NS', '')}</div>
+                                                    <div className="text-[10px] font-medium text-white/30 truncate max-w-[200px] mt-1">{comp.name}</div>
                                                 </div>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="text-xs font-black text-rose-400 bg-rose-500/10 px-2 py-1 rounded-md">
-                                                        Risk: {comp.cie_macro_signals?.[0]?.liquidity_transmission_lag || selectedSectorPanel.liquidityRisk}
+                                                <div className="flex items-center gap-4">
+                                                    <div className="text-[10px] font-black text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-full border border-rose-500/20">
+                                                        RISK: {comp.cie_macro_signals?.[0]?.liquidity_transmission_lag || selectedSectorPanel.liquidityRisk}
                                                     </div>
-                                                    <ArrowUpRight size={14} className="text-white/20 group-hover:text-white/80 transition-colors" />
+                                                    <ArrowUpRight size={16} className="text-white/10 group-hover/comp:text-white/80 transition-all" />
                                                 </div>
                                             </div>
                                         ))}
@@ -298,78 +301,78 @@ export const RiskExposureHeatmap: React.FC = () => {
                     <>
                         <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100]"
                             onClick={() => setSelectedCDSPanel(null)}
                         />
                         <motion.div
                             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-[#0A0D14] border-l border-white/10 z-50 p-6 flex flex-col shadow-2xl overflow-y-auto"
+                            transition={{ type: 'spring', damping: 30, stiffness: 200 }}
+                            className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/10 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
                         >
-                            <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
-                                        <ShieldAlert size={18} />
+                            <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                        <ShieldAlert size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-black text-white leading-none">{selectedCDSPanel.sector}</h3>
-                                        <span className="text-[0.65rem] font-bold uppercase tracking-widest text-emerald-400">CDS Risk Profile</span>
+                                        <h3 className="text-2xl font-black text-white leading-none tracking-tight">{selectedCDSPanel.sector}</h3>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mt-2 block">CDS Risk Profile</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedCDSPanel(null)} className="p-2 text-white/40 hover:text-white bg-white/5 rounded-full transition-colors">
-                                    <X size={16} />
+                                <button onClick={() => setSelectedCDSPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/10 hover:border-white/20">
+                                    <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                        <div className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-1">5Y CDS Spread</div>
-                                        <div className={`text-2xl font-black ${selectedCDSPanel.cdsRisk > 150 ? 'text-rose-400' : selectedCDSPanel.cdsRisk > 80 ? 'text-yellow-400' : 'text-emerald-400'}`}>
-                                            {selectedCDSPanel.cdsRisk} bps
+                            <div className="space-y-10">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">5Y CDS Spread</div>
+                                        <div className={`text-4xl font-black italic tracking-tighter ${selectedCDSPanel.cdsRisk > 150 ? 'text-rose-400' : selectedCDSPanel.cdsRisk > 80 ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                                            {selectedCDSPanel.cdsRisk}<span className="text-sm ml-1 opacity-20">bps</span>
                                         </div>
                                     </div>
-                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                        <div className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-1">Monthly Change</div>
-                                        <div className={`text-2xl font-black ${selectedCDSPanel.cdsMonthlyChange > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                            {selectedCDSPanel.cdsMonthlyChange > 0 ? '+' : ''}{selectedCDSPanel.cdsMonthlyChange} bps
+                                    <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">30D Movement</div>
+                                        <div className={`text-4xl font-black italic tracking-tighter ${selectedCDSPanel.cdsMonthlyChange > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                            {selectedCDSPanel.cdsMonthlyChange > 0 ? '+' : ''}{selectedCDSPanel.cdsMonthlyChange}<span className="text-sm ml-1 opacity-20">bps</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-2xl">
-                                    <h4 className="text-[0.65rem] font-bold uppercase tracking-widest text-purple-400 mb-2">Market Sentiment</h4>
-                                    <p className="text-sm text-purple-100/70 leading-relaxed font-medium">
-                                        This spread represents the market-implied cost of protecting against default. Elevated spreads in {selectedCDSPanel.sector} indicate rising structural concerns around leverage and debt serviceability compared to India's Sovereign 5Y CDS (Benchmark: 75 bps).
+                                <div className="bg-purple-500/5 border border-purple-500/20 p-8 rounded-[2rem]">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-4">Market Sentiment</h4>
+                                    <p className="text-xs text-purple-100/60 leading-relaxed font-medium">
+                                        This spread represents the market-implied cost of protecting against default. Elevated spreads in {selectedCDSPanel.sector} indicate rising structural concerns around leverage compared to India's Sovereign 5Y CDS Benchmark (75 bps).
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h4 className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-3 border-b border-white/5 pb-2">Top 5 Most Exposed Constituents</h4>
-                                    <div className="space-y-2">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-6 border-b border-white/5 pb-4">Most Sensitive Constituents</h4>
+                                    <div className="space-y-3">
                                         {selectedCDSPanel.topExposed.map((comp: any) => (
-                                            <div key={comp.ticker} className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
+                                            <div key={comp.ticker} className="flex justify-between items-center p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group/comp cursor-pointer" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{comp.ticker.replace('.NS', '')}</div>
-                                                    <div className="text-[0.65rem] text-white/40 truncate max-w-[200px]">{comp.name}</div>
+                                                    <div className="text-sm font-black text-white group-hover/comp:text-blue-400 transition-colors tracking-tight">{comp.ticker.replace('.NS', '')}</div>
+                                                    <div className="text-[10px] font-medium text-white/30 truncate max-w-[200px] mt-1">{comp.name}</div>
                                                 </div>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="text-xs font-black text-rose-400 bg-rose-500/10 px-2 py-1 rounded-md">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="text-[10px] font-black text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-full border border-rose-500/20">
                                                         CDS: {comp.cie_macro_signals?.[0]?.cds_spread_bps || selectedCDSPanel.cdsRisk}
                                                     </div>
-                                                    <ArrowUpRight size={14} className="text-white/20 group-hover:text-white/80 transition-colors" />
+                                                    <ArrowUpRight size={16} className="text-white/10 group-hover/comp:text-white/80 transition-all" />
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div className="p-4 bg-white/[0.01] rounded-2xl border border-white/5">
-                                    <h4 className="text-[0.65rem] font-bold uppercase tracking-widest text-white/40 mb-2">Linked Macro Drivers</h4>
+                                <div className="p-8 bg-white/[0.01] rounded-[2rem] border border-white/5">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-4">Linked Macro Stressors</h4>
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-1 bg-white/5 rounded text-[0.6rem] font-bold text-white/60">Liquidity Stress</span>
-                                        <span className="px-2 py-1 bg-white/5 rounded text-[0.6rem] font-bold text-white/60">Fiscal Health</span>
-                                        <span className="px-2 py-1 bg-white/5 rounded text-[0.6rem] font-bold text-white/60">FX Volatility</span>
+                                        {['Liquidity Transmission', 'Fiscal Staleness', 'FX Volatility'].map(tag => (
+                                            <span key={tag} className="px-3 py-1.5 bg-white/5 rounded-full text-[9px] font-black uppercase tracking-widest text-white/40 border border-white/10">{tag}</span>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

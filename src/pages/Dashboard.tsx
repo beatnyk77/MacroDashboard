@@ -184,30 +184,32 @@ export const Dashboard: React.FC = () => {
                         />
                     </div>
 
-                    <div className="space-y-16">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                            <SectionErrorBoundary name="Net Liquidity">
-                                <div className="space-y-6">
-                                    <NetLiquidityRow />
-                                    <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium">
-                                        <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
-                                        Net liquidity dictates the short-term path of risk assets. We monitor the TGA and RRP to detect stealth-QE before it manifests.
+                    <div className="space-y-24">
+                        <SectionErrorBoundary name="Net Liquidity">
+                            <div className="space-y-8 max-w-6xl mx-auto">
+                                <NetLiquidityRow />
+                                <div className="p-6 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10">
+                                    <p className="text-base text-muted-foreground/80 leading-relaxed font-medium">
+                                        <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-xs">Regime Insight:</span>
+                                        Net liquidity dictates the short-term path of risk assets. We monitor the TGA and RRP to detect stealth-QE before it manifests in broader market pricing.
                                     </p>
                                 </div>
-                            </SectionErrorBoundary>
+                            </div>
+                        </SectionErrorBoundary>
 
-                            <SectionErrorBoundary name="Capital Flows Terminal">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <div className="space-y-6">
-                                        <CapitalFlowsTerminal />
-                                        <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium">
-                                            <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
-                                            Relative capital velocity between USD, Gold, and Emerging Markets reveals the current regime's destination.
+                        <SectionErrorBoundary name="Capital Flows Terminal">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="space-y-8 max-w-6xl mx-auto pt-16 border-t border-white/5">
+                                    <CapitalFlowsTerminal hideHeader />
+                                    <div className="p-6 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10">
+                                        <p className="text-base text-muted-foreground/80 leading-relaxed font-medium">
+                                            <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-xs">Flow Context:</span>
+                                            Relative capital velocity between USD, Gold, and Emerging Markets reveals the current regime's destination. Structural shifts in offshore US dollar availability often precede Treasury auction stress.
                                         </p>
                                     </div>
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
                     </div>
                 </SPASection>
 
@@ -217,26 +219,40 @@ export const Dashboard: React.FC = () => {
                         title="US Fiscal & Macro Stress"
                         subtitle="Treasury demand dynamics and auction stress levels"
                     />
-                    <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <div className="mt-16 space-y-12 max-w-6xl mx-auto">
                         <SectionErrorBoundary name="Treasury Demand">
                             <Suspense fallback={<LoadingFallback />}>
-                                <USTreasuryDemandGauge />
+                                <div className="p-12 rounded-[32px] bg-white/[0.02] border border-white/5">
+                                    <USTreasuryDemandGauge />
+                                </div>
                             </Suspense>
                         </SectionErrorBoundary>
-                        <div className="lg:pt-20">
-                            <p className="text-lg text-white font-bold uppercase tracking-tight mb-4">The US Maturity Wall is now a structural issue.</p>
-                            <p className="text-muted-foreground leading-relaxed text-sm mb-8">
-                                <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
-                                As US interest expense exceeds defense spending, the "Auction Stress" signal becomes the primary driver for yields. We monitor primary dealer absorption and indirect-bid ratios to detect when the market stops absorbing the supply.
-                            </p>
-                            <Button
-                                variant="text"
-                                href="/labs/us-macro-fiscal"
-                                endIcon={<ChevronRight size={16} />}
-                                sx={{ color: '#3b82f6', fontWeight: 900, fontSize: '0.7rem' }}
-                            >
-                                Enter US Macro & Fiscal Lab
-                            </Button>
+                        <div className="p-10 rounded-3xl bg-blue-500/[0.03] border border-blue-500/10 relative overflow-hidden">
+                            <div className="relative z-10">
+                                <p className="text-2xl text-white font-black uppercase tracking-tighter mb-6 underline decoration-blue-500/30 decoration-4 underline-offset-8">The US Maturity Wall is now a structural issue.</p>
+                                <p className="text-muted-foreground leading-relaxed text-lg mb-10 max-w-4xl">
+                                    <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-xs">Sovereign Thesis:</span>
+                                    As US interest expense exceeds defense spending, the "Auction Stress" signal becomes the primary driver for yields. We monitor primary dealer absorption and indirect-bid ratios to detect when the market stops absorbing the supply.
+                                </p>
+                                <Button
+                                    variant="contained"
+                                    href="/labs/us-macro-fiscal"
+                                    endIcon={<ChevronRight size={16} />}
+                                    sx={{
+                                        bgcolor: 'rgba(59, 130, 246, 0.1)',
+                                        color: '#3b82f6',
+                                        fontWeight: 900,
+                                        fontSize: '0.75rem',
+                                        px: 4,
+                                        py: 1.5,
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                                        '&:hover': { bgcolor: 'rgba(59, 130, 246, 0.2)' }
+                                    }}
+                                >
+                                    Detailed US Fiscal Intelligence
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </SPASection>
@@ -308,28 +324,41 @@ export const Dashboard: React.FC = () => {
                         title="The China Vector"
                         subtitle="Counter-cyclical telemetry for the world's second economy"
                     />
-                    <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="order-2 lg:order-1">
-                            <SectionErrorBoundary name="China Market Pulse">
-                                <Suspense fallback={<LoadingFallback />}>
+                    <div className="mt-16 space-y-16 max-w-6xl mx-auto">
+                        <SectionErrorBoundary name="China Market Pulse">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="p-8 rounded-[32px] bg-white/[0.01] border border-white/5">
                                     <CompactChinaCard />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-                        <div className="order-1 lg:order-2">
-                            <p className="text-lg text-white font-bold uppercase tracking-tight mb-4">China is shifting from credit-growth to technology-sovereignty.</p>
-                            <p className="text-muted-foreground leading-relaxed text-sm mb-8">
-                                <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
-                                As the PBoC maintains a divergence from the Fed, the China Pulse tracks domestic liquidity and deflationary export pressures affecting global EM portfolios.
-                            </p>
-                            <Button
-                                variant="text"
-                                href="/labs/china"
-                                endIcon={<ChevronRight size={16} />}
-                                sx={{ color: '#3b82f6', fontWeight: 900, fontSize: '0.7rem' }}
-                            >
-                                Enter China Lab
-                            </Button>
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <div className="p-10 rounded-3xl bg-blue-500/[0.03] border border-blue-500/10">
+                            <p className="text-2xl text-white font-black uppercase tracking-tighter mb-6 underline decoration-blue-500/30 decoration-4 underline-offset-8">China is shifting from credit-growth to technology-sovereignty.</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+                                <p className="text-muted-foreground leading-relaxed text-lg">
+                                    <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-xs">Macro Proxy:</span>
+                                    As the PBoC maintains a divergence from the Fed, the China Pulse tracks domestic liquidity and deflationary export pressures affecting global EM portfolios.
+                                </p>
+                                <div className="flex justify-start md:justify-end">
+                                    <Button
+                                        variant="contained"
+                                        href="/labs/china"
+                                        endIcon={<ChevronRight size={16} />}
+                                        sx={{
+                                            bgcolor: 'rgba(59, 130, 246, 0.1)',
+                                            color: '#3b82f6',
+                                            fontWeight: 900,
+                                            px: 4,
+                                            py: 1.5,
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(59, 130, 246, 0.2)',
+                                            '&:hover': { bgcolor: 'rgba(59, 130, 246, 0.2)' }
+                                        }}
+                                    >
+                                        Detailed China Telemetry
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </SPASection>
@@ -340,35 +369,51 @@ export const Dashboard: React.FC = () => {
                         title="Hard Money & Reserve Shift"
                         subtitle="Gold anchor ratios and the de-dollarization vector"
                     />
-                    <div className="mt-12 space-y-16">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                            <div className="space-y-8">
-                                <p className="text-lg text-amber-400 font-bold uppercase tracking-tight mb-4">The Sovereign Debt to Gold Ratio is the ultimate system-gauge.</p>
-                                <p className="text-muted-foreground leading-relaxed text-sm">
-                                    <span className="text-amber-500 font-bold uppercase mr-2">So what?</span>
+                    <div className="mt-16 space-y-16 max-w-6xl mx-auto">
+                        <div className="grid grid-cols-1 gap-12">
+                            <div className="p-10 rounded-3xl bg-amber-500/[0.03] border border-amber-500/10">
+                                <p className="text-2xl text-amber-400 font-black uppercase tracking-tighter mb-6 underline decoration-amber-400/30 decoration-4 underline-offset-8">The Sovereign Debt to Gold Ratio is the ultimate system-gauge.</p>
+                                <p className="text-muted-foreground leading-relaxed text-lg mb-10">
+                                    <span className="text-amber-500 font-black uppercase mr-3 tracking-widest text-xs">Reserve Thesis:</span>
                                     As central banks diversify away from USD-denominated paper, the "SDG Ratio" tracks the structural re-anchoring to physical reserves. Physical gold purchases by G20 central banks are now at 50-year highs.
                                 </p>
                                 <SectionErrorBoundary name="Gold Ratio">
                                     <Suspense fallback={<LoadingFallback />}>
-                                        <GoldRatioRibbon />
+                                        <div className="p-8 rounded-2xl bg-black/20 border border-white/5">
+                                            <GoldRatioRibbon />
+                                        </div>
                                     </Suspense>
                                 </SectionErrorBoundary>
                             </div>
-                            <Box className="p-12 rounded-3xl border border-amber-500/20 bg-amber-500/[0.02] text-center relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-10">
-                                    <Lock size={120} />
+
+                            <Box className="p-16 rounded-[40px] border border-amber-500/20 bg-amber-500/[0.02] text-center relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                                    <Lock size={200} />
                                 </div>
-                                <h3 className="text-2xl font-black text-amber-500 uppercase mb-4">Sovereign De-Dollarization</h3>
-                                <p className="text-muted-foreground max-w-xl mx-auto mb-8 text-sm">
-                                    Detailed tracking of G20 central bank gold net purchases and the structural shift in global reserve compositions.
-                                </p>
-                                <Button
-                                    variant="contained"
-                                    href="/labs/de-dollarization-gold"
-                                    sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 900, px: 4, '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.2)' } }}
-                                >
-                                    Access De-Dollarization Lab
-                                </Button>
+                                <div className="relative z-10">
+                                    <h3 className="text-4xl font-black text-amber-500 uppercase mb-6 tracking-tighter">Sovereign De-Dollarization</h3>
+                                    <p className="text-muted-foreground max-w-2xl mx-auto mb-10 text-lg leading-relaxed font-medium">
+                                        Detailed tracking of G20 central bank gold net purchases and the structural shift in global reserve compositions.
+                                    </p>
+                                    <Button
+                                        variant="contained"
+                                        href="/labs/de-dollarization-gold"
+                                        size="large"
+                                        sx={{
+                                            bgcolor: 'rgba(245, 158, 11, 0.1)',
+                                            color: '#f59e0b',
+                                            fontWeight: 900,
+                                            px: 6,
+                                            py: 2,
+                                            borderRadius: '20px',
+                                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                                            fontSize: '1rem',
+                                            '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.2)' }
+                                        }}
+                                    >
+                                        Access De-Dollarization Lab
+                                    </Button>
+                                </div>
                             </Box>
                         </div>
                     </div>
@@ -376,29 +421,44 @@ export const Dashboard: React.FC = () => {
 
                 {/* 8. ENERGY & COMMODITY SECURITY */}
                 <SPASection id="commodities">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-                        <div className="space-y-8">
-                            <SectionHeader
-                                title="Resource Security"
-                                subtitle="Geopolitical chokepoints and physical flows"
-                            />
-                            <p className="text-muted-foreground leading-relaxed text-sm">
-                                <span className="text-blue-400 font-bold uppercase mr-2">So what?</span>
-                                Physical flow dynamics and geopolitical chokepoints now dictate commodity pricing more than paper markets. We track 14 critical nodes from the Malacca Strait to the Suez Canal.
-                            </p>
-                            <Button
-                                variant="outlined"
-                                href="/labs/energy-commodities"
-                                sx={{ borderColor: 'white/10', color: 'white', fontWeight: 900, px: 4, borderRadius: '12px' }}
-                            >
-                                Enter Energy Lab
-                            </Button>
+                    <div className="space-y-24 max-w-6xl mx-auto">
+                        <div className="grid grid-cols-1 gap-16 items-start">
+                            <div className="space-y-12">
+                                <SectionHeader
+                                    title="Resource Security"
+                                    subtitle="Geopolitical chokepoints and physical flows"
+                                    sectionId="commodities"
+                                />
+                                <div className="p-10 rounded-3xl bg-blue-500/[0.03] border border-blue-500/10">
+                                    <p className="text-muted-foreground leading-relaxed text-lg mb-8">
+                                        <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-xs">Physical Edge:</span>
+                                        Physical flow dynamics and geopolitical chokepoints now dictate commodity pricing more than paper markets. We track 14 critical nodes from the Malacca Strait to the Suez Canal.
+                                    </p>
+                                    <Button
+                                        variant="outlined"
+                                        href="/labs/energy-commodities"
+                                        sx={{
+                                            borderColor: 'white/10',
+                                            color: 'white',
+                                            fontWeight: 900,
+                                            px: 4,
+                                            py: 1.5,
+                                            borderRadius: '12px',
+                                            '&:hover': { borderColor: 'white/30', bgcolor: 'white/5' }
+                                        }}
+                                    >
+                                        Detailed Resource Analytics
+                                    </Button>
+                                </div>
+                            </div>
+                            <SectionErrorBoundary name="Commodity Terminal">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <div className="p-8 rounded-[32px] bg-white/[0.01] border border-white/5">
+                                        <CompactCommodityCard />
+                                    </div>
+                                </Suspense>
+                            </SectionErrorBoundary>
                         </div>
-                        <SectionErrorBoundary name="Commodity Terminal">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CompactCommodityCard />
-                            </Suspense>
-                        </SectionErrorBoundary>
                     </div>
                 </SPASection>
 

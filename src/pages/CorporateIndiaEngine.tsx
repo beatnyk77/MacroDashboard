@@ -113,28 +113,42 @@ export const CorporateIndiaEngine: React.FC = () => {
                 </div>
             </header>
 
-            {/* Macro Score Summary Cards */}
+            {/* Macro Score Summary Cards - Narrative Row */}
             <section className="py-12 border-b border-white/5 bg-white/[0.01]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {stats.map((stat) => (
-                            <div key={stat.label} className="p-5 rounded-3xl border border-white/5 bg-black/40 backdrop-blur-md hover:border-blue-500/30 transition-all group relative overflow-hidden">
-                                {showMacroOverlay && (
-                                    <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                                        <Activity size={40} className="text-blue-500" />
-                                    </div>
-                                )}
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-2 rounded-xl bg-${stat.color}-500/10 text-${stat.color}-400`}>
-                                        <stat.icon size={18} />
-                                    </div>
-                                    <span className="text-[0.6rem] font-black text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">{stat.trend}</span>
-                                </div>
-                                <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-white/40 mb-1">{stat.label}</h4>
-                                <div className="text-2xl font-black text-white mb-2">{stat.value}</div>
-                                <p className="text-[0.6rem] text-muted-foreground/40 leading-tight font-medium">{stat.desc}</p>
+                    <div className="flex flex-col lg:flex-row gap-12 mb-12">
+                        <div className="lg:w-1/3">
+                            <div className="inline-flex items-center gap-2 mb-4">
+                                <Shield className="text-blue-400" size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/60">CIE Intelligence Brief</span>
                             </div>
-                        ))}
+                            <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-4">The Formalization Convergence</h2>
+                            <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium">
+                                Tracking the structural pivot from informal to formal credit. We prioritize companies capturing the <span className="text-blue-400 font-bold italic">Formalization Premium</span> — where DPI (Digital Public Infrastructure) integration and state-capex resilience intersect with pure-play fundamentals.
+                            </p>
+                        </div>
+                        <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {stats.map((stat) => (
+                                <div key={stat.label} className="p-6 rounded-[2rem] border border-white/5 bg-black/40 backdrop-blur-md hover:border-blue-500/30 transition-all group relative overflow-hidden flex items-center justify-between gap-6">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className={`p-1.5 rounded-lg bg-${stat.color}-500/10 text-${stat.color}-400`}>
+                                                <stat.icon size={16} />
+                                            </div>
+                                            <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40">{stat.label}</h4>
+                                        </div>
+                                        <div className="text-2xl font-black text-white italic tracking-tight">{stat.value}</div>
+                                        <p className="text-[0.6rem] text-muted-foreground/30 mt-1 font-medium">{stat.desc}</p>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-2">
+                                        <span className="text-[0.65rem] font-black text-emerald-400 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]">{stat.trend}</span>
+                                        {showMacroOverlay && (
+                                            <Activity size={24} className="text-blue-500/20" />
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -143,34 +157,38 @@ export const CorporateIndiaEngine: React.FC = () => {
             <main className="max-w-7xl mx-auto px-4 sm:px-8 py-12">
                 <div className="flex flex-col gap-10">
 
-                    {/* Navigation Tabs */}
-                    <div className="flex items-center gap-8 border-b border-white/5 pb-1">
-                        {[
-                            { id: 'screener', label: 'Macro Screener', icon: Filter },
-                            { id: 'heatmap', label: 'Risk Exposure', icon: Flame },
-                            { id: 'aggregates', label: 'Quarterly Results Aggregator', icon: LineChart },
-                            { id: 'watchlists', label: 'Institutional Watchlists', icon: Shield },
-                            { id: 'promoters', label: 'Promoter Activity', icon: Activity },
-                            { id: 'deals', label: 'Institutional Deals', icon: Briefcase },
-                            { id: 'shortSelling', label: 'Short Interest', icon: TrendingDown },
-                            { id: 'ipos', label: 'Upcoming IPOs', icon: Ship },
-                        ].map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center gap-2 pb-4 text-[0.7rem] font-black uppercase tracking-widest transition-all relative ${activeTab === tab.id ? 'text-blue-400' : 'text-white/30 hover:text-white/60'
-                                    }`}
-                            >
-                                <tab.icon size={14} />
-                                {tab.label}
-                                {activeTab === tab.id && (
-                                    <motion.div
-                                        layoutId="tab-underline"
-                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400"
-                                    />
-                                )}
-                            </button>
-                        ))}
+                    {/* Navigation Tabs - Scrollable on Mobile */}
+                    <div className="relative group">
+                        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar pb-1 border-b border-white/5">
+                            {[
+                                { id: 'screener', label: 'Macro Screener', icon: Filter },
+                                { id: 'heatmap', label: 'Risk Exposure', icon: Flame },
+                                { id: 'aggregates', label: 'Aggregates', icon: LineChart },
+                                { id: 'watchlists', label: 'Watchlists', icon: Shield },
+                                { id: 'promoters', label: 'Promoters', icon: Activity },
+                                { id: 'deals', label: 'Deals', icon: Briefcase },
+                                { id: 'shortSelling', label: 'Shorts', icon: TrendingDown },
+                                { id: 'ipos', label: 'IPOs', icon: Ship },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id as any)}
+                                    className={`flex items-center gap-3 px-6 py-4 text-[0.65rem] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all relative group/tab ${activeTab === tab.id ? 'text-blue-400' : 'text-white/30 hover:text-white/60'
+                                        }`}
+                                >
+                                    <tab.icon size={14} className={activeTab === tab.id ? 'text-blue-400' : 'text-white/20 group-hover/tab:text-white/40'} />
+                                    {tab.label}
+                                    {activeTab === tab.id && (
+                                        <motion.div
+                                            layoutId="tab-underline"
+                                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]"
+                                        />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                        {/* Indicative Fade for Scroll */}
+                        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#050810] to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
 
                     {/* Content Section */}

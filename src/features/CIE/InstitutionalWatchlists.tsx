@@ -33,28 +33,28 @@ export const AlertHistory: React.FC = () => {
     });
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
-                <Bell size={16} />
-                <span className="text-[0.7rem] font-black uppercase tracking-widest">Macro Alert History</span>
+        <div className="space-y-6">
+            <div className="flex items-center gap-4 px-8 py-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 backdrop-blur-md">
+                <Bell size={18} />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Macro Alert History</span>
             </div>
             {isLoading ? (
-                <div className="h-20 bg-white/[0.02] rounded-2xl animate-pulse" />
+                <div className="h-20 bg-white/[0.02] rounded-3xl animate-pulse" />
             ) : alerts && alerts.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {alerts.map(alert => (
-                        <div key={alert.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
-                            <div>
-                                <span className="text-[0.6rem] font-black uppercase text-blue-400 mr-2">{alert.ticker}</span>
-                                <p className="text-xs text-white/80">{alert.message}</p>
+                        <div key={alert.id} className="p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-3xl flex justify-between items-start group hover:border-blue-500/30 transition-all">
+                            <div className="flex-1">
+                                <span className="text-[10px] font-black uppercase text-blue-400 tracking-widest block mb-2">{alert.ticker}</span>
+                                <p className="text-xs text-white/60 font-medium leading-relaxed">{alert.message}</p>
                             </div>
-                            <span className="text-[0.6rem] text-white/30 uppercase">{new Date(alert.created_at).toLocaleDateString()}</span>
+                            <span className="text-[10px] text-white/20 uppercase font-black tracking-widest ml-4">{new Date(alert.created_at).toLocaleDateString()}</span>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="p-8 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-3xl">
-                    <p className="text-[0.6rem] text-white/20 uppercase font-black tracking-widest">No active alerts</p>
+                <div className="p-12 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-[2rem]">
+                    <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">No active alerts detected</p>
                 </div>
             )}
         </div>
@@ -87,92 +87,100 @@ export const InstitutionalWatchlists: React.FC = () => {
     });
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-2 space-y-12">
                 {/* Watchlists */}
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-400">
-                        <div className="flex items-center gap-3">
-                            <Shield size={16} />
-                            <span className="text-[0.7rem] font-black uppercase tracking-widest">My Institutional Watchlists</span>
+                <div className="space-y-8">
+                    <div className="flex items-center justify-between px-8 py-5 rounded-[2rem] bg-orange-500/10 border border-orange-500/20 text-orange-400 backdrop-blur-md">
+                        <div className="flex items-center gap-4">
+                            <Shield size={20} />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">CIE Institutional Watchlists</span>
                         </div>
-                        <button className="px-3 py-1 rounded-lg bg-orange-500/20 text-[0.6rem] font-black uppercase tracking-widest hover:bg-orange-500/30 transition-colors">
-                            + New Watchlist
+                        <button className="px-6 py-2 rounded-xl bg-orange-500/20 text-[10px] font-black uppercase tracking-widest hover:bg-orange-500/30 transition-all border border-orange-500/20">
+                            + Initialize
                         </button>
                     </div>
 
                     {isLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {[1, 2].map(i => (
-                                <div key={i} className="h-40 rounded-3xl bg-white/[0.02] border border-white/5 animate-pulse" />
+                                <div key={i} className="h-48 rounded-[2rem] bg-white/[0.02] border border-white/5 animate-pulse" />
                             ))}
                         </div>
                     ) : watchlists && watchlists.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {watchlists.map((list) => (
                                 <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
                                     key={list.id}
-                                    className="p-6 rounded-3xl border border-white/5 bg-black/20 hover:border-white/10 transition-all cursor-pointer group"
+                                    className="p-8 rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl hover:border-orange-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[220px]"
                                 >
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-black text-white group-hover:text-orange-400 transition-colors">{list.name}</h3>
-                                        <div className="p-2 rounded-full bg-white/5 text-white/40">
-                                            <Eye size={14} />
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xl font-black text-white group-hover:text-orange-400 transition-colors italic tracking-tight">{list.name}</h3>
+                                        <div className="p-3 rounded-2xl bg-white/5 text-white/20 group-hover:text-white transition-colors border border-white/10">
+                                            <Eye size={18} />
                                         </div>
                                     </div>
-                                    <div className="text-sm font-medium text-white/40 mb-6">
-                                        {list.company_ids.length} Equities Tracked
+                                    <div className="flex items-center justify-between">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/20">
+                                            {list.company_ids.length} Equities Tracking
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase text-orange-400/60 bg-orange-500/5 px-3 py-1.5 rounded-full border border-orange-500/10">Active Protection</span>
                                     </div>
                                 </motion.div>
                             ))}
                         </div>
                     ) : (
-                        <div className="p-12 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-3xl flex flex-col items-center">
-                            <Lock size={32} className="text-white/10 mb-4" />
-                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white/20 mb-2">No Watchlists Setup</h3>
+                        <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center group hover:bg-white/[0.02] transition-all">
+                            <div className="p-6 rounded-full bg-white/5 mb-6 group-hover:scale-110 transition-transform">
+                                <Lock size={40} className="text-white/10" />
+                            </div>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-2">No Institutional Watchlists Provisioned</h3>
+                            <p className="text-[0.65rem] text-white/10 max-w-xs font-medium uppercase tracking-widest">Create a watchlist to enable real-time macro telemetry on specific tickers.</p>
                         </div>
                     )}
                 </div>
 
                 {/* Saved Views */}
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/60">
-                        <div className="flex items-center gap-3">
-                            <Activity size={16} />
-                            <span className="text-[0.7rem] font-black uppercase tracking-widest">Saved Screener Views</span>
+                <div className="space-y-8">
+                    <div className="flex items-center justify-between px-8 py-5 rounded-[2rem] bg-white/5 border border-white/10 text-white/40 backdrop-blur-md">
+                        <div className="flex items-center gap-4">
+                            <Activity size={20} />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Saved Macro Topographies</span>
                         </div>
                     </div>
                     {savedViews.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {savedViews.map((view) => (
-                                <div key={view.name} className="p-5 rounded-3xl bg-white/[0.02] border border-white/5 flex justify-between items-center group">
+                                <div key={view.name} className="p-8 rounded-[2.5rem] bg-black/40 border border-white/5 backdrop-blur-3xl flex justify-between items-center group hover:border-blue-500/30 transition-all">
                                     <div>
-                                        <h4 className="text-sm font-bold text-white mb-1">{view.name}</h4>
-                                        <p className="text-[0.6rem] text-white/30 uppercase font-bold">
-                                            {Object.keys(view.filters).length} Filters Active
-                                        </p>
+                                        <h4 className="text-lg font-black text-white italic tracking-tight mb-2 group-hover:text-blue-400 transition-colors uppercase">{view.name}</h4>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-[9px] font-black text-blue-400/60 bg-blue-500/5 px-2.5 py-1 rounded-md border border-blue-500/10 uppercase tracking-widest">
+                                                {Object.keys(view.filters).length} Parameter Overlays
+                                            </span>
+                                        </div>
                                     </div>
                                     <button
                                         onClick={() => deleteView(view.name)}
-                                        className="p-2 rounded-lg hover:bg-rose-500/10 text-white/10 hover:text-rose-400 transition-all"
+                                        className="p-3 rounded-2xl bg-white/5 text-white/10 hover:text-rose-400 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/20 transition-all"
                                     >
-                                        <Trash2 size={14} />
+                                        <Trash2 size={16} />
                                     </button>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="p-8 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-3xl">
-                            <p className="text-[0.6rem] text-white/20 uppercase font-black tracking-widest">No saved views</p>
+                        <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem]">
+                            <p className="text-[10px] text-white/20 uppercase font-black tracking-[0.2em]">No saved topographical views detected</p>
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Sidebar Alerts */}
-            <div className="space-y-8">
+            <div className="space-y-12">
                 <AlertHistory />
             </div>
         </div>
