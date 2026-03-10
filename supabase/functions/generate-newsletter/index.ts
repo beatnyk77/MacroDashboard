@@ -71,6 +71,17 @@ Deno.serve(async (req) => {
             Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
         );
 
+        const colors = {
+            bg: '#111111',
+            card: '#1a1a1a',
+            text: '#dddddd',
+            muted: '#888888',
+            accent: '#3b82f6', // blue
+            success: '#10b981', // green
+            danger: '#ef4444', // red
+            border: '#333333'
+        };
+
         // 1. Fetch Data
         // ------------------------------------------------------------------
         const metricsToFetch = {
@@ -173,17 +184,6 @@ Deno.serve(async (req) => {
 
         // --- HTML Generation ---
         // ------------------------------------------------------------------
-
-        const colors = {
-            bg: '#111111',
-            card: '#1a1a1a',
-            text: '#dddddd',
-            muted: '#888888',
-            accent: '#3b82f6', // blue
-            success: '#10b981', // green
-            danger: '#ef4444', // red
-            border: '#333333'
-        };
 
         const getArrow = (change: number, inverse = false) => {
             if (!change) return '';
