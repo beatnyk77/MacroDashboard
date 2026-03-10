@@ -47,6 +47,17 @@ export const DataHealthDashboard: React.FC = () => {
         }
     });
 
+    // 4. NEW: India Market Pulse Tracking
+    const { data: indiaPulseStatus } = useQuery({
+        queryKey: ['india-pulse-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('market_pulse_stats').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 60000 // 1 min
+    });
+
     const [refreshing, setRefreshing] = React.useState<string | null>(null);
 
     const handleForceRefresh = async (functionName: string) => {
@@ -117,6 +128,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="primary" onClick={() => handleForceRefresh('generate-newsletter')} disabled={refreshing === 'generate-newsletter'}>
                                 {refreshing === 'generate-newsletter' ? <CircularProgress size={20} /> : <Send size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>India Market Pulse</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {indiaPulseStatus ? new Date(indiaPulseStatus.date).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="success" onClick={() => handleForceRefresh('ingest-nse-flows')} disabled={refreshing === 'ingest-nse-flows'}>
+                                {refreshing === 'ingest-nse-flows' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
