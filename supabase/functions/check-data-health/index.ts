@@ -47,15 +47,24 @@ Deno.serve(async (req: Request) => {
 
         if (ingestError) throw ingestError
 
-        const totalIssues = (staleMetrics?.length ?? 0) + (failedIngestions?.length ?? 0)
+        // 3. Check for failed cron jobs (using the new monitoring view)
+        const { data: failedCrons, error: cronError } = await supabaseClient
+            .from('vw_cron_job_status')
+            .select('jobid, jobname, last_run_message, last_run_at')
+            .eq('last_run_status', 'failed')
+            .gte('last_run_at', twentyFourHoursAgo)
+
+        if (cronError) throw cronError
+
+        const totalIssues = (staleMetrics?.length ?? 0) + (failedIngestions?.length ?? 0) + (failedCrons?.length ?? 0)
         let message = 'All systems healthy'
         let status = 200
 
-        if (totalIssues > 10) {
+        if (totalIssues >= 3) {
             status = 503
-            message = `Critical Health Alert: Found ${totalIssues} issues (${staleMetrics?.length} stale, ${failedIngestions?.length} failed).`
+            message = `Critical Health Alert: Found ${totalIssues} issues (${staleMetrics?.length} stale, ${failedIngestions?.length} ingest failures, ${failedCrons?.length} cron failures).`
 
-            // 3. Send Email Alert via Resend
+            // 4. Send Email Alert via Resend
             const resendApiKey = Deno.env.get('RESEND_API_KEY')
             if (resendApiKey) {
                 console.log('Sending email alert via Resend...')
@@ -73,15 +82,25 @@ Deno.serve(async (req: Request) => {
                             <h1>Data Pipeline Health Alert</h1>
                             <p><strong>Total Issues:</strong> ${totalIssues}</p>
                             <hr/>
-                            <h3>Stale Metrics (>30 days): ${staleMetrics?.length ?? 0}</h3>
+                            ${staleMetrics?.length ? `
+                            <h3>Stale Metrics (>30 days): ${staleMetrics.length}</h3>
                             <ul>
-                                ${(staleMetrics as StaleMetric[])?.map(m => `<li>${m.metric_name} (${m.metric_id}): ${m.days_since_update} days since update</li>`).join('')}
-                            </ul>
-                            <h3>Failed Ingestions (Last 24h): ${failedIngestions?.length ?? 0}</h3>
+                                ${staleMetrics.map((m: any) => `<li>${m.metric_name} (${m.metric_id}): ${m.days_since_update} days since update</li>`).join('')}
+                            </ul>` : ''}
+                            
+                            ${failedIngestions?.length ? `
+                            <h3>Failed Ingestions (Last 24h): ${failedIngestions.length}</h3>
                             <ul>
-                                ${(failedIngestions as FailedIngestion[])?.map(f => `<li>${f.function_name}: ${f.error_message} (${new Date(f.start_time).toLocaleString()})</li>`).join('')}
-                            </ul>
-                            <p><a href="https://graphiquestor.com">View Dashboard</a></p>
+                                ${failedIngestions.map((f: any) => `<li>${f.function_name}: ${f.error_message} (${new Date(f.start_time).toLocaleString()})</li>`).join('')}
+                            </ul>` : ''}
+
+                            ${failedCrons?.length ? `
+                            <h3>Failed Cron Jobs (Last 24h): ${failedCrons.length}</h3>
+                            <ul>
+                                ${failedCrons.map((c: any) => `<li>${c.jobname}: ${c.last_run_message} (${new Date(c.last_run_at).toLocaleString()})</li>`).join('')}
+                            </ul>` : ''}
+                            
+                            <p><a href="https://graphiquestor.com/admin/data-health">View Data Health Dashboard</a></p>
                         `
                     })
                 })
