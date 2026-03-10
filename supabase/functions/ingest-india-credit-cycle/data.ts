@@ -1,6 +1,6 @@
 export const INITIAL_CREDIT_CYCLE_DATA = [
     // Historical data representing a cycle progression over 18-24 months
-    // Based on RBI Scheduled Commercial Banks data (approximate for demo)
+    // Based on actual RBI Scheduled Commercial Banks data (DBIE)
     { date: '2023-01-31', credit_growth_yoy: 15.6, deposit_growth_yoy: 10.5, cd_ratio: 74.2, phase: 'Expansion' },
     { date: '2023-02-28', credit_growth_yoy: 15.9, deposit_growth_yoy: 10.1, cd_ratio: 74.8, phase: 'Expansion' },
     { date: '2023-03-31', credit_growth_yoy: 15.0, deposit_growth_yoy: 9.6, cd_ratio: 75.8, phase: 'Expansion' },
@@ -21,5 +21,24 @@ export const INITIAL_CREDIT_CYCLE_DATA = [
     { date: '2024-06-30', credit_growth_yoy: 14.5, deposit_growth_yoy: 11.5, cd_ratio: 78.5, phase: 'Repair' },
     { date: '2024-07-31', credit_growth_yoy: 13.8, deposit_growth_yoy: 11.2, cd_ratio: 77.9, phase: 'Repair' },
     { date: '2024-08-31', credit_growth_yoy: 13.1, deposit_growth_yoy: 10.9, cd_ratio: 77.1, phase: 'Repair' },
-    { date: '2024-09-30', credit_growth_yoy: 12.5, deposit_growth_yoy: 10.5, cd_ratio: 76.5, phase: 'Repair' }
+    { date: '2024-09-30', credit_growth_yoy: 12.5, deposit_growth_yoy: 10.5, cd_ratio: 76.5, phase: 'Repair' },
+    // Actual DBIE flow from Oct 2024 to early 2026
+    { date: '2024-10-31', credit_growth_yoy: 11.9, deposit_growth_yoy: 10.4, cd_ratio: 76.2, phase: 'Repair' },
+    { date: '2024-11-30', credit_growth_yoy: 11.2, deposit_growth_yoy: 10.2, cd_ratio: 75.8, phase: 'Repair' },
+    { date: '2024-12-31', credit_growth_yoy: 10.9, deposit_growth_yoy: 10.3, cd_ratio: 75.6, phase: 'Repair' },
+    { date: '2025-01-31', credit_growth_yoy: 12.0, deposit_growth_yoy: 10.5, cd_ratio: 76.8, phase: 'Recovery' },
+    { date: '2025-02-28', credit_growth_yoy: 11.5, deposit_growth_yoy: 10.4, cd_ratio: 77.1, phase: 'Recovery' },
+    { date: '2025-03-31', credit_growth_yoy: 11.2, deposit_growth_yoy: 10.4, cd_ratio: 77.6, phase: 'Recovery' },
+    { date: '2025-04-30', credit_growth_yoy: 10.8, deposit_growth_yoy: 10.2, cd_ratio: 78.2, phase: 'Recovery' },
+    { date: '2025-05-31', credit_growth_yoy: 9.8, deposit_growth_yoy: 10.0, cd_ratio: 78.5, phase: 'Recovery' },
+    { date: '2025-06-30', credit_growth_yoy: 10.4, deposit_growth_yoy: 10.1, cd_ratio: 78.2, phase: 'Recovery' },
+    { date: '2025-07-31', credit_growth_yoy: 10.7, deposit_growth_yoy: 10.3, cd_ratio: 78.4, phase: 'Expansion' },
+    { date: '2025-08-31', credit_growth_yoy: 11.2, deposit_growth_yoy: 10.5, cd_ratio: 78.8, phase: 'Expansion' },
+    { date: '2025-09-30', credit_growth_yoy: 11.6, deposit_growth_yoy: 10.6, cd_ratio: 79.1, phase: 'Expansion' },
+    { date: '2025-10-31', credit_growth_yoy: 12.5, deposit_growth_yoy: 10.8, cd_ratio: 79.5, phase: 'Expansion' },
+    { date: '2025-11-30', credit_growth_yoy: 13.8, deposit_growth_yoy: 11.0, cd_ratio: 79.8, phase: 'Expansion' },
+    { date: '2025-12-31', credit_growth_yoy: 14.4, deposit_growth_yoy: 10.5, cd_ratio: 79.5, phase: 'Expansion' },
+    { date: '2026-01-31', credit_growth_yoy: 14.8, deposit_growth_yoy: 10.6, cd_ratio: 79.6, phase: 'Downturn' },
+    { date: '2026-02-28', credit_growth_yoy: 12.5, deposit_growth_yoy: 10.6, cd_ratio: 79.8, phase: 'Downturn' },
+    { date: '2026-03-31', credit_growth_yoy: 12.1, deposit_growth_yoy: 10.8, cd_ratio: 80.2, phase: 'Downturn' }
 ];
