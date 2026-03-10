@@ -1,13 +1,36 @@
 import React, { useMemo } from 'react';
-import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
-import { scaleLinear } from 'd3-scale';
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
+import { scaleThreshold } from 'd3-scale';
 import { TreasuryHolder } from '@/hooks/useTreasuryHolders';
 import { getISO3FromTIC } from '@/utils/ticCountryMapping';
 import { MetricType } from './TICWorldMapModule';
 import { Box } from '@mui/material';
 import { cn } from '@/lib/utils';
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+
+// Mapping country names to flags
+const COUNTRY_FLAGS: Record<string, string> = {
+    'Japan': '🇯🇵',
+    'United Kingdom': '🇬🇧',
+    'China, Mainland': '🇨🇳',
+    'Belgium': '🇧🇪',
+    'Luxembourg': '🇱🇺',
+    'Canada': '🇨🇦',
+    'Cayman Islands': '🇰🇾',
+    'Switzerland': '🇨🇭',
+    'Ireland': '🇮🇪',
+    'Taiwan': '🇹🇼',
+    'India': '🇮🇳',
+    'Hong Kong': '🇭🇰',
+    'Singapore': '🇸🇬',
+    'Brazil': '🇧🇷',
+    'Norway': '🇳🇴',
+    'France': '🇫🇷',
+    'Germany': '🇩🇪',
+    'Israel': '🇮🇱',
+};
 
 interface TICChoroplethMapProps {
     data: TreasuryHolder[];
@@ -20,18 +43,21 @@ interface TICChoroplethMapProps {
 export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric, hoveredCountry, onHover, onSelect }) => {
     const colorScale = useMemo(() => {
         const values = data.map(d => metric === 'holdings' ? d.holdings_usd_bn : (d.pct_of_total_foreign || 0));
-        return scaleLinear<string>()
-            .domain([0, Math.max(...values) * 0.8, Math.max(...values)])
-            .range(['#0d3b44', '#0e7490', '#22d3ee']);
+        const maxVal = Math.max(...values, 100);
+        
+        // 5-step quantized teal scale for high contrast
+        return scaleThreshold<number, string>()
+            .domain([maxVal * 0.05, maxVal * 0.15, maxVal * 0.35, maxVal * 0.7])
+            .range(['#112229', '#0891b2', '#06b6d4', '#22d3ee', '#67e8f9']);
     }, [data, metric]);
 
     const top10 = useMemo(() => data.slice(0, 10), [data]);
 
     return (
-        <Box className="w-full h-full relative cursor-crosshair">
+        <Box className="w-full h-full relative overflow-hidden bg-[#050505]">
             <ComposableMap
-                projectionConfig={{ rotate: [-10, 0, 0], scale: 140 }}
-                className="w-full h-full opacity-80"
+                projectionConfig={{ rotate: [-10, 0, 0], scale: 145 }}
+                className="w-full h-full"
             >
                 <Geographies geography={geoUrl}>
                     {({ geographies }) =>
@@ -48,12 +74,12 @@ export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric
                                     onMouseEnter={() => countryData && onHover(countryData)}
                                     onMouseLeave={() => onHover(null)}
                                     onClick={() => countryData && onSelect(countryData)}
-                                    fill={countryData ? colorScale(metric === 'holdings' ? countryData.holdings_usd_bn : (countryData.pct_of_total_foreign || 0)) : "rgba(255,255,255,0.02)"}
-                                    stroke={isHovered ? "#22d3ee" : isTop10 ? "rgba(34,211,238,0.3)" : "rgba(255,255,255,0.05)"}
-                                    strokeWidth={isHovered ? 1.5 : isTop10 ? 0.8 : 0.5}
+                                    fill={countryData ? colorScale(metric === 'holdings' ? countryData.holdings_usd_bn : (countryData.pct_of_total_foreign || 0)) : "#0f172a"}
+                                    stroke={isHovered ? "#ffffff" : isTop10 ? "rgba(34,211,238,0.5)" : "rgba(255,255,255,0.08)"}
+                                    strokeWidth={isHovered ? 1.5 : isTop10 ? 0.8 : 0.4}
                                     style={{
-                                        default: { outline: 'none', transition: 'all 250ms' },
-                                        hover: { outline: 'none', fill: countryData ? '#0891b2' : 'rgba(255,255,255,0.05)' },
+                                        default: { outline: 'none', transition: 'all 200ms' },
+                                        hover: { outline: 'none', fill: countryData ? '#0891b2' : '#1e293b', cursor: countryData ? 'pointer' : 'default' },
                                         pressed: { outline: 'none' }
                                     }}
                                 />
@@ -61,48 +87,37 @@ export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric
                         })
                     }
                 </Geographies>
-
-                {/* Top 10 Markers / Flag Indicators */}
-                {top10.map((h) => {
-                    const iso3 = getISO3FromTIC(h.country_name);
-                    if (!iso3) return null;
-
-                    return (
-                        <Marker key={h.country_name} coordinates={[0, 0]} /* Coordinates will be handled by centroid if possible, but react-simple-maps needs explicit coords for Marker */ >
-                            {/* Marker logic usually needs a lookup table for lat/long of country centroids */}
-                        </Marker>
-                    );
-                })}
             </ComposableMap>
 
-            {/* In-Map Tooltip (Follows Cursor style) */}
+            {/* Floating Tooltip Interface */}
             {hoveredCountry && (
-                <div className="absolute bottom-12 left-12 p-6 rounded-2xl bg-black/90 backdrop-blur-3xl border border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.15)] z-40 animate-in fade-in slide-in-from-bottom-2">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-1.5 h-6 bg-cyan-400 rounded-full" />
-                        <h4 className="text-sm font-black text-white uppercase tracking-widest italic">{hoveredCountry.country_name}</h4>
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                        <div>
-                            <span className="text-[0.6rem] font-black text-muted-foreground uppercase mb-1 block">Holdings</span>
-                            <span className="text-lg font-black text-white tabular-nums">${Math.round(hoveredCountry.holdings_usd_bn)}B</span>
+                <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 p-6 rounded-2xl bg-slate-950/95 backdrop-blur-3xl border border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] z-50 min-w-[260px] animate-in fade-in slide-in-from-bottom-4 duration-300">
+                    <div className="flex items-center gap-4 mb-4 border-b border-white/10 pb-3">
+                        <span className="text-3xl filter drop-shadow-md">{COUNTRY_FLAGS[hoveredCountry.country_name] || '🌐'}</span>
+                        <div className="flex flex-col">
+                            <h4 className="text-sm font-black text-white uppercase tracking-tight italic">{hoveredCountry.country_name}</h4>
+                            <span className="text-[0.55rem] font-black text-cyan-400 uppercase tracking-widest">Sovereign Treasury Holder</span>
                         </div>
-                        <div>
-                            <span className="text-[0.6rem] font-black text-muted-foreground uppercase mb-1 block">YoY Change</span>
-                            <span className={cn(
-                                "text-lg font-black tabular-nums",
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+                        <div className="space-y-1">
+                            <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Holdings</span>
+                            <div className="text-2xl font-black text-white tabular-nums">${Math.round(hoveredCountry.holdings_usd_bn)}B</div>
+                        </div>
+                        <div className="space-y-1 text-right">
+                            <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Share (%)</span>
+                            <div className="text-2xl font-black text-cyan-400 tabular-nums">{(hoveredCountry.pct_of_total_foreign || 0).toFixed(1)}%</div>
+                        </div>
+                        <div className="col-span-2 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Year-on-Year Change</span>
+                            <div className={cn(
+                                "flex items-center gap-1.5 text-sm font-black tabular-nums",
                                 (hoveredCountry.yoy_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"
                             )}>
-                                {(hoveredCountry.yoy_pct_change || 0) > 0 ? '+' : ''}{(hoveredCountry.yoy_pct_change || 0).toFixed(1)}%
-                            </span>
-                        </div>
-                        <div>
-                            <span className="text-[0.6rem] font-black text-muted-foreground uppercase mb-1 block">Share of Total</span>
-                            <span className="text-lg font-black text-cyan-400 tabular-nums">{(hoveredCountry.pct_of_total_foreign || 0).toFixed(1)}%</span>
-                        </div>
-                        <div>
-                            <span className="text-[0.6rem] font-black text-muted-foreground uppercase mb-1 block">Status</span>
-                            <span className="text-[0.6rem] font-black text-white px-2 py-0.5 rounded bg-white/10 uppercase tracking-tighter">TIC Reporting</span>
+                                {(hoveredCountry.yoy_pct_change || 0) > 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                                {Math.abs(hoveredCountry.yoy_pct_change || 0).toFixed(1)}%
+                            </div>
                         </div>
                     </div>
                 </div>

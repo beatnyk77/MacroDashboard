@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Box, Button, Skeleton } from '@mui/material';
-import { ArrowUpRight, ArrowDownRight, TrendingUp } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, TrendingUp, Globe, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTreasuryHolders, TreasuryHolder } from '@/hooks/useTreasuryHolders';
 import { TICChoroplethMap } from './TICChoroplethMap';
@@ -8,6 +8,27 @@ import { TICStatsDrawer } from './TICStatsDrawer';
 import { formatPercentage } from '@/utils/formatNumber';
 
 export type MetricType = 'holdings' | 'share';
+
+const COUNTRY_FLAGS: Record<string, string> = {
+    'Japan': '🇯🇵',
+    'United Kingdom': '🇬🇧',
+    'China, Mainland': '🇨🇳',
+    'Belgium': '🇧🇪',
+    'Luxembourg': '🇱🇺',
+    'Canada': '🇨🇦',
+    'Cayman Islands': '🇰🇾',
+    'Switzerland': '🇨🇭',
+    'Ireland': '🇮🇪',
+    'Taiwan': '🇹🇼',
+    'India': '🇮🇳',
+    'Hong Kong': '🇭🇰',
+    'Singapore': '🇸🇬',
+    'Brazil': '🇧🇷',
+    'Norway': '🇳🇴',
+    'France': '🇫🇷',
+    'Germany': '🇩🇪',
+    'Israel': '🇮🇱',
+};
 
 export const TICWorldMapModule: React.FC = () => {
     const { data: holders, isLoading } = useTreasuryHolders();
@@ -18,33 +39,40 @@ export const TICWorldMapModule: React.FC = () => {
     const latestHolders = useMemo(() => {
         if (!holders || holders.length === 0) return [];
         const latestDate = holders[0].as_of_date;
-        return holders.filter(h => h.as_of_date === latestDate && h.country_name !== 'Total Foreign' && h.country_name !== 'Grand Total');
+        return holders
+            .filter(h => h.as_of_date === latestDate && h.country_name !== 'Total Foreign' && h.country_name !== 'Grand Total')
+            .sort((a, b) => b.holdings_usd_bn - a.holdings_usd_bn);
     }, [holders]);
 
+    const top5 = useMemo(() => latestHolders.slice(0, 5), [latestHolders]);
     const top10 = useMemo(() => latestHolders.slice(0, 10), [latestHolders]);
 
-    if (isLoading) return <Skeleton variant="rectangular" height={700} className="rounded-[32px] bg-white/5" />;
+    if (isLoading) return <Skeleton variant="rectangular" height={750} className="rounded-[40px] bg-white/5" />;
 
     return (
-        <Box className="relative w-full min-h-[700px] rounded-[40px] border border-white/10 bg-[#050505] overflow-hidden group/module">
-            {/* 1. Header & Controls */}
-            <div className="absolute top-8 left-8 z-30 flex flex-col gap-6">
+        <Box className="relative w-full min-h-[750px] rounded-[48px] border border-white/10 bg-[#050505] overflow-hidden group/module shadow-3xl">
+            {/* 1. Header & Primary Controls */}
+            <div className="absolute top-10 left-10 z-30 flex flex-col gap-8 max-w-sm">
                 <div>
-                    <h2 className="text-2xl font-black uppercase tracking-tighter text-white italic">
-                        TOP FOREIGN <span className="text-cyan-400">HOLDERS</span> OF US TREASURIES
+                    <div className="flex items-center gap-2 mb-3">
+                        <Globe className="text-cyan-400 w-4 h-4" />
+                        <span className="text-[0.6rem] font-black text-cyan-400 uppercase tracking-[0.4em]">Global TIC Exposure</span>
+                    </div>
+                    <h2 className="text-4xl font-black uppercase tracking-tighter text-white leading-none">
+                        Top Foreign <span className="text-cyan-400">Holders</span>
                     </h2>
-                    <p className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest mt-1">
-                        TIC DATA BY GEOGRAPHY • PINPOINTING DE-DOLLARIZATION NODES
+                    <p className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-relaxed opacity-60">
+                        Pinpointing institutional demand and sovereign accumulation of US government debt
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2 bg-white/5 p-1 rounded-xl border border-white/5 w-fit backdrop-blur-xl">
+                <div className="flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-white/5 w-fit backdrop-blur-3xl shadow-2xl">
                     <Button
                         size="small"
                         onClick={() => setMetric('holdings')}
                         className={cn(
-                            "px-4 py-2 rounded-lg text-[0.6rem] font-black uppercase tracking-widest transition-all",
-                            metric === 'holdings' ? "bg-cyan-500 text-black shadow-[0_0_20px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
+                            "px-5 py-2.5 rounded-xl text-[0.6rem] font-black uppercase tracking-widest transition-all",
+                            metric === 'holdings' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
                         )}
                     >
                         Holdings ($B)
@@ -53,22 +81,46 @@ export const TICWorldMapModule: React.FC = () => {
                         size="small"
                         onClick={() => setMetric('share')}
                         className={cn(
-                            "px-4 py-2 rounded-lg text-[0.6rem] font-black uppercase tracking-widest transition-all",
-                            metric === 'share' ? "bg-cyan-500 text-black shadow-[0_0_20px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
+                            "px-5 py-2.5 rounded-xl text-[0.6rem] font-black uppercase tracking-widest transition-all",
+                            metric === 'share' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
                         )}
                     >
-                        Share of Total (%)
+                        Market Share
                     </Button>
                 </div>
             </div>
 
-            {/* 2. Side Panel (Ranked List) */}
-            <div className="absolute top-8 right-8 z-30 w-72 max-h-[calc(100%-120px)] overflow-y-auto hidden lg:block scrollbar-hide bg-black/40 backdrop-blur-3xl border border-white/5 rounded-3xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.2em]">Ranked Sovereigns</span>
-                    <TrendingUp size={14} className="text-cyan-400" />
+            {/* 2. Top 5 Power List (Bottom Left Overlay) */}
+            <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-3xl w-80">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-[0.7rem] font-black text-white uppercase tracking-widest">Top 5 Holders</span>
+                    <Layers className="text-cyan-400 w-4 h-4" />
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-5">
+                    {top5.map((h, i) => (
+                        <div key={h.country_name} className="flex items-center justify-between group/power cursor-pointer" onClick={() => setSelectedCountry(h)}>
+                            <div className="flex items-center gap-3">
+                                <span className="text-xl">{COUNTRY_FLAGS[h.country_name] || '🌐'}</span>
+                                <div className="flex flex-col">
+                                    <span className="text-[0.75rem] font-bold text-white group-hover/power:text-cyan-400 transition-colors uppercase truncate w-32">{h.country_name}</span>
+                                    <span className="text-[0.55rem] font-black text-white/30 tabular-nums">RANK #{(i+1).toString().padStart(2, '0')}</span>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <span className="text-sm font-black text-white italic">${Math.round(h.holdings_usd_bn)}B</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* 3. Ranked Sidebar (Desktop Right) */}
+            <div className="absolute top-10 right-10 z-30 w-72 max-h-[calc(100%-120px)] overflow-y-auto hidden lg:block scrollbar-hide bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 shadow-inner">
+                <div className="flex items-center justify-between mb-8">
+                    <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.3em]">Institutional Rank</span>
+                    <TrendingUp size={16} className="text-cyan-400" />
+                </div>
+                <div className="space-y-5">
                     {top10.map((h, i) => (
                         <div
                             key={h.country_name}
@@ -76,15 +128,15 @@ export const TICWorldMapModule: React.FC = () => {
                             onMouseLeave={() => setHoveredCountry(null)}
                             onClick={() => setSelectedCountry(h)}
                             className={cn(
-                                "flex items-center justify-between group/item cursor-pointer p-2 rounded-xl border border-transparent transition-all",
+                                "flex items-center justify-between group/item cursor-pointer p-3 rounded-2xl border border-transparent transition-all",
                                 (hoveredCountry?.country_name === h.country_name || selectedCountry?.country_name === h.country_name) ? "bg-cyan-500/10 border-cyan-500/20" : "hover:bg-white/5"
                             )}
                         >
-                            <div className="flex items-center gap-3">
-                                <span className="text-[0.6rem] font-black text-white/20 tabular-nums">{(i + 1).toString().padStart(2, '0')}</span>
+                            <div className="flex items-center gap-4">
+                                <span className="text-[0.65rem] font-black text-white/10 tabular-nums">{(i + 1).toString().padStart(2, '0')}</span>
                                 <div className="flex flex-col">
-                                    <span className="text-xs font-bold text-white group-hover/item:text-cyan-400 transition-colors uppercase truncate w-24">{h.country_name}</span>
-                                    <span className="text-[0.55rem] font-bold text-muted-foreground tracking-tighter tabular-nums">
+                                    <span className="text-[0.7rem] font-bold text-white group-hover/item:text-cyan-400 transition-colors uppercase truncate w-20">{h.country_name}</span>
+                                    <span className="text-[0.55rem] font-black text-cyan-400/50 tabular-nums uppercase">
                                         {formatPercentage(h.pct_of_total_foreign || 0, { decimals: 1 })} Share
                                     </span>
                                 </div>
@@ -92,34 +144,19 @@ export const TICWorldMapModule: React.FC = () => {
                             <div className="text-right">
                                 <div className="text-xs font-black text-white tabular-nums">${Math.round(h.holdings_usd_bn)}B</div>
                                 <div className={cn(
-                                    "flex items-center justify-end gap-1 text-[0.55rem] font-black tabular-nums",
+                                    "flex items-center justify-end gap-1 text-[0.6rem] font-black tabular-nums",
                                     (h.yoy_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"
                                 )}>
-                                    {(h.yoy_pct_change || 0) > 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                                    {(h.yoy_pct_change || 0) > 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                                     {Math.abs(h.yoy_pct_change || 0).toFixed(1)}%
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
-                <Button
-                    fullWidth
-                    className="mt-6 py-3 rounded-xl bg-white/5 border border-white/10 text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest hover:text-white transition-all"
-                >
-                    View All Holdings
-                </Button>
             </div>
 
-            {/* 3. Filter Chips (Top Center) */}
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30 hidden xl:flex items-center gap-3">
-                {['All Holders', 'Top 10', 'Rising YoY', 'Falling YoY'].map(f => (
-                    <button key={f} className="px-5 py-2 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest hover:border-cyan-500/50 hover:text-white transition-all">
-                        {f}
-                    </button>
-                ))}
-            </div>
-
-            {/* 4. Core Map Visualization */}
+            {/* 4. Core Map Component */}
             <TICChoroplethMap
                 data={latestHolders}
                 metric={metric}
@@ -128,24 +165,29 @@ export const TICWorldMapModule: React.FC = () => {
                 onSelect={setSelectedCountry}
             />
 
-            {/* 5. Legend (Bottom Center) */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 w-96 flex flex-col gap-2 px-8">
-                <div className="flex justify-between text-[0.55rem] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">
-                    <span>Low Exposure</span>
+            {/* 5. Quantized Legend (Bottom Right Center) */}
+            <div className="absolute bottom-10 right-10 z-30 hidden md:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/5 p-6 rounded-[2rem] shadow-2xl min-w-[320px]">
+                <div className="flex justify-between text-[0.6rem] font-black text-white/40 uppercase tracking-[0.2em]">
+                    <span>Minimum Exposure</span>
                     <span>Median</span>
-                    <span>High Exposure</span>
+                    <span>High Demand</span>
                 </div>
-                <div className="h-1.5 w-full rounded-full bg-gradient-to-r from-[#0d3b44] via-cyan-900 to-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]" />
+                <div className="flex gap-1 h-3 w-full px-1">
+                    <div className="flex-1 bg-[#112229] rounded-l-md border border-white/5" />
+                    <div className="flex-1 bg-[#0891b2] border border-white/5" />
+                    <div className="flex-1 bg-[#06b6d4] border border-white/5" />
+                    <div className="flex-1 bg-[#22d3ee] border border-white/5" />
+                    <div className="flex-1 bg-[#67e8f9] rounded-r-md border border-white/5" />
+                </div>
+                <div className="flex justify-between items-center mt-1">
+                    <span className="text-[10px] text-muted-foreground/40 font-mono uppercase tracking-tight italic">
+                        As of {latestHolders[0] ? new Date(latestHolders[0].as_of_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '--'} • US Treasury TIC Stats
+                    </span>
+                    <Globe size={12} className="text-muted-foreground/20" />
+                </div>
             </div>
 
-            {/* 6. Footer Info (Bottom Left) */}
-            <div className="absolute bottom-8 left-8 z-30">
-                <p className="text-[10px] text-muted-foreground/40 font-mono uppercase tracking-tight">
-                    Last updated: {holders && holders[0]?.as_of_date ? new Date(holders[0].as_of_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '--'} • Source: U.S. Treasury TIC
-                </p>
-            </div>
-
-            {/* 7. Stats Drawer (Selected Country Overlay) */}
+            {/* 6. Stats Drawer Overlay */}
             <TICStatsDrawer
                 country={selectedCountry}
                 allData={holders || []}
