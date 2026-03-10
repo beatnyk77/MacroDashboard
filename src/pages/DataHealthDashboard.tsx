@@ -58,6 +58,40 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000 // 1 min
     });
 
+    // 5. NEW: Energy Terminal Tracking
+    const { data: energyStatus } = useQuery({
+        queryKey: ['energy-terminal-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('india_energy').select('state_code', { count: 'exact', head: true });
+            if (error) throw error;
+            
+            const { data: latestEntry } = await supabase.from('india_energy').select('last_updated_at').order('last_updated_at', { ascending: false }).limit(1).single();
+            
+            return {
+                stateCount: data?.length || 0,
+                lastUpdated: latestEntry?.last_updated_at
+            };
+        },
+        refetchInterval: 300000 // 5 min
+    });
+
+    // 6. NEW: ASI Matrix Tracking
+    const { data: asiStatus } = useQuery({
+        queryKey: ['asi-matrix-status'],
+        queryFn: async () => {
+            const { count, error } = await supabase.from('india_asi').select('state_code', { count: 'exact', head: true }).eq('year', 2023).eq('sector', 'all_industries');
+            if (error) throw error;
+            
+            const { data: latestEntry } = await supabase.from('india_asi').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
+            
+            return {
+                stateCount: count || 0,
+                lastUpdated: latestEntry?.as_of_date
+            };
+        },
+        refetchInterval: 300000 // 5 min
+    });
+
     const [refreshing, setRefreshing] = React.useState<string | null>(null);
 
     const handleForceRefresh = async (functionName: string) => {
@@ -160,6 +194,32 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="primary" onClick={() => handleForceRefresh('generate-newsletter')} disabled={refreshing === 'generate-newsletter'}>
                                 {refreshing === 'generate-newsletter' ? <CircularProgress size={20} /> : <Send size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>ASI Matrix</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {asiStatus ? `${asiStatus.stateCount}/36 states` : 'Unknown'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="primary" onClick={() => handleForceRefresh('ingest-asi')} disabled={refreshing === 'ingest-asi'}>
+                                {refreshing === 'ingest-asi' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f59e0b', fontWeight: 700, display: 'block', lineHeight: 1 }}>Energy Terminal</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {energyStatus ? `${energyStatus.stateCount}/36 states` : 'Unknown'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-energy')} disabled={refreshing === 'ingest-energy'}>
+                                {refreshing === 'ingest-energy' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
