@@ -86,6 +86,8 @@ Deno.serve(async (req: Request) => {
     const errors = [];
     const batchSize = 10; 
 
+    const rawPayloads: any[] = [];
+
     for (let i = 0; i < targetMetrics.length; i += batchSize) {
       if (Date.now() - startTime > runtimeBudget) {
         console.log('Runtime budget exceeded, stopping early');
@@ -106,6 +108,10 @@ Deno.serve(async (req: Request) => {
 
             const sofrData = await sofrRes.json() as any;
             const effrData = await effrRes.json() as any;
+            
+            rawPayloads.push({ metricId: 'SOFR', data: sofrData });
+            rawPayloads.push({ metricId: 'EFFR', data: effrData });
+
             const sofrObs = sofrData.observations || [];
             const effrObs = effrData.observations || [];
             const effrMap = new Map(effrObs.map((o: any) => [o.date, parseFloat(o.value)]));
@@ -144,6 +150,9 @@ Deno.serve(async (req: Request) => {
         try {
           const response = await withTimeout(fetchWithRetry(url), 10000, `FRED Fetch ${fredId}`);
           const data = await response.json() as any;
+          
+          rawPayloads.push({ metricId: metric.id, data });
+
           if (!data.observations) return { metricId: metric.id, count: 0, success: false, error: 'No observations' };
 
           const observations = data.observations
@@ -183,6 +192,7 @@ Deno.serve(async (req: Request) => {
 
     return {
       rows_inserted: totalRows,
+      raw_payload: rawPayloads,
       metadata: {
         attempted: targetMetrics.length,
         successful: successCount,

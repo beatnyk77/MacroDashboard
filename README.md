@@ -107,9 +107,10 @@ GDP figures are backward-looking, seasonally adjusted, and consistently revised.
 GraphiQuestor is engineered to meet the exacting standards of sovereign wealth funds and tier-one research teams.
 
 *   **Autonomous 25-Year Ingestion Pipelines:** Serverless Edge Functions (Supabase/Deno) autonomously harvest data from official sources (BIS, NDB, MoSPI, FRED, EIA, RBI) daily. Our time-series metrics span from 2000 to the present, capturing the dot-com crash, the GFC, the QE era, and COVID-19 stimulus perfectly for reliable Z-score calculation.
-*   **Resilient, Self-Healing Operations:** Automatic schema drift detection and API rate limit management. If source structures change, the system gracefully logs discrepancies and maintains operational continuity.
+*   **Institutional-Grade Data Health & Provenance:** Every data point is tagged with a `provenance` certificate (`api_live`, `fallback_snapshot`), providing full transparency on data origin. Our **Authenticity Score** provides a real-time "trust percentage" for all active dashboards.
+*   **Materialized Performance Layer:** High-frequency metrics are served via a **trigger-synchronized materialization layer**, ensuring sub-millisecond dashboard responsiveness even during massive volatility spikes.
+*   **Resilient, Self-Healing Operations:** Automatic schema drift detection and API rate limit management. If source structures change, the system gracefully logs discrepancies and maintains operational continuity via granular telemetry (`status_code`, `api_latency_ms`).
 *   **Secure Infrastructure & High Availability:** Row-Level Security (RLS) policies, parameterized queries to prevent injection attacks, redundant database replicas, and global CDN distribution ensure robust security, fast load times, and reliable uptime during periods of acute market stress.
-*   **Data Governance:** Every metric features a freshness/staleness indicator. We provide full transparency on data provenance with direct links to original sources, coupled with Z-Score standardization for apples-to-apples comparisons across disparate datasets.
 
 ---
 

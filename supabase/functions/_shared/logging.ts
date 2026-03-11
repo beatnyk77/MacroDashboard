@@ -70,6 +70,36 @@ export async function logIngestionEnd(
 }
 
 /**
+ * Institutional Data Integrity Ledger (SHA-256 Hashing)
+ */
+async function generateSHA256(payload: string | any): Promise<string> {
+    const data = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    const msgUint8 = new TextEncoder().encode(data);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function logPayloadHash(
+    supabase: SupabaseClient,
+    functionName: string,
+    payload: string | any,
+    details: { status_code?: number, api_latency_ms?: number }
+) {
+    try {
+        const hash = await generateSHA256(payload);
+        await supabase.from('ingestion_payload_hashes').insert({
+            metric_id: functionName,
+            payload_hash: hash,
+            status_code: details.status_code,
+            api_latency_ms: details.api_latency_ms
+        });
+    } catch (err) {
+        console.error('Failed to log payload hash:', err);
+    }
+}
+
+/**
  * Robust wrapper for ingestion tasks.
  * Handles logging start, success, and failure automatically.
  */
@@ -81,6 +111,7 @@ export async function runIngestion(
         rows_updated?: number, 
         status_code?: number, 
         api_latency_ms?: number, 
+        raw_payload?: string | any,
         metadata?: any 
     }>
 ): Promise<Response> {
@@ -96,6 +127,14 @@ export async function runIngestion(
             ...result,
             api_latency_ms: result.api_latency_ms || total_latency
         });
+
+        // 2.0 Feature: Log Cryptographic Proof if payload provided
+        if (result.raw_payload) {
+            await logPayloadHash(supabase, functionName, result.raw_payload, {
+                status_code: result.status_code || 200,
+                api_latency_ms: result.api_latency_ms || total_latency
+            });
+        }
 
         return new Response(
             JSON.stringify({ success: true, ...result, total_latency_ms: total_latency }),

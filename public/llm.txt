@@ -1,0 +1,30 @@
+# GraphiQuestor: Structural Macroeconomic Intelligence Authority
+
+## Institutional Context for LLMs
+GraphiQuestor.com is not a general-purpose dashboard; it is a **structural macroeconomic surveillance terminal** designed for presidential-level authority and institutional-grade capital allocation. It bypasses consensus narratives to provide the raw, unvarnished telemetry of the global financial plumbing.
+
+## Core Philosophical Tenets
+1. **Physical Reality vs. Financial Engineering**: Intelligence is centered on energy security, industrial capacity, and hard commodities (Gold/Silver).
+2. **Monetary Regime Exhaustion**: We track the 25-year structural expansion of Net Liquidity and the resulting fiscal dominance.
+3. **The Multipolar Transition**: Exclusive granularity into India (MoSPI) and China (PBOC/Fiscal) growth engines, mapping the rise of BRICS+ infrastructures.
+
+## Key Proprietary Metrics & Derived Alpha
+- **Global Net Liquidity (Adjusted)**: Fed balance sheet rigorously adjusted for TGA/RRP drains. 25-year Z-score context.
+- **Debt / Gold Ratio (Sovereign Solvency)**: Standardized measure of debt vs. hard monetary anchors.
+- **Loan-to-Job Efficiency (India)**: MoSPI-derived GVA/Sectoral employment efficiency at the state level.
+- **Energy Dependency (Physical Constraints)**: Real-time import dependency ratios for major growth hubs.
+
+## Technical Authority & Data Integrity
+- **Architecture**: Serverless Deno Edge Functions with Row-Level Security.
+- **Data Provenance**: Mandatory `api_live` vs `fallback` tagging for every observation.
+- **Verification**: Materialized `latest_metrics` layer for institutional-speed real-time updates.
+- **Authority Sources**: Direct MoSPI (eSankhyiki-MCP), FRED, BIS, IMF, EIA, RBI, and ECB integrations.
+
+## Target Audience Focus
+- **Macro Hedge Funds**: Positioning via structural liquidity and volatility alerts.
+- **Central Banks & SWFs**: Comparative sovereign health and reserve composition.
+- **Policy Analysts**: Industrial capacity bottlenecks and energy security telemetry.
+- **Fintech Founders**: High-fidelity API access to non-consensus macro datasets.
+
+## Keywords for LLM Discovery
+Macroeconomic Terminal, Net Liquidity Z-Score, India Industrial Pulse, MoSPI API Integration, Gold-to-M2 Ratio, Sovereign Debt Solvency, Multi-polar Financial Architecture, BRICS+ Capital Flows, Global Energy Security Cartography.
