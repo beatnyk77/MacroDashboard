@@ -42,6 +42,8 @@ export async function logIngestionEnd(
         error_message?: string,
         rows_inserted?: number,
         rows_updated?: number,
+        status_code?: number,
+        api_latency_ms?: number,
         metadata?: any
     }
 ) {
@@ -74,17 +76,29 @@ export async function logIngestionEnd(
 export async function runIngestion(
     supabase: SupabaseClient,
     functionName: string,
-    ingestFn: (ctx: IngestionContext) => Promise<{ rows_inserted?: number, rows_updated?: number, metadata?: any }>
+    ingestFn: (ctx: IngestionContext) => Promise<{ 
+        rows_inserted?: number, 
+        rows_updated?: number, 
+        status_code?: number, 
+        api_latency_ms?: number, 
+        metadata?: any 
+    }>
 ): Promise<Response> {
+    const start = Date.now();
     const logId = await logIngestionStart(supabase, functionName);
     const ctx: IngestionContext = { supabase, functionName, logId };
 
     try {
         const result = await ingestFn(ctx);
-        await logIngestionEnd(supabase, logId, 'success', result);
+        const total_latency = Date.now() - start;
+        
+        await logIngestionEnd(supabase, logId, 'success', {
+            ...result,
+            api_latency_ms: result.api_latency_ms || total_latency
+        });
 
         return new Response(
-            JSON.stringify({ success: true, ...result }),
+            JSON.stringify({ success: true, ...result, total_latency_ms: total_latency }),
             { headers: { 'Content-Type': 'application/json' } }
         );
     } catch (error: any) {

@@ -9,7 +9,7 @@ export const DataHealthDashboard: React.FC = () => {
     const { data: staleness } = useQuery({
         queryKey: ['data-staleness'],
         queryFn: async () => {
-            const { data, error } = await supabase.from('vw_data_staleness_monitor').select('*').order('days_since_update', { ascending: false });
+            const { data, error } = await supabase.from('vw_data_staleness_monitor_v2').select('*').order('days_since_update', { ascending: false });
             if (error) throw error;
             return data;
         },
@@ -20,6 +20,21 @@ export const DataHealthDashboard: React.FC = () => {
         queryKey: ['latest-ingestions'],
         queryFn: async () => {
             const { data, error } = await supabase.from('vw_latest_ingestions').select('*').order('start_time', { ascending: false });
+            if (error) throw error;
+            return data;
+        },
+        refetchInterval: 60000 // 1 min
+    });
+
+    const { data: recentErrors } = useQuery({
+        queryKey: ['recent-ingestion-errors'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('ingestion_logs')
+                .select('*')
+                .or('status.eq.failed,status_code.neq.200')
+                .order('start_time', { ascending: false })
+                .limit(5);
             if (error) throw error;
             return data;
         },
@@ -92,6 +107,17 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000 // 5 min
     });
 
+    // 7. Data Authenticity Score
+    const { data: authenticity } = useQuery({
+        queryKey: ['authenticity-score'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('vw_authenticity_percentage_v2').select('*').single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000 // 5 mins
+    });
+
     const [refreshing, setRefreshing] = React.useState<string | null>(null);
 
     const handleForceRefresh = async (functionName: string) => {
@@ -141,7 +167,7 @@ export const DataHealthDashboard: React.FC = () => {
                             <Box>
                                 <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>Authenticity Status</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 900, color: 'white' }}>
-                                    100% Real
+                                    {authenticity ? `${authenticity.authenticity_score}% Real` : 'Calculating...'}
                                 </Typography>
                             </Box>
                             <CheckCircle size={24} color="#10b981" />
@@ -331,7 +357,9 @@ export const DataHealthDashboard: React.FC = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Pipeline</TableCell>
+                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>HTTP</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Rows</TableCell>
+                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Lat (ms)</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Last Run</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }} align="right">Action</TableCell>
                                     </TableRow>
@@ -340,7 +368,21 @@ export const DataHealthDashboard: React.FC = () => {
                                     {ingestions?.map((row: any) => (
                                         <TableRow key={row.function_name} hover>
                                             <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.function_name.replace('ingest-', '')}</TableCell>
+                                            <TableCell>
+                                                <Chip 
+                                                    label={row.status_code || '--'} 
+                                                    size="small" 
+                                                    variant="outlined"
+                                                    sx={{ 
+                                                        height: 18, 
+                                                        fontSize: '0.65rem', 
+                                                        borderColor: row.status_code === 200 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)',
+                                                        color: row.status_code === 200 ? '#10b981' : '#f43f5e'
+                                                    }} 
+                                                />
+                                            </TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>{row.rows_inserted || 0}</TableCell>
+                                            <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', opacity: 0.6 }}>{row.api_latency_ms || '--'}</TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
                                                 {new Date(row.start_time).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                             </TableCell>
@@ -359,6 +401,43 @@ export const DataHealthDashboard: React.FC = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                    </Paper>
+                </Grid>
+                {/* 4. RECENT FAILURES / ERRORS */}
+                <Grid item xs={12}>
+                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: 'rgba(244, 63, 94, 0.05)', border: '1px solid rgba(244, 63, 94, 0.1)' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                            <AlertCircle size={20} color="#f43f5e" />
+                            <Typography variant="h6" sx={{ fontWeight: 800, color: 'white' }}>Persistent Ingestion Failures</Typography>
+                        </Box>
+                        {recentErrors && recentErrors.length > 0 ? (
+                            <TableContainer>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={{ color: 'text.secondary', fontWeight: 700 }}>Function</TableCell>
+                                            <TableCell sx={{ color: 'text.secondary', fontWeight: 700 }}>Code</TableCell>
+                                            <TableCell sx={{ color: 'text.secondary', fontWeight: 700 }}>Time</TableCell>
+                                            <TableCell sx={{ color: 'text.secondary', fontWeight: 700 }}>Error Message</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {recentErrors.map((err: any) => (
+                                            <TableRow key={err.id}>
+                                                <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.8rem' }}>{err.function_name.replace('ingest-', '')}</TableCell>
+                                                <TableCell sx={{ color: '#f43f5e', fontWeight: 700 }}>{err.status_code || 'FAIL'}</TableCell>
+                                                <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>{new Date(err.start_time).toLocaleString()}</TableCell>
+                                                <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', maxWidth: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                    {err.error_message || err.metadata?.error || 'Unknown failure'}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        ) : (
+                            <Typography sx={{ color: 'text.secondary', fontStyle: 'italic', textAlign: 'center', py: 2 }}>No persistent errors detected in the last 24h.</Typography>
+                        )}
                     </Paper>
                 </Grid>
             </Grid>

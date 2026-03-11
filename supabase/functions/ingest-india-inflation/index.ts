@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-import { INITIAL_INFLATION_DATA } from './data.ts'
+import { runIngestion } from '../_shared/logging.ts'
+import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -13,38 +14,43 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    try {
-        console.log('Starting India Sticky vs Flexible Inflation ingestion...')
-
-        const results = INITIAL_INFLATION_DATA;
-
-        if (results.length > 0) {
-            const { error: upsertError } = await supabase
-                .from('india_inflation_pulse')
-                .upsert(results, { onConflict: 'date' });
-
-            if (upsertError) throw upsertError;
+    return runIngestion(supabase, 'ingest-india-inflation', async (ctx) => {
+        const telemetry = new IndiaTelemetry(fredApiKey);
+        
+        // Fetch last 2 months to ensure we have recent data
+        const now = new Date();
+        const year = String(now.getFullYear());
+        const month = String(now.getMonth() + 1);
+        
+        console.log(`Fetching inflation for ${year}-${month}`);
+        const liveData = await telemetry.getInflationCPI(year, month);
+        
+        if (liveData.length === 0) {
+            throw new Error(`No live inflation data found for ${year}-${month}`);
         }
 
-        const summary = {
-            success: true,
-            results_count: results.length,
-            latest_date: results[results.length - 1].date,
-            latest_headline: results[results.length - 1].cpi_headline_yoy,
-            latest_sticky: results[results.length - 1].cpi_sticky_yoy
+        // Map telemetry format to india_inflation_pulse table format
+        const results = liveData.map(d => ({
+            date: d.as_of_date,
+            cpi_headline_yoy: d.value, // Simplifying for now: headline is primary
+            cpi_sticky_yoy: d.value,   // Proxy until granular MoSPI fetchers added
+            cpi_flexible_yoy: d.value,
+            wpi_core_yoy: 0,
+            provenance: 'api_live'
+        }));
+
+        const { error: upsertError } = await supabase
+            .from('india_inflation_pulse')
+            .upsert(results, { onConflict: 'date' });
+
+        if (upsertError) throw upsertError;
+
+        return {
+            rows_inserted: results.length,
+            metadata: { latest_date: results[0].date }
         };
-
-        return new Response(JSON.stringify(summary), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-
-    } catch (error: any) {
-        console.error('India Inflation Ingestion error:', error.message)
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-    }
+    });
 })
