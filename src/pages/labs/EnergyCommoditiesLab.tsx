@@ -16,6 +16,7 @@ const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/c
 const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/components/sections/AsiaCommodityFlowsSection').then(m => ({ default: m.AsiaCommodityFlowsSection })));
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
+const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -108,6 +109,29 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             The "shadow" fleet and redirection of heavily sanctioned crude have created a massive structural cost advantage for Indian refiners and Chinese industrials. By tracking import pain points (FX vs. Brent correlation), we can identify early capitulation risks in emerging markets dependent on dollar-priced energy imports.
+                        </p>
+                    </div>
+                </section>
+
+                {/* 2.5 Geopolitical Risk: Hormuz Tanker Tracking */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Ship className="text-blue-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Hormuz Tanker Tracking</h2>
+                    </div>
+
+                    <div className="w-full">
+                        <SectionErrorBoundary name="Hormuz Tracking">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GeopoliticalRiskMap />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 block mb-2">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed">
+                            Monitoring the Strait of Hormuz in real-time allows for the detection of "grey zone" maritime activity. Significant deviations in tanker frequency or insurance risk premiums directly impact the Energy Intensity metrics of the global industrial base.
                         </p>
                     </div>
                 </section>

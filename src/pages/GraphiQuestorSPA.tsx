@@ -39,6 +39,7 @@ const EastWestDebtInfluence = lazy(() => import('@/features/dashboard/components
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const ScenarioStudio = lazy(() => import('@/features/dashboard/components/sections/ScenarioStudio').then(m => ({ default: m.ScenarioStudio })));
+const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -112,6 +113,17 @@ export const GraphiQuestorSPA: React.FC = () => {
                             The Heartbeat suite monitors 48+ data points across G7 and EM markets to detect regime shifts in real-time.
                         </p>
                     </div>
+                </SPASection>
+
+                {/* ═══════════════════════════════════════════════════════════════════
+                    GEOPOLITICAL OSINT: LIVE RISK MAP
+                ═══════════════════════════════════════════════════════════════════ */}
+                <SPASection id="geopolitical-osint" variant="hero">
+                    <SectionErrorBoundary name="Geopolitical Risk Map">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GeopoliticalRiskMap />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </SPASection>
 
                 {/* Regime Context Band */}

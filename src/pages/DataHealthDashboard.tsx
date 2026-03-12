@@ -107,7 +107,24 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000 // 5 min
     });
 
-    // 7. Data Authenticity Score
+    // 7. NEW: Geopolitical OSINT Tracking
+    const { data: osintStatus } = useQuery({
+        queryKey: ['osint-status'],
+        queryFn: async () => {
+            const { count, error } = await supabase.from('geopolitical_osint').select('*', { count: 'exact', head: true });
+            if (error) throw error;
+            
+            const { data: latestEntry } = await supabase.from('geopolitical_osint').select('timestamp').order('timestamp', { ascending: false }).limit(1).single();
+            
+            return {
+                assetCount: count || 0,
+                lastUpdated: latestEntry?.timestamp
+            };
+        },
+        refetchInterval: 60000 // 1 min
+    });
+
+    // 8. Data Authenticity Score
     const { data: authenticity } = useQuery({
         queryKey: ['authenticity-score'],
         queryFn: async () => {
@@ -259,6 +276,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="success" onClick={() => handleForceRefresh('ingest-nse-flows')} disabled={refreshing === 'ingest-nse-flows'}>
                                 {refreshing === 'ingest-nse-flows' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(96, 165, 250, 0.05)', border: '1px solid rgba(96, 165, 250, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Geopolitical OSINT</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {osintStatus ? `${osintStatus.assetCount} Assets` : 'Unknown'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-geopolitical-osint')} disabled={refreshing === 'ingest-geopolitical-osint'}>
+                                {refreshing === 'ingest-geopolitical-osint' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
