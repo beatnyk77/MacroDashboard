@@ -40,6 +40,7 @@ const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/component
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const ScenarioStudio = lazy(() => import('@/features/dashboard/components/sections/ScenarioStudio').then(m => ({ default: m.ScenarioStudio })));
 const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
+const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -122,6 +123,17 @@ export const GraphiQuestorSPA: React.FC = () => {
                     <SectionErrorBoundary name="Geopolitical Risk Map">
                         <Suspense fallback={<LoadingFallback />}>
                             <GeopoliticalRiskMap />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </SPASection>
+
+                {/* ═══════════════════════════════════════════════════════════════════
+                    GRIT INDEX: SOVEREIGN STRESS MONITOR
+                ═══════════════════════════════════════════════════════════════════ */}
+                <SPASection id="grit-monitor" variant="hero">
+                    <SectionErrorBoundary name="GRIT Index Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GritIndexMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
                 </SPASection>
