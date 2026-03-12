@@ -39,6 +39,7 @@ const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGo
 const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLab').then(module => ({ default: module.EnergyCommoditiesLab })));
 const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').then(module => ({ default: module.SovereignStressLab })));
 const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(module => ({ default: module.ShadowSystemLab })));
+const SustainableFinanceLab = lazy(() => import('@/pages/labs/SustainableFinanceLab').then(module => ({ default: module.SustainableFinanceLab })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -92,6 +93,7 @@ function App() {
                                         <Route path="/labs/energy-commodities" element={<EnergyCommoditiesLab />} />
                                         <Route path="/labs/sovereign-stress" element={<SovereignStressLab />} />
                                         <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
+                                        <Route path="/labs/sustainable-finance-climate-risk" element={<SustainableFinanceLab />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />

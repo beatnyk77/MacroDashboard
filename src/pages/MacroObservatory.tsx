@@ -10,7 +10,8 @@ import {
     Building2,
     EyeOff,
     ChevronRight,
-    Search
+    Search,
+    Leaf
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -22,6 +23,7 @@ const labs = [
     { title: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Fuel size={24} />, color: 'orange', desc: 'Strategic supply chains & oil-rupee settlement pulse' },
     { title: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <Building2 size={24} />, color: 'purple', desc: 'EM credit matrix & systemic refinance risk analytics' },
     { title: 'Shadow System', path: '/labs/shadow-system', icon: <EyeOff size={24} />, color: 'zinc', desc: 'Capital flight indices & illicit trade flow telemetry' },
+    { title: 'Sustainable Finance & Climate Risk', path: '/labs/sustainable-finance-climate-risk', icon: <Leaf size={24} />, color: 'emerald', desc: 'Climate transition alpha & institutional ESG risk telemetry' },
 ];
 
 const colorMap: Record<string, string> = {
