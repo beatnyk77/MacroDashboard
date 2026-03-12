@@ -15,6 +15,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
+const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -56,7 +57,20 @@ export const SovereignStressLab: React.FC = () => {
             </Box>
 
             <div className="space-y-32">
-                {/* 1. Sovereign Risk Matrix */}
+                {/* 1. GRIT Index Monitor */}
+                <section id="grit-monitor" className="scroll-mt-32">
+                    <div className="flex items-center gap-3 mb-10">
+                        <TrendingUp className="text-emerald-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">GRIT Index Monitor</h2>
+                    </div>
+                    <SectionErrorBoundary name="GRIT Index">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GritIndexMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                {/* 2. Sovereign Risk Matrix */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-purple-500" size={28} />

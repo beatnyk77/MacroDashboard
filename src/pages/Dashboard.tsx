@@ -356,6 +356,7 @@ export const Dashboard: React.FC = () => {
                                 </blockquote>
                                 <Button
                                     variant="outlined"
+                                    href="/labs/sovereign-stress#grit-monitor"
                                     sx={{
                                         borderColor: 'white/10', color: 'white', fontWeight: 900, px: 6, py: 2, borderRadius: '16px',
                                         '&:hover': { borderColor: 'white', bg: 'white/5' }

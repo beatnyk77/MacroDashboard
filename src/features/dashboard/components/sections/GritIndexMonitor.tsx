@@ -12,6 +12,7 @@ import { useGritIndex } from '@/hooks/useGritIndex';
 export const GritIndexMonitor: React.FC = () => {
   const { data: gritData, isLoading, error } = useGritIndex();
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [methodologyOpen, setMethodologyOpen] = useState(false);
 
   const processedData = useMemo(() => {
     if (!gritData) return [];
@@ -83,6 +84,12 @@ export const GritIndexMonitor: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col items-end">
+          <button 
+            onClick={() => setMethodologyOpen(true)} 
+            className="px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-sm text-[10px] text-white font-mono uppercase tracking-[0.2em] transition-all mb-4"
+          >
+            [Read_Methodology]
+          </button>
           <div className="text-gray-500 text-[10px] font-mono mb-1 uppercase tracking-widest">Global Risk Baseline</div>
           <div className="text-3xl font-black text-white font-mono flex items-baseline gap-2 leading-none">
             {globalAvg.toFixed(2)}
@@ -290,6 +297,86 @@ export const GritIndexMonitor: React.FC = () => {
           v1.0.4-beta // GRIT-ALGO-ACTIVE
         </div>
       </div>
+
+      {/* METHODOLOGY MODAL */}
+      {methodologyOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#0a0a0b] border border-[#2e2e33] rounded-sm shadow-2xl p-8 sm:p-12 font-mono scrollbar-thin scrollbar-thumb-white/10 text-white">
+            {/* Modal Header */}
+            <div className="flex justify-between items-start mb-12 border-b border-white/10 pb-6">
+              <div>
+                <div className="text-[10px] tracking-[0.3em] text-gray-500 uppercase mb-2">Internal Working Paper Series // Restricted</div>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase leading-none">
+                  Methodology: The <span className="text-emerald-500">GRIT</span> Index
+                </h2>
+              </div>
+              <button 
+                onClick={() => setMethodologyOpen(false)}
+                className="text-gray-500 hover:text-white transition-colors"
+              >
+                [CLOSE]
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="space-y-8 text-sm text-gray-300 leading-relaxed">
+              <section>
+                <h3 className="text-emerald-500 font-bold tracking-widest uppercase mb-3">1. Executive Summary</h3>
+                <p>
+                  The Geopolitical Risk & Institutional Transition (GRIT) Index is a composite framework designed to monitor systemic sovereign stress and reserve base diversification velocity across major global economies. It moves beyond traditional debt-to-GDP metrics to encompass monetary resilience, yielding a holistic signal of structural sovereign solvency and transition risk.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-emerald-500 font-bold tracking-widest uppercase mb-3">2. Core Equation</h3>
+                <div className="p-6 bg-white/[0.02] border border-white/5 my-4 overflow-x-auto text-center font-mono">
+                  <span className="text-white text-lg">
+                    GRIT_t = 0.60 × (\Delta DebtStress) + 0.40 × (\Delta MonetaryResilience)
+                  </span>
+                </div>
+                <p className="mt-4">
+                  The index normalizes independent vector inputs (Debt vs. Reserves) into a 0-100 scale, weighting structural leverage (60%) over immediate monetary liquidity buffers (40%). 
+                </p>
+              </section>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <section>
+                  <h3 className="text-emerald-500 font-bold tracking-widest uppercase mb-3">3. Debt Stress Vector (60%)</h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li><strong className="text-white">Govt Debt / GDP:</strong> Primary structural encumbrance gauge.</li>
+                    <li><strong className="text-white">Govt Deficit / GDP:</strong> Velocity of new debt issuance need.</li>
+                    <li><strong className="text-white">Target Sovereign Yield:</strong> Cost of systemic carry and market absorption stress.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-emerald-500 font-bold tracking-widest uppercase mb-3">4. Monetary Resilience (40%)</h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li><strong className="text-white">Gold Reserve Velocity:</strong> Central bank accumulation vs historical run-rate.</li>
+                    <li><strong className="text-white">Debt / Gold Proxy:</strong> Unencumbered fiat structural backing.</li>
+                    <li><strong className="text-white">Current Acct / GDP:</strong> External funding reliance.</li>
+                  </ul>
+                </section>
+              </div>
+
+              <section className="p-6 border border-red-500/20 bg-red-500/5 mt-8">
+                <h3 className="text-red-500 font-bold tracking-widest uppercase mb-3 flex items-center gap-2">
+                  <AlertTriangle size={16} />
+                  5. Crisis Multiplier (Hard Override)
+                </h3>
+                <p>
+                  Should any active Banking, Sovereign Debt, or Currency crisis flags trigger within the GMD event dataset, the overarching algorithm forces a <strong>minimum risk rating of 85</strong>. This structural circuit breaker ensures trailing macroeconomic data does not mask sudden capital flight or institutional fracture.
+                </p>
+              </section>
+
+              <div className="pt-8 border-t border-white/5 flex items-center justify-between text-gray-500 text-[10px] tracking-widest uppercase">
+                <span>Model Designation: GRIT-V1.0.4-BETA</span>
+                <span>Author: Elite Reserve Directorate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
