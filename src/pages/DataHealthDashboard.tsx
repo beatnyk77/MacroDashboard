@@ -124,7 +124,24 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000 // 1 min
     });
 
-    // 8. Data Authenticity Score
+    // 8. NEW: Prediction Market Terminal Tracking
+    const { data: predictionMarketStatus } = useQuery({
+        queryKey: ['prediction-market-status'],
+        queryFn: async () => {
+            const { count, error } = await supabase.from('domeapi_markets').select('*', { count: 'exact', head: true });
+            if (error) throw error;
+            
+            const { data: latestEntry } = await supabase.from('domeapi_markets').select('last_updated').order('last_updated', { ascending: false }).limit(1).single();
+            
+            return {
+                marketCount: count || 0,
+                lastUpdated: latestEntry?.last_updated
+            };
+        },
+        refetchInterval: 60000 // 1 min
+    });
+
+    // 9. Data Authenticity Score
     const { data: authenticity } = useQuery({
         queryKey: ['authenticity-score'],
         queryFn: async () => {
@@ -276,6 +293,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="success" onClick={() => handleForceRefresh('ingest-nse-flows')} disabled={refreshing === 'ingest-nse-flows'}>
                                 {refreshing === 'ingest-nse-flows' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(96, 165, 250, 0.05)', border: '1px solid rgba(96, 165, 250, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Prediction Markets</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {predictionMarketStatus ? `${predictionMarketStatus.marketCount} Markets` : 'Unknown'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-prediction-markets')} disabled={refreshing === 'ingest-prediction-markets'}>
+                                {refreshing === 'ingest-prediction-markets' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>

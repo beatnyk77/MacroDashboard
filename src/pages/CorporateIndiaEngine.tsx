@@ -10,10 +10,14 @@ import {
     Download,
     LineChart,
     Building2,
-    Globe
+    Globe,
+    Flame,
+    Briefcase,
+    TrendingDown,
+    Ship
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Screener } from '@/features/CIE/Screener';
 import { QuarterlyAggregator } from '@/features/CIE/QuarterlyAggregator';
 import { InstitutionalWatchlists } from '@/features/CIE/InstitutionalWatchlists';
@@ -22,10 +26,16 @@ import { PromoterActivityHeatmap } from '@/features/CIE/PromoterActivityHeatmap'
 import { BulkBlockReport } from '@/features/CIE/BulkBlockReport';
 import { ShortSellingReport } from '@/features/CIE/ShortSellingReport';
 import { UpcomingIPOs } from '@/features/CIE/UpcomingIPOs';
-import { Flame, Briefcase, TrendingDown, Ship } from 'lucide-react';
+import { SEOManager } from '@/components/SEOManager';
 
 export const CorporateIndiaEngine: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'screener' | 'heatmap' | 'aggregates' | 'watchlists' | 'promoters' | 'deals' | 'shortSelling' | 'ipos'>('screener');
+    const { tool } = useParams<{ tool: string }>();
+    const navigate = useNavigate();
+    const activeTab = tool || 'screener';
+    
+    const setActiveTab = (tab: string) => {
+        navigate(`/india-equities/${tab}`);
+    };
     const [showMacroOverlay, setShowMacroOverlay] = useState(true);
 
     const { data: globalStats } = useQuery({
@@ -59,6 +69,11 @@ export const CorporateIndiaEngine: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#050810] text-gray-100">
+            <SEOManager 
+                title={`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} | Corporate India Engine`}
+                description="Institutional fundamental terminal for Indian equities integrated with high-frequency macro telemetry. Filter for structural resilience, state-wise exposure, and formalization premiums."
+                keywords={['Corporate India', 'Equity Screener', 'Nifty 500 Fundamentals', 'Macro-Corporate Health', activeTab]}
+            />
             {/* CIE Hero / Navigation Header */}
             <header className="pt-24 pb-12 border-b border-white/5 relative overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none">

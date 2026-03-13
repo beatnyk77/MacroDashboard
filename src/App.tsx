@@ -79,7 +79,8 @@ function App() {
                                         <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
                                         <Route path="/india-equities" element={<CorporateIndiaEngine />} />
-                                        <Route path="/india-equities/:ticker" element={<CompanyDetail />} />
+                                        <Route path="/india-equities/:tool" element={<CorporateIndiaEngine />} />
+                                        <Route path="/india-equities/equity/:ticker" element={<CompanyDetail />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
                                         <Route path="/institutional" element={<ForInstitutional />} />
