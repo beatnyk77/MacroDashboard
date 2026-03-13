@@ -7,7 +7,8 @@ import {
     MapPin,
     Zap,
     Activity,
-    BarChart3
+    BarChart3,
+    Landmark
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -20,7 +21,7 @@ const IndiaFiscalStressMonitor = lazy(() => import('@/features/dashboard/compone
 const IndiaDebtMaturityWall = lazy(() => import('@/features/dashboard/components/rows/IndiaDebtMaturityWall').then(m => ({ default: m.IndiaDebtMaturityWall })));
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
 const RBIFXDefenseMonitor = lazy(() => import('@/features/dashboard/components/rows/RBIFXDefenseMonitor').then(m => ({ default: m.RBIFXDefenseMonitor })));
-const IndiaLiquidityStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaLiquidityStressMonitor').then(m => ({ default: m.IndiaLiquidityStressMonitor })));
+const RBIMoneyMarketMonitor = lazy(() => import('@/features/dashboard/components/sections/RBIMoneyMarketMonitor').then(m => ({ default: m.RBIMoneyMarketMonitor })));
 const IndiaInflationPulseMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaInflationPulseMonitor').then(m => ({ default: m.IndiaInflationPulseMonitor })));
 const IndiaDigitizationPremiumMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor').then(m => ({ default: m.IndiaDigitizationPremiumMonitor })));
 const IndiaFiscalAllocationTracker = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalAllocationTracker').then(m => ({ default: m.IndiaFiscalAllocationTracker })));
@@ -169,14 +170,14 @@ export const IndiaLab: React.FC = () => {
 
                 {/* 6. Liquidity & Inflation */}
                 <div className="space-y-24">
-                    <section>
+                    <section id="liquidity-monitor">
                         <div className="flex items-center gap-3 mb-8">
-                            <Zap className="text-amber-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Liquidity Stress</h2>
+                            <Landmark className="text-blue-500" size={24} />
+                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Daily Money Market Terminal</h2>
                         </div>
-                        <SectionErrorBoundary name="India Liquidity Stress">
+                        <SectionErrorBoundary name="India Money Market">
                             <Suspense fallback={<LoadingFallback />}>
-                                <IndiaLiquidityStressMonitor />
+                                <RBIMoneyMarketMonitor />
                             </Suspense>
                         </SectionErrorBoundary>
                     </section>
