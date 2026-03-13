@@ -9,7 +9,6 @@ import {
     FlaskConical,
     Activity,
     Mail,
-    ArrowRight,
     TrendingUp,
     Anchor,
     ShieldAlert
@@ -18,26 +17,17 @@ import { SPASection } from '@/components/spa';
 import { SectionHeader } from '@/components/SectionHeader';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { SEOManager } from '@/components/SEOManager';
-import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
-import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 
 // Row Components
-import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
 import { GeopoliticalEventsRow } from '@/features/dashboard/components/rows/GeopoliticalEventsRow';
 
 // Lazy load key components for the homepage
-const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
-const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const CompactIndiaCard = lazy(() => import('@/features/dashboard/components/cards/CompactIndiaCard').then(m => ({ default: m.CompactIndiaCard })));
 const CompactChinaCard = lazy(() => import('@/features/dashboard/components/cards/CompactChinaCard').then(m => ({ default: m.CompactChinaCard })));
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const CompactCommodityCard = lazy(() => import('@/features/commodities/components/CompactCommodityCard').then(m => ({ default: m.CompactCommodityCard })));
 const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
-const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
-const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketTerminal').then(m => ({ default: m.PredictionMarketTerminal })));
-const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
-const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -108,7 +98,7 @@ export const Dashboard: React.FC = () => {
                                     MACRO OBSERVATORY FOR THE<br />
                                     <span className="text-blue-500">MULTIPOLAR ERA</span>
                                 </h1>
-                                <p className="text-lg md:text-xl text-muted-foreground max-w-xl uppercase font-bold tracking-tight opacity-70 mb-10 leading-tight">
+                                <p className="text-lg md:text-xl text-muted-foreground max-w-xl font-medium opacity-80 mb-10 leading-relaxed">
                                     Track global liquidity, sovereign stress, and India/China regimes. Not a Sovereign AI product—pure analytical independence.
                                 </p>
 
@@ -135,7 +125,7 @@ export const Dashboard: React.FC = () => {
                                     <Button
                                         variant="outlined"
                                         size="large"
-                                        onClick={() => window.location.href = '/institutional'}
+                                        onClick={() => window.location.href = '/terminal'}
                                         sx={{
                                             borderColor: 'rgba(255,255,255,0.1)',
                                             color: 'white',
@@ -148,13 +138,13 @@ export const Dashboard: React.FC = () => {
                                             '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.05)' }
                                         }}
                                     >
-                                        For Funds & Family Offices
+                                        Enter Terminal
                                     </Button>
                                 </div>
 
                                 <div className="email-capture-glass max-w-md">
                                     <TextField
-                                        placeholder="Enter email for Weekly Regime Digest"
+                                        placeholder="Enter institutional email..."
                                         variant="standard"
                                         InputProps={{
                                             disableUnderline: true,
@@ -183,7 +173,7 @@ export const Dashboard: React.FC = () => {
                                             '&:hover': { bgcolor: 'rgba(255,255,255,0.8)' }
                                         }}
                                     >
-                                        Join
+                                        Receive Unfiltered Telemetry
                                     </Button>
                                 </div>
                             </div>
@@ -434,127 +424,6 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </SPASection>
 
-                {/* 8.6 PREDICTION MARKET TERMINAL (DOME API) */}
-                <SPASection id="prediction-terminal" className="py-24 bg-blue-500/[0.01] border-y border-white/5">
-                    <div className="max-w-7xl mx-auto px-4 space-y-16">
-                        <SectionHeader
-                            title="Prediction Market Terminal"
-                            subtitle="Real-time multi-platform probability aggregation via DomeAPI"
-                        />
-
-                        <SectionErrorBoundary name="Prediction Markets">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div className="space-y-12">
-                                    <PredictionMarketTerminal />
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                        <ArbitrageScanner />
-                                        <PredictionMarketHeatmap />
-                                    </div>
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-                </SPASection>
-
-                {/* 9. THE MATURITY WALL */}
-                <SPASection id="maturity-wall" className="py-24">
-                    <div className="max-w-6xl mx-auto px-4">
-                        <SectionHeader
-                            title="Global Bond Maturity"
-                            subtitle="Tracking the $9.2T structural gravitational force."
-                        />
-                        <SectionErrorBoundary name="Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div className="mt-16 pt-16 border-t border-white/5">
-                                    <USDebtMaturityWall />
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                        <ChartInsightSummary id="hero-insight" insight="US Debt rollover remains the primary gravitational force. The maturity wall dictates the floor for global yields." />
-                    </div>
-                </SPASection>
-
-                {/* 10. MACRO HEARTBEAT (Enhanced with KPI Grid) */}
-                <SPASection id="heartbeat" className="py-24">
-                    <div className="max-w-6xl mx-auto px-4">
-                        <SectionHeader
-                            title="Macro Heartbeat"
-                            subtitle="High-frequency liquidity and regime signals"
-                        />
-
-                        <div className="mt-16 space-y-24">
-                            <SectionErrorBoundary name="KPI Grid">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <CockpitKPIGrid />
-                                </Suspense>
-                            </SectionErrorBoundary>
-
-                            <SectionErrorBoundary name="Net Liquidity">
-                                <div className="space-y-8">
-                                    <NetLiquidityRow />
-                                    <div className="p-8 rounded-3xl bg-blue-500/[0.03] border border-blue-500/10">
-                                        <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                                            <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-[0.65rem]">Regime Insight:</span>
-                                            Net liquidity dictates the short-term path of risk assets. We monitor the TGA and RRP to detect shifts before they manifest in pricing.
-                                        </p>
-                                    </div>
-                                </div>
-                            </SectionErrorBoundary>
-
-                            <SectionErrorBoundary name="Capital Flows Terminal">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <div className="space-y-8 pt-16 border-t border-white/5">
-                                        <CapitalFlowsTerminal hideHeader />
-                                        <div className="p-8 rounded-3xl bg-blue-500/[0.03] border border-blue-500/10">
-                                            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                                                <span className="text-blue-400 font-black uppercase mr-3 tracking-widest text-[0.65rem]">Flow Context:</span>
-                                                Structural shifts in offshore US dollar availability often precede Treasury auction stress and FX vol.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-                    </div>
-                </SPASection>
-
-                {/* 11. US FISCAL & MACRO STRESS */}
-                <SPASection id="us-fiscal" className="py-24">
-                    <div className="max-w-6xl mx-auto px-4">
-                        <SectionHeader
-                            title="Sovereign Stress"
-                            subtitle="Treasury demand dynamics and auction stress levels"
-                        />
-                        <div className="mt-16 space-y-12">
-                            <SectionErrorBoundary name="Treasury Demand">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <div className="p-12 rounded-[40px] bg-white/[0.02] border border-white/5">
-                                        <USTreasuryDemandGauge />
-                                    </div>
-                                </Suspense>
-                            </SectionErrorBoundary>
-                            <div className="p-12 rounded-[40px] bg-blue-500/[0.03] border border-blue-500/10 relative overflow-hidden">
-                                <div className="relative z-10">
-                                    <p className="text-3xl text-white font-black uppercase tracking-tighter mb-6">The US Maturity Wall is now a structural issue.</p>
-                                    <p className="text-muted-foreground leading-relaxed text-lg mb-10 max-w-4xl font-medium">
-                                        As US interest expense exceeds defense spending, "Auction Stress" becomes the primary driver for yields. We monitor primary dealer absorption to detect when the market stops biting.
-                                    </p>
-                                    <Button
-                                        variant="contained"
-                                        href="/labs/us-macro-fiscal"
-                                        endIcon={<ArrowRight size={16} />}
-                                        sx={{
-                                            bgcolor: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 900, px: 4, py: 1.5, borderRadius: '12px',
-                                            border: '1px solid rgba(59, 130, 246, 0.2)', '&:hover': { bgcolor: 'rgba(59, 130, 246, 0.2)' }
-                                        }}
-                                    >
-                                        Detailed US Fiscal Intelligence
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </SPASection>
 
                 {/* 12. INSTITUTIONAL TEASER */}
                 <SPASection id="institutional-teaser" className="py-24">
@@ -564,7 +433,7 @@ export const Dashboard: React.FC = () => {
                                 <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase leading-none mb-6">
                                     FOR FUNDS & <span className="text-blue-500">FAMILY OFFICES</span>
                                 </h2>
-                                <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto font-bold uppercase tracking-tight opacity-70">
+                                <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto font-medium opacity-80 leading-relaxed">
                                     Institutional-grade macro telemetry starting at $28/mo. Built for high-frequency regime timing and long-term transition planning.
                                 </p>
                                 <div className="flex flex-wrap justify-center gap-12 mb-12">

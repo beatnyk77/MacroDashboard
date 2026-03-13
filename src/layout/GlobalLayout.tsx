@@ -6,6 +6,7 @@ import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { NavigationSidebar } from '@/components/NavigationSidebar';
+import { TerminalSidebar } from '@/components/TerminalSidebar';
 import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
@@ -21,6 +22,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
     const location = useLocation();
     const isObservatory = location.pathname.includes('/macro-observatory');
+    const isTerminalOrLab = location.pathname === '/terminal' || location.pathname.startsWith('/labs') || location.pathname.startsWith('/india-equities') || location.pathname.startsWith('/intel');
+    const isMarketingPage = location.pathname === '/';
 
 
     useEffect(() => {
@@ -142,8 +145,12 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </header>
 
             <div className="flex flex-1">
-                {/* Navigation Sidebar (Desktop Only) */}
-                <NavigationSidebar />
+                {/* Conditionally Render Sidebars Based on Route */}
+                {isTerminalOrLab ? (
+                    <TerminalSidebar />
+                ) : !isMarketingPage ? (
+                    <NavigationSidebar />
+                ) : null}
 
                 <main className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden min-w-0">
                     <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
