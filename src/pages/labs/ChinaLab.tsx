@@ -23,9 +23,26 @@ const LoadingFallback = () => (
     </div>
 );
 
+import { SEOManager } from '@/components/SEOManager';
+
 export const ChinaLab: React.FC = () => {
     return (
         <Container maxWidth={false} sx={{ py: 6 }}>
+            <SEOManager 
+                title="China Macro Intelligence Lab | De-Dollarization & Liquidity"
+                description="High-frequency monitor for China's real economy, credit impulse, and PBoC gold reserves. Specialized tracking for de-dollarization momentum."
+                keywords={['China Macro', 'Credit Impulse', 'PBoC Gold', 'De-dollarization', 'China Economy Monitor']}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Dataset",
+                    "name": "China Macro Intelligence Pulse",
+                    "description": "Real-time economic indicators for the People's Republic of China including GDP, Credit Impulse, and FX Reserves.",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor"
+                    }
+                }}
+            />
             {/* Breadcrumbs */}
             <Box sx={{ mb: 4 }}>
                 <Breadcrumbs

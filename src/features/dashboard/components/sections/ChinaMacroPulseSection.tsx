@@ -104,6 +104,26 @@ export const ChinaMacroPulseSection: React.FC = () => {
                 </button>
             </div>
 
+            {/* Fallback Table for AI Crawlers (GEO) */}
+            <div className="sr-only" aria-hidden="true">
+                <table>
+                    <caption>China Macro Pulse - High Frequency Indicators</caption>
+                    <thead>
+                        <tr>
+                            <th>Indicator</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>GDP Growth (YoY)</td><td>{gdp?.value ?? '--'}</td><td>%</td></tr>
+                        <tr><td>Credit Impulse</td><td>{credit?.value ?? '--'}</td><td>%</td></tr>
+                        <tr><td>CPI Inflation</td><td>{cpi?.value ?? '--'}</td><td>%</td></tr>
+                        <tr><td>Gold Reserves</td><td>{chinaReserves?.gold_reserves ?? '--'}</td><td>t</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div className="grid grid-cols-1 gap-12">
                 {/* Core Activity Grid */}
                 <div className="space-y-6">

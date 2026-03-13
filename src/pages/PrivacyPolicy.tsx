@@ -1,8 +1,14 @@
 import { Container, Typography, Box } from '@mui/material';
+import { SEOManager } from '@/components/SEOManager';
 
 export const PrivacyPolicy = () => {
     return (
         <Container maxWidth="md" sx={{ py: 8 }}>
+            <SEOManager 
+                title="Privacy Policy | GraphiQuestor"
+                description="Our commitment to your data privacy and security. Learn how GraphiQuestor handles user information."
+                keywords={['Privacy Policy', 'Data Security', 'GraphiQuestor Privacy']}
+            />
             <Typography variant="h3" gutterBottom>Privacy Policy</Typography>
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">1. Data Collection</Typography>

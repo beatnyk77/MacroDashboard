@@ -19,9 +19,26 @@ const LoadingFallback = () => (
     </div>
 );
 
+import { SEOManager } from '@/components/SEOManager';
+
 export const SustainableFinanceLab: React.FC = () => {
     return (
         <Container maxWidth={false} sx={{ py: 6 }}>
+            <SEOManager 
+                title="Sustainable Finance & Climate Risk Lab"
+                description="Monitoring the intersection of global finance and climate entropy. Tracking physical risk, energy transition velocity, and green capital flows."
+                keywords={['Sustainable Finance', 'Climate Risk', 'Green Transition', 'ESG Data', 'Climate Entropy']}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Dataset",
+                    "name": "Climate Finance & Energy Transition Data",
+                    "description": "Global dataset tracking climate risk exposure and energy transition momentum.",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor"
+                    }
+                }}
+            />
             {/* Breadcrumbs */}
             <Box sx={{ mb: 4 }}>
                 <Breadcrumbs

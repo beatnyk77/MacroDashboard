@@ -52,6 +52,29 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                 </div>
             </div>
 
+            {/* Fallback Table for AI Crawlers (GEO) */}
+            <div className="sr-only" aria-hidden="true">
+                <table>
+                    <caption>Geopolitical OSINT - Tracked High-Value Assets</caption>
+                    <thead>
+                        <tr>
+                            <th>Callsign</th>
+                            <th>Type</th>
+                            <th>Correlation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {assets?.map(asset => (
+                            <tr key={asset.id}>
+                                <td>{asset.callsign}</td>
+                                <td>{asset.type}</td>
+                                <td>{asset.macro_correlation}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             {/* Map */}
             <ComposableMap
                 projection="geoMercator"

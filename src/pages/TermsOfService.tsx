@@ -1,8 +1,14 @@
 import { Container, Typography, Box } from '@mui/material';
+import { SEOManager } from '@/components/SEOManager';
 
 export const TermsOfService = () => {
     return (
         <Container maxWidth="md" sx={{ py: 8 }}>
+            <SEOManager 
+                title="Terms of Service | GraphiQuestor"
+                description="Terms and conditions for using the GraphiQuestor platform and its institutional intelligence tools."
+                keywords={['Terms of Service', 'User Agreement', 'GraphiQuestor Terms']}
+            />
             <Typography variant="h3" gutterBottom>Terms of Service</Typography>
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">1. API Usage</Typography>

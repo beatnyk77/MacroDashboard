@@ -33,9 +33,26 @@ const LoadingFallback = () => (
     </div>
 );
 
+import { SEOManager } from '@/components/SEOManager';
+
 export const IndiaLab: React.FC = () => {
     return (
         <Container maxWidth={false} sx={{ py: 6 }}>
+            <SEOManager 
+                title="India Macro Pulse | Institutional Economic Monitor"
+                description="Comprehensive real-time monitoring of India's macroeconomic health, DPI integration, and state-capex resilience. High-frequency data for institutional investors."
+                keywords={['India Macro', 'Nifty 500 Fundamentals', 'India Economy Pulse', 'India Data Dashboard', 'Structural India']}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Dataset",
+                    "name": "India Macro Resilience Index",
+                    "description": "High-frequency activity monitor for the Indian economy, tracking formalization and fiscal health.",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor"
+                    }
+                }}
+            />
             {/* Breadcrumbs */}
             <Box sx={{ mb: 4 }}>
                 <Breadcrumbs

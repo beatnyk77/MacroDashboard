@@ -98,6 +98,29 @@ export const GritIndexMonitor: React.FC = () => {
         </div>
       </div>
 
+      {/* Fallback Table for AI Crawlers (GEO) */}
+      <div className="sr-only" aria-hidden="true">
+        <table>
+          <caption>Geopolitical Risk & Institutional Transition (GRIT) Index - Leaderboard</caption>
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>GRIT Score</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {processedData.slice(0, 10).map(item => (
+              <tr key={item.country_code}>
+                <td>{item.country_code}</td>
+                <td>{item.grit_score.toFixed(1)}</td>
+                <td>{item.is_crisis_active ? 'Crisis Active' : 'Structural Stress'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Panel: Rankings & Terminal */}
         <div className="lg:col-span-4 space-y-6">
