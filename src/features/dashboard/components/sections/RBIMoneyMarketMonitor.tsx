@@ -19,7 +19,6 @@ import {
   Legend
 } from 'recharts';
 import { useRBIMoneyMarket } from '@/hooks/useRBIMoneyMarket';
-import { formatCurrency, formatPercent } from '@/lib/utils';
 
 export const RBIMoneyMarketMonitor: React.FC = () => {
   const { ops, liq, isLoading, isError } = useRBIMoneyMarket();

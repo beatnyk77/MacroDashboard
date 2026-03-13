@@ -4,11 +4,26 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { motion } from 'framer-motion';
-import { Globe, TrendingDown, Zap, BarChart2, Shield, ArrowRight } from 'lucide-react';
+import { Globe, TrendingDown, ArrowRight, Package2, Leaf, Cpu } from 'lucide-react';
 
-// Lazy-load heavy sub-sections
+// Lazy-load all sections
 const ChinaMacroPulseSection = lazy(() =>
     import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection }))
+);
+const ChinaPBOCLiquidityMonitor = lazy(() =>
+    import('@/features/dashboard/components/sections/ChinaPBOCLiquidityMonitor').then(m => ({ default: m.ChinaPBOCLiquidityMonitor }))
+);
+const ChinaRealEconomyPanel = lazy(() =>
+    import('@/features/dashboard/components/sections/ChinaRealEconomyPanel').then(m => ({ default: m.ChinaRealEconomyPanel }))
+);
+const ChinaExternalSectorPanel = lazy(() =>
+    import('@/features/dashboard/components/sections/ChinaExternalSectorPanel').then(m => ({ default: m.ChinaExternalSectorPanel }))
+);
+const ChinaEnergyGridPanel = lazy(() =>
+    import('@/features/dashboard/components/sections/ChinaEnergyGridPanel').then(m => ({ default: m.ChinaEnergyGridPanel }))
+);
+const ChinaProprietarySignals = lazy(() =>
+    import('@/features/dashboard/components/sections/ChinaProprietarySignals').then(m => ({ default: m.ChinaProprietarySignals }))
 );
 
 const SectionSkeleton = () => (
@@ -16,19 +31,22 @@ const SectionSkeleton = () => (
 );
 
 const SIGNAL_CARDS = [
-    { icon: Globe, label: 'Macro Pulse', desc: 'GDP growth, credit impulse & PBoC policy', color: 'red' },
-    { icon: TrendingDown, label: 'Deflation Risk', desc: 'CPI & PPI deflation pressure monitor', color: 'rose' },
-    { icon: BarChart2, label: 'Credit Impulse', desc: 'New credit as % of GDP — leading indicator', color: 'amber' },
-    { icon: Zap, label: 'Industrial Velocity', desc: 'Industrial production & retail sales YoY', color: 'orange' },
-    { icon: Shield, label: 'FX & Gold Reserves', desc: 'PBoC USD reserves & gold accumulation', color: 'yellow' },
+    { icon: Globe,    label: 'PBOC Liquidity',   desc: 'MLF, reverse repo, M2 & regime',         color: 'red',    anchor: '#pboc' },
+    { icon: TrendingDown, label: 'Real Economy', desc: 'NBS vs Caixin PMI, IP & retail',          color: 'orange', anchor: '#real-economy' },
+    { icon: Package2, label: 'External Sector',  desc: 'Trade balance, FX reserves & exports',   color: 'blue',   anchor: '#external' },
+    { icon: Leaf,     label: 'Energy & Carbon',  desc: 'Grid carbon intensity & transition risk', color: 'green',  anchor: '#energy' },
+    { icon: Cpu,      label: 'Alpha Signals',    desc: 'Credit impulse, de-dollarization, distress', color: 'purple', anchor: '#signals' },
 ];
 
 const colorMap: Record<string, string> = {
-    red: 'text-red-500 bg-red-500/10 border-red-500/20',
-    rose: 'text-rose-500 bg-rose-500/10 border-rose-500/20',
-    amber: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
+    red:    'text-red-500 bg-red-500/10 border-red-500/20',
+    rose:   'text-rose-500 bg-rose-500/10 border-rose-500/20',
+    amber:  'text-amber-500 bg-amber-500/10 border-amber-500/20',
     orange: 'text-orange-500 bg-orange-500/10 border-orange-500/20',
     yellow: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
+    blue:   'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    green:  'text-green-400 bg-green-500/10 border-green-500/20',
+    purple: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
 };
 
 export const IntelChinaPage: React.FC = () => {
@@ -37,27 +55,23 @@ export const IntelChinaPage: React.FC = () => {
         "@type": "Place",
         "name": "China",
         "description": "Institutional macro intelligence for China — covering PBoC monetary policy, credit impulse, deflation risk, industrial production, and de-dollarization strategy.",
-        "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 35.8617,
-            "longitude": 104.1954
-        }
+        "geo": { "@type": "GeoCoordinates", "latitude": 35.8617, "longitude": 104.1954 }
     };
 
     const collectionSchema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         "name": "China Macro Intelligence Hub",
-        "description": "Institutional-grade macro telemetry for China: credit impulse, deflation risk, industrial velocity, PBoC policy rates, FX reserves, and de-dollarization trends.",
+        "description": "Institutional-grade macro telemetry for China: PBOC liquidity, PMI, trade balance, FX reserves, grid carbon intensity, credit impulse, and de-dollarization velocity.",
         "url": "https://graphiquestor.com/intel/china",
-        "about": {
-            "@type": "Place",
-            "name": "China"
-        },
+        "about": { "@type": "Place", "name": "China" },
         "hasPart": [
-            { "@type": "WebPage", "name": "China Macro Pulse", "url": "https://graphiquestor.com/intel/china#macro" },
-            { "@type": "WebPage", "name": "China Credit Impulse", "url": "https://graphiquestor.com/intel/china#credit" },
-            { "@type": "WebPage", "name": "China De-Dollarization", "url": "https://graphiquestor.com/intel/china#dedollarization" },
+            { "@type": "WebPage", "name": "China Macro Pulse",         "url": "https://graphiquestor.com/intel/china#macro" },
+            { "@type": "WebPage", "name": "PBOC Liquidity Monitor",   "url": "https://graphiquestor.com/intel/china#pboc" },
+            { "@type": "WebPage", "name": "Real Economy Activity",    "url": "https://graphiquestor.com/intel/china#real-economy" },
+            { "@type": "WebPage", "name": "External Sector & Trade",  "url": "https://graphiquestor.com/intel/china#external" },
+            { "@type": "WebPage", "name": "Energy & Transition Risk", "url": "https://graphiquestor.com/intel/china#energy" },
+            { "@type": "WebPage", "name": "Proprietary Alpha Signals","url": "https://graphiquestor.com/intel/china#signals" },
         ]
     };
 
@@ -65,51 +79,48 @@ export const IntelChinaPage: React.FC = () => {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://graphiquestor.com/" },
+            { "@type": "ListItem", "position": 1, "name": "Home",         "item": "https://graphiquestor.com/" },
             { "@type": "ListItem", "position": 2, "name": "Intelligence", "item": "https://graphiquestor.com/intel/china" },
-            { "@type": "ListItem", "position": 3, "name": "China", "item": "https://graphiquestor.com/intel/china" }
+            { "@type": "ListItem", "position": 3, "name": "China",        "item": "https://graphiquestor.com/intel/china" }
         ]
     };
 
     const datasetSchema = {
         "@context": "https://schema.org",
         "@type": "Dataset",
-        "name": "China Macro-Activity & De-Dollarization Telemetry",
-        "description": "High-frequency activity monitor for China tracking credit impulse, deflation risk, industrial production velocity, PBoC monetary policy, and gold reserves accumulation.",
+        "name": "China Macro-Activity, PBOC & Energy Telemetry",
+        "description": "High-frequency activity monitor for China tracking credit impulse, deflation risk, industrial production velocity, PBoC monetary policy, gold and FX reserves, trade balance, and grid carbon intensity.",
         "url": "https://graphiquestor.com/intel/china",
         "license": "https://creativecommons.org/licenses/by/4.0/",
-        "creator": {
-            "@type": "Organization",
-            "name": "GraphiQuestor Intelligence"
-        },
-        "keywords": ["China", "PBoC", "Credit Impulse", "Deflation", "De-Dollarization"]
+        "creator": { "@type": "Organization", "name": "GraphiQuestor Intelligence" },
+        "keywords": ["China", "PBoC", "Credit Impulse", "Deflation", "De-Dollarization", "China Energy Transition", "China PMI", "China Trade Balance"]
     };
 
     return (
         <div className="min-h-screen bg-[#050810]">
-            {/* Schema Injection */}
+            {/* Schema */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
-                title="China Macro Intelligence Hub — PBoC, Credit Impulse & Deflation Risk"
-                description="Institutional-grade macro telemetry for China: credit impulse (new credit/GDP), PBoC monetary policy, CPI/PPI deflation risk, industrial production velocity, FX reserves, and gold accumulation trends."
+                title="China Macro Intelligence Hub — PBOC, PMI, Credit Impulse & Energy Transition"
+                description="Institutional-grade macro telemetry for China: PBOC liquidity operations, NBS vs Caixin PMI, trade balance, FX reserves, grid carbon intensity, China credit impulse, de-dollarization velocity, and corporate distress score."
                 keywords={[
                     'China Macro Intelligence', 'PBoC Monetary Policy', 'China Credit Impulse',
                     'China Deflation Risk', 'China Industrial Production', 'China FX Reserves',
-                    'China Gold Reserves', 'China De-Dollarization', 'China GDP Growth',
-                    'China Institutional Macro'
+                    'China Gold Reserves', 'China De-Dollarization', 'China PMI', 'China Trade Balance',
+                    'China Carbon Intensity', 'China Energy Transition', 'China Institutional Macro'
                 ]}
             />
 
             {/* Hero */}
             <section className="relative overflow-hidden pt-24 pb-16 border-b border-white/5">
-                {/* Ambient glow */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-red-600/8 rounded-full blur-[120px]" />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-red-600/8 rounded-full blur-[140px]" />
                     <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-amber-500/5 rounded-full blur-[100px]" />
+                    <div className="absolute top-1/2 left-0 w-[300px] h-[200px] bg-blue-500/5 rounded-full blur-[80px]" />
                 </div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-8">
@@ -128,27 +139,42 @@ export const IntelChinaPage: React.FC = () => {
                         className="flex items-start gap-6 mb-10"
                     >
                         <span className="text-6xl md:text-8xl select-none">🇨🇳</span>
-                        <div>
+                        <div className="flex-1">
                             <p className="text-[0.65rem] font-black text-red-400 uppercase tracking-[0.3em] mb-2">GraphiQuestor Intelligence Series</p>
-                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-none">
+                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-none mb-4">
                                 China<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-amber-400">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-300 to-amber-400">
                                     Macro Hub
                                 </span>
                             </h1>
-                            <p className="mt-4 text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
-                                High-frequency activity monitor tracking China's credit impulse, deflation risk, industrial velocity, PBoC monetary stance, FX reserves, and de-dollarization momentum — sourced from NBS, PBoC, and IMF DOTS.
+                            <p className="mt-2 text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
+                                Institutional-grade macro intelligence for the world's second-largest economy.
+                                Daily coverage of PBOC liquidity operations, PMI divergence, trade flows, energy transition,
+                                and proprietary signals — designed for symmetric East vs West macro analysis.
                             </p>
-                            <div className="flex flex-wrap gap-3 mt-6">
-                                <a href="#macro" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[0.65rem] font-black uppercase tracking-widest hover:bg-red-500/20 transition-colors">
-                                    Macro Pulse <ArrowRight size={12} />
-                                </a>
-                                <a href="#credit" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                                    Credit Impulse <ArrowRight size={12} />
-                                </a>
-                                <a href="#dedollarization" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                                    De-Dollarization <ArrowRight size={12} />
-                                </a>
+
+                            {/* Nav Pills */}
+                            <div className="flex flex-wrap gap-2 mt-6">
+                                {[
+                                    { href: '#macro',       label: 'Macro Pulse',     active: true },
+                                    { href: '#pboc',        label: 'PBOC Liquidity' },
+                                    { href: '#real-economy',label: 'Real Economy' },
+                                    { href: '#external',    label: 'External Sector' },
+                                    { href: '#energy',      label: 'Energy & Carbon' },
+                                    { href: '#signals',     label: 'Alpha Signals' },
+                                ].map(({ href, label, active }) => (
+                                    <a
+                                        key={href}
+                                        href={href}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[0.65rem] font-black uppercase tracking-widest transition-colors ${
+                                            active
+                                                ? 'bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20'
+                                                : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10'
+                                        }`}
+                                    >
+                                        {label} <ArrowRight size={10} />
+                                    </a>
+                                ))}
                             </div>
                         </div>
                     </motion.div>
@@ -160,12 +186,16 @@ export const IntelChinaPage: React.FC = () => {
                         transition={{ duration: 0.7, delay: 0.2 }}
                         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
                     >
-                        {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color }) => (
-                            <div key={label} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-default`}>
+                        {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color, anchor }) => (
+                            <a
+                                key={label}
+                                href={anchor}
+                                className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-pointer hover:scale-[1.02] transition-all duration-200`}
+                            >
                                 <Icon size={18} className="mb-3 opacity-80" />
                                 <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
                                 <p className="text-[0.6rem] text-muted-foreground/60 leading-relaxed">{desc}</p>
-                            </div>
+                            </a>
                         ))}
                     </motion.div>
                 </div>
@@ -174,7 +204,7 @@ export const IntelChinaPage: React.FC = () => {
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
 
-                {/* China Macro Pulse */}
+                {/* China Macro Pulse (existing) */}
                 <section id="macro">
                     <SectionErrorBoundary name="China Macro Pulse">
                         <Suspense fallback={<SectionSkeleton />}>
@@ -185,7 +215,62 @@ export const IntelChinaPage: React.FC = () => {
 
                 <div className="border-t border-white/5" />
 
-                {/* Credit Impulse Explainer */}
+                {/* PBOC Liquidity Monitor */}
+                <section id="pboc">
+                    <SectionErrorBoundary name="PBOC Liquidity Monitor">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <ChinaPBOCLiquidityMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Real Economy */}
+                <section id="real-economy">
+                    <SectionErrorBoundary name="China Real Economy Panel">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <ChinaRealEconomyPanel />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* External Sector */}
+                <section id="external">
+                    <SectionErrorBoundary name="China External Sector Panel">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <ChinaExternalSectorPanel />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Energy & Transition */}
+                <section id="energy">
+                    <SectionErrorBoundary name="China Energy Grid Panel">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <ChinaEnergyGridPanel />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Proprietary Alpha Signals */}
+                <section id="signals">
+                    <SectionErrorBoundary name="China Proprietary Signals">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <ChinaProprietarySignals />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Credit Impulse context (existing) */}
                 <section id="credit">
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
@@ -220,7 +305,7 @@ export const IntelChinaPage: React.FC = () => {
 
                 <div className="border-t border-white/5" />
 
-                {/* De-Dollarization Context */}
+                {/* De-Dollarization Context (existing) */}
                 <section id="dedollarization">
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
@@ -241,7 +326,6 @@ export const IntelChinaPage: React.FC = () => {
                         </div>
                     </div>
                 </section>
-
             </div>
 
             <InstitutionalFooter />
