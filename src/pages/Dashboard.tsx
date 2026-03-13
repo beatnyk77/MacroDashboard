@@ -345,12 +345,14 @@ export const Dashboard: React.FC = () => {
                         <div className="p-12 md:p-16 rounded-[48px] border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-transparent relative overflow-hidden group">
                             <div className="relative z-10">
                                 <div className="grit-badge mb-8">Proprietary Framework</div>
-                                <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none mb-8">
-                                    THE <span className="text-blue-500">GRIT</span> INDEX
-                                </h2>
-                                <p className="text-xl md:text-2xl text-white font-bold tracking-tight mb-8">
-                                    Geopolitical Risk & Institutional Transition
-                                </p>
+                                <a href="/labs/sovereign-stress#grit-monitor" className="block hover:opacity-80 transition-opacity">
+                                    <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none mb-8">
+                                        THE <span className="text-blue-500">GRIT</span> INDEX
+                                    </h2>
+                                    <p className="text-xl md:text-2xl text-white font-bold tracking-tight mb-8">
+                                        Geopolitical Risk & Institutional Transition
+                                    </p>
+                                </a>
                                 <blockquote className="text-lg text-muted-foreground italic border-l-4 border-blue-500 pl-8 mb-10 max-w-3xl">
                                     "Where Bloomberg has FLDS, BofA has the Bull & Bear, and Goldman has the FCI — GraphiQuestor tracks the **GRIT Index**, a real-time composite of sovereign debt stress and reserve velocity."
                                 </blockquote>
