@@ -25,6 +25,9 @@ const ChinaEnergyGridPanel = lazy(() =>
 const ChinaProprietarySignals = lazy(() =>
     import('@/features/dashboard/components/sections/ChinaProprietarySignals').then(m => ({ default: m.ChinaProprietarySignals }))
 );
+const China15thFYPTeaserRow = lazy(() =>
+    import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow }))
+);
 
 const SectionSkeleton = () => (
     <div className="h-[300px] w-full rounded-3xl bg-white/[0.02] animate-pulse" />
@@ -198,6 +201,14 @@ export const IntelChinaPage: React.FC = () => {
                             </a>
                         ))}
                     </motion.div>
+                    {/* FYP Teaser Row */}
+                    <div className="mt-12">
+                        <SectionErrorBoundary name="China 15th FYP Teaser">
+                            <Suspense fallback={<div className="h-24 rounded-2xl bg-white/[0.02] animate-pulse" />}>
+                                <China15thFYPTeaserRow />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                 </div>
             </section>
 

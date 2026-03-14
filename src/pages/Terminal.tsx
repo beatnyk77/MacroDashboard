@@ -16,6 +16,7 @@ const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/compone
 const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
 const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
+const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
 
 
 const LoadingFallback = () => (
@@ -47,6 +48,15 @@ export const Terminal: React.FC = () => {
                     <SectionErrorBoundary name="Strategic KPIs">
                         <Suspense fallback={<LoadingFallback />}>
                             <CockpitKPIGrid />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 1.5: China 15th FYP Strategic Signal */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="China 15th FYP Teaser">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <China15thFYPTeaserRow />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
