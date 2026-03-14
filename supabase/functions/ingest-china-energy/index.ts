@@ -36,6 +36,10 @@ Deno.serve(async (req: Request) => {
                     const yearMap: Record<number, any> = {};
                     for (const row of data.data) {
                         const yr = row.year;
+                        if (!yr) {
+                            console.warn('[ChinaEnergy] Row missing year, skipping:', row);
+                            continue;
+                        }
                         if (!yearMap[yr]) yearMap[yr] = { year: yr, total_generation_twh: 0 };
 
                         // Map fuel categories
