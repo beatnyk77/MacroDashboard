@@ -6,7 +6,8 @@ import {
     ShieldAlert,
     TrendingUp,
     Zap,
-    Activity
+    Activity,
+    Globe
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -18,6 +19,7 @@ const CorporateProfitCapture = lazy(() => import('@/features/dashboard/component
 const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
 const Distress401kMonitor = lazy(() => import('@/features/dashboard/components/rows/Distress401kMonitor').then(m => ({ default: m.Distress401kMonitor })));
 const USLaborMarketMonitor = lazy(() => import('@/features/dashboard/components/rows/USLaborMarketMonitor').then(m => ({ default: m.USLaborMarketMonitor })));
+const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/components/rows/IranConflictImpactMonitor').then(m => ({ default: m.IranConflictImpactMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -137,6 +139,19 @@ export const SovereignStressLab: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-labor-market" insight="Real-time monitoring of US Labor statistics via BLS/FRED. The proprietary Labor Distress Index combines claims, layoffs, and quit ratios to provide a high-fidelity recession lead signal." />
+                </section>
+
+                <section className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <Globe size={24} className="text-orange-500" />
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: 'white' }}>Geopolitical Stress Test: Iran Conflict</Typography>
+                    </div>
+                    <SectionErrorBoundary name="Iran Conflict Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IranConflictImpactMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-iran-conflict" insight="Visualization of India's second-order exposure to Middle East conflict. Unlike 1990, India's $680bn FX reserves and $125bn remittance flywheel provide a structural floor despite higher oil sensitivity." />
                 </section>
             </div>
 
