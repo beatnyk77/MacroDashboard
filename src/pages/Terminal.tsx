@@ -40,61 +40,72 @@ export const Terminal: React.FC = () => {
                 </div>
             </header>
 
-            <main className="grid grid-cols-1 xl:grid-cols-12 gap-6 auto-rows-min">
+            <main className="space-y-12">
                 
-                {/* Top Row: KPI Grid (Full Width) */}
-                <div className="xl:col-span-12">
-                    <SectionErrorBoundary name="KPI Grid">
+                {/* Row 1: KPI Grid (Strategic Visibility) */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="Strategic KPIs">
                         <Suspense fallback={<LoadingFallback />}>
                             <CockpitKPIGrid />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Middle Row: Net Liquidity & Capital Flows */}
-                <div className="xl:col-span-8 flex flex-col gap-6">
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">US Liquidity Plumbline</h2>
-                            <LiveStatusIndicator source="FRED / Treasury" />
+                {/* Row 2: US Liquidity Plumbline (Core Market Driver) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">US Liquidity Plumbline</h2>
+                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Monetary Base & Treasury General Account Telemetry</p>
                         </div>
-                        <SectionErrorBoundary name="Net Liquidity">
-                            <NetLiquidityRow />
-                        </SectionErrorBoundary>
+                        <LiveStatusIndicator source="FRED / Treasury" />
                     </div>
-
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Global Capital Flows</h2>
-                            <LiveStatusIndicator source="BIS / SWIFT" />
-                        </div>
-                        <SectionErrorBoundary name="Capital Flows">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CapitalFlowsTerminal hideHeader />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
+                    <SectionErrorBoundary name="Net Liquidity">
+                        <NetLiquidityRow />
+                    </SectionErrorBoundary>
                 </div>
 
-                {/* Right Column: Maturity Wall & Treasury Demand */}
-                <div className="xl:col-span-4 flex flex-col gap-6">
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl flex-1">
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">US Maturity Wall</h2>
+                {/* Row 3: Global Capital Flows (Shadow System Visibility) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Global Capital Flows</h2>
+                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Cross-Border Banking & Institutional Sentiment Hubs</p>
+                        </div>
+                        <LiveStatusIndicator source="BIS / SWIFT" />
+                    </div>
+                    <SectionErrorBoundary name="Capital Flows">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CapitalFlowsTerminal hideHeader />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 4: Sovereign Stress Matrix (2-Column Grid for Density) */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                            <div>
+                                <h2 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h2>
+                                <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Cumulative Interest Expense Refinancing Risk</p>
+                            </div>
                             <LiveStatusIndicator source="Treasury" />
                         </div>
                         <SectionErrorBoundary name="Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="scale-90 origin-top">
+                                <div className="scale-95 origin-top">
                                     <USDebtMaturityWall />
                                 </div>
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl h-fit">
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand</h2>
+                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                            <div>
+                                <h2 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h2>
+                                <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Primary Dealer Bid-to-Cover Ratios</p>
+                            </div>
                             <LiveStatusIndicator source="Treasury" />
                         </div>
                         <SectionErrorBoundary name="Treasury Demand">
@@ -105,48 +116,58 @@ export const Terminal: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Bottom Row: GRIT & Geopolitical */}
-                <div className="xl:col-span-12 space-y-6">
-                    <div id="grit-monitor" className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
-                        <SectionErrorBoundary name="GRIT Monitor">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GritIndexMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Geopolitical Risk Matrix</h2>
-                            <LiveStatusIndicator source="GDELT / Global News Array" />
+                {/* Row 5: GRIT Index (Proprietary Risk Signal) */}
+                <div id="grit-monitor" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-lg font-black text-white uppercase tracking-tighter text-amber-500">GRIT Index Monitor</h2>
+                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Global Regime Indicator & Transition Signal</p>
                         </div>
-                        <SectionErrorBoundary name="Geopolitical Matrix">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GeopoliticalEventsRow />
-                            </Suspense>
-                        </SectionErrorBoundary>
+                        <LiveStatusIndicator source="GraphiQuestor Core" />
                     </div>
+                    <SectionErrorBoundary name="GRIT Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GritIndexMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </div>
 
-                {/* Prediction Row: Data Density Expansion */}
-                <div className="xl:col-span-12 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Prediction Market Probability Core</h2>
-                            <LiveStatusIndicator source="Polymarket / Kalshi / PredictIt" />
+                {/* Row 6: Geopolitical Risk Matrix (Tanker tracking fix) */}
+                <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Geopolitical Risk Matrix</h2>
+                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Hormuz Tanker Tracking & ADS-B Conflict Telemetry</p>
                         </div>
-                        <SectionErrorBoundary name="Prediction Markets">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div className="space-y-6">
-                                    <PredictionMarketTerminal />
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        <ArbitrageScanner />
-                                        <PredictionMarketHeatmap />
-                                    </div>
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
+                        <LiveStatusIndicator source="GDELT / OpenSky" />
                     </div>
+                    <SectionErrorBoundary name="Geopolitical Matrix">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GeopoliticalEventsRow />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 7: Prediction Market Probability Core */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Prediction Market Core</h2>
+                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Aggregated Odds from Polymarket, Kalshi, & PredictIt</p>
+                        </div>
+                        <LiveStatusIndicator source="DomeAPI" />
+                    </div>
+                    <SectionErrorBoundary name="Prediction Markets">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <div className="space-y-12">
+                                <PredictionMarketTerminal />
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-t border-white/5 pt-8">
+                                    <ArbitrageScanner />
+                                    <PredictionMarketHeatmap />
+                                </div>
+                            </div>
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </div>
 
             </main>

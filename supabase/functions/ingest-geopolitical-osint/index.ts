@@ -18,22 +18,20 @@ Deno.serve(async (req: Request) => {
     return runIngestion(supabase, 'ingest-geopolitical-osint', async (ctx) => {
         const results = [];
         const now = new Date().toISOString();
+        const platformStats: Record<string, any> = {};
 
         // 1. Fetch Aircraft Data from OpenSky (ADS-B)
-        // Public states for a wide box covering Middle East & Asia
-        // Box: [min_lat, min_lon, max_lat, max_lon]
-        // Middle East to China: [10, 30, 60, 130]
         try {
             console.log("Fetching aircraft from OpenSky...");
+            // Middle East to China: [10, 30, 60, 130]
             const openSkyUrl = `https://opensky-network.org/api/states/all?lamin=10&lomin=30&lamax=60&lomax=130`;
             const aircraftRes = await fetch(openSkyUrl);
+            
             if (aircraftRes.ok) {
                 const aircraftData = await aircraftRes.json() as any;
                 if (aircraftData.states) {
-                    // Filter for interesting callsigns or high-altitude long-range jets
-                    // (Simplified filter for demo: top 50 by altitude or specific callsigns)
                     const filteredAircraft = aircraftData.states
-                        .filter((s: any) => s[8] === false && s[1] && s[5] && s[6]) // Not on ground, has callsign, has lat/lng
+                        .filter((s: any) => s[8] === false && s[1] && s[5] && s[6])
                         .slice(0, 50);
 
                     for (const s of filteredAircraft) {
@@ -43,36 +41,44 @@ Deno.serve(async (req: Request) => {
                             callsign: callsign,
                             lat: s[6],
                             lng: s[5],
-                            owner_flag: s[2], // Country of origin
+                            owner_flag: s[2],
                             timestamp: now,
                             macro_correlation: determineMacroCorrelation('jet', callsign, s[2]),
                             metadata: {
                                 altitude: s[7],
                                 velocity: s[9],
-                                true_track: s[10],
-                                baro_altitude: s[13]
+                                true_track: s[10]
                             }
                         });
                     }
+                    platformStats['OpenSky'] = { status: 'success', count: filteredAircraft.length };
                 }
+            } else {
+                platformStats['OpenSky'] = { status: 'failed', code: aircraftRes.status };
             }
         } catch (e) {
             console.error("OpenSky fetch failed:", e);
+            platformStats['OpenSky'] = { status: 'error', message: e.message };
         }
 
-        // 2. Fetch GDELT Conflict/Marine Events (Vessel proxy)
+        // 2. Fetch GDELT Marine Events (Tanker focus)
         try {
-            console.log("Fetching marine/conflict events from GDELT...");
-            const query = '(tanker OR vessel OR ship OR "marine" OR "strait of hormuz" OR "bab el-mandeb")';
-            const gdeltUrl = `https://api.gdeltproject.org/api/v2/geo/geo?query=${encodeURIComponent(query)}&mode=artlist&format=geojson&timespan=24h`;
+            console.log("Fetching marine events from GDELT...");
+            // Focus more on tankers and Hormuz specifically
+            const query = '(tanker OR "oil tanker" OR "lng carrier" OR "vessel" OR "strait of hormuz" OR "bab el-mandeb")';
+            const gdeltUrl = `https://api.gdeltproject.org/api/v2/geo/geo?query=${encodeURIComponent(query)}&mode=artlist&format=geojson&timespan=12h`;
             
             const gdeltRes = await fetch(gdeltUrl);
             if (gdeltRes.ok) {
                 const gdeltData = await gdeltRes.json() as any;
                 if (gdeltData.features) {
+                    let vesselCount = 0;
                     for (const feature of gdeltData.features) {
                         const props = feature.properties || {};
                         const coords = feature.geometry?.coordinates || [0, 0];
+                        
+                        // Heuristic: If name or snippet contains tanker, tag it as such
+                        const isTanker = props.name?.toLowerCase().includes('tanker') || props.html?.toLowerCase().includes('tanker');
                         
                         results.push({
                             type: 'vessel',
@@ -81,36 +87,42 @@ Deno.serve(async (req: Request) => {
                             lng: coords[0],
                             owner_flag: 'GDELT_EVENT',
                             timestamp: now,
-                            macro_correlation: 'Potential trade disruption signal from GDELT event stream.',
+                            macro_correlation: isTanker 
+                                ? 'Oil/LNG tanker event detected via GDELT; monitoring for Hormuz/Bab el-Mandeb transit risk.'
+                                : 'Geopolitical maritime event detected via OSINT stream.',
                             metadata: {
                                 gdelt_url: props.url,
-                                gdelt_html: props.html,
+                                is_tanker_heuristic: isTanker,
                                 news_count: props.count
                             }
                         });
+                        vesselCount++;
                     }
+                    platformStats['GDELT'] = { status: 'success', count: vesselCount };
                 }
+            } else {
+                platformStats['GDELT'] = { status: 'failed', code: gdeltRes.status };
             }
         } catch (e) {
             console.error("GDELT fetch failed:", e);
+            platformStats['GDELT'] = { status: 'error', message: e.message };
         }
 
         // 3. Insert into DB
         if (results.length > 0) {
-            // Optional: Clean older data (e.g., > 1 hour) to keep it "Live"
             const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
             await supabase.from('geopolitical_osint').delete().lt('timestamp', oneHourAgo);
 
             const { error: insertError } = await supabase
                 .from('geopolitical_osint')
-                .insert(results);
+                .upsert(results, { onConflict: 'callsign, type' });
 
             if (insertError) throw insertError;
         }
 
         return {
             rows_inserted: results.length,
-            metadata: { count: results.length, sources: ['OpenSky', 'GDELT'] }
+            metadata: { count: results.length, stats: platformStats }
         };
     });
 });

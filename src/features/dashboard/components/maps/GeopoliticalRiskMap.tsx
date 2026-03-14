@@ -235,22 +235,70 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
 
             {/* Bottom Status bar */}
             <div className="absolute bottom-8 left-8 z-10 hidden md:flex items-center gap-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/5">
-                    <Activity size={12} className="text-emerald-500" />
-                    <span className="text-[0.6rem] font-black text-white uppercase tracking-widest">{assets?.length || 0} Assets Tracked</span>
+                <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-lg">
+                    {(() => {
+                        const latestTimestamp = assets?.[0]?.timestamp;
+                        const now = new Date().getTime();
+                        const ageInHours = latestTimestamp 
+                            ? (now - new Date(latestTimestamp).getTime()) / 3600000 
+                            : Infinity;
+                        
+                        let statusColor = "bg-rose-500";
+                        let statusText = "ERROR";
+                        let statusIconColor = "text-rose-500";
+
+                        if (ageInHours < 2) {
+                            statusColor = "bg-emerald-500";
+                            statusText = "LIVE";
+                            statusIconColor = "text-emerald-500";
+                        } else if (ageInHours < 6) {
+                            statusColor = "bg-amber-500";
+                            statusText = "DEGRADED";
+                            statusIconColor = "text-amber-500";
+                        }
+
+                        return (
+                            <>
+                                <div className="flex items-center gap-2 pr-3 border-r border-white/10">
+                                    <div className={cn("w-2 h-2 rounded-full animate-pulse", statusColor)} />
+                                    <span className={cn("text-[0.65rem] font-black uppercase tracking-widest", statusIconColor)}>{statusText} FEED</span>
+                                </div>
+                                <div className="flex items-center gap-2 pl-3">
+                                    <Activity size={14} className="text-white/40" />
+                                    <span className="text-[0.65rem] font-black text-white uppercase tracking-widest">{assets?.length || 0} Assets</span>
+                                </div>
+                            </>
+                        );
+                    })()}
                 </div>
                 {isLoading && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-500/10 border border-blue-500/20 shadow-lg">
                         <motion.div 
                             animate={{ rotate: 360 }}
                             transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                         >
-                            <Globe size={12} className="text-blue-500" />
+                            <Globe size={14} className="text-blue-500" />
                         </motion.div>
-                        <span className="text-[0.6rem] font-black text-blue-500 uppercase tracking-widest">Scanning...</span>
+                        <span className="text-[0.65rem] font-black text-blue-500 uppercase tracking-widest">Scanning Signal...</span>
                     </div>
                 )}
             </div>
+
+            {/* Empty State Overlay */}
+            {!isLoading && (!assets || assets.length === 0) && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md z-10 p-12 text-center">
+                    <div className="p-6 rounded-full bg-slate-900 border border-white/5 mb-6">
+                        <Ship className="w-12 h-12 text-slate-700 animate-pulse" />
+                    </div>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-2">No High-Value Assets in Scope</h3>
+                    <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-widest max-w-sm leading-relaxed">
+                        Signal quiet across Strait of Hormuz and Bab el-Mandeb. Monitoring for trade disruption and maritime stress markers.
+                    </p>
+                    <div className="mt-8 px-4 py-2 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                        <span className="text-[0.6rem] font-black text-blue-500/50 uppercase tracking-[0.2em]">Next Scan in 60s</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
