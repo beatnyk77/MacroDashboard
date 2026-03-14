@@ -3,47 +3,14 @@ import { Card, CardContent, Typography, Box, Tooltip, Chip } from '@mui/material
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import { useUPIAutopay } from '@/hooks/useUPIAutopay';
-import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
+import { useUPIAutopay, useUPIAutopayHistory } from '@/hooks/useUPIAutopay';
+import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, Tooltip as RechartsTooltip } from 'recharts';
 
 export const UPIAutopayFailureCard: React.FC = () => {
-    const { data, isLoading } = useUPIAutopay();
+    const { data: latestData, isLoading: isLatestLoading } = useUPIAutopay();
+    const { data: historyData, isLoading: isHistoryLoading } = useUPIAutopayHistory();
 
-    // Mock history for sparkline if not fetched separately (Plan didn't specify history endpoint, but we can assume static or simple trend for now or fetch if needed).
-    // The migration seeded 5 months. We could fetch history, but for now let's just make the card look good with the data we have.
-    // If we want the sparkline, we need history. `useUPIAutopay` only gets latest. 
-    // I will add a small history fetch or just use a visual placeholder/static data if easier, 
-    // BUT the user asked for "Sparkline: 12m trend".
-    // I'll update the hook to fetch history or just fetch it here.
-    // Let's keep it simple and just show the latest value with a sophisticated look, 
-    // referencing the "Rising failures precede credit stress" note.
-
-    // Actually, to do the sparkline properly, I should query the table `upi_autopay_metrics` directly for history.
-    // I will do an inline fetch for history or expand the hook later. 
-    // For this step, I'll use the latest data and a small "simulated" sparkline if real data is scant, 
-    // or better, I will assume the hook *could* return history if I modified it.
-    // Let's modify the hook to return history? No, let's keep the hook for the card's main data and maybe fetch history separately if needed.
-    // Given the constraints and "Mocking" capability for the immediate task to look "Beautiful & Institutional",
-    // I will implement a lightweight history fetch inside the component or just map the seeded data if I can.
-    // I'll stick to the requested UI: "Sparkline: 12m trend".
-    // I will implement a separate small useEffect to get history for the sparkline to ensure it's real.
-
-    const [history, setHistory] = React.useState<any[]>([]);
-
-    React.useEffect(() => {
-        const fetchHistory = async () => {
-            const { supabase } = await import('@/lib/supabase');
-            const { data: hist } = await supabase
-                .from('upi_autopay_metrics')
-                .select('as_of_date, failure_rate_pct')
-                .order('as_of_date', { ascending: true })
-                .limit(12);
-            if (hist) setHistory(hist);
-        };
-        fetchHistory();
-    }, []);
-
-    if (isLoading) {
+    if (isLatestLoading || isHistoryLoading) {
         return (
             <Card sx={{ height: '100%', minHeight: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.paper' }}>
                 <Typography variant="body2" color="text.secondary">Loading UPI Data...</Typography>
@@ -51,21 +18,17 @@ export const UPIAutopayFailureCard: React.FC = () => {
         );
     }
 
-    const { failure_rate_pct, failure_rate_delta_mom, staleness_flag } = data || {};
+    const { failure_rate_pct, failure_rate_delta_mom, staleness_flag, as_of_date } = latestData || {};
+    const history = historyData || [];
+    
     const isRising = (failure_rate_delta_mom || 0) > 0;
-    const isHighStress = (failure_rate_pct || 0) > 1.0; // Threshold for "High" in this specific metric context (Business Decline of 1%+ is significant)
+    const isHighStress = (failure_rate_pct || 0) > 1.0; 
 
     // Institutional Styling
-    const trendColor = isRising ? '#ff5252' : '#4caf50'; // Red if rising (bad for failure rate)
+    const trendColor = isRising ? '#ff5252' : '#4caf50'; 
 
     return (
         <Card
-            onClick={() => {
-                gtag('event', 'click_upi_stress', {
-                    failure_rate: failure_rate_pct,
-                    delta_mom: failure_rate_delta_mom
-                });
-            }}
             sx={{
                 height: '100%',
                 position: 'relative',
@@ -140,7 +103,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
                     </Box>
                 )}
 
-                {/* Sparkline Area */}
+                {/* Sparkline Area with Real Data */}
                 <Box sx={{ height: 60, mt: 2, ml: -2, mr: -2, mb: -1.5 }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={history}>
@@ -155,26 +118,44 @@ export const UPIAutopayFailureCard: React.FC = () => {
                                 dataKey="failure_rate_pct"
                                 stroke={trendColor}
                                 strokeWidth={2}
+                                dot={false}
                                 fillOpacity={1}
                                 fill="url(#colorFailure)"
+                                isAnimationActive={true}
                             />
-                            {/* Hidden YAxis to scale properly */}
+                            <XAxis dataKey="as_of_date" hide />
                             <YAxis domain={['auto', 'auto']} hide />
+                            <RechartsTooltip 
+                                contentStyle={{ 
+                                    backgroundColor: '#1a1a1a', 
+                                    border: '1px solid #333', 
+                                    fontSize: '0.7rem',
+                                    padding: '4px 8px'
+                                }}
+                                itemStyle={{ color: trendColor }}
+                                labelStyle={{ display: 'none' }}
+                                formatter={(value: number) => [`${value.toFixed(2)}%`, 'Failure Rate']}
+                            />
                         </AreaChart>
                     </ResponsiveContainer>
                 </Box>
 
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1, mt: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
                     <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.disabled', opacity: 0.8 }}>
-                        Updated: {data?.as_of_date}
+                        History: 12m trend
                     </Typography>
-                    <Box sx={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: '50%',
-                        bgcolor: staleness_flag === 'fresh' ? 'primary.main' : 'text.disabled',
-                        opacity: staleness_flag === 'fresh' ? 0.8 : 0.3
-                    }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.disabled', opacity: 0.8 }}>
+                            Updated: {as_of_date}
+                        </Typography>
+                        <Box sx={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: '50%',
+                            bgcolor: staleness_flag === 'fresh' ? 'primary.main' : 'text.disabled',
+                            opacity: staleness_flag === 'fresh' ? 0.8 : 0.3
+                        }} />
+                    </Box>
                 </Box>
             </CardContent>
         </Card>
