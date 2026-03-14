@@ -16,6 +16,7 @@ const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/s
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
 const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
+const Distress401kMonitor = lazy(() => import('@/features/dashboard/components/rows/Distress401kMonitor').then(m => ({ default: m.Distress401kMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -108,6 +109,20 @@ export const SovereignStressLab: React.FC = () => {
                             <CorporateProfitCapture />
                         </Suspense>
                     </SectionErrorBoundary>
+                </section>
+
+                {/* 4. 401(k) Distress Monitor */}
+                <section id="401k-distress" className="scroll-mt-32">
+                    <div className="flex items-center gap-3 mb-10">
+                        <ShieldAlert className="text-rose-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">401(k) Distress Monitor</h2>
+                    </div>
+                    <SectionErrorBoundary name="401(k) Distress">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <Distress401kMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-401k-distress" insight="The 401(k) Distress Monitor tracks hardship withdrawals and loan activity as a leading indicator of consumer exhaustion. Spikes in these levels historically precede broad-based recessionary shifts." />
                 </section>
             </div>
 

@@ -140,6 +140,25 @@ Deno.serve(async (req) => {
             });
         }
 
+        // 4. 401(k) Distress Monitor
+        const { data: distressData } = await supabaseClient
+            .from("us_401k_distress")
+            .select("*")
+            .order("date", { ascending: false })
+            .limit(1);
+        
+        if (distressData && distressData.length > 0) {
+            const distress = distressData[0];
+            snapshots.push({
+                week_ending_date: weekEndingDate,
+                section_name: "Consumer Health",
+                key_metric: "401(k) Distress Z-Score",
+                value: distress.distress_zscore,
+                wow_change_pct: 0,
+                narrative_snippet: `The 401(k) Distress Monitor registered a Z-Score of ${distress.distress_zscore.toFixed(1)}, with hardship withdrawals at ${distress.vanguard_hardship_pct}% and Fidelity loan triggers at ${distress.fidelity_loan_pct}%. This leading indicator ${distress.distress_zscore > 5 ? "signals mounting consumer exhaustion" : "suggests resilient internal household liquidity"}.`,
+            });
+        }
+
         // 4. India Macro
         const inCpi = await fetchMetricWow(supabaseClient, "IN_CPI_YOY");
         const inFx = await fetchMetricWow(supabaseClient, "IN_FX_RESERVES");

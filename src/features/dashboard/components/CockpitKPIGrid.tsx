@@ -26,6 +26,7 @@ export const CockpitKPIGrid = React.memo(({ simplified = false }: { simplified?:
     const ust10y = findMetric('UST_10Y_YIELD');
     const sofr = findMetric('SOFR_RATE');
     const btc = findMetric('BITCOIN_PRICE_USD');
+    const distress401k = findMetric('US_401K_DISTRESS_Z');
 
     const renderMetricWithEnhancedDelta = (metric: any, metricId: string, label: string, sublabel?: string, unitType: any = 'index', prefix: string = '', suffixValue: string = '', statusType: any = 'neutral') => {
         const config = getMetricConfig(metricId);
@@ -228,6 +229,22 @@ export const CockpitKPIGrid = React.memo(({ simplified = false }: { simplified?:
                         (vix?.value || 0) >= 35 ? 'danger' : (vix?.value || 0) >= 25 ? 'warning' : 'safe'
                     )}
                 </div>
+
+                {/* 11. 401(k) Distress */}
+                {!simplified && (
+                    <div className="col-span-1 min-h-[180px] md:min-h-[200px]">
+                        {renderMetricWithEnhancedDelta(
+                            distress401k,
+                            'US_401K_DISTRESS_Z',
+                            '401(k) Distress',
+                            'Hardship Z-Score',
+                            'index',
+                            '',
+                            '',
+                            (distress401k?.value || 0) >= 7 ? 'danger' : (distress401k?.value || 0) >= 4 ? 'warning' : 'safe'
+                        )}
+                    </div>
+                )}
             </div>
 
             {simplified && (

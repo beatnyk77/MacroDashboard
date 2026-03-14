@@ -68,6 +68,11 @@ export const METRIC_RISK_CONFIG: Record<string, MetricRiskConfig> = {
         displayUnit: '',
         deltaDecimals: 1,
     },
+    'US_401K_DISTRESS_Z': {
+        riskOnDirection: 'down', // Lower distress = consumer health = risk-on
+        displayUnit: '',
+        deltaDecimals: 1,
+    },
 };
 
 /**

@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Paper, Chip, Table, TableBody, TableCell, TableC
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle, AlertCircle, Clock, RefreshCcw, Send, Settings, RefreshCw, Download } from 'lucide-react';
+import { use401kDistress } from '@/hooks/use401kDistress';
 
 export const DataHealthDashboard: React.FC = () => {
     // 1. Core Telemetry Queries
@@ -98,7 +99,6 @@ export const DataHealthDashboard: React.FC = () => {
             if (error) throw error;
             
             const { data: latestEntry } = await supabase.from('india_asi').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
-            
             return {
                 stateCount: count || 0,
                 lastUpdated: latestEntry?.as_of_date
@@ -106,6 +106,8 @@ export const DataHealthDashboard: React.FC = () => {
         },
         refetchInterval: 300000 // 5 min
     });
+
+    const { data: distressData } = use401kDistress();
 
     // 7. NEW: Geopolitical OSINT Tracking
     const { data: osintStatus } = useQuery({
@@ -319,6 +321,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="info" onClick={() => handleForceRefresh('ingest-geopolitical-osint')} disabled={refreshing === 'ingest-geopolitical-osint'}>
                                 {refreshing === 'ingest-geopolitical-osint' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(244, 63, 94, 0.05)', border: '1px solid rgba(244, 63, 94, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f43f5e', fontWeight: 700, display: 'block', lineHeight: 1 }}>401(k) Distress</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {distressData && distressData.length > 0 ? new Date(distressData[distressData.length - 1].date).toLocaleDateString() : 'Inactive'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="error" onClick={() => handleForceRefresh('ingest-401k-distress')} disabled={refreshing === 'ingest-401k-distress'}>
+                                {refreshing === 'ingest-401k-distress' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
