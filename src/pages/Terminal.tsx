@@ -11,6 +11,12 @@ import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
 const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
+const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
+const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketTerminal').then(m => ({ default: m.PredictionMarketTerminal })));
+const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
+const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
+const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
+
 
 const LoadingFallback = () => (
     <div className="w-full h-full min-h-[150px] bg-slate-900/50 border border-white/5 rounded-xl animate-pulse flex items-center justify-center">
@@ -94,6 +100,50 @@ export const Terminal: React.FC = () => {
                         <SectionErrorBoundary name="Treasury Demand">
                             <Suspense fallback={<LoadingFallback />}>
                                 <USTreasuryDemandGauge />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+                </div>
+
+                {/* Bottom Row: GRIT & Geopolitical */}
+                <div className="xl:col-span-12 space-y-6">
+                    <div id="grit-monitor" className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
+                        <SectionErrorBoundary name="GRIT Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GritIndexMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
+                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
+                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Geopolitical Risk Matrix</h2>
+                            <LiveStatusIndicator source="GDELT / Global News Array" />
+                        </div>
+                        <SectionErrorBoundary name="Geopolitical Matrix">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GeopoliticalEventsRow />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+                </div>
+
+                {/* Prediction Row: Data Density Expansion */}
+                <div className="xl:col-span-12 space-y-6">
+                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
+                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
+                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Prediction Market Probability Core</h2>
+                            <LiveStatusIndicator source="Polymarket / Kalshi / PredictIt" />
+                        </div>
+                        <SectionErrorBoundary name="Prediction Markets">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="space-y-6">
+                                    <PredictionMarketTerminal />
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <ArbitrageScanner />
+                                        <PredictionMarketHeatmap />
+                                    </div>
+                                </div>
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>

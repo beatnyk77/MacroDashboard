@@ -8,7 +8,6 @@ import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Lazy load page components
-const Dashboard = lazy(() => import('@/pages/Dashboard').then(module => ({ default: module.Dashboard })));
 const Terminal = lazy(() => import('@/pages/Terminal').then(module => ({ default: module.Terminal })));
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
 const BlogPage = lazy(() => import('@/pages/BlogPage').then(module => ({ default: module.BlogPage })));
@@ -63,8 +62,7 @@ function App() {
                             <GlobalLayout>
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
-                                        <Route path="/" element={<Dashboard />} />
-                                        <Route path="/terminal" element={<Terminal />} />
+                                        <Route path="/" element={<Terminal />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
                                         <Route path="/blog" element={<BlogPage />} />
                                         <Route path="/blog/:slug" element={<ArticlePage />} />

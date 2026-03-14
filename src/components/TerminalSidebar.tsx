@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     Activity, Globe, TrendingUp, Anchor, Zap, ShieldAlert,
-    Box, Database, BarChart3, Radio
+    Database, BarChart3, Radio
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -14,15 +14,16 @@ interface NavItem {
 }
 
 const terminalNavItems: NavItem[] = [
-    { id: 'observatory', label: 'Observatory', path: '/terminal', icon: <Radio size={14} /> },
-    { id: 'us-macro', label: 'US Macro & Fiscal', path: '/labs/us-macro-fiscal', icon: <Zap size={14} /> },
-    { id: 'india', label: 'India Pulse', path: '/labs/india', icon: <Globe size={14} /> },
-    { id: 'india-eq', label: 'India Equities', path: '/india-equities', icon: <BarChart3 size={14} /> },
-    { id: 'china', label: 'China Pulse', path: '/labs/china', icon: <TrendingUp size={14} /> },
-    { id: 'de-dollarization', label: 'De-Dollarization', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} /> },
-    { id: 'commodities', label: 'Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
-    { id: 'sovereign', label: 'Sovereign Risk', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} /> },
-    { id: 'shadow', label: 'Shadow System', path: '/labs/shadow-system', icon: <Box size={14} /> },
+    { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} /> },
+    { id: 'china', label: 'China Macro Pulse', path: '/labs/china', icon: <TrendingUp size={14} /> },
+    { id: 'india', label: 'India Macro Pulse', path: '/labs/india', icon: <Globe size={14} /> },
+    { id: 'india-eq', label: 'Corporate India Engine', path: '/india-equities', icon: <BarChart3 size={14} /> },
+    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
+    { id: 'sustainable', label: 'Sustainable Finance', path: '/labs/sustainable-finance-climate-risk', icon: <Zap size={14} /> },
+    { id: 'grit', label: 'GRIT Index', path: '/labs/sovereign-stress#grit-monitor', icon: <Activity size={14} /> },
+    { id: 'geopolitics', label: 'Geopolitical Map', path: '/#geopolitical-matrix', icon: <ShieldAlert size={14} /> },
+    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} /> },
+    { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} /> },
 ];
 
 export const TerminalSidebar: React.FC = () => {
@@ -39,7 +40,7 @@ export const TerminalSidebar: React.FC = () => {
             <nav className="flex-1 px-3">
                 <ul className="space-y-1">
                     {terminalNavItems.map((item) => {
-                        const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/terminal');
+                        const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
                         
                         return (
                             <li key={item.id}>
