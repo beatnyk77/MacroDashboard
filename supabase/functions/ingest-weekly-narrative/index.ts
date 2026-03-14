@@ -159,6 +159,25 @@ Deno.serve(async (req) => {
             });
         }
 
+        // 5. US Labor Market Monitor
+        const { data: laborData } = await supabaseClient
+            .from("us_labor_market")
+            .select("*")
+            .order("date", { ascending: false })
+            .limit(1);
+
+        if (laborData && laborData.length > 0) {
+            const labor = laborData[0];
+            snapshots.push({
+                week_ending_date: weekEndingDate,
+                section_name: "Labor Market",
+                key_metric: "Unemployment Rate",
+                value: labor.unemployment_rate,
+                wow_change_pct: 0,
+                narrative_snippet: `US Labor markets showing ${labor.unemployment_rate}% unemployment-rate and ${labor.labor_participation_rate}% participation. The Labor Distress Index at ${labor.labor_distress_index.toFixed(1)} ${labor.labor_distress_index > 7 ? "indicates significant institutional labor market friction" : "remains below official recession trigger levels"}.`,
+            });
+        }
+
         // 4. India Macro
         const inCpi = await fetchMetricWow(supabaseClient, "IN_CPI_YOY");
         const inFx = await fetchMetricWow(supabaseClient, "IN_FX_RESERVES");

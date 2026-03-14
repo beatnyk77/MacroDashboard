@@ -17,6 +17,7 @@ const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/row
 const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
 const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
 const Distress401kMonitor = lazy(() => import('@/features/dashboard/components/rows/Distress401kMonitor').then(m => ({ default: m.Distress401kMonitor })));
+const USLaborMarketMonitor = lazy(() => import('@/features/dashboard/components/rows/USLaborMarketMonitor').then(m => ({ default: m.USLaborMarketMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -123,6 +124,19 @@ export const SovereignStressLab: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-401k-distress" insight="The 401(k) Distress Monitor tracks hardship withdrawals and loan activity as a leading indicator of consumer exhaustion. Spikes in these levels historically precede broad-based recessionary shifts." />
+                </section>
+
+                <section className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <Activity size={24} className="text-blue-400" />
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: 'white' }}>US Labor Supply & Demand</Typography>
+                    </div>
+                    <SectionErrorBoundary name="Labor Market Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <USLaborMarketMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-labor-market" insight="Real-time monitoring of US Labor statistics via BLS/FRED. The proprietary Labor Distress Index combines claims, layoffs, and quit ratios to provide a high-fidelity recession lead signal." />
                 </section>
             </div>
 

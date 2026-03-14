@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle, AlertCircle, Clock, RefreshCcw, Send, Settings, RefreshCw, Download } from 'lucide-react';
 import { use401kDistress } from '@/hooks/use401kDistress';
+import { useUSLabor } from '@/hooks/useUSLabor';
 
 export const DataHealthDashboard: React.FC = () => {
     // 1. Core Telemetry Queries
@@ -108,6 +109,7 @@ export const DataHealthDashboard: React.FC = () => {
     });
 
     const { data: distressData } = use401kDistress();
+    const { data: laborData } = useUSLabor();
 
     // 7. NEW: Geopolitical OSINT Tracking
     const { data: osintStatus } = useQuery({
@@ -334,6 +336,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="error" onClick={() => handleForceRefresh('ingest-401k-distress')} disabled={refreshing === 'ingest-401k-distress'}>
                                 {refreshing === 'ingest-401k-distress' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Labor Market Pulse</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {laborData && laborData.length > 0 ? new Date(laborData[laborData.length - 1].date).toLocaleDateString() : 'Inactive'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="primary" onClick={() => handleForceRefresh('ingest-us-labor')} disabled={refreshing === 'ingest-us-labor'}>
+                                {refreshing === 'ingest-us-labor' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
