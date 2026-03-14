@@ -81,42 +81,41 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 4: Sovereign Stress Matrix (2-Column Grid for Density) */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                            <div>
-                                <h2 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h2>
-                                <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Cumulative Interest Expense Refinancing Risk</p>
-                            </div>
-                            <LiveStatusIndicator source="Treasury" />
+                {/* Row 4: US Debt Maturity Wall (Sovereign Stress Strip 1) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h2>
+                            <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Cumulative Interest Expense Refinancing Risk</p>
                         </div>
-                        <SectionErrorBoundary name="Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div className="scale-95 origin-top">
-                                    <USDebtMaturityWall />
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
+                        <LiveStatusIndicator source="Treasury" />
                     </div>
-
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                            <div>
-                                <h2 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h2>
-                                <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Primary Dealer Bid-to-Cover Ratios</p>
+                    <SectionErrorBoundary name="Maturity Wall">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <div className="scale-95 origin-top">
+                                <USDebtMaturityWall />
                             </div>
-                            <LiveStatusIndicator source="Treasury" />
-                        </div>
-                        <SectionErrorBoundary name="Treasury Demand">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <USTreasuryDemandGauge />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </div>
 
-                {/* Row 5: GRIT Index (Proprietary Risk Signal) */}
+                {/* Row 5: Auction Demand Gauge (Sovereign Stress Strip 2) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                        <div>
+                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h2>
+                            <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Primary Dealer Bid-to-Cover Ratios</p>
+                        </div>
+                        <LiveStatusIndicator source="Treasury" />
+                    </div>
+                    <SectionErrorBoundary name="Treasury Demand">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <USTreasuryDemandGauge />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 6: GRIT Index (Proprietary Risk Signal) */}
                 <div id="grit-monitor" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                         <div>
@@ -132,7 +131,7 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 6: Geopolitical Risk Matrix (Tanker tracking fix) */}
+                {/* Row 7: Geopolitical Risk Matrix (Tanker tracking fix) */}
                 <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                         <div>
@@ -148,7 +147,7 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 7: Prediction Market Probability Core */}
+                {/* Row 8: Prediction Market Probability Core */}
                 <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                         <div>
