@@ -41,6 +41,7 @@ jobs:
             compute-cie-macro-scores: ['supabase/functions/compute-cie-macro-scores/**']
             ingest-cie-ipos: ['supabase/functions/ingest-cie-ipos/**']
             ingest-cie-short-selling: ['supabase/functions/ingest-cie-short-selling/**']
+            ingest-rbi-money-market: ['supabase/functions/ingest-rbi-money-market/**']
             _shared: ['supabase/functions/_shared/**']
 
       - name: Deploy Changed Functions
@@ -65,6 +66,7 @@ jobs:
           CHANGED_COMPUTE_CIE_MACRO_SCORES: ${{ steps.filter.outputs['compute-cie-macro-scores'] }}
           CHANGED_INGEST_CIE_SHORT_SELLING: ${{ steps.filter.outputs['ingest-cie-short-selling'] }}
           CHANGED_INGEST_CIE_IPOS: ${{ steps.filter.outputs['ingest-cie-ipos'] }}
+          CHANGED_INGEST_RBI_MONEY_MARKET: ${{ steps.filter.outputs['ingest-rbi-money-market'] }}
         run: |
           deploy_func() {
             local func_name="$1"
@@ -98,5 +100,6 @@ jobs:
             [ "$CHANGED_COMPUTE_CIE_MACRO_SCORES" = "true" ]   && deploy_func "compute-cie-macro-scores"
             [ "$CHANGED_INGEST_CIE_SHORT_SELLING" = "true" ]   && deploy_func "ingest-cie-short-selling"
             [ "$CHANGED_INGEST_CIE_IPOS" = "true" ]            && deploy_func "ingest-cie-ipos"
+            [ "$CHANGED_INGEST_RBI_MONEY_MARKET" = "true" ]    && deploy_func "ingest-rbi-money-market"
             echo "Selective deployment complete."
           fi

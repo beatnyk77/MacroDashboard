@@ -1,0 +1,84 @@
+/* Command Palette Styles for cmdk */
+[cmdk-root] {
+  max-width: 640px;
+  width: 100%;
+  background: var(--slate-900, #0f172a);
+  border-radius: 1rem;
+  overflow: hidden;
+  padding: 0;
+  font-family: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+[cmdk-input] {
+  font-family: inherit;
+  border: none;
+  width: 100%;
+  font-size: 1.125rem;
+  padding: 1rem;
+  outline: none;
+  background: transparent;
+  color: white;
+  margin: 0;
+}
+
+[cmdk-input]::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+[cmdk-list] {
+  min-height: 100px;
+  max-height: 400px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  transition: 100ms ease;
+  transition-property: height;
+  padding: 0.5rem;
+}
+
+[cmdk-group-heading] {
+  user-select: none;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+[cmdk-item] {
+  content-visibility: auto;
+  cursor: pointer;
+  height: 48px;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  user-select: none;
+  will-change: background, color;
+  transition: all 0.15s ease;
+}
+
+[cmdk-item][aria-selected="true"] {
+  background: rgba(59, 130, 246, 0.15); /* blue-500/15 */
+  color: white;
+}
+
+[cmdk-item][aria-disabled="true"] {
+  color: rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+}
+
+[cmdk-empty] {
+  font-size: 0.875rem;
+  padding: 3rem 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}

@@ -39,11 +39,11 @@ Deno.serve(async (req) => {
     if (!titleText) {
       titleText = $("b:contains('Money Market Operations as on')").first().text();
     }
-    
+
     console.log(`Searching for date in: "${titleText}"`);
     const dateMatch = titleText.match(/(?:as on\s+)?(\w+\s+\d+,\s+\d{4})/i);
     if (!dateMatch) throw new Error(`Could not find date in text: "${titleText}"`);
-    
+
     const rawDate = new Date(dateMatch[1]);
     const isoDate = rawDate.toISOString().split("T")[0];
     console.log(`Detected Date: ${isoDate}`);
@@ -57,12 +57,15 @@ Deno.serve(async (req) => {
 
     const logs: string[] = [];
 
+    const opsData: Partial<MoneyMarketData> = {};
+    const liqData: Partial<LiquidityData> = {};
+
     $("tr").each((_, tr) => {
       const cells = $(tr).children();
       if (cells.length === 0) return;
-      
+
       const label = $(cells[0]).text().trim();
-      
+
       // Section Landmarks
       if (label.includes("A. Overnight Segment")) currentSection = "overnight";
       else if (label.includes("B. Term Segment")) currentSection = "term";
@@ -94,30 +97,32 @@ Deno.serve(async (req) => {
         }
       } else if (currentSection === "slf") {
         if (label.includes("Standing Liquidity Facility")) {
-           liqData.slf_amount = parse(cells[cells.length - 1]);
+          liqData.slf_amount = parse(cells[cells.length - 1]);
         }
       } else if (currentSection === "net_outstanding" || label.includes("(Outstanding)")) {
-          const val = parse(cells[cells.length - 1]) || parse(cells[cells.length - 2]);
-          if (val) liqData.net_liquidity_outstanding = val;
+        const val = parse(cells[cells.length - 1]) || parse(cells[cells.length - 2]);
+        if (val) liqData.net_liquidity_outstanding = val;
       } else if (currentSection === "net_total" || label.includes("(Total)")) {
-          const val = parse(cells[cells.length - 1]) || parse(cells[cells.length - 2]);
-          if (val) liqData.net_liquidity_total = val;
+        const val = parse(cells[cells.length - 1]) || parse(cells[cells.length - 2]);
+        if (val) liqData.net_liquidity_total = val;
       }
     });
 
-    // 4. Upsert into Supabase
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    await supabase.from("rbi_money_market_ops").upsert(opsData, { onConflict: "date" });
-    await supabase.from("rbi_liquidity_ops").upsert(liqData, { onConflict: "date" });
+    opsData.date = isoDate;
+    liqData.date = isoDate;
+
+    await supabase.from("rbi_money_market_ops").upsert(opsData as MoneyMarketData, { onConflict: "date" });
+    await supabase.from("rbi_liquidity_ops").upsert(liqData as LiquidityData, { onConflict: "date" });
 
     return new Response(JSON.stringify({ success: true, date: isoDate, opsData, liqData, debug_logs: logs.slice(0, 50) }), {
       headers: { "Content-Type": "application/json" },
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,

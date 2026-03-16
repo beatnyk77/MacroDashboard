@@ -10,6 +10,7 @@ import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
 import { QuickTourModal } from '@/components/QuickTourModal';
+import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import { Button } from '@mui/material';
 
 interface GlobalLayoutProps {
@@ -19,6 +20,7 @@ interface GlobalLayoutProps {
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [cmdKOpen, setCmdKOpen] = useState(false);
     const location = useLocation();
     const isObservatory = location.pathname.includes('/macro-observatory');
 
@@ -158,6 +160,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             {/* Dashboard Footer with Disclaimer & Data Transparency */}
             <InstitutionalFooter />
 
+            <CommandPalette open={cmdKOpen} setOpen={setCmdKOpen} />
             <SocialShareMode />
             <MobileNav />
             <QuickTourModal />
