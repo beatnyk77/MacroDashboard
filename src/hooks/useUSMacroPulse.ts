@@ -31,7 +31,9 @@ const US_MACRO_METRICS = [
     'LABOR_VACANCIES_JOLTS',
     'LABOR_UNEMPLOYMENT_RATE',
     'LABOR_WAGE_GROWTH_YOY',
-    'US_10Y_YIELD'
+    'US_10Y_YIELD',
+    'US_DEFENSE_SPENDING',
+    'US_FEDERAL_INTEREST_PAYMENTS'
 ];
 
 export function useUSMacroPulse() {
@@ -56,13 +58,13 @@ export function useUSMacroPulse() {
 
             return US_MACRO_METRICS.map(metricId => {
                 const metricHistory = historyData
-                    ?.filter(h => h.metric_id === metricId)
-                    .map(h => ({
+                    ?.filter((h: any) => h.metric_id === metricId)
+                    .map((h: any) => ({
                         date: h.as_of_date,
                         value: Number(h.value)
                     })) || [];
 
-                const latest = latestData?.find(l => l.metric_id === metricId);
+                const latest = latestData?.find((l: any) => l.metric_id === metricId);
 
                 const lastDate = latest?.last_updated_at ? new Date(latest.last_updated_at) : (metricHistory.length > 0 ? new Date(metricHistory[metricHistory.length - 1].date) : null);
                 const isStale = lastDate ? (new Date().getTime() - lastDate.getTime()) / (1000 * 3600 * 24) > 35 : true;

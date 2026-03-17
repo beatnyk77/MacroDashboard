@@ -81,9 +81,9 @@ export const DataHealthDashboard: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase.from('india_energy').select('state_code', { count: 'exact', head: true });
             if (error) throw error;
-            
+
             const { data: latestEntry } = await supabase.from('india_energy').select('last_updated_at').order('last_updated_at', { ascending: false }).limit(1).single();
-            
+
             return {
                 stateCount: data?.length || 0,
                 lastUpdated: latestEntry?.last_updated_at
@@ -98,7 +98,7 @@ export const DataHealthDashboard: React.FC = () => {
         queryFn: async () => {
             const { count, error } = await supabase.from('india_asi').select('state_code', { count: 'exact', head: true }).eq('year', 2023).eq('sector', 'all_industries');
             if (error) throw error;
-            
+
             const { data: latestEntry } = await supabase.from('india_asi').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
             return {
                 stateCount: count || 0,
@@ -117,9 +117,9 @@ export const DataHealthDashboard: React.FC = () => {
         queryFn: async () => {
             const { count, error } = await supabase.from('geopolitical_osint').select('*', { count: 'exact', head: true });
             if (error) throw error;
-            
+
             const { data: latestEntry } = await supabase.from('geopolitical_osint').select('timestamp').order('timestamp', { ascending: false }).limit(1).single();
-            
+
             return {
                 assetCount: count || 0,
                 lastUpdated: latestEntry?.timestamp
@@ -134,9 +134,9 @@ export const DataHealthDashboard: React.FC = () => {
         queryFn: async () => {
             const { count, error } = await supabase.from('domeapi_markets').select('*', { count: 'exact', head: true });
             if (error) throw error;
-            
+
             const { data: latestEntry } = await supabase.from('domeapi_markets').select('last_updated').order('last_updated', { ascending: false }).limit(1).single();
-            
+
             return {
                 marketCount: count || 0,
                 lastUpdated: latestEntry?.last_updated
@@ -145,7 +145,27 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000 // 1 min
     });
 
-    // 9. Data Authenticity Score
+    // 9. NEW: US Fiscal Structural Telemetry Tracking
+    const { data: fiscalStatus } = useQuery({
+        queryKey: ['fiscal-telemetry-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('metric_observations')
+                .select('metric_id, as_of_date')
+                .in('metric_id', ['US_DEFENSE_SPENDING', 'US_FEDERAL_INTEREST_PAYMENTS'])
+                .order('as_of_date', { ascending: false });
+
+            if (error) throw error;
+
+            const defense = data?.find(d => d.metric_id === 'US_DEFENSE_SPENDING');
+            const interest = data?.find(d => d.metric_id === 'US_FEDERAL_INTEREST_PAYMENTS');
+
+            return { defense, interest };
+        },
+        refetchInterval: 60000 // 1 min
+    });
+
+    // 10. Data Authenticity Score
     const { data: authenticity } = useQuery({
         queryKey: ['authenticity-score'],
         queryFn: async () => {
@@ -352,6 +372,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </IconButton>
                         </Paper>
                     </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>Fiscal Structural</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {fiscalStatus?.defense ? new Date(fiscalStatus.defense.as_of_date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="secondary" onClick={() => handleForceRefresh('ingest-fred')} disabled={refreshing === 'ingest-fred'}>
+                                {refreshing === 'ingest-fred' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
                 </Grid>
             </Box>
 
@@ -386,17 +419,17 @@ export const DataHealthDashboard: React.FC = () => {
                                                 {job.last_run_at ? new Date(job.last_run_at).toLocaleString() : 'Never'}
                                             </TableCell>
                                             <TableCell>
-                                                {job.last_run_status === 'succeeded' ? 
+                                                {job.last_run_status === 'succeeded' ?
                                                     <Chip label="OK" size="small" sx={{ height: 20, bgcolor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontSize: '0.7rem' }} /> :
                                                     <Chip label={job.last_run_status || 'Wait'} size="small" sx={{ height: 20, bgcolor: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', fontSize: '0.7rem' }} />
                                                 }
                                             </TableCell>
                                             <TableCell align="right">
-                                                <IconButton 
-                                                    size="small" 
-                                                    onClick={() => handleForceTriggerCron(job.jobname)} 
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => handleForceTriggerCron(job.jobname)}
                                                     disabled={refreshing === job.jobname}
-                                                    sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#60a5fa' }}}
+                                                    sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#60a5fa' } }}
                                                 >
                                                     {refreshing === job.jobname ? <CircularProgress size={14} /> : <RefreshCcw size={14} />}
                                                 </IconButton>
@@ -459,16 +492,16 @@ export const DataHealthDashboard: React.FC = () => {
                                         <TableRow key={row.function_name} hover>
                                             <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.function_name.replace('ingest-', '')}</TableCell>
                                             <TableCell>
-                                                <Chip 
-                                                    label={row.status_code || '--'} 
-                                                    size="small" 
+                                                <Chip
+                                                    label={row.status_code || '--'}
+                                                    size="small"
                                                     variant="outlined"
-                                                    sx={{ 
-                                                        height: 18, 
-                                                        fontSize: '0.65rem', 
+                                                    sx={{
+                                                        height: 18,
+                                                        fontSize: '0.65rem',
                                                         borderColor: row.status_code === 200 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)',
                                                         color: row.status_code === 200 ? '#10b981' : '#f43f5e'
-                                                    }} 
+                                                    }}
                                                 />
                                             </TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>{row.rows_inserted || 0}</TableCell>
@@ -477,9 +510,9 @@ export const DataHealthDashboard: React.FC = () => {
                                                 {new Date(row.start_time).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <IconButton 
-                                                    size="small" 
-                                                    onClick={() => handleForceRefresh(row.function_name)} 
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => handleForceRefresh(row.function_name)}
                                                     disabled={refreshing === row.function_name}
                                                     sx={{ color: refreshing === row.function_name ? '#60a5fa' : 'rgba(255,255,255,0.1)' }}
                                                 >

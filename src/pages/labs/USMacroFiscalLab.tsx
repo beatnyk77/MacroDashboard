@@ -18,6 +18,7 @@ import { LazyRender } from '@/components/LazyRender';
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasuryHoldersSection = lazy(() => import('@/features/dashboard/components/sections/TreasuryHoldersSection').then(m => ({ default: m.TreasuryHoldersSection })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
+const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 
 const LoadingFallback = () => (
@@ -106,7 +107,23 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 4: US Macro Pulse (Sankey) */}
+                {/* Section 4: US Fiscal Comparison */}
+                <section>
+                    <div className="flex items-center gap-3 mb-8">
+                        <TrendingUp className="text-indigo-500" size={24} />
+                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Defense vs Interest</h2>
+                    </div>
+                    <SectionErrorBoundary name="US Fiscal Comparison">
+                        <LazyRender minHeight="400px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <USFiscalComparisonChart />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-us-fiscal-comp" insight="Net interest payments on US federal debt have risen from $250B to over $1T annually, now rivaling the total national defense budget – a structural shift with profound implications for fiscal policy flexibilty." />
+                </section>
+
+                {/* Section 5: US Macro Pulse (Sankey) */}
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
@@ -123,7 +140,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 5: Policy Tracker */}
+                {/* Section 6: Policy Tracker */}
                 <section className="pt-12 border-t border-white/5">
                     <div className="flex items-center gap-3 mb-8">
                         <ShieldAlert className="text-rose-500" size={24} />
