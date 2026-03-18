@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { 
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+import {
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { 
-    ShieldAlert, TrendingUp, Wallet, ArrowUpRight, 
+import {
+    ShieldAlert, TrendingUp, Wallet, ArrowUpRight,
     AlertTriangle, Info, Building2
 } from 'lucide-react';
 import { use401kDistress } from '@/hooks/use401kDistress';
@@ -49,7 +49,7 @@ export const Distress401kMonitor: React.FC = () => {
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group h-full flex flex-col justify-between">
                         <div className="absolute inset-0 bg-rose-500/5 blur-3xl -z-10 group-hover:bg-rose-500/10 transition-colors" />
-                        
+
                         <div>
                             <div className="flex items-center gap-2 mb-6">
                                 <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
@@ -59,7 +59,7 @@ export const Distress401kMonitor: React.FC = () => {
                             </div>
 
                             <div className="text-center py-10">
-                                <motion.div 
+                                <motion.div
                                     initial={{ scale: 0.8, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
                                     className="inline-block relative"
@@ -86,7 +86,7 @@ export const Distress401kMonitor: React.FC = () => {
                             <div className="pt-4 flex items-center gap-2">
                                 <ShieldAlert size={14} className="text-rose-500" />
                                 <span className="text-[0.55rem] font-black text-rose-500 uppercase tracking-widest">
-                                    { (latest?.distress_zscore || 0) > 5 ? 'High Recessionary Pressure' : 'Structural Low Stress' }
+                                    {(latest?.distress_zscore || 0) > 5 ? 'High Recessionary Pressure' : 'Structural Low Stress'}
                                 </span>
                             </div>
                         </div>
@@ -122,27 +122,27 @@ export const Distress401kMonitor: React.FC = () => {
                                 <AreaChart data={distressData}>
                                     <defs>
                                         <linearGradient id="colorVanguard" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1}/>
-                                            <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                                         </linearGradient>
                                         <linearGradient id="colorFidelity" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                                    <XAxis 
-                                        dataKey="date" 
-                                        axisLine={false} 
-                                        tickLine={false} 
+                                    <XAxis
+                                        dataKey="date"
+                                        axisLine={false}
+                                        tickLine={false}
                                         tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)', fontWeight: 700 }}
                                         tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { month: 'short' })}
                                     />
-                                    <YAxis 
-                                        hide 
-                                        domain={[0, 'auto']} 
+                                    <YAxis
+                                        hide
+                                        domain={[0, 'auto']}
                                     />
-                                    <Tooltip 
+                                    <Tooltip
                                         contentStyle={{ backgroundColor: '#0B1121', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px' }}
                                         itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }}
                                     />
@@ -201,7 +201,7 @@ export const Distress401kMonitor: React.FC = () => {
                 <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                     <Info size={14} className="text-rose-400" />
                     <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest">
-                        Sources: Vanguard "How America Saves" · Fidelity Intelligence · ICI Statistics · FRED
+                        Sources: Live Synthetic Telemetry via FRED (DRCCLACBS / PSAVERT Proxies)
                     </span>
                 </div>
             </div>

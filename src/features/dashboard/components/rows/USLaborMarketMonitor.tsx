@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { 
+import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar
 } from 'recharts';
-import { 
-    Activity, Briefcase, TrendingUp, TrendingDown, 
+import {
+    Activity, Briefcase, TrendingUp, TrendingDown,
     AlertTriangle, Zap
 } from 'lucide-react';
 import { useUSLabor } from '@/hooks/useUSLabor';
@@ -51,7 +51,7 @@ export const USLaborMarketMonitor: React.FC = () => {
         <div className="w-full bg-[#0B1121]/50 border border-white/5 rounded-3xl p-6 backdrop-blur-sm relative overflow-hidden">
             {/* Background Glow */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[120px] -z-10 rounded-full" />
-            
+
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
@@ -61,7 +61,7 @@ export const USLaborMarketMonitor: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-black text-white tracking-tight">Employment & Payroll Terminals</h2>
                 </div>
-                
+
                 <div className="flex gap-4">
                     <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
                         <span className="block text-[10px] text-white/40 font-bold uppercase mb-0.5">Labor Distress Index</span>
@@ -135,16 +135,16 @@ export const USLaborMarketMonitor: React.FC = () => {
                             <AreaChart data={laborData}>
                                 <defs>
                                     <linearGradient id="colorClaims" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                                <XAxis 
-                                    dataKey="date" 
-                                    hide 
+                                <XAxis
+                                    dataKey="date"
+                                    hide
                                 />
-                                <YAxis 
+                                <YAxis
                                     orientation="right"
                                     tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
                                     axisLine={false}
@@ -152,14 +152,22 @@ export const USLaborMarketMonitor: React.FC = () => {
                                     tickFormatter={(val) => `${(val / 1000).toFixed(0)}k`}
                                 />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Area 
+                                <Area
                                     name="Initial Claims"
-                                    type="monotone" 
-                                    dataKey="initial_claims" 
-                                    stroke="#3b82f6" 
+                                    type="monotone"
+                                    dataKey="initial_claims"
+                                    stroke="#3b82f6"
                                     strokeWidth={2}
-                                    fillOpacity={1} 
-                                    fill="url(#colorClaims)" 
+                                    fillOpacity={1}
+                                    fill="url(#colorClaims)"
+                                />
+                                <Area
+                                    name="Continuing Claims"
+                                    type="monotone"
+                                    dataKey="continuing_claims"
+                                    stroke="#c084fc"
+                                    strokeWidth={2}
+                                    fillOpacity={0}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -207,7 +215,7 @@ export const USLaborMarketMonitor: React.FC = () => {
                     </div>
                 </div>
                 <div>
-                   <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-4">
                         <span className="text-[10px] font-black uppercase text-white/40 tracking-wider">JOLTS: Openings vs Layoffs</span>
                     </div>
                     <div className="h-32">

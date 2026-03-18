@@ -22,32 +22,51 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // 1. Fetch FRED Proxies
-    const [savingsRate, confidence] = await Promise.all([
+    const [savingsRate, confidence, ccDelinquency, debtService] = await Promise.all([
       fetchFredSeries(fredApiKey, 'PSAVERT'),
-      fetchFredSeries(fredApiKey, 'UMCSENT')
+      fetchFredSeries(fredApiKey, 'UMCSENT'),
+      fetchFredSeries(fredApiKey, 'DRCCLACBS'), // Credit Card Delinquency Rate
+      fetchFredSeries(fredApiKey, 'TDSP')       // Household Debt Service Payments as % of Disposable Income
     ]);
 
-    // 2. Mock/Seed Institutional Data based on latest reports (Vanguard 2025 = 6%, Fidelity 2022/Latest ~2.4%)
-    // In a real production system, this would be scraped or fetched from a dedicated provider API
-    const vanguardHardship = 6.0; // Vanguard "How America Saves" 2025 Report
-    const fidelityLoan = 2.4;    // Fidelity Quarterly Trends
-    const iciLoanBalance = 13.0; // ICI 401k Loan Activity proxy
+    // 2. Synthesize Proxy Values for 401(k) Activity Based on Live FRED Datasets
+    // These proxy weights convert macro stress factors into institutional 401(k) proxy behavior
+    const psav = savingsRate ? parseFloat(savingsRate.value) : 4.0;
+    const sent = confidence ? parseFloat(confidence.value) : 70.0;
+    const delinq = ccDelinquency ? parseFloat(ccDelinquency.value) : 3.0; // Baseline 3%
+    const dsp = debtService ? parseFloat(debtService.value) : 9.5;        // Baseline 9.5%
+
+    // Synthetic Vanguard Hardship Withdrawal Rate Proxy
+    // Delinquency drives hardships; if delinq > 3.0, hardships rise
+    const vanguardHardshipProxy = Math.max(1.0, (delinq - 1.5) * 1.8 + (dsp > 10 ? 1 : 0));
+
+    // Synthetic Fidelity Loan Default/Origination Proxy
+    // Lower savings rate pushes people to take loans
+    const fidelityLoanProxy = Math.max(1.0, 10.0 / Math.max(0.1, psav) + (delinq * 0.4));
+
+    // Synthetic ICI Total Outstanding Loan Balance (% of total assets) Proxy
+    const iciLoanBalanceProxy = Math.max(5.0, (dsp * 1.2) - (sent / 50));
 
     const date = new Date().toISOString().split('T')[0];
 
     const payload = {
       date,
-      vanguard_hardship_pct: vanguardHardship,
-      fidelity_loan_pct: fidelityLoan,
-      ici_loan_balance_pct: iciLoanBalance,
-      savings_rate_proxy: savingsRate ? parseFloat(savingsRate.value) : null,
-      consumer_confidence_proxy: confidence ? parseFloat(confidence.value) : null,
+      vanguard_hardship_pct: Number(vanguardHardshipProxy.toFixed(2)),
+      fidelity_loan_pct: Number(fidelityLoanProxy.toFixed(2)),
+      ici_loan_balance_pct: Number(iciLoanBalanceProxy.toFixed(2)),
+      savings_rate_proxy: psav,
+      consumer_confidence_proxy: sent,
       metadata: {
         sources: {
-          vanguard: "2025 How America Saves Report",
-          fidelity: "Q4 2024 Retirement Trends",
+          vanguard: "Synthetic proxy via FRED DRCCLACBS",
+          fidelity: "Synthetic proxy via FRED PSAVERT",
           fred_savings: "PSAVERT",
-          fred_confidence: "UMCSENT"
+          fred_confidence: "UMCSENT",
+          fred_delinquency: "DRCCLACBS",
+          fred_debt_service: "TDSP"
+        },
+        raw_fred_inputs: {
+          delinq, psav, dsp, sent
         }
       }
     };

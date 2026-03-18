@@ -24,9 +24,25 @@ export const useUSLabor = () => {
                 .from('us_labor_market')
                 .select('*')
                 .order('date', { ascending: true });
-            
+
             if (error) throw error;
-            return data as USLaborData[];
+
+            const rawData = data as USLaborData[];
+            if (rawData.length === 0) return rawData;
+
+            // Forward fill null values
+            const filledData = [...rawData];
+            for (let i = 1; i < filledData.length; i++) {
+                const current = filledData[i];
+                const prev = filledData[i - 1];
+                (Object.keys(current) as Array<keyof USLaborData>).forEach(key => {
+                    if (current[key] === null && prev[key] !== null) {
+                        (current as any)[key] = prev[key];
+                    }
+                });
+            }
+
+            return filledData;
         },
         staleTime: 1000 * 60 * 60, // 1 hour
     });
