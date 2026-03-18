@@ -305,7 +305,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                                 {entry.name}
                             </span>
                             <span className="text-white font-mono font-black text-xs">
-                                {entry.name.includes('Value') ? `₹${entry.value.toFixed(2)}T` : entry.name.includes('%') ? `${entry.value.toFixed(2)}%` : entry.value.toFixed(2)}
+                                {entry.name.includes('Value') ? `₹${(entry.value || 0).toFixed(2)}T` : entry.name.includes('%') ? `${(entry.value || 0).toFixed(2)}%` : (entry.value || 0).toFixed(2)}
                             </span>
                         </div>
                     ))}
