@@ -15,7 +15,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
             ...d,
             formattedDate: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
             // Create a derived metric for REER premium over NEER
-            valuation_premium: d.reer_40 - d.neer_40
+            valuation_premium: (d.reer_40 || 0) - (d.neer_40 || 0)
         }));
     }, [rawData]);
 
@@ -26,14 +26,14 @@ export const RBIFXDefenseMonitor: React.FC = () => {
         return <div className="h-96 w-full bg-[#0a0f1d] border border-white/5 rounded-3xl animate-pulse" />;
     }
 
-    const reservesDelta = latest.fx_reserves_bn - previous.fx_reserves_bn;
+    const reservesDelta = (latest.fx_reserves_bn || 0) - (previous?.fx_reserves_bn || latest.fx_reserves_bn || 0);
     const isAccumulating = reservesDelta > 0;
 
     // Logic for analyst insight based on recent data
     let analystInsight = "";
-    if (latest.forward_book_net_bn < 0 && isAccumulating) {
+    if ((latest.forward_book_net_bn || 0) < 0 && isAccumulating) {
         analystInsight = "RBI is actively accumulating spot reserves while drawing down the net forward book to manage liquidity and absorb inflows without immediate spot market distortion.";
-    } else if (latest.valuation_premium > 5) {
+    } else if ((latest.valuation_premium || 0) > 5) {
         analystInsight = "Rupee remains significantly overvalued on a REER basis compared to NEER, putting pressure on export competitiveness and necessitating careful RBI intervention management.";
     } else {
         analystInsight = "RBI maintaining a balanced defense posture. Intervention focus shifting dynamically between spot accumulation and forward book management based on daily volatility.";
@@ -64,7 +64,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5 border-b border-white/5">
                 <MetricCard
                     title="Headline FX Reserves"
-                    value={`$${latest.fx_reserves_bn.toFixed(1)}B`}
+                    value={`$${(latest.fx_reserves_bn || 0).toFixed(1)}B`}
                     delta={`${reservesDelta > 0 ? '+' : ''}${reservesDelta.toFixed(1)}B`}
                     trend={reservesDelta > 0 ? 'up' : 'down'}
                     icon={<Shield className="w-5 h-5 text-emerald-400" />}
@@ -72,15 +72,15 @@ export const RBIFXDefenseMonitor: React.FC = () => {
                 />
                 <MetricCard
                     title="Net Forward Book"
-                    value={`$${latest.forward_book_net_bn.toFixed(1)}B`}
-                    subtext={latest.forward_book_net_bn < 0 ? "Net Short (Selling)" : "Net Long (Buying)"}
+                    value={`$${(latest.forward_book_net_bn || 0).toFixed(1)}B`}
+                    subtext={(latest.forward_book_net_bn || 0) < 0 ? "Net Short (Selling)" : "Net Long (Buying)"}
                     icon={<ArrowRightLeft className="w-5 h-5 text-cyan-400" />}
-                    colorClass={latest.forward_book_net_bn < 0 ? "text-rose-400" : "text-cyan-400"}
+                    colorClass={(latest.forward_book_net_bn || 0) < 0 ? "text-rose-400" : "text-cyan-400"}
                 />
                 <MetricCard
                     title="REER Valuation Premium"
-                    value={`${latest.valuation_premium.toFixed(1)} pts`}
-                    subtext={`REER: ${latest.reer_40.toFixed(1)} | NEER: ${latest.neer_40.toFixed(1)}`}
+                    value={`${(latest.valuation_premium || 0).toFixed(1)} pts`}
+                    subtext={`REER: ${(latest.reer_40 || 0).toFixed(1)} | NEER: ${(latest.neer_40 || 0).toFixed(1)}`}
                     icon={<Globe className="w-5 h-5 text-fuchsia-400" />}
                     colorClass="text-fuchsia-400"
                 />
@@ -202,7 +202,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
                         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
                             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Defense Stance</div>
                             <div className="text-white font-bold text-sm">
-                                {reservesDelta > 0 && latest.forward_book_net_bn < 0 ? "Asymmetric (Spot Buy, Forward Sell)" : "Symmetrical Accumulation"}
+                                {reservesDelta > 0 && (latest.forward_book_net_bn || 0) < 0 ? "Asymmetric (Spot Buy, Forward Sell)" : "Symmetrical Accumulation"}
                             </div>
                         </div>
                     </div>

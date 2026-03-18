@@ -15,7 +15,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
             ...d,
             formattedDate: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
             // Calculate Premium Spread
-            premium_spread: d.rbi_dpi_index - d.g20_digital_baseline
+            premium_spread: (d.rbi_dpi_index || 0) - (d.g20_digital_baseline || 0)
         }));
     }, [rawData]);
 
@@ -26,8 +26,12 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
         return <div className="h-[600px] w-full bg-[#0a0f1d] border border-white/5 rounded-[2.5rem] animate-pulse" />;
     }
 
-    const upiVolGrowth = ((latest.upi_volume_bn - previous.upi_volume_bn) / previous.upi_volume_bn) * 100;
-    const formalizationPremium = ((latest.rbi_dpi_index - latest.g20_digital_baseline) / latest.g20_digital_baseline) * 100;
+    const upiVolGrowth = previous?.upi_volume_bn
+        ? ((latest.upi_volume_bn - previous.upi_volume_bn) / previous.upi_volume_bn) * 100
+        : 0;
+    const formalizationPremium = latest.g20_digital_baseline
+        ? ((latest.rbi_dpi_index - latest.g20_digital_baseline) / latest.g20_digital_baseline) * 100
+        : 0;
 
     return (
         <section className="w-full bg-[#0a0f1d] rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl font-sans relative group">
@@ -54,14 +58,14 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5 border-b border-white/5 bg-black/20">
                 <MetricCard
                     title="Latest UPI Vol"
-                    value={`${latest.upi_volume_bn.toFixed(1)}B`}
+                    value={`${(latest.upi_volume_bn || 0).toFixed(1)}B`}
                     subtext={`${upiVolGrowth.toFixed(1)}% MoM SURGE`}
                     icon={<Zap className="w-5 h-5 text-cyan-400" />}
                     colorClass="text-cyan-400"
                 />
                 <MetricCard
                     title="DPI Index Score"
-                    value={latest.rbi_dpi_index.toFixed(1)}
+                    value={(latest.rbi_dpi_index || 0).toFixed(1)}
                     subtext="BASE 2018 = 100"
                     icon={<BarChart3 className="w-5 h-5 text-emerald-400" />}
                     colorClass="text-emerald-400"
