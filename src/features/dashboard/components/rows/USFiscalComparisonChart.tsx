@@ -13,11 +13,7 @@ import {
 import { format } from 'date-fns';
 import { useUSMacroPulse } from '../../../../hooks/useUSMacroPulse';
 
-interface USFiscalComparisonChartProps {
-    // Add props if needed
-}
-
-const USFiscalComparisonChart: React.FC<USFiscalComparisonChartProps> = () => {
+const USFiscalComparisonChart: React.FC = () => {
     const { data: pulseData, isLoading } = useUSMacroPulse();
 
     const chartData = useMemo(() => {
