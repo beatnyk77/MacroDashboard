@@ -11,7 +11,7 @@ import {
     ReferenceArea
 } from 'recharts';
 import { format } from 'date-fns';
-import { useUSMacroPulse } from '../../../hooks/useUSMacroPulse';
+import { useUSMacroPulse } from '../../../../hooks/useUSMacroPulse';
 
 interface USFiscalComparisonChartProps {
     // Add props if needed

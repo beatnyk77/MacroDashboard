@@ -165,6 +165,39 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000 // 1 min
     });
 
+    // 11. NEW: RBI Money Market Ops Tracking
+    const { data: moneyMarketStatus } = useQuery({
+        queryKey: ['money-market-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('rbi_money_market_ops').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 60000
+    });
+
+    // 12. NEW: RBI FX Defense Tracking
+    const { data: fxDefenseStatus } = useQuery({
+        queryKey: ['fx-defense-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('rbi_fx_defense').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 60000
+    });
+
+    // 13. NEW: India Digitization Tracking
+    const { data: digitizationStatus } = useQuery({
+        queryKey: ['digitization-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('india_digitization_premium').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 60000
+    });
+
     // 10. Data Authenticity Score
     const { data: authenticity } = useQuery({
         queryKey: ['authenticity-score'],
@@ -382,6 +415,45 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="secondary" onClick={() => handleForceRefresh('ingest-fred')} disabled={refreshing === 'ingest-fred'}>
                                 {refreshing === 'ingest-fred' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>Money Market</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {moneyMarketStatus ? new Date(moneyMarketStatus.date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="secondary" onClick={() => handleForceRefresh('ingest-rbi-money-market')} disabled={refreshing === 'ingest-rbi-money-market'}>
+                                {refreshing === 'ingest-rbi-money-market' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>FX Defense</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {fxDefenseStatus ? new Date(fxDefenseStatus.date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="secondary" onClick={() => handleForceRefresh('ingest-rbi-fx-defense')} disabled={refreshing === 'ingest-rbi-fx-defense'}>
+                                {refreshing === 'ingest-rbi-fx-defense' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>Digitization</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {digitizationStatus ? new Date(digitizationStatus.date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="secondary" onClick={() => handleForceRefresh('ingest-india-digitization')} disabled={refreshing === 'ingest-india-digitization'}>
+                                {refreshing === 'ingest-india-digitization' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
