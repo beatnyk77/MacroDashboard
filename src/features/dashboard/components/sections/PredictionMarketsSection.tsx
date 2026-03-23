@@ -4,10 +4,6 @@ import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
 import { FileText, ExternalLink, Quote, BarChart3, Globe, Sparkles } from 'lucide-react';
 
-
-// The generated image path
-import infographicImg from '@/assets/images/feds_2026_010_infographic.png';
-
 export const PredictionMarketsSection: React.FC = () => {
     return (
         <SPASection id="prediction-markets-discovery" className="py-24 bg-white/[0.01]">
@@ -22,15 +18,26 @@ export const PredictionMarketsSection: React.FC = () => {
                 {/* Visual Side */}
                 <div className="relative group perspective-1000">
                     <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 to-emerald-500/10 rounded-[3rem] blur-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-                    <Card className="relative overflow-hidden border-white/5 bg-slate-950/50 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
-                        <img
-                            src={infographicImg}
-                            alt="FEDS 2026-010 Infographic: Kalshi & Prediction Markets"
-                            className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-all duration-700"
-                        />
+                    <Card className="relative overflow-hidden border-white/5 bg-slate-950/50 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl transition-transform duration-700 group-hover:scale-[1.01] min-h-[400px] flex items-center justify-center">
+                        {/* Premium Abstract Placeholder for FEDS Infographic */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-emerald-600/20 opacity-30" />
+                        <div className="relative z-10 flex flex-col items-center justify-center p-12 text-center space-y-6">
+                            <div className="w-24 h-24 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center animate-pulse-slow">
+                                <Sparkles size={48} className="text-blue-400 opacity-60" />
+                            </div>
+                            <div>
+                                <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-2">FEDS 2026-010</h4>
+                                <p className="text-[0.65rem] text-muted-foreground font-bold uppercase tracking-[0.3em]">Institutional Signal Synthesis</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="w-1 h-8 bg-blue-500/40 rounded-full animate-bounce-slow" />
+                                <div className="w-1 h-12 bg-blue-400/40 rounded-full animate-bounce-slow [animation-delay:0.2s]" />
+                                <div className="w-1 h-6 bg-emerald-500/40 rounded-full animate-bounce-slow [animation-delay:0.4s]" />
+                            </div>
+                        </div>
 
                         {/* Shimmer Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                     </Card>
 
                     {/* Floating Label */}
