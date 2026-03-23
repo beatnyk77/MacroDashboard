@@ -42,14 +42,21 @@ jobs:
             ingest-cie-ipos: ['supabase/functions/ingest-cie-ipos/**']
             ingest-cie-short-selling: ['supabase/functions/ingest-cie-short-selling/**']
             ingest-rbi-money-market: ['supabase/functions/ingest-rbi-money-market/**']
+            ingest-global-refining: ['supabase/functions/ingest-global-refining/**']
+            ingest-gold-debt-coverage: ['supabase/functions/ingest-gold-debt-coverage/**']
+            ingest-prediction-markets: ['supabase/functions/ingest-prediction-markets/**']
+            ingest-gold-positioning: ['supabase/functions/ingest-gold-positioning/**']
+            ingest-rbi-fx-defense: ['supabase/functions/ingest-rbi-fx-defense/**']
+            ingest-commodity-terminal: ['supabase/functions/ingest-commodity-terminal/**']
+            ingest-cie-deals: ['supabase/functions/ingest-cie-deals/**']
+            ingest-cie-promoters: ['supabase/functions/ingest-cie-promoters/**']
+            ingest-smart-money-flow: ['supabase/functions/ingest-smart-money-flow/**']
             _shared: ['supabase/functions/_shared/**']
 
       - name: Deploy Changed Functions
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-          # Export each filter result as a named env var — avoids invalid
-          # dynamic expression syntax (${{ steps.filter.outputs.$var }})
           CHANGED_SHARED: ${{ steps.filter.outputs._shared }}
           CHANGED_INGEST_FRED: ${{ steps.filter.outputs['ingest-fred'] }}
           CHANGED_INGEST_MACRO_EVENTS: ${{ steps.filter.outputs['ingest-macro-events'] }}
@@ -67,6 +74,15 @@ jobs:
           CHANGED_INGEST_CIE_SHORT_SELLING: ${{ steps.filter.outputs['ingest-cie-short-selling'] }}
           CHANGED_INGEST_CIE_IPOS: ${{ steps.filter.outputs['ingest-cie-ipos'] }}
           CHANGED_INGEST_RBI_MONEY_MARKET: ${{ steps.filter.outputs['ingest-rbi-money-market'] }}
+          CHANGED_INGEST_GLOBAL_REFINING: ${{ steps.filter.outputs['ingest-global-refining'] }}
+          CHANGED_INGEST_GOLD_DEBT_COVERAGE: ${{ steps.filter.outputs['ingest-gold-debt-coverage'] }}
+          CHANGED_INGEST_PREDICTION_MARKETS: ${{ steps.filter.outputs['ingest-prediction-markets'] }}
+          CHANGED_INGEST_GOLD_POSITIONING: ${{ steps.filter.outputs['ingest-gold-positioning'] }}
+          CHANGED_INGEST_RBI_FX_DEFENSE: ${{ steps.filter.outputs['ingest-rbi-fx-defense'] }}
+          CHANGED_INGEST_COMMODITY_TERMINAL: ${{ steps.filter.outputs['ingest-commodity-terminal'] }}
+          CHANGED_INGEST_CIE_DEALS: ${{ steps.filter.outputs['ingest-cie-deals'] }}
+          CHANGED_INGEST_CIE_PROMOTERS: ${{ steps.filter.outputs['ingest-cie-promoters'] }}
+          CHANGED_INGEST_SMART_MONEY_FLOW: ${{ steps.filter.outputs['ingest-smart-money-flow'] }}
         run: |
           deploy_func() {
             local func_name="$1"
@@ -84,7 +100,7 @@ jobs:
               fi
             done
           else
-            # Deploy only changed functions using named env vars (not dynamic expressions)
+            # Deploy only changed functions using named env vars
             [ "$CHANGED_INGEST_FRED" = "true" ]                && deploy_func "ingest-fred"
             [ "$CHANGED_INGEST_MACRO_EVENTS" = "true" ]        && deploy_func "ingest-macro-events"
             [ "$CHANGED_INGEST_COMMODITY_RESERVES" = "true" ]  && deploy_func "ingest-commodity-reserves"
@@ -101,5 +117,14 @@ jobs:
             [ "$CHANGED_INGEST_CIE_SHORT_SELLING" = "true" ]   && deploy_func "ingest-cie-short-selling"
             [ "$CHANGED_INGEST_CIE_IPOS" = "true" ]            && deploy_func "ingest-cie-ipos"
             [ "$CHANGED_INGEST_RBI_MONEY_MARKET" = "true" ]    && deploy_func "ingest-rbi-money-market"
+            [ "$CHANGED_INGEST_GLOBAL_REFINING" = "true" ]     && deploy_func "ingest-global-refining"
+            [ "$CHANGED_INGEST_GOLD_DEBT_COVERAGE" = "true" ]  && deploy_func "ingest-gold-debt-coverage"
+            [ "$CHANGED_INGEST_PREDICTION_MARKETS" = "true" ]  && deploy_func "ingest-prediction-markets"
+            [ "$CHANGED_INGEST_GOLD_POSITIONING" = "true" ]    && deploy_func "ingest-gold-positioning"
+            [ "$CHANGED_INGEST_RBI_FX_DEFENSE" = "true" ]      && deploy_func "ingest-rbi-fx-defense"
+            [ "$CHANGED_INGEST_COMMODITY_TERMINAL" = "true" ]  && deploy_func "ingest-commodity-terminal"
+            [ "$CHANGED_INGEST_CIE_DEALS" = "true" ]           && deploy_func "ingest-cie-deals"
+            [ "$CHANGED_INGEST_CIE_PROMOTERS" = "true" ]       && deploy_func "ingest-cie-promoters"
+            [ "$CHANGED_INGEST_SMART_MONEY_FLOW" = "true" ]    && deploy_func "ingest-smart-money-flow"
             echo "Selective deployment complete."
           fi
