@@ -6,7 +6,7 @@ import { FileText, ExternalLink, Quote, BarChart3, Globe, Sparkles } from 'lucid
 
 
 // The generated image path
-import infographicImg from '/Users/kartikaysharma/.gemini/antigravity/brain/7b2eab03-13eb-47aa-859a-9dc5e802b91d/feds_2026_010_infographic_v2_1771525581049.png';
+import infographicImg from '@/assets/images/feds_2026_010_infographic.png';
 
 export const PredictionMarketsSection: React.FC = () => {
     return (

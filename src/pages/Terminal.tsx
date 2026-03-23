@@ -20,6 +20,7 @@ const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components
 const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
 const WhiteCollarDebtMonitor = lazy(() => import('@/features/dashboard/components/sections/WhiteCollarDebtMonitor').then(m => ({ default: m.WhiteCollarDebtMonitor })));
+const PredictionMarketsSection = lazy(() => import('@/features/dashboard/components/sections/PredictionMarketsSection').then(m => ({ default: m.PredictionMarketsSection })));
 
 
 const LoadingFallback = () => (
@@ -205,6 +206,15 @@ export const Terminal: React.FC = () => {
                                     <PredictionMarketHeatmap />
                                 </div>
                             </div>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 9: Prediction Markets Discovery (Research Synthesis) */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="Prediction Markets Discovery">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <PredictionMarketsSection />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
