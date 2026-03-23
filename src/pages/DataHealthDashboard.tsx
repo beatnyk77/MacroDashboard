@@ -198,6 +198,72 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000
     });
 
+    // 14. NEW: Gold / Debt of G20
+    const { data: goldDebtStatus } = useQuery({
+        queryKey: ['gold-debt-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('gold_debt_coverage_g20').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 15. NEW: CIE Short Selling
+    const { data: cieShortSellingStatus } = useQuery({
+        queryKey: ['cie-short-selling-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('cie_short_selling_history').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 16. NEW: CIE Promoters
+    const { data: ciePromoterStatus } = useQuery({
+        queryKey: ['cie-promoter-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('cie_promoter_history').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 17. NEW: Global Refining
+    const { data: globalRefiningStatus } = useQuery({
+        queryKey: ['global-refining-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('global_refining_capacity').select('last_updated').order('last_updated', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 18. NEW: Gold Positioning
+    const { data: goldPositioningStatus } = useQuery({
+        queryKey: ['gold-positioning-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('gold_positioning').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 19. NEW: Commodity Flows
+    const { data: commodityFlowsStatus } = useQuery({
+        queryKey: ['commodity-flows-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('commodity_flows').select('trade_date').order('trade_date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
     // 10. Data Authenticity Score
     const { data: authenticity } = useQuery({
         queryKey: ['authenticity-score'],
@@ -454,6 +520,84 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="secondary" onClick={() => handleForceRefresh('ingest-india-digitization')} disabled={refreshing === 'ingest-india-digitization'}>
                                 {refreshing === 'ingest-india-digitization' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(234, 179, 8, 0.05)', border: '1px solid rgba(234, 179, 8, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#eab308', fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold / Debt G20</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {goldDebtStatus ? new Date(goldDebtStatus.as_of_date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-gold-debt-coverage')} disabled={refreshing === 'ingest-gold-debt-coverage'}>
+                                {refreshing === 'ingest-gold-debt-coverage' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(234, 179, 8, 0.05)', border: '1px solid rgba(234, 179, 8, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#eab308', fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold Positioning</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {goldPositioningStatus ? new Date(goldPositioningStatus.date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-gold-positioning')} disabled={refreshing === 'ingest-gold-positioning'}>
+                                {refreshing === 'ingest-gold-positioning' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(14, 165, 233, 0.05)', border: '1px solid rgba(14, 165, 233, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#0ea5e9', fontWeight: 700, display: 'block', lineHeight: 1 }}>CIE Short Selling</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {cieShortSellingStatus ? new Date(cieShortSellingStatus.date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-cie-short-selling')} disabled={refreshing === 'ingest-cie-short-selling'}>
+                                {refreshing === 'ingest-cie-short-selling' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(14, 165, 233, 0.05)', border: '1px solid rgba(14, 165, 233, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#0ea5e9', fontWeight: 700, display: 'block', lineHeight: 1 }}>CIE Promoters</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {ciePromoterStatus ? new Date(ciePromoterStatus.date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-cie-fundamentals/promoters')} disabled={refreshing === 'ingest-cie-fundamentals/promoters'}>
+                                {refreshing === 'ingest-cie-fundamentals/promoters' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Global Refining</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {globalRefiningStatus ? new Date(globalRefiningStatus.last_updated).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-global-refining')} disabled={refreshing === 'ingest-global-refining'}>
+                                {refreshing === 'ingest-global-refining' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Commodity Flows</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {commodityFlowsStatus ? new Date(commodityFlowsStatus.trade_date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-commodity-terminal')} disabled={refreshing === 'ingest-commodity-terminal'}>
+                                {refreshing === 'ingest-commodity-terminal' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
