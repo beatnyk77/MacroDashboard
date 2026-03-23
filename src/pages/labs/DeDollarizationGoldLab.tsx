@@ -19,6 +19,7 @@ const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/ro
 const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
+const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -133,6 +134,20 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
+                </section>
+
+                {/* 5. Gold Positioning & Manipulation Monitor */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Zap className="text-amber-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Futures & Manipulation Monitor</h2>
+                    </div>
+                    <SectionErrorBoundary name="Gold Positioning">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GoldPositioningMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-gold-positioning" insight="The divergence between paper gold positioning (futures/options) and physical demand is a primary indicator of institutional hedging velocity and sovereign 'price discovery' outside Western exchanges." />
                 </section>
             </div>
 
