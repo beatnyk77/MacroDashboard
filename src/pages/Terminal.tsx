@@ -17,6 +17,7 @@ const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/componen
 const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
+const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
 
 
 const LoadingFallback = () => (
@@ -42,7 +43,16 @@ export const Terminal: React.FC = () => {
             </header>
 
             <main className="space-y-12">
-                
+
+                {/* Row 0: Global Liquidity Direction Monitor (Primary Context) */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="Global Liquidity Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GlobalLiquidityMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
                 {/* Row 1: KPI Grid (Strategic Visibility) */}
                 <div className="w-full">
                     <SectionErrorBoundary name="Strategic KPIs">
