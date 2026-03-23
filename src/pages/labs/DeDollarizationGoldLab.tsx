@@ -20,6 +20,7 @@ const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/
 const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
+const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -79,6 +80,15 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+
+                    <div className="mt-12">
+                        <SectionErrorBoundary name="G20 Gold Debt Coverage">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <G20GoldDebtCoveragePanel />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
                     <ChartInsightSummary id="lab-gold-ratios" insight="The M2/Gold ratio tracks the relative debasement of the monetary supply against the hard asset anchor. Structurally rising ratios indicate a regime change in sovereign preference for physical liquidity." />
                 </section>
 
