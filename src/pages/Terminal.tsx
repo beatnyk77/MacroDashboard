@@ -15,6 +15,7 @@ const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sect
 const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketTerminal').then(m => ({ default: m.PredictionMarketTerminal })));
 const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
 const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
+const SmartMoneyFlowMonitor = lazy(() => import('@/features/dashboard/components/sections/SmartMoneyFlowMonitor').then(m => ({ default: m.SmartMoneyFlowMonitor })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
@@ -59,6 +60,15 @@ export const Terminal: React.FC = () => {
                     <SectionErrorBoundary name="White-Collar Debt Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <WhiteCollarDebtMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 0.75: Smart Money Flow Monitor (Institutional Positioning) */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="Smart Money Flow Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <SmartMoneyFlowMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
