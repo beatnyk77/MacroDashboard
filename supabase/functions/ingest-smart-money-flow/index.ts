@@ -36,14 +36,14 @@ Deno.serve(async (req: Request) => {
         if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
         // 1. Fetch Series
-        // TOTALTIC: TIC Net Long-term Securities
+        // BOPGSTRLTS: TIC Net Foreign Purchases of Long-term Securities
         // BAMLH0A0HYM2: HY Option-Adjusted Spread (Invert: Lower = Risk ON)
-        // GOLDAMGBD228NLBM: Gold Price
+        // GOLDPMGBD228NLBM: Gold Price (PM Fix)
         // SP500: Equity Performance
         const [ticRaw, hySpread, gold, sp500] = await Promise.all([
-            fetchFredSeries('TOTALTIC', fredApiKey),
+            fetchFredSeries('BOPGSTRLTS', fredApiKey),
             fetchFredSeries('BAMLH0A0HYM2', fredApiKey),
-            fetchFredSeries('GOLDAMGBD228NLBM', fredApiKey),
+            fetchFredSeries('GOLDPMGBD228NLBM', fredApiKey),
             fetchFredSeries('SP500', fredApiKey)
         ]);
 
