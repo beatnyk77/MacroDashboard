@@ -14,6 +14,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 // Lazy loaded components
 const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/SovereignEnergySecuritySection').then(m => ({ default: m.SovereignEnergySecuritySection })));
 const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/components/sections/AsiaCommodityFlowsSection').then(m => ({ default: m.AsiaCommodityFlowsSection })));
+const GlobalRefiningMonitorSection = lazy(() => import('@/features/dashboard/components/refining/GlobalRefiningMonitorSection').then(m => ({ default: m.GlobalRefiningMonitorSection })));
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
 const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
@@ -109,6 +110,29 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             The "shadow" fleet and redirection of heavily sanctioned crude have created a massive structural cost advantage for Indian refiners and Chinese industrials. By tracking import pain points (FX vs. Brent correlation), we can identify early capitulation risks in emerging markets dependent on dollar-priced energy imports.
+                        </p>
+                    </div>
+                </section>
+
+                {/* 2.2 Global Refining Imbalance Monitor */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Activity className="text-blue-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Global Refining imbalance</h2>
+                    </div>
+
+                    <div className="w-full">
+                        <SectionErrorBoundary name="Global Refining Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GlobalRefiningMonitorSection />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 block mb-2">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed">
+                            Refining capacity is the ultimate bottleneck in the energy transition. The migration of complex refining clusters from West to East represents a fundamental shift in geopolitical leverage, as refined product arbitrage now dictates regional inflation trajectories more than crude price itself.
                         </p>
                     </div>
                 </section>
