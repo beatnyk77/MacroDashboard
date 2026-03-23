@@ -11,6 +11,9 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
+    const functionName = 'ingest-cie-short-selling'
+    const start = new Date().toISOString()
+
     // Handle incoming date or default to yesterday/today
     let targetDate = new Date()
     try {
@@ -45,10 +48,17 @@ Deno.serve(async (req: Request) => {
         })
 
         if (!response.ok) {
-            return new Response(JSON.stringify({
-                error: `NSE Report not found for ${dbDate}. This is expected on weekends/holidays.`,
-                status: response.status
-            }), {
+            const errorMsg = `NSE Report not found for ${dbDate}. This is expected on weekends/holidays.`
+            await supabase.from('ingestion_logs').insert({
+                function_name: functionName,
+                status: 'success', // Marking as success but 0 rows because it's expected behavior
+                error_message: errorMsg,
+                start_time: start,
+                completed_at: new Date().toISOString(),
+                status_code: 404,
+                rows_inserted: 0
+            })
+            return new Response(JSON.stringify({ error: errorMsg, status: response.status }), {
                 headers: { 'Content-Type': 'application/json' },
                 status: 200
             })
@@ -57,19 +67,13 @@ Deno.serve(async (req: Request) => {
         const csvText = await response.text()
         const lines = csvText.split('\n')
 
-        // NSE Short Selling CSV Format:
-        // Date,Symbol,Quantity
-        // Usually starts from line 1 (0-indexed) if header is line 0
-
         const results = []
-        const symbols = []
 
-        // Fetch Nifty 200 symbols from our DB to map correctly
         const { data: cieCompanies } = await supabase
             .from('cie_companies')
             .select('id, symbol')
 
-        const companyMap = new Map<string, string>(cieCompanies?.map((c: { id: string, symbol: string }) => [c.symbol, c.id]))
+        const companyMap = new Map<string, string>(cieCompanies?.map((c: { id: string, symbol: string }) => [c.symbol.replace('.NS', ''), c.id]))
 
         for (let i = 1; i < lines.length; i++) {
             const line = lines[i].trim()
@@ -98,19 +102,44 @@ Deno.serve(async (req: Request) => {
 
             if (upsertError) throw upsertError
 
+            await supabase.from('ingestion_logs').insert({
+                function_name: functionName,
+                status: 'success',
+                rows_inserted: results.length,
+                start_time: start,
+                completed_at: new Date().toISOString(),
+                status_code: 200
+            })
+
             return new Response(JSON.stringify({
                 message: `Successfully ingested ${results.length} short selling records for ${dbDate}`,
                 dbDate
             }), { headers: { 'Content-Type': 'application/json' } })
         }
 
-        return new Response(JSON.stringify({
-            message: `No matching Nifty 200 companies found in short selling report for ${dbDate}`,
-            dbDate
-        }), { headers: { 'Content-Type': 'application/json' } })
+        const noMatchMsg = `No matching Nifty 200 companies found in short selling report for ${dbDate}`
+        await supabase.from('ingestion_logs').insert({
+            function_name: functionName,
+            status: 'success',
+            rows_inserted: 0,
+            start_time: start,
+            completed_at: new Date().toISOString(),
+            status_code: 200,
+            error_message: noMatchMsg
+        })
+
+        return new Response(JSON.stringify({ message: noMatchMsg, dbDate }), { headers: { 'Content-Type': 'application/json' } })
 
     } catch (error: any) {
         console.error('Ingestion error:', error)
+        await supabase.from('ingestion_logs').insert({
+            function_name: functionName,
+            status: 'failed',
+            error_message: error.message,
+            start_time: start,
+            completed_at: new Date().toISOString(),
+            status_code: 500
+        })
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
