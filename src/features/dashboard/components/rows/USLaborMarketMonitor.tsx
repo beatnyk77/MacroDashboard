@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
                         <span className="text-white font-bold text-sm">{entry.name}:</span>
                         <span className="text-white/90 text-sm">
-                            {entry.value > 1000 ? `${(entry.value / 1000).toFixed(1)}k` : entry.value.toFixed(2)}
+                            {(entry.value || 0) > 1000 ? `${((entry.value || 0) / 1000).toFixed(1)}k` : (entry.value || 0).toFixed(2)}
                             {entry.name.includes('%') || entry.name.includes('Rate') ? '%' : ''}
                         </span>
                     </div>

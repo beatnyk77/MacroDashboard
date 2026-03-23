@@ -27,7 +27,15 @@ export function useIndiaDigitization() {
                 if (dbError) throw dbError;
 
                 if (dbData) {
-                    setData(dbData);
+                    const parsedData = dbData.map((d: any) => ({
+                        ...d,
+                        upi_volume_bn: d.upi_volume_bn !== null ? Number(d.upi_volume_bn) : null,
+                        upi_value_inr_trillion: d.upi_value_inr_trillion !== null ? Number(d.upi_value_inr_trillion) : null,
+                        rbi_dpi_index: d.rbi_dpi_index !== null ? Number(d.rbi_dpi_index) : null,
+                        fi_index: d.fi_index !== null ? Number(d.fi_index) : null,
+                        g20_digital_baseline: d.g20_digital_baseline !== null ? Number(d.g20_digital_baseline) : null
+                    }));
+                    setData(parsedData);
                 }
             } catch (err: any) {
                 console.error('Error fetching India Digitization data:', err);

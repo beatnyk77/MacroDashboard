@@ -65,7 +65,7 @@ export const Distress401kMonitor: React.FC = () => {
                                     className="inline-block relative"
                                 >
                                     <span className="text-7xl font-black italic tracking-tighter" style={{ color: getZScoreColor(latest?.distress_zscore || 0) }}>
-                                        {latest?.distress_zscore.toFixed(1)}
+                                        {(latest?.distress_zscore || 0).toFixed(1)}
                                     </span>
                                     <div className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-muted-foreground/40 mt-2">
                                         Composite Index

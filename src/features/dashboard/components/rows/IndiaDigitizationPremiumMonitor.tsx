@@ -15,7 +15,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
             ...d,
             formattedDate: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
             // Calculate Premium Spread
-            premium_spread: (d.rbi_dpi_index || 0) - (d.g20_digital_baseline || 0)
+            premium_spread: Number(d.rbi_dpi_index || 0) - Number(d.g20_digital_baseline || 0)
         }));
     }, [rawData]);
 
@@ -27,10 +27,10 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
     }
 
     const upiVolGrowth = previous?.upi_volume_bn
-        ? ((latest.upi_volume_bn - previous.upi_volume_bn) / previous.upi_volume_bn) * 100
+        ? ((Number(latest.upi_volume_bn || 0) - Number(previous.upi_volume_bn || 0)) / Number(previous.upi_volume_bn || 1)) * 100
         : 0;
     const formalizationPremium = latest.g20_digital_baseline
-        ? ((latest.rbi_dpi_index - latest.g20_digital_baseline) / latest.g20_digital_baseline) * 100
+        ? ((Number(latest.rbi_dpi_index || 0) - Number(latest.g20_digital_baseline || 0)) / Number(latest.g20_digital_baseline || 1)) * 100
         : 0;
 
     return (

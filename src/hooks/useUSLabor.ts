@@ -26,8 +26,21 @@ export const useUSLabor = () => {
                 .order('date', { ascending: true });
 
             if (error) throw error;
-
-            const rawData = data as USLaborData[];
+            const numericFields: Array<keyof USLaborData> = [
+                'unemployment_rate', 'labor_participation_rate', 'nonfarm_payrolls',
+                'adp_payrolls', 'initial_claims', 'continuing_claims',
+                'jolts_openings', 'jolts_quits', 'jolts_layoffs',
+                'average_hourly_earnings', 'labor_distress_index'
+            ];
+            const rawData = (data as any[]).map(d => {
+                const item = { ...d };
+                numericFields.forEach(field => {
+                    if (item[field] !== null) {
+                        item[field] = Number(item[field]);
+                    }
+                });
+                return item as USLaborData;
+            });
             if (rawData.length === 0) return rawData;
 
             // Forward fill null values

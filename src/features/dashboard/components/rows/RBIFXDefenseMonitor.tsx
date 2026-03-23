@@ -15,7 +15,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
             ...d,
             formattedDate: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
             // Create a derived metric for REER premium over NEER
-            valuation_premium: (d.reer_40 || 0) - (d.neer_40 || 0)
+            valuation_premium: Number(d.reer_40 || 0) - Number(d.neer_40 || 0)
         }));
     }, [rawData]);
 
@@ -26,7 +26,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
         return <div className="h-96 w-full bg-[#0a0f1d] border border-white/5 rounded-3xl animate-pulse" />;
     }
 
-    const reservesDelta = (latest.fx_reserves_bn || 0) - (previous?.fx_reserves_bn || latest.fx_reserves_bn || 0);
+    const reservesDelta = Number(latest.fx_reserves_bn || 0) - Number(previous?.fx_reserves_bn || latest.fx_reserves_bn || 0);
     const isAccumulating = reservesDelta > 0;
 
     // Logic for analyst insight based on recent data
