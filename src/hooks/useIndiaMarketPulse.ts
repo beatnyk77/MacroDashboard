@@ -22,6 +22,8 @@ export interface MarketPulseData {
     // Stats from view
     vix_zscore?: number;
     vix_percentile?: number;
+    fii_zscore?: number;
+    fii_percentile?: number;
     fii_dii_net?: number;
     fii_fno_net?: number;
     client_fno_net?: number;

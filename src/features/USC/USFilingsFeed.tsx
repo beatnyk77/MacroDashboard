@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Box, Typography, Skeleton } from '@mui/material';
 import { format } from 'date-fns';
-import { FileText, ExternalLink, Zap } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const USFilingsFeed: React.FC = () => {

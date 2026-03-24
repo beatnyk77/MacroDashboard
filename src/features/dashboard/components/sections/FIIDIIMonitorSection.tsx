@@ -10,8 +10,6 @@ import {
     ArrowRightLeft,
     Layers,
     TrendingUp,
-    TrendingDown,
-    Gauge,
     Flame,
     Wind
 } from 'lucide-react';
@@ -28,7 +26,7 @@ import {
 
 export const FIIDIIMonitorSection: React.FC = () => {
     const { data: marketPulse, isLoading: isPulseLoading } = useIndiaMarketPulse();
-    const { data: sectorFlows, isLoading: isSectorLoading } = useFPISectorFlows();
+    const { data: sectorFlows } = useFPISectorFlows();
 
     if (isPulseLoading || !marketPulse?.current) {
         return (
@@ -193,7 +191,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                             <Flame size={10} /> Priority Accumulation
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                            {topBuyers.map((s, idx) => (
+                            {topBuyers.map((s) => (
                                 <div key={s.sector} className="flex flex-col justify-center p-2 rounded bg-emerald-500/5 border border-emerald-500/10">
                                     <span className="text-[0.55rem] font-black text-emerald-500/90 truncate mb-1">{s.sector}</span>
                                     <span className="text-[0.7rem] font-black text-emerald-400 tabular-nums">+{formatNumber(s.net_investment_cr)}</span>
@@ -206,7 +204,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                             <Wind size={10} /> Strategic Liquidation
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                            {topSellers.map((s, idx) => (
+                            {topSellers.map((s) => (
                                 <div key={s.sector} className="flex flex-col justify-center p-2 rounded bg-rose-500/5 border border-rose-500/10">
                                     <span className="text-[0.55rem] font-black text-rose-500/90 truncate mb-1">{s.sector}</span>
                                     <span className="text-[0.7rem] font-black text-rose-400 tabular-nums">{formatNumber(s.net_investment_cr)}</span>

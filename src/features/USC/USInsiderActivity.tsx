@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Box, Typography, Skeleton } from '@mui/material';
 import { format } from 'date-fns';
-import { User, ArrowUpRight, ArrowDownRight, Briefcase } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const USInsiderActivity: React.FC = () => {
