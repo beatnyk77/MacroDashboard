@@ -202,7 +202,7 @@ export const DataHealthDashboard: React.FC = () => {
     const { data: goldDebtStatus } = useQuery({
         queryKey: ['gold-debt-status'],
         queryFn: async () => {
-            const { data, error } = await supabase.from('gold_debt_coverage_g20').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
+            const { data, error } = await supabase.from('gold_debt_coverage_g20').select('date').order('date', { ascending: false }).limit(1).single();
             if (error && error.code !== 'PGRST116') throw error;
             return data;
         },
@@ -235,7 +235,7 @@ export const DataHealthDashboard: React.FC = () => {
     const { data: globalRefiningStatus } = useQuery({
         queryKey: ['global-refining-status'],
         queryFn: async () => {
-            const { data, error } = await supabase.from('global_refining_capacity').select('last_updated').order('last_updated', { ascending: false }).limit(1).single();
+            const { data, error } = await supabase.from('global_refining_capacity').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
             if (error && error.code !== 'PGRST116') throw error;
             return data;
         },
@@ -246,7 +246,7 @@ export const DataHealthDashboard: React.FC = () => {
     const { data: goldPositioningStatus } = useQuery({
         queryKey: ['gold-positioning-status'],
         queryFn: async () => {
-            const { data, error } = await supabase.from('gold_positioning').select('date').order('date', { ascending: false }).limit(1).single();
+            const { data, error } = await supabase.from('gold_positioning').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
             if (error && error.code !== 'PGRST116') throw error;
             return data;
         },
@@ -257,7 +257,7 @@ export const DataHealthDashboard: React.FC = () => {
     const { data: commodityFlowsStatus } = useQuery({
         queryKey: ['commodity-flows-status'],
         queryFn: async () => {
-            const { data, error } = await supabase.from('commodity_flows').select('trade_date').order('trade_date', { ascending: false }).limit(1).single();
+            const { data, error } = await supabase.from('commodity_flows').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
             if (error && error.code !== 'PGRST116') throw error;
             return data;
         },
@@ -528,7 +528,7 @@ export const DataHealthDashboard: React.FC = () => {
                             <Box>
                                 <Typography variant="overline" sx={{ color: '#eab308', fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold / Debt G20</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {goldDebtStatus ? new Date(goldDebtStatus.as_of_date).toLocaleDateString() : 'Pending'}
+                                    {goldDebtStatus ? new Date(goldDebtStatus.date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
                             <IconButton color="warning" onClick={() => handleForceRefresh('ingest-gold-debt-coverage')} disabled={refreshing === 'ingest-gold-debt-coverage'}>
@@ -541,7 +541,7 @@ export const DataHealthDashboard: React.FC = () => {
                             <Box>
                                 <Typography variant="overline" sx={{ color: '#eab308', fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold Positioning</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {goldPositioningStatus ? new Date(goldPositioningStatus.date).toLocaleDateString() : 'Pending'}
+                                    {goldPositioningStatus ? new Date(goldPositioningStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
                             <IconButton color="warning" onClick={() => handleForceRefresh('ingest-gold-positioning')} disabled={refreshing === 'ingest-gold-positioning'}>
@@ -580,7 +580,7 @@ export const DataHealthDashboard: React.FC = () => {
                             <Box>
                                 <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Global Refining</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {globalRefiningStatus ? new Date(globalRefiningStatus.last_updated).toLocaleDateString() : 'Pending'}
+                                    {globalRefiningStatus ? new Date(globalRefiningStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
                             <IconButton color="warning" onClick={() => handleForceRefresh('ingest-global-refining')} disabled={refreshing === 'ingest-global-refining'}>
@@ -593,7 +593,7 @@ export const DataHealthDashboard: React.FC = () => {
                             <Box>
                                 <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Commodity Flows</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {commodityFlowsStatus ? new Date(commodityFlowsStatus.trade_date).toLocaleDateString() : 'Pending'}
+                                    {commodityFlowsStatus ? new Date(commodityFlowsStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
                             <IconButton color="warning" onClick={() => handleForceRefresh('ingest-commodity-terminal')} disabled={refreshing === 'ingest-commodity-terminal'}>

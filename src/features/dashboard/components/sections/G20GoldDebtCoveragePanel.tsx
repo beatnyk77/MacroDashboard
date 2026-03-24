@@ -25,7 +25,7 @@ const COUNTRY_NAMES: Record<string, string> = {
 
 // Map ISO-A3 codes from geoUrl to our 2-letter codes
 const ISO3_TO_CODE: Record<string, string> = {
-    'USA': 'US', 'GBR': 'UK', 'FRA': 'FR', 'DEU': 'DE', 'ITA': 'IT',
+    'USA': 'US', 'GBR': 'GB', 'FRA': 'FR', 'DEU': 'DE', 'ITA': 'IT',
     'CAN': 'CA', 'JPN': 'JP', 'CHN': 'CN', 'IND': 'IN', 'RUS': 'RU',
     'BRA': 'BR', 'ZAF': 'ZA', 'AUS': 'AU', 'KOR': 'KR', 'MEX': 'MX',
     'IDN': 'ID', 'TUR': 'TR', 'SAU': 'SA', 'ARG': 'AR'
@@ -40,7 +40,7 @@ const formatCurrency = (val: number, fxRate: number) => {
 };
 
 export const G20GoldDebtCoveragePanel: React.FC = () => {
-    const { data, isLoading } = useGoldDebtCoverageG20();
+    const { data, isLoading, isError, error } = useGoldDebtCoverageG20();
     const [hoveredCountry, setHoveredCountry] = useState<G20GoldDebtRow | null>(null);
 
     const colorScale = useMemo(() => {
@@ -64,6 +64,20 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
 
     if (isLoading) {
         return <Skeleton className="h-[600px] w-full rounded-[2.5rem] bg-white/5" />;
+    }
+
+    if (isError) {
+        return (
+            <Card className="p-8 bg-black/40 backdrop-blur-xl border-rose-500/10 h-[400px] flex items-center justify-center rounded-[2.5rem]">
+                <div className="text-center text-rose-400">
+                    <ShieldAlert size={32} className="mx-auto mb-4 opacity-50" />
+                    <p className="font-black uppercase tracking-widest text-xs mb-2">Relay Divergence</p>
+                    <p className="text-xs text-rose-400/60 font-medium max-w-xs mx-auto italic">
+                        {error instanceof Error ? error.message : 'Sovereign feed encountered a runtime error.'}
+                    </p>
+                </div>
+            </Card>
+        );
     }
 
     if (!data?.latest || data.latest.length === 0) {
