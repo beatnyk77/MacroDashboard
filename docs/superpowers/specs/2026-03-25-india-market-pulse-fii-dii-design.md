@@ -26,13 +26,15 @@
 - A Supabase cron job will run daily post-market close.
 
 ### 2. Frontend Layout & Components (UI/UX)
-- Build an "Institutional Flows Terminal" inside `IndiaLab.tsx`.
+- Build an "FII/DII Flow Monitor" inside `IndiaLab.tsx`.
+- **Information Density & Layout:** Adopt a tighter, one-card-per-row layout with reduced padding for a purely functional aesthetic.
 - **Top Row:** FII vs DII Tug-of-War gauge and the Smart Money Regime Indicator focus card.
 - **Middle Row:** Mixed-axis chart overlaying Nifty 50 historical returns against stacked bar flows, paired with a capital flow Sankey diagram.
 - **Bottom Row:** Sector Allocation Heatmap for fortnightly flows.
 
-### 3. Error Handling & Edge Cases
+### 3. Error Handling, Edge Cases, & Monitoring
 - Include robust retry mechanisms, user-agent rotation, and proxies in the Supabase scraper to prevent blocking.
 - Gracefully handle holidays/weekends.
 - Use `SectionErrorBoundary` to manage raw data type mismatches (e.g., numeric strings from Supabase).
 - Display a fallback skeleton state for the Sector Heatmap if the NSDL release is delayed.
+- **Data Health Integration:** Actively integrate with `DataHealthDashboard` to include comprehensive staleness monitoring for `market_pulse_daily` and `fpi_sector_flows`.
