@@ -8,7 +8,8 @@ import {
     Zap,
     Activity,
     BarChart3,
-    Landmark
+    Landmark,
+    ArrowRightLeft
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -17,6 +18,7 @@ import { LazyRender } from '@/components/LazyRender';
 // Lazy loaded components
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
 const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
+const FIIDIIMonitorSection = lazy(() => import('@/features/dashboard/components/sections/FIIDIIMonitorSection').then(m => ({ default: m.FIIDIIMonitorSection })));
 const IndiaFiscalStressMonitor = lazy(() => import('@/features/dashboard/components/rows/IndiaFiscalStressMonitor').then(m => ({ default: m.IndiaFiscalStressMonitor })));
 const IndiaDebtMaturityWall = lazy(() => import('@/features/dashboard/components/rows/IndiaDebtMaturityWall').then(m => ({ default: m.IndiaDebtMaturityWall })));
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
@@ -38,7 +40,7 @@ import { SEOManager } from '@/components/SEOManager';
 export const IndiaLab: React.FC = () => {
     return (
         <Container maxWidth={false} sx={{ py: 6 }}>
-            <SEOManager 
+            <SEOManager
                 title="India Macro Pulse | Institutional Economic Monitor"
                 description="Comprehensive real-time monitoring of India's macroeconomic health, DPI integration, and state-capex resilience. High-frequency data for institutional investors."
                 keywords={['India Macro', 'Nifty 500 Fundamentals', 'India Economy Pulse', 'India Data Dashboard', 'Structural India']}
@@ -92,7 +94,16 @@ export const IndiaLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="India Market Pulse">
                         <Suspense fallback={<LoadingFallback />}>
-                            <IndiaMarketPulseRow />
+                            <div className="space-y-12">
+                                <IndiaMarketPulseRow />
+                                <div className="pt-8 border-t border-white/5">
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <ArrowRightLeft className="text-blue-500" size={24} />
+                                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">FII / DII Flow Monitor</h2>
+                                    </div>
+                                    <FIIDIIMonitorSection />
+                                </div>
+                            </div>
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>

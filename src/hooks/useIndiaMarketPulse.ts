@@ -20,10 +20,19 @@ export interface MarketPulseData {
     new_highs_52w: number;
     new_lows_52w: number;
     // Stats from view
-    fii_zscore?: number;
-    fii_percentile?: number;
     vix_zscore?: number;
     vix_percentile?: number;
+    fii_dii_net?: number;
+    fii_fno_net?: number;
+    client_fno_net?: number;
+    sentiment_score?: number;
+}
+
+export interface FPISectorFlow {
+    date: string;
+    sector: string;
+    net_investment_cr: number;
+    fortnight_end_date: string;
 }
 
 export const useIndiaMarketPulse = () => {
@@ -69,13 +78,32 @@ export const useIndiaMarketPulse = () => {
                 fii_zscore: d.fii_zscore !== undefined ? Number(d.fii_zscore) : undefined,
                 fii_percentile: d.fii_percentile !== undefined ? Number(d.fii_percentile) : undefined,
                 vix_zscore: d.vix_zscore !== undefined ? Number(d.vix_zscore) : undefined,
-                vix_percentile: d.vix_percentile !== undefined ? Number(d.vix_percentile) : undefined
+                vix_percentile: d.vix_percentile !== undefined ? Number(d.vix_percentile) : undefined,
+                fii_dii_net: d.fii_dii_net !== undefined ? Number(d.fii_dii_net) : undefined,
+                fii_fno_net: d.fii_fno_net !== undefined ? Number(d.fii_fno_net) : undefined,
+                client_fno_net: d.client_fno_net !== undefined ? Number(d.client_fno_net) : undefined,
+                sentiment_score: d.sentiment_score !== undefined ? Number(d.sentiment_score) : undefined
             } as MarketPulseData);
 
             return {
                 current: latest ? mapRow(latest) : null,
                 history: (history || []).map(mapRow)
             };
+        }
+    });
+};
+
+export const useFPISectorFlows = () => {
+    return useQuery({
+        queryKey: ['fpi-sector-flows'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('fpi_sector_flows')
+                .select('*')
+                .order('fortnight_end_date', { ascending: false });
+
+            if (error) throw error;
+            return data as FPISectorFlow[];
         }
     });
 };

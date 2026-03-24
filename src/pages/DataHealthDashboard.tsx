@@ -264,6 +264,17 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000
     });
 
+    // 20. NEW: FPI Sector Flows Tracking
+    const { data: fpiSectorStatus } = useQuery({
+        queryKey: ['fpi-sector-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('fpi_sector_flows').select('fortnight_end_date').order('fortnight_end_date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
     // 10. Data Authenticity Score
     const { data: authenticity } = useQuery({
         queryKey: ['authenticity-score'],
@@ -409,7 +420,20 @@ export const DataHealthDashboard: React.FC = () => {
                     <Grid item>
                         <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>India Market Pulse</Typography>
+                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>FPI Sector Flows (NSDL)</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {fpiSectorStatus ? new Date(fpiSectorStatus.fortnight_end_date).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="success" onClick={() => handleForceRefresh('ingest-nse-flows')} disabled={refreshing === 'ingest-nse-flows'}>
+                                {refreshing === 'ingest-nse-flows' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>NSE India Flows</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
                                     {indiaPulseStatus ? new Date(indiaPulseStatus.date).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}
                                 </Typography>

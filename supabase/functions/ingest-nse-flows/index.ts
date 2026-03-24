@@ -1,305 +1,352 @@
 import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
 import { retry } from './utils/retry.ts'
+import { calculateZScore, computeStats } from './utils/stats.ts'
+import { parse } from 'https://esm.sh/csv-parse@5.5.3/sync'
 
-// @ts-ignore: Deno is a global in Supabase Edge Functions
+// --- Types & Constants ---
+const NSDL_BASE = 'https://www.fpi.nsdl.co.in/web';
+const FAO_BASE = 'https://nsearchives.nseindia.com/content/nsccl';
+
+const HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Referer': 'https://www.nseindia.com/',
+    'Origin': 'https://www.nseindia.com',
+    'Connection': 'keep-alive',
+};
+
+const KNOWN_SECTORS = [
+    'Automobile and Auto Components', 'Capital Goods', 'Chemicals', 'Construction',
+    'Construction Materials', 'Consumer Durables', 'Consumer Services', 'Diversified',
+    'Fast Moving Consumer Goods', 'Financial Services', 'Forest Materials', 'Healthcare',
+    'Information Technology', 'Media, Entertainment & Publication', 'Metals & Mining',
+    'Oil, Gas & Consumable Fuels', 'Power', 'Realty', 'Services', 'Telecommunication',
+    'Textiles', 'Utilities', 'Sovereign', 'Others'
+];
+
+interface FlowData {
+    date: string;
+    fii_buy: number; fii_sell: number; fii_net: number;
+    dii_buy: number; dii_sell: number; dii_net: number;
+    fii_idx_fut_long: number; fii_idx_fut_short: number; fii_idx_fut_net: number;
+    dii_idx_fut_long: number; dii_idx_fut_short: number; dii_idx_fut_net: number;
+    fii_stk_fut_long: number; fii_stk_fut_short: number; fii_stk_fut_net: number;
+    dii_stk_fut_long: number; dii_stk_fut_short: number; dii_stk_fut_net: number;
+    fii_idx_call_long: number; fii_idx_call_short: number; fii_idx_call_net: number;
+    fii_idx_put_long: number; fii_idx_put_short: number; fii_idx_put_net: number;
+    pcr: number;
+    sentiment_score: number;
+    india_vix: number;
+    advances: number;
+    declines: number;
+    delivery_pct: number;
+    sector_returns: Record<string, number>;
+    midcap_perf: number;
+    smallcap_perf: number;
+    nifty_perf: number;
+    new_highs_52w: number;
+    new_lows_52w: number;
+}
+
+// --- Helper Functions ---
+
+const parseNum = (val: any) => {
+    if (typeof val === 'string') return parseFloat(val.replace(/,/g, '')) || 0;
+    return parseFloat(val) || 0;
+}
+
+function stripHtml(str: string) {
+    return (str || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
+}
+
+async function getNSESession(logger: Logger) {
+    try {
+        const resp = await fetch('https://www.nseindia.com/', { headers: HEADERS });
+        const setCookie = resp.headers.get('set-cookie');
+        return setCookie || '';
+    } catch (e: any) {
+        logger.log('nse-flows', 'warn', 0, `Failed to get NSE session: ${e.message}`);
+        return '';
+    }
+}
+
+async function fetchFaoOi(dateStr: string, cookies: string, logger: Logger) {
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return null;
+
+    // dateStr is CCYY-MM-DD
+    const dateArr = dateStr.split('-');
+    const day = dateArr[2];
+    const month = new Intl.DateTimeFormat('en', { month: 'short' }).format(new Date(dateStr));
+    const year = dateArr[0];
+    const datePart = `${day}${month}${year}`;
+
+    const urls = [
+        `${FAO_BASE}/fao_participant_oi_${datePart}_b.csv`,
+        `${FAO_BASE}/fao_participant_oi_${datePart}.csv`,
+    ];
+
+    for (const url of urls) {
+        try {
+            const resp = await fetch(url, { headers: { ...HEADERS, 'Cookie': cookies } });
+            if (resp.ok) return await resp.text();
+        } catch { continue; }
+    }
+    return null;
+}
+
+function parseFaoCss(csvText: string) {
+    if (!csvText) return null;
+    try {
+        const lines = csvText.trim().split('\n');
+        if (lines.length < 2) return null;
+
+        const records = parse(lines.slice(1).join('\n'), {
+            skip_empty_lines: true,
+            relax_column_count: true
+        });
+
+        const data: any = {};
+        for (const row of records) {
+            const clientType = (row[0] || "").trim().toUpperCase();
+            if (!clientType.includes("FII") && !clientType.includes("DII")) continue;
+            const key = clientType.includes("FII") ? "FII" : "DII";
+            data[key] = {
+                idx_fut_long: parseNum(row[1]),
+                idx_fut_short: parseNum(row[2]),
+                stk_fut_long: parseNum(row[3]),
+                stk_fut_short: parseNum(row[4]),
+                idx_call_long: parseNum(row[5]),
+                idx_call_short: parseNum(row[6]),
+                idx_put_long: parseNum(row[7]),
+                idx_put_short: parseNum(row[8]),
+            };
+        }
+        return data;
+    } catch { return null; }
+}
+
+async function fetchNSDLSectorFlows(logger: Logger) {
+    const today = new Date();
+    const abbr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Try to find the latest fortnightly report
+    for (let i = 0; i < 30; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        if (d.getDate() !== 15 && d.getDate() !== new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()) continue;
+
+        const dateCode = `${abbr[d.getMonth()]}${String(d.getDate()).padStart(2, '0')}${d.getFullYear()}`;
+        const url = `${NSDL_BASE}/StaticReports/Fortnightly_Sector_wise_FII_Investment_Data/FIIInvestSector_${dateCode}.html`;
+
+        try {
+            const resp = await fetch(url, { headers: HEADERS });
+            if (resp.ok) {
+                const html = await resp.text();
+                if (html.length > 2000 && html.includes('Sector')) {
+                    return { html, dateCode };
+                }
+            }
+        } catch { continue; }
+    }
+    return null;
+}
+
+function parseNSDLHtml(html: string) {
+    const sectorData = [];
+    const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    let m;
+    while ((m = trRegex.exec(html)) !== null) {
+        const rowHtml = m[1];
+        const cellMatches = [...rowHtml.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)];
+        const cells = cellMatches.map(c => stripHtml(c[1]));
+        if (cells.length < 30) continue;
+
+        const sectorCell = cells[1] || '';
+        const matched = KNOWN_SECTORS.find(s => sectorCell.toLowerCase().includes(s.toLowerCase().substring(0, 12)));
+        if (!matched || /^total$/i.test(sectorCell.trim())) continue;
+
+        const n = cells.map(c => parseNum(c));
+        sectorData.push({
+            sector: matched,
+            equity_auc_inr: n[2] || 0,
+            equity_net_inr: n[26] || 0,
+            debt_auc_inr: (n[3] || 0) + (n[4] || 0) + (n[5] || 0),
+            debt_net_inr: (n[27] || 0) + (n[28] || 0) + (n[29] || 0),
+            hybrid_auc_inr: n[6] || 0,
+            total_auc_inr: n[13] || 0,
+            total_net_inr: n[37] || 0,
+        });
+    }
+    return sectorData;
+}
+
+// --- Main Handler ---
+
 Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+    if (!authHeader) return new Response('Unauthorized', { status: 401 })
 
     const runId = crypto.randomUUID()
     const client = createAdminClient()
     const logger = new Logger(runId)
 
-    // Parse date range from request body
-    let startDate = new Date()
-    let endDate = new Date()
+    let startDate = new Date(); startDate.setDate(startDate.getDate() - 3);
+    let endDate = new Date();
 
     try {
         const body = await req.json() as any
-        if (body.startDate) {
-            startDate = new Date(body.startDate)
-        }
-        if (body.endDate) {
-            endDate = new Date(body.endDate)
-        }
-    } catch (e) {
-        // No body or invalid JSON, use today as default
-    }
+        if (body.startDate) startDate = new Date(body.startDate)
+        if (body.endDate) endDate = new Date(body.endDate)
+    } catch { /* Default to last 3 days */ }
 
-    await logger.log('nse-flows', 'processing', 0, `Starting NSE ingestion: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`)
-    const start = performance.now()
+    await logger.log('nse-flows', 'processing', 0, `Starting FII/DII Ingestion: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`)
+    const startTimeMill = performance.now()
 
-    // NSE requires specific headers and valid cookies
-    const baseHeaders = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Referer': 'https://www.nseindia.com/',
-        'Origin': 'https://www.nseindia.com',
-        'Connection': 'keep-alive',
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-origin',
-    }
-
-    let cookies = '';
-
-    async function getSessionCookies() {
-        try {
-            const resp = await fetch('https://www.nseindia.com/', { headers: baseHeaders });
-            if (!resp.ok) throw new Error(`Homepage fetch failed: ${resp.status}`);
-
-            // Extract cookies (Deno fetch handles Set-Cookie in headers if available)
-            // Note: In Deno Deploy/Edge, headers.getSetCookie() might be available or we parse 'set-cookie'
-            const setCookie = resp.headers.get('set-cookie');
-            if (setCookie) {
-                // Simple parsing, taking the first part of multiple path cookies if needed
-                // But usually we just need to pass them back.
-                // However, fetch might merge multiple Set-Cookie headers into one comma-separated string
-                // or we might need to iterate.
-                cookies = setCookie;
-            } else {
-                // Try getting all entries if getSetCookie is available (newer Deno)
-                // @ts-ignore
-                if (typeof resp.headers.getSetCookie === 'function') {
-                    // @ts-ignore
-                    cookies = resp.headers.getSetCookie().join('; ');
-                }
-            }
-            console.log('NSE Cookies obtained:', cookies ? 'Yes' : 'No');
-        } catch (e) {
-            console.warn('Failed to get NSE cookies:', e);
-        }
-    }
-
-    // Initialize session
-    await getSessionCookies();
-
-    const headers = {
-        ...baseHeaders,
-        'Cookie': cookies
-    }
+    const cookies = await getNSESession(logger)
+    const headers = { ...HEADERS, 'Cookie': cookies }
 
     const processedDates: string[] = []
-    const skippedDates: string[] = []
     let currentDate = new Date(startDate)
 
     while (currentDate <= endDate) {
-        // Skip weekends
-        const dayOfWeek = currentDate.getDay()
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-            currentDate.setDate(currentDate.getDate() + 1)
-            continue
+        if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+            currentDate.setDate(currentDate.getDate() + 1); continue;
         }
 
         const dateStr = currentDate.toISOString().split('T')[0]
-
         try {
-            let fiiNet = 0, diiNet = 0
-            let fiiIdxFutNet = 0
-            let advances = 0, declines = 0
-            let deliveryPct = 0
-            let indiaVix = 0
-            let pcr = 1.0
-            let sectorReturns: Record<string, number> = {}
-            let midcapPerf = 0, smallcapPerf = 0, niftyPerf = 0
-            let newHighs52w = 0, newLows52w = 0
+            const data: Partial<FlowData> = { date: dateStr, sector_returns: {} }
 
-            const parseNum = (val: any) => {
-                if (typeof val === 'string') return parseFloat(val.replace(/,/g, '')) || 0;
-                return parseFloat(val) || 0;
-            }
-
-            // 1. FII/DII Cash Flows
-            try {
-                const url = 'https://www.nseindia.com/api/fiidiiTradeReact'
-                const res = await retry(() => fetch(url, { headers }))
-                if (res.ok) {
-                    const data = (await res.json()) as any
-                    console.log(`FII/DII Raw Data: ${JSON.stringify(data).slice(0, 500)}...`)
-                    for (const item of data) {
-                        const cat = (item.category || '').toUpperCase()
-                        if (cat.includes('FII') || cat.includes('FPI')) {
-                            fiiNet = parseNum(item.netValue)
-                        }
-                        if (cat.includes('DII')) {
-                            diiNet = parseNum(item.netValue)
-                        }
-                    }
-                    console.log(`Parsed for ${dateStr}: FII=${fiiNet}, DII=${diiNet}`)
-                }
-            } catch (err: any) {
-                console.warn(`FII/DII failed for ${dateStr}: ${err.message}`)
-            }
-
-            // 2. All Indices (VIX, Sectoral, Cap Indices)
-            try {
-                const url = 'https://www.nseindia.com/api/allIndices'
-                const res = await retry(() => fetch(url, { headers }))
-                if (res.ok) {
-                    const data = (await res.json()) as any
-                    const indices = data.data || []
-
-                    for (const idx of indices) {
-                        const name = idx.index || idx.indexSymbol || ''
-                        const pChange = parseNum(idx.percentChange || idx.pChange || 0)
-
-                        if (name === 'INDIA VIX') {
-                            indiaVix = parseNum(idx.last || idx.lastPrice || 0)
-                        }
-
-                        if (name === 'NIFTY 50') {
-                            niftyPerf = pChange
-                            advances = parseInt(idx.advances || 0)
-                            declines = parseInt(idx.declines || 0)
-                        }
-
-                        if (name === 'NIFTY MIDCAP 100') {
-                            midcapPerf = pChange
-                        }
-
-                        if (name === 'NIFTY SMALLCAP 100') {
-                            smallcapPerf = pChange
-                        }
-
-                        if (name.startsWith('NIFTY ') && !name.includes('MIDCAP') && !name.includes('SMALLCAP') && !name.includes('NEXT') && name !== 'NIFTY 50') {
-                            const sectorName = name.replace('NIFTY ', '').trim()
-                            if (sectorName.length > 0 && sectorName.length < 20) {
-                                sectorReturns[sectorName] = pChange
-                            }
-                        }
+            // 1. Daily Cash Flows
+            const cashRes = await retry(() => fetch('https://www.nseindia.com/api/fiidiiTradeReact', { headers })) as any
+            if (cashRes.ok) {
+                const cashData = await cashRes.json() as any[]
+                for (const item of cashData) {
+                    const cat = (item.category || '').toUpperCase()
+                    if (cat.includes('FII') || cat.includes('FPI')) {
+                        data.fii_buy = parseNum(item.buyValue); data.fii_sell = parseNum(item.sellValue); data.fii_net = parseNum(item.netValue);
+                    } else if (cat.includes('DII')) {
+                        data.dii_buy = parseNum(item.buyValue); data.dii_sell = parseNum(item.sellValue); data.dii_net = parseNum(item.netValue);
                     }
                 }
-            } catch (err: any) {
-                console.warn(`Indices failed for ${dateStr}: ${err.message}`)
             }
 
-            // 3. PCR from Option Chain
-            try {
-                const url = 'https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY'
-                const res = await retry(() => fetch(url, { headers }))
-                if (res.ok) {
-                    const data = (await res.json()) as any
-                    const filtered = data.filtered || {}
-                    const putOI = parseFloat(filtered.PE?.totOI || 0)
-                    const callOI = parseFloat(filtered.CE?.totOI || 0)
-                    if (callOI > 0) {
-                        pcr = putOI / callOI
+            // 2. F&O Participants
+            const faoText = await fetchFaoOi(dateStr, cookies, logger)
+            if (faoText) {
+                const fao = parseFaoCss(faoText)
+                if (fao?.FII) {
+                    const f = fao.FII
+                    data.fii_idx_fut_long = f.idx_fut_long; data.fii_idx_fut_short = f.idx_fut_short; data.fii_idx_fut_net = f.idx_fut_long - f.idx_fut_short;
+                    data.fii_stk_fut_long = f.stk_fut_long; data.fii_stk_fut_short = f.stk_fut_short; data.fii_stk_fut_net = f.stk_fut_long - f.stk_fut_short;
+                    data.fii_idx_call_long = f.idx_call_long; data.fii_idx_call_short = f.idx_call_short; data.fii_idx_call_net = f.idx_call_long - f.idx_call_short;
+                    data.fii_idx_put_long = f.idx_put_long; data.fii_idx_put_short = f.idx_put_short; data.fii_idx_put_net = f.idx_put_long - f.idx_put_short;
+                    data.pcr = f.idx_call_short > 0 ? parseFloat((f.idx_put_short / f.idx_call_short).toFixed(2)) : 1.0;
+                }
+                if (fao?.DII) {
+                    const d = fao.DII
+                    data.dii_idx_fut_long = d.idx_fut_long; data.dii_idx_fut_short = d.idx_fut_short; data.dii_idx_fut_net = d.idx_fut_long - d.idx_fut_short;
+                    data.dii_stk_fut_long = d.stk_fut_long; data.dii_stk_fut_short = d.stk_fut_short; data.dii_stk_fut_net = d.stk_fut_long - d.stk_fut_short;
+                }
+            }
+
+            // 3. Market Indices
+            const idxRes = await retry(() => fetch('https://www.nseindia.com/api/allIndices', { headers })) as any
+            if (idxRes.ok) {
+                const idxData = await idxRes.json() as any; const indices = idxData.data || []
+                for (const idx of indices) {
+                    const name = idx.index || idx.indexSymbol || ''; const pChange = parseNum(idx.percentChange || idx.pChange || 0)
+                    if (name === 'INDIA VIX') data.india_vix = parseNum(idx.last || idx.lastPrice || 0)
+                    if (name === 'NIFTY 50') { data.nifty_perf = pChange; data.advances = parseInt(idx.advances || 0); data.declines = parseInt(idx.declines || 0) }
+                    if (name === 'NIFTY MIDCAP 100') data.midcap_perf = pChange
+                    if (name === 'NIFTY SMALLCAP 100') data.smallcap_perf = pChange
+                    if (name.startsWith('NIFTY ') && !/MIDCAP|SMALLCAP|NEXT|50/.test(name)) {
+                        const sName = name.replace('NIFTY ', '').trim()
+                        if (sName.length > 0 && sName.length < 25) data.sector_returns![sName] = pChange
                     }
                 }
-            } catch (err: any) {
-                console.warn(`PCR failed for ${dateStr}: ${err.message}`)
             }
 
-            // 4. Market Breadth & Quality
-            try {
-                const url = 'https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%2050'
-                const res = await retry(() => fetch(url, { headers }))
-                if (res.ok) {
-                    const data = (await res.json()) as any
-                    const metadata = data.metadata || {}
-                    advances = parseInt(metadata.advances || advances)
-                    declines = parseInt(metadata.declines || declines)
-                    newHighs52w = parseInt(metadata.new52WeekHigh || 0)
-                    newLows52w = parseInt(metadata.new52WeekLow || 0)
+            // 4. Sentiment Score (Simple implementation)
+            if (data.fii_net !== undefined) {
+                let sentiment = 50; sentiment += (data.fii_net / 200); sentiment += ((data.fii_idx_fut_net || 0) / 5000)
+                if ((data.pcr || 1) > 1.3) sentiment -= 10; if ((data.pcr || 1) < 0.7) sentiment += 10
+                data.sentiment_score = Math.min(100, Math.max(0, parseFloat(sentiment.toFixed(1))))
+            }
 
-                    const stocks = data.data || []
-                    let totalDelivery = 0
-                    let count = 0
-                    for (const stock of stocks) {
-                        const delPct = parseFloat(stock.deliveryToTradedQuantity || 0)
-                        if (delPct > 0) {
-                            totalDelivery += delPct
-                            count++
-                        }
-                    }
-                    if (count > 0) {
-                        deliveryPct = totalDelivery / count
-                        console.log(`Calculated delivery % for ${count} stocks: ${deliveryPct.toFixed(2)}`)
-                    } else {
-                        console.warn(`No delivery data found in ${stocks.length} stocks for ${dateStr}`)
-                    }
+            if (data.fii_net !== undefined || data.india_vix !== undefined) {
+                const { error: upsertError } = await client.from('market_pulse_daily').upsert(data, { onConflict: 'date' })
+                if (!upsertError) {
+                    processedDates.push(dateStr);
+                    // Log observation for health tracking
+                    await client.from('metric_observations').upsert({
+                        metric_id: 'IN_NSE_FLOWS',
+                        as_of_date: dateStr,
+                        observation_value: data.fii_net,
+                        provenance: 'NSE_API'
+                    }, { onConflict: 'metric_id,as_of_date' }).catch(() => { });
                 }
-            } catch (err: any) {
-                console.warn(`Breadth failed for ${dateStr}: ${err.message}`)
             }
-
-            // 5. FII Index Futures Net (approximation)
-            fiiIdxFutNet = fiiNet * 0.3
-
-            // Only insert if we have meaningful data (at least one non-zero metric)
-            if (fiiNet !== 0 || diiNet !== 0 || indiaVix !== 0 || advances !== 0) {
-                const { error: upsertError } = await client
-                    .from('market_pulse_daily')
-                    .upsert({
-                        date: dateStr,
-                        fii_cash_net: fiiNet,
-                        dii_cash_net: diiNet,
-                        fii_idx_fut_net: fiiIdxFutNet,
-                        pcr: pcr,
-                        india_vix: indiaVix,
-                        advances: advances,
-                        declines: declines,
-                        delivery_pct: deliveryPct,
-                        sector_returns: sectorReturns,
-                        midcap_perf: midcapPerf,
-                        smallcap_perf: smallcapPerf,
-                        nifty_perf: niftyPerf,
-                        new_highs_52w: newHighs52w,
-                        new_lows_52w: newLows52w
-                    }, { onConflict: 'date' })
-
-                if (upsertError) throw upsertError
-
-                processedDates.push(dateStr)
-                if (processedDates.length % 10 === 0) {
-                    await logger.log('nse-flows', 'processing', processedDates.length, `Processed ${processedDates.length} dates`)
-                }
-            } else {
-                skippedDates.push(dateStr)
-                console.log(`Skipped ${dateStr}: no data available (likely holiday)`)
-            }
-
-        } catch (err: any) {
-            console.error(`Error for ${dateStr}:`, err)
-            await logger.log('nse-flows', 'warn', 0, `Failed for ${dateStr}: ${err.message}`)
-            skippedDates.push(dateStr)
-        }
-
+        } catch (err: any) { logger.log('nse-flows', 'warn', 0, `Failed for ${dateStr}: ${err.message}`) }
         currentDate.setDate(currentDate.getDate() + 1)
-
-        // Rate limiting: wait 1000ms between requests to avoid NSE blocking
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(r => setTimeout(r, 1000))
     }
+
+    // 5. NSDL Sector Flows (Fortnightly)
+    try {
+        const nsdl = await fetchNSDLSectorFlows(logger)
+        if (nsdl) {
+            const sectors = parseNSDLHtml(nsdl.html)
+            const periodMatch = nsdl.html.match(/Fortnight[^\n]*?(\d{1,2}[A-Za-z]{3}\d{4})[^\n]*?(\d{1,2}[A-Za-z]{3}\d{4})/i);
+            const period = periodMatch ? periodMatch[0].replace(/<[^>]+>/g, '').trim() : nsdl.dateCode;
+
+            const monthMap: Record<string, string> = {
+                'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+                'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+            };
+            const monthStr = nsdl.dateCode.substring(0, 3);
+            const dayStr = nsdl.dateCode.substring(3, 5);
+            const yearStr = nsdl.dateCode.substring(5, 9);
+            const fortnight_end_date = `${yearStr}-${monthMap[monthStr]}-${dayStr}`;
+
+            const records = sectors.map(s => ({
+                date_code: nsdl.dateCode,
+                period,
+                sector: s.sector,
+                equity_auc_inr: s.equity_auc_inr,
+                equity_net_inr: s.equity_net_inr,
+                debt_auc_inr: s.debt_auc_inr,
+                debt_net_inr: s.debt_net_inr,
+                hybrid_auc_inr: s.hybrid_auc_inr,
+                total_auc_inr: s.total_auc_inr,
+                total_net_inr: s.total_net_inr,
+                fortnight_end_date
+            }))
+
+            const { error: sectorError } = await client.from('fpi_sector_flows').upsert(records, { onConflict: 'date_code,sector' })
+            if (sectorError) logger.log('nse-flows', 'warn', 0, `Sector upsert failed: ${sectorError.message}`)
+            else {
+                await logger.log('nse-flows', 'processing', records.length, `Ingested ${records.length} sector flows for ${nsdl.dateCode}`);
+                // Log observation for health tracking
+                await client.from('metric_observations').upsert({
+                    metric_id: 'IN_NSDL_SECTOR_FLOWS',
+                    as_of_date: fortnight_end_date,
+                    observation_value: records.reduce((sum, r) => sum + (r.total_net_inr || 0), 0),
+                    provenance: 'NSDL_HTML'
+                }, { onConflict: 'metric_id,as_of_date' }).catch(() => { });
+            }
+        }
+    } catch (err: any) { logger.log('nse-flows', 'warn', 0, `NSDL processing failed: ${err.message}`) }
 
     // Refresh materialized view
-    try {
-        const { error: refreshError } = await client.rpc('refresh_market_pulse_stats')
-        if (refreshError) {
-            console.warn('Failed to refresh stats view:', refreshError)
-        } else {
-            await logger.log('nse-flows', 'processing', 0, 'Refreshed materialized view')
-        }
-    } catch (err: any) {
-        console.warn('View refresh error:', err)
-    }
-
-    const totalDuration = Math.round(performance.now() - start)
-    await logger.log('nse-flows', 'success', processedDates.length, `Ingested ${processedDates.length} dates, skipped ${skippedDates.length}`, totalDuration)
+    await client.rpc('refresh_market_pulse_stats').catch(() => { })
 
     return new Response(JSON.stringify({
-        message: `NSE ingestion complete`,
-        dateRange: {
-            start: startDate.toISOString().split('T')[0],
-            end: endDate.toISOString().split('T')[0]
-        },
+        message: `FII/DII Ingestion complete`,
         processedDates: processedDates.length,
-        skippedDates: skippedDates.length,
-        sampleProcessed: processedDates.slice(0, 5),
-        sampleSkipped: skippedDates.slice(0, 5),
         runId
     }), { headers: { 'Content-Type': 'application/json' } })
 })
