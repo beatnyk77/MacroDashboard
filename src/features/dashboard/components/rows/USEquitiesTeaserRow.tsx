@@ -58,7 +58,7 @@ export const USEquitiesTeaserRow: React.FC = () => {
                     </Grid>
 
                     <Grid item xs={12} md={5}>
-                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
                             {[
                                 { label: 'Insider Sync', icon: <Users size={16} className="text-emerald-400" />, sub: 'Form 4 Live' },
                                 { label: 'Whale Tracker', icon: <ShieldCheck size={16} className="text-blue-400" />, sub: '13F Filings' },
