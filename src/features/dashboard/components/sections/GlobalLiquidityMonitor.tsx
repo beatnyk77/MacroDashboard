@@ -259,7 +259,7 @@ export const GlobalLiquidityMonitor: React.FC = () => {
             <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>LIQUIDITY REGIME</Typography>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>CORRELATION: HIGH (GRIT, DEBT WALL)</Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>CORRELATION: HIGH (LIQUIDITY, DEBT WALL)</Typography>
                 </Box>
                 <Box sx={{ height: 8, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1, overflow: 'hidden', display: 'flex' }}>
                     <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score < -15 ? 'error.main' : 'rgba(248, 113, 113, 0.2)' }} />

@@ -182,7 +182,7 @@ export const USLaborMarketMonitor: React.FC = () => {
                             <span className="text-[10px] font-black uppercase text-blue-400 tracking-wider">Macro Correlation</span>
                         </div>
                         <p className="text-[11px] text-white/60 leading-relaxed italic">
-                            "Initial claims have historically led the GRIT Index pivots by 3-5 weeks. Current upward drift signals potential liquidity tightening by quarter-end."
+                            "Initial claims have historically led sovereign liquidity pivots by 3-5 weeks. Current upward drift signals potential liquidity tightening by quarter-end."
                         </p>
                     </div>
 

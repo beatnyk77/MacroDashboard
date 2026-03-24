@@ -167,7 +167,7 @@ export const WhiteCollarDebtMonitor: React.FC = () => {
                                 <Grid item xs={4}><HeatmapCell label="Commercial RE" value={4.2} color="#fbbf24" /></Grid>
 
                                 <Grid item xs={4}><HeatmapCell label="401(k) Flow" value={1.5} color="#fbbf24" /></Grid>
-                                <Grid item xs={4}><HeatmapCell label="GRIT Gap" value={0.8} color="#22d3ee" /></Grid>
+                                <Grid item xs={4}><HeatmapCell label="Stress Gap" value={0.8} color="#22d3ee" /></Grid>
                                 <Grid item xs={4}><HeatmapCell label="Sovereign" value={0.4} color="#22d3ee" /></Grid>
                             </Grid>
                         </Box>
@@ -189,7 +189,7 @@ export const WhiteCollarDebtMonitor: React.FC = () => {
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>vs GRIT Index</Typography>
+                                <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>vs Liquidity Index</Typography>
                                 <Typography variant="body2" sx={{ color: 'warning.main', fontWeight: 700, fontSize: '0.75rem' }}>
                                     {(data.correlation_grit * 100).toFixed(0)}%
                                 </Typography>

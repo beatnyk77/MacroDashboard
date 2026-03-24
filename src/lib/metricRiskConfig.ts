@@ -1,7 +1,7 @@
 /**
  * Metric Risk Interpretation Configuration
  * 
- * Defines how to interpret directional changes for each metric in the System Heartbeat panel.
+ * Defines how to interpret directional changes for each metric in the metric risk interpretation.
  * - riskOnDirection: 'up' means higher values = risk-on (green), 'down' means lower values = risk-on (green)
  * - displayUnit: unit to show in delta display
  * - deltaDecimals: decimal places for delta formatting

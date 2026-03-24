@@ -80,7 +80,7 @@ export const EnergySecuritySection: React.FC = () => {
             <div className="space-y-8">
                 <SectionHeader
                     title="Energy Security & Supply Chain"
-                    subtitle="US Refining Capacity, Crude Sourcing, and Supplier Vulnerability"
+                    subtitle="US Refining Capacity, Crude Sourcing, and Supplier Concentration"
                 />
                 <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-[2.5rem] backdrop-blur-3xl">
                     <span className="text-sm font-black text-rose-500/50 uppercase tracking-widest mb-2">Energy Security data temporarily unavailable</span>
@@ -94,7 +94,7 @@ export const EnergySecuritySection: React.FC = () => {
         <div className="space-y-8">
             <SectionHeader
                 title="Energy Security & Supply Chain"
-                subtitle="US Refining Capacity, Crude Sourcing, and Supplier Vulnerability"
+                subtitle="US Refining Capacity, Crude Sourcing, and Supplier Concentration"
                 exportId="energy-security-section"
             />
             {isFallback && (

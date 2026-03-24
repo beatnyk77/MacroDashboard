@@ -12,16 +12,21 @@ import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 
-const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketTerminal').then(m => ({ default: m.PredictionMarketTerminal })));
-const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
-const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
 const SmartMoneyFlowMonitor = lazy(() => import('@/features/dashboard/components/sections/SmartMoneyFlowMonitor').then(m => ({ default: m.SmartMoneyFlowMonitor })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
 const WhiteCollarDebtMonitor = lazy(() => import('@/features/dashboard/components/sections/WhiteCollarDebtMonitor').then(m => ({ default: m.WhiteCollarDebtMonitor })));
-const PredictionMarketsSection = lazy(() => import('@/features/dashboard/components/sections/PredictionMarketsSection').then(m => ({ default: m.PredictionMarketsSection })));
 const USEquitiesTeaserRow = lazy(() => import('@/features/dashboard/components/rows/USEquitiesTeaserRow').then(m => ({ default: m.USEquitiesTeaserRow })));
+
+const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
+const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/components/sections/TreasurySnapshotSection').then(m => ({ default: m.TreasurySnapshotSection })));
+const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
+const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
+const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
+const CompactIndiaCard = lazy(() => import('@/features/dashboard/components/cards/CompactIndiaCard').then(m => ({ default: m.CompactIndiaCard })));
+const CompactChinaCard = lazy(() => import('@/features/dashboard/components/cards/CompactChinaCard').then(m => ({ default: m.CompactChinaCard })));
+const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
 
 
 const LoadingFallback = () => (
@@ -47,6 +52,14 @@ export const Terminal: React.FC = () => {
             </header>
 
             <main className="space-y-12">
+
+                <div className="w-full">
+                    <SectionErrorBoundary name="Today's Brief">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TodaysBriefPanel />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
 
                 {/* Row 0: Global Liquidity Direction Monitor (Primary Context) */}
                 <div className="w-full">
@@ -109,6 +122,14 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
+                <div className="w-full">
+                    <SectionErrorBoundary name="Treasury Snapshot">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TreasurySnapshotSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
                 {/* Row 3: Global Capital Flows (Shadow System Visibility) */}
                 <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
@@ -159,6 +180,22 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
+                <div className="w-full">
+                    <SectionErrorBoundary name="Deflation & Debasement Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <DeflationDebasementMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                <div className="w-full">
+                    <SectionErrorBoundary name="Currency Wars Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CurrencyWarsMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
 
 
                 {/* Row 7: Geopolitical Risk Matrix (Tanker tracking fix) */}
@@ -177,33 +214,30 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 8: Prediction Market Probability Core */}
-                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Prediction Market Core</h2>
-                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Aggregated Odds from Polymarket, Kalshi, & PredictIt</p>
-                        </div>
-                        <LiveStatusIndicator source="DomeAPI" />
-                    </div>
-                    <SectionErrorBoundary name="Prediction Markets">
+                <div className="w-full">
+                    <SectionErrorBoundary name="Trade Gravity Card">
                         <Suspense fallback={<LoadingFallback />}>
-                            <div className="space-y-12">
-                                <PredictionMarketTerminal />
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 border-t border-white/5 pt-8">
-                                    <ArbitrageScanner />
-                                    <PredictionMarketHeatmap />
-                                </div>
-                            </div>
+                            <TradeGravityCard />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 9: Prediction Markets Discovery (Research Synthesis) */}
-                <div className="w-full">
-                    <SectionErrorBoundary name="Prediction Markets Discovery">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                    <SectionErrorBoundary name="Compact India Card">
                         <Suspense fallback={<LoadingFallback />}>
-                            <PredictionMarketsSection />
+                            <CompactIndiaCard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <SectionErrorBoundary name="Compact China Card">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CompactChinaCard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+                <div className="w-full">
+                    <SectionErrorBoundary name="Weekly Narrative">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <WeeklyNarrativeSection />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>

@@ -66,11 +66,11 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                     </Suspense>
                 </MotionCard>
 
-                {/* Row 3.6: Local Import Pressure */}
+                {/* Row 3.6: Import Dependency Monitor */}
                 <MotionCard delay={0.45} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-rose-500/30">
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
-                            Local Import Pressure
+                            Import Dependency Monitor
                         </h3>
                         <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Economic impact of energy sourcing. Weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
@@ -89,7 +89,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 <MotionCard delay={0.5} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
-                            Supplier Vulnerability Matrix
+                            Supplier Concentration Matrix
                         </h3>
                         <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Mapping energy import concentration. Higher reliance on volatile regions directly impacts the national risk profile.
