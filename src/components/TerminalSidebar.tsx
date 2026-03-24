@@ -16,7 +16,7 @@ interface NavItem {
 const terminalNavItems: NavItem[] = [
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} /> },
-    { id: 'us-eq', label: 'US Equities Pulse', path: '/us-equities', icon: <BarChart3 size={14} /> },
+    { id: 'us-eq', label: 'US Corporate Terminal', path: '/us-equities', icon: <BarChart3 size={14} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/labs/china', icon: <TrendingUp size={14} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/labs/india', icon: <Globe size={14} /> },
     { id: 'india-eq', label: 'Corporate India Engine', path: '/india-equities', icon: <BarChart3 size={14} /> },

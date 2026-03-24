@@ -16,6 +16,7 @@ import {
 import { motion } from 'framer-motion';
 
 const labs = [
+    { title: 'US Corporate Terminal', path: '/us-equities', icon: <Building2 size={24} />, color: 'blue', desc: 'SEC EDGAR fundamentals, whale tracking & insider conviction' },
     { title: 'US Macro & Fiscal', path: '/labs/us-macro-fiscal', icon: <ShieldAlert size={24} />, color: 'blue', desc: 'Sovereign maturity walls & auction demand dynamics' },
     { title: 'India Lab', path: '/labs/india', icon: <Activity size={24} />, color: 'emerald', desc: 'RBI credit impulse & state-side fiscal telemetry' },
     { title: 'China Lab', path: '/labs/china', icon: <Globe size={24} />, color: 'rose', desc: 'PBoC liquidity cycles & de-dollarization flows' },

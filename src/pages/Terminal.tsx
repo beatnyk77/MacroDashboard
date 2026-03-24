@@ -21,6 +21,7 @@ const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
 const WhiteCollarDebtMonitor = lazy(() => import('@/features/dashboard/components/sections/WhiteCollarDebtMonitor').then(m => ({ default: m.WhiteCollarDebtMonitor })));
 const PredictionMarketsSection = lazy(() => import('@/features/dashboard/components/sections/PredictionMarketsSection').then(m => ({ default: m.PredictionMarketsSection })));
+const USEquitiesTeaserRow = lazy(() => import('@/features/dashboard/components/rows/USEquitiesTeaserRow').then(m => ({ default: m.USEquitiesTeaserRow })));
 
 
 const LoadingFallback = () => (
@@ -96,6 +97,15 @@ export const Terminal: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="Net Liquidity">
                         <NetLiquidityRow />
+                    </SectionErrorBoundary>
+                </div>
+
+                {/* Row 2.5: US Equity Fundamental Pulse (New Entry Point) */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="US Equities Teaser">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <USEquitiesTeaserRow />
+                        </Suspense>
                     </SectionErrorBoundary>
                 </div>
 
