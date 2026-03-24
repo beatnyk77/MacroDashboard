@@ -8,10 +8,10 @@ import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 
-const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
+
 const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
-const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
+
 const PredictionMarketTerminal = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketTerminal').then(m => ({ default: m.PredictionMarketTerminal })));
 const PredictionMarketHeatmap = lazy(() => import('@/features/dashboard/components/widgets/PredictionMarketHeatmap').then(m => ({ default: m.PredictionMarketHeatmap })));
 const ArbitrageScanner = lazy(() => import('@/features/dashboard/components/widgets/ArbitrageScanner').then(m => ({ default: m.ArbitrageScanner })));
@@ -74,14 +74,7 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 1: KPI Grid (Strategic Visibility) */}
-                <div className="w-full">
-                    <SectionErrorBoundary name="Strategic KPIs">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CockpitKPIGrid />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
+
 
                 {/* Row 1.5: China 15th FYP Strategic Signal */}
                 <div className="w-full">
@@ -156,21 +149,7 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 6: GRIT Index (Proprietary Risk Signal) */}
-                <div id="grit-monitor" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-lg font-black text-white uppercase tracking-tighter text-amber-500">GRIT Index Monitor</h2>
-                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Global Regime Indicator & Transition Signal</p>
-                        </div>
-                        <LiveStatusIndicator source="GraphiQuestor Core" />
-                    </div>
-                    <SectionErrorBoundary name="GRIT Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GritIndexMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
+
 
                 {/* Row 7: Geopolitical Risk Matrix (Tanker tracking fix) */}
                 <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">

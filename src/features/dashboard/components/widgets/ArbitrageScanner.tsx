@@ -4,7 +4,7 @@ import { usePredictionMarkets } from '@/hooks/usePredictionMarkets';
 import { cn } from '@/lib/utils';
 
 // Mock structural signals for demo/initial implementation
-// In a real scenario, these would come from useNetLiquidity, useGritIndex, etc.
+// In a real scenario, these would come from useNetLiquidity, etc.
 const STRUCTURAL_SIGNALS = {
     'FOMC': 0.85, // 85% chance of cut based on internal models
     'Recession': 0.15, // 15% chance based on internal models

@@ -16,7 +16,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
-const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
+
 const Distress401kMonitor = lazy(() => import('@/features/dashboard/components/rows/Distress401kMonitor').then(m => ({ default: m.Distress401kMonitor })));
 const USLaborMarketMonitor = lazy(() => import('@/features/dashboard/components/rows/USLaborMarketMonitor').then(m => ({ default: m.USLaborMarketMonitor })));
 const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/components/rows/IranConflictImpactMonitor').then(m => ({ default: m.IranConflictImpactMonitor })));
@@ -61,18 +61,7 @@ export const SovereignStressLab: React.FC = () => {
             </Box>
 
             <div className="space-y-32">
-                {/* 1. GRIT Index Monitor */}
-                <section id="grit-monitor" className="scroll-mt-32">
-                    <div className="flex items-center gap-3 mb-10">
-                        <TrendingUp className="text-emerald-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">GRIT Index Monitor</h2>
-                    </div>
-                    <SectionErrorBoundary name="GRIT Index">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GritIndexMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
+
 
                 {/* 2. Sovereign Risk Matrix */}
                 <section>

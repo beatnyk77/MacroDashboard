@@ -6,12 +6,12 @@ import { MotionCard } from '@/components/MotionCard';
 import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
 
 const RefiningCapacityCard = lazy(() => import('../cards/RefiningCapacityCard').then(m => ({ default: m.RefiningCapacityCard })));
-const OilImportVulnerabilityCard = lazy(() => import('../cards/OilImportVulnerabilityCard').then(m => ({ default: m.OilImportVulnerabilityCard })));
+
 const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({ default: m.OilFlowsSankey })));
-const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
+
 const SPRTrackerCard = lazy(() => import('../cards/SPRTrackerCard').then(m => ({ default: m.SPRTrackerCard })));
 const ReserveTrackerCard = lazy(() => import('@/features/commodities/components/ReserveTrackerCard').then(m => ({ default: m.ReserveTrackerCard })));
-const OilImportCostCard = lazy(() => import('../cards/OilImportCostCard').then(m => ({ default: m.OilImportCostCard })));
+
 const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCard').then(m => ({ default: m.PowerMixDivergenceCard })));
 
 // Fallback/Mock Data generator for when API returns empty
@@ -291,70 +291,7 @@ export const EnergySecuritySection: React.FC = () => {
                     </Suspense>
                 </MotionCard>
 
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
-                {/* Row 3.6: Local Import Pressure */}
-                <MotionCard delay={0.45} className="w-full">
-                    <div className="mb-8 pl-4 border-l-4 border-rose-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
-                            Local Import Pressure
-                        </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
-                            Economic impact of energy sourcing. Weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
-                        </p>
-                    </div>
-                    <Suspense fallback={<div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <OilImportCostCard
-                            importData={data.importData}
-                            brentPriceData={data.brentPriceData || []}
-                            isLoading={false}
-                        />
-                    </Suspense>
-                </MotionCard>
-
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-
-                {/* Row 4: Import Vulnerability & Flow Matrix */}
-                <MotionCard delay={0.5} className="w-full">
-                    <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
-                            Global Supply Vulnerability
-                        </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
-                            Mapping US energy import concentration. Higher reliance on volatile regions (OPEC+, Middle East) directly impacts the national risk profile.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col gap-12">
-                        {/* 1. Sankey Diagram */}
-                        <div className="w-full">
-                            <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                                {data.importData && data.importData.length > 0 ? (
-                                    <OilImportVulnerabilityCard data={data.importData} isLoading={false} />
-                                ) : (
-                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
-                                        <span className="text-[0.6rem] text-muted-foreground uppercase tracking-widest mb-2 font-black">Data normalization under protocol...</span>
-                                        <p className="text-[0.6rem] text-muted-foreground/40 italic">Global flows require ingestion from `ingest-oil-global`. Mapping EU+ and Asia nodes.</p>
-                                    </div>
-                                )}
-                            </Suspense>
-                        </div>
-
-                        {/* 2. Matrix Table - Full Width */}
-                        <div className="w-full h-[500px]">
-                            <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                                {data.importData && data.importData.length > 0 ? (
-                                    <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
-                                ) : (
-                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
-                                        <span className="text-[0.6rem] text-rose-500/50 uppercase tracking-widest mb-2 font-black">Vulnerability Analysis Pending</span>
-                                        <p className="text-[0.6rem] text-muted-foreground/40 italic">Run institutional security scanner (ingest-oil-global) to populate risk metrics.</p>
-                                    </div>
-                                )}
-                            </Suspense>
-                        </div>
-                    </div>
-                </MotionCard>
             </div>
         </div>
     );

@@ -6,8 +6,7 @@ import {
     EyeOff,
     Zap,
     ShieldAlert,
-    Globe,
-    TrendingUp
+    Globe
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -16,7 +15,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 const EliteWealthFlightIndex = lazy(() => import('@/features/dashboard/components/rows/EliteWealthFlightIndex').then(m => ({ default: m.EliteWealthFlightIndex })));
 const IllicitFlowsTracker = lazy(() => import('@/features/dashboard/components/rows/IllicitFlowsTracker').then(m => ({ default: m.IllicitFlowsTracker })));
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
-const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
+
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -98,18 +97,6 @@ export const ShadowSystemLab: React.FC = () => {
                     <ChartInsightSummary id="lab-shadow-trade" insight="Shadow trade metrics capture settlement activity occurring outside traditional SWIFT channels, often mediated through local currency swaps or physical commodity bartering." />
                 </section>
 
-                {/* 4. Trade Gravity Card */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <TrendingUp className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Global Trade Gravity Shift</h2>
-                    </div>
-                    <SectionErrorBoundary name="Trade Gravity">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TradeGravityCard />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
             </div>
 
             <Box sx={{ mt: 12, pt: 8, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>

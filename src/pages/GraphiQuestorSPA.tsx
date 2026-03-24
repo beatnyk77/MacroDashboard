@@ -16,7 +16,7 @@ import { trackSectionView } from '@/lib/analytics';
 import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 
 // Lazy load heavy sections
-const CockpitKPIGrid = lazy(() => import('@/features/dashboard/components/CockpitKPIGrid').then(m => ({ default: m.CockpitKPIGrid })));
+
 const NetLiquidityCard = lazy(() => import('@/features/dashboard/components/cards/NetLiquidityCard').then(m => ({ default: m.NetLiquidityCard })));
 const MacroOrientationSection = lazy(() => import('@/features/dashboard/components/sections/MacroOrientationSection').then(m => ({ default: m.MacroOrientationSection })));
 const GlobalLiquiditySection = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquiditySection').then(m => ({ default: m.GlobalLiquiditySection })));
@@ -40,7 +40,7 @@ const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/component
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const ScenarioStudio = lazy(() => import('@/features/dashboard/components/sections/ScenarioStudio').then(m => ({ default: m.ScenarioStudio })));
 const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
-const GritIndexMonitor = lazy(() => import('@/features/dashboard/components/sections/GritIndexMonitor').then(m => ({ default: m.GritIndexMonitor })));
+
 
 const LoadingFallback = () => (
     <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -86,22 +86,13 @@ export const GraphiQuestorSPA: React.FC = () => {
                         <DataHealthTicker />
                     </div>
 
-                    {/* Hero Row: Net Liquidity + KPI Grid */}
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    {/* Hero Row: Net Liquidity */}
+                    <div className="grid grid-cols-1 gap-8">
                         {/* Net Liquidity - Primary Signal */}
-                        <div className="xl:col-span-1">
+                        <div className="w-full">
                             <SectionErrorBoundary name="Net Liquidity">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <NetLiquidityCard />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-
-                        {/* KPI Grid - Full Width */}
-                        <div className="xl:col-span-2">
-                            <SectionErrorBoundary name="System Heartbeat">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <CockpitKPIGrid />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </div>
@@ -127,16 +118,7 @@ export const GraphiQuestorSPA: React.FC = () => {
                     </SectionErrorBoundary>
                 </SPASection>
 
-                {/* ═══════════════════════════════════════════════════════════════════
-                    GRIT INDEX: SOVEREIGN STRESS MONITOR
-                ═══════════════════════════════════════════════════════════════════ */}
-                <SPASection id="grit-monitor" variant="hero">
-                    <SectionErrorBoundary name="GRIT Index Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GritIndexMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </SPASection>
+
 
                 {/* Regime Context Band */}
                 <SPASection id="regime-context" variant="band">
