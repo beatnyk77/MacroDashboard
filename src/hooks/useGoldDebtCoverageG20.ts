@@ -31,7 +31,17 @@ export function useGoldDebtCoverageG20() {
 
             if (error) throw error;
 
-            const rows = (data || []) as G20GoldDebtRow[];
+            const rows = (data || []).map(row => ({
+                ...row,
+                gold_price_usd: Number(row.gold_price_usd),
+                fx_rate_local_per_usd: Number(row.fx_rate_local_per_usd),
+                gold_price_local: Number(row.gold_price_local),
+                debt_local: Number(row.debt_local),
+                gold_reserves_oz: Number(row.gold_reserves_oz),
+                debt_per_oz_local: Number(row.debt_per_oz_local),
+                coverage_ratio: Number(row.coverage_ratio),
+                implied_gold_price_usd: Number(row.implied_gold_price_usd)
+            })) as G20GoldDebtRow[];
 
             // Group by country
             const history: Record<string, G20GoldDebtRow[]> = {};

@@ -49,9 +49,32 @@ export const useIndiaMarketPulse = () => {
 
             if (historyError) throw historyError;
 
+            const mapRow = (d: any) => ({
+                ...d,
+                fii_cash_net: Number(d.fii_cash_net),
+                dii_cash_net: Number(d.dii_cash_net),
+                fii_idx_fut_net: Number(d.fii_idx_fut_net),
+                pcr: Number(d.pcr),
+                india_vix: Number(d.india_vix),
+                india_vix_zscore: Number(d.india_vix_zscore),
+                advances: Number(d.advances),
+                declines: Number(d.declines),
+                delivery_pct: Number(d.delivery_pct),
+                circuits_pct: Number(d.circuits_pct),
+                midcap_perf: Number(d.midcap_perf),
+                smallcap_perf: Number(d.smallcap_perf),
+                nifty_perf: Number(d.nifty_perf),
+                new_highs_52w: Number(d.new_highs_52w),
+                new_lows_52w: Number(d.new_lows_52w),
+                fii_zscore: d.fii_zscore !== undefined ? Number(d.fii_zscore) : undefined,
+                fii_percentile: d.fii_percentile !== undefined ? Number(d.fii_percentile) : undefined,
+                vix_zscore: d.vix_zscore !== undefined ? Number(d.vix_zscore) : undefined,
+                vix_percentile: d.vix_percentile !== undefined ? Number(d.vix_percentile) : undefined
+            } as MarketPulseData);
+
             return {
-                current: latest as MarketPulseData,
-                history: history as MarketPulseData[]
+                current: latest ? mapRow(latest) : null,
+                history: (history || []).map(mapRow)
             };
         }
     });

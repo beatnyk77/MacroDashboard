@@ -27,7 +27,11 @@ export const useCommodityImports = () => {
                 .order('year', { ascending: true });
 
             if (error) throw error;
-            return data as CommodityImport[];
+            return (data || []).map(d => ({
+                ...d,
+                value_usd: Number(d.value_usd),
+                volume: Number(d.volume)
+            })) as CommodityImport[];
         }
     });
 };

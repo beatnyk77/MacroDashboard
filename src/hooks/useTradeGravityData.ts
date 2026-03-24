@@ -70,7 +70,7 @@ export const useTradeGravityData = () => {
 
                     rows.forEach(r => {
                         if (!byPeriod[r.period]) byPeriod[r.period] = { 'BRICS+': 0, G7: 0 };
-                        byPeriod[r.period][r.bloc] = r.trade_share_pct;
+                        byPeriod[r.period][r.bloc] = Number(r.trade_share_pct);
                     });
 
                     const curr = byPeriod['2023'] || { 'BRICS+': 0, G7: 0 };
