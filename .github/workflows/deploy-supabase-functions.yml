@@ -51,6 +51,7 @@ jobs:
             ingest-cie-deals: ['supabase/functions/ingest-cie-deals/**']
             ingest-cie-promoters: ['supabase/functions/ingest-cie-promoters/**']
             ingest-smart-money-flow: ['supabase/functions/ingest-smart-money-flow/**']
+            ingest-us-edgar-fundamentals: ['supabase/functions/ingest-us-edgar-fundamentals/**']
             _shared: ['supabase/functions/_shared/**']
 
       - name: Deploy Changed Functions
@@ -83,6 +84,7 @@ jobs:
           CHANGED_INGEST_CIE_DEALS: ${{ steps.filter.outputs['ingest-cie-deals'] }}
           CHANGED_INGEST_CIE_PROMOTERS: ${{ steps.filter.outputs['ingest-cie-promoters'] }}
           CHANGED_INGEST_SMART_MONEY_FLOW: ${{ steps.filter.outputs['ingest-smart-money-flow'] }}
+          CHANGED_INGEST_US_EDGAR_FUNDAMENTALS: ${{ steps.filter.outputs['ingest-us-edgar-fundamentals'] }}
         run: |
           deploy_func() {
             local func_name="$1"
@@ -125,6 +127,7 @@ jobs:
             [ "$CHANGED_INGEST_COMMODITY_TERMINAL" = "true" ]  && deploy_func "ingest-commodity-terminal"
             [ "$CHANGED_INGEST_CIE_DEALS" = "true" ]           && deploy_func "ingest-cie-deals"
             [ "$CHANGED_INGEST_CIE_PROMOTERS" = "true" ]       && deploy_func "ingest-cie-promoters"
-            [ "$CHANGED_INGEST_SMART_MONEY_FLOW" = "true" ]    && deploy_func "ingest-smart-money-flow"
+            [|"$CHANGED_INGEST_SMART_MONEY_FLOW" = "true" ]    && deploy_func "ingest-smart-money-flow"
+            [ "$CHANGED_INGEST_US_EDGAR_FUNDAMENTALS" = "true" ] && deploy_func "ingest-us-edgar-fundamentals"
             echo "Selective deployment complete."
           fi

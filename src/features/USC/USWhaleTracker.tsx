@@ -12,7 +12,7 @@ export const USWhaleTracker: React.FC = () => {
             const { data, error } = await supabase
                 .from('us_13f_holdings')
                 .select('*, us_companies(name, sector)')
-                .order('shares_value', { ascending: false })
+                .order('value_usd', { ascending: false })
                 .limit(50);
 
             if (error) throw error;
@@ -49,7 +49,7 @@ export const USWhaleTracker: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {whaleHoldings?.map((h) => (
+                        {whaleHoldings?.map((h: any) => (
                             <tr key={h.id} className="group hover:bg-white/[0.02] transition-all bg-white/[0.01]">
                                 <td className="px-6 py-4 rounded-l-2xl border-y border-l border-white/5 group-hover:border-white/10">
                                     <div className="flex items-center gap-3">

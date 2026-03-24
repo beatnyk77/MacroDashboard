@@ -39,7 +39,7 @@ export const USFilingsFeed: React.FC = () => {
             </Box>
 
             <Box sx={{ spaceY: 2 }}>
-                {filings?.map((f) => (
+                {filings?.map((f: any) => (
                     <Box key={f.id} sx={{
                         p: 3,
                         mb: 2,

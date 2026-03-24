@@ -15,7 +15,7 @@ export const USEquitiesEngine: React.FC = () => {
 
     const activeTab = tool || 'screener';
 
-    const handleTabChange = (_: any, newValue: string) => {
+    const handleTabChange = (_: React.SyntheticEvent, newValue: string) => {
         navigate(`/us-equities/${newValue}`);
     };
 

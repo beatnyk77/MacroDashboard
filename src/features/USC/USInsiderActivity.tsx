@@ -39,7 +39,7 @@ export const USInsiderActivity: React.FC = () => {
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {insiderTrades?.map((t) => (
+                {insiderTrades?.map((t: any) => (
                     <Box key={t.id} sx={{
                         p: 4,
                         borderRadius: '24px',

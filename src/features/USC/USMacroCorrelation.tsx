@@ -43,7 +43,7 @@ export const USMacroCorrelation: React.FC = () => {
                         </Typography>
                         <Box sx={{ height: 300, width: '100%' }}>
                             <ResponsiveContainer>
-                                <LineChart data={macroMetrics?.filter(d => d.metrics.name.includes('Rate') || d.metrics.name.includes('Yield'))}>
+                                <LineChart data={macroMetrics?.filter((d: any) => d.metrics.name.includes('Rate') || d.metrics.name.includes('Yield'))}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                     <XAxis
                                         dataKey="date"

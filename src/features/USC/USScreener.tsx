@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Box, Typography, TextField, InputAdornment, Skeleton } from '@mui/material';
-import { Search, Filter, ArrowUpRight, ArrowDownRight, ExternalLink } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const USScreener: React.FC = () => {
@@ -49,7 +49,7 @@ export const USScreener: React.FC = () => {
                     fullWidth
                     placeholder="Search by Ticker or Company Name..."
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -94,7 +94,7 @@ export const USScreener: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered?.map((c) => (
+                        {filtered?.map((c: any) => (
                             <tr key={c.id} className="group hover:bg-white/[0.02] transition-all bg-white/[0.01]">
                                 <td className="px-6 py-4 rounded-l-2xl border-y border-l border-white/5 group-hover:border-white/10">
                                     <Link to={`/us-equities/equity/${c.ticker}`} className="block">

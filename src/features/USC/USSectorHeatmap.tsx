@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Box, Typography, Grid, Skeleton, LinearProgress } from '@mui/material';
-import { LayoutGrid, TrendingUp, ShieldAlert, Zap } from 'lucide-react';
+import { TrendingUp, ShieldAlert, Zap } from 'lucide-react';
 
 export const USSectorHeatmap: React.FC = () => {
     const { data: sectors, isLoading } = useQuery({
@@ -33,7 +33,7 @@ export const USSectorHeatmap: React.FC = () => {
     return (
         <Box>
             <Grid container spacing={4}>
-                {sectors?.map((s) => (
+                {sectors?.map((s: any) => (
                     <Grid item xs={12} md={4} key={s.sector}>
                         <Box sx={{
                             p: 6,
