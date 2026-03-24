@@ -625,6 +625,19 @@ export const DataHealthDashboard: React.FC = () => {
                             </IconButton>
                         </Paper>
                     </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>US EDGAR Fundamentals</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {ingestions?.find(i => i.function_name === 'ingest-us-edgar-fundamentals') ? new Date(ingestions.find(i => i.function_name === 'ingest-us-edgar-fundamentals').start_time).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="primary" onClick={() => handleForceRefresh('ingest-us-edgar-fundamentals')} disabled={refreshing === 'ingest-us-edgar-fundamentals'}>
+                                {refreshing === 'ingest-us-edgar-fundamentals' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
                 </Grid>
             </Box>
 

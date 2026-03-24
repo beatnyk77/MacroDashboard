@@ -5,7 +5,8 @@ import {
     ArrowLeft,
     ShieldAlert,
     TrendingUp,
-    Zap
+    Zap,
+    BarChart3
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -153,6 +154,61 @@ export const USMacroFiscalLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
+                </section>
+
+                {/* Section 7: Equity Fundamental Pulse (New) */}
+                <section className="pt-12 border-t border-white/5">
+                    <Box sx={{
+                        p: 8,
+                        borderRadius: '40px',
+                        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(0, 0, 0, 0) 100%)',
+                        border: '1px solid rgba(59, 130, 246, 0.1)',
+                        display: 'flex',
+                        flexDirection: { xs: 'column', md: 'row' },
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 6
+                    }}>
+                        <Box sx={{ flex: 1 }}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <BarChart3 className="text-blue-400" size={24} />
+                                <h2 className="text-2xl font-black uppercase tracking-tight text-white">US Equity Fundamental Pulse</h2>
+                            </div>
+                            <Typography variant="body1" sx={{ color: 'white/60', mb: 6, fontWeight: 500, lineHeight: 1.6 }}>
+                                Deep macro-to-corporate correlation engine. Analyze how sovereign debt dynamics and policy shifts impact US corporate margins, valuation tiers, and institutional positioning through official SEC EDGAR telemetry.
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                endIcon={<ChevronRight size={16} />}
+                                href="/us-equities"
+                                sx={{
+                                    bgcolor: '#3b82f6',
+                                    fontWeight: 900,
+                                    fontSize: '0.75rem',
+                                    borderRadius: '12px',
+                                    px: 4,
+                                    py: 1.5,
+                                    boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)',
+                                    '&:hover': { bgcolor: '#2563eb' }
+                                }}
+                            >
+                                Launch Equities Terminal
+                            </Button>
+                        </Box>
+                        <Box sx={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, width: '100%' }}>
+                            {[
+                                { label: 'Valuation Tiers', sub: 'P/E Heatmaps' },
+                                { label: 'Insider Ops', sub: 'Conviction Feed' },
+                                { label: 'Leverage Pulse', sub: 'Debt/Equity' },
+                                { label: 'Whale Tracking', sub: '13F Holdings' }
+                            ].map((item, i) => (
+                                <Box key={i} sx={{ p: 4, borderRadius: '24px', bgcolor: 'white/[0.03]', border: '1px solid white/5' }}>
+                                    <Typography variant="caption" sx={{ display: 'block', color: 'blue.400', fontWeight: 900, mb: 0.5, textTransform: 'uppercase' }}>{item.label}</Typography>
+                                    <Typography variant="body2" sx={{ color: 'white/40', fontWeight: 700 }}>{item.sub}</Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
                 </section>
             </div>
 

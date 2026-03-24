@@ -27,6 +27,8 @@ const IntelIndiaPage = lazy(() => import('@/pages/IntelIndiaPage').then(module =
 const CorporateIndiaEngine = lazy(() => import('@/pages/CorporateIndiaEngine').then(module => ({ default: module.CorporateIndiaEngine })));
 const CompanyDetail = lazy(() => import('@/pages/CompanyDetail').then(module => ({ default: module.CompanyDetail })));
 const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module => ({ default: module.IntelChinaPage })));
+const USEquitiesEngine = lazy(() => import('@/pages/USEquitiesEngine').then(module => ({ default: module.USEquitiesEngine })));
+const USCompanyDetail = lazy(() => import('@/pages/USCompanyDetail').then(module => ({ default: module.USCompanyDetail })));
 const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
 const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
 const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
@@ -82,6 +84,9 @@ function App() {
                                         <Route path="/india-equities" element={<CorporateIndiaEngine />} />
                                         <Route path="/india-equities/:tool" element={<CorporateIndiaEngine />} />
                                         <Route path="/india-equities/equity/:ticker" element={<CompanyDetail />} />
+                                        <Route path="/us-equities" element={<USEquitiesEngine />} />
+                                        <Route path="/us-equities/:tool" element={<USEquitiesEngine />} />
+                                        <Route path="/us-equities/equity/:ticker" element={<USCompanyDetail />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
                                         <Route path="/institutional" element={<ForInstitutional />} />
