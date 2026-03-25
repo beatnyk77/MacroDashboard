@@ -7,7 +7,8 @@ import { GlobalLayout } from '@/layout/GlobalLayout';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Lazy load page components
+// Build Version: 1.0.1 - Cleanup Pass
+// Force fresh bundle generation
 const Terminal = lazy(() => import('@/pages/Terminal').then(module => ({ default: module.Terminal })));
 const MetricsMethodologyPage = lazy(() => import('@/pages/MetricsMethodologyPage').then(module => ({ default: module.MetricsMethodologyPage })));
 const BlogPage = lazy(() => import('@/pages/BlogPage').then(module => ({ default: module.BlogPage })));
