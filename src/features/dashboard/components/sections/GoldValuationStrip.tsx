@@ -115,7 +115,7 @@ export const GoldValuationStrip: React.FC = () => {
             <div className="hidden md:flex items-center gap-4 shrink-0 border-l border-white/5 pl-6">
                 <div className="text-right">
                     <span className="block text-[0.6rem] font-bold text-muted-foreground/50 tracking-[0.05em] uppercase mb-0.5">
-                        SYSTEM HEARTBEAT (UTC)
+                        TERMINAL PULSE (UTC)
                     </span>
                     <div className="flex items-center gap-2 justify-end">
                         <div className={cn(

@@ -132,15 +132,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         <Item
                             onSelect={() => runCommand(() => {
                                 navigate('/');
-                                setTimeout(() => document.getElementById('grit-monitor')?.scrollIntoView({ behavior: 'smooth' }), 100);
-                            })}
-                            icon={<BarChart3 className="h-4 w-4 text-amber-400" />}
-                        >
-                            Jump to GRIT Index
-                        </Item>
-                        <Item
-                            onSelect={() => runCommand(() => {
-                                navigate('/');
                                 setTimeout(() => document.getElementById('geopolitical-matrix')?.scrollIntoView({ behavior: 'smooth' }), 100);
                             })}
                             icon={<Globe className="h-4 w-4 text-rose-400" />}

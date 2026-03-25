@@ -88,12 +88,4 @@ export const glossaryData: GlossaryTerm[] = [
         definition: 'A multi-central bank digital currency (CBDC) platform developed by the BIS Innovation Hub in collaboration with the central banks of China, Hong Kong, Thailand, and the UAE. It functions as a structural alternative to the SWIFT network, facilitating real-time, peer-to-peer cross-border payments in local currencies, thereby serving as a core mechanism for de-dollarization.',
         relatedMetrics: ['Shadow Trade Flows', 'De-Dollarization']
     },
-    {
-        id: '11',
-        term: 'GRIT Index',
-        slug: 'grit-index',
-        category: 'Sovereign Debt',
-        definition: 'GraphiQuestor\'s proprietary composite score for Geopolitical Risk and Institutional Transition. The GRIT Index serves as an overarching macroeconomic barometer, synthetically combining sovereign debt stress markers (like debt-to-gold ratios), reserve diversification velocity, and global liquidity drain signals to quantify the systemic transition away from the pre-2008 multipolar consensus.',
-        relatedMetrics: ['Sovereign Debt', 'Central Bank Gold Net Purchases', 'Net Liquidity']
-    }
 ];

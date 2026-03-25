@@ -86,7 +86,7 @@ export const IndiaLab: React.FC = () => {
             </Box>
 
             <div className="space-y-32">
-                {/* 1. Market Heartbeat */}
+                {/* 1. Market Pulse Analytics */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <Activity className="text-blue-500" size={24} />
