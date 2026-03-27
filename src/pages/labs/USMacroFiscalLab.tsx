@@ -4,6 +4,7 @@ import {
     ChevronRight,
     ArrowLeft,
     ShieldAlert,
+    ShieldCheck,
     TrendingUp,
     Zap,
     BarChart3
@@ -19,6 +20,7 @@ import { LazyRender } from '@/components/LazyRender';
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasuryHoldersSection = lazy(() => import('@/features/dashboard/components/sections/TreasuryHoldersSection').then(m => ({ default: m.TreasuryHoldersSection })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
+const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 
@@ -136,6 +138,21 @@ export const USMacroFiscalLab: React.FC = () => {
                         <LazyRender minHeight="500px">
                             <Suspense fallback={<LoadingFallback />}>
                                 <USMacroPulseSection />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                </section>
+
+                {/* Section 6: Corporate Treasury Hedging (New) */}
+                <section>
+                    <div className="flex items-center gap-3 mb-8">
+                        <ShieldCheck className="text-emerald-500" size={24} />
+                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Hedging Opportunities</h2>
+                    </div>
+                    <SectionErrorBoundary name="Corporate Hedging monitor">
+                        <LazyRender minHeight="400px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <CorporateTreasuryHedgingSection />
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
