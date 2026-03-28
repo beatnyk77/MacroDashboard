@@ -10,6 +10,7 @@
     },
     "imports": {
         "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.3",
-        "@std/assert": "https://deno.land/std@0.211.0/assert/mod.ts"
+        "@std/assert": "https://deno.land/std@0.211.0/assert/mod.ts",
+        "@shared/": "./_shared/"
     }
 }

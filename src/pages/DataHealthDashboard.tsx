@@ -109,7 +109,8 @@ export const DataHealthDashboard: React.FC = () => {
     });
 
     const { data: distressData } = use401kDistress();
-    const { data: laborData } = useUSLabor();
+    const { data: laborDataResp } = useUSLabor();
+    const laborData = laborDataResp?.data;
 
     // 7. NEW: Geopolitical OSINT Tracking
     const { data: osintStatus } = useQuery({

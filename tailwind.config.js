@@ -56,6 +56,16 @@ export default {
     				'3': 'hsl(var(--chart-3))',
     				'4': 'hsl(var(--chart-4))',
     				'5': 'hsl(var(--chart-5))'
+    			},
+    			terminal: {
+    				bg: '#0f172a',
+    				header: '#1e293b',
+    				border: '#334155',
+    				gold: '#fbbf24',
+    				emerald: '#34d399',
+    				rose: '#fb7185',
+    				muted: '#94a3b8',
+    				blue: '#60a5fa',
     			}
     		},
     		borderRadius: {

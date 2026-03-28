@@ -41,8 +41,12 @@ export const useUSLabor = () => {
                 });
                 return item as USLaborData;
             });
-            if (rawData.length === 0) return rawData;
-
+            if (rawData.length === 0) {
+                return {
+                    data: [],
+                    staleness: { daysStale: 0, status: 'fresh' as const, lastUpdate: new Date().toISOString() }
+                };
+            }
             // Forward fill null values
             const filledData = [...rawData];
             for (let i = 1; i < filledData.length; i++) {
@@ -55,7 +59,21 @@ export const useUSLabor = () => {
                 });
             }
 
-            return filledData;
+            const latestDate = filledData.length > 0 ? new Date(filledData[filledData.length - 1].date) : new Date();
+            const now = new Date();
+            const stalenessDays = Math.floor((now.getTime() - latestDate.getTime()) / (1000 * 3600 * 24));
+            
+            // For monthly labor data, freshness threshold is ~35 days.
+            const status = stalenessDays > 45 ? 'critical' : stalenessDays > 35 ? 'stale' : 'fresh';
+
+            return {
+                data: filledData,
+                staleness: {
+                    daysStale: stalenessDays,
+                    status,
+                    lastUpdate: latestDate.toISOString()
+                }
+            };
         },
         staleTime: 1000 * 60 * 60, // 1 hour
     });
