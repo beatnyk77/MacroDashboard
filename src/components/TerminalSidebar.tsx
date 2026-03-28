@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     Activity, Globe, TrendingUp, Anchor, Zap, ShieldAlert,
-    Database, BarChart3, Radio
+    Database, BarChart3, Radio, FileText, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -14,10 +14,13 @@ interface NavItem {
 }
 
 const terminalNavItems: NavItem[] = [
+    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} /> },
+    { id: 'treasury-hedging', label: 'Treasury Hedging', path: '/treasury-hedging', icon: <ShieldCheck size={14} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} /> },
     { id: 'us-eq', label: 'US Corporate Terminal', path: '/us-equities', icon: <BarChart3 size={14} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/labs/china', icon: <TrendingUp size={14} /> },
+    { id: 'india-flow', label: 'India Flow Pulse (FII/DII)', path: '/india-equities/fii-dii', icon: <Activity size={14} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/labs/india', icon: <Globe size={14} /> },
     { id: 'india-eq', label: 'Corporate India Engine', path: '/india-equities', icon: <BarChart3 size={14} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },

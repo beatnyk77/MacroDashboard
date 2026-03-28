@@ -27,6 +27,8 @@ const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows
 const CompactIndiaCard = lazy(() => import('@/features/dashboard/components/cards/CompactIndiaCard').then(m => ({ default: m.CompactIndiaCard })));
 const CompactChinaCard = lazy(() => import('@/features/dashboard/components/cards/CompactChinaCard').then(m => ({ default: m.CompactChinaCard })));
 const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
+const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
+const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 
 
 const LoadingFallback = () => (
@@ -52,6 +54,14 @@ export const Terminal: React.FC = () => {
             </header>
 
             <main className="space-y-12">
+
+                <div className="w-full">
+                    <SectionErrorBoundary name="Weekly Narrative">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <WeeklyNarrativeSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
 
                 <div className="w-full">
                     <SectionErrorBoundary name="Today's Brief">
@@ -126,6 +136,14 @@ export const Terminal: React.FC = () => {
                     <SectionErrorBoundary name="Treasury Snapshot">
                         <Suspense fallback={<LoadingFallback />}>
                             <TreasurySnapshotSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
+                <div className="w-full">
+                    <SectionErrorBoundary name="Corporate Treasury Hedging">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CorporateTreasuryHedgingSection />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
@@ -235,12 +253,14 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
                 <div className="w-full">
-                    <SectionErrorBoundary name="Weekly Narrative">
+                    <SectionErrorBoundary name="India Market Pulse (FII/DII)">
                         <Suspense fallback={<LoadingFallback />}>
-                            <WeeklyNarrativeSection />
+                            <IndiaMarketPulseRow />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
+
+
 
             </main>
         </Container>
