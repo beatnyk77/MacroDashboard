@@ -4,7 +4,9 @@
 
 INSERT INTO metrics (id, name, description, source_id, native_frequency, display_frequency, unit, unit_label, tier, category, metadata, expected_interval_days) VALUES
   -- 1. Offshore Dollar Stress
-  ('TED_SPREAD', 'TED Spread', 'Difference between 3-month LIBOR and 3-month T-bill rate', 1, 'daily', 'daily', 'bps', 'basis points', 'core', 'liquidity', '{"fred_id": "TEDRATE"}', 2),
+  -- DEPRECATED: TED_SPREAD (LIBOR-based, discontinued 2023). Historical data preserved for backtest.
+  ('TED_SPREAD', 'TED Spread', 'DEPRECATED: Difference between 3-month LIBOR and 3-month T-bill rate', 1, 'daily', 'daily', 'bps', 'basis points', 'deprecated', 'liquidity', '{"fred_id": "TEDRATE", "deprecated": true, "reason": "LIBOR discontinued"}', 2),
+  ('SOFR_OIS_SPREAD', 'SOFR-OIS Spread', 'Secured Overnight Financing Rate minus Effective Fed Funds Rate (basis points). Modern replacement for TED Spread, measures institutional funding stress.', 1, 'daily', 'daily', 'bps', 'basis points', 'core', 'liquidity', '{"fred_series": ["SOFR", "EFFR"], "computed": true}', 2),
   ('ED_F_FRONT', 'Eurodollar Futures (Front)', 'Front month Eurodollar futures price', 6, 'daily', 'daily', 'index', 'index', 'core', 'liquidity', '{"yahoo_ticker": "GE=F"}', 2),
   ('ED_F_DEFERRED', 'Eurodollar Futures (Deferred)', 'Deferred Eurodollar futures price (2y out)', 6, 'daily', 'daily', 'index', 'index', 'core', 'liquidity', '{"yahoo_ticker": "GEZ2027.CME"}', 2),
 

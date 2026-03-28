@@ -6,14 +6,14 @@ export const OffshoreDollarStressCard: React.FC = () => {
     const { offshore } = useInstitutionalFeatures();
     const data = offshore.data;
 
-    const isStressed = (data?.sofr_ois_spread || data?.ted_spread || 0) > 40 || (data?.slope_bps || 0) < 0;
+    const isStressed = (data?.sofr_ois_spread || 0) > 40 || (data?.slope_bps || 0) < 0;
 
     return (
         <MetricCard
             label="Offshore Dollar Funding Stress"
             value={data?.sofr_ois_spread !== undefined && data.sofr_ois_spread !== null
                 ? `${data.sofr_ois_spread.toFixed(0)} bps`
-                : (data?.ted_spread !== undefined ? `${data.ted_spread.toFixed(0)} bps` : '-')}
+                : '-'}
             isLoading={offshore.isLoading}
             status={isStressed ? 'danger' : 'safe'}
             sublabel={isStressed ? 'SYSTEMIC STRESS DETECTED' : 'LIQUIDITY CONDITIONS NORMAL'}
@@ -29,8 +29,8 @@ export const OffshoreDollarStressCard: React.FC = () => {
             stats={[
                 {
                     label: 'SOFR-OIS Spread',
-                    value: (data?.sofr_ois_spread !== undefined) ? `${data.sofr_ois_spread.toFixed(0)} bps` : (data?.ted_spread ? `${data.ted_spread.toFixed(0)} bps` : '-'),
-                    color: (data?.sofr_ois_spread || data?.ted_spread || 0) > 40 ? 'error.main' : 'success.main'
+                    value: (data?.sofr_ois_spread !== undefined) ? `${data.sofr_ois_spread.toFixed(0)} bps` : '-',
+                    color: (data?.sofr_ois_spread || 0) > 40 ? 'error.main' : 'success.main'
                 },
                 {
                     label: 'Curve Slope',

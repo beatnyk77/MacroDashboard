@@ -3,8 +3,7 @@ import { supabase } from '@/lib/supabase';
 
 export interface OffshoreDollarStress {
     as_of_date: string;
-    ted_spread: number;
-    sofr_ois_spread?: number;
+    sofr_ois_spread: number;
     slope_bps: number;
     status: string;
 }
@@ -39,8 +38,7 @@ export function useInstitutionalFeatures() {
             if (error) throw error;
             return {
                 as_of_date: data.as_of_date,
-                ted_spread: Number(data.ted_spread || 0),
-                sofr_ois_spread: data.sofr_ois_spread ? Number(data.sofr_ois_spread) : undefined,
+                sofr_ois_spread: data.sofr_ois_spread ? Number(data.sofr_ois_spread) : 0,
                 slope_bps: Number(data.slope_bps || 0),
                 status: data.status
             } as OffshoreDollarStress;

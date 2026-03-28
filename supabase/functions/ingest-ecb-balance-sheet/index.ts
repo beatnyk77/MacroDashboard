@@ -52,7 +52,9 @@ Deno.serve(async (req: Request) => {
         const metricsMap = [
             { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' },
             { id: 'ECB_DF_OUTSTANDING_MEUR', fredId: 'ECBDFR' }, // Using Rate for now as proxy or check if balance exists
-            { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMRRFR' } // Using Rate
+            { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMRRFR' }, // Using Rate
+            // Euro Area Government Debt to GDP (replaces stale TED_SPREAD timeline)
+            { id: 'EU_DEBT_GDP_PCT', fredId: 'DEBTGDP', description: 'Euro Area General Government Debt to GDP Ratio (%)' }
         ];
 
         const results: any[] = [];

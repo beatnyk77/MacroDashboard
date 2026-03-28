@@ -239,15 +239,15 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                                         )}
                                                     </a>
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <span className={cn("text-[0.55rem] font-bold px-1.5 py-0.5 rounded", getSourceColor(headline.source))}>
+                                                        <span className={cn("text-xs font-bold px-1.5 py-0.5 rounded", getSourceColor(headline.source))}>
                                                             {headline.source}
                                                         </span>
-                                                        <span className="text-[0.55rem] text-muted-foreground/50 font-medium">
+                                                        <span className="text-xs text-muted-foreground/50 font-medium">
                                                             {timeAgo(headline.published_at)}
                                                         </span>
                                                         {stale && (
-                                                            <span className="text-[0.5rem] text-amber-400/80 font-bold flex items-center gap-0.5" title="This headline is older than 48 hours">
-                                                                <AlertTriangle size={8} />
+                                                            <span className="text-[0.7rem] text-amber-400/80 font-bold flex items-center gap-0.5" title="This headline is older than 48 hours">
+                                                                <AlertTriangle size={10} />
                                                                 Stale
                                                             </span>
                                                         )}

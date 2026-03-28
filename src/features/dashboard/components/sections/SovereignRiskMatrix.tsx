@@ -265,7 +265,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                             <ZAxis type="number" dataKey="z" range={[80, 2000]} />
 
                             <RechartsTooltip
-                                content={<CustomTooltip />}
+                                content={CustomTooltip}
                                 cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.2)' }}
                                 animationDuration={200}
                             />

@@ -3,11 +3,12 @@
 -- =====================================================
 
 -- 1. Offshore Dollar Stress View
+-- Updated: Use SOFR_OIS_SPREAD as primary indicator (TED_SPREAD deprecated - LIBOR discontinued)
 CREATE OR REPLACE VIEW vw_offshore_dollar_stress AS
-WITH ted AS (
-  SELECT as_of_date, value AS ted_spread
+WITH sofr_ois AS (
+  SELECT as_of_date, value AS sofr_ois_spread
   FROM metric_observations
-  WHERE metric_id = 'TED_SPREAD'
+  WHERE metric_id = 'SOFR_OIS_SPREAD'
 ),
 ed_front AS (
   SELECT as_of_date, value AS front_px
@@ -20,20 +21,20 @@ ed_deferred AS (
   WHERE metric_id = 'ED_F_DEFERRED'
 ),
 slope_data AS (
-  SELECT 
+  SELECT
     f.as_of_date,
     (d.deferred_px - f.front_px) * 100 AS slope_bps
   FROM ed_front f
   JOIN ed_deferred d ON f.as_of_date = d.as_of_date
 )
-SELECT 
-  COALESCE(t.as_of_date, s.as_of_date) AS as_of_date,
-  t.ted_spread,
+SELECT
+  COALESCE(so.as_of_date, s.as_of_date) AS as_of_date,
+  so.sofr_ois_spread,
   s.slope_bps,
-  -- Freshness
-  CASE WHEN t.as_of_date = CURRENT_DATE THEN 'fresh' ELSE 'lagged' END AS status
-FROM ted t
-FULL OUTER JOIN slope_data s ON t.as_of_date = s.as_of_date
+  -- Freshness based on SOFR-OIS data (most critical)
+  CASE WHEN so.as_of_date = CURRENT_DATE THEN 'fresh' ELSE 'lagged' END AS status
+FROM sofr_ois so
+FULL OUTER JOIN slope_data s ON so.as_of_date = s.as_of_date
 ORDER BY as_of_date DESC;
 
 -- 2. Credit Creation Pulse View
