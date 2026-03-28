@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { useCurrencyWars } from '@/hooks/useCurrencyWars';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
-import { KalshiFedFundsCard } from '../cards/KalshiFedFundsCard';
 
 
 import {
@@ -184,11 +183,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
                     />
                 </div>
             </div>
-
-            {/* Kalshi Prediction Market Integration */}
-            <div className="mt-12 pt-12 border-t border-white/5">
-                <KalshiFedFundsCard />
-            </div>
+            {/* Macro Context Integration moved to shared hooks */}
         </SPASection>
     );
 };

@@ -16,7 +16,7 @@ const SmartMoneyFlowMonitor = lazy(() => import('@/features/dashboard/components
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
-const WhiteCollarDebtMonitor = lazy(() => import('@/features/dashboard/components/sections/WhiteCollarDebtMonitor').then(m => ({ default: m.WhiteCollarDebtMonitor })));
+
 const USEquitiesTeaserRow = lazy(() => import('@/features/dashboard/components/rows/USEquitiesTeaserRow').then(m => ({ default: m.USEquitiesTeaserRow })));
 
 const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
@@ -80,14 +80,7 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 0.5: White-Collar Debt Distress Monitor (Labor + Debt Signal) */}
-                <div className="w-full">
-                    <SectionErrorBoundary name="White-Collar Debt Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <WhiteCollarDebtMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
+
 
                 {/* Row 0.75: Smart Money Flow Monitor (Institutional Positioning) */}
                 <div className="w-full">

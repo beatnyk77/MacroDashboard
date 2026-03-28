@@ -17,8 +17,6 @@ const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/s
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
 
-const Distress401kMonitor = lazy(() => import('@/features/dashboard/components/rows/Distress401kMonitor').then(m => ({ default: m.Distress401kMonitor })));
-const USLaborMarketMonitor = lazy(() => import('@/features/dashboard/components/rows/USLaborMarketMonitor').then(m => ({ default: m.USLaborMarketMonitor })));
 const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/components/rows/IranConflictImpactMonitor').then(m => ({ default: m.IranConflictImpactMonitor })));
 
 const LoadingFallback = () => (
@@ -103,32 +101,7 @@ export const SovereignStressLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* 4. 401(k) Distress Monitor */}
-                <section id="401k-distress" className="scroll-mt-32">
-                    <div className="flex items-center gap-3 mb-10">
-                        <ShieldAlert className="text-rose-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">401(k) Distress Monitor</h2>
-                    </div>
-                    <SectionErrorBoundary name="401(k) Distress">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <Distress401kMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-401k-distress" insight="The 401(k) Distress Monitor tracks hardship withdrawals and loan activity as a leading indicator of consumer exhaustion. Spikes in these levels historically precede broad-based recessionary shifts." />
-                </section>
 
-                <section className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <Activity size={24} className="text-blue-400" />
-                        <Typography variant="h5" sx={{ fontWeight: 900, color: 'white' }}>US Labor Supply & Demand</Typography>
-                    </div>
-                    <SectionErrorBoundary name="Labor Market Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <USLaborMarketMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-labor-market" insight="Real-time monitoring of US Labor statistics via BLS/FRED. The proprietary Labor Distress Index combines claims, layoffs, and quit ratios to provide a high-fidelity recession lead signal." />
-                </section>
 
                 <section className="space-y-4">
                     <div className="flex items-center gap-3">

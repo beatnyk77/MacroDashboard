@@ -1,9 +1,4 @@
-import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
 
 async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]> {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=250`;
@@ -11,38 +6,25 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
         const response = await fetch(url);
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`FRED API error for ${seriesId}: ${response.status} ${errorText}`);
             throw new Error(`FRED API error for ${seriesId}: ${response.status}`);
         }
         const data = await response.json();
         return data.observations || [];
     } catch (err: any) {
-        console.error(`Fetch failed for ${seriesId}: ${err.message}`);
-        throw err;
+        throw new Error(`Fetch failed for ${seriesId}: ${err.message}`);
     }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
+export async function processFiscal(supabase: SupabaseClient, fredApiKey: string) {
     try {
-        if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
-
-        // Fetch all required series
         const [interest, receipts, personal, payroll, gdp] = await Promise.all([
-            fetchFredSeries('A091RC1Q027SBEA', fredApiKey), // Gross Interest Expense
-            fetchFredSeries('FGRECPT', fredApiKey),         // Total Federal Receipts
-            fetchFredSeries('A074RC1Q027SBEA', fredApiKey), // Personal current taxes
-            fetchFredSeries('W780RC1Q027SBEA', fredApiKey), // Payroll taxes
-            fetchFredSeries('GDP', fredApiKey)             // GDP
+            fetchFredSeries('A091RC1Q027SBEA', fredApiKey),
+            fetchFredSeries('FGRECPT', fredApiKey),
+            fetchFredSeries('A074RC1Q027SBEA', fredApiKey),
+            fetchFredSeries('W780RC1Q027SBEA', fredApiKey),
+            fetchFredSeries('GDP', fredApiKey)
         ]);
 
-        // Group by date
         const dateMap = new Map<string, any>();
 
         const processObservations = (obs: any[], key: string) => {
@@ -63,7 +45,6 @@ Deno.serve(async (req: Request) => {
         processObservations(payroll, 'payroll_taxes');
         processObservations(gdp, 'gdp');
 
-        // Calculate ratios and prepare for upsert
         const upsertData = Array.from(dateMap.values())
             .map(d => {
                 const insolvency_ratio = (d.interest_expense && d.total_receipts) ? (d.interest_expense / d.total_receipts) : null;
@@ -81,25 +62,12 @@ Deno.serve(async (req: Request) => {
             .filter(d => d.insolvency_ratio !== null || d.employment_tax_share !== null || d.receipts_gdp !== null);
 
         if (upsertData.length > 0) {
-            const { error } = await supabase
-                .from('us_fiscal_stress')
-                .upsert(upsertData, { onConflict: 'date' });
-
+            const { error } = await supabase.from('us_fiscal_stress').upsert(upsertData, { onConflict: 'date' });
             if (error) throw error;
         }
 
-        return new Response(JSON.stringify({
-            success: true,
-            count: upsertData.length,
-            latest: upsertData[0]
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-
+        return { success: true, count: upsertData.length };
     } catch (error: any) {
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        return { success: false, error: error.message };
     }
-})
+}

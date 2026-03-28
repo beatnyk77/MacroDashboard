@@ -3,8 +3,7 @@ import { Box, Typography, Grid, Paper, Chip, Table, TableBody, TableCell, TableC
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle, AlertCircle, Clock, RefreshCcw, Send, Settings, RefreshCw, Download } from 'lucide-react';
-import { use401kDistress } from '@/hooks/use401kDistress';
-import { useUSLabor } from '@/hooks/useUSLabor';
+
 
 export const DataHealthDashboard: React.FC = () => {
     // 1. Core Telemetry Queries
@@ -108,9 +107,16 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000 // 5 min
     });
 
-    const { data: distressData } = use401kDistress();
-    const { data: laborDataResp } = useUSLabor();
-    const laborData = laborDataResp?.data;
+    // 6. NEW: US Macro Pulse (Unified Orchestrator)
+    const { data: usMacroStatus } = useQuery({
+        queryKey: ['us-macro-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('us_fiscal_stress').select('date').order('date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 60000 // 1 min
+    });
 
     // 7. NEW: Geopolitical OSINT Tracking
     const { data: osintStatus } = useQuery({
@@ -129,22 +135,7 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 60000 // 1 min
     });
 
-    // 8. NEW: Prediction Market Terminal Tracking
-    const { data: predictionMarketStatus } = useQuery({
-        queryKey: ['prediction-market-status'],
-        queryFn: async () => {
-            const { count, error } = await supabase.from('domeapi_markets').select('*', { count: 'exact', head: true });
-            if (error) throw error;
 
-            const { data: latestEntry } = await supabase.from('domeapi_markets').select('last_updated').order('last_updated', { ascending: false }).limit(1).single();
-
-            return {
-                marketCount: count || 0,
-                lastUpdated: latestEntry?.last_updated
-            };
-        },
-        refetchInterval: 60000 // 1 min
-    });
 
     // 9. NEW: US Fiscal Structural Telemetry Tracking
     const { data: fiscalStatus } = useQuery({
@@ -445,15 +436,15 @@ export const DataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(96, 165, 250, 0.05)', border: '1px solid rgba(96, 165, 250, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Prediction Markets</Typography>
+                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>US Macro Pulse</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {predictionMarketStatus ? `${predictionMarketStatus.marketCount} Markets` : 'Unknown'}
+                                    {usMacroStatus ? new Date(usMacroStatus.date).toLocaleDateString() : 'Inactive'}
                                 </Typography>
                             </Box>
-                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-prediction-markets')} disabled={refreshing === 'ingest-prediction-markets'}>
-                                {refreshing === 'ingest-prediction-markets' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            <IconButton color="primary" onClick={() => handleForceRefresh('ingest-us-macro')} disabled={refreshing === 'ingest-us-macro'}>
+                                {refreshing === 'ingest-us-macro' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
@@ -467,32 +458,6 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="info" onClick={() => handleForceRefresh('ingest-geopolitical-osint')} disabled={refreshing === 'ingest-geopolitical-osint'}>
                                 {refreshing === 'ingest-geopolitical-osint' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(244, 63, 94, 0.05)', border: '1px solid rgba(244, 63, 94, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#f43f5e', fontWeight: 700, display: 'block', lineHeight: 1 }}>401(k) Distress</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {distressData && distressData.length > 0 ? new Date(distressData[distressData.length - 1].date).toLocaleDateString() : 'Inactive'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="error" onClick={() => handleForceRefresh('ingest-401k-distress')} disabled={refreshing === 'ingest-401k-distress'}>
-                                {refreshing === 'ingest-401k-distress' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Labor Market Pulse</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {laborData && laborData.length > 0 ? new Date(laborData[laborData.length - 1].date).toLocaleDateString() : 'Inactive'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="primary" onClick={() => handleForceRefresh('ingest-us-labor')} disabled={refreshing === 'ingest-us-labor'}>
-                                {refreshing === 'ingest-us-labor' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>
