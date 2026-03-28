@@ -11,6 +11,7 @@ export interface G20GoldDebtRow {
     gold_reserves_oz: number;
     debt_per_oz_local: number;
     coverage_ratio: number;
+    inverse_coverage_ratio: number;
     implied_gold_price_usd: number;
 }
 
@@ -40,6 +41,7 @@ export function useGoldDebtCoverageG20() {
                 gold_reserves_oz: Number(row.gold_reserves_oz),
                 debt_per_oz_local: Number(row.debt_per_oz_local),
                 coverage_ratio: Number(row.coverage_ratio),
+                inverse_coverage_ratio: Number(row.inverse_coverage_ratio || (Number(row.coverage_ratio) > 0 ? 100 / Number(row.coverage_ratio) : 0)),
                 implied_gold_price_usd: Number(row.implied_gold_price_usd)
             })) as G20GoldDebtRow[];
 

@@ -42,6 +42,17 @@ const formatCurrency = (val: number, fxRate: number) => {
 export const G20GoldDebtCoveragePanel: React.FC = () => {
     const { data, isLoading, isError, error } = useGoldDebtCoverageG20();
     const [hoveredCountry, setHoveredCountry] = useState<G20GoldDebtRow | null>(null);
+    const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>('US'); // Default to US
+
+    const selectedCountryData = useMemo(() => {
+        if (!selectedCountryCode || !data?.latest) return null;
+        return data.latest.find(d => d.country_code === selectedCountryCode);
+    }, [selectedCountryCode, data]);
+
+    const countryHistory = useMemo(() => {
+        if (!selectedCountryCode || !data?.history) return [];
+        return data.history[selectedCountryCode] || [];
+    }, [selectedCountryCode, data]);
 
     const colorScale = useMemo(() => {
         if (!data?.latest || data.latest.length === 0) return scaleQuantize<string>().range(['#1e293b']);
@@ -110,6 +121,18 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                         A lower percentage indicates higher fiat over-extension, measuring exactly how many local currency debt units are backed by a single ounce of gold.
                     </p>
                 </div>
+
+                {/* Narrative Insight */}
+                {selectedCountryData && (
+                    <div className="flex-1 bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 md:max-w-xs animate-in fade-in slide-in-from-right-4">
+                        <div className="text-[0.6rem] font-black text-amber-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <ShieldAlert size={10} /> Solvency Insight
+                        </div>
+                        <p className="text-[0.7rem] text-amber-200/70 leading-relaxed italic">
+                            {COUNTRY_NAMES[selectedCountryData.country_code]} would need <span className="text-amber-400 font-bold">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</span> its current gold reserves to fully back its sovereign debt at current prices.
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
@@ -177,6 +200,60 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Country Detail Card & Trend */}
+                    {selectedCountryData && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in zoom-in-95">
+                            <div className="bg-slate-950/50 p-6 rounded-3xl border border-white/[0.03] flex flex-col justify-between">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <span className="text-3xl">{COUNTRY_FLAGS[selectedCountryData.country_code]}</span>
+                                    <div>
+                                        <h4 className="text-lg font-black text-white uppercase tracking-tighter italic">{COUNTRY_NAMES[selectedCountryData.country_code]}</h4>
+                                        <p className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-[0.2em]">{selectedCountryData.country_code} / SOVEREIGN AUDIT</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <p className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest mb-1">Inverse Coverage</p>
+                                        <p className="text-xl font-black text-rose-500">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</p>
+                                        <p className="text-[0.55rem] text-muted-foreground italic">Debt to Gold Value</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest mb-1">Debt / Gold Oz</p>
+                                        <p className="text-xl font-black text-amber-400 font-mono">
+                                            {formatCurrency(selectedCountryData.debt_per_oz_local, selectedCountryData.fx_rate_local_per_usd)}
+                                        </p>
+                                        <p className="text-[0.55rem] text-muted-foreground italic">Local Currency Units</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-950/50 p-6 rounded-3xl border border-white/[0.03]">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h4 className="text-[0.65rem] font-black text-white/50 uppercase tracking-widest flex items-center gap-2">
+                                        <TrendingDown size={12} className="text-amber-500" /> Coverage Trend (30D)
+                                    </h4>
+                                    <span className="text-[0.6rem] font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Ingestion</span>
+                                </div>
+                                <div className="h-[100px] w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={countryHistory}>
+                                            <Bar dataKey="coverage_ratio" radius={[2, 2, 0, 0]}>
+                                                {countryHistory.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={getCoverageColor(entry.coverage_ratio)} opacity={0.6 + (index / countryHistory.length) * 0.4} />
+                                                ))}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                                <div className="mt-2 flex justify-between text-[0.55rem] font-black text-white/20 uppercase tracking-widest">
+                                    <span>T-30 Days</span>
+                                    <span>Current</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Top 10 Red Zone Bar Chart */}
@@ -237,13 +314,18 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                 <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground w-16">Rank</th>
                                 <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground">Sovereign</th>
                                 <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right">Coverage %</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right hidden sm:table-cell">Gold Reserves (Tonnes)</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right">Debt per Oz (Local)</th>
+                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right hidden sm:table-cell">Inverse Ratio</th>
+                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right hidden lg:table-cell">Gold (Tonnes)</th>
+                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right">Debt / Gold Oz (Local)</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">
                             {sortedRows.map((row, idx) => (
-                                <tr key={row.country_code} className="hover:bg-white/[0.02] transition-colors group">
+                                <tr 
+                                    key={row.country_code} 
+                                    className={`hover:bg-amber-500/5 transition-colors group cursor-pointer ${selectedCountryCode === row.country_code ? 'bg-amber-500/10 border-l-2 border-l-amber-500' : ''}`}
+                                    onClick={() => setSelectedCountryCode(row.country_code)}
+                                >
                                     <td className="px-6 py-4">
                                         <span className="text-xs font-black text-white/30 tabular-nums">{String(idx + 1).padStart(2, '0')}</span>
                                     </td>
@@ -262,12 +344,17 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right hidden sm:table-cell">
-                                        <span className="text-sm text-white/60 font-mono tabular-nums">
-                                            {(row.gold_reserves_oz / 32150.7).toLocaleString(undefined, { maximumFractionDigits: 1 })}t
+                                        <span className="text-sm text-white/80 font-mono tabular-nums">
+                                            {row.inverse_coverage_ratio.toFixed(1)}x
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right hidden lg:table-cell">
+                                        <span className="text-sm text-white/50 font-mono tabular-nums">
+                                            {(row.gold_reserves_oz / 32150.7).toLocaleString(undefined, { maximumFractionDigits: 0 })}t
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <span className="text-sm text-white/80 font-mono tabular-nums">
+                                        <span className="text-sm text-amber-200/90 font-mono tabular-nums group-hover:text-amber-400 transition-colors">
                                             {formatCurrency(row.debt_per_oz_local, row.fx_rate_local_per_usd)}
                                         </span>
                                     </td>

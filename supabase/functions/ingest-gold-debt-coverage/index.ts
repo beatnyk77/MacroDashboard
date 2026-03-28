@@ -116,6 +116,7 @@ Deno.serve(async (req: Request) => {
 
                 const debtPerOzLocal = totalDebtLocal / ounces;
                 const coverageRatio = (goldValueUsd / totalDebtUsd) * 100; // as percent
+                const inverseCoverageRatio = totalDebtUsd / goldValueUsd;
                 const impliedGoldPriceUsd = totalDebtUsd / ounces;
 
                 results.push({
@@ -128,6 +129,7 @@ Deno.serve(async (req: Request) => {
                     gold_reserves_oz: ounces,
                     debt_per_oz_local: debtPerOzLocal,
                     coverage_ratio: coverageRatio,
+                    inverse_coverage_ratio: inverseCoverageRatio,
                     implied_gold_price_usd: impliedGoldPriceUsd
                 });
             }
