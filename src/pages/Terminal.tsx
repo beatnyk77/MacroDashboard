@@ -9,6 +9,7 @@ import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidi
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWall';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
+import InstitutionalHoldingsWall from '@/components/InstitutionalHoldingsWall';
 
 
 const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
@@ -57,6 +58,15 @@ export const Terminal: React.FC = () => {
             </header>
 
             <main className="space-y-16 pb-32">
+                {/* 0. FLAGSHIP: 13-F SMART MONEY TRACKER */}
+                <div className="w-full">
+                    <SectionErrorBoundary name="13-F Smart Money Tracker">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <InstitutionalHoldingsWall />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </div>
+
                 {/* 1. STRATEGIC CONTEXT */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     <div className="lg:col-span-8">
