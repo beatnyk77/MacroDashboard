@@ -2,23 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Building2, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Activity, Percent } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-interface CorporateMaturity {
-    ticker: string;
-    company_name: string;
-    yr1: number;
-    yr2_3: number;
-    yr4_5: number;
-    yr5_plus: number;
-    total_debt: number;
-    report_date: string;
-}
+
+
 
 interface AggregateData {
     bucket: string;
     amount: number;
     percent: number;
+    color: string;
+    coupon?: number;
+    delta?: number;
 }
 
 const COLORS = {
@@ -183,7 +177,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
                                                     <p className="text-slate-300 text-xs">
-                                                        Amount: <span className="text-white font-mono">${payload[0].value.toFixed(2)}T</span>
+                                                        Amount: <span className="text-white font-mono">${Number(payload[0].value).toFixed(2)}T</span>
                                                     </p>
                                                 </div>
                                                 <p className="text-slate-500 text-[10px] mt-1 italic">
