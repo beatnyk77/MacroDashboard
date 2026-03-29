@@ -4,16 +4,12 @@ import {
     ChevronRight,
     ArrowLeft,
     EyeOff,
-    Zap,
-    ShieldAlert,
     Globe
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 
 // Lazy loaded components
-const EliteWealthFlightIndex = lazy(() => import('@/features/dashboard/components/rows/EliteWealthFlightIndex').then(m => ({ default: m.EliteWealthFlightIndex })));
-const IllicitFlowsTracker = lazy(() => import('@/features/dashboard/components/rows/IllicitFlowsTracker').then(m => ({ default: m.IllicitFlowsTracker })));
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
 
 
@@ -57,32 +53,6 @@ export const ShadowSystemLab: React.FC = () => {
             </Box>
 
             <div className="space-y-32">
-                {/* 1. Elite Wealth Flight */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Zap className="text-blue-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Elite Wealth Flight</h2>
-                    </div>
-                    <SectionErrorBoundary name="Wealth Flight">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <EliteWealthFlightIndex />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 2. Illicit Flows Tracker */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <ShieldAlert className="text-rose-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Illicit Flows Tracker</h2>
-                    </div>
-                    <SectionErrorBoundary name="Illicit Flows">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <IllicitFlowsTracker />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
                 {/* 3. Shadow Trade Card */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">

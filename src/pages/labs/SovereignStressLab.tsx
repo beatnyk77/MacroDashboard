@@ -5,7 +5,6 @@ import {
     ArrowLeft,
     ShieldAlert,
     TrendingUp,
-    Zap,
     Activity,
     Globe
 } from 'lucide-react';
@@ -15,7 +14,6 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
-const CorporateProfitCapture = lazy(() => import('@/features/dashboard/components/rows/CorporateProfitCapture').then(m => ({ default: m.CorporateProfitCapture })));
 
 const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/components/rows/IranConflictImpactMonitor').then(m => ({ default: m.IranConflictImpactMonitor })));
 
@@ -87,21 +85,6 @@ export const SovereignStressLab: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
-
-                {/* 3. Corporate Profit Capture */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Zap className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Corporate Profit Capture</h2>
-                    </div>
-                    <SectionErrorBoundary name="Corporate Profit">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CorporateProfitCapture />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-
 
                 <section className="space-y-4">
                     <div className="flex items-center gap-3">
