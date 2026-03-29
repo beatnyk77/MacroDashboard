@@ -7,6 +7,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
+import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWall';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 
 
@@ -124,6 +125,14 @@ export const Terminal: React.FC = () => {
                                     </div>
                                     <USDebtMaturityWall />
                                 </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <div className="w-full">
+                        <SectionErrorBoundary name="Corporate Debt Maturity Wall">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <CorporateDebtMaturityWall />
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
