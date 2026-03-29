@@ -41,7 +41,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                             <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic">
                                 {country.country_name}
                             </h3>
-                            <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">
                                 Sovereign Exposure Profile
                             </span>
                         </div>
@@ -75,7 +75,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                 {/* Historical Sparkline */}
                 <div className="flex-1 min-h-[250px] bg-black/40 rounded-3xl border border-white/5 overflow-hidden p-6 relative">
                     <div className="absolute top-6 left-6 z-10">
-                        <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-[0.22em] block mb-1">UST Accumulation Path</span>
+                        <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.22em] block mb-1">UST Accumulation Path</span>
                         <span className="text-xs font-bold text-white tracking-widest uppercase">Historical Trend (LTM+)</span>
                     </div>
                     <ResponsiveContainer width="100%" height="100%">
@@ -109,7 +109,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
 
 const StatItem = ({ label, value, sub, color = "text-white", icon }: any) => (
     <div className="flex flex-col gap-1">
-        <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest leading-none">{label}</span>
+        <span className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none">{label}</span>
         <div className="flex items-center gap-2">
             <span className={cn("text-xl font-black tabular-nums", color)}>{value}</span>
             {icon}

@@ -46,7 +46,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
       <div className="w-full h-96 bg-white/[0.02] border border-white/5 rounded-3xl animate-pulse flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Activity className="text-blue-500/20 animate-spin" size={40} />
-          <span className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em]">Synchronizing RBI Telemetry...</span>
+          <span className="text-xs font-black text-white/20 uppercase tracking-[0.3em]">Synchronizing RBI Telemetry...</span>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
                 { label: 'WACR', val: `${latestOps?.call_money_rate?.toFixed(2)}%`, sub: 'Market Reality' }
               ].map((m, i) => (
                 <div key={i} className="flex flex-col">
-                  <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest mb-1">{m.label}</span>
+                  <span className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">{m.label}</span>
                   <span className="text-lg font-black text-white">{m.val}</span>
                   <span className="text-[0.55rem] font-medium text-muted-foreground/40 uppercase">{m.sub}</span>
                 </div>
@@ -118,7 +118,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
               <Activity size={16} className="text-blue-500" />
               Interest Rate Corridor Dynamics
             </h3>
-            <div className="text-[0.6rem] text-muted-foreground font-medium uppercase tracking-widest">
+            <div className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
               Last 30 Operations
             </div>
           </div>
@@ -200,7 +200,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-white tracking-tighter">₹{s.vol?.toLocaleString('en-IN')}</span>
-                  <span className="text-[0.6rem] text-muted-foreground/50 font-black uppercase">Cr</span>
+                  <span className="text-xs text-muted-foreground/50 font-black uppercase">Cr</span>
                 </div>
                 <div className="mt-3 h-1 w-full bg-white/5 rounded-full overflow-hidden">
                   <div className={`h-full ${s.color} opacity-40`} style={{ width: '80%' }} />

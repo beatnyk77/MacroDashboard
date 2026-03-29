@@ -18,7 +18,7 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
                     <h3 className="text-sm font-black text-blue-500 uppercase tracking-widest flex items-center gap-2">
                         <Trophy size={14} /> Refining Alpha Ranking
                     </h3>
-                    <p className="text-[0.6rem] text-muted-foreground font-bold uppercase tracking-tight mt-1">Top 10 Global Assets by Scale</p>
+                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-tight mt-1">Top 10 Global Assets by Scale</p>
                 </div>
             </div>
 
@@ -60,9 +60,9 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <TrendingUp size={12} className="text-emerald-500" />
-                    <span className="text-[0.6rem] text-muted-foreground uppercase">Market Consolidation: HIGH</span>
+                    <span className="text-xs text-muted-foreground uppercase">Market Consolidation: HIGH</span>
                 </div>
-                <button className="text-[0.6rem] text-blue-500/60 hover:text-blue-400 font-black uppercase flex items-center gap-1 transition-colors">
+                <button className="text-xs text-blue-500/60 hover:text-blue-400 font-black uppercase flex items-center gap-1 transition-colors">
                     Detailed Report <ArrowUpRight size={10} />
                 </button>
             </div>

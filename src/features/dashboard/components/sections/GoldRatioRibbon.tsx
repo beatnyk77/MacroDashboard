@@ -10,7 +10,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     return (
         <div className="bg-slate-950/95 border border-white/10 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
-            <p className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-3">
+            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-3">
                 {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
             </p>
             <div className="space-y-2.5">
@@ -18,11 +18,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                     <div key={entry.name} className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-[0.7rem] font-bold text-white/80 tracking-tight">{entry.name}</span>
+                            <span className="text-xs font-bold text-white/80 tracking-tight">{entry.name}</span>
                         </div>
                         <div className="text-right">
                             <div className={cn(
-                                "text-[0.7rem] font-black",
+                                "text-xs font-black",
                                 entry.value != null ? (Math.abs(entry.value) > 2 ? "text-rose-400" : Math.abs(entry.value) > 1.2 ? "text-amber-400" : "text-emerald-400") : "text-muted-foreground"
                             )}>
                                 {entry.value != null ? (entry.value > 0 ? '+' : '') + entry.value.toFixed(2) + 'σ' : 'N/A'}
@@ -163,7 +163,7 @@ export const GoldRatioRibbon: React.FC = () => {
                             </div>
                             <div className="text-center">
                                 <p className="text-sm font-black text-white/40 uppercase tracking-widest">Ribbon visualization temporarily unavailable</p>
-                                <p className="text-[10px] text-muted-foreground/30 italic mt-1">Fetching historical correlation matrix...</p>
+                                <p className="text-xs text-muted-foreground/30 italic mt-1">Fetching historical correlation matrix...</p>
                             </div>
                         </div>
                     ) : (
@@ -260,7 +260,7 @@ export const GoldRatioRibbon: React.FC = () => {
                                 <div className="flex justify-between items-center mb-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: sConfig?.color }} />
-                                        <span className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-widest">
+                                        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">
                                             {ratio.ratio_name}
                                         </span>
                                     </div>
@@ -271,7 +271,7 @@ export const GoldRatioRibbon: React.FC = () => {
                                         {ratio.current_value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                     </div>
                                     <div className={cn(
-                                        "text-[0.7rem] font-black tabular-nums tracking-tight",
+                                        "text-xs font-black tabular-nums tracking-tight",
                                         isExtreme ? "text-rose-500" : Math.abs(ratio.z_score) > 1.2 ? "text-amber-500" : "text-emerald-500"
                                     )}>
                                         {ratio.z_score != null ? (ratio.z_score > 0 ? '+' : '') + ratio.z_score.toFixed(2) + 'σ' : '--'}

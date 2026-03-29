@@ -80,7 +80,7 @@ export const ClimateRiskDashboard: React.FC = () => {
         <div className="md:col-span-2 p-6 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-xl">
           <div className="flex items-center gap-2 text-emerald-500 mb-2">
             <Leaf className="w-4 h-4" />
-            <span className="text-[10px] font-black tracking-widest uppercase">Transition Signal active</span>
+            <span className="text-xs font-black tracking-widest uppercase">Transition Signal active</span>
           </div>
           <h2 className="text-4xl font-black text-white tracking-tighter uppercase italic leading-none">
             Transition <span className="text-emerald-500">Risk Matrix</span>
@@ -91,12 +91,12 @@ export const ClimateRiskDashboard: React.FC = () => {
         </div>
         
         <div className="bg-[#0f1115] border border-white/5 rounded-xl p-6 flex flex-col justify-center items-end">
-          <div className="text-[10px] text-gray-500 font-mono uppercase mb-1">Global Baseline alignment</div>
+          <div className="text-xs text-gray-500 font-mono uppercase mb-1">Global Baseline alignment</div>
           <div className="text-4xl font-black text-white font-mono leading-none flex items-baseline gap-2">
             {globalAvgRisk.toFixed(1)}
             <span className="text-xs text-emerald-500/70">TR_SCORE</span>
           </div>
-          <div className="text-[10px] text-gray-600 font-mono mt-2 uppercase tracking-tighter">v1.2.0-CLIMATE-CORE</div>
+          <div className="text-xs text-gray-600 font-mono mt-2 uppercase tracking-tighter">v1.2.0-CLIMATE-CORE</div>
         </div>
       </div>
 
@@ -120,12 +120,12 @@ export const ClimateRiskDashboard: React.FC = () => {
                   className={`w-full flex items-center justify-between p-4 transition-all hover:bg-white/5 text-left ${selectedCountry === item.country_code ? 'bg-white/10 border-l-2 border-emerald-400 shadow-inner' : ''}`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-gray-600 font-mono text-[10px] w-4">{(idx + 1).toString().padStart(2, '0')}</span>
+                    <span className="text-gray-600 font-mono text-xs w-4">{(idx + 1).toString().padStart(2, '0')}</span>
                     <div>
                       <div className="text-white font-bold text-sm tracking-tight">{item.country_code}</div>
                       <div className="flex items-center gap-1.5 mt-1">
                         <Thermometer size={10} style={{ color: getTempColor(item.temperature_alignment_c) }} />
-                        <span className="text-[9px] font-mono" style={{ color: getTempColor(item.temperature_alignment_c) }}>
+                        <span className="text-xs font-mono" style={{ color: getTempColor(item.temperature_alignment_c) }}>
                           {item.temperature_alignment_c}°C Align
                         </span>
                       </div>
@@ -135,7 +135,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                     <div className="text-lg font-black font-mono leading-none text-white">
                       {item.transition_risk_score.toFixed(1)}
                     </div>
-                    <div className="text-[8px] text-gray-500 font-mono uppercase tracking-tighter mt-1">RI_SCORE</div>
+                    <div className="text-xs text-gray-500 font-mono uppercase tracking-tighter mt-1">RI_SCORE</div>
                   </div>
                 </button>
               ))}
@@ -155,7 +155,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                   <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono italic">Exposure vectors</h3>
                 </div>
                 {countryDisplayData && (
-                  <div className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/10 text-emerald-400">
+                  <div className="text-xs font-mono bg-white/5 px-2 py-0.5 rounded border border-white/10 text-emerald-400">
                     {countryDisplayData.country_code}
                   </div>
                 )}
@@ -188,14 +188,14 @@ export const ClimateRiskDashboard: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2 text-amber-500 mb-4 border-b border-white/5 pb-2">
                     <Zap size={14} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Grid Intensity</span>
+                    <span className="text-xs font-black uppercase tracking-widest">Grid Intensity</span>
                   </div>
                   {countryDisplayData ? (
                     <div className="flex items-end gap-3">
                       <div className="text-4xl font-black text-white font-mono leading-none tracking-tighter">
                         {countryDisplayData.grid_co2_intensity}
                       </div>
-                      <div className="text-[10px] text-gray-500 font-mono mb-1">gCO₂/kWh</div>
+                      <div className="text-xs text-gray-500 font-mono mb-1">gCO₂/kWh</div>
                     </div>
                   ) : null}
                 </div>
@@ -216,14 +216,14 @@ export const ClimateRiskDashboard: React.FC = () => {
                  <div>
                   <div className="flex items-center gap-2 text-emerald-500 mb-4 border-b border-emerald-500/10 pb-2">
                     <ShieldCheck size={14} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Renewable Share</span>
+                    <span className="text-xs font-black uppercase tracking-widest">Renewable Share</span>
                   </div>
                   {countryDisplayData ? (
                     <div className="flex items-end gap-2">
                       <div className="text-4xl font-black text-white font-mono leading-none">
                         {countryDisplayData.renewable_share_pct.toFixed(1)}%
                       </div>
-                      <div className="text-[10px] text-emerald-500/70 font-mono mb-1 uppercase italic">Generation mix</div>
+                      <div className="text-xs text-emerald-500/70 font-mono mb-1 uppercase italic">Generation mix</div>
                     </div>
                   ) : null}
                 </div>
@@ -249,15 +249,15 @@ export const ClimateRiskDashboard: React.FC = () => {
                    <div key={state.region_code} className="p-4 bg-white/[0.02] border border-white/5 rounded-lg">
                      <div className="flex justify-between items-center mb-3">
                        <span className="text-xs font-bold text-white font-mono uppercase">{state.region_code === 'MH' ? 'Maharashtra' : 'Karnataka'}</span>
-                       <span className="text-[10px] text-gray-500 font-mono tracking-tighter">NODE_ID: {state.region_code}</span>
+                       <span className="text-xs text-gray-500 font-mono tracking-tighter">NODE_ID: {state.region_code}</span>
                      </div>
                      <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <div className="text-[8px] text-gray-600 uppercase font-mono mb-1 underline decoration-emerald-500/30 underline-offset-2">Intensity</div>
+                          <div className="text-xs text-gray-600 uppercase font-mono mb-1 underline decoration-emerald-500/30 underline-offset-2">Intensity</div>
                           <div className="text-sm font-black text-white font-mono">{state.grid_co2_intensity} g</div>
                         </div>
                         <div>
-                          <div className="text-[8px] text-gray-600 uppercase font-mono mb-1 underline decoration-emerald-500/30 underline-offset-2">RE_Share</div>
+                          <div className="text-xs text-gray-600 uppercase font-mono mb-1 underline decoration-emerald-500/30 underline-offset-2">RE_Share</div>
                           <div className="text-sm font-black text-white font-mono">{state.renewable_share_pct}%</div>
                         </div>
                      </div>
@@ -266,7 +266,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                </div>
                
                <div className="h-[200px] bg-white/[0.02] border border-white/5 rounded-xl p-4">
-                 <div className="text-[10px] text-gray-500 font-mono uppercase mb-4 text-center">Inferred Transition Path</div>
+                 <div className="text-xs text-gray-500 font-mono uppercase mb-4 text-center">Inferred Transition Path</div>
                  <ResponsiveContainer width="100%" height="80%">
                     <BarChart data={processedData.filter(d => d.country_code === 'IND' && d.region_code)}>
                       <Bar dataKey="transition_risk_score" fill="#10b981" radius={[4, 4, 0, 0]} />
@@ -289,14 +289,14 @@ export const ClimateRiskDashboard: React.FC = () => {
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2 group cursor-help">
             <ShieldCheck className="w-4 h-4 text-emerald-500 transform group-hover:scale-110 transition-transform" />
-            <span className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em] group-hover:text-emerald-400 transition-colors">Institutional Node</span>
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-[0.2em] group-hover:text-emerald-400 transition-colors">Institutional Node</span>
           </div>
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-indigo-400" />
-            <span className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">EDGAR GHG Tier-1 Source</span>
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-[0.2em]">EDGAR GHG Tier-1 Source</span>
           </div>
         </div>
-        <div className="text-[10px] text-gray-600 font-mono tracking-tighter italic border-l border-white/10 pl-4">
+        <div className="text-xs text-gray-600 font-mono tracking-tighter italic border-l border-white/10 pl-4">
           SYSTEM_ALIGNED // PACTA_METHODOLOGY_V3
         </div>
       </div>

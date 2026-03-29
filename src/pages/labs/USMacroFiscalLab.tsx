@@ -26,7 +26,7 @@ const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/compon
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Signal...</span>
     </div>
 );
 

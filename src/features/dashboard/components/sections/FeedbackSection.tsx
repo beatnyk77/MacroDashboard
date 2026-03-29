@@ -35,7 +35,7 @@ export const FeedbackSection: React.FC = () => {
                         className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Observation Log</span>
+                            <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Observation Log</span>
                             <span className="text-sm font-black text-white">Share Feedback</span>
                         </div>
                         <div className="p-2 rounded-xl bg-emerald-500/10 group-hover/btn:bg-emerald-500/20 transition-colors">
@@ -51,7 +51,7 @@ export const FeedbackSection: React.FC = () => {
                         className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-blue-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Source Control</span>
+                            <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Source Control</span>
                             <span className="text-sm font-black text-white">GitHub Repository</span>
                         </div>
                         <div className="p-2 rounded-xl bg-blue-500/10 group-hover/btn:bg-blue-500/20 transition-colors">

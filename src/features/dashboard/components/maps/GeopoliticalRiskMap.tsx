@@ -39,15 +39,15 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                 <div className="px-4 py-3 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 space-y-3">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Private Jets</span>
+                        <span className="text-xs font-black text-white uppercase tracking-widest">Private Jets</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Tanker/Vessel</span>
+                        <span className="text-xs font-black text-white uppercase tracking-widest">Tanker/Vessel</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">High Risk Zone</span>
+                        <span className="text-xs font-black text-rose-500 uppercase tracking-widest">High Risk Zone</span>
                     </div>
                 </div>
             </div>
@@ -166,7 +166,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                             </div>
                             <div>
                                 <h3 className="text-xl font-black text-white uppercase tracking-tight">{selectedAsset.callsign}</h3>
-                                <div className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest">
+                                <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                                     {selectedAsset.type} • {selectedAsset.owner_flag || 'Unknown Origin'}
                                 </div>
                             </div>
@@ -174,7 +174,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
 
                         <div className="space-y-6 flex-1 overflow-y-auto pr-2 custom-scrollbar">
                             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                                <span className="text-[0.6rem] font-black text-blue-500 uppercase tracking-widest block mb-2 underline decoration-blue-500/30 underline-offset-4">
+                                <span className="text-xs font-black text-blue-500 uppercase tracking-widest block mb-2 underline decoration-blue-500/30 underline-offset-4">
                                     Macro Correlation
                                 </span>
                                 <p className="text-xs text-white/70 leading-relaxed font-medium">
@@ -225,9 +225,9 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                         <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[0.6rem] font-bold text-muted-foreground uppercase">Real-Time</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase">Real-Time</span>
                             </div>
-                            <span className="text-[0.6rem] font-mono text-muted-foreground/40 italic">Refreshed 1m ago</span>
+                            <span className="text-xs font-mono text-muted-foreground/40 italic">Refreshed 1m ago</span>
                         </div>
                     </motion.div>
                 )}
@@ -295,7 +295,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                         Signal quiet across Strait of Hormuz and Bab el-Mandeb. Monitoring for trade disruption and maritime stress markers.
                     </p>
                     <div className="mt-8 px-4 py-2 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                        <span className="text-[0.6rem] font-black text-blue-500/50 uppercase tracking-[0.2em]">Next Scan in 60s</span>
+                        <span className="text-xs font-black text-blue-500/50 uppercase tracking-[0.2em]">Next Scan in 60s</span>
                     </div>
                 </div>
             )}

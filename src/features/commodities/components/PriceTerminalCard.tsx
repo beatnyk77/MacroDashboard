@@ -54,12 +54,12 @@ export const PriceTerminalCard: React.FC = () => {
                                     </span>
                                     <div className="flex items-center gap-2">
                                         <span className={cn(
-                                            "text-[10px] font-bold",
+                                            "text-xs font-bold",
                                             change >= 0 ? "text-emerald-500" : "text-rose-500"
                                         )}>
                                             {change >= 0 ? '+' : ''}{change.toFixed(2)}%
                                         </span>
-                                        <span className="text-[10px] font-medium text-muted-foreground/40">
+                                        <span className="text-xs font-medium text-muted-foreground/40">
                                             Z: {zScore.toFixed(1)}
                                         </span>
                                     </div>

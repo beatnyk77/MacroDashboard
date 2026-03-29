@@ -112,7 +112,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         </div>
                     )}
                 </div>
-                <span className="block text-[0.7rem] font-medium text-muted-foreground/70">
+                <span className="block text-xs font-medium text-muted-foreground/70">
                     {subtitle}
                 </span>
             </div>
@@ -143,9 +143,9 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 {typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
                     <div className="space-y-1">
                         <div className="flex justify-between">
-                            <span className="text-[0.6rem] font-extrabold text-muted-foreground tracking-wider uppercase">VALUATION PERCENTILE</span>
+                            <span className="text-xs font-extrabold text-muted-foreground tracking-wider uppercase">VALUATION PERCENTILE</span>
                             <span className={cn(
-                                "text-[0.7rem] font-black",
+                                "text-xs font-black",
                                 percentile > 90 || percentile < 10 ? "text-amber-500" : "text-primary"
                             )}>
                                 {formatPercentage(percentile, { decimals: 0 })}
@@ -173,7 +173,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                     )}
                     {timeLabel && (
                         <span className={cn(
-                            "block mt-1 text-[0.6rem] font-bold",
+                            "block mt-1 text-xs font-bold",
                             stalenessState === 'stale' || stalenessState === 'overdue' ? "text-rose-500" : "text-muted-foreground/50"
                         )}>
                             Updated {timeLabel}

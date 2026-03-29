@@ -40,7 +40,7 @@ export const USWhaleTracker: React.FC = () => {
             <Box sx={{ overflowX: 'auto' }}>
                 <table className="w-full text-left border-separate border-spacing-y-2">
                     <thead>
-                        <tr className="text-[0.6rem] font-black uppercase tracking-widest text-white/20">
+                        <tr className="text-xs font-black uppercase tracking-widest text-white/20">
                             <th className="px-6 pb-2">Institutional Manager</th>
                             <th className="px-6 pb-2">Securities Held</th>
                             <th className="px-6 pb-2 text-right">Value ($M)</th>
@@ -65,7 +65,7 @@ export const USWhaleTracker: React.FC = () => {
                                 <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10">
                                     <Link to={`/us-equities/equity/${h.ticker}`} className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all">
                                         <span className="text-[0.65rem] font-black text-blue-400">{h.ticker}</span>
-                                        <span className="text-[0.6rem] font-bold text-white/40 truncate max-w-[100px]">{h.us_companies?.name}</span>
+                                        <span className="text-xs font-bold text-white/40 truncate max-w-[100px]">{h.us_companies?.name}</span>
                                     </Link>
                                 </td>
                                 <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">

@@ -23,10 +23,10 @@ const FocusCard: React.FC<{
 
             <div className="space-y-4">
                 <div>
-                    <span className="text-[0.6rem] font-black text-muted-foreground/50 uppercase tracking-widest block mb-2">Import Dependency Correlation</span>
+                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-2">Import Dependency Correlation</span>
                     <div className="flex items-end gap-2">
                         <div className="text-3xl font-black text-white italic leading-none">{correlation.toFixed(2)}</div>
-                        <div className="text-[0.6rem] font-bold text-emerald-400 uppercase pb-1 flex items-center gap-1">
+                        <div className="text-xs font-bold text-emerald-400 uppercase pb-1 flex items-center gap-1">
                             <TrendingUp size={10} /> CRITICAL
                         </div>
                     </div>
@@ -34,9 +34,9 @@ const FocusCard: React.FC<{
 
                 <div className="pt-4 border-t border-white/5">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-[0.6rem] font-black text-muted-foreground/50 uppercase tracking-widest">Cap Utilization</span>
+                        <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest">Cap Utilization</span>
                         <span className={cn(
-                            "text-[0.6rem] font-black uppercase tracking-widest px-1.5 py-0.5 rounded",
+                            "text-xs font-black uppercase tracking-widest px-1.5 py-0.5 rounded",
                             isOverMedian ? "text-blue-400 bg-blue-500/10" : "text-amber-400 bg-amber-500/10"
                         )}>
                             {isOverMedian ? "Above Median" : "Below Median"}

@@ -265,25 +265,25 @@ export const CompanyDetail: React.FC = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">Current Pledge</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Current Pledge</p>
                                     <p className={`text-xl font-black ${(company.promoter_pledge_pct || 0) > 10 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                         {company.promoter_pledge_pct || 0}%
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">Pledge 1Y Delta</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Pledge 1Y Delta</p>
                                     <p className={`text-xl font-black ${(company.pledge_delta || 0) > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                         {company.pledge_delta > 0 ? '+' : ''}{(company.pledge_delta || 0).toFixed(1)}%
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">Insider Buy (12M)</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Insider Buy (12M)</p>
                                     <p className={`text-xl font-black ${(company.insider_buy_sell_net || 0) > 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
                                         {company.insider_buy_sell_net > 0 ? `+${company.insider_buy_sell_net}` : company.insider_buy_sell_net || 0} Cr
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">Sector Avg Pledge</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Sector Avg Pledge</p>
                                     <p className="text-xl font-black text-blue-400">{peerComparison?.avgSectorPledge.toFixed(1)}%</p>
                                 </div>
                             </div>
@@ -311,12 +311,12 @@ export const CompanyDetail: React.FC = () => {
                                 <table className="w-full text-left">
                                     <thead>
                                         <tr className="border-b border-white/5">
-                                            <th className="pb-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Date</th>
-                                            <th className="pb-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Client</th>
-                                            <th className="pb-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Type</th>
-                                            <th className="pb-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20 text-right">Qty</th>
-                                            <th className="pb-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20 text-right">Price</th>
-                                            <th className="pb-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20 text-right">% Eq</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20">Date</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20">Client</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20">Type</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Qty</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Price</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">% Eq</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/[0.02]">
@@ -324,24 +324,24 @@ export const CompanyDetail: React.FC = () => {
                                             recentDeals.map((deal: any) => (
                                                 <tr key={deal.id}>
                                                     <td className="py-4">
-                                                        <span className="text-[0.7rem] font-medium text-white/60">{format(new Date(deal.date), 'dd MMM')}</span>
+                                                        <span className="text-xs font-medium text-white/60">{format(new Date(deal.date), 'dd MMM')}</span>
                                                     </td>
                                                     <td className="py-4">
-                                                        <span className="text-[0.7rem] font-medium text-white/80">{deal.client_name}</span>
+                                                        <span className="text-xs font-medium text-white/80">{deal.client_name}</span>
                                                     </td>
                                                     <td className="py-4">
-                                                        <span className={`text-[0.6rem] font-black px-1.5 py-0.5 rounded ${deal.type === 'BUY' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                                                        <span className={`text-xs font-black px-1.5 py-0.5 rounded ${deal.type === 'BUY' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                                                             {deal.type} {deal.deal_type}
                                                         </span>
                                                     </td>
                                                     <td className="py-4 text-right">
-                                                        <span className="text-[0.7rem] font-mono text-white/60">{(deal.quantity / 100000).toFixed(1)}L</span>
+                                                        <span className="text-xs font-mono text-white/60">{(deal.quantity / 100000).toFixed(1)}L</span>
                                                     </td>
                                                     <td className="py-4 text-right">
-                                                        <span className="text-[0.7rem] font-mono text-white/60">₹{deal.price}</span>
+                                                        <span className="text-xs font-mono text-white/60">₹{deal.price}</span>
                                                     </td>
                                                     <td className="py-4 text-right">
-                                                        <span className={`text-[0.7rem] font-black ${deal.type === 'BUY' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                                        <span className={`text-xs font-black ${deal.type === 'BUY' ? 'text-emerald-400' : 'text-rose-400'}`}>
                                                             {deal.equity_pct}%
                                                         </span>
                                                     </td>
@@ -410,10 +410,10 @@ export const CompanyDetail: React.FC = () => {
                                 <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10">
                                     <div className="flex justify-between items-end mb-2">
                                         <div>
-                                            <p className="text-[0.6rem] uppercase tracking-widest font-black text-rose-400/60 mb-1">Gov Risk Score</p>
+                                            <p className="text-xs uppercase tracking-widest font-black text-rose-400/60 mb-1">Gov Risk Score</p>
                                             <p className="text-2xl font-black text-white">{company.governance_risk_score || 0}<span className="text-xs text-white/30">/100</span></p>
                                         </div>
-                                        <span className={`px-2 py-0.5 rounded-md text-[0.6rem] font-black uppercase tracking-widest ${(company.governance_risk_score || 0) < 30 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                                        <span className={`px-2 py-0.5 rounded-md text-xs font-black uppercase tracking-widest ${(company.governance_risk_score || 0) < 30 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                                             {(company.governance_risk_score || 0) < 30 ? 'Low Risk' : 'High Risk'}
                                         </span>
                                     </div>
@@ -423,7 +423,7 @@ export const CompanyDetail: React.FC = () => {
                                 </div>
 
                                 <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-blue-400/60 mb-2">Last Regulatory Action</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-blue-400/60 mb-2">Last Regulatory Action</p>
                                     <p className="text-xs font-bold text-white/80 leading-relaxed italic">
                                         "{company.last_sebi_action || 'No SEBI/ED observations reported in the last 24 months.'}"
                                     </p>

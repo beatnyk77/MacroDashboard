@@ -33,7 +33,7 @@ export const InstitutionalFooter: React.FC = () => {
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Contact & Intelligence</h3>
                         <div className="flex flex-col md:items-end gap-2">
                             <span className="text-[0.65rem] font-mono">graphiquestor@gmail.com</span>
-                            <span className="text-[0.6rem] text-muted-foreground uppercase tracking-widest">Global Macro Strategy Division</span>
+                            <span className="text-xs text-muted-foreground uppercase tracking-widest">Global Macro Strategy Division</span>
                         </div>
                     </div>
                 </div>
@@ -42,14 +42,14 @@ export const InstitutionalFooter: React.FC = () => {
                 <nav className="mt-8 pt-6 border-t border-white/[0.03]" aria-label="Dashboard Sections">
                     <h3 className="text-[0.55rem] font-black uppercase tracking-[0.3em] text-muted-foreground/30 mb-3">Dashboard Deep Dives</h3>
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
-                        <a href="/#liquidity-hero" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Net Liquidity</a>
-                        <a href="/#debt-maturity-hero" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Debt Maturity Wall</a>
-                        <a href="/#india-pulse" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-emerald-400/80 transition-colors">India Macro Pulse</a>
-                        <a href="/#thematic-labs" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Thematic Labs</a>
-                        <a href="/#policy-geopolitics" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Geopolitics</a>
-                        <a href="/#sovereign-debt-stress" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Sovereign Debt</a>
-                        <a href="/#country-pulses" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Country Pulses</a>
-                        <a href="/#yield-curve-monitor" className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Yield Curves</a>
+                        <a href="/#liquidity-hero" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Net Liquidity</a>
+                        <a href="/#debt-maturity-hero" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Debt Maturity Wall</a>
+                        <a href="/#india-pulse" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-emerald-400/80 transition-colors">India Macro Pulse</a>
+                        <a href="/#thematic-labs" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Thematic Labs</a>
+                        <a href="/#policy-geopolitics" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Geopolitics</a>
+                        <a href="/#sovereign-debt-stress" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Sovereign Debt</a>
+                        <a href="/#country-pulses" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Country Pulses</a>
+                        <a href="/#yield-curve-monitor" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Yield Curves</a>
                     </div>
                 </nav>
 
@@ -59,43 +59,43 @@ export const InstitutionalFooter: React.FC = () => {
                     </span>
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-4 border-r border-white/5 pr-6">
-                            <Link to="/api-access" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Access</Link>
-                            <Link to="/api-docs" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Docs</Link>
+                            <Link to="/api-access" className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Access</Link>
+                            <Link to="/api-docs" className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Docs</Link>
                         </div>
                         <div className="flex items-center gap-4 border-r border-white/5 pr-6">
-                            <Link to="/terms" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Terms</Link>
-                            <Link to="/privacy" className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Privacy</Link>
+                            <Link to="/terms" className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Terms</Link>
+                            <Link to="/privacy" className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Privacy</Link>
                         </div>
                         <Link
                             to="/about"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/80 hover:text-white transition-colors"
+                            className="text-xs font-black uppercase tracking-widest text-muted-foreground/80 hover:text-white transition-colors"
                         >
                             About Team
                         </Link>
                         <Link
                             to="/blog"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
                             <BookOpen size={12} />
                             Intelligence Journal
                         </Link>
                         <Link
                             to="/glossary"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
                             <BookOpen size={12} />
                             Glossary
                         </Link>
                         <Link
                             to="/intel/india"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
                             <Globe size={12} />
                             🇮🇳 India Intel
                         </Link>
                         <Link
                             to="/intel/china"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
                         >
                             <Globe size={12} />
                             🇨🇳 China Intel
@@ -104,7 +104,7 @@ export const InstitutionalFooter: React.FC = () => {
                             href="/rss.xml"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors flex items-center gap-1.5"
+                            className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 hover:text-blue-400/80 transition-colors flex items-center gap-1.5"
                         >
                             <div className="w-1.5 h-1.5 rounded-full bg-orange-500/40" />
                             Subscribe via RSS

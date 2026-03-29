@@ -100,7 +100,7 @@ export const IllicitFlowsTracker: React.FC = () => {
                                 <div className="p-2 bg-amber-500/10 rounded-lg">
                                     <Activity className="w-4 h-4 text-amber-500" />
                                 </div>
-                                <span className="text-[0.6rem] font-black text-neutral-500 uppercase tracking-widest text-white/60">Annual Loss Pulse</span>
+                                <span className="text-xs font-black text-neutral-500 uppercase tracking-widest text-white/60">Annual Loss Pulse</span>
                             </div>
 
                             <div className="flex-1 flex flex-col items-center justify-center">
@@ -127,7 +127,7 @@ export const IllicitFlowsTracker: React.FC = () => {
                                         <span className="text-4xl font-black text-white font-mono tracking-tighter">
                                             {avgGdpPct.toFixed(1)}%
                                         </span>
-                                        <span className="text-[0.6rem] font-black text-neutral-500 uppercase tracking-widest mt-1">of India GDP</span>
+                                        <span className="text-xs font-black text-neutral-500 uppercase tracking-widest mt-1">of India GDP</span>
                                     </div>
                                 </div>
 
@@ -141,7 +141,7 @@ export const IllicitFlowsTracker: React.FC = () => {
                             </div>
 
                             <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
-                                <div className="flex justify-between items-center text-[0.6rem] text-neutral-500 uppercase font-black">
+                                <div className="flex justify-between items-center text-xs text-neutral-500 uppercase font-black">
                                     <span>GFI Reliability Score</span>
                                     <span className="text-amber-400">High Confidence</span>
                                 </div>
@@ -167,12 +167,12 @@ export const IllicitFlowsTracker: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-black text-white uppercase tracking-wider">Misinvoicing Partner Index</h3>
-                                    <p className="text-[0.6rem] text-neutral-500 uppercase font-black tracking-widest uppercase">Top Countries identified by trade mismatch</p>
+                                    <p className="text-xs text-neutral-500 uppercase font-black tracking-widest uppercase">Top Countries identified by trade mismatch</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/5">
                                 <Search className="w-3 h-3 text-neutral-500" />
-                                <span className="text-[0.6rem] font-black text-neutral-400 uppercase tracking-widest">Global Financial Integrity (GFI) Reports</span>
+                                <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">Global Financial Integrity (GFI) Reports</span>
                             </div>
                         </div>
 
@@ -233,23 +233,23 @@ export const IllicitFlowsTracker: React.FC = () => {
 
             <div className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-white/5 pt-8 gap-6">
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                    <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-black leading-none">
+                    <p className="text-xs text-neutral-500 uppercase tracking-widest font-black leading-none">
                         Intelligence: GFI, UN Comtrade, India FIU
                     </p>
                     <div className="h-4 w-px bg-white/5 hidden md:block" />
-                    <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-black leading-none flex items-center gap-2">
+                    <p className="text-xs text-neutral-500 uppercase tracking-widest font-black leading-none flex items-center gap-2">
                         <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
                         Annual Update Synchronized
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="text-right">
-                        <p className="text-[0.6rem] text-neutral-500 uppercase font-black tracking-widest">Vulnerability Bias</p>
+                        <p className="text-xs text-neutral-500 uppercase font-black tracking-widest">Vulnerability Bias</p>
                         <p className="text-xs font-bold text-amber-400 font-mono">Outflow Skewed</p>
                     </div>
                     <div className="h-8 w-px bg-white/5" />
                     <button className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group">
-                        <span className="text-[0.6rem] font-black text-white uppercase tracking-widest">Bilateral Gaps</span>
+                        <span className="text-xs font-black text-white uppercase tracking-widest">Bilateral Gaps</span>
                         <ArrowUpRight className="w-3 h-3 text-neutral-500 group-hover:text-white transition-colors" />
                     </button>
                 </div>

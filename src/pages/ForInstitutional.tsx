@@ -23,7 +23,7 @@ export const ForInstitutional: React.FC = () => {
             />
             <Container maxWidth="lg">
                 <Box sx={{ textAlign: 'center', mb: 16 }}>
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.7rem] font-black uppercase tracking-[0.2em] mb-8 animate-fade-in">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-8 animate-fade-in">
                         <Crown size={14} /> Institutional Intelligence Console
                     </div>
                     <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
@@ -72,7 +72,7 @@ export const ForInstitutional: React.FC = () => {
 
                     {/* Tier 2: The Core API Offer */}
                     <div className="p-10 rounded-[2.5rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] flex flex-col relative group md:scale-105 z-10">
-                        <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-[0.6rem] font-black uppercase tracking-widest shadow-xl">Most Popular</div>
+                        <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-xs font-black uppercase tracking-widest shadow-xl">Most Popular</div>
                         <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-blue-400 mb-6">Institutional API Access</h4>
                         <div className="flex items-baseline gap-1 mb-2">
                             <span className="text-5xl font-black text-white">$28</span>

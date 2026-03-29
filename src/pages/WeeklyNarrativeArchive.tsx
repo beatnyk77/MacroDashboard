@@ -110,7 +110,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                                             <Chip
                                                                 label="LATEST"
                                                                 size="small"
-                                                                className="bg-primary/20 text-primary font-black text-[0.6rem] tracking-widest border-none h-5"
+                                                                className="bg-primary/20 text-primary font-black text-xs tracking-widest border-none h-5"
                                                             />
                                                         )}
                                                     </Box>
@@ -136,7 +136,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                     <Box mt={10} textAlign="center">
                         <Link
                             to="/"
-                            className="text-[0.7rem] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
+                            className="text-xs font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
                         >
                             ← Back to Dashboard
                         </Link>

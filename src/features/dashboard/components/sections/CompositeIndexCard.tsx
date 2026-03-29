@@ -75,7 +75,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                     )}
                     <div className="flex flex-col">
                         <div className="flex items-center gap-1.5">
-                            <h4 className="text-[0.7rem] font-bold uppercase tracking-[0.08em] text-slate-300 leading-tight">
+                            <h4 className="text-xs font-bold uppercase tracking-[0.08em] text-slate-300 leading-tight">
                                 {title}
                             </h4>
                             {description && (
@@ -93,7 +93,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                         </div>
                         <div className="flex flex-wrap gap-1 mt-1.5">
                             {sources.map(src => (
-                                <span key={src} className="text-[0.6rem] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-0.5">
+                                <span key={src} className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-0.5">
                                     <Database size={8} /> {src}
                                 </span>
                             ))}
@@ -117,7 +117,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                 ) : isZeroWithNeutral ? (
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-mono text-slate-600">Awaiting wiring</span>
-                        <span className="text-[0.6rem] font-bold text-slate-600 uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-slate-700/30 bg-slate-800/30">Pending</span>
+                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-slate-700/30 bg-slate-800/30">Pending</span>
                     </div>
                 ) : (
                     <div className="flex items-baseline gap-2">
@@ -149,7 +149,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/[0.03] border border-white/[0.05]">
                         <Calculator size={10} className="text-slate-500" />
-                        <span className="text-[0.6rem] font-medium text-slate-400 font-mono">
+                        <span className="text-xs font-medium text-slate-400 font-mono">
                             {formula}
                         </span>
                     </div>

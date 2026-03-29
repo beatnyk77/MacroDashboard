@@ -81,7 +81,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-8">
-                    <nav className="flex items-center gap-2 text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 mb-8">
+                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground/40 mb-8">
                         <Link to="/" className="hover:text-white transition-colors">Home</Link>
                         <span>/</span>
                         <Link to="/intel/india" className="hover:text-white transition-colors">India Intel</Link>
@@ -120,7 +120,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                                     Pure Fundamentals
                                 </button>
                             </div>
-                            <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/80 text-[0.7rem] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+                            <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/80 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all">
                                 <Download size={14} /> Export CSV
                             </button>
                         </div>
@@ -135,7 +135,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                         <div className="lg:w-1/3">
                             <div className="inline-flex items-center gap-2 mb-4">
                                 <Shield className="text-blue-400" size={16} />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/60">CIE Intelligence Brief</span>
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400/60">CIE Intelligence Brief</span>
                             </div>
                             <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-4">The Formalization Convergence</h2>
                             <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium">
@@ -150,10 +150,10 @@ export const CorporateIndiaEngine: React.FC = () => {
                                             <div className={`p-1.5 rounded-lg bg-${stat.color}-500/10 text-${stat.color}-400`}>
                                                 <stat.icon size={16} />
                                             </div>
-                                            <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40">{stat.label}</h4>
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-white/40">{stat.label}</h4>
                                         </div>
                                         <div className="text-2xl font-black text-white italic tracking-tight">{stat.value}</div>
-                                        <p className="text-[0.6rem] text-muted-foreground/30 mt-1 font-medium">{stat.desc}</p>
+                                        <p className="text-xs text-muted-foreground/30 mt-1 font-medium">{stat.desc}</p>
                                     </div>
                                     <div className="flex flex-col items-end gap-2">
                                         <span className="text-[0.65rem] font-black text-emerald-400 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]">{stat.trend}</span>
@@ -232,7 +232,7 @@ export const CorporateIndiaEngine: React.FC = () => {
             </main>
 
             <footer className="max-w-7xl mx-auto px-4 sm:px-8 py-12 border-t border-white/5">
-                <div className="flex justify-between items-center text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/30">
+                <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-muted-foreground/30">
                     <span>GraphiQuestor CIE Engine Alpha</span>
                     <div className="flex gap-6">
                         <a href="#" className="hover:text-white transition-colors">Term of use</a>

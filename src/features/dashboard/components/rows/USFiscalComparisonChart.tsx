@@ -157,7 +157,7 @@ const USFiscalComparisonChart: React.FC = () => {
                 </div>
                 <div className="flex-1 min-w-[200px]">
                     <span className="text-white/30 text-xs font-mono uppercase tracking-wider block mb-2">Note</span>
-                    <p className="text-white/50 text-[11px] leading-relaxed">
+                    <p className="text-white/50 text-xs leading-relaxed">
                         Data indexed to 1995. Federal debt interest encompasses all payments on public debt securities.
                         Defense spending includes gross investment and consumption expenditures.
                     </p>

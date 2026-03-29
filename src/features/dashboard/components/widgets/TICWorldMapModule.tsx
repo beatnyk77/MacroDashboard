@@ -56,7 +56,7 @@ export const TICWorldMapModule: React.FC = () => {
                 <div>
                     <div className="flex items-center gap-2 mb-3">
                         <Globe className="text-cyan-400 w-4 h-4" />
-                        <span className="text-[0.6rem] font-black text-cyan-400 uppercase tracking-[0.4em]">Global TIC Exposure</span>
+                        <span className="text-xs font-black text-cyan-400 uppercase tracking-[0.4em]">Global TIC Exposure</span>
                     </div>
                     <h2 className="text-4xl font-black uppercase tracking-tighter text-white leading-none">
                         Top Foreign <span className="text-cyan-400">Holders</span>
@@ -71,7 +71,7 @@ export const TICWorldMapModule: React.FC = () => {
                         size="small"
                         onClick={() => setMetric('holdings')}
                         className={cn(
-                            "px-5 py-2.5 rounded-xl text-[0.6rem] font-black uppercase tracking-widest transition-all",
+                            "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                             metric === 'holdings' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
                         )}
                     >
@@ -81,7 +81,7 @@ export const TICWorldMapModule: React.FC = () => {
                         size="small"
                         onClick={() => setMetric('share')}
                         className={cn(
-                            "px-5 py-2.5 rounded-xl text-[0.6rem] font-black uppercase tracking-widest transition-all",
+                            "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                             metric === 'share' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
                         )}
                     >
@@ -93,7 +93,7 @@ export const TICWorldMapModule: React.FC = () => {
             {/* 2. Top 5 Power List (Bottom Left Overlay) */}
             <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-3xl w-80">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-[0.7rem] font-black text-white uppercase tracking-widest">Top 5 Holders</span>
+                    <span className="text-xs font-black text-white uppercase tracking-widest">Top 5 Holders</span>
                     <Layers className="text-cyan-400 w-4 h-4" />
                 </div>
                 <div className="space-y-5">
@@ -135,7 +135,7 @@ export const TICWorldMapModule: React.FC = () => {
                             <div className="flex items-center gap-4">
                                 <span className="text-[0.65rem] font-black text-white/10 tabular-nums">{(i + 1).toString().padStart(2, '0')}</span>
                                 <div className="flex flex-col">
-                                    <span className="text-[0.7rem] font-bold text-white group-hover/item:text-cyan-400 transition-colors uppercase truncate w-20">{h.country_name}</span>
+                                    <span className="text-xs font-bold text-white group-hover/item:text-cyan-400 transition-colors uppercase truncate w-20">{h.country_name}</span>
                                     <span className="text-[0.55rem] font-black text-cyan-400/50 tabular-nums uppercase">
                                         {formatPercentage(h.pct_of_total_foreign || 0, { decimals: 1 })} Share
                                     </span>
@@ -144,7 +144,7 @@ export const TICWorldMapModule: React.FC = () => {
                             <div className="text-right">
                                 <div className="text-xs font-black text-white tabular-nums">${Math.round(h.holdings_usd_bn)}B</div>
                                 <div className={cn(
-                                    "flex items-center justify-end gap-1 text-[0.6rem] font-black tabular-nums",
+                                    "flex items-center justify-end gap-1 text-xs font-black tabular-nums",
                                     (h.yoy_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"
                                 )}>
                                     {(h.yoy_pct_change || 0) > 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
@@ -167,7 +167,7 @@ export const TICWorldMapModule: React.FC = () => {
 
             {/* 5. Quantized Legend (Bottom Right Center) */}
             <div className="absolute bottom-10 right-10 z-30 hidden md:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/5 p-6 rounded-[2rem] shadow-2xl min-w-[320px]">
-                <div className="flex justify-between text-[0.6rem] font-black text-white/40 uppercase tracking-[0.2em]">
+                <div className="flex justify-between text-xs font-black text-white/40 uppercase tracking-[0.2em]">
                     <span>Minimum Exposure</span>
                     <span>Median</span>
                     <span>High Demand</span>
@@ -180,7 +180,7 @@ export const TICWorldMapModule: React.FC = () => {
                     <div className="flex-1 bg-[#67e8f9] rounded-r-md border border-white/5" />
                 </div>
                 <div className="flex justify-between items-center mt-1">
-                    <span className="text-[10px] text-muted-foreground/40 font-mono uppercase tracking-tight italic">
+                    <span className="text-xs text-muted-foreground/40 font-mono uppercase tracking-tight italic">
                         As of {latestHolders[0] ? new Date(latestHolders[0].as_of_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '--'} • US Treasury TIC Stats
                     </span>
                     <Globe size={12} className="text-muted-foreground/20" />

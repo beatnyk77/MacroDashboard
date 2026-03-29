@@ -59,7 +59,7 @@ export const BOPPressureTable: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="text-[0.6rem] font-black text-emerald-500 uppercase tracking-widest">Protocol: Stable</span>
+                            <span className="text-xs font-black text-emerald-500 uppercase tracking-widest">Protocol: Stable</span>
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@ export const BOPPressureTable: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="py-5 hidden sm:table-cell">
-                                        <span className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/30">
+                                        <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/30">
                                             {item.trend}
                                         </span>
                                     </td>

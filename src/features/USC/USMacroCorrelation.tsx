@@ -77,7 +77,7 @@ export const USMacroCorrelation: React.FC = () => {
                                 <Typography variant="caption" sx={{ display: 'block', color: 'white/30', fontWeight: 900, textTransform: 'uppercase', mb: 1 }}>{m.label}</Typography>
                                 <div className="flex items-center justify-between">
                                     <span className="text-xl font-black text-white">{m.value}</span>
-                                    <div className={`px-2 py-0.5 rounded text-[0.6rem] font-black uppercase bg-${m.color}-500/10 text-${m.color}-400 border border-${m.color}-500/20`}>
+                                    <div className={`px-2 py-0.5 rounded text-xs font-black uppercase bg-${m.color}-500/10 text-${m.color}-400 border border-${m.color}-500/20`}>
                                         {m.trend}
                                     </div>
                                 </div>

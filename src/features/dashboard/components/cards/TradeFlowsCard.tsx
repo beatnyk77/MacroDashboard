@@ -116,14 +116,14 @@ export const TradeFlowsCard: React.FC = () => {
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 mb-2">
                             <Crown className="w-4 h-4 text-amber-500" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500/80 shadow-amber-500/20 drop-shadow-sm">
+                            <span className="text-xs font-black uppercase tracking-[0.3em] text-amber-500/80 shadow-amber-500/20 drop-shadow-sm">
                                 Imperial Resource Flow
                             </span>
                         </div>
                         <div className="flex items-center gap-4">
                             <CardTitle className="text-3xl font-bold tracking-tight text-white">Global Trade Architecture</CardTitle>
                             {latestStat && (
-                                <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-muted-foreground/60 bg-white/5 px-2 py-1 rounded-md border border-white/5">
+                                <div className="flex items-center gap-2 text-xs font-mono font-bold text-muted-foreground/60 bg-white/5 px-2 py-1 rounded-md border border-white/5">
                                     <Calendar className="w-3 h-3" />
                                     <span>DATA AS OF {new Date(latestStat.as_of_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase()}</span>
                                 </div>
@@ -155,7 +155,7 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* 4xl Primaries */}
                         <div className="space-y-8">
                             <div className="group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-primary">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-primary">
                                     Annualized Exports (USD)
                                 </span>
                                 <div className="flex items-baseline gap-3">
@@ -175,7 +175,7 @@ export const TradeFlowsCard: React.FC = () => {
                             </div>
 
                             <div className="group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-amber-500">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-amber-500">
                                     Annualized Imports (USD)
                                 </span>
                                 <div className="flex items-baseline gap-3">
@@ -186,7 +186,7 @@ export const TradeFlowsCard: React.FC = () => {
                             </div>
 
                             <div className="pt-6 border-t border-white/5">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2">
                                     Trade Balance
                                 </span>
                                 <div className={cn(
@@ -203,7 +203,7 @@ export const TradeFlowsCard: React.FC = () => {
                             <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-full pointer-events-none" />
                             <div className="flex items-center gap-2 mb-6">
                                 <Link className="w-4 h-4 text-amber-400" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/80">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-amber-400/80">
                                     Strategic Alliances
                                 </span>
                             </div>
@@ -213,7 +213,7 @@ export const TradeFlowsCard: React.FC = () => {
                                         <div key={key} className="flex items-start justify-between group">
                                             <div>
                                                 <div className="text-sm font-bold text-white/80 transition-colors group-hover:text-white">{key.replace('_', ' ')}</div>
-                                                <div className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-wider">{data.status}</div>
+                                                <div className="text-xs text-muted-foreground/50 font-bold uppercase tracking-wider">{data.status}</div>
                                             </div>
                                             {data.impact_yoy && (
                                                 <div className="text-emerald-400 text-xs font-black">
@@ -231,7 +231,7 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* Tariff Gauge */}
                         <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5">
                             <div>
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-1">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-1">
                                     Avg. Weighted Tariff
                                 </span>
                                 <div className="text-2xl font-black font-mono">
@@ -253,7 +253,7 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* Geography Share (Sankey) */}
                         <div className="h-[400px] relative">
                             <div className="absolute top-0 left-0 z-10">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">
                                     Bilateral Volume Flow
                                 </span>
                             </div>
@@ -276,17 +276,17 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* Historical Trend (Line Chart) */}
                         <div className="h-[300px] relative">
                             <div className="absolute top-0 left-0 z-10 flex items-center gap-4">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">
                                     Export vs Import Trajectory
                                 </span>
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1.5">
                                         <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                        <span className="text-[9px] font-bold text-muted-foreground uppercase">Exports</span>
+                                        <span className="text-xs font-bold text-muted-foreground uppercase">Exports</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                        <span className="text-[9px] font-bold text-muted-foreground uppercase">Imports</span>
+                                        <span className="text-xs font-bold text-muted-foreground uppercase">Imports</span>
                                     </div>
                                 </div>
                             </div>

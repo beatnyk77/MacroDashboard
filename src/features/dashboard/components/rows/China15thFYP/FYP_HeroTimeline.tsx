@@ -36,7 +36,7 @@ export const FYP_HeroTimeline: React.FC = () => {
                             <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-red-400">
                                 {ms.value_target}
                             </h4>
-                            <p className="text-[0.6rem] text-muted-foreground leading-relaxed line-clamp-3">
+                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
                                 {ms.metadata?.event}
                             </p>
                         </div>

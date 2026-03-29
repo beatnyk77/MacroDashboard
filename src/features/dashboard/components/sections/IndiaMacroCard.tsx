@@ -6,7 +6,7 @@ import { TrendingUp, TrendingDown, Activity, IndianRupee } from 'lucide-react';
 
 const MetricValue: React.FC<{ label: string; value: number | undefined | null; unit: string; trend?: number }> = ({ label, value, unit, trend }) => (
     <div className="flex flex-col">
-        <span className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/30 mb-1.5">{label}</span>
+        <span className="text-xs font-black uppercase tracking-[0.2em] text-white/30 mb-1.5">{label}</span>
         <div className="flex items-baseline gap-1.5">
             <span className="text-2xl font-black text-white font-mono tracking-tighter">
                 {value !== undefined && value !== null ? value.toFixed(1) : '---'}
@@ -14,7 +14,7 @@ const MetricValue: React.FC<{ label: string; value: number | undefined | null; u
             <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">{unit}</span>
         </div>
         {trend !== undefined && (
-            <div className={cn("flex items-center gap-1 text-[0.6rem] font-black mt-1.5 uppercase tracking-widest", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
+            <div className={cn("flex items-center gap-1 text-xs font-black mt-1.5 uppercase tracking-widest", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
                 {trend > 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                 <span>{Math.abs(trend)}% vs PREV</span>
             </div>
@@ -67,7 +67,7 @@ export const IndiaMacroCard: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[0.6rem] font-black text-emerald-400/80 uppercase tracking-widest">Live Signal</span>
+                        <span className="text-xs font-black text-emerald-400/80 uppercase tracking-widest">Live Signal</span>
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@ export const IndiaMacroCard: React.FC = () => {
                         </span>
                         <div className="flex flex-col">
                             <span className="text-xs font-black text-white/60 uppercase tracking-widest">Aggregated</span>
-                            <span className="text-[0.6rem] font-bold text-white/30 uppercase tracking-widest">(CPI + Unemp)</span>
+                            <span className="text-xs font-bold text-white/30 uppercase tracking-widest">(CPI + Unemp)</span>
                         </div>
                     </div>
                 </div>

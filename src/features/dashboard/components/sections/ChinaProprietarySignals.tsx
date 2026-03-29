@@ -21,7 +21,7 @@ const SignalCard: React.FC<{
 }> = ({ label, sublabel, value, delta, trend, color, borderColor, desc, interpretation }) => (
     <div className={cn('p-5 rounded-2xl bg-white/[0.02] border transition-all hover:bg-white/[0.04]', borderColor)}>
         <p className={cn('text-[0.55rem] font-black uppercase tracking-widest mb-1', color)}>{label}</p>
-        <p className="text-[0.5rem] text-muted-foreground/40 mb-3">{sublabel}</p>
+        <p className="text-xs text-muted-foreground/40 mb-3">{sublabel}</p>
         <div className="flex items-baseline justify-between mb-2">
             <p className={cn('text-3xl font-black tabular-nums tracking-tighter', color)}>{value}</p>
             {delta && (
@@ -33,8 +33,8 @@ const SignalCard: React.FC<{
                 </div>
             )}
         </div>
-        <p className="text-[0.5rem] text-muted-foreground/30 mb-2">{desc}</p>
-        <div className={cn('p-2 rounded-xl text-[0.5rem] text-muted-foreground/60 leading-relaxed border', borderColor, 'bg-white/[0.01]')}>
+        <p className="text-xs text-muted-foreground/30 mb-2">{desc}</p>
+        <div className={cn('p-2 rounded-xl text-xs text-muted-foreground/60 leading-relaxed border', borderColor, 'bg-white/[0.01]')}>
             {interpretation}
         </div>
     </div>

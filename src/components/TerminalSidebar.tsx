@@ -35,7 +35,7 @@ export const TerminalSidebar: React.FC = () => {
     return (
         <aside className="hidden lg:flex w-[220px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/5 bg-slate-950/90 backdrop-blur-2xl py-6 z-[1200] overflow-y-auto">
             <div className="px-4 mb-6">
-                <span className="text-[0.6rem] font-black tracking-[0.2em] text-blue-500 uppercase flex items-center gap-2">
+                <span className="text-xs font-black tracking-[0.2em] text-blue-500 uppercase flex items-center gap-2">
                     <Activity size={10} /> Terminal Active
                 </span>
             </div>
@@ -83,7 +83,7 @@ export const TerminalSidebar: React.FC = () => {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                         </div>
-                        <span className="text-[0.6rem] font-bold text-emerald-400 uppercase tracking-widest leading-none">
+                        <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest leading-none">
                             All Systems Nominal
                         </span>
                     </div>

@@ -27,7 +27,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/95 backdrop-blur-2xl border border-white/10 p-3 rounded-2xl shadow-2xl">
-                <div className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
+                <div className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
                 <div className="text-sm font-black text-white tabular-nums">
                     ${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </div>
@@ -79,7 +79,7 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
                                 "w-1.5 h-1.5 rounded-full animate-pulse",
                                 color === 'red' ? 'bg-red-500' : color === 'orange' ? 'bg-orange-500' : 'bg-slate-400'
                             )} />
-                            <span className="text-[0.6rem] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">
+                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em]">
                                 {category}
                             </span>
                         </div>
@@ -152,8 +152,8 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
                     </div>
                 </div>
                 <div className="text-right">
-                    <div className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.2em]">Institutional Telemetry</div>
-                    <div className="text-[0.5rem] font-bold text-white/10 uppercase tracking-tighter">Source: NYMEX / COMEX</div>
+                    <div className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">Institutional Telemetry</div>
+                    <div className="text-xs font-bold text-white/10 uppercase tracking-tighter">Source: NYMEX / COMEX</div>
                 </div>
             </div>
         </div>

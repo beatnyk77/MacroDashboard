@@ -142,12 +142,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 <div className="flex justify-between items-start">
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                            <span className="text-[0.7rem] font-semibold tracking-wider text-muted-foreground/70 uppercase group-hover:text-blue-500/80 transition-colors">
+                            <span className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase group-hover:text-blue-500/80 transition-colors">
                                 {label}
                             </span>
                             {status !== 'neutral' && (
                                 <div className={cn(
-                                    "px-1.5 py-0.5 rounded-[4px] text-[0.6rem] font-bold tracking-tight",
+                                    "px-1.5 py-0.5 rounded-[4px] text-xs font-bold tracking-tight",
                                     status === 'safe' && "bg-emerald-500/10 text-emerald-500",
                                     status === 'warning' && "bg-amber-500/10 text-amber-500",
                                     status === 'danger' && "bg-rose-500/10 text-rose-500",
@@ -156,13 +156,13 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 </div>
                             )}
                             {isStale && (
-                                <div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-[0.6rem] font-bold tracking-tight animate-pulse border border-amber-500/20">
+                                <div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-xs font-bold tracking-tight animate-pulse border border-amber-500/20">
                                     OFFLINE
                                 </div>
                             )}
                         </div>
                         {sublabel && (
-                            <div className="text-[0.7rem] font-medium text-muted-foreground/55 truncate max-w-[180px]">
+                            <div className="text-xs font-medium text-muted-foreground/55 truncate max-w-[180px]">
                                 {sublabel}
                             </div>
                         )}
@@ -215,23 +215,23 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                                 <TooltipContent className="p-3 bg-slate-950 border-white/10 shadow-2xl backdrop-blur-xl">
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
-                                                            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">Current</span>
+                                                            <span className="text-xs font-bold text-muted-foreground/60 uppercase">Current</span>
                                                             <span className="text-xs font-mono font-bold text-white">{delta.tooltip.currentValue}</span>
                                                         </div>
                                                         <div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
-                                                            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">7 Days Ago</span>
+                                                            <span className="text-xs font-bold text-muted-foreground/60 uppercase">7 Days Ago</span>
                                                             <span className="text-xs font-mono font-bold text-white/80">{delta.tooltip.previousValue}</span>
                                                         </div>
                                                         <div className="grid grid-cols-2 gap-3 pt-0.5">
                                                             <div className="space-y-0.5">
-                                                                <div className="text-[9px] font-black text-muted-foreground/40 uppercase leading-none">Change</div>
-                                                                <div className={cn("text-[11px] font-bold font-mono", getDeltaTextColor())}>
+                                                                <div className="text-xs font-black text-muted-foreground/40 uppercase leading-none">Change</div>
+                                                                <div className={cn("text-xs font-bold font-mono", getDeltaTextColor())}>
                                                                     {delta.tooltip.absoluteChange}
                                                                 </div>
                                                             </div>
                                                             <div className="space-y-0.5 text-right">
-                                                                <div className="text-[9px] font-black text-muted-foreground/40 uppercase leading-none">% Change</div>
-                                                                <div className={cn("text-[11px] font-bold font-mono", getDeltaTextColor())}>
+                                                                <div className="text-xs font-black text-muted-foreground/40 uppercase leading-none">% Change</div>
+                                                                <div className={cn("text-xs font-bold font-mono", getDeltaTextColor())}>
                                                                     {delta.tooltip.percentChange}%
                                                                 </div>
                                                             </div>
@@ -244,9 +244,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 )}
                                 {typeof zScore === 'number' && !isNaN(zScore) && (
                                     <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-secondary/50 border border-border/50">
-                                        <span className="text-[0.6rem] font-semibold text-muted-foreground/60 uppercase">σ</span>
+                                        <span className="text-xs font-semibold text-muted-foreground/60 uppercase">σ</span>
                                         <span className={cn(
-                                            "text-[0.7rem] font-bold tabular-nums font-mono",
+                                            "text-xs font-bold tabular-nums font-mono",
                                             Math.abs(zScore) > 2 ? "text-amber-500" : "text-blue-400"
                                         )}>
                                             {formatDelta(zScore, { decimals: 1 })}
@@ -264,7 +264,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                         <div className="space-y-1.5 flex-1">
                             {isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && (
                                 <div className="space-y-1 max-w-[100px]">
-                                    <div className="flex justify-between text-[0.6rem] font-semibold text-muted-foreground/50 tracking-wide">
+                                    <div className="flex justify-between text-xs font-semibold text-muted-foreground/50 tracking-wide">
                                         <span>RANK</span>
                                         <span>{Math.round(percentile)}%</span>
                                     </div>
@@ -276,7 +276,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                     </div>
                                 </div>
                             )}
-                            <div className="text-[0.6rem] font-medium text-muted-foreground/40 uppercase tracking-wide group-hover:text-muted-foreground/60 transition-colors">
+                            <div className="text-xs font-medium text-muted-foreground/40 uppercase tracking-wide group-hover:text-muted-foreground/60 transition-colors">
                                 {frequency?.toUpperCase()} • {source}
                                 {lastUpdated && <span className="hidden group-hover:inline transition-opacity duration-300"> • {new Date(lastUpdated).toLocaleDateString()}</span>}
                             </div>

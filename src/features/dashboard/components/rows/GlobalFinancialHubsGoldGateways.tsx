@@ -79,7 +79,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                             <h3 className="text-lg font-black text-white tracking-tight leading-none mb-1">
                                 {hub.hub === 'GIFT City' ? 'GIFT City' : hub.hub}
                             </h3>
-                            <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-black">
+                            <p className="text-xs text-neutral-500 uppercase tracking-widest font-black">
                                 {hub.hub === 'Switzerland' ? 'Safe-Haven' :
                                     hub.hub === 'Singapore' ? 'Asian Wealth' :
                                         hub.hub === 'London' ? 'Fin. Plumbing' :
@@ -206,12 +206,12 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
             </motion.div>
 
             <div className="mt-8 flex flex-col md:flex-row items-center justify-between border-t border-white/5 pt-6 gap-4">
-                <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-medium text-center md:text-left">
+                <p className="text-xs text-neutral-500 uppercase tracking-widest font-medium text-center md:text-left">
                     Data: SNB, MAS, LBMA, DMCC, HKMA, SGE, PBoC – Updated Monthly
                 </p>
                 <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[0.6rem] text-neutral-500 uppercase tracking-widest">Live Signals Active</span>
+                    <span className="text-xs text-neutral-500 uppercase tracking-widest">Live Signals Active</span>
                 </div>
             </div>
         </div>

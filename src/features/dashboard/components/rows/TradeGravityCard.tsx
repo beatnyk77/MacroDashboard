@@ -137,7 +137,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                                             <div className="flex justify-between items-center mb-1.5">
                                                 <span className="text-xs font-mono font-semibold text-white/80">{state.name}</span>
                                                 {state.hasShifted && (
-                                                    <span className="text-[0.6rem] font-mono font-bold text-orange-300 bg-orange-500/15 border border-orange-500/20 px-1.5 py-0.5 rounded-full animate-pulse">
+                                                    <span className="text-xs font-mono font-bold text-orange-300 bg-orange-500/15 border border-orange-500/20 px-1.5 py-0.5 rounded-full animate-pulse">
                                                         ⚡ GRAVITY SHIFTED
                                                     </span>
                                                 )}
@@ -158,7 +158,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                                                     }}
                                                 />
                                             </div>
-                                            <div className="flex justify-between text-[0.6rem] font-mono text-muted-foreground mt-1">
+                                            <div className="flex justify-between text-xs font-mono text-muted-foreground mt-1">
                                                 <span className="text-orange-300">{state.currentBricsShare.toFixed(1)}% BRICS+</span>
                                                 <span className="text-blue-300">{state.currentG7Share.toFixed(1)}% G7</span>
                                             </div>

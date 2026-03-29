@@ -78,7 +78,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                             <div className="hidden sm:block text-2xl font-black tracking-tighter leading-none">
                                 <span className="text-foreground">Graphi</span>
                                 <span className="text-blue-500">Questor</span>
-                                <div className="text-[0.6rem] font-bold text-muted-foreground/50 tracking-widest mt-1 uppercase">
+                                <div className="text-xs font-bold text-muted-foreground/50 tracking-widest mt-1 uppercase">
                                     Macro Observatory · Not Sovereign AI
                                 </div>
                             </div>
@@ -88,7 +88,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
                         <div className="hidden md:flex items-center gap-4">
                             <div>
-                                <span className="block text-[0.6rem] font-black text-muted-foreground uppercase leading-none mb-0.5">
+                                <span className="block text-xs font-black text-muted-foreground uppercase leading-none mb-0.5">
                                     LOCAL TIME
                                 </span>
                                 <span className="text-sm font-black text-foreground font-mono">
@@ -96,7 +96,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 </span>
                             </div>
                             <div>
-                                <span className="block text-[0.6rem] font-black text-muted-foreground uppercase leading-none mb-0.5">
+                                <span className="block text-xs font-black text-muted-foreground uppercase leading-none mb-0.5">
                                     DATE
                                 </span>
                                 <span className="text-xs font-black text-foreground">

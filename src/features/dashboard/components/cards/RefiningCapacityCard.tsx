@@ -100,9 +100,9 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                     </CardTitle>
                     <div className="flex gap-4 mt-1">
                         {region === 'US' && latestUtil && (
-                            <span className="text-[10px] text-emerald-400/80 font-mono">UTILIZATION RATE: {latestUtil.value.toFixed(1)}%</span>
+                            <span className="text-xs text-emerald-400/80 font-mono">UTILIZATION RATE: {latestUtil.value.toFixed(1)}%</span>
                         )}
-                        <span className="text-[10px] text-blue-400/80 font-mono">REGION: {region}</span>
+                        <span className="text-xs text-blue-400/80 font-mono">REGION: {region}</span>
                     </div>
                 </div>
                 <Tabs defaultValue="US" className="w-[180px]" onValueChange={setRegion}>
@@ -125,7 +125,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                 {currentStats?.isPositive ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
                                 {Math.abs(currentStats?.change || 0).toFixed(2)} mbpd vs prev
                             </div>
-                            <span className="text-[10px] text-muted-foreground/60">{currentStats?.label}</span>
+                            <span className="text-xs text-muted-foreground/60">{currentStats?.label}</span>
                         </div>
                         {region === 'US' && (
                             <div className="text-right">

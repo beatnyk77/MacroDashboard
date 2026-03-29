@@ -74,7 +74,7 @@ export const IntelligenceSidebar: React.FC = () => {
                     {lastUpdatedDate && (
                         <div className="flex items-center gap-1.5 mt-1">
                             <div className={`w-1.5 h-1.5 rounded-full ${isStale ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
-                            <span className={`text-[9px] font-bold uppercase tracking-tighter ${isStale ? 'text-rose-400' : 'text-muted-foreground/60'}`}>
+                            <span className={`text-xs font-bold uppercase tracking-tighter ${isStale ? 'text-rose-400' : 'text-muted-foreground/60'}`}>
                                 {isStale ? `STALE: ${diffMin}m AGO` : `LIVE: ${diffMin}m AGO`}
                             </span>
                         </div>
@@ -107,7 +107,7 @@ export const IntelligenceSidebar: React.FC = () => {
                             >
                                 <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-tighter">
+                                        <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-tighter">
                                             {item.source}
                                         </span>
                                         <span className="text-[0.65rem] text-muted-foreground/50 flex items-center gap-1">
@@ -121,7 +121,7 @@ export const IntelligenceSidebar: React.FC = () => {
                                     <div className="flex items-center justify-between">
                                         <div className="flex gap-1 overflow-hidden">
                                             {item.keywords?.slice(0, 2).map((k: string) => (
-                                                <span key={k} className="text-[0.6rem] text-muted-foreground/60 truncate">#{k}</span>
+                                                <span key={k} className="text-xs text-muted-foreground/60 truncate">#{k}</span>
                                             ))}
                                         </div>
                                         <ExternalLink size={10} className="text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />

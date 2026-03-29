@@ -240,27 +240,27 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                     <div className="flex items-center justify-center md:justify-start gap-3 md:pl-[4rem]">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />
-                            <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em]">
+                            <span className="text-xs font-black text-white/60 uppercase tracking-[0.2em]">
                                 {processedData.latestDate ? `Synced: ${new Date(processedData.latestDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : "Connecting Feeds..."}
                             </span>
                         </div>
                         <div className="w-1 h-1 rounded-full bg-white/20" />
-                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">EIA International Analytics</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">EIA International Analytics</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4 bg-black/30 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
                     <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
-                            <TabsTrigger value="sankey" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Flow</TabsTrigger>
-                            <TabsTrigger value="history" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Trends</TabsTrigger>
+                            <TabsTrigger value="sankey" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Flow</TabsTrigger>
+                            <TabsTrigger value="history" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Trends</TabsTrigger>
                         </TabsList>
                     </Tabs>
                     <div className="w-px h-6 bg-white/10" />
                     <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
-                            <TabsTrigger value="IN" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(37,99,235,0.4)]">INDIA</TabsTrigger>
-                            <TabsTrigger value="CN" className="rounded-lg text-[10px] font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(225,29,72,0.4)]">CHINA</TabsTrigger>
+                            <TabsTrigger value="IN" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(37,99,235,0.4)]">INDIA</TabsTrigger>
+                            <TabsTrigger value="CN" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(225,29,72,0.4)]">CHINA</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
@@ -269,7 +269,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
             <CardContent className="flex-1 p-0 mt-8 relative overflow-hidden min-h-[350px]">
                 {/* Sub-section Heading */}
                 <div className="absolute top-0 left-0 z-20">
-                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] bg-slate-900/50 backdrop-blur-sm px-3 py-1 rounded-full border border-white/5">
+                    <span className="text-xs font-black text-white/30 uppercase tracking-[0.3em] bg-slate-900/50 backdrop-blur-sm px-3 py-1 rounded-full border border-white/5">
                         {viewMode === 'sankey' ? 'Real-time Supply Corridors' : 'Annual Sourcing Trajectory'}
                     </span>
                 </div>
@@ -282,7 +282,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                         </div>
                         <div className="space-y-2 relative z-10">
                             <p className="text-sm font-black text-white uppercase tracking-[0.3em]">Normalizing Trade Data</p>
-                            <p className="text-[10px] uppercase tracking-[0.4em] font-medium text-muted-foreground/40">Protocol: EIA-INT-V2-ANNUAL</p>
+                            <p className="text-xs uppercase tracking-[0.4em] font-medium text-muted-foreground/40">Protocol: EIA-INT-V2-ANNUAL</p>
                         </div>
                     </div>
                 ) : (
@@ -311,12 +311,12 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                                                 </div>
                                                 <div className="space-y-4">
                                                     <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                                                        <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Annual Volume</span>
-                                                        <span className="text-sm font-mono font-black text-white">{item.value.toFixed(1)} <span className="text-[10px] opacity-30 font-sans">M·BBL</span></span>
+                                                        <span className="text-xs font-black text-white/40 uppercase tracking-widest">Annual Volume</span>
+                                                        <span className="text-sm font-mono font-black text-white">{item.value.toFixed(1)} <span className="text-xs opacity-30 font-sans">M·BBL</span></span>
                                                     </div>
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between items-center px-1">
-                                                            <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Network Share</span>
+                                                            <span className="text-xs font-black text-white/40 uppercase tracking-widest">Network Share</span>
                                                             <span className="text-xs font-mono font-black text-emerald-400">{item.share.toFixed(1)}%</span>
                                                         </div>
                                                         <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -394,7 +394,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
             <div className="mt-8 pt-8 border-t border-white/10">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="flex flex-wrap justify-center gap-8 items-center">
-                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mr-2">Market Risk Tiering</span>
+                        <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em] mr-2">Market Risk Tiering</span>
                         {[
                             { color: '#10b981', label: 'Tier 1 / Optimal' },
                             { color: '#f59e0b', label: 'Tier 2 / Diversify' },
@@ -402,14 +402,14 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                         ].map(legend => (
                             <div key={legend.label} className="flex items-center gap-3 group/legend">
                                 <div className="w-2.5 h-2.5 rounded-full border border-white/10 shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all group-hover/legend:scale-125" style={{ backgroundColor: legend.color, color: legend.color }} />
-                                <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">{legend.label}</span>
+                                <span className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{legend.label}</span>
                             </div>
                         ))}
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col items-end gap-1">
-                            <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Processing Standard</span>
-                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-0.5 rounded-full border border-blue-500/20">
+                            <span className="text-xs font-black text-white/30 uppercase tracking-[0.3em]">Processing Standard</span>
+                            <span className="text-xs font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-0.5 rounded-full border border-blue-500/20">
                                 West ↔ East Corridor
                             </span>
                         </div>

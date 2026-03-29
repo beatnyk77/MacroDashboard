@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
-                <div className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
+                <div className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
                 <div className="text-sm font-black text-white tabular-nums">
                     {payload[0].value.toFixed(1)}%
                 </div>
@@ -60,7 +60,7 @@ export const ReserveShareHistoryChart: React.FC<ReserveShareHistoryChartProps> =
                             {title}
                         </h3>
                         <div className="flex items-center gap-2">
-                            <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-widest">
+                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">
                                 {years}-Year Institutional History
                             </span>
                         </div>
@@ -133,11 +133,11 @@ export const ReserveShareHistoryChart: React.FC<ReserveShareHistoryChartProps> =
                         "w-2 h-2 rounded-full animate-pulse",
                         isDeclining ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" : "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
                     )} />
-                    <span className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest">
+                    <span className="text-xs font-black text-white/40 uppercase tracking-widest">
                         {isDeclining ? "Structural Erosion" : "Strategic Expansion"}
                     </span>
                 </div>
-                <div className="text-[0.6rem] font-bold text-muted-foreground/30 uppercase tracking-[0.2em]">
+                <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-[0.2em]">
                     Source: IMF COFER / WGC
                 </div>
             </div>

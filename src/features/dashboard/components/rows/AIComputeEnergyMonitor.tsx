@@ -29,7 +29,7 @@ export const AIComputeEnergyMonitor: React.FC = () => {
     if (isLoading) {
         return (
             <div className="h-[600px] w-full bg-indigo-950/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-[0.6rem] font-black text-indigo-400/30 uppercase tracking-[0.3em]">Analyzing Compute Telemetry...</span>
+                <span className="text-xs font-black text-indigo-400/30 uppercase tracking-[0.3em]">Analyzing Compute Telemetry...</span>
             </div>
         );
     }

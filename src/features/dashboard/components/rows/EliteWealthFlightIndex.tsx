@@ -109,7 +109,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                                 <div className="p-2 bg-rose-500/10 rounded-lg">
                                     <Zap className="w-4 h-4 text-rose-500" />
                                 </div>
-                                <span className="text-[0.6rem] font-black text-neutral-500 uppercase tracking-widest">Global Outflow</span>
+                                <span className="text-xs font-black text-neutral-500 uppercase tracking-widest">Global Outflow</span>
                             </div>
 
                             <div className="mb-2">
@@ -122,7 +122,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
 
                             <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[0.6rem] text-neutral-500 uppercase font-black">Velocity Pulse</span>
+                                    <span className="text-xs text-neutral-500 uppercase font-black">Velocity Pulse</span>
                                     <span className="text-xs font-bold text-rose-400 font-mono">Accelerating</span>
                                 </div>
                                 <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
@@ -148,7 +148,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                                         </div>
                                         <div className="flex items-baseline gap-2">
                                             <span className="text-xs font-mono font-bold text-white">${flow.amount_usd_bn}B</span>
-                                            <span className="text-[0.6rem] text-rose-400">+{flow.flight_velocity_pct}%</span>
+                                            <span className="text-xs text-rose-400">+{flow.flight_velocity_pct}%</span>
                                         </div>
                                     </div>
                                 ))}
@@ -157,7 +157,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                         <div className="mt-8 p-4 bg-rose-500/5 rounded-2xl border border-rose-500/10">
                             <div className="flex items-center gap-2 mb-2">
                                 <Lock className="w-3 h-3 text-rose-400" />
-                                <span className="text-[0.6rem] font-black text-rose-400 uppercase">Havens Identified</span>
+                                <span className="text-xs font-black text-rose-400 uppercase">Havens Identified</span>
                             </div>
                             <p className="text-[0.65rem] text-neutral-400 leading-relaxed font-mono">
                                 UAE, Singapore, Switzerland, Cayman Islands
@@ -174,7 +174,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                                 <Globe className="w-5 h-5 text-rose-500" />
                                 <div>
                                     <h3 className="text-sm font-black text-white uppercase tracking-wider">Flight Trajectory Map</h3>
-                                    <p className="text-[0.6rem] text-neutral-500 uppercase font-black tracking-widest">Real-time Capital Migration Flows</p>
+                                    <p className="text-xs text-neutral-500 uppercase font-black tracking-widest">Real-time Capital Migration Flows</p>
                                 </div>
                             </div>
                         </div>
@@ -244,7 +244,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                                         </div>
                                         <div className="flex items-baseline gap-2">
                                             <span className="text-xl font-black text-white font-mono">${hoveredFlow.amount_usd_bn}B</span>
-                                            <span className="text-[0.6rem] text-neutral-500 uppercase font-bold tracking-tighter">Annual Flight</span>
+                                            <span className="text-xs text-neutral-500 uppercase font-bold tracking-tighter">Annual Flight</span>
                                         </div>
                                     </motion.div>
                                 )}
@@ -284,7 +284,7 @@ export const EliteWealthFlightIndex: React.FC = () => {
                                 </span>
                                 <div className="flex items-center gap-1 mt-1">
                                     <ArrowUpRight className="w-3 h-3 text-rose-500" />
-                                    <span className="text-[0.6rem] text-rose-400 font-bold">Structural Shift</span>
+                                    <span className="text-xs text-rose-400 font-bold">Structural Shift</span>
                                 </div>
                             </Card>
                         </div>
@@ -294,23 +294,23 @@ export const EliteWealthFlightIndex: React.FC = () => {
 
             <div className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-white/5 pt-8 gap-6">
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                    <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-black leading-none">
+                    <p className="text-xs text-neutral-500 uppercase tracking-widest font-black leading-none">
                         Intelligence: EU Tax Obs, Henley, BIS, TJN
                     </p>
                     <div className="h-4 w-px bg-white/5 hidden md:block" />
-                    <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-black leading-none flex items-center gap-2">
+                    <p className="text-xs text-neutral-500 uppercase tracking-widest font-black leading-none flex items-center gap-2">
                         <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
                         Data Freshness Verified
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="text-right">
-                        <p className="text-[0.6rem] text-neutral-500 uppercase font-black tracking-widest">Flight Velocity</p>
+                        <p className="text-xs text-neutral-500 uppercase font-black tracking-widest">Flight Velocity</p>
                         <p className="text-xs font-bold text-rose-400 font-mono">+18.5% YoY</p>
                     </div>
                     <div className="h-8 w-px bg-white/5" />
                     <button className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group">
-                        <span className="text-[0.6rem] font-black text-white uppercase tracking-widest">Full report</span>
+                        <span className="text-xs font-black text-white uppercase tracking-widest">Full report</span>
                         <ChevronRight className="w-3 h-3 text-neutral-500 group-hover:text-white transition-colors" />
                     </button>
                 </div>

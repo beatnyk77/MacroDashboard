@@ -52,7 +52,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-black text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+                            <h3 className="font-black text-xs uppercase tracking-[0.3em] text-muted-foreground/40">
                                 {title} Arbitrage
                             </h3>
                             <div className="h-[1px] flex-1 bg-white/5" />
@@ -141,7 +141,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                             />
                         </AreaChart>
                     </ResponsiveContainer>
-                    <div className="text-[0.5rem] font-black text-muted-foreground/30 uppercase tracking-widest text-center mt-2">60D Flow Velocity</div>
+                    <div className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest text-center mt-2">60D Flow Velocity</div>
                 </div>
             </div>
         </div>
@@ -214,7 +214,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                             <AlertTriangle className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div className="space-y-1">
-                            <div className="text-[0.6rem] font-black text-emerald-400 uppercase tracking-[0.2em]">Institutional Engine Note</div>
+                            <div className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Institutional Engine Note</div>
                             <p className="text-sm font-medium text-white/90 leading-relaxed max-w-2xl">
                                 {goldSpread && goldSpread.value > 0.5
                                     ? "Persistent Shanghai Premium confirmed. Bullion flow velocity remains skewed toward Asian sovereign vaults, potentially front-running a global reserve diversification cycle."
@@ -231,7 +231,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                                 </button>
                             </TooltipTrigger>
                             <TooltipContent className="bg-slate-950 border-white/10 p-4 max-w-[250px] rounded-xl shadow-2xl">
-                                <p className="text-[0.7rem] font-medium text-muted-foreground leading-relaxed">
+                                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
                                     <span className="text-white font-bold block mb-1 uppercase tracking-wider">Arbitrage Calculation</span>
                                     Cross-exchange spread calculated as ((Shanghai Cash / USDCNH) - COMEX Front Month) / COMEX * 100. Accounts for offshore currency conversion and physical delivery fees.
                                 </p>
@@ -263,7 +263,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                                 <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-white/60 group-hover/bullet:text-white transition-colors">
                                     {bullet.label}
                                 </span>
-                                <div className="px-2 py-0.5 rounded bg-white/5 text-[0.5rem] font-black text-muted-foreground uppercase">
+                                <div className="px-2 py-0.5 rounded bg-white/5 text-xs font-black text-muted-foreground uppercase">
                                     {bullet.status}
                                 </div>
                             </div>

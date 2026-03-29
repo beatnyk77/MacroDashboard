@@ -341,7 +341,7 @@ export const USDebtMaturityWall: React.FC = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-slate-500 text-[10px] italic mt-2 text-center">
+                    <p className="text-slate-500 text-xs italic mt-2 text-center">
                         Low-cost = effective yield at issuance (&lt;2%). T-bills use discount rate/yield at auction, not coupon.
                     </p>
                 </div>

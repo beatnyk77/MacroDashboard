@@ -37,7 +37,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
                     <div className="md:w-1/4 p-6 flex flex-col justify-center border-b md:border-b-0 md:border-r border-white/5 bg-red-500/5">
                         <div className="flex items-center gap-2 mb-2">
                             <Flag className="text-red-500" size={16} />
-                            <span className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-red-400">Policy Intelligence</span>
+                            <span className="text-xs font-black uppercase tracking-[0.2em] text-red-400">Policy Intelligence</span>
                         </div>
                         <h3 className="text-lg font-black tracking-tighter text-white leading-tight">
                             China 15th <br />

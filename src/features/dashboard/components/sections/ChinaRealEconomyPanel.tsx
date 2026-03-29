@@ -108,10 +108,10 @@ export const ChinaRealEconomyPanel: React.FC = () => {
                                     <GaugeNeedle value={value} />
                                     <p className={cn('text-3xl font-black tabular-nums tracking-tighter', color)}>{value.toFixed(1)}</p>
                                     <p className={cn('text-[0.65rem] font-black uppercase tracking-widest', s.cls)}>{s.label}</p>
-                                    <p className="text-[0.6rem] font-black text-white/50 uppercase tracking-widest">{label}</p>
+                                    <p className="text-xs font-black text-white/50 uppercase tracking-widest">{label}</p>
                                     <p className="text-[0.55rem] text-muted-foreground/40">{sub}</p>
                                     <div className={cn('w-full h-0.5 rounded-full mt-1', value >= 50 ? 'bg-emerald-500/30' : 'bg-rose-500/30')} />
-                                    <p className="text-[0.5rem] text-muted-foreground/30">50.0 expansion threshold</p>
+                                    <p className="text-xs text-muted-foreground/30">50.0 expansion threshold</p>
                                 </div>
                             );
                         })}
@@ -148,9 +148,9 @@ export const ChinaRealEconomyPanel: React.FC = () => {
                                     <span className={cn('text-2xl font-black tabular-nums tracking-tighter', color)}>
                                         {data?.value != null ? (data.value >= 0 ? '+' : '') + data.value.toFixed(1) : '--'}
                                     </span>
-                                    <span className="text-[0.6rem] text-white/20 uppercase">{unit}</span>
+                                    <span className="text-xs text-white/20 uppercase">{unit}</span>
                                 </div>
-                                <p className="text-[0.5rem] text-muted-foreground/30 mt-1">{data?.date?.slice(0, 7) ?? 'Latest'}</p>
+                                <p className="text-xs text-muted-foreground/30 mt-1">{data?.date?.slice(0, 7) ?? 'Latest'}</p>
                             </div>
                         ))}
                     </div>

@@ -7,28 +7,30 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
 import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
+import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 
-
-const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
-const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
-
-const SmartMoneyFlowMonitor = lazy(() => import('@/features/dashboard/components/sections/SmartMoneyFlowMonitor').then(m => ({ default: m.SmartMoneyFlowMonitor })));
-const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
-const China15thFYPTeaserRow = lazy(() => import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow })));
-const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
-
-const USEquitiesTeaserRow = lazy(() => import('@/features/dashboard/components/rows/USEquitiesTeaserRow').then(m => ({ default: m.USEquitiesTeaserRow })));
 
 const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
+const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
+
+// 1. LIQUIDITY & FLOWS
+const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
+const SmartMoneyFlowMonitor = lazy(() => import('@/features/dashboard/components/sections/SmartMoneyFlowMonitor').then(m => ({ default: m.SmartMoneyFlowMonitor })));
+const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
+
+// 2. SOVEREIGN STRESS
+const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
+const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
+const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/components/sections/TreasurySnapshotSection').then(m => ({ default: m.TreasurySnapshotSection })));
+
+// 3. REGIONAL & MACRO
+const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
+const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
+const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
+const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
 const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
-const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
-const CompactIndiaCard = lazy(() => import('@/features/dashboard/components/cards/CompactIndiaCard').then(m => ({ default: m.CompactIndiaCard })));
-const CompactChinaCard = lazy(() => import('@/features/dashboard/components/cards/CompactChinaCard').then(m => ({ default: m.CompactChinaCard })));
-const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
-const IndiaMarketPulseRow = lazy(() => import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow })));
-const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 
 
 const LoadingFallback = () => (
@@ -53,168 +55,186 @@ export const Terminal: React.FC = () => {
                 </div>
             </header>
 
-            <main className="space-y-12">
-
-                <div className="w-full">
-                    <SectionErrorBoundary name="Weekly Narrative">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <WeeklyNarrativeSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
+            <main className="space-y-16 pb-32">
+                {/* 1. STRATEGIC CONTEXT */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div className="lg:col-span-8">
+                        <SectionErrorBoundary name="Weekly Narrative">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <WeeklyNarrativeSection />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+                    <div className="lg:col-span-4">
+                        <SectionErrorBoundary name="Today's Brief">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <TodaysBriefPanel />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                 </div>
 
-                <div className="w-full">
-                    <SectionErrorBoundary name="Today's Brief">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TodaysBriefPanel />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-                {/* Row 0: Global Liquidity Direction Monitor (Primary Context) */}
-                <div className="w-full">
+                {/* 2. LIQUIDITY PLUMBLINE (Core Macro Input) */}
+                <div className="w-full space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/10" />
+                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-blue-400">Liquidity Plumbline</h2>
+                        <div className="h-px flex-1 bg-white/10" />
+                    </div>
                     <SectionErrorBoundary name="Global Liquidity Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <GlobalLiquidityMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
+                    
+                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                            <div>
+                                <h2 className="text-lg font-black text-white uppercase tracking-tighter">US Net Liquidity Proxy</h2>
+                                <p className="text-xs text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Monetary Base & Treasury General Account Telemetry</p>
+                            </div>
+                            <LiveStatusIndicator source="FRED / Treasury" />
+                        </div>
+                        <SectionErrorBoundary name="Net Liquidity">
+                            <NetLiquidityRow />
+                        </SectionErrorBoundary>
+                    </div>
                 </div>
 
+                {/* 3. SOVEREIGN STRESS (Risk Indicators) */}
+                <div className="w-full space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/10" />
+                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-rose-400">Sovereign Stress</h2>
+                        <div className="h-px flex-1 bg-white/10" />
+                    </div>
 
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <SectionErrorBoundary name="Sovereign Risk Matrix">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <SovereignRiskMatrix />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="US Debt Maturity Wall">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h3>
+                                        <LiveStatusIndicator source="Treasury" />
+                                    </div>
+                                    <USDebtMaturityWall />
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
 
-                {/* Row 0.75: Smart Money Flow Monitor (Institutional Positioning) */}
-                <div className="w-full">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <SectionErrorBoundary name="Yield Curve Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <YieldCurveMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="Auction Demand Gauge">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h3>
+                                        <LiveStatusIndicator source="Treasury" />
+                                    </div>
+                                    <USTreasuryDemandGauge />
+                                    <div className="flex justify-end pt-2">
+                                        <DataProvenanceBadge 
+                                            source="FRED / Treasury" 
+                                            methodology="B/S Aggregation"
+                                            lastVerified={new Date()}
+                                            size="sm"
+                                        />
+                                    </div>
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+                </div>
+
+                {/* 4. INSTITUTIONAL POSITIONING */}
+                <div className="w-full space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/10" />
+                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-emerald-400">Capital Positioning</h2>
+                        <div className="h-px flex-1 bg-white/10" />
+                    </div>
                     <SectionErrorBoundary name="Smart Money Flow Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <SmartMoneyFlowMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
-                </div>
-
-
-
-                {/* Row 1.5: China 15th FYP Strategic Signal */}
-                <div className="w-full">
-                    <SectionErrorBoundary name="China 15th FYP Teaser">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <China15thFYPTeaserRow />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-                {/* Row 2: US Liquidity Plumbline (Core Market Driver) */}
-                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">US Liquidity Plumbline</h2>
-                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Monetary Base & Treasury General Account Telemetry</p>
-                        </div>
-                        <LiveStatusIndicator source="FRED / Treasury" />
-                    </div>
-                    <SectionErrorBoundary name="Net Liquidity">
-                        <NetLiquidityRow />
-                    </SectionErrorBoundary>
-                </div>
-
-                {/* Row 2.5: US Equity Fundamental Pulse (New Entry Point) */}
-                <div className="w-full">
-                    <SectionErrorBoundary name="US Equities Teaser">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <USEquitiesTeaserRow />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-                <div className="w-full">
-                    <SectionErrorBoundary name="Treasury Snapshot">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TreasurySnapshotSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-                <div className="w-full">
-                    <SectionErrorBoundary name="Corporate Treasury Hedging">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CorporateTreasuryHedgingSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-                {/* Row 3: Global Capital Flows (Shadow System Visibility) */}
-                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Global Capital Flows</h2>
-                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Cross-Border Banking & Institutional Sentiment Hubs</p>
-                        </div>
-                        <LiveStatusIndicator source="BIS / SWIFT" />
-                    </div>
+                    
                     <SectionErrorBoundary name="Capital Flows">
                         <Suspense fallback={<LoadingFallback />}>
-                            <CapitalFlowsTerminal hideHeader />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-                {/* Row 4: US Debt Maturity Wall (Sovereign Stress Strip 1) */}
-                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h2>
-                            <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Cumulative Interest Expense Refinancing Risk</p>
-                        </div>
-                        <LiveStatusIndicator source="Treasury" />
-                    </div>
-                    <SectionErrorBoundary name="Maturity Wall">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <div className="scale-95 origin-top">
-                                <USDebtMaturityWall />
+                            <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                                <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                                    <h2 className="text-lg font-black text-white uppercase tracking-tighter">Global Capital Flows</h2>
+                                    <LiveStatusIndicator source="BIS / SWIFT" />
+                                </div>
+                                <CapitalFlowsTerminal hideHeader />
                             </div>
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
 
-                {/* Row 5: Auction Demand Gauge (Sovereign Stress Strip 2) */}
-                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h2>
-                            <p className="text-[0.6rem] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">Primary Dealer Bid-to-Cover Ratios</p>
-                        </div>
-                        <LiveStatusIndicator source="Treasury" />
+                {/* 5. REGIONAL INTELLIGENCE */}
+                <div className="w-full space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/10" />
+                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-amber-400">Regional Intelligence</h2>
+                        <div className="h-px flex-1 bg-white/10" />
                     </div>
-                    <SectionErrorBoundary name="Treasury Demand">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <USTreasuryDemandGauge />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <SectionErrorBoundary name="China Macro Pulse">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                    <ChinaMacroPulseSection />
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="India Credit Cycle">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaCreditCycleClock />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                 </div>
 
-                <div className="w-full">
-                    <SectionErrorBoundary name="Deflation & Debasement Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <DeflationDebasementMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                <div className="w-full space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/10" />
+                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-cyan-400">Institutional Strategy</h2>
+                        <div className="h-px flex-1 bg-white/10" />
+                    </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <SectionErrorBoundary name="Treasury Snapshot">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                    <TreasurySnapshotSection />
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="Hedging Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                    <CorporateTreasuryHedgingSection />
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                 </div>
 
-                <div className="w-full">
-                    <SectionErrorBoundary name="Currency Wars Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CurrencyWarsMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-
-
-                {/* Row 7: Geopolitical Risk Matrix (Tanker tracking fix) */}
+                {/* 6. SYSTEMIC RISK & MONITORING */}
                 <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                         <div>
                             <h2 className="text-lg font-black text-white uppercase tracking-tighter">Geopolitical Risk Matrix</h2>
-                            <p className="text-[0.65rem] text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Hormuz Tanker Tracking & ADS-B Conflict Telemetry</p>
+                            <p className="text-xs text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Hormuz Tanker Tracking & ADS-B Conflict Telemetry</p>
                         </div>
                         <LiveStatusIndicator source="GDELT / OpenSky" />
                     </div>
@@ -225,36 +245,18 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                <div className="w-full">
-                    <SectionErrorBoundary name="Trade Gravity Card">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <SectionErrorBoundary name="Deflation Debasement">
                         <Suspense fallback={<LoadingFallback />}>
-                            <TradeGravityCard />
+                            <DeflationDebasementMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <SectionErrorBoundary name="Currency Wars">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CurrencyWarsMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-                    <SectionErrorBoundary name="Compact India Card">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CompactIndiaCard />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    <SectionErrorBoundary name="Compact China Card">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CompactChinaCard />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-                <div className="w-full">
-                    <SectionErrorBoundary name="India Market Pulse (FII/DII)">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <IndiaMarketPulseRow />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
-
-
-
             </main>
         </Container>
     );

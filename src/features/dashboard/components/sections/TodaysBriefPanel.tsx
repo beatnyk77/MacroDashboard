@@ -137,7 +137,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             {formatDate(new Date())}
                         </h3>
                     </div>
-                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-[0.7rem] font-black tracking-wider uppercase">
+                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-xs font-black tracking-wider uppercase">
                         Proprietary View
                     </div>
                 </div>
@@ -148,14 +148,14 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                         <div className="p-5 rounded-lg bg-white/5 border border-white/10">
                             <div className="flex items-center gap-2 mb-3">
                                 {getStatusIcon(getRegimeStatus())}
-                                <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase" aria-label="Current Market Regime Status">
+                                <span className="text-xs font-black tracking-widest text-muted-foreground uppercase" aria-label="Current Market Regime Status">
                                     Regime Consensus
                                 </span>
                             </div>
                             <h5 className={cn("text-xl font-black mb-1", getRegimeColorClass())}>
                                 {regime?.regimeLabel || 'Neutral Persistence'}
                             </h5>
-                            <span className="text-[0.7rem] font-semibold text-muted-foreground">
+                            <span className="text-xs font-semibold text-muted-foreground">
                                 {regime?.timestamp ? `Model updated ${new Date(regime.timestamp).toLocaleDateString()}` : 'Real-time detection active'}
                             </span>
                         </div>
@@ -167,14 +167,14 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                 ) : (
                                     <TrendingDown size={16} className="text-rose-500" />
                                 )}
-                                <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase" aria-label="Liquidity Signal">
+                                <span className="text-xs font-black tracking-widest text-muted-foreground uppercase" aria-label="Liquidity Signal">
                                     Liquidity Impulse
                                 </span>
                             </div>
                             <h5 className={cn("text-xl font-black mb-1", getLiquidityColorClass())}>
                                 {liquidityStatus}
                             </h5>
-                            <span className="text-[0.7rem] font-semibold text-muted-foreground">
+                            <span className="text-xs font-semibold text-muted-foreground">
                                 {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${formatBillions(liquidityDelta / 1e9, { decimals: 1 })} net change (7D)` : 'Awaiting fresh feed'}
                             </span>
                         </div>
@@ -186,7 +186,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <Newspaper size={16} className="text-primary" />
-                                    <span className="text-[0.7rem] font-black tracking-widest text-muted-foreground uppercase">
+                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">
                                         LIVE INTELLIGENCE FEED
                                     </span>
                                 </div>
@@ -197,7 +197,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                             key={tab.key}
                                             onClick={() => setActiveTab(tab.key)}
                                             className={cn(
-                                                "px-2.5 py-1 rounded-md text-[0.6rem] font-bold uppercase tracking-wider transition-all duration-200",
+                                                "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200",
                                                 activeTab === tab.key
                                                     ? "bg-blue-500/20 text-blue-400 shadow-sm"
                                                     : "text-muted-foreground/60 hover:text-muted-foreground"
@@ -246,7 +246,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                                             {timeAgo(headline.published_at)}
                                                         </span>
                                                         {stale && (
-                                                            <span className="text-[0.7rem] text-amber-400/80 font-bold flex items-center gap-0.5" title="This headline is older than 48 hours">
+                                                            <span className="text-xs text-amber-400/80 font-bold flex items-center gap-0.5" title="This headline is older than 48 hours">
                                                                 <AlertTriangle size={10} />
                                                                 Stale
                                                             </span>
@@ -257,7 +257,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                         );
                                     })
                                 ) : (
-                                    <span className="text-[0.7rem] text-muted-foreground text-center block py-4">
+                                    <span className="text-xs text-muted-foreground text-center block py-4">
                                         {activeTab === 'india' ? 'No India-specific headlines yet — awaiting next ingest cycle...' :
                                             activeTab === 'global' ? 'No global headlines yet — awaiting next ingest cycle...' :
                                                 'Awaiting institutional signal ingest...'}

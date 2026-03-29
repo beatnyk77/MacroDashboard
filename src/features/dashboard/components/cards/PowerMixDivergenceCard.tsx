@@ -31,7 +31,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                         Power Mix Divergence
                     </h4>
                     <div className="flex items-center gap-3 mt-1 ml-10">
-                        <span className="text-[10px] font-bold text-emerald-500/80 flex items-center gap-1.5 uppercase tracking-widest">
+                        <span className="text-xs font-bold text-emerald-500/80 flex items-center gap-1.5 uppercase tracking-widest">
                             {lastUpdated ? (
                                 <>
                                     <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
@@ -43,7 +43,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                         </span>
                     </div>
                 </div>
-                <div className="px-3 py-1.5 rounded-2xl bg-white/5 border border-white/5 text-[9px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <div className="px-3 py-1.5 rounded-2xl bg-white/5 border border-white/5 text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                     {data.length > 0 ? (
                         <>
                             <div className="w-1 h-1 rounded-full bg-emerald-500" />
@@ -104,9 +104,9 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                                                             <div key={p.name} className="flex justify-between items-center gap-4">
                                                                 <div className="flex items-center gap-2">
                                                                     <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.fill }} />
-                                                                    <span className="text-[10px] text-muted-foreground uppercase font-bold">{p.name}</span>
+                                                                    <span className="text-xs text-muted-foreground uppercase font-bold">{p.name}</span>
                                                                 </div>
-                                                                <span className="text-[10px] font-mono font-black text-white">{p.value.toFixed(1)}%</span>
+                                                                <span className="text-xs font-mono font-black text-white">{p.value.toFixed(1)}%</span>
                                                             </div>
                                                         ))}
                                                     </div>
@@ -129,7 +129,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                             ].map(legend => (
                                 <div key={legend.label} className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full border border-white/10" style={{ backgroundColor: legend.color }} />
-                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{legend.label}</span>
+                                    <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{legend.label}</span>
                                 </div>
                             ))}
                         </div>
@@ -138,7 +138,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
 
                 <div className="mt-8 p-6 rounded-3xl bg-white/[0.02] border border-white/5 relative group/insight overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/50 group-hover/insight:bg-emerald-400 transition-colors" />
-                    <p className="text-[11px] leading-relaxed text-muted-foreground/80 font-medium">
+                    <p className="text-xs leading-relaxed text-muted-foreground/80 font-medium">
                         <span className="text-white font-black uppercase tracking-widest mr-2 underline decoration-emerald-500/30">Strategic Insight:</span>
                         The structural divergence in power generation is the primary driver of 2025 energy cost disparities.
                         <span className="text-white"> China and India</span> prioritize energy density via coal to fuel industrial expansion,

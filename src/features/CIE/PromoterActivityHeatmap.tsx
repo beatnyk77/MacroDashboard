@@ -53,7 +53,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
                             <div className="flex justify-between items-start mb-8">
                                 <div>
                                     <h3 className="text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">{sector.name}</h3>
-                                    <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mt-1">{sector.count} Entities Monitored</div>
+                                    <div className="text-xs font-black text-white/20 uppercase tracking-[0.2em] mt-1">{sector.count} Entities Monitored</div>
                                 </div>
                                 <div className={`p-3 rounded-2xl border ${sector.netInsider > 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : sector.netInsider < 0 ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-white/5 text-white/40 border-white/10'}`}>
                                     {sector.netInsider > 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
@@ -63,10 +63,10 @@ export const PromoterActivityHeatmap: React.FC = () => {
                             <div className="space-y-8">
                                 <div>
                                     <div className="flex justify-between items-end mb-3">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Insider Net Velocity</span>
+                                        <span className="text-xs font-black uppercase tracking-widest text-white/30">Insider Net Velocity</span>
                                         <span className={`text-lg font-black italic tracking-tighter ${sector.netInsider >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                             {sector.netInsider > 0 ? '+' : ''}{sector.netInsider.toFixed(1)}
-                                            <span className="text-[10px] ml-1 opacity-40">Cr</span>
+                                            <span className="text-xs ml-1 opacity-40">Cr</span>
                                         </span>
                                     </div>
                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
@@ -80,7 +80,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
 
                                 <div>
                                     <div className="flex justify-between items-end mb-3">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Avg Pledging Intensity</span>
+                                        <span className="text-xs font-black uppercase tracking-widest text-white/30">Avg Pledging Intensity</span>
                                         <span className={`text-lg font-black italic tracking-tighter ${sector.avgPledge > 20 ? 'text-rose-400' : sector.avgPledge > 10 ? 'text-amber-400' : 'text-emerald-400'}`}>
                                             {sector.avgPledge.toFixed(1)}%
                                         </span>
@@ -97,7 +97,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
                         </div>
 
                         <div className="mt-10 pt-6 border-t border-white/5 flex justify-end">
-                            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/20 group-hover:text-blue-400 transition-all">
+                            <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/20 group-hover:text-blue-400 transition-all">
                                 Analyze Leaders <Activity size={14} className="group-hover:rotate-12 transition-transform" />
                             </button>
                         </div>

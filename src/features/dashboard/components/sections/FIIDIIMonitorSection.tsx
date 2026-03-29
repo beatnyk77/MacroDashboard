@@ -67,7 +67,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
             >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-1">
-                        <div className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                        <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
                             <Activity size={10} /> Smart Money Regime
                         </div>
                         <div className="flex items-baseline gap-3">
@@ -77,7 +77,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                             )}>
                                 {(data.sentiment_score || 0).toFixed(2)}
                             </span>
-                            <span className="text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                            <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
                                 {(data.sentiment_score || 0) > 0.5 ? 'RISK-ON' : (data.sentiment_score || 0) < -0.5 ? 'RISK-OFF' : 'NEUTRAL'}
                             </span>
                         </div>
@@ -136,7 +136,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
             >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="space-y-1 min-w-[200px]">
-                        <div className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                        <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
                             <ArrowRightLeft size={10} /> FII vs DII Tug-of-War
                         </div>
                         <div className="text-2xl font-black text-white tracking-tighter">
@@ -150,7 +150,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                     </div>
 
                     <div className="flex-1 space-y-3">
-                        <div className="flex justify-between items-center text-[0.6rem] font-bold uppercase tracking-widest">
+                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
                             <span className="text-rose-400">FII Net: {formatNumber(data.fii_cash_net)} Cr</span>
                             <span className="text-emerald-400">DII Net: +{formatNumber(data.dii_cash_net)} Cr</span>
                         </div>
@@ -177,7 +177,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                 className="rounded-xl bg-white/[0.02] border border-white/[0.05] p-5"
             >
                 <div className="flex items-center justify-between mb-6">
-                    <div className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
                         <Layers size={10} /> Sector-wise FPI Velocity (Fortnightly)
                     </div>
                     <div className="text-[0.55rem] font-bold text-muted-foreground/20 uppercase tracking-widest">
@@ -194,7 +194,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                             {topBuyers.map((s) => (
                                 <div key={s.sector} className="flex flex-col justify-center p-2 rounded bg-emerald-500/5 border border-emerald-500/10">
                                     <span className="text-[0.55rem] font-black text-emerald-500/90 truncate mb-1">{s.sector}</span>
-                                    <span className="text-[0.7rem] font-black text-emerald-400 tabular-nums">+{formatNumber(s.net_investment_cr)}</span>
+                                    <span className="text-xs font-black text-emerald-400 tabular-nums">+{formatNumber(s.net_investment_cr)}</span>
                                 </div>
                             ))}
                         </div>
@@ -207,7 +207,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                             {topSellers.map((s) => (
                                 <div key={s.sector} className="flex flex-col justify-center p-2 rounded bg-rose-500/5 border border-rose-500/10">
                                     <span className="text-[0.55rem] font-black text-rose-500/90 truncate mb-1">{s.sector}</span>
-                                    <span className="text-[0.7rem] font-black text-rose-400 tabular-nums">{formatNumber(s.net_investment_cr)}</span>
+                                    <span className="text-xs font-black text-rose-400 tabular-nums">{formatNumber(s.net_investment_cr)}</span>
                                 </div>
                             ))}
                         </div>
@@ -224,7 +224,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                 className="rounded-xl bg-white/[0.02] border border-white/[0.05] p-5 h-[350px]"
             >
                 <div className="flex items-center justify-between mb-6">
-                    <div className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
                         <TrendingUp size={10} /> Flow Regime vs Benchmark Returns
                     </div>
                     <div className="flex items-center gap-4 text-[0.55rem] font-bold uppercase tracking-widest">

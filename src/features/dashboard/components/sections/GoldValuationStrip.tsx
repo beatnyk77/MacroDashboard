@@ -52,11 +52,11 @@ export const GoldValuationStrip: React.FC = () => {
             <div className="flex items-center gap-6 md:gap-12 overflow-x-auto no-scrollbar">
                 <div className="shrink-0 flex flex-col justify-center">
                     <div className="flex items-baseline gap-1.5 mb-0.5">
-                        <span className="text-[0.6rem] font-black text-primary tracking-[0.15em] uppercase">
+                        <span className="text-xs font-black text-primary tracking-[0.15em] uppercase">
                             LIVE ANCHOR
                         </span>
                         <div className="bg-blue-500/10 px-1 rounded-[2px] border border-blue-500/20">
-                            <span className="text-[0.5rem] font-black text-primary block leading-tight">25Y CYCLE</span>
+                            <span className="text-xs font-black text-primary block leading-tight">25Y CYCLE</span>
                         </div>
                     </div>
                     <span className="text-base md:text-lg font-black text-foreground tracking-tight">
@@ -75,7 +75,7 @@ export const GoldValuationStrip: React.FC = () => {
                     <div key={idx} className="flex items-center gap-4 shrink-0">
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1 mb-0.5">
-                                <span className="text-[0.6rem] font-bold text-muted-foreground tracking-[0.08em] uppercase">
+                                <span className="text-xs font-bold text-muted-foreground tracking-[0.08em] uppercase">
                                     {item.label}
                                 </span>
                                 {item.name === 'Gold/Silver' && (
@@ -114,7 +114,7 @@ export const GoldValuationStrip: React.FC = () => {
 
             <div className="hidden md:flex items-center gap-4 shrink-0 border-l border-white/5 pl-6">
                 <div className="text-right">
-                    <span className="block text-[0.6rem] font-bold text-muted-foreground/50 tracking-[0.05em] uppercase mb-0.5">
+                    <span className="block text-xs font-bold text-muted-foreground/50 tracking-[0.05em] uppercase mb-0.5">
                         TERMINAL PULSE (UTC)
                     </span>
                     <div className="flex items-center gap-2 justify-end">

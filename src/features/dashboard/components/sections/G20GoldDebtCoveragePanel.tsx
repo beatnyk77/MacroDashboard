@@ -125,10 +125,10 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                 {/* Narrative Insight */}
                 {selectedCountryData && (
                     <div className="flex-1 bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 md:max-w-xs animate-in fade-in slide-in-from-right-4">
-                        <div className="text-[0.6rem] font-black text-amber-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <div className="text-xs font-black text-amber-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                             <ShieldAlert size={10} /> Solvency Insight
                         </div>
-                        <p className="text-[0.7rem] text-amber-200/70 leading-relaxed italic">
+                        <p className="text-xs text-amber-200/70 leading-relaxed italic">
                             {COUNTRY_NAMES[selectedCountryData.country_code]} would need <span className="text-amber-400 font-bold">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</span> its current gold reserves to fully back its sovereign debt at current prices.
                         </p>
                     </div>
@@ -140,7 +140,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="h-[450px] relative rounded-3xl bg-slate-950/50 border border-white/[0.03] overflow-hidden group">
                         <div className="absolute top-4 left-4 z-10 pointer-events-none">
-                            <span className="text-[0.6rem] font-black text-white/30 uppercase tracking-[0.2em]">Sovereign Heatmap (Coverage %)</span>
+                            <span className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Sovereign Heatmap (Coverage %)</span>
                         </div>
                         <ComposableMap projectionConfig={{ rotate: [-10, 0, 0], scale: 145 }} className="w-full h-full">
                             <Geographies geography={geoUrl}>
@@ -180,13 +180,13 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                 </div>
                                 <div className="space-y-3">
                                     <div>
-                                        <div className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Gold Coverage</div>
+                                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Gold Coverage</div>
                                         <div className="font-black text-lg" style={{ color: getCoverageColor(hoveredCountry.coverage_ratio) }}>
                                             {hoveredCountry.coverage_ratio.toFixed(2)}%
                                         </div>
                                     </div>
                                     <div>
-                                        <div className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Debt per Gold Ounce</div>
+                                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Debt per Gold Ounce</div>
                                         <div className="font-mono text-sm text-white/90">
                                             {formatCurrency(hoveredCountry.debt_per_oz_local, hoveredCountry.fx_rate_local_per_usd)}
                                         </div>
@@ -209,18 +209,18 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                     <span className="text-3xl">{COUNTRY_FLAGS[selectedCountryData.country_code]}</span>
                                     <div>
                                         <h4 className="text-lg font-black text-white uppercase tracking-tighter italic">{COUNTRY_NAMES[selectedCountryData.country_code]}</h4>
-                                        <p className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-[0.2em]">{selectedCountryData.country_code} / SOVEREIGN AUDIT</p>
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{selectedCountryData.country_code} / SOVEREIGN AUDIT</p>
                                     </div>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-6">
                                     <div>
-                                        <p className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest mb-1">Inverse Coverage</p>
+                                        <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">Inverse Coverage</p>
                                         <p className="text-xl font-black text-rose-500">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</p>
                                         <p className="text-[0.55rem] text-muted-foreground italic">Debt to Gold Value</p>
                                     </div>
                                     <div>
-                                        <p className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest mb-1">Debt / Gold Oz</p>
+                                        <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">Debt / Gold Oz</p>
                                         <p className="text-xl font-black text-amber-400 font-mono">
                                             {formatCurrency(selectedCountryData.debt_per_oz_local, selectedCountryData.fx_rate_local_per_usd)}
                                         </p>
@@ -234,7 +234,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                     <h4 className="text-[0.65rem] font-black text-white/50 uppercase tracking-widest flex items-center gap-2">
                                         <TrendingDown size={12} className="text-amber-500" /> Coverage Trend (30D)
                                     </h4>
-                                    <span className="text-[0.6rem] font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Ingestion</span>
+                                    <span className="text-xs font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Ingestion</span>
                                 </div>
                                 <div className="h-[100px] w-full">
                                     <ResponsiveContainer width="100%" height="100%">
@@ -334,7 +334,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                             <span className="text-xl opacity-80 group-hover:opacity-100 transition-opacity">{COUNTRY_FLAGS[row.country_code] || '🌐'}</span>
                                             <div>
                                                 <div className="text-sm font-bold text-white/90">{COUNTRY_NAMES[row.country_code] || row.country_code}</div>
-                                                <div className="text-[0.6rem] font-bold text-muted-foreground uppercase">{row.country_code}</div>
+                                                <div className="text-xs font-bold text-muted-foreground uppercase">{row.country_code}</div>
                                             </div>
                                         </div>
                                     </td>

@@ -156,7 +156,7 @@ export const ChinaExternalSectorPanel: React.FC = () => {
                 <div className="flex items-start gap-3">
                     <Anchor size={14} className="text-blue-400 mt-0.5 shrink-0" />
                     <div>
-                        <p className="text-[0.6rem] font-black text-blue-400 uppercase tracking-widest mb-1">RMB Intervention Signal</p>
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">RMB Intervention Signal</p>
                         <p className="text-xs text-muted-foreground/60 leading-relaxed">
                             PBOC FX reserves declining alongside strong trade surplus indicates stealth intervention via state bank proxies — a classic signal of capital outflow management. Rising reserves alongside surplus = passive accumulation (no intervention).
                         </p>

@@ -39,16 +39,16 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                         Storage Inventory & Strategic Buffers
                     </CardTitle>
                     <div className="flex gap-4 mt-1">
-                        <span className="text-[10px] text-orange-400/80 font-mono">CAPACITY UTILIZATION: {fillPct.toFixed(1)}%</span>
-                        <span className="text-[10px] text-muted-foreground font-mono uppercase">Reference Cap: 713.5M bbl</span>
+                        <span className="text-xs text-orange-400/80 font-mono">CAPACITY UTILIZATION: {fillPct.toFixed(1)}%</span>
+                        <span className="text-xs text-muted-foreground font-mono uppercase">Reference Cap: 713.5M bbl</span>
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                    <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         DATA CURRENT AS OF: {latest?.date}
                     </span>
-                    <span className="text-[8px] text-muted-foreground/40 font-bold uppercase tracking-tight">Updated Weekly via EIA/FRED</span>
+                    <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tight">Updated Weekly via EIA/FRED</span>
                 </div>
             </CardHeader>
             <CardContent className="px-0 pb-0">
@@ -70,7 +70,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                                 style={{ width: `${fillPct}%` }}
                             />
                         </div>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">Inventory Health Index</span>
+                        <span className="text-xs text-muted-foreground uppercase tracking-tighter">Inventory Health Index</span>
                     </div>
                 </div>
 

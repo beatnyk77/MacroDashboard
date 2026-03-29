@@ -69,7 +69,7 @@ export const APIAccessPage: React.FC = () => {
 
             <Container maxWidth="lg">
                 <Box sx={{ textAlign: 'center', mb: 12 }}>
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.7rem] font-black uppercase tracking-[0.2em] mb-8">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-8">
                         <Lock size={14} /> Secure API Terminal
                     </div>
                     <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
@@ -152,7 +152,7 @@ export const APIAccessPage: React.FC = () => {
                                     Get Quantum Access <ArrowRight size={18} className="ml-2" />
                                 </Button>
 
-                                <p className="mt-6 text-[0.6rem] text-center text-muted-foreground/40 font-black uppercase tracking-widest">
+                                <p className="mt-6 text-xs text-center text-muted-foreground/40 font-black uppercase tracking-widest">
                                     30-Day Money Back Guarantee • Secure Checkout by Paddle
                                 </p>
                             </div>

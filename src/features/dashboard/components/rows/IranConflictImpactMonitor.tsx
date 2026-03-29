@@ -43,7 +43,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                 <div className="flex items-center gap-3 px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-lg">
                     <AlertTriangle className="text-orange-500 animate-pulse" size={18} />
                     <div>
-                        <div className="text-[10px] font-black uppercase text-orange-500/70 leading-none">Scenario Status</div>
+                        <div className="text-xs font-black uppercase text-orange-500/70 leading-none">Scenario Status</div>
                         <div className="text-sm font-bold text-orange-500">Active Monitoring / Stress Test</div>
                     </div>
                 </div>
@@ -89,14 +89,14 @@ export const IranConflictImpactMonitor: React.FC = () => {
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-end pb-2">
                                 <span className="text-3xl font-black tabular-nums">${brentPrice.toFixed(1)}</span>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">Brent Crude / BBL</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase opacity-60">Brent Crude / BBL</span>
                             </div>
                         </div>
 
                         <div className="mt-4 p-3 bg-slate-900/50 rounded-lg border border-white/5">
                             <div className="flex justify-between items-center mb-1">
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase">Fiscal Sensitivity</span>
-                                <span className="text-[10px] font-bold text-rose-400">-${projectedAdditionalCost.toFixed(1)}B</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase">Fiscal Sensitivity</span>
+                                <span className="text-xs font-bold text-rose-400">-${projectedAdditionalCost.toFixed(1)}B</span>
                             </div>
                             <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
                                 <div 
@@ -104,7 +104,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                     style={{ width: `${Math.min(100, (projectedAdditionalCost / 25) * 100)}%` }}
                                 />
                             </div>
-                            <p className="text-[9px] text-muted-foreground/60 mt-2">
+                            <p className="text-xs text-muted-foreground/60 mt-2">
                                 Est. annual import bill increase above ${oilThreshold} pivot.
                             </p>
                         </div>
@@ -132,9 +132,9 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                         "bg-slate-800 text-muted-foreground hover:bg-slate-700"
                                     )}
                                 >
-                                    <span className="text-[10px] font-black">{state.state_code}</span>
+                                    <span className="text-xs font-black">{state.state_code}</span>
                                     <div className="hidden group-hover/cell:flex absolute z-50 bg-slate-950 border border-white/10 p-2 rounded shadow-2xl -translate-y-12">
-                                        <div className="text-[9px] font-bold uppercase whitespace-nowrap text-white">
+                                        <div className="text-xs font-bold uppercase whitespace-nowrap text-white">
                                             {state.state_name}: {state.risk_score.toFixed(0)} Risk
                                         </div>
                                     </div>
@@ -143,13 +143,13 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         </div>
                         
                         <div className="mt-4 space-y-2">
-                            <div className="flex justify-between text-[10px] font-bold">
+                            <div className="flex justify-between text-xs font-bold">
                                 <span className="text-muted-foreground uppercase">Top Exposure</span>
                                 <span className="text-rose-400 uppercase">High Vulnerability</span>
                             </div>
                             <div className="flex items-center gap-1">
                                 {stateRisks.slice(0, 3).map(s => (
-                                    <span key={s.state_code} className="px-1.5 py-0.5 bg-rose-500/10 text-rose-500 text-[9px] font-black border border-rose-500/20 rounded">
+                                    <span key={s.state_code} className="px-1.5 py-0.5 bg-rose-500/10 text-rose-500 text-xs font-black border border-rose-500/20 rounded">
                                         {s.state_name}
                                     </span>
                                 ))}
@@ -199,11 +199,11 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         
                         <div className="flex items-center justify-between mt-4">
                             <div>
-                                <div className="text-[10px] font-black uppercase text-muted-foreground/50 leading-none mb-1">FX Reserve Cover</div>
+                                <div className="text-xs font-black uppercase text-muted-foreground/50 leading-none mb-1">FX Reserve Cover</div>
                                 <div className="text-lg font-black tabular-nums">${fxReserves}B</div>
                             </div>
                             <div className="text-right">
-                                <div className="text-[10px] font-black uppercase text-muted-foreground/50 leading-none mb-1">Buffer Health</div>
+                                <div className="text-xs font-black uppercase text-muted-foreground/50 leading-none mb-1">Buffer Health</div>
                                 <div className="flex items-center gap-1 text-emerald-400">
                                     <span className="text-sm font-bold uppercase">Optimal</span>
                                     <ArrowUpRight size={14} />
@@ -227,7 +227,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                             {resilienceMetrics.map((item, idx) => (
                                 <div key={idx} className="group/row">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[10px] font-bold text-muted-foreground uppercase">{item.metric}</span>
+                                        <span className="text-xs font-bold text-muted-foreground uppercase">{item.metric}</span>
                                         {item.status === 'IMPROVED' ? (
                                             <ArrowUpRight className="text-emerald-400" size={12} />
                                         ) : item.status === 'DEGRADED' ? (
@@ -236,12 +236,12 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div className="bg-slate-900/40 p-1.5 rounded border border-white/5 flex flex-col">
-                                            <span className="text-[8px] font-black text-muted-foreground/40 uppercase">1990</span>
-                                            <span className="text-[11px] font-bold text-muted-foreground/80 tabular-nums">{item.val1990}</span>
+                                            <span className="text-xs font-black text-muted-foreground/40 uppercase">1990</span>
+                                            <span className="text-xs font-bold text-muted-foreground/80 tabular-nums">{item.val1990}</span>
                                         </div>
                                         <div className="bg-slate-900/60 p-1.5 rounded border border-white/10 flex flex-col group-hover/row:border-blue-500/30 transition-colors">
-                                            <span className="text-[8px] font-black text-blue-400/50 uppercase">2025</span>
-                                            <span className="text-[11px] font-black text-foreground tabular-nums">{item.val2025}</span>
+                                            <span className="text-xs font-black text-blue-400/50 uppercase">2025</span>
+                                            <span className="text-xs font-black text-foreground tabular-nums">{item.val2025}</span>
                                         </div>
                                     </div>
                                 </div>

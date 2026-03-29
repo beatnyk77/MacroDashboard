@@ -13,9 +13,9 @@ export const AlertBadge: React.FC<AlertBadgeProps> = ({ zScore, size = 'md' }) =
     if (absZ < 2) return null;
 
     const sizeClasses = {
-        sm: 'text-[0.5rem] px-1.5 py-0.5',
+        sm: 'text-xs px-1.5 py-0.5',
         md: 'text-[0.55rem] px-2 py-1',
-        lg: 'text-[0.6rem] px-2.5 py-1.5'
+        lg: 'text-xs px-2.5 py-1.5'
     };
 
     return (

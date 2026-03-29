@@ -28,21 +28,21 @@ export const CompactIndiaCard: React.FC = () => {
 
                 <div className="flex flex-wrap gap-8 items-center bg-white/[0.02] p-6 rounded-xl border border-white/5">
                     <div>
-                        <div className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">FII Net Flow</div>
+                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">FII Net Flow</div>
                         <div className={cn("text-2xl font-black tabular-nums", data.fii_cash_net > 0 ? "text-emerald-500" : "text-rose-500")}>
                             {data.fii_cash_net > 0 ? '+' : ''}{formatNumber(data.fii_cash_net)}
                             <span className="text-xs ml-1 text-muted-foreground/50 uppercase">Cr</span>
                         </div>
                     </div>
                     <div>
-                        <div className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">DII Net Flow</div>
+                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">DII Net Flow</div>
                         <div className={cn("text-2xl font-black tabular-nums", data.dii_cash_net > 0 ? "text-emerald-500" : "text-rose-500")}>
                             {data.dii_cash_net > 0 ? '+' : ''}{formatNumber(data.dii_cash_net)}
                             <span className="text-xs ml-1 text-muted-foreground/50 uppercase">Cr</span>
                         </div>
                     </div>
                     <div>
-                        <div className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">India VIX</div>
+                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">India VIX</div>
                         <div className="text-2xl font-black tabular-nums text-orange-400">
                             {data.india_vix?.toFixed(1)}
                         </div>

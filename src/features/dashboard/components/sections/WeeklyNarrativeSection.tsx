@@ -125,7 +125,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                 <div className="lg:col-span-8">
                     <Card className="bg-card/20 backdrop-blur-md border-white/5 h-full">
                         <CardContent className="p-8 md:p-10">
-                            <h5 className="text-[0.7rem] font-black tracking-[0.25em] text-muted-foreground uppercase mb-10 flex items-center gap-3">
+                            <h5 className="text-xs font-black tracking-[0.25em] text-muted-foreground uppercase mb-10 flex items-center gap-3">
                                 <div className="p-1 rounded bg-primary/10">
                                     <Activity size={14} className="text-primary" />
                                 </div>
@@ -140,7 +140,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                             </h6>
                                             {section.wow_change_pct !== null && (
                                                 <div className={cn(
-                                                    "flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.6rem] font-black border",
+                                                    "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border",
                                                     section.wow_change_pct >= 0
                                                         ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                                                         : "bg-rose-500/10 text-rose-500 border-rose-500/20"
@@ -173,7 +173,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                     <div className="p-1.5 rounded-full bg-emerald-500/10">
                                         <Info size={16} className="text-emerald-500" />
                                     </div>
-                                    <span className="text-[0.7rem] font-black tracking-[0.2em] text-emerald-500 uppercase">
+                                    <span className="text-xs font-black tracking-[0.2em] text-emerald-500 uppercase">
                                         PROPRIETARY VIEW
                                     </span>
                                 </div>
@@ -188,9 +188,9 @@ export const WeeklyNarrativeSection: React.FC = () => {
                     {forwardLook && (
                         <Card className="bg-card/40 border-white/10 hover:border-white/20 transition-all shadow-xl">
                             <CardContent className="p-8">
-                                <h5 className="text-[0.7rem] font-black tracking-[0.25em] text-muted-foreground uppercase mb-6 flex justify-between items-center">
+                                <h5 className="text-xs font-black tracking-[0.25em] text-muted-foreground uppercase mb-6 flex justify-between items-center">
                                     Next Window
-                                    <span className="text-[0.6rem] text-primary bg-primary/10 px-2 py-0.5 rounded">HIGH IMPACT</span>
+                                    <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">HIGH IMPACT</span>
                                 </h5>
                                 <p className="text-[0.9rem] text-muted-foreground leading-relaxed mb-8 font-medium">
                                     {forwardLook.narrative_snippet}

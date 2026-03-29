@@ -116,7 +116,7 @@ export const StateMacroInsights: React.FC<StateMacroInsightsProps> = ({ type, da
                                 insight.type === 'info' ? "text-blue-500" :
                                     "text-muted-foreground"
                     )} />
-                    <p className="text-[0.7rem] font-bold leading-relaxed uppercase tracking-tighter italic">
+                    <p className="text-xs font-bold leading-relaxed uppercase tracking-tighter italic">
                         {insight.text}
                     </p>
                 </div>

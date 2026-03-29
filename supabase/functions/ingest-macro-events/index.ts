@@ -193,6 +193,54 @@ async function handleMockFallback(supabase: SupabaseClient, logId: number | null
     return new Response(JSON.stringify({ count: mockEvents.length, status: 'mocked', reason }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 }
 
+// Alpha Vantage Fallback mechanism for key macro indicators
+async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: number | null, apiKey: string) {
+    console.log('Switching to Alpha Vantage for macro data...');
+    const indicators = [
+        { name: 'US GDP', function: 'REAL_GDP', country: 'USA' },
+        { name: 'US CPI', function: 'CPI', country: 'USA' },
+        { name: 'US Unemployment', function: 'UNEMPLOYMENT', country: 'USA' },
+        { name: 'Fed Funds Rate', function: 'FEDERAL_FUNDS_RATE', country: 'USA' }
+    ];
+
+    let successCount = 0;
+    const events = [];
+
+    for (const indicator of indicators) {
+        try {
+            const url = `https://www.alphavantage.co/query?function=${indicator.function}&apikey=${apiKey}`;
+            const res = await fetch(url);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.data && data.data.length > 0) {
+                    const latest = data.data[0];
+                    events.push({
+                        event_date: latest.date + 'T00:00:00Z',
+                        event_name: `${indicator.name} (Latest Release)`,
+                        country: indicator.country,
+                        impact_level: 'High',
+                        actual: latest.value,
+                        forecast: null,
+                        previous: data.data[1]?.value || null,
+                        source_url: 'Alpha Vantage API'
+                    });
+                    successCount++;
+                }
+            }
+        } catch (e) {
+            console.error(`Alpha Vantage fetch failed for ${indicator.name}:`, e);
+        }
+    }
+
+    if (events.length > 0) {
+        const { error } = await supabase.from('upcoming_events').upsert(events, { onConflict: 'event_date, event_name, country' });
+        if (error) console.error('Failed to upsert Alpha Vantage events:', error);
+    }
+
+    await logIngestionEnd(supabase, logId, 'success', { rows_inserted: events.length, metadata: { status: 'alpha_vantage_fallback', count: successCount } });
+    return new Response(JSON.stringify({ count: events.length, status: 'alpha_vantage_fallback' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+}
+
 // Send alert to admin (via Supabase Edge Function or webhook)
 async function sendAlert(message: string, severity: 'critical' | 'warning' = 'warning') {
     // TODO: Integrate with Slack/Discord/Email webhook when available
@@ -254,12 +302,17 @@ Deno.serve(async (req: Request) => {
         if (!response.ok) {
             circuitBreaker.recordFailure();
             const errorText = await response.text();
-            console.warn(`Finnhub API error ${response.status}: ${errorText}. Falling back to mock data.`);
+            console.warn(`Finnhub API error ${response.status}: ${errorText}. Falling back to Alpha Vantage.`);
 
             if (isAuthError(response)) {
-                await sendAlert('Finnhub API authentication failed (401/403). Check API key and plan subscription.', 'critical');
+                const avKey = Deno.env.get('ALPHA_VANTAGE_API_KEY') || '';
+                if (avKey) {
+                    await sendAlert('Finnhub 403 - Switching to Alpha Vantage Fallback', 'warning');
+                    return await handleAlphaVantageFallback(supabase, logId, avKey);
+                }
+                await sendAlert('Finnhub 403 and Alpha Vantage key missing. Using mock data.', 'critical');
             } else if (isRateLimitError(response)) {
-                await sendAlert('Finnhub API rate limit exceeded (429/402). Consider upgrading plan or implementing caching.', 'warning');
+                await sendAlert('Finnhub API rate limit exceeded.', 'warning');
             }
 
             return await handleMockFallback(supabase, logId, `http_${response.status}`);

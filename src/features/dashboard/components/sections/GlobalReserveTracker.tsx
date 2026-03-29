@@ -62,7 +62,7 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
                     )}
                 </div>
 
-                <h3 className="text-[0.7rem] font-black text-muted-foreground/50 uppercase tracking-[0.2em] mb-1">
+                <h3 className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em] mb-1">
                     {title}
                 </h3>
                 <div className="text-3xl font-black text-white/90 tracking-tighter tabular-nums">
@@ -295,7 +295,7 @@ export const GlobalReserveTracker: React.FC = () => {
                             <div key={idx} className="flex gap-3 group/bullet">
                                 <div className={cn("w-1 h-8 rounded-full opacity-20 group-hover/bullet:opacity-100 transition-opacity", `bg-${bullet.color}-500`)} />
                                 <div className="space-y-0.5">
-                                    <div className="text-[0.6rem] font-black uppercase tracking-widest text-white/40">{bullet.label}</div>
+                                    <div className="text-xs font-black uppercase tracking-widest text-white/40">{bullet.label}</div>
                                     <p className="text-[0.65rem] text-muted-foreground leading-snug">{bullet.content}</p>
                                 </div>
                             </div>

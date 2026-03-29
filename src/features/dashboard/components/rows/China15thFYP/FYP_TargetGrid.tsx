@@ -35,17 +35,17 @@ export const FYP_TargetGrid: React.FC = () => {
                                     <div className="p-2 rounded-xl bg-red-500/10 text-red-400 group-hover:bg-red-500 group-hover:text-white transition-all">
                                         <Icon size={18} />
                                     </div>
-                                    <div className="text-[0.6rem] font-black text-rose-500/70 uppercase">
+                                    <div className="text-xs font-black text-rose-500/70 uppercase">
                                         High Priority
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[0.6rem] font-black uppercase text-muted-foreground/50 tracking-widest">{target.label}</p>
+                                    <p className="text-xs font-black uppercase text-muted-foreground/50 tracking-widest">{target.label}</p>
                                     <h4 className="text-xl font-black text-white tracking-tighter">{target.value_target}</h4>
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
                                     <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase">Baseline: {target.value_baseline}</div>
-                                    <div className="flex items-center gap-1 text-emerald-400 text-[0.6rem] font-black">
+                                    <div className="flex items-center gap-1 text-emerald-400 text-xs font-black">
                                         <TrendingUp size={10} />
                                         SHIFT
                                     </div>

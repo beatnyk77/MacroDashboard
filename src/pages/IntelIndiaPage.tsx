@@ -134,7 +134,7 @@ export const IntelIndiaPage: React.FC = () => {
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-8">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-2 text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 mb-12">
+                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground/40 mb-12">
                         <Link to="/" className="hover:text-white transition-colors">Home</Link>
                         <span>/</span>
                         <span className="text-blue-400">India Intelligence</span>
@@ -175,7 +175,7 @@ export const IntelIndiaPage: React.FC = () => {
 
                         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 justify-between">
                             <div className="max-w-xl">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.6rem] font-black uppercase tracking-widest mb-4">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-4">
                                     <Zap size={10} /> New Institutional Module
                                 </div>
                                 <h3 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-3">Corporate India Engine v1.0</h3>
@@ -185,7 +185,7 @@ export const IntelIndiaPage: React.FC = () => {
                             </div>
                             <Link
                                 to="/india-equities"
-                                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black text-[0.7rem] font-black uppercase tracking-widest hover:bg-blue-400 hover:text-white transition-all shadow-xl shadow-white/5 group/btn whitespace-nowrap"
+                                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black text-xs font-black uppercase tracking-widest hover:bg-blue-400 hover:text-white transition-all shadow-xl shadow-white/5 group/btn whitespace-nowrap"
                             >
                                 Explore Corporate India Engine <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                             </Link>
@@ -219,7 +219,7 @@ export const IntelIndiaPage: React.FC = () => {
                         <div key={label} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-default`}>
                             <Icon size={18} className="mb-3 opacity-80" />
                             <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
-                            <p className="text-[0.6rem] text-muted-foreground/60 leading-relaxed">{desc}</p>
+                            <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
                         </div>
                     ))}
                 </motion.div>

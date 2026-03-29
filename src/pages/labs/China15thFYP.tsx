@@ -118,7 +118,7 @@ export const China15thFYPLab: React.FC = () => {
                         {/* Alpha Insight Box */}
                         <Card className="bg-red-500/5 border-red-500/20">
                             <CardContent className="p-6 space-y-4">
-                                <div className="flex items-center gap-2 text-red-500 uppercase font-black text-[0.7rem] tracking-widest">
+                                <div className="flex items-center gap-2 text-red-500 uppercase font-black text-xs tracking-widest">
                                     <Shield size={16} />
                                     Strategist Deep Insight
                                 </div>
@@ -126,8 +126,8 @@ export const China15thFYPLab: React.FC = () => {
                                     The 15th FYP represents a fundamental shift from <span className="text-white italic">"Growth at any cost"</span> to <span className="text-white italic">"High-quality resilience."</span> The key metric to watch is R&D growth and supply chain self-sufficiency indices, which now carry higher political weighting than raw GDP.
                                 </p>
                                 <div className="pt-4 border-t border-red-500/10">
-                                    <div className="text-[0.6rem] text-red-400 uppercase font-black mb-2 opacity-60 italic">Key Tipping Point: 2027</div>
-                                    <div className="text-[0.7rem] font-bold text-slate-200">Military centennial goals and semiconductor node independence parity targets align.</div>
+                                    <div className="text-xs text-red-400 uppercase font-black mb-2 opacity-60 italic">Key Tipping Point: 2027</div>
+                                    <div className="text-xs font-bold text-slate-200">Military centennial goals and semiconductor node independence parity targets align.</div>
                                 </div>
                             </CardContent>
                         </Card>

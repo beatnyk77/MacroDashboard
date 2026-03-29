@@ -39,7 +39,7 @@ export const StateFiscalHeatmap: React.FC = () => {
     if (loading) {
         return (
             <div className="h-[600px] w-full bg-white/[0.02] border border-white/5 animate-pulse rounded-[3rem] flex items-center justify-center">
-                <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Mapping Fiscal Matrix...</span>
+                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Mapping Fiscal Matrix...</span>
             </div>
         );
     }
@@ -55,17 +55,17 @@ export const StateFiscalHeatmap: React.FC = () => {
                         </div>
                         <div>
                             <h3 className="text-sm font-black text-white uppercase tracking-widest italic">State Fiscal Health Matrix</h3>
-                            <p className="text-[0.6rem] text-muted-foreground/60 font-medium">Outstanding Debt vs. Fiscal Deficit (% GSDP)</p>
+                            <p className="text-xs text-muted-foreground/60 font-medium">Outstanding Debt vs. Fiscal Deficit (% GSDP)</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="h-[450px] w-full relative">
                     {/* Quadrant Labels Overlay */}
-                    <div className="absolute top-4 left-16 text-[0.5rem] font-black text-white/20 uppercase tracking-[0.2em]">Debt-Driven</div>
-                    <div className="absolute top-4 right-4 text-[0.5rem] font-black text-rose-500/30 uppercase tracking-[0.2em]">Fiscal Trap (Stress)</div>
-                    <div className="absolute bottom-12 left-16 text-[0.5rem] font-black text-emerald-500/30 uppercase tracking-[0.2em]">Fiscal Fortress</div>
-                    <div className="absolute bottom-12 right-4 text-[0.5rem] font-black text-white/20 uppercase tracking-[0.2em]">Growth-Driven</div>
+                    <div className="absolute top-4 left-16 text-xs font-black text-white/20 uppercase tracking-[0.2em]">Debt-Driven</div>
+                    <div className="absolute top-4 right-4 text-xs font-black text-rose-500/30 uppercase tracking-[0.2em]">Fiscal Trap (Stress)</div>
+                    <div className="absolute bottom-12 left-16 text-xs font-black text-emerald-500/30 uppercase tracking-[0.2em]">Fiscal Fortress</div>
+                    <div className="absolute bottom-12 right-4 text-xs font-black text-white/20 uppercase tracking-[0.2em]">Growth-Driven</div>
 
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart margin={{ top: 20, right: 20, bottom: 40, left: 20 }}>
@@ -120,14 +120,14 @@ export const StateFiscalHeatmap: React.FC = () => {
                     </div>
 
                     <div className="space-y-6">
-                        <p className="text-[0.7rem] text-muted-foreground/80 leading-relaxed">
+                        <p className="text-xs text-muted-foreground/80 leading-relaxed">
                             Market analysts trade the <span className="text-white font-bold italic">SDL-G-Sec spreads</span> based on relative fiscal slippage.
                         </p>
 
                         <div className="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 space-y-3">
                             <div className="flex items-center gap-2">
                                 <AlertCircle size={14} className="text-rose-500" />
-                                <span className="text-[0.6rem] font-black text-rose-500 uppercase tracking-widest">Stress Signal</span>
+                                <span className="text-xs font-black text-rose-500 uppercase tracking-widest">Stress Signal</span>
                             </div>
                             <p className="text-[0.65rem] text-rose-200/60 leading-relaxed italic">
                                 States in the <span className="text-rose-400 font-bold">Top-Right Trap</span> (GFD &gt; 3.5%, Debt &gt; 30%) are primary candidates for spread widening. Market demands higher liquidity premiums for these issuances.
@@ -137,7 +137,7 @@ export const StateFiscalHeatmap: React.FC = () => {
                         <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 space-y-3">
                             <div className="flex items-center gap-2">
                                 <ShieldCheck size={14} className="text-emerald-500" />
-                                <span className="text-[0.6rem] font-black text-emerald-500 uppercase tracking-widest">Solvency Alpha</span>
+                                <span className="text-xs font-black text-emerald-500 uppercase tracking-widest">Solvency Alpha</span>
                             </div>
                             <p className="text-[0.65rem] text-emerald-200/60 leading-relaxed italic">
                                 <span className="text-emerald-400 font-bold">Fiscal Fortresses</span> (Bottom-Left) typically trade at the tightest spreads to 10Y G-Sec, reflecting institutional confidence and superior treasury management.
@@ -152,10 +152,10 @@ export const StateFiscalHeatmap: React.FC = () => {
                 <div className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Info size={14} className="text-muted-foreground/40" />
-                        <span className="text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest">Source: RBI State Finances 2024-25</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">Source: RBI State Finances 2024-25</span>
                     </div>
                     <div className="flex items-center gap-1">
-                        <span className="text-[0.6rem] font-black text-white/20 uppercase tracking-widest italic">Live Spread Pulse</span>
+                        <span className="text-xs font-black text-white/20 uppercase tracking-widest italic">Live Spread Pulse</span>
                     </div>
                 </div>
             </div>
@@ -168,17 +168,17 @@ const CustomTooltip = ({ active, payload }: any) => {
         const data = payload[0].payload;
         return (
             <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/10 p-5 rounded-3xl shadow-3xl">
-                <div className="text-[0.7rem] font-black text-white italic mb-1 border-b border-white/5 pb-2 uppercase tracking-widest">
+                <div className="text-xs font-black text-white italic mb-1 border-b border-white/5 pb-2 uppercase tracking-widest">
                     {data.state_name} ({data.state_code})
                 </div>
                 <div className="space-y-2 mt-3">
                     <div className="flex justify-between gap-8">
                         <span className="text-[0.65rem] text-muted-foreground/60">Debt/GSDP:</span>
-                        <span className="text-[0.7rem] font-black text-white tabular-nums">{data.y}%</span>
+                        <span className="text-xs font-black text-white tabular-nums">{data.y}%</span>
                     </div>
                     <div className="flex justify-between gap-8">
                         <span className="text-[0.65rem] text-muted-foreground/60">GFD/GSDP:</span>
-                        <span className="text-[0.7rem] font-black text-rose-400 tabular-nums">{data.x}%</span>
+                        <span className="text-xs font-black text-rose-400 tabular-nums">{data.x}%</span>
                     </div>
                 </div>
             </div>

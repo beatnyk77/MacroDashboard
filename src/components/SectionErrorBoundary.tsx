@@ -53,7 +53,7 @@ export class SectionErrorBoundary extends Component<Props, State> {
                     </button>
                     {process.env.NODE_ENV === 'development' && (
                         <div className="mt-8 p-4 rounded-lg bg-black/40 border border-white/5 w-full text-left overflow-auto max-h-40">
-                            <code className="text-[10px] text-rose-400/50 block">
+                            <code className="text-xs text-rose-400/50 block">
                                 {this.state.error?.toString()}
                             </code>
                         </div>

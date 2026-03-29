@@ -148,7 +148,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                                 </div>
                                 <div className="text-xs text-muted-foreground bg-white/[0.02] p-3 rounded border border-white/5">
                                     {detailContent.methodology || 'Calculated using standardized Z-Score normalization against institutional source data.'}
-                                    <div className="mt-2 font-bold text-primary text-[0.6rem] uppercase">
+                                    <div className="mt-2 font-bold text-primary text-xs uppercase">
                                         DATA SOURCE: {detailContent.source || 'Standard Financial Feeds'}
                                     </div>
                                 </div>

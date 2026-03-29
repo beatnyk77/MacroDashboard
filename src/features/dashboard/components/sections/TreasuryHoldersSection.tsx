@@ -201,7 +201,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                             <div className="mt-4 text-center">
                                 <button
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    className="inline-flex items-center gap-2 text-[0.7rem] font-black text-primary hover:text-primary/80 uppercase tracking-widest transition-colors hover:underline"
+                                    className="inline-flex items-center gap-2 text-xs font-black text-primary hover:text-primary/80 uppercase tracking-widest transition-colors hover:underline"
                                 >
                                     {isExpanded ? (
                                         <>

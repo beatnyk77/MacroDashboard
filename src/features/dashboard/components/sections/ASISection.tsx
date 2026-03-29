@@ -129,7 +129,7 @@ export const ASISection: React.FC = () => {
                                 )}
                             >
                                 <Globe className="w-3.5 h-3.5" />
-                                <span className="text-[0.6rem] font-black uppercase tracking-wider">Geopolitical Alignment</span>
+                                <span className="text-xs font-black uppercase tracking-wider">Geopolitical Alignment</span>
                             </button>
                             <div className="w-[1px] h-4 bg-white/10 self-center mx-1" />
                             {metricTabs.map((tab) => (
@@ -147,7 +147,7 @@ export const ASISection: React.FC = () => {
                                     )}
                                 >
                                     <tab.icon className="w-3.5 h-3.5" />
-                                    <span className="text-[0.6rem] font-black uppercase tracking-wider">{tab.label.split(' ')[0]}</span>
+                                    <span className="text-xs font-black uppercase tracking-wider">{tab.label.split(' ')[0]}</span>
                                 </button>
                             ))}
                         </div>
@@ -157,7 +157,7 @@ export const ASISection: React.FC = () => {
                         <Suspense fallback={
                             <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl gap-4">
                                 <Activity className="w-6 h-6 text-emerald-500 animate-spin" />
-                                <span className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Calibrating Industrial Sensors...</span>
+                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Calibrating Industrial Sensors...</span>
                             </div>
                         }>
                             <IndiaLeafletMap
@@ -216,7 +216,7 @@ export const ASISection: React.FC = () => {
                     )}>
                         <div className="flex justify-between items-start mb-6">
                             <div className="space-y-1">
-                                <span className="text-[0.5rem] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">
+                                <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em]">
                                     {selectedState ? 'Selected Node' : 'National Buffer'}
                                 </span>
                                 <h4 className="text-xl font-black text-white/90 truncate">{activeStats.title}</h4>
@@ -239,7 +239,7 @@ export const ASISection: React.FC = () => {
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-xl font-black text-white font-mono tracking-tighter">₹{(activeStats.gva / 100000).toFixed(1)}</span>
-                                    <span className="text-[0.6rem] font-bold text-white/30 uppercase">T</span>
+                                    <span className="text-xs font-bold text-white/30 uppercase">T</span>
                                 </div>
                             </div>
                             <div className="space-y-1.5">
@@ -249,7 +249,7 @@ export const ASISection: React.FC = () => {
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-xl font-black text-white font-mono tracking-tighter">{(activeStats.employment / 1000).toFixed(1)}</span>
-                                    <span className="text-[0.6rem] font-bold text-white/30 uppercase">M</span>
+                                    <span className="text-xs font-bold text-white/30 uppercase">M</span>
                                 </div>
                             </div>
                             <div className="space-y-1.5 pt-4 border-t border-white/5">
@@ -286,7 +286,7 @@ export const ASISection: React.FC = () => {
                                         <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
                                             ${Math.round(activeStats.efficiency).toLocaleString()}
                                         </span>
-                                        <span className="text-[0.5rem] font-bold text-emerald-400/40 uppercase tracking-widest pl-1">CAPEX / NEW JOB</span>
+                                        <span className="text-xs font-bold text-emerald-400/40 uppercase tracking-widest pl-1">CAPEX / NEW JOB</span>
                                     </div>
                                 </div>
                             )}
@@ -302,11 +302,11 @@ export const ASISection: React.FC = () => {
                     {/* Rankings */}
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Tier-1 States</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Tier-1 States</h4>
                             <select
                                 value={rankingMetric}
                                 onChange={(e) => setRankingMetric(e.target.value as any)}
-                                className="bg-white/5 border-none text-[0.6rem] font-black text-muted-foreground uppercase py-1 rounded-lg cursor-pointer hover:text-white transition-colors"
+                                className="bg-white/5 border-none text-xs font-black text-muted-foreground uppercase py-1 rounded-lg cursor-pointer hover:text-white transition-colors"
                             >
                                 <option value="total_gva">GVA</option>
                                 <option value="total_employment">Labor</option>

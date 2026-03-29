@@ -71,7 +71,7 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
 
                             {/* Current Value */}
                             <div className="mb-3">
-                                <div className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">
+                                <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">
                                     Current
                                 </div>
                                 <div className="text-2xl font-black tabular-nums text-white">
@@ -112,19 +112,19 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                                     </div>
                                     <div className="grid grid-cols-3 gap-2 text-center">
                                         <div>
-                                            <div className="text-[0.5rem] text-muted-foreground/40 mb-1">MIN</div>
+                                            <div className="text-xs text-muted-foreground/40 mb-1">MIN</div>
                                             <div className="text-xs font-bold text-rose-500/80 tabular-nums">
                                                 {historicalStats.min.toFixed(2)}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-[0.5rem] text-muted-foreground/40 mb-1">AVG</div>
+                                            <div className="text-xs text-muted-foreground/40 mb-1">AVG</div>
                                             <div className="text-xs font-bold text-blue-500/80 tabular-nums">
                                                 {historicalStats.avg.toFixed(2)}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-[0.5rem] text-muted-foreground/40 mb-1">MAX</div>
+                                            <div className="text-xs text-muted-foreground/40 mb-1">MAX</div>
                                             <div className="text-xs font-bold text-emerald-500/80 tabular-nums">
                                                 {historicalStats.max.toFixed(2)}
                                             </div>
@@ -137,7 +137,7 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                             {zScore !== undefined && Math.abs(zScore) > 1 && (
                                 <div className="mt-3 pt-3 border-t border-white/10">
                                     <div className={cn(
-                                        "text-[0.6rem] font-bold uppercase tracking-wider px-2 py-1 rounded",
+                                        "text-xs font-bold uppercase tracking-wider px-2 py-1 rounded",
                                         Math.abs(zScore) > 2 ? "bg-rose-500/20 text-rose-400" : "bg-orange-500/20 text-orange-400"
                                     )}>
                                         {Math.abs(zScore) > 2 ? '⚠️ EXTREME VALUE' : '⚡ ELEVATED VALUE'}

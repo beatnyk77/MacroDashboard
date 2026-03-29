@@ -46,8 +46,8 @@ const MiniGauge: React.FC<{ auction: USTreasuryAuction | undefined; label: strin
             hasTailAlert ? "bg-rose-500/10 border-rose-500/30 animate-pulse" : "bg-white/[0.03] border-white/5"
         )}>
             <div className="flex items-center justify-between">
-                <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest">{label}</span>
-                {hasTailAlert && <span className="text-[0.5rem] font-black text-rose-500 uppercase tracking-tighter">Tail!</span>}
+                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</span>
+                {hasTailAlert && <span className="text-xs font-black text-rose-500 uppercase tracking-tighter">Tail!</span>}
             </div>
             <div className="flex items-end justify-between gap-2">
                 <span className={cn("text-xl font-black leading-none", regime.color)}>
@@ -224,40 +224,40 @@ export const USTreasuryDemandGauge: React.FC = () => {
                                             return (
                                                 <div className="p-4 rounded-2xl bg-black/90 border border-white/10 backdrop-blur-xl shadow-2xl space-y-3 min-w-[180px]">
                                                     <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                                                        <span className="text-[0.6rem] font-black text-muted-foreground uppercase">{format(new Date(data.date), 'MMM d, yyyy')}</span>
-                                                        <span className={cn("text-[0.6rem] font-black uppercase", getRegime(data.score).color)}>
+                                                        <span className="text-xs font-black text-muted-foreground uppercase">{format(new Date(data.date), 'MMM d, yyyy')}</span>
+                                                        <span className={cn("text-xs font-black uppercase", getRegime(data.score).color)}>
                                                             {getRegime(data.score).label}
                                                         </span>
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <div className="flex justify-between gap-4">
-                                                            <span className="text-[0.6rem] text-white/40 uppercase font-black">Score</span>
-                                                            <span className="text-[0.6rem] text-white font-black">{data.score.toFixed(2)}</span>
+                                                            <span className="text-xs text-white/40 uppercase font-black">Score</span>
+                                                            <span className="text-xs text-white font-black">{data.score.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between gap-4">
-                                                            <span className="text-[0.6rem] text-white/40 uppercase font-black">BTC Ratio</span>
-                                                            <span className="text-[0.6rem] text-white font-black">{data.btc?.toFixed(2)}</span>
+                                                            <span className="text-xs text-white/40 uppercase font-black">BTC Ratio</span>
+                                                            <span className="text-xs text-white font-black">{data.btc?.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between gap-4">
-                                                            <span className="text-[0.6rem] text-white/40 uppercase font-black">Dealer Absorption</span>
+                                                            <span className="text-xs text-white/40 uppercase font-black">Dealer Absorption</span>
                                                             <span className={cn(
-                                                                "text-[0.6rem] font-black",
+                                                                "text-xs font-black",
                                                                 (data.primary_dealer_pct > 12.5) ? "text-rose-500" : "text-white"
                                                             )}>
                                                                 {data.primary_dealer_pct?.toFixed(1)}%
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between gap-4">
-                                                            <span className="text-[0.6rem] text-white/40 uppercase font-black">Indirect %</span>
-                                                            <span className="text-[0.6rem] text-white font-black">{data.indirect?.toFixed(1)}%</span>
+                                                            <span className="text-xs text-white/40 uppercase font-black">Indirect %</span>
+                                                            <span className="text-xs text-white font-black">{data.indirect?.toFixed(1)}%</span>
                                                         </div>
                                                         <div className="flex justify-between gap-4">
-                                                            <span className="text-[0.6rem] text-white/40 uppercase font-black">High Yield</span>
-                                                            <span className="text-[0.6rem] text-white font-black">{data.yield?.toFixed(3)}%</span>
+                                                            <span className="text-xs text-white/40 uppercase font-black">High Yield</span>
+                                                            <span className="text-xs text-white font-black">{data.yield?.toFixed(3)}%</span>
                                                         </div>
                                                         <div className="flex justify-between gap-4">
-                                                            <span className="text-[0.6rem] text-white/40 uppercase font-black">Total Size</span>
-                                                            <span className="text-[0.6rem] text-white font-black">${formatNumber(data.size / 1e3, { decimals: 1 })}B</span>
+                                                            <span className="text-xs text-white/40 uppercase font-black">Total Size</span>
+                                                            <span className="text-xs text-white font-black">${formatNumber(data.size / 1e3, { decimals: 1 })}B</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -286,7 +286,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     <div className="pt-4 border-t border-white/5 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <TrendingUp size={12} className="text-emerald-500" />
-                            <span className="text-[0.6rem] font-black text-white/40 uppercase tracking-widest">Regime: {regime.label}</span>
+                            <span className="text-xs font-black text-white/40 uppercase tracking-widest">Regime: {regime.label}</span>
                         </div>
                         <span className="text-[0.65rem] font-bold text-white/20">52W Range: 0.82 — 2.14</span>
                     </div>
@@ -297,7 +297,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
             <div className="flex justify-center pt-8">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/5">
                     <Info size={12} className="text-blue-400" />
-                    <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none">
                         Source: U.S. Treasury Auction Results – updated weekly via FiscalData API
                     </span>
                 </div>

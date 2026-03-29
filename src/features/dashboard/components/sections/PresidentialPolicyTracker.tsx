@@ -59,7 +59,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                     </h3>
                 </div>
                 <div className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
-                    <span className="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest">H-S CONFIDENCE</span>
+                    <span className="text-xs font-black text-rose-400 uppercase tracking-widest">H-S CONFIDENCE</span>
                 </div>
             </div>
 
@@ -98,7 +98,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
 
                             {narrativeTag && (
                                 <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-3">
-                                    <span className="text-[0.6rem] font-bold text-blue-400/80">{narrativeTag}</span>
+                                    <span className="text-xs font-bold text-blue-400/80">{narrativeTag}</span>
                                 </div>
                             )}
 
@@ -119,7 +119,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                             {/* Magnitude Bar */}
                             <div className="mt-4">
                                 <div className="flex justify-between items-center mb-1.5">
-                                    <span className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40">Market Magnitude</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/40">Market Magnitude</span>
                                     <span className={cn("text-[0.65rem] font-black", isPositive ? "text-emerald-400" : "text-rose-400")}>
                                         {absScore * 10}%
                                     </span>
@@ -140,13 +140,13 @@ export const PresidentialPolicyTracker: React.FC = () => {
                                     >
                                         <div className="flex items-center gap-2">
                                             <Flag size={10} className="text-amber-500/60" />
-                                            <span className="text-[0.6rem] font-black uppercase tracking-widest text-amber-500/60 group-hover:text-amber-400 transition-colors">Macro Analogue</span>
+                                            <span className="text-xs font-black uppercase tracking-widest text-amber-500/60 group-hover:text-amber-400 transition-colors">Macro Analogue</span>
                                         </div>
                                         <ChevronDown size={14} className={cn("text-amber-500/60 transition-transform", isExpanded && "rotate-180")} />
                                     </button>
                                     {isExpanded && (
                                         <div className="mt-2 p-3 rounded-xl bg-black/20 border border-white/5">
-                                            <p className="text-[0.7rem] font-bold text-amber-400/80 leading-relaxed italic">
+                                            <p className="text-xs font-bold text-amber-400/80 leading-relaxed italic">
                                                 {macroAnalogue}
                                             </p>
                                         </div>
@@ -161,7 +161,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
             <div className="mt-auto p-3 rounded-2xl bg-rose-500/5 border border-rose-500/10">
                 <div className="flex items-center gap-2">
                     <Flag size={10} className="text-rose-400/60" />
-                    <p className="text-[0.6rem] font-bold text-rose-400/60 uppercase tracking-widest leading-tight">
+                    <p className="text-xs font-bold text-rose-400/60 uppercase tracking-widest leading-tight">
                         Live policy tracking with deep historical correlation analysis
                     </p>
                 </div>

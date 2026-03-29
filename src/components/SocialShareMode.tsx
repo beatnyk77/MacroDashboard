@@ -48,7 +48,7 @@ export const SocialShareMode: React.FC = () => {
                             <Camera size={20} />
                         </button>
                     </TooltipTrigger>
-                    <TooltipContent side="left" className="bg-slate-950 border-white/10 text-[0.6rem] font-black uppercase tracking-widest">
+                    <TooltipContent side="left" className="bg-slate-950 border-white/10 text-xs font-black uppercase tracking-widest">
                         Clean Screenshot View
                     </TooltipContent>
                 </Tooltip>
@@ -60,7 +60,7 @@ export const SocialShareMode: React.FC = () => {
                 isShareMode ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
             )}>
                 <div className="flex items-center gap-3 bg-slate-950/80 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full shadow-2xl">
-                    <span className="text-[0.6rem] font-black text-white uppercase tracking-[0.2em] px-2 italic">
+                    <span className="text-xs font-black text-white uppercase tracking-[0.2em] px-2 italic">
                         Terminal Active: Capture Mode
                     </span>
                     <button

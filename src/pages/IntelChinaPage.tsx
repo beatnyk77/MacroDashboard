@@ -128,7 +128,7 @@ export const IntelChinaPage: React.FC = () => {
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-8">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-2 text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 mb-12">
+                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground/40 mb-12">
                         <Link to="/" className="hover:text-white transition-colors">Home</Link>
                         <span>/</span>
                         <span className="text-red-400">China Intelligence</span>
@@ -197,7 +197,7 @@ export const IntelChinaPage: React.FC = () => {
                             >
                                 <Icon size={18} className="mb-3 opacity-80" />
                                 <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
-                                <p className="text-[0.6rem] text-muted-foreground/60 leading-relaxed">{desc}</p>
+                                <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
                             </a>
                         ))}
                     </motion.div>
@@ -286,23 +286,23 @@ export const IntelChinaPage: React.FC = () => {
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-amber-500" />
-                            <h2 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Credit Impulse Deep Dive</h2>
+                            <h2 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Credit Impulse Deep Dive</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-4">
-                                <p className="text-[0.6rem] font-black text-amber-400 uppercase tracking-widest">What is China's Credit Impulse?</p>
+                                <p className="text-xs font-black text-amber-400 uppercase tracking-widest">What is China's Credit Impulse?</p>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
                                     China's credit impulse measures the change in new credit issued as a percentage of GDP. It is one of the most powerful leading indicators for global economic activity, with a 9-12 month lead on commodity demand and EM asset prices.
                                 </p>
                                 <p className="text-xs text-muted-foreground/60 leading-relaxed">
                                     A rising impulse signals accelerating credit growth, typically bullish for oil, copper, and EM equities. A falling impulse warns of demand contraction ahead.
                                 </p>
-                                <Link to="/glossary/de-dollarization" className="inline-flex items-center gap-1.5 text-[0.6rem] font-black uppercase tracking-widest text-amber-400 hover:text-amber-300 transition-colors mt-2">
+                                <Link to="/glossary/de-dollarization" className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-amber-400 hover:text-amber-300 transition-colors mt-2">
                                     Read: De-Dollarization →
                                 </Link>
                             </div>
                             <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-4">
-                                <p className="text-[0.6rem] font-black text-red-400 uppercase tracking-widest">Deflation Risk Monitor</p>
+                                <p className="text-xs font-black text-red-400 uppercase tracking-widest">Deflation Risk Monitor</p>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
                                     China has been experiencing persistent PPI deflation since mid-2022, driven by a domestic demand shortfall and over-supply in industrial capacity. When PPI is deeply negative, it exports disinflationary pressure globally through cheaper manufactured goods.
                                 </p>
@@ -321,7 +321,7 @@ export const IntelChinaPage: React.FC = () => {
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-red-500" />
-                            <h2 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">China De-Dollarization Strategy</h2>
+                            <h2 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">China De-Dollarization Strategy</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {[

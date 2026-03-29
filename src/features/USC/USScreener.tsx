@@ -82,7 +82,7 @@ export const USScreener: React.FC = () => {
             <Box sx={{ overflowX: 'auto' }}>
                 <table className="w-full text-left border-separate border-spacing-y-2">
                     <thead>
-                        <tr className="text-[0.6rem] font-black uppercase tracking-widest text-white/20">
+                        <tr className="text-xs font-black uppercase tracking-widest text-white/20">
                             <th className="px-6 pb-2">Company</th>
                             <th className="px-6 pb-2 text-right">P/E</th>
                             <th className="px-6 pb-2 text-right">P/B</th>

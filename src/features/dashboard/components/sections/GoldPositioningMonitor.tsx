@@ -71,10 +71,10 @@ export const GoldPositioningMonitor: React.FC = () => {
                     <MotionCard>
                         <Box sx={{ p: 3 }}>
                             <div className="flex items-center justify-between mb-6">
-                                <span className="text-[0.7rem] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
+                                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
                                     <Activity size={12} /> Institutional Net Position
                                 </span>
-                                <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[0.6rem] font-bold">COT PROXY</div>
+                                <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold">COT PROXY</div>
                             </div>
                             <Box sx={{ height: 250 }}>
                                 <ResponsiveContainer width="100%" height="100%">
@@ -99,7 +99,7 @@ export const GoldPositioningMonitor: React.FC = () => {
                 <Grid item xs={12} lg={5}>
                     <MotionCard>
                         <Box sx={{ p: 3, height: '100%', minHeight: 330 }}>
-                            <span className="text-[0.7rem] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 mb-6">
+                            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 mb-6">
                                 <Layers size={12} /> Paper vs Physical Flows
                             </span>
                             <Box sx={{ height: 230 }}>

@@ -42,7 +42,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
     if (isLoading) {
         return (
             <div className="h-[500px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Mapping Divergence...</span>
+                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Mapping Divergence...</span>
             </div>
         );
     }
@@ -195,7 +195,7 @@ const MetricMiniCard = ({ label, value, sub, icon }: any) => (
         <div>
             <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</div>
             <div className="text-lg font-black tabular-nums text-white/90 leading-none">{value}</div>
-            <div className="text-[0.6rem] text-muted-foreground/30 mt-1">{sub}</div>
+            <div className="text-xs text-muted-foreground/30 mt-1">{sub}</div>
         </div>
     </div>
 );
@@ -203,13 +203,13 @@ const MetricMiniCard = ({ label, value, sub, icon }: any) => (
 const InsightCard = ({ title, description, value, unit = '', trend }: any) => (
     <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all flex flex-col justify-between">
         <div>
-            <div className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">{title}</div>
+            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">{title}</div>
             <p className="text-xs text-muted-foreground/60 leading-relaxed">{description}</p>
         </div>
         <div className="mt-6 flex items-baseline justify-between">
             <span className="text-2xl font-black text-white/90">{value?.toFixed(1)}{unit}</span>
             <span className={cn(
-                "text-[0.6rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest",
+                "text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-widest",
                 trend === 'critical' || trend === 'high' ? "bg-rose-500/10 text-rose-400" : "bg-emerald-500/10 text-emerald-400"
             )}>
                 {trend}
@@ -222,7 +222,7 @@ const ZoomButton = ({ active, onClick, label }: any) => (
     <button
         onClick={onClick}
         className={cn(
-            "px-3 py-1 rounded-lg text-[0.6rem] font-black uppercase tracking-widest transition-all",
+            "px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
             active ? "bg-white text-black" : "bg-white/[0.05] text-muted-foreground/40 hover:bg-white/[0.1]"
         )}
     >
@@ -234,7 +234,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-background-dashboard/90 backdrop-blur-md border border-white/10 p-4 rounded-xl shadow-2xl">
-                <div className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-widest mb-3">
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-3">
                     {new Date(label).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                 </div>
                 <div className="space-y-2">
@@ -244,7 +244,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
                                 <span className="text-[0.65rem] font-bold text-muted-foreground/80">{entry.name}</span>
                             </div>
-                            <span className="text-[0.7rem] font-black tabular-nums">{entry.value.toFixed(2)}{entry.name.includes('Rate') || entry.name.includes('Fed') || entry.name.includes('RBI') ? '%' : ''}</span>
+                            <span className="text-xs font-black tabular-nums">{entry.value.toFixed(2)}{entry.name.includes('Rate') || entry.name.includes('Fed') || entry.name.includes('RBI') ? '%' : ''}</span>
                         </div>
                     ))}
                 </div>

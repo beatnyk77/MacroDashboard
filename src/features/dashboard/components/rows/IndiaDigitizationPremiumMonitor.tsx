@@ -44,8 +44,8 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            <span className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em]">Alpha Signal: Formal Economy Scaling</span>
-                            <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] ml-2 border-l border-white/10 pl-2">Source: RBI / NPCI / IMF</span>
+                            <span className="text-emerald-400 text-xs font-black uppercase tracking-[0.2em]">Alpha Signal: Formal Economy Scaling</span>
+                            <span className="text-slate-500 text-xs font-black uppercase tracking-[0.2em] ml-2 border-l border-white/10 pl-2">Source: RBI / NPCI / IMF</span>
                         </div>
                         <h2 className="text-3xl font-black text-white tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                             India Digitization & Formalization Premium
@@ -85,7 +85,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                             <ShieldCheck className="w-5 h-5" />
                             <span className="text-sm font-black uppercase tracking-widest text-emerald-400">Premium Active</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 font-medium leading-tight">
+                        <p className="text-xs text-slate-400 font-medium leading-tight">
                             India's DPI infrastructure is driving structural nominal GDP efficiency vs EM peers. Significant FDI narrative de-risking sovereign bonds.
                         </p>
                     </div>
@@ -100,7 +100,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                 The Parabolic Surge <ArrowRight className="w-4 h-4 text-slate-600" />
                             </h3>
-                            <p className="text-[10px] text-slate-500 font-bold">UPI Volume (Bn) & Value (₹ Trillion)</p>
+                            <p className="text-xs text-slate-500 font-bold">UPI Volume (Bn) & Value (₹ Trillion)</p>
                         </div>
                     </div>
 
@@ -161,11 +161,11 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                     <div className="flex gap-4 mt-4">
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Volume</span>
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-tighter">Volume</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-blue-500" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Value</span>
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-tighter">Value</span>
                         </div>
                     </div>
                 </div>
@@ -177,7 +177,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                 The Digitization Premium <ArrowRight className="w-4 h-4 text-slate-600" />
                             </h3>
-                            <p className="text-[10px] text-slate-500 font-bold">RBI DPI Index vs. G20 EM Baseline</p>
+                            <p className="text-xs text-slate-500 font-bold">RBI DPI Index vs. G20 EM Baseline</p>
                         </div>
                     </div>
 
@@ -230,11 +230,11 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                     <div className="flex gap-4 mt-4">
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">India DPI Index</span>
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-tighter">India DPI Index</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-0.5 border-b border-dashed border-white/40" />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">G20 Baseline</span>
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-tighter">G20 Baseline</span>
                         </div>
                     </div>
                 </div>
@@ -247,14 +247,14 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                         <div className="p-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
                             <Info className="w-4 h-4 text-emerald-400" />
                         </div>
-                        <h4 className="text-[11px] font-black text-white uppercase tracking-widest text-emerald-400">Structural Efficiency Narrative</h4>
+                        <h4 className="text-xs font-black text-white uppercase tracking-widest text-emerald-400">Structural Efficiency Narrative</h4>
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed font-medium">
                         India's digitization is no longer just about payments; it's a formalization engine. Unified Payments Interface (UPI) scale is driving tax buoyancy (GST) and credit democratization for MSMEs. This provides a structural efficiency premium over EM peers, justifying premium equity multiples and supporting sovereign debt stability.
                     </p>
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Formalization Alpha Score</div>
+                    <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Formalization Alpha Score</div>
                     <div className="flex gap-1">
                         {[1, 2, 3, 4, 5, 6, 7].map((i) => (
                             <div
@@ -266,7 +266,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                             />
                         ))}
                     </div>
-                    <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Tier 1 Performance</span>
+                    <span className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Tier 1 Performance</span>
                 </div>
             </div>
         </section>
@@ -276,7 +276,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
 const MetricCard = ({ title, value, subtext, icon, colorClass }: any) => (
     <div className="p-6 bg-transparent hover:bg-white/[0.01] transition-colors group">
         <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-300 transition-colors tracking-[0.2em]">{title}</span>
+            <span className="text-xs font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-300 transition-colors tracking-[0.2em]">{title}</span>
             <div className="p-1.5 rounded-lg bg-white/[0.02] border border-white/5">
                 {icon}
             </div>
@@ -285,7 +285,7 @@ const MetricCard = ({ title, value, subtext, icon, colorClass }: any) => (
             <span className={`text-3xl font-black tracking-tighter leading-none ${colorClass}`}>{value}</span>
         </div>
         {subtext && (
-            <div className="mt-2 text-[10px] font-black tracking-widest uppercase text-slate-600 italic tracking-[0.15em]">{subtext}</div>
+            <div className="mt-2 text-xs font-black tracking-widest uppercase text-slate-600 italic tracking-[0.15em]">{subtext}</div>
         )}
     </div>
 );
@@ -294,13 +294,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl z-50 min-w-[200px]">
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
+                <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
                     {label}
                 </div>
                 <div className="space-y-2">
                     {payload.filter((p: any) => p.dataKey !== 'premium_spread').map((entry: any) => (
                         <div key={entry.name} className="flex justify-between items-center">
-                            <span className="text-[11px] text-slate-300 font-bold flex items-center gap-2 uppercase tracking-tighter">
+                            <span className="text-xs text-slate-300 font-bold flex items-center gap-2 uppercase tracking-tighter">
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
                                 {entry.name}
                             </span>

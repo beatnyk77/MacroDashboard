@@ -90,7 +90,7 @@ export const UpcomingIPOs: React.FC = () => {
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value as any)}
-                        className="bg-black/40 border border-white/10 rounded-2xl py-3 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
+                        className="bg-black/40 border border-white/10 rounded-2xl py-3 px-6 text-xs font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
                     >
                         <option value="All">All Status</option>
                         <option value="Upcoming">Upcoming</option>
@@ -101,7 +101,7 @@ export const UpcomingIPOs: React.FC = () => {
                     <select
                         value={sectorFilter}
                         onChange={(e) => setSectorFilter(e.target.value)}
-                        className="bg-black/40 border border-white/10 rounded-2xl py-3 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
+                        className="bg-black/40 border border-white/10 rounded-2xl py-3 px-6 text-xs font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
                     >
                         {sectors.map(s => <option key={s ?? 'All'} value={s ?? 'All'}>{s ?? 'All'}</option>)}
                     </select>
@@ -112,13 +112,13 @@ export const UpcomingIPOs: React.FC = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/[0.01]">
-                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Company</th>
-                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Sector</th>
-                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Size (Cr)</th>
-                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Price Band</th>
-                            <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-right">Dates</th>
-                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">Macro Risk</th>
-                            <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 text-center">Status</th>
+                            <th className="px-8 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30">Company</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30">Sector</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30 text-right">Size (Cr)</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30 text-right">Price Band</th>
+                            <th className="px-8 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30 text-right">Dates</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30 text-center">Macro Risk</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30 text-center">Status</th>
                             <th className="px-8 py-6"></th>
                         </tr>
                     </thead>
@@ -135,17 +135,17 @@ export const UpcomingIPOs: React.FC = () => {
                                 >
                                     <td className="px-8 py-6">
                                         <div className="font-black text-white text-sm tracking-tight group-hover:text-blue-400 transition-colors">{ipo.company_name}</div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/20 mt-1">{ipo.exchange}</div>
+                                        <div className="text-xs font-black uppercase tracking-widest text-white/20 mt-1">{ipo.exchange}</div>
                                     </td>
                                     <td className="px-6 py-6">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-400/80 bg-blue-400/5 px-3 py-1.5 rounded-full border border-blue-400/10">
+                                        <span className="text-xs font-black uppercase tracking-widest text-blue-400/80 bg-blue-400/5 px-3 py-1.5 rounded-full border border-blue-400/10">
                                             {ipo.sector}
                                         </span>
                                     </td>
                                     <td className="px-6 py-6 text-right">
                                         <div className="text-sm font-black text-emerald-400 italic tracking-tighter">
                                             ₹{ipo.issue_size_cr?.toLocaleString()}
-                                            <span className="text-[10px] text-white/20 ml-1">Cr</span>
+                                            <span className="text-xs text-white/20 ml-1">Cr</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-6 text-right">
@@ -154,13 +154,13 @@ export const UpcomingIPOs: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-8 py-6 text-right">
-                                        <div className="inline-flex items-center gap-2 text-[10px] font-black tracking-widest text-white/60 uppercase italic">
+                                        <div className="inline-flex items-center gap-2 text-xs font-black tracking-widest text-white/60 uppercase italic">
                                             <Calendar size={12} className="text-white/20" />
                                             {ipo.open_date ? format(new Date(ipo.open_date), 'dd MMM') : '--'} - {ipo.close_date ? format(new Date(ipo.close_date), 'dd MMM') : '--'}
                                         </div>
                                     </td>
                                     <td className="px-6 py-6 text-center">
-                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border ${ipo.macro_risk_score < 40 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border ${ipo.macro_risk_score < 40 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
                                             ipo.macro_risk_score < 70 ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
                                                 'bg-rose-500/10 border-rose-500/20 text-rose-400'
                                             }`}>
@@ -170,7 +170,7 @@ export const UpcomingIPOs: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-6 text-center">
-                                        <span className={`text-[10px] font-black uppercase tracking-widest ${ipo.status === 'Open' ? 'text-emerald-400 animate-pulse' :
+                                        <span className={`text-xs font-black uppercase tracking-widest ${ipo.status === 'Open' ? 'text-emerald-400 animate-pulse' :
                                             ipo.status === 'Upcoming' ? 'text-blue-400' :
                                                 'text-white/20'
                                             }`}>
@@ -200,7 +200,7 @@ export const UpcomingIPOs: React.FC = () => {
                         <div className="inline-flex p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 text-white/10 mb-6">
                             <TrendingUp size={48} />
                         </div>
-                        <h3 className="text-white/30 font-black uppercase tracking-widest text-[10px]">No matching IPO candidates detected</h3>
+                        <h3 className="text-white/30 font-black uppercase tracking-widest text-xs">No matching IPO candidates detected</h3>
                     </div>
                 )}
             </div>
@@ -211,7 +211,7 @@ export const UpcomingIPOs: React.FC = () => {
                     <Zap size={24} />
                 </div>
                 <div>
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-orange-400 mb-2">Protocol Overlay: Macro Risk Intelligence</h4>
+                    <h4 className="text-xs font-black uppercase tracking-widest text-orange-400 mb-2">Protocol Overlay: Macro Risk Intelligence</h4>
                     <p className="text-[0.65rem] text-muted-foreground/60 leading-relaxed font-medium max-w-4xl">
                         The "Macro Risk Score" is calculated based on our proprietary India Macro Pulse signals (GFCF levels, formalization premiums, and state-capex resilience) applied to the candidate's primary sector and geographical exposure. This is an intelligence overlay and does not constitute financial advice.
                     </p>

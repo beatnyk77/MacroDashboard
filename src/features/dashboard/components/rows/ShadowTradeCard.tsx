@@ -128,7 +128,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
                                                             <div className="text-2xl font-black font-mono tabular-nums">
                                                                 {ratio.toFixed(1)}×
                                                             </div>
-                                                            <div className="text-[0.6rem] font-bold uppercase tracking-widest mt-1 opacity-80">
+                                                            <div className="text-xs font-bold uppercase tracking-widest mt-1 opacity-80">
                                                                 {getSpikeLabel(ratio)}
                                                             </div>
 
@@ -153,7 +153,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
                                                                         </div>
                                                                     </div>
                                                                     {row.metadata?.note && (
-                                                                        <p className="text-[0.6rem] text-muted-foreground/60 italic mt-2 border-t border-white/5 pt-2">
+                                                                        <p className="text-xs text-muted-foreground/60 italic mt-2 border-t border-white/5 pt-2">
                                                                             {row.metadata.note}
                                                                         </p>
                                                                     )}

@@ -23,8 +23,8 @@ export const DataQualityBadge: React.FC<DataQualityBadgeProps> = ({
 
     // Size maps
     const sizeClasses = {
-        small: "px-1.5 py-0.5 text-[0.5rem]",
-        medium: "px-2.5 py-1 text-[0.6rem]",
+        small: "px-1.5 py-0.5 text-xs",
+        medium: "px-2.5 py-1 text-xs",
         large: "px-3 py-1.5 text-xs"
     };
 

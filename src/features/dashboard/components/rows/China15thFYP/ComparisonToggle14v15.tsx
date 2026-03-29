@@ -41,7 +41,7 @@ export const ComparisonToggle14v15: React.FC = () => {
                         <Card key={idx} className="bg-white/[0.02] border-white/5 relative overflow-hidden h-full">
                             <CardContent className="p-6">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="text-[0.6rem] font-black text-red-400 uppercase tracking-widest">{shift.pillar}</div>
+                                    <div className="text-xs font-black text-red-400 uppercase tracking-widest">{shift.pillar}</div>
                                     <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500">
                                         <Icon size={14} />
                                     </div>

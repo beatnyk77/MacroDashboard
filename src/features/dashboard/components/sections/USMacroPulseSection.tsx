@@ -95,7 +95,7 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
             {/* Label Block */}
             <div className="w-full md:w-56 space-y-1 shrink-0">
                 <div className="text-[0.65rem] font-black text-muted-foreground/40 uppercase tracking-widest">{config.label}</div>
-                <div className="text-[0.6rem] font-bold text-white/30 uppercase tracking-tighter">{config.unit}</div>
+                <div className="text-xs font-bold text-white/30 uppercase tracking-tighter">{config.unit}</div>
             </div>
 
             {/* Sparkline Block */}
@@ -148,7 +148,7 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                                     "text-emerald-500 bg-emerald-500"
                     )} />
                     {data.isStale && (
-                        <span className="text-[0.5rem] font-black text-amber-500/60 uppercase tracking-tighter">Delay</span>
+                        <span className="text-xs font-black text-amber-500/60 uppercase tracking-tighter">Delay</span>
                     )}
                 </div>
             </div>
@@ -241,7 +241,7 @@ export const USMacroPulseSection: React.FC = () => {
                     <ActivityIcon color="#3b82f6" size={16} />
                 </div>
                 <div>
-                    <span className="text-[0.7rem] font-bold text-blue-400 uppercase tracking-widest">Institutional Note:</span>
+                    <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Institutional Note:</span>
                     <p className="text-[0.65rem] text-muted-foreground/50 leading-relaxed mt-1">
                         All sparklines represent 25-year indexed historical distribution. Current levels are benchmarked against 3-year rolling standard deviations (Z-Scores) to identify regime instability. Sources include FRED, US Treasury, and BLS.
                     </p>

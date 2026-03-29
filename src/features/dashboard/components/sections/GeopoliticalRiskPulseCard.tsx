@@ -34,12 +34,12 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
 
     const renderSubMetric = (label: string, value: number | undefined, color: string) => (
         <div className="flex flex-col gap-1">
-            <span className="text-[0.6rem] font-black text-muted-foreground uppercase tracking-widest">{label}</span>
+            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</span>
             <div className="flex items-baseline gap-1">
                 <span className={cn("text-lg font-black tracking-tighter", color)}>
                     {value !== undefined ? (value > 0 ? '+' : '') + value.toFixed(1) : '-'}
                 </span>
-                <span className="text-[0.5rem] font-bold text-muted-foreground/40">Z</span>
+                <span className="text-xs font-bold text-muted-foreground/40">Z</span>
             </div>
         </div>
     );
@@ -53,7 +53,7 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
                         <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.15em]">
                             Systemic Risk Detection
                         </span>
-                        <div className={cn("px-1.5 py-0.5 rounded-[3px] border text-[0.5rem] font-black", statusBg, statusColor)}>
+                        <div className={cn("px-1.5 py-0.5 rounded-[3px] border text-xs font-black", statusBg, statusColor)}>
                             {status.toUpperCase()}
                         </div>
                     </div>

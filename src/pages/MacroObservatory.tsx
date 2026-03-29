@@ -47,7 +47,7 @@ export const MacroObservatory: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.7rem] font-black uppercase tracking-[0.2em] mb-8"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-8"
                     >
                         <Search size={14} /> Intelligence Network
                     </motion.div>
@@ -81,7 +81,7 @@ export const MacroObservatory: React.FC = () => {
                             </p>
 
                             <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                                <span className="text-[0.6rem] font-black uppercase tracking-widest text-muted-foreground/40 group-hover:text-white transition-colors">Enter Lab</span>
+                                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 group-hover:text-white transition-colors">Enter Lab</span>
                                 <ChevronRight size={14} className="text-muted-foreground/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
                             </div>
 
@@ -97,7 +97,7 @@ export const MacroObservatory: React.FC = () => {
                         <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
                             <Activity size={24} className="text-white/20" />
                         </div>
-                        <p className="text-[0.6rem] font-black uppercase tracking-widest text-white/40">New Module Pending</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-white/40">New Module Pending</p>
                     </div>
                 </div>
             </Container>

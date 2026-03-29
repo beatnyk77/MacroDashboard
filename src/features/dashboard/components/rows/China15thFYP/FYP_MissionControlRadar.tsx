@@ -54,7 +54,7 @@ export const FYP_MissionControlRadar: React.FC = () => {
                             <div className="text-[0.55rem] font-black text-muted-foreground/60 uppercase tracking-tighter">{p.label}</div>
                             <div className="flex items-center justify-between">
                                 <div className="text-[0.65rem] font-bold text-white uppercase">{p.value_target}</div>
-                                <div className="text-[0.6rem] font-black text-red-400">Idx: {p.impact_score}</div>
+                                <div className="text-xs font-black text-red-400">Idx: {p.impact_score}</div>
                             </div>
                         </div>
                     ))}

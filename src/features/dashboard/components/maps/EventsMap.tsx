@@ -56,7 +56,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
             <div className="absolute top-4 left-4 z-10 flex items-center gap-3">
                 <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center gap-2">
                     <Activity className="w-3 h-3 text-emerald-400" />
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest">
+                    <span className="text-xs font-black text-white uppercase tracking-widest">
                         Live Event Feed
                     </span>
                 </div>
@@ -74,7 +74,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                         <AlertCircle className="w-3 h-3 text-amber-400" />
                     )}
                     <span className={cn(
-                        "text-[9px] font-bold uppercase tracking-widest",
+                        "text-xs font-bold uppercase tracking-widest",
                         ingestionSuccess ? "text-emerald-400" : "text-amber-400"
                     )}>
                         {ingestionSuccess ? 'Feed Active' : 'Feed Degraded'}
@@ -85,7 +85,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                 {lastSync && (
                     <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center gap-2">
                         <Clock className="w-3 h-3 text-blue-400" />
-                        <span className="text-[9px] font-mono text-muted-foreground">
+                        <span className="text-xs font-mono text-muted-foreground">
                             {new Date().getTime() - lastSync.getTime() < 3600000
                                 ? `${Math.floor((new Date().getTime() - lastSync.getTime()) / 60000)}m ago`
                                 : lastSync.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
@@ -98,7 +98,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
             {/* Event Count Badge */}
             {hasEvents && (
                 <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10">
-                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-0.5">
                         Active Events
                     </div>
                     <div className="text-2xl font-black text-white tabular-nums">
@@ -179,7 +179,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                             {eventIcons[hoveredEvent.type] || eventIcons.default}
                         </div>
                         <div className="flex-1">
-                            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                            <div className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">
                                 {hoveredEvent.type}
                             </div>
                             <div className="text-sm font-bold text-white mb-2 line-clamp-2">

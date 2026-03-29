@@ -75,13 +75,13 @@ const CustomTooltip = ({ active, payload }: any) => {
                     {!data.dataAvailable && (
                         <div className="mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5">
                             <Info className="w-3 h-3 text-amber-400" />
-                            <span className="text-[0.6rem] font-bold text-amber-400/80 uppercase tracking-wider">Partial data</span>
+                            <span className="text-xs font-bold text-amber-400/80 uppercase tracking-wider">Partial data</span>
                         </div>
                     )}
                     {data.isStale && (
                         <div className="mt-1 flex items-center gap-1.5">
                             <ShieldAlert className="w-3 h-3 text-rose-400 animate-pulse" />
-                            <span className="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest">Data Delayed</span>
+                            <span className="text-xs font-black text-rose-400 uppercase tracking-widest">Data Delayed</span>
                         </div>
                     )}
                 </div>
@@ -138,7 +138,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                     onClick={() => setIsExpanded(!isExpanded)}
                     className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all"
                 >
-                    <span className="text-[0.6rem] font-black uppercase tracking-widest text-white/80 group-hover:text-white">
+                    <span className="text-xs font-black uppercase tracking-widest text-white/80 group-hover:text-white">
                         {isExpanded ? 'Collapse View' : 'Deep Analysis'}
                     </span>
                     <Activity className="w-3 h-3 text-blue-400 group-hover:animate-pulse" />
@@ -172,33 +172,33 @@ export const SovereignRiskMatrix = React.memo(() => {
                             <div className="absolute top-4 left-16 z-0 pointer-events-none">
                                 <div className="flex items-center gap-1.5 mb-0.5">
                                     <Anchor className="w-3 h-3 text-emerald-400" />
-                                    <span className="text-[0.6rem] font-black text-emerald-400 uppercase tracking-widest">Dynamic Anchors</span>
+                                    <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">Dynamic Anchors</span>
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-emerald-500/60 uppercase tracking-wider block">Low Debt, High Growth</span>
+                                <span className="text-xs font-bold text-emerald-500/60 uppercase tracking-wider block">Low Debt, High Growth</span>
                             </div>
 
                             <div className="absolute top-4 right-8 z-0 pointer-events-none text-right">
                                 <div className="flex items-center gap-1.5 mb-0.5 justify-end">
-                                    <span className="text-[0.6rem] font-black text-amber-400 uppercase tracking-widest">Growth at Risk</span>
+                                    <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Growth at Risk</span>
                                     <TrendingUp className="w-3 h-3 text-amber-400" />
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-amber-500/60 uppercase tracking-wider block">High Debt, High Growth</span>
+                                <span className="text-xs font-bold text-amber-500/60 uppercase tracking-wider block">High Debt, High Growth</span>
                             </div>
 
                             <div className="absolute bottom-16 right-8 z-0 pointer-events-none text-right">
                                 <div className="flex items-center gap-1.5 mb-0.5 justify-end">
-                                    <span className="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest">Fiscal Trap</span>
+                                    <span className="text-xs font-black text-rose-400 uppercase tracking-widest">Fiscal Trap</span>
                                     <ShieldAlert className="w-3 h-3 text-rose-400" />
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-rose-500/60 uppercase tracking-wider block">High Debt, Low Growth</span>
+                                <span className="text-xs font-bold text-rose-500/60 uppercase tracking-wider block">High Debt, Low Growth</span>
                             </div>
 
                             <div className="absolute bottom-16 left-16 z-0 pointer-events-none">
                                 <div className="flex items-center gap-1.5 mb-0.5">
                                     <Activity className="w-3 h-3 text-blue-400" />
-                                    <span className="text-[0.6rem] font-black text-blue-400 uppercase tracking-widest">Stagnant Stability</span>
+                                    <span className="text-xs font-black text-blue-400 uppercase tracking-widest">Stagnant Stability</span>
                                 </div>
-                                <span className="text-[0.5rem] font-bold text-blue-500/60 uppercase tracking-wider block">Low Debt, Low Growth</span>
+                                <span className="text-xs font-bold text-blue-500/60 uppercase tracking-wider block">Low Debt, Low Growth</span>
                             </div>
                         </>
                     )}
@@ -208,7 +208,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                         {Object.entries(REGION_LABELS).map(([key, label]) => (
                             <div key={key} className="flex items-center gap-1.5">
                                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: REGION_COLORS[key as G20Region] }} />
-                                <span className="text-[0.7rem] font-black text-white/50 uppercase tracking-widest">{label}</span>
+                                <span className="text-xs font-black text-white/50 uppercase tracking-widest">{label}</span>
                             </div>
                         ))}
                     </div>

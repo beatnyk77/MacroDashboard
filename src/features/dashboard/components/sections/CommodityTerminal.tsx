@@ -45,11 +45,11 @@ export const CommodityTerminal: React.FC = () => {
                 <div className="flex flex-wrap gap-3">
                     <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
                         <Calendar size={14} className="text-orange-500" />
-                        <span className="text-[0.6rem] font-black text-white/60 uppercase tracking-widest">25Y History Buffer</span>
+                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">25Y History Buffer</span>
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
                         <Target size={14} className="text-emerald-500" />
-                        <span className="text-[0.6rem] font-black text-white/60 uppercase tracking-widest">Real-Time Markers</span>
+                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">Real-Time Markers</span>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@ export const CommodityTerminal: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                     <h4 className="text-sm font-black text-white uppercase tracking-widest">Macro Logic: The Real Asset Pivot</h4>
-                    <p className="text-[0.7rem] text-muted-foreground leading-relaxed max-w-4xl italic">
+                    <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl italic">
                         Commodities act as the ultimate "Regime Verification" engine. While liquidity drives nominal prices, industrial activity
                         manifests in metal spreads. High energy costs act as a <span className="text-rose-400 font-bold">tax on consumption</span>, while rising
                         copper demand signals <span className="text-emerald-400 font-bold">industrial expansion</span>. The 25-year charts above help visualize

@@ -72,7 +72,7 @@ export const ChinaPBOCLiquidityMonitor: React.FC = () => {
                         <span className={cn('text-sm font-black uppercase tracking-widest', regimeStyle.text)}>
                             {latest.regime_label}
                         </span>
-                        <span className="text-muted-foreground text-[0.6rem] uppercase tracking-widest ml-2">PBOC Stance</span>
+                        <span className="text-muted-foreground text-xs uppercase tracking-widest ml-2">PBOC Stance</span>
                     </div>
                 )}
             </div>
@@ -91,12 +91,12 @@ export const ChinaPBOCLiquidityMonitor: React.FC = () => {
                         ].map(({ label, value, unit, color, desc }) => (
                             <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
                                 <p className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</p>
-                                <p className="text-[0.6rem] text-muted-foreground/40 mb-2">{desc}</p>
+                                <p className="text-xs text-muted-foreground/40 mb-2">{desc}</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className={cn('text-2xl font-black tabular-nums tracking-tighter', color)}>
                                         {value != null ? value.toFixed(2) : '--'}
                                     </span>
-                                    <span className="text-[0.6rem] text-white/20 uppercase">{unit}</span>
+                                    <span className="text-xs text-white/20 uppercase">{unit}</span>
                                 </div>
                             </div>
                         ))}
@@ -126,7 +126,7 @@ export const ChinaPBOCLiquidityMonitor: React.FC = () => {
                     {latest && (
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-[0.6rem] font-black text-white/50 uppercase tracking-widest">Net Liquidity Signal (M2 - Nominal GDP proxy)</span>
+                                <span className="text-xs font-black text-white/50 uppercase tracking-widest">Net Liquidity Signal (M2 - Nominal GDP proxy)</span>
                                 <span className={cn('text-sm font-black tabular-nums', latest.net_liquidity_signal >= 0 ? 'text-emerald-400' : 'text-rose-400')}>
                                     {latest.net_liquidity_signal >= 0 ? '+' : ''}{latest.net_liquidity_signal?.toFixed(2)}%
                                 </span>

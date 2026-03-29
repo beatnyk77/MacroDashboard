@@ -96,7 +96,7 @@ export const YieldCurveMonitor: React.FC = () => {
     if (isLoading) {
         return (
             <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Yield Curves...</span>
+                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Yield Curves...</span>
             </div>
         );
     }
@@ -140,7 +140,7 @@ export const YieldCurveMonitor: React.FC = () => {
                                 <h3 className="text-xs font-black text-white/40 uppercase tracking-[0.3em]">
                                     Sovereign Yield Curves
                                 </h3>
-                                <p className="text-[0.6rem] text-muted-foreground/60 mt-1">
+                                <p className="text-xs text-muted-foreground/60 mt-1">
                                     x = Tenor · y = Yield (%) · Lines = Countries
                                 </p>
                             </div>
@@ -156,7 +156,7 @@ export const YieldCurveMonitor: React.FC = () => {
                             {COUNTRIES.map(c => (
                                 <div key={c} className="flex items-center gap-2">
                                     <div className="w-3 h-[3px] rounded-full" style={{ backgroundColor: COUNTRY_CONFIG[c].color }} />
-                                    <span className="text-[0.6rem] font-bold text-muted-foreground/60">{COUNTRY_CONFIG[c].flag} {COUNTRY_CONFIG[c].label}</span>
+                                    <span className="text-xs font-bold text-muted-foreground/60">{COUNTRY_CONFIG[c].flag} {COUNTRY_CONFIG[c].label}</span>
                                 </div>
                             ))}
                         </div>
@@ -265,7 +265,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
             </div>
             <div className="flex items-center gap-1">
                 <span className="text-xl font-black tabular-nums" style={{ color: config.color }}>{y10y}%</span>
-                <span className="text-[0.5rem] font-bold text-muted-foreground/40 uppercase">10Y</span>
+                <span className="text-xs font-bold text-muted-foreground/40 uppercase">10Y</span>
             </div>
         </div>
 
@@ -275,14 +275,14 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <TrendingUp size={14} className="text-blue-400" />
-                    <span className="text-[0.6rem] font-bold text-muted-foreground/60">Slope (30Y−3M)</span>
+                    <span className="text-xs font-bold text-muted-foreground/60">Slope (30Y−3M)</span>
                 </div>
                 <span className={cn(
                     "text-sm font-black tabular-nums",
                     parseFloat(slope) > 0 ? "text-emerald-400" : parseFloat(slope) < 0 ? "text-rose-500" : "text-white/40"
                 )}>
                     {slope !== '—' ? `${parseFloat(slope) > 0 ? '+' : ''}${slope}` : '—'}
-                    <span className="text-[0.5rem] font-bold text-muted-foreground/40 ml-1">bps</span>
+                    <span className="text-xs font-bold text-muted-foreground/40 ml-1">bps</span>
                 </span>
             </div>
 
@@ -298,7 +298,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
                         ? <AlertTriangle size={14} className="text-rose-500" />
                         : <TrendingDown size={14} className="text-amber-400" />
                     }
-                    <span className="text-[0.6rem] font-bold text-muted-foreground/60">2Y−10Y Spread</span>
+                    <span className="text-xs font-bold text-muted-foreground/60">2Y−10Y Spread</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className={cn(
@@ -308,7 +308,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
                         {spread !== '—' ? `${parseFloat(spread) > 0 ? '+' : ''}${spread}` : '—'}
                     </span>
                     {inverted && (
-                        <span className="text-[0.5rem] font-black px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 uppercase">
+                        <span className="text-xs font-black px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 uppercase">
                             Inverted
                         </span>
                     )}
@@ -318,8 +318,8 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
 
         {/* Footer */}
         <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
-            <span className="text-[0.5rem] font-black text-white/15 uppercase tracking-widest">{config.label}</span>
-            <span className="text-[0.5rem] font-bold text-muted-foreground/30 uppercase">{source}</span>
+            <span className="text-xs font-black text-white/15 uppercase tracking-widest">{config.label}</span>
+            <span className="text-xs font-bold text-muted-foreground/30 uppercase">{source}</span>
         </div>
     </motion.div>
 );
@@ -329,7 +329,7 @@ const CurveTooltip = ({ active, payload, label, gauges }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-950/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-3xl min-w-[220px]">
-                <div className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
                     Tenor: {label}
                 </div>
                 <div className="space-y-2">
@@ -343,7 +343,7 @@ const CurveTooltip = ({ active, payload, label, gauges }: any) => {
                                 <div key={countryCode} className="flex items-center justify-between gap-8">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg?.color }} />
-                                        <span className="text-[0.7rem] font-bold text-muted-foreground/80">{cfg?.flag} {countryCode}</span>
+                                        <span className="text-xs font-bold text-muted-foreground/80">{cfg?.flag} {countryCode}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-[0.8rem] font-black tabular-nums text-white/90">

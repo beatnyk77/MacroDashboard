@@ -151,7 +151,7 @@ export const CompositeMetricsSection: React.FC = () => {
                 </div>
                 <div className="ml-auto flex items-center gap-2 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[0.6rem] font-bold text-emerald-400 uppercase tracking-wider">Live</span>
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Live</span>
                 </div>
             </div>
 

@@ -176,14 +176,14 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                 <div className="w-8 h-px bg-blue-500/50" />
                                 Physical Flow Network <span className="text-white">– Latency Breakdown</span>
                             </CardTitle>
-                            <CardDescription className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest pl-11">
+                            <CardDescription className="text-xs text-muted-foreground/40 font-bold uppercase tracking-widest pl-11">
                                 Benchmarking transit corridors & Logistical Throughput Variance
                             </CardDescription>
                         </div>
                         <div className="flex items-center gap-4 self-end sm:self-auto">
                             <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] animate-pulse" />
-                                <span className="text-[10px] text-white font-black uppercase tracking-widest">LIVE MESH</span>
+                                <span className="text-xs text-white font-black uppercase tracking-widest">LIVE MESH</span>
                             </div>
                             <TooltipProvider>
                                 <UITooltip>
@@ -193,7 +193,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent className="bg-slate-900/95 border-white/10 max-w-xs p-4 backdrop-blur-xl z-[100]">
-                                        <p className="text-[10px] leading-relaxed text-muted-foreground font-medium uppercase tracking-tight">
+                                        <p className="text-xs leading-relaxed text-muted-foreground font-medium uppercase tracking-tight">
                                             Mapping top 10 physical commodity corridors. Volumes indexed in KT (kilotonnes).
                                         </p>
                                     </TooltipContent>
@@ -207,7 +207,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                     {!sankeyData.nodes.length ? (
                         <div className="h-full flex flex-col items-center justify-center gap-4 opacity-30 py-20">
                             <Ship className="w-8 h-8 animate-bounce text-blue-500" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">Initializing Logistical Feed...</p>
+                            <p className="text-xs font-black uppercase tracking-[0.3em]">Initializing Logistical Feed...</p>
                         </div>
                     ) : (
                         <ResponsiveContainer width="100%" height="100%">
@@ -229,26 +229,26 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                             <div className="bg-slate-950/95 border border-white/10 p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[220px] z-[100]">
                                                 <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
                                                     <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor]" style={{ backgroundColor: data.color, color: data.color }} />
-                                                    <span className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                                    <span className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">
                                                         {data.source?.name} <ArrowRight className="w-3 h-3 text-muted-foreground/40" /> {data.target?.name}
                                                     </span>
                                                 </div>
                                                 <div className="space-y-3">
                                                     <div className="flex justify-between items-center bg-white/[0.02] p-2 rounded-lg">
-                                                        <span className="text-[9px] font-black text-muted-foreground/60 uppercase">Commodity</span>
-                                                        <span className="text-[10px] font-black text-white uppercase tracking-tighter">{data.commodity}</span>
+                                                        <span className="text-xs font-black text-muted-foreground/60 uppercase">Commodity</span>
+                                                        <span className="text-xs font-black text-white uppercase tracking-tighter">{data.commodity}</span>
                                                     </div>
                                                     <div className="flex justify-between items-center bg-white/[0.02] p-2 rounded-lg">
-                                                        <span className="text-[9px] font-black text-muted-foreground/60 uppercase">Throughput</span>
-                                                        <span className="text-[10px] font-mono font-black text-blue-400">{data.value.toLocaleString()} KT</span>
+                                                        <span className="text-xs font-black text-muted-foreground/60 uppercase">Throughput</span>
+                                                        <span className="text-xs font-mono font-black text-blue-400">{data.value.toLocaleString()} KT</span>
                                                     </div>
                                                     <div className="flex justify-between items-center bg-white/[0.02] p-2 rounded-lg">
-                                                        <span className="text-[9px] font-black text-white/40 uppercase">Network Load</span>
-                                                        <span className="text-[10px] font-mono font-black text-emerald-400">{data.share.toFixed(1)}%</span>
+                                                        <span className="text-xs font-black text-white/40 uppercase">Network Load</span>
+                                                        <span className="text-xs font-mono font-black text-emerald-400">{data.share.toFixed(1)}%</span>
                                                     </div>
                                                     <div className="flex justify-between items-center bg-blue-500/10 p-2 rounded-lg border border-blue-500/20">
-                                                        <span className="text-[9px] font-black text-blue-400/60 uppercase">Transit Latency</span>
-                                                        <span className="text-[10px] font-mono font-black text-blue-400">{data.latency} Days</span>
+                                                        <span className="text-xs font-black text-blue-400/60 uppercase">Transit Latency</span>
+                                                        <span className="text-xs font-mono font-black text-blue-400">{data.latency} Days</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -266,13 +266,13 @@ export const PhysicalFlowNetwork: React.FC = () => {
                             {Object.entries(REGION_THEMES).filter(([k]) => k !== 'DEFAULT').map(([name, theme]) => (
                                 <div key={name} className="flex items-center gap-2.5 group cursor-default">
                                     <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: theme.color, color: theme.color }} />
-                                    <span className="text-[10px] font-black text-white/40 group-hover:text-white transition-colors uppercase tracking-[0.2em]">{name}</span>
+                                    <span className="text-xs font-black text-white/40 group-hover:text-white transition-colors uppercase tracking-[0.2em]">{name}</span>
                                 </div>
                             ))}
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" />
-                            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/30">Data Integrity: Tier 1 Terminal Verified</span>
+                            <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30">Data Integrity: Tier 1 Terminal Verified</span>
                         </div>
                     </div>
                 </div>

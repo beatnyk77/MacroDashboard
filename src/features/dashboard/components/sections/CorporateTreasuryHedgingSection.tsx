@@ -33,12 +33,12 @@ const MetricGauge: React.FC<{
     return (
         <div className="space-y-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden group">
             <div className="flex justify-between items-start">
-                <span className="text-[0.6rem] font-bold text-muted-foreground/50 uppercase tracking-widest">{label}</span>
+                <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">{label}</span>
                 <Zap className="w-3 h-3 text-white/10 group-hover:text-white/30 transition-colors" />
             </div>
             <div className="flex items-baseline gap-1">
                 <span className="text-2xl font-black text-white tabular-nums tracking-tighter">{value.toFixed(2)}</span>
-                <span className="text-[0.6rem] font-bold text-white/20 uppercase">{unit}</span>
+                <span className="text-xs font-bold text-white/20 uppercase">{unit}</span>
             </div>
             <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                 <div
@@ -46,7 +46,7 @@ const MetricGauge: React.FC<{
                     style={{ width: `${percentage}%`, backgroundColor: color }}
                 />
             </div>
-            <div className="flex justify-between text-[0.5rem] font-black text-white/10 uppercase tracking-tighter">
+            <div className="flex justify-between text-xs font-black text-white/10 uppercase tracking-tighter">
                 <span>{min}{unit}</span>
                 <span>{max}{unit}</span>
             </div>
@@ -109,7 +109,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                 </div>
                 <div className="hidden md:flex gap-4">
                     <div className="px-4 py-2 rounded-xl bg-white/[0.02] border border-white/5 text-right">
-                        <div className="text-[0.5rem] font-black text-muted-foreground/40 uppercase tracking-widest">Hedge Sentiment</div>
+                        <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">Hedge Sentiment</div>
                         <div className="text-xs font-bold text-emerald-500 uppercase tracking-tighter">Opportunity High</div>
                     </div>
                 </div>
@@ -158,7 +158,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                     <div className="relative z-10 space-y-6">
                         <div className="flex items-center gap-3">
                             <Compass className="w-4 h-4 text-emerald-500" />
-                            <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Interest Rate Transition Curve</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Interest Rate Transition Curve</h4>
                         </div>
 
                         <div className="h-64 w-full">
@@ -206,7 +206,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                             </ResponsiveContainer>
                         </div>
 
-                        <div className="flex gap-6 mt-4 opacity-50 text-[0.6rem] font-bold uppercase tracking-widest">
+                        <div className="flex gap-6 mt-4 opacity-50 text-xs font-bold uppercase tracking-widest">
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
                                 <span>10Y Bench</span>
@@ -224,7 +224,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                     <div className="relative z-10 space-y-6">
                         <div className="flex items-center gap-3">
                             <BarChart3 className="w-4 h-4 text-emerald-500" />
-                            <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Hedge Effectiveness Heatmap</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Hedge Effectiveness Heatmap</h4>
                         </div>
 
                         <div className="grid grid-cols-3 gap-2">
@@ -241,7 +241,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                             ].map((item, i) => (
                                 <div key={i} className={cn("p-2 rounded-xl border border-white/5 flex flex-col items-center justify-center gap-1", item.c)}>
                                     <span className="text-[0.45rem] font-bold text-white/40 uppercase text-center leading-tight">{item.l}</span>
-                                    <span className="text-[0.7rem] font-black text-white">{item.v}</span>
+                                    <span className="text-xs font-black text-white">{item.v}</span>
                                 </div>
                             ))}
                         </div>
@@ -257,8 +257,8 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
             <div className="p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-4">
                 <Activity className="w-5 h-5 text-emerald-500 mt-1 shrink-0" />
                 <div className="space-y-1">
-                    <span className="text-[0.7rem] font-black text-emerald-400 uppercase tracking-widest">Treasurer's Perspective:</span>
-                    <p className="text-[0.6rem] text-muted-foreground/70 leading-relaxed font-medium">
+                    <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">Treasurer's Perspective:</span>
+                    <p className="text-xs text-muted-foreground/70 leading-relaxed font-medium">
                         Current SOFR-Oil correlation levels indicate heightened supply-chain driven inflation risk. Hedging costs for USD/INR remain in the 45th percentile, suggesting neutral forward positioning. Monitor 2Y-10Y spread for transition into 'Higher for Longer' regime stability.
                     </p>
                 </div>

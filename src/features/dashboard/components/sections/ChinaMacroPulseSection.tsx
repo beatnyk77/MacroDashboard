@@ -24,7 +24,7 @@ const CompactPulseMetric: React.FC<{
                             <TooltipTrigger>
                                 <Info className="w-3 h-3 text-muted-foreground/20 hover:text-muted-foreground/50 transition-colors" />
                             </TooltipTrigger>
-                            <TooltipContent className="bg-slate-950 border-white/10 p-2 text-[0.6rem] max-w-[150px]">
+                            <TooltipContent className="bg-slate-950 border-white/10 p-2 text-xs max-w-[150px]">
                                 {description}
                             </TooltipContent>
                         </Tooltip>
@@ -43,11 +43,11 @@ const CompactPulseMetric: React.FC<{
         <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-1">
                 <span className="text-xl font-black text-white/90 tabular-nums tracking-tighter">{value}</span>
-                <span className="text-[0.6rem] font-bold text-white/20 uppercase tracking-widest">{unit}</span>
+                <span className="text-xs font-bold text-white/20 uppercase tracking-widest">{unit}</span>
             </div>
             {delta && (
                 <div className={cn(
-                    "text-[0.6rem] font-black tabular-nums tracking-tight flex items-center gap-0.5",
+                    "text-xs font-black tabular-nums tracking-tight flex items-center gap-0.5",
                     trend === 'up' ? "text-emerald-500" : "text-rose-500"
                 )}>
                     {delta}
@@ -97,7 +97,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                     onClick={() => setIsExpanded(!isExpanded)}
                     className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
                 >
-                    <span className="text-[0.7rem] font-black uppercase tracking-widest text-white/70 group-hover:text-white">
+                    <span className="text-xs font-black uppercase tracking-widest text-white/70 group-hover:text-white">
                         {isExpanded ? 'Collapse Pulse' : 'Expand Full Engine'}
                     </span>
                     {isExpanded ? <ChevronUp className="w-4 h-4 text-red-500" /> : <ChevronDown className="w-4 h-4 text-red-500" />}
@@ -129,7 +129,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                 <div className="space-y-6">
                     <div className="flex items-center gap-4">
                         <div className="h-[2px] w-8 bg-red-500" />
-                        <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Core Activity & Liquidity</h4>
+                        <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Core Activity & Liquidity</h4>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -177,7 +177,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-orange-500" />
-                            <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Industrial & Consumption Velocity</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Industrial & Consumption Velocity</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <CompactPulseMetric
@@ -210,7 +210,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-blue-500" />
-                            <h4 className="text-[0.7rem] font-black text-white/90 uppercase tracking-[0.3em]">Monetary Policy & External</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Monetary Policy & External</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <CompactPulseMetric

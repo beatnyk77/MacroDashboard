@@ -78,7 +78,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
             <div className="h-[800px] w-full bg-white/[0.02] border border-white/5 animate-pulse rounded-[3rem] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-                    <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Decoding Fiscal Allocations...</span>
+                    <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Decoding Fiscal Allocations...</span>
                 </div>
             </div>
         );
@@ -147,13 +147,13 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-black text-white uppercase tracking-widest">State-Level Capex Velocity</h4>
-                                    <p className="text-[0.6rem] text-muted-foreground/60 italic">Interactive choropleth: Capex % GSDP</p>
+                                    <p className="text-xs text-muted-foreground/60 italic">Interactive choropleth: Capex % GSDP</p>
                                 </div>
                             </div>
                             {selectedState && (
                                 <button
                                     onClick={() => setSelectedState(null)}
-                                    className="text-[0.6rem] font-black text-emerald-500/60 uppercase tracking-widest hover:text-emerald-500 transition-colors"
+                                    className="text-xs font-black text-emerald-500/60 uppercase tracking-widest hover:text-emerald-500 transition-colors"
                                 >
                                     Reset Zoom
                                 </button>
@@ -170,7 +170,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 selectedStateCode={selectedState?.state_code}
                                 tooltipFormatter={(s) => `
                                     <div class="space-y-1">
-                                        <div class="text-[0.7rem] font-black text-white/90 mb-1 border-b border-white/10 pb-1">${s.state_name}</div>
+                                        <div class="text-xs font-black text-white/90 mb-1 border-b border-white/10 pb-1">${s.state_name}</div>
                                         <div class="flex justify-between gap-4">
                                             <span class="text-muted-foreground/60">Capex/GSDP:</span>
                                             <span class="text-emerald-400 font-black">${s.capex_pct_gdp?.toFixed(1)}%</span>
@@ -189,15 +189,15 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                                        <span className="text-[0.6rem] font-bold text-white/80">High (4%+)</span>
+                                        <span className="text-xs font-bold text-white/80">High (4%+)</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full bg-[#64748b]" />
-                                        <span className="text-[0.6rem] font-bold text-white/80">Neutral (1.5 - 2.5%)</span>
+                                        <span className="text-xs font-bold text-white/80">Neutral (1.5 - 2.5%)</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full bg-rose-500" />
-                                        <span className="text-[0.6rem] font-bold text-white/80">Low (&lt; 1%)</span>
+                                        <span className="text-xs font-bold text-white/80">Low (&lt; 1%)</span>
                                     </div>
                                 </div>
                             </div>
@@ -211,7 +211,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                         className="absolute top-8 left-8 z-[1000] p-6 rounded-3xl bg-slate-950/90 backdrop-blur-2xl border border-emerald-500/20 max-w-[240px] shadow-3xl"
                                     >
                                         <h5 className="text-lg font-black text-white italic mb-1">{selectedState.state_name}</h5>
-                                        <p className="text-[0.6rem] text-muted-foreground/60 uppercase tracking-widest font-black mb-6">State Profile Index</p>
+                                        <p className="text-xs text-muted-foreground/60 uppercase tracking-widest font-black mb-6">State Profile Index</p>
                                         <div className="space-y-4">
                                             <StateDetailRow label="Capex Strategy" value={`${selectedState.capex_pct_gdp?.toFixed(1)}%`} sub="of GSDP" color="text-emerald-500" />
                                             <StateDetailRow label="Revenue Overhang" value={`${selectedState.revenue_pct_gdp?.toFixed(1)}%`} sub="of GSDP" color="text-amber-500" />
@@ -232,7 +232,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-black text-white uppercase tracking-widest">Efficiency Trends</h4>
-                                    <p className="text-[0.6rem] text-muted-foreground/60 italic">Consolidated General Govt (Center + States)</p>
+                                    <p className="text-xs text-muted-foreground/60 italic">Consolidated General Govt (Center + States)</p>
                                 </div>
                             </div>
                             <div className="flex gap-2">
@@ -241,7 +241,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                         key={r}
                                         onClick={() => setTimeRange(r as any)}
                                         className={cn(
-                                            "px-3 py-1 rounded-lg text-[0.6rem] font-black uppercase tracking-wider transition-all",
+                                            "px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider transition-all",
                                             timeRange === r ? "bg-white/10 text-white" : "bg-white/[0.02] text-white/40 hover:bg-white/5"
                                         )}
                                     >
@@ -253,7 +253,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
 
                         <div className="h-[550px] w-full rounded-[2.5rem] bg-white/[0.01] border border-white/5 p-8 relative group">
                             <div className="absolute top-8 left-8 z-10">
-                                <span className="text-[0.5rem] font-black text-white/20 uppercase tracking-[0.3em]">Capital vs Revenue Dynamics</span>
+                                <span className="text-xs font-black text-white/20 uppercase tracking-[0.3em]">Capital vs Revenue Dynamics</span>
                             </div>
                             <ResponsiveContainer width="100%" height="100%">
                                 <ComposedChart data={filteredTrends} margin={{ top: 60, right: 30, left: 0, bottom: 20 }}>
@@ -331,7 +331,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                 <div className="flex justify-center">
                     <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-[0.6rem] font-bold text-muted-foreground uppercase tracking-widest text-center">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">
                             Source: Finance.gov.in (Expenditure Profile) / RBI State Finances Report / PRS India analysis
                         </span>
                     </div>
@@ -357,10 +357,10 @@ const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: a
             </div>
         </div>
         <div>
-            <div className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-2">{title}</div>
+            <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-2">{title}</div>
             <div className="flex items-baseline gap-2 mb-4">
                 <span className="text-4xl font-black text-white italic tracking-tighter tabular-nums">{value}</span>
-                <span className="text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest">{sub}</span>
+                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">{sub}</span>
             </div>
             <div className="text-[0.65rem] font-bold text-muted-foreground/50 leading-relaxed italic">
                 {description}
@@ -375,7 +375,7 @@ const StateDetailRow = ({ label, value, sub, color }: any) => (
     <div className="flex justify-between items-end border-b border-white/5 pb-3">
         <div className="flex flex-col">
             <span className="text-[0.55rem] font-black text-white/30 uppercase tracking-widest leading-none mb-1">{label}</span>
-            <span className="text-[0.5rem] font-bold text-muted-foreground/40 uppercase tracking-tighter">{sub}</span>
+            <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-tighter">{sub}</span>
         </div>
         <span className={cn("text-xl font-black tabular-nums tracking-tighter", color)}>{value}</span>
     </div>
@@ -385,13 +385,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/10 p-5 rounded-3xl shadow-3xl">
-                <div className="text-[0.6rem] font-black text-muted-foreground/40 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
                     {label} Fiscal Matrix
                 </div>
                 <div className="space-y-3">
                     {payload.map((entry: any, index: number) => (
                         <div key={index} className="flex items-center justify-between gap-12">
-                            <span className="text-[0.7rem] font-bold text-muted-foreground/80">{entry.name}</span>
+                            <span className="text-xs font-bold text-muted-foreground/80">{entry.name}</span>
                             <span className="text-[0.8rem] font-black tabular-nums" style={{ color: entry.stroke || entry.fill || entry.color }}>
                                 {entry.value?.toFixed(2)}%
                             </span>

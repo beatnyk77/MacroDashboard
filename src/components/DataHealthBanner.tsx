@@ -35,7 +35,7 @@ export const DataHealthBanner: React.FC = () => {
 
                 <div className="h-3 w-[1px] bg-white/10 mx-1" />
 
-                <span className="text-[11px] font-medium opacity-80">
+                <span className="text-xs font-medium opacity-80">
                     {health.staleCount} of {health.totalHighFrequency} tracked feeds delayed
                     {isCritical && " — refresh recommended"}
                 </span>
@@ -47,12 +47,12 @@ export const DataHealthBanner: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
                 >
                     <RefreshCcw className="w-3 h-3" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider">Refresh Data</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Refresh Data</span>
                 </button>
 
                 <a
                     href="#health"
-                    className="text-[10px] font-bold uppercase tracking-wider underline underline-offset-4 opacity-60 hover:opacity-100"
+                    className="text-xs font-bold uppercase tracking-wider underline underline-offset-4 opacity-60 hover:opacity-100"
                 >
                     Details
                 </a>

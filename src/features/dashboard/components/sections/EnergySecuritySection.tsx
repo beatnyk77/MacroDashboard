@@ -101,7 +101,7 @@ export const EnergySecuritySection: React.FC = () => {
                 <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between group">
                     <div className="flex items-center gap-3">
                         <DataQualityBadge type="simulated" />
-                        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-500/90 flex items-center gap-2">
+                        <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-500/90 flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                             Live Feed Normalizing — Displaying Institutional Proxies
                         </p>
@@ -116,7 +116,7 @@ export const EnergySecuritySection: React.FC = () => {
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Refining Strategic Capacity
                         </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Industrial backbone of US energy independence. Operable capacity vs. utilization rates indicates system stress and supply-side resilience.
                         </p>
                     </div>
@@ -143,7 +143,7 @@ export const EnergySecuritySection: React.FC = () => {
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Strategic Petroleum Reserve <span className="text-orange-500/40">(SPR)</span>
                         </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Emergency oil stockpile metrics. Tracking drawdown, inventory levels, and strategic refilling mandates relative to historical baselines.
                         </p>
                     </div>
@@ -160,7 +160,7 @@ export const EnergySecuritySection: React.FC = () => {
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Strategic Reserve & Stockpile Tracker
                         </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Comprehensive monitoring of critical resource inventories. India Grains (Rice/Wheat) and Global Crude Oil strategic/commercial levels.
                         </p>
                     </div>
@@ -177,7 +177,7 @@ export const EnergySecuritySection: React.FC = () => {
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Power Mix Divergence
                         </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Comparative analysis of electricity generation sources. Highlighting decarbonization pace and reliance on fossil baseload across G4 economies.
                         </p>
                     </div>
@@ -202,8 +202,8 @@ export const EnergySecuritySection: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div className="w-full p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 flex flex-col md:flex-row md:items-center justify-between gap-6 backdrop-blur-sm">
                                 <div>
-                                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">EU Gas Resilience</h4>
-                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-wider">Aggregate Storage Trend</p>
+                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-2">EU Gas Resilience</h4>
+                                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-wider">Aggregate Storage Trend</p>
                                 </div>
                                 <div className="flex items-center gap-6 flex-1 max-w-md h-16">
                                     <div className="flex-1 h-full w-full">
@@ -237,8 +237,8 @@ export const EnergySecuritySection: React.FC = () => {
 
                             <div className="w-full p-8 rounded-[2rem] bg-rose-500/[0.03] border border-rose-500/10 flex flex-col md:flex-row md:items-center justify-between gap-6 backdrop-blur-sm">
                                 <div>
-                                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-rose-400 mb-2">Refining Stress</h4>
-                                    <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-wider">Historical Utilization Rate</p>
+                                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-rose-400 mb-2">Refining Stress</h4>
+                                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-wider">Historical Utilization Rate</p>
                                 </div>
                                 <div className="flex items-center gap-6 flex-1 max-w-md h-16">
                                     <div className="flex-1 h-full w-full">
@@ -282,7 +282,7 @@ export const EnergySecuritySection: React.FC = () => {
                         <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                             Asia Commodity Flow Dynamics
                         </h3>
-                        <p className="text-[11px] text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Molecular shift toward the East. Tracking Crude import origins for Bharat & China identifies emerging trade corridors and energy density dependencies.
                         </p>
                     </div>

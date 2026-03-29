@@ -58,7 +58,7 @@ export const UpcomingEventsCard: React.FC = () => {
                             )}>
                                 {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                             </span>
-                            <span className="text-[0.6rem] text-muted-foreground font-mono">
+                            <span className="text-xs text-muted-foreground font-mono">
                                 {new Date(event.event_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
                             </span>
                         </div>
@@ -82,10 +82,10 @@ export const UpcomingEventsCard: React.FC = () => {
                         />
                     </td>
                     <td className="py-3 px-2 text-right w-[90px]">
-                        <span className="text-[0.7rem] text-muted-foreground font-mono">{event.forecast || '-'}</span>
+                        <span className="text-xs text-muted-foreground font-mono">{event.forecast || '-'}</span>
                     </td>
                     <td className="py-3 px-2 text-right w-[90px]">
-                        <span className="text-[0.7rem] text-muted-foreground/70 font-mono">{event.previous || '-'}</span>
+                        <span className="text-xs text-muted-foreground/70 font-mono">{event.previous || '-'}</span>
                     </td>
                     <td className="py-3 pl-2 pr-0 text-right w-[90px]">
                         {event.actual ? (
@@ -114,7 +114,7 @@ export const UpcomingEventsCard: React.FC = () => {
                 </div>
                 <div className="group relative">
                     <Info size={14} className="text-muted-foreground cursor-help hover:text-foreground transition-colors" />
-                    <div className="absolute right-0 top-6 w-48 p-2 bg-popover border border-border rounded shadow-xl text-[0.6rem] text-popover-foreground z-10 hidden group-hover:block animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute right-0 top-6 w-48 p-2 bg-popover border border-border rounded shadow-xl text-xs text-popover-foreground z-10 hidden group-hover:block animate-in fade-in zoom-in-95 duration-200">
                         Institutional-grade calendar powered by Finnhub. Live updates hourly.
                     </div>
                 </div>
@@ -125,13 +125,13 @@ export const UpcomingEventsCard: React.FC = () => {
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
                             <tr className="border-b border-white/[0.05]">
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none pl-0 w-[130px]">DATE / TIME</th>
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none w-[80px]">COUNTRY</th>
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none">EVENT</th>
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none w-[70px]">IMPACT</th>
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none text-right w-[90px]">FORECAST</th>
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none text-right w-[90px]">PREVIOUS</th>
-                                <th className="pb-2 text-[0.6rem] font-extrabold text-muted-foreground border-none text-right w-[90px] pr-0">ACTUAL</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none pl-0 w-[130px]">DATE / TIME</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none w-[80px]">COUNTRY</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none">EVENT</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none w-[70px]">IMPACT</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none text-right w-[90px]">FORECAST</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none text-right w-[90px]">PREVIOUS</th>
+                                <th className="pb-2 text-xs font-extrabold text-muted-foreground border-none text-right w-[90px] pr-0">ACTUAL</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,7 +143,7 @@ export const UpcomingEventsCard: React.FC = () => {
                                         <td colSpan={7} className="py-4 border-none">
                                             <div className="flex items-center gap-4 opacity-50">
                                                 <div className="flex-1 h-px bg-border" />
-                                                <span className="text-[0.5rem] font-black text-muted-foreground tracking-[0.2em]">RECENT RELEASES</span>
+                                                <span className="text-xs font-black text-muted-foreground tracking-[0.2em]">RECENT RELEASES</span>
                                                 <div className="flex-1 h-px bg-border" />
                                             </div>
                                         </td>

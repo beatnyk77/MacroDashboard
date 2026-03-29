@@ -302,7 +302,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
 
             {/* Educational Footnote */}
             <div className="px-8 md:px-10 pb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-widest">
                     <span>Source: RBI DBIE / Handbook of Statistics</span>
                     <div className="w-1 h-1 rounded-full bg-slate-700" />
                     <span>Updated Monthly</span>
@@ -310,7 +310,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                 {view === 'comparison' && (
                     <div className="flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
                         <ArrowRightLeft className="w-3 h-3 text-red-400" />
-                        <span className="text-red-400 text-[10px] font-black uppercase tracking-tighter">Dual Scale View: Indian ₹ Lakh Cr vs US $ Trillion</span>
+                        <span className="text-red-400 text-xs font-black uppercase tracking-tighter">Dual Scale View: Indian ₹ Lakh Cr vs US $ Trillion</span>
                     </div>
                 )}
             </div>

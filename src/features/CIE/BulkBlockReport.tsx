@@ -60,9 +60,9 @@ export const BulkBlockReport: React.FC = () => {
                         <Briefcase size={80} />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40 mb-1">Total Deals (30D)</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Total Deals (30D)</h4>
                         <div className="text-3xl font-black text-white">42</div>
-                        <p className="text-[0.6rem] text-emerald-400 font-bold mt-2">+12% vs Prev Month</p>
+                        <p className="text-xs text-emerald-400 font-bold mt-2">+12% vs Prev Month</p>
                     </div>
                 </div>
                 <div className="p-6 rounded-2xl border border-white/5 bg-black/40 backdrop-blur-sm relative overflow-hidden group">
@@ -70,9 +70,9 @@ export const BulkBlockReport: React.FC = () => {
                         <ArrowUpRight size={80} />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40 mb-1">Institutional Buy Value</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Institutional Buy Value</h4>
                         <div className="text-3xl font-black text-emerald-400">₹2,480 Cr</div>
-                        <p className="text-[0.6rem] text-white/40 font-bold mt-2">Across 18 Nifty 200 Assets</p>
+                        <p className="text-xs text-white/40 font-bold mt-2">Across 18 Nifty 200 Assets</p>
                     </div>
                 </div>
                 <div className="p-6 rounded-2xl border border-white/5 bg-black/40 backdrop-blur-sm relative overflow-hidden group">
@@ -80,9 +80,9 @@ export const BulkBlockReport: React.FC = () => {
                         <Filter size={80} />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-[0.6rem] font-black uppercase tracking-widest text-white/40 mb-1">Max Conviction Deal</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Max Conviction Deal</h4>
                         <div className="text-3xl font-black text-blue-400">1.8% Equity</div>
-                        <p className="text-[0.6rem] text-white/40 font-bold mt-2">Morgan Stanley in HDFC BANK</p>
+                        <p className="text-xs text-white/40 font-bold mt-2">Morgan Stanley in HDFC BANK</p>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@ export const BulkBlockReport: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Search symbol or client..."
-                                className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[0.7rem] text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 transition-all w-64"
+                                className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 transition-all w-64"
                             />
                         </div>
                         <button className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-colors">
@@ -113,15 +113,15 @@ export const BulkBlockReport: React.FC = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-white/5">
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Date</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Symbol</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Client Name</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Type</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20">Deal Type</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20 text-right">Qty</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20 text-right">Price</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20 text-right">% Equity</th>
-                                <th className="px-6 py-4 text-[0.6rem] font-black uppercase tracking-widest text-white/20"></th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Date</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Symbol</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Client Name</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Type</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Deal Type</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Qty</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Price</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">% Equity</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20"></th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">
@@ -130,17 +130,17 @@ export const BulkBlockReport: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
                                             <Calendar size={12} className="text-white/20" />
-                                            <span className="text-[0.7rem] font-medium text-white/60">{format(new Date(deal.date), 'dd MMM yyyy')}</span>
+                                            <span className="text-xs font-medium text-white/60">{format(new Date(deal.date), 'dd MMM yyyy')}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-[0.7rem] font-black text-white hover:text-blue-400 transition-colors cursor-pointer">{deal.symbol}</span>
+                                        <span className="text-xs font-black text-white hover:text-blue-400 transition-colors cursor-pointer">{deal.symbol}</span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-[0.7rem] font-medium text-white/80">{deal.client_name}</span>
+                                        <span className="text-xs font-medium text-white/80">{deal.client_name}</span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[0.6rem] font-black uppercase tracking-widest ${deal.type === 'BUY'
+                                        <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-black uppercase tracking-widest ${deal.type === 'BUY'
                                             ? 'bg-emerald-500/10 text-emerald-400'
                                             : 'bg-rose-500/10 text-rose-400'
                                             }`}>
@@ -154,10 +154,10 @@ export const BulkBlockReport: React.FC = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <span className="text-[0.7rem] font-mono text-white/60">{deal.quantity.toLocaleString()}</span>
+                                        <span className="text-xs font-mono text-white/60">{deal.quantity.toLocaleString()}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <span className="text-[0.7rem] font-mono text-white/60">₹{deal.price.toFixed(2)}</span>
+                                        <span className="text-xs font-mono text-white/60">₹{deal.price.toFixed(2)}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right whitespace-nowrap">
                                         <div className="flex items-center justify-end gap-2">
@@ -167,7 +167,7 @@ export const BulkBlockReport: React.FC = () => {
                                                     style={{ width: `${Math.min(100, (deal.equity_pct || 0) * 50)}%` }}
                                                 />
                                             </div>
-                                            <span className="text-[0.7rem] font-black text-white">{(deal.equity_pct || 0).toFixed(2)}%</span>
+                                            <span className="text-xs font-black text-white">{(deal.equity_pct || 0).toFixed(2)}%</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
@@ -182,8 +182,8 @@ export const BulkBlockReport: React.FC = () => {
                 </div>
 
                 <div className="p-4 border-t border-white/5 bg-black/20 flex items-center justify-between">
-                    <span className="text-[0.6rem] font-black uppercase tracking-widest text-white/20">Showing top 50 transactions</span>
-                    <button className="flex items-center gap-2 text-[0.6rem] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors">
+                    <span className="text-xs font-black uppercase tracking-widest text-white/20">Showing top 50 transactions</span>
+                    <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors">
                         View Historical Archive <ChevronRight size={12} />
                     </button>
                 </div>

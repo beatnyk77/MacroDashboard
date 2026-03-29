@@ -106,7 +106,7 @@ export const USCompanyDetail: React.FC = () => {
                                         <button
                                             key={metric}
                                             onClick={() => setChartMetric(metric as any)}
-                                            className={`px-3 py-1.5 rounded-lg text-[0.6rem] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${chartMetric === metric ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${chartMetric === metric ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
                                         >
                                             {metric.replace('_', ' ')}
                                         </button>
@@ -152,7 +152,7 @@ export const USCompanyDetail: React.FC = () => {
                                         >
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[0.6rem] font-black uppercase tracking-widest mr-3">
+                                                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-black uppercase tracking-widest mr-3">
                                                         {f.form_type}
                                                     </span>
                                                     <span className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">{f.description}</span>
@@ -178,19 +178,19 @@ export const USCompanyDetail: React.FC = () => {
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">P/E Ratio</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">P/E Ratio</p>
                                     <p className="text-xl font-black">{latestFund.pe_ratio?.toFixed(1) || '—'}</p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">P/B Ratio</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">P/B Ratio</p>
                                     <p className="text-xl font-black">{latestFund.pb_ratio?.toFixed(1) || '—'}</p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">EV/EBITDA</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">EV/EBITDA</p>
                                     <p className="text-xl font-black">{latestFund.ev_ebitda?.toFixed(1) || '—'}</p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-[0.6rem] uppercase tracking-widest font-black text-white/30 mb-1">FCF Yield</p>
+                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">FCF Yield</p>
                                     <p className="text-xl font-black text-emerald-400">{latestFund.fcf_yield ? `${(latestFund.fcf_yield * 100).toFixed(1)}%` : '—'}</p>
                                 </div>
                             </div>
@@ -218,7 +218,7 @@ export const USCompanyDetail: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="py-8 text-center bg-black/20 rounded-2xl">
-                                    <p className="text-[0.6rem] font-bold text-white/20 uppercase tracking-widest">No recent transactions.</p>
+                                    <p className="text-xs font-bold text-white/20 uppercase tracking-widest">No recent transactions.</p>
                                 </div>
                             )}
                         </div>

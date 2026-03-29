@@ -46,7 +46,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                     <select
                         value={currencyFilter}
                         onChange={(e) => setCurrencyFilter(e.target.value)}
-                        className="bg-white/5 border-white/5 rounded-md text-[10px] font-bold text-muted-foreground px-2 py-1.5 focus:outline-none hover:bg-white/10 transition-colors"
+                        className="bg-white/5 border-white/5 rounded-md text-xs font-bold text-muted-foreground px-2 py-1.5 focus:outline-none hover:bg-white/10 transition-colors"
                     >
                         {currencies.map(curr => (
                             <option key={curr} value={curr} className="bg-slate-900">{curr}</option>
@@ -56,7 +56,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                     <button
                         onClick={() => setFilter(filter === 'all' ? 'high' : 'all')}
                         className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-bold transition-all border",
+                            "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all border",
                             filter === 'high'
                                 ? "bg-rose-500/10 border-rose-500/20 text-rose-400"
                                 : "bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10"
@@ -91,10 +91,10 @@ export const MacroEconomicCalendar: React.FC = () => {
                                     <tr key={event.id} className="group hover:bg-white/[0.02] transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="font-mono font-bold text-muted-foreground group-hover:text-foreground transition-colors text-[10px]">
+                                                <span className="font-mono font-bold text-muted-foreground group-hover:text-foreground transition-colors text-xs">
                                                     {eventDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                                 </span>
-                                                <span className="text-[10px] text-muted-foreground/40 font-mono">
+                                                <span className="text-xs text-muted-foreground/40 font-mono">
                                                     {eventDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                 </span>
                                             </div>
@@ -108,7 +108,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                                         <td className="px-6 py-4 font-semibold text-foreground/90">
                                             {event.event_name}
                                             {isLive && (
-                                                <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 animate-pulse">
+                                                <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-rose-500/20 text-rose-400 animate-pulse">
                                                     LIVE
                                                 </span>
                                             )}
@@ -139,7 +139,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                 </div>
 
                 <div className="p-4 border-t border-white/5 bg-white/[0.01]">
-                    <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                    <div className="flex items-center justify-between text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
                         <div className="flex items-center gap-2">
                             <Clock className="w-3 h-3" />
                             <span>Time Zone: Local Time</span>

@@ -114,11 +114,11 @@ export const CorporateProfitCapture: React.FC = () => {
                                 {latestUS?.profit_share_pct?.toFixed(1)}%
                             </span>
                         </div>
-                        <p className="text-[0.6rem] text-neutral-500 mt-2">of GDP · {latestUS?.year}</p>
+                        <p className="text-xs text-neutral-500 mt-2">of GDP · {latestUS?.year}</p>
                         {isHistoricHigh && (
                             <div className="mt-3 flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 rounded-lg border border-amber-500/20 w-fit">
                                 <AlertTriangle className="w-2.5 h-2.5 text-amber-500" />
-                                <span className="text-[0.5rem] font-black text-amber-400 uppercase tracking-widest">Historic High</span>
+                                <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Historic High</span>
                             </div>
                         )}
                     </Card>
@@ -136,7 +136,7 @@ export const CorporateProfitCapture: React.FC = () => {
                                 <span className="text-xs text-rose-400 font-mono font-bold">Lowest since 1980</span>
                             </div>
                         </div>
-                        <p className="text-[0.6rem] text-neutral-500 mt-2">of GDP · {latestUS?.year}</p>
+                        <p className="text-xs text-neutral-500 mt-2">of GDP · {latestUS?.year}</p>
                     </Card>
 
                     {/* Squeeze Ratio */}
@@ -147,8 +147,8 @@ export const CorporateProfitCapture: React.FC = () => {
                                 {latestUS?.squeeze_ratio?.toFixed(2)}
                             </span>
                         </div>
-                        <p className="text-[0.6rem] text-neutral-500 mt-2">Profit ÷ Wage Share</p>
-                        <p className="text-[0.6rem] text-amber-500/70 mt-1 font-mono">
+                        <p className="text-xs text-neutral-500 mt-2">Profit ÷ Wage Share</p>
+                        <p className="text-xs text-amber-500/70 mt-1 font-mono">
                             {latestUS?.squeeze_ratio > 0.35 ? 'Elevated' : 'Moderate'}
                         </p>
                     </Card>
@@ -161,8 +161,8 @@ export const CorporateProfitCapture: React.FC = () => {
                                 {latestG20?.profit_share_pct?.toFixed(1)}%
                             </span>
                         </div>
-                        <p className="text-[0.6rem] text-neutral-500 mt-2">of GDP · {latestG20?.year}</p>
-                        <p className="text-[0.6rem] text-sky-400/70 mt-1 font-mono">OECD NAAG</p>
+                        <p className="text-xs text-neutral-500 mt-2">of GDP · {latestG20?.year}</p>
+                        <p className="text-xs text-sky-400/70 mt-1 font-mono">OECD NAAG</p>
                     </Card>
                 </motion.div>
 
@@ -176,17 +176,17 @@ export const CorporateProfitCapture: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-black text-white uppercase tracking-wider">Corporate Profit Share of GDP</h3>
-                                    <p className="text-[0.6rem] text-neutral-500 uppercase font-black tracking-widest">Historical 1980–present · Quarterly BEA + OECD Sources</p>
+                                    <p className="text-xs text-neutral-500 uppercase font-black tracking-widest">Historical 1980–present · Quarterly BEA + OECD Sources</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-6">
                                 <div className="flex items-center gap-2">
                                     <span className="w-8 h-0.5 bg-emerald-500 block" />
-                                    <span className="text-[0.6rem] font-black text-neutral-400 uppercase tracking-widest">US</span>
+                                    <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">US</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className="w-8 h-0.5 bg-sky-500 block border-dashed border-sky-500" style={{ borderTop: '2px dashed' }} />
-                                    <span className="text-[0.6rem] font-black text-neutral-400 uppercase tracking-widest">G20 avg</span>
+                                    <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">G20 avg</span>
                                 </div>
                             </div>
                         </div>
@@ -281,10 +281,10 @@ export const CorporateProfitCapture: React.FC = () => {
             </motion.div>
 
             <div className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-white/5 pt-8 gap-6">
-                <p className="text-[0.6rem] text-neutral-500 uppercase tracking-widest font-black leading-none">
+                <p className="text-xs text-neutral-500 uppercase tracking-widest font-black leading-none">
                     Sources: BEA NIPA Table 1.12 · FRED CP/GDP · OECD NAAG
                 </p>
-                <p className="text-[0.6rem] text-neutral-500 uppercase font-black leading-none flex items-center gap-2">
+                <p className="text-xs text-neutral-500 uppercase font-black leading-none flex items-center gap-2">
                     <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
                     Annual update (Q4 BEA release)
                 </p>
