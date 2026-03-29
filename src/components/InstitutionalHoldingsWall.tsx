@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { TrendingUp, TrendingDown, Activity, Shield, Cpu, Globe, Database } from 'lucide-react';
-import SectionErrorBoundary from './SectionErrorBoundary';
+import { SectionErrorBoundary } from './SectionErrorBoundary';
 
 // Supabase client initialization
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -99,7 +99,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
           </div>
           
           <div className="h-[400px] w-full bg-slate-900/20 p-6 rounded-lg border border-white/5 relative group">
-            <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
+            <div className="absolute inset-0 bg-grid-white-02 pointer-events-none" />
             <ResponsiveContainer width="100%" height="100%">
               <BarChart layout="vertical" data={data.slice(0, 8)} margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
                 <XAxis type="number" hide />
@@ -204,7 +204,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
           <span className="text-[9px] text-slate-400 font-mono">SUPABASE_EDGE_CLUSTER_SEC_V3</span>
         </div>
         <div className="ml-auto flex items-center gap-4">
-          <div className="w-24 h-5 bg-blue-500/5 rounded flex bg-grid-white/[0.05] overflow-hidden">
+          <div className="w-24 h-5 bg-blue-500/5 rounded flex bg-grid-white-05 overflow-hidden">
             <div className="h-full bg-blue-500/30 animate-pulse" style={{ width: '65%' }} />
           </div>
           <span className="text-[9px] text-slate-700 font-mono uppercase font-black">X_TAP_STREAM: NOMINAL</span>
@@ -222,10 +222,10 @@ const InstitutionalHoldingsWall: React.FC = () => {
         }
         .animate-shimmer { animation: shimmer 3s infinite linear; }
         
-        .bg-grid-white\/\\[0\.02\\] {
+        .bg-grid-white-02 {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E");
         }
-        .bg-grid-white\/\\[0\.05\\] {
+        .bg-grid-white-05 {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E");
         }
       `}} />
