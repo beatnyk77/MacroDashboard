@@ -62,14 +62,7 @@ const USFiscalComparisonChart: React.FC = () => {
         return ticks;
     }, [chartData]);
 
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-80 bg-black/20 animate-pulse rounded-xl border border-white/5">
-                <span className="text-white/40 font-mono text-sm">Loading Fiscal Telemetry...</span>
-            </div>
-        );
-    }
-
+    // Compute latest values before conditional return to obey Rules of Hooks
     const latestValues = useMemo(() => {
         if (chartData.length === 0) return null;
         const latest = chartData[chartData.length - 1];
@@ -79,6 +72,14 @@ const USFiscalComparisonChart: React.FC = () => {
             date: latest.date
         };
     }, [chartData]);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-80 bg-black/20 animate-pulse rounded-xl border border-white/5">
+                <span className="text-white/40 font-mono text-sm">Loading Fiscal Telemetry...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full bg-[#0A0A0A] border border-white/12 rounded-xl p-6 glass-morphism overflow-hidden">

@@ -10,27 +10,49 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLin
 import { useGoldPositioning } from '@/hooks/useGoldPositioning';
 import { MotionCard } from '@/components/MotionCard';
 
+// Custom tooltip component for basis chart
+interface BasisTooltipProps {
+    active?: boolean;
+    payload?: any[];
+    label?: string;
+}
+
+const BasisTooltip: React.FC<BasisTooltipProps> = ({ active, payload, label }) => {
+    if (!active || !payload?.[0]) return null;
+    const value = payload[0].value;
+    const isPositive = value >= 0;
+    return (
+        <Box sx={{
+            p: 2,
+            bgcolor: 'rgba(15, 23, 42, 0.95)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 1,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+        }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', display: 'block', mb: 0.5 }}>
+                {label}
+            </Typography>
+            <Typography variant="body2" sx={{
+                fontWeight: 700,
+                fontFamily: 'monospace',
+                color: isPositive ? '#34d399' : '#f43f5e'
+            }}>
+                {isPositive ? '+' : ''}{value.toFixed(1)} bps
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem', display: 'block', mt: 0.5 }}>
+                {isPositive ? 'Physical Premium' : 'Paper Premium'}
+            </Typography>
+        </Box>
+    );
+};
 
 export const GoldPositioningMonitor: React.FC = () => {
     const { data: historyData, isLoading } = useGoldPositioning();
 
-    if (isLoading || !historyData || historyData.length === 0) return null;
-
-    // Latest snapshot (most recent date)
-    const latest = historyData[0];
-
-    // COT positioning data for current week
-    const cotData = [
-        { name: 'Managed Money', value: latest.cot_managed_money_net },
-        { name: 'Swap Dealers', value: latest.cot_swap_dealer_net },
-        { name: 'Producers', value: latest.cot_producer_net }
-    ];
-
-    // Sort COT data by absolute value for better visualization
-    const sortedCotData = [...cotData].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
-
     // Build time series for Paper-Physical Basis Spread (last 90 days)
+    // Must be before conditional return to obey Rules of Hooks
     const basisSeriesData = useMemo(() => {
+        if (!historyData || historyData.length === 0) return [];
         const raw = historyData
             .slice(0, 90)
             .reverse()
@@ -52,35 +74,20 @@ export const GoldPositioningMonitor: React.FC = () => {
         }));
     }, [historyData]);
 
-    // Tooltip component for basis chart
-    const BasisTooltip = ({ active, payload, label }: any) => {
-        if (!active || !payload?.[0]) return null;
-        const value = payload[0].value;
-        const isPositive = value >= 0;
-        return (
-            <Box sx={{
-                p: 2,
-                bgcolor: 'rgba(15, 23, 42, 0.95)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: 1,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-            }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', display: 'block', mb: 0.5 }}>
-                    {label}
-                </Typography>
-                <Typography variant="body2" sx={{
-                    fontWeight: 700,
-                    fontFamily: 'monospace',
-                    color: isPositive ? '#34d399' : '#f43f5e'
-                }}>
-                    {isPositive ? '+' : ''}{value.toFixed(1)} bps
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem', display: 'block', mt: 0.5 }}>
-                    {isPositive ? 'Physical Premium' : 'Paper Premium'}
-                </Typography>
-            </Box>
-        );
-    };
+    if (isLoading || !historyData || historyData.length === 0) return null;
+
+    // Latest snapshot (most recent date)
+    const latest = historyData[0];
+
+    // COT positioning data for current week
+    const cotData = [
+        { name: 'Managed Money', value: latest.cot_managed_money_net },
+        { name: 'Swap Dealers', value: latest.cot_swap_dealer_net },
+        { name: 'Producers', value: latest.cot_producer_net }
+    ];
+
+    // Sort COT data by absolute value for better visualization
+    const sortedCotData = [...cotData].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
 
 
     return (
