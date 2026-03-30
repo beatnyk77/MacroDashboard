@@ -1,166 +1,310 @@
-import React from 'react';
-import { Box, Typography, Grid, alpha } from '@mui/material';
-import { ResponsiveSankey } from '@nivo/sankey';
+import React, { useMemo } from 'react';
+import { Box, Typography, Grid, alpha, useTheme, Tooltip as MuiTooltip } from '@mui/material';
 import {
     Activity,
     ShieldAlert,
     Layers,
-    Target,
-    Zap
+    Zap,
+    Info
 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, AreaChart, Area, CartesianGrid } from 'recharts';
 import { useGoldPositioning } from '@/hooks/useGoldPositioning';
 import { MotionCard } from '@/components/MotionCard';
 
-const PredictionGauge: React.FC<{ score: number }> = ({ score }) => {
-    const data = [{ value: 100 }];
-    const normalized = Math.max(0, Math.min(100, score));
-    const color = score > 60 ? '#f59e0b' : score < 40 ? '#ef4444' : '#6366f1';
-
-    return (
-        <Box sx={{ width: '100%', height: 160, position: 'relative' }}>
-            <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                    <Pie data={data} cx="50%" cy="80%" startAngle={180} endAngle={0} innerRadius="65%" outerRadius="90%" paddingAngle={0} dataKey="value" stroke="none">
-                        <Cell fill="rgba(255,255,255,0.05)" />
-                    </Pie>
-                    <Pie data={[{ value: normalized }, { value: 100 - normalized }]} cx="50%" cy="80%" startAngle={180} endAngle={0} innerRadius="65%" outerRadius="90%" paddingAngle={0} dataKey="value" stroke="none">
-                        <Cell fill={color} />
-                        <Cell fill="transparent" />
-                    </Pie>
-                </PieChart>
-            </ResponsiveContainer>
-            <Box sx={{ position: 'absolute', bottom: '15%', left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: 'text.primary', fontFamily: 'monospace' }}>{score.toFixed(0)}</Typography>
-                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', tracking: 1 }}>PREDICTION</Typography>
-            </Box>
-        </Box>
-    );
-};
 
 export const GoldPositioningMonitor: React.FC = () => {
-    const { data, isLoading } = useGoldPositioning();
+    const { data: historyData, isLoading } = useGoldPositioning();
+    const theme = useTheme();
 
-    if (isLoading || !data) return null;
+    if (isLoading || !historyData || historyData.length === 0) return null;
 
+    // Latest snapshot (most recent date)
+    const latest = historyData[0];
+
+    // COT positioning data for current week
     const cotData = [
-        { name: 'Managed Money', value: data.cot_managed_money_net, color: '#f59e0b' },
-        { name: 'Swap Dealers', value: data.cot_swap_dealer_net, color: '#3b82f6' },
-        { name: 'Producers', value: data.cot_producer_net, color: '#ef4444' }
+        { name: 'Managed Money', value: latest.cot_managed_money_net },
+        { name: 'Swap Dealers', value: latest.cot_swap_dealer_net },
+        { name: 'Producers', value: latest.cot_producer_net }
     ];
+
+    // Sort COT data by absolute value for better visualization
+    const sortedCotData = [...cotData].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+
+    // Build time series for Paper-Physical Basis Spread (last 90 days)
+    const basisSeriesData = useMemo(() => {
+        const raw = historyData
+            .slice(0, 90)
+            .reverse()
+            .map(entry => {
+                const ratio = entry.paper_vs_physical_ratio;
+                const basisBps = (ratio - 1) * 10000;
+                return {
+                    date: new Date(entry.as_of_date),
+                    formattedDate: new Date(entry.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    basisSpread: basisBps
+                };
+            })
+            .filter(d => !isNaN(d.basisSpread));
+        // Add positive/negative split for coloring
+        return raw.map(d => ({
+            ...d,
+            positiveBasis: d.basisSpread >= 0 ? d.basisSpread : 0,
+            negativeBasis: d.basisSpread < 0 ? d.basisSpread : 0
+        }));
+    }, [historyData]);
+
+    // Tooltip component for basis chart
+    const BasisTooltip = ({ active, payload, label }: any) => {
+        if (!active || !payload?.[0]) return null;
+        const value = payload[0].value;
+        const isPositive = value >= 0;
+        return (
+            <Box sx={{
+                p: 2,
+                bgcolor: 'rgba(15, 23, 42, 0.95)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: 1,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', display: 'block', mb: 0.5 }}>
+                    {label}
+                </Typography>
+                <Typography variant="body2" sx={{
+                    fontWeight: 700,
+                    fontFamily: 'monospace',
+                    color: isPositive ? '#34d399' : '#f43f5e'
+                }}>
+                    {isPositive ? '+' : ''}{value.toFixed(1)} bps
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem', display: 'block', mt: 0.5 }}>
+                    {isPositive ? 'Physical Premium' : 'Paper Premium'}
+                </Typography>
+            </Box>
+        );
+    };
+
+    // Color thresholds for basis spread
+    const getBasisColor = (value: number) => {
+        if (value > 10) return '#34d399'; // emerald - strong physical premium
+        if (value < -10) return '#f43f5e'; // rose - strong paper premium
+        return '#0ea5e9'; // sky - neutral
+    };
 
     return (
         <Box sx={{ mb: 12 }}>
             <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Box sx={{ p: 1.5, bgcolor: alpha('#f59e0b', 0.1), color: '#f59e0b', borderRadius: 1 }}>
-                    <Target size={24} />
+                    <Layers size={24} />
                 </Box>
                 <Box>
                     <Typography variant="h5" sx={{ fontWeight: 900, color: 'text.primary', textTransform: 'uppercase', tracking: -0.5 }}>
-                        Gold Positioning & Manipulation Monitor
+                        Gold Derivatives & Physical Arbitrage Monitor
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', tracking: 1 }}>
-                        Futures Allocation × Whale Hedging × Implied Direction
+                        COT Net Position × Basis Spread × Liquidity Stress
                     </Typography>
                 </Box>
             </Box>
 
             <Grid container spacing={3}>
-                {/* 1. COT Positioning Heatmap */}
-                <Grid item xs={12} lg={4}>
+                {/* 1. COT Positioning - Horizontal Bars */}
+                <Grid item xs={12} md={3} lg={3}>
                     <MotionCard>
-                        <Box sx={{ p: 3 }}>
-                            <div className="flex items-center justify-between mb-6">
+                        <Box sx={{ p: 3, height: '100%' }}>
+                            <div className="flex items-center justify-between mb-4">
                                 <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2">
-                                    <Activity size={12} /> Institutional Net Position
+                                    <Activity size={12} />
+                                    <span>COT NET POSITION</span>
+                                    <MuiTooltip title="CFTC Commitments of Traders net positions by trader classification. Positive = net long, Negative = net short." arrow placement="top">
+                                        <Info size={10} className="text-muted-foreground/40 cursor-help" />
+                                    </MuiTooltip>
                                 </span>
-                                <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold">COT PROXY</div>
+                                <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase">
+                                    CFTC WEEKLY
+                                </span>
                             </div>
-                            <Box sx={{ height: 250 }}>
+
+                            {/* Color legend */}
+                            <div className="flex items-center justify-center gap-4 mb-3 text-[10px] text-muted-foreground/60">
+                                <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                                    <span>Long</span>
+                                </span>
+                                <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                                    <span>Short</span>
+                                </span>
+                            </div>
+
+                            <Box sx={{ height: 220, mb: 2 }}>
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={cotData} layout="vertical" margin={{ left: 20 }}>
-                                        <XAxis type="number" hide domain={[-100, 100]} />
-                                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} width={100} />
-                                        <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }} contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', fontSize: '12px' }} />
-                                        <ReferenceLine x={0} stroke="rgba(255,255,255,0.2)" />
-                                        <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                                            {cotData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                    <BarChart
+                                        data={sortedCotData}
+                                        layout="vertical"
+                                        margin={{ left: 20, right: 30, top: 4, bottom: 4 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.06)" />
+                                        <XAxis
+                                            type="number"
+                                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                                            tickFormatter={(v) => `${v >= 0 ? '+' : ''}${v}K`}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+                                        <YAxis
+                                            dataKey="name"
+                                            type="category"
+                                            width={110}
+                                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700, fontFamily: 'monospace' }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+                                        <Tooltip
+                                            cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                            contentStyle={{
+                                                backgroundColor: '#0f172a',
+                                                border: '1px solid rgba(255,255,255,0.12)',
+                                                borderRadius: '8px',
+                                                fontSize: '11px',
+                                                fontFamily: 'monospace',
+                                                padding: '8px 12px'
+                                            }}
+                                            formatter={(value: number) => [`${value.toLocaleString()} contracts`, 'Net Position']}
+                                        />
+                                        <ReferenceLine x={0} stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} />
+                                        <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={28}>
+                                            {sortedCotData.map((entry, index) => (
+                                                <Cell
+                                                    key={`cell-${index}`}
+                                                    fill={entry.value >= 0 ? '#818cf8' : '#f43f5e'}
+                                                />
                                             ))}
                                         </Bar>
                                     </BarChart>
                                 </ResponsiveContainer>
                             </Box>
+
+                            <div className="pt-2 border-t border-white/5 flex justify-between text-[10px]">
+                                <span className="text-muted-foreground/40 font-mono">
+                                    As of: {new Date(latest.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                                <span className="text-muted-foreground/60">
+                                    Latest CFTC report
+                                </span>
+                            </div>
                         </Box>
                     </MotionCard>
                 </Grid>
 
-                {/* 2. Paper vs Physical Sankey */}
-                <Grid item xs={12} lg={5}>
+                {/* 2. Paper-Physical Basis Spread Time Series */}
+                <Grid item xs={12} md={9} lg={9}>
                     <MotionCard>
-                        <Box sx={{ p: 3, height: '100%', minHeight: 330 }}>
-                            <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2 mb-6">
-                                <Layers size={12} /> Paper vs Physical Flows
-                            </span>
-                            <Box sx={{ height: 230 }}>
-                                <ResponsiveSankey
-                                    data={data.sankey_data as any}
-                                    margin={{ top: 10, right: 100, bottom: 10, left: 100 }}
-                                    align="justify"
-                                    colors={node => (node as any).color || '#f59e0b'}
-                                    nodeThickness={12}
-                                    nodeSpacing={18}
-                                    linkOpacity={0.2}
-                                    linkHoverOpacity={0.6}
-                                    enableLinkGradient={true}
-                                    labelPosition="outside"
-                                    labelPadding={12}
-                                    labelTextColor="rgba(255,255,255,0.7)"
-                                    theme={{
-                                        labels: { text: { fontSize: 10, fontWeight: 800, fontFamily: 'monospace' } },
-                                        tooltip: { container: { background: '#0f172a', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }
-                                    }}
-                                />
+                        <Box sx={{ p: 3, height: '100%' }}>
+                            <div className="flex items-center justify-between mb-4">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2">
+                                    <Layers size={12} />
+                                    <span>PAPER-PHYSICAL BASIS SPREAD</span>
+                                    <MuiTooltip title="Spread between paper gold (futures) and physical spot prices. Positive = physical premium (backwardation), Negative = paper premium (contango). Measured in basis points (bps)." arrow placement="top">
+                                        <Info size={10} className="text-muted-foreground/40 cursor-help" />
+                                    </MuiTooltip>
+                                </span>
+                                <div className="flex items-center gap-3 text-[10px]">
+                                    <span className="flex items-center gap-1.5">
+                                        <span className="w-3 h-3 rounded-full bg-sky-500" />
+                                        <span className="text-muted-foreground/60">Basis (bps)</span>
+                                    </span>
+                                    <span className="flex items-center gap-1.5">
+                                        <span className="w-3 h-3 rounded-full bg-emerald-400" />
+                                        <span className="text-muted-foreground/60">Physical Premium</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <Box sx={{ height: 280 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={basisSeriesData} margin={{ top: 4, right: 4, left: 0, bottom: 24 }}>
+                                        <defs>
+                                            <linearGradient id="basisGradientPositive" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor="#34d399" stopOpacity={0.3} />
+                                                <stop offset="100%" stopColor="#34d399" stopOpacity={0} />
+                                            </linearGradient>
+                                            <linearGradient id="basisGradientNegative" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.3} />
+                                                <stop offset="100%" stopColor="#f43f5e" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+
+                                        {/* XAxis */}
+                                        <XAxis
+                                            dataKey="formattedDate"
+                                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                            tickLine={false}
+                                            angle={-45}
+                                            textAnchor="end"
+                                            height={50}
+                                            interval="preserveStartEnd"
+                                        />
+
+                                        {/* YAxis */}
+                                        <YAxis
+                                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                            tickFormatter={(v) => `${v} bps`}
+                                            domain={['auto', 'auto']}
+                                        />
+
+                                        <Tooltip content={<BasisTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeDasharray: '2 2' }} />
+
+                                        <ReferenceLine y={0} stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeDasharray="3 3" />
+
+                                        {/* Line for basis spread (on top) */}
+                                        {basisSeriesData.length > 0 && (
+                                            <Area
+                                                type="monotone"
+                                                dataKey="basisSpread"
+                                                stroke="#0ea5e9"
+                                                strokeWidth={2}
+                                                fill="none"
+                                                dot={false}
+                                                activeDot={{ r: 4, fill: '#0ea5e9', stroke: '#fff', strokeWidth: 2 }}
+                                            />
+                                        )}
+                                        {/* Positive area fill */}
+                                        {basisSeriesData.length > 0 && (
+                                            <Area
+                                                type="monotone"
+                                                dataKey="positiveBasis"
+                                                stroke="none"
+                                                fill="url(#basisGradientPositive)"
+                                            />
+                                        )}
+                                        {/* Negative area fill */}
+                                        {basisSeriesData.length > 0 && (
+                                            <Area
+                                                type="monotone"
+                                                dataKey="negativeBasis"
+                                                stroke="none"
+                                                fill="url(#basisGradientNegative)"
+                                            />
+                                        )}
+                                    </AreaChart>
+                                </ResponsiveContainer>
                             </Box>
+
+                            {/* Current value indicator */}
+                            <div className="flex items-center justify-end gap-2 mt-2 text-[10px]">
+                                <span className="text-muted-foreground/40">CURRENT:</span>
+                                <span className={`font-mono font-bold ${basisSeriesData.length > 0 && basisSeriesData[basisSeriesData.length-1].basisSpread >= 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
+                                    {basisSeriesData.length > 0 ? (basisSeriesData[basisSeriesData.length-1].basisSpread >= 0 ? '+' : '') + basisSeriesData[basisSeriesData.length-1].basisSpread.toFixed(1) : 'N/A'} bps
+                                </span>
+                            </div>
                         </Box>
                     </MotionCard>
-                </Grid>
-
-                {/* 3. Prediction & Whale Badge */}
-                <Grid item xs={12} lg={3}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, height: '100%' }}>
-                        <MotionCard>
-                            <Box sx={{ p: 3, textAlign: 'center' }}>
-                                <PredictionGauge score={data.prediction_gauge_score} />
-                                <Box sx={{ mt: -1 }}>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.75rem' }}>
-                                        1-WEEK PREDICTION BAND
-                                    </Typography>
-                                    <Typography variant="h6" sx={{ fontWeight: 900, color: 'text.primary', fontFamily: 'monospace' }}>
-                                        ${data.price_band_low.toFixed(0)} — ${data.price_band_high.toFixed(0)}
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </MotionCard>
-
-                        <MotionCard>
-                            <Box sx={{ p: 2, bgcolor: alpha('#818cf8', 0.05) }}>
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded bg-indigo-500/20 text-indigo-400">
-                                        <ShieldAlert size={18} />
-                                    </div>
-                                    <div>
-                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, display: 'block', textTransform: 'uppercase', fontSize: '0.6rem' }}>
-                                            WHALE HEDGING PRESSURE
-                                        </Typography>
-                                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#818cf8', fontFamily: 'monospace' }}>
-                                            {data.whale_hedging_pressure.toFixed(1)}Z
-                                        </Typography>
-                                    </div>
-                                </div>
-                            </Box>
-                        </MotionCard>
-                    </Box>
                 </Grid>
             </Grid>
 
@@ -170,7 +314,7 @@ export const GoldPositioningMonitor: React.FC = () => {
                     <Box sx={{ p: 2, bgcolor: 'rgba(255,215,0,0.02)', display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <Zap size={16} className="text-amber-500 mt-1 flex-shrink-0" />
                         <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', fontWeight: 500 }}>
-                            {data.interpretation} — <span className="text-xs opacity-50 uppercase font-black tracking-heading">Verified @ {data.as_of_date}</span>
+                            {latest.interpretation} — <span className="text-xs opacity-50 uppercase font-black tracking-heading">Verified @ {new Date(latest.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         </Typography>
                     </Box>
                 </MotionCard>

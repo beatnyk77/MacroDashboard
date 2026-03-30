@@ -142,7 +142,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Futures & Manipulation Monitor</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Gold Derivatives & Physical Arbitrage Monitor</h2>
                     </div>
                     <SectionErrorBoundary name="Gold Positioning">
                         <Suspense fallback={<LoadingFallback />}>
