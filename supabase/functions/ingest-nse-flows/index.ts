@@ -28,26 +28,29 @@ const KNOWN_SECTORS = [
 
 interface FlowData {
     date: string;
-    fii_buy: number; fii_sell: number; fii_net: number;
-    dii_buy: number; dii_sell: number; dii_net: number;
+    fii_cash_net?: number;
+    dii_cash_net?: number;
     fii_idx_fut_long: number; fii_idx_fut_short: number; fii_idx_fut_net: number;
     dii_idx_fut_long: number; dii_idx_fut_short: number; dii_idx_fut_net: number;
     fii_stk_fut_long: number; fii_stk_fut_short: number; fii_stk_fut_net: number;
     dii_stk_fut_long: number; dii_stk_fut_short: number; dii_stk_fut_net: number;
+    client_idx_fut_long: number; client_idx_fut_short: number; client_idx_fut_net: number;
+    client_stk_fut_long: number; client_stk_fut_short: number; client_stk_fut_net: number;
     fii_idx_call_long: number; fii_idx_call_short: number; fii_idx_call_net: number;
     fii_idx_put_long: number; fii_idx_put_short: number; fii_idx_put_net: number;
-    pcr: number;
-    sentiment_score: number;
-    india_vix: number;
-    advances: number;
-    declines: number;
-    delivery_pct: number;
-    sector_returns: Record<string, number>;
-    midcap_perf: number;
-    smallcap_perf: number;
-    nifty_perf: number;
-    new_highs_52w: number;
-    new_lows_52w: number;
+    pcr?: number;
+    sentiment_score?: number;
+    india_vix?: number;
+    advances?: number;
+    declines?: number;
+    delivery_pct?: number;
+    circuits_pct?: number;
+    sector_returns?: Record<string, number>;
+    midcap_perf?: number;
+    smallcap_perf?: number;
+    nifty_perf?: number;
+    new_highs_52w?: number;
+    new_lows_52w?: number;
 }
 
 // --- Helper Functions ---
@@ -108,11 +111,14 @@ function parseFaoCss(csvText: string) {
             relax_column_count: true
         });
 
-        const data: any = {};
+        const data: any = { FII: null, DII: null, CLIENT: null };
         for (const row of records) {
             const clientType = (row[0] || "").trim().toUpperCase();
-            if (!clientType.includes("FII") && !clientType.includes("DII")) continue;
-            const key = clientType.includes("FII") ? "FII" : "DII";
+            let key: string | null = null;
+            if (clientType.includes("FII") || clientType.includes("FPI")) key = "FII";
+            else if (clientType.includes("DII")) key = "DII";
+            else if (clientType.includes("CLIENT") || clientType.includes("RETAIL")) key = "CLIENT";
+            if (!key) continue;
             data[key] = {
                 idx_fut_long: parseNum(row[1]),
                 idx_fut_short: parseNum(row[2]),
@@ -227,9 +233,9 @@ Deno.serve(async (req: Request) => {
                 for (const item of cashData) {
                     const cat = (item.category || '').toUpperCase()
                     if (cat.includes('FII') || cat.includes('FPI')) {
-                        data.fii_buy = parseNum(item.buyValue); data.fii_sell = parseNum(item.sellValue); data.fii_net = parseNum(item.netValue);
+                        data.fii_cash_net = parseNum(item.netValue);
                     } else if (cat.includes('DII')) {
-                        data.dii_buy = parseNum(item.buyValue); data.dii_sell = parseNum(item.sellValue); data.dii_net = parseNum(item.netValue);
+                        data.dii_cash_net = parseNum(item.netValue);
                     }
                 }
             }
@@ -251,6 +257,11 @@ Deno.serve(async (req: Request) => {
                     data.dii_idx_fut_long = d.idx_fut_long; data.dii_idx_fut_short = d.idx_fut_short; data.dii_idx_fut_net = d.idx_fut_long - d.idx_fut_short;
                     data.dii_stk_fut_long = d.stk_fut_long; data.dii_stk_fut_short = d.stk_fut_short; data.dii_stk_fut_net = d.stk_fut_long - d.stk_fut_short;
                 }
+                if (fao?.CLIENT) {
+                    const c = fao.CLIENT;
+                    data.client_idx_fut_long = c.idx_fut_long; data.client_idx_fut_short = c.idx_fut_short; data.client_idx_fut_net = c.idx_fut_long - c.idx_fut_short;
+                    data.client_stk_fut_long = c.stk_fut_long; data.client_stk_fut_short = c.stk_fut_short; data.client_stk_fut_net = c.stk_fut_long - c.stk_fut_short;
+                }
             }
 
             // 3. Market Indices
@@ -270,22 +281,19 @@ Deno.serve(async (req: Request) => {
                 }
             }
 
-            // 4. Sentiment Score (Simple implementation)
-            if (data.fii_net !== undefined) {
-                let sentiment = 50; sentiment += (data.fii_net / 200); sentiment += ((data.fii_idx_fut_net || 0) / 5000)
-                if ((data.pcr || 1) > 1.3) sentiment -= 10; if ((data.pcr || 1) < 0.7) sentiment += 10
-                data.sentiment_score = Math.min(100, Math.max(0, parseFloat(sentiment.toFixed(1))))
-            }
-
-            if (data.fii_net !== undefined || data.india_vix !== undefined) {
-                const { error: upsertError } = await client.from('market_pulse_daily').upsert(data, { onConflict: 'date' })
+            if (data.fii_cash_net !== undefined || data.india_vix !== undefined) {
+                // Filter out undefined values before upserting
+                const rawData = Object.fromEntries(
+                    Object.entries(data).filter(([_, v]) => v !== undefined)
+                ) as any;
+                const { error: upsertError } = await client.from('market_pulse_daily').upsert(rawData, { onConflict: 'date' })
                 if (!upsertError) {
                     processedDates.push(dateStr);
                     // Log observation for health tracking
                     await client.from('metric_observations').upsert({
                         metric_id: 'IN_NSE_FLOWS',
                         as_of_date: dateStr,
-                        observation_value: data.fii_net,
+                        observation_value: data.fii_cash_net,
                         provenance: 'NSE_API'
                     }, { onConflict: 'metric_id,as_of_date' }).catch(() => { });
                 }
