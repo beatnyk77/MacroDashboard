@@ -116,61 +116,59 @@ export const IndiaLab: React.FC = () => {
                     <ChartInsightSummary id="lab-india-macro" insight="India's macro pulse integrates IIP, CPI, and capital account flows. Real-time BOP pressure metrics track the structural resilience of the 'India Stack' economy." />
                 </section>
 
-                {/* 3. Monetary & Credit Cycle */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <Zap className="text-amber-500" size={28} />
-                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Credit Cycle Clock</h2>
-                        </div>
-                        <SectionErrorBoundary name="India Credit Cycle Clock">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <IndiaCreditCycleClock />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
+                {/* 3. Credit Cycle Clock */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Zap className="text-amber-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Credit Cycle Clock</h2>
+                    </div>
+                    <SectionErrorBoundary name="India Credit Cycle Clock">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaCreditCycleClock />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <BarChart3 className="text-emerald-500" size={28} />
-                            <h2 className="text-xl font-black uppercase tracking-heading text-white">RBI FX Defense</h2>
-                        </div>
-                        <SectionErrorBoundary name="RBI FX Defense">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <RBIFXDefenseMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
-                </div>
+                {/* 4. RBI FX Defense */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <BarChart3 className="text-emerald-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">RBI FX Defense</h2>
+                    </div>
+                    <SectionErrorBoundary name="RBI FX Defense">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <RBIFXDefenseMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                {/* 4. Fiscal Stress & Debt */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <Activity className="text-rose-500" size={28} />
-                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Fiscal Stress Monitor</h2>
-                        </div>
-                        <SectionErrorBoundary name="India Fiscal Stress">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <IndiaFiscalStressMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
+                {/* 5. Fiscal Stress Monitor */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Activity className="text-rose-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Fiscal Stress Monitor</h2>
+                    </div>
+                    <SectionErrorBoundary name="India Fiscal Stress">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaFiscalStressMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <BarChart3 className="text-blue-500" size={28} />
-                            <h2 className="text-xl font-black uppercase tracking-heading text-white">India Debt Maturity Wall</h2>
-                        </div>
-                        <SectionErrorBoundary name="India Debt Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <IndiaDebtMaturityWall />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
-                </div>
+                {/* 6. India Debt Maturity Wall */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <BarChart3 className="text-blue-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">India Debt Maturity Wall</h2>
+                    </div>
+                    <SectionErrorBoundary name="India Debt Maturity Wall">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaDebtMaturityWall />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                {/* 5. State-Level Fiscal Health */}
+                {/* 7. State-Level Fiscal Health */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <MapPin className="text-blue-500" size={28} />
@@ -188,34 +186,33 @@ export const IndiaLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* 6. Liquidity & Inflation */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                    <section id="liquidity-monitor">
-                        <div className="flex items-center gap-3 mb-10">
-                            <Landmark className="text-blue-500" size={28} />
-                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
-                        </div>
-                        <SectionErrorBoundary name="India Money Market">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <RBIMoneyMarketMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
+                {/* 7. Daily Money Market Terminal */}
+                <section id="liquidity-monitor">
+                    <div className="flex items-center gap-3 mb-10">
+                        <Landmark className="text-blue-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
+                    </div>
+                    <SectionErrorBoundary name="India Money Market">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <RBIMoneyMarketMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <Activity className="text-emerald-500" size={28} />
-                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Inflation Pulse</h2>
-                        </div>
-                        <SectionErrorBoundary name="India Inflation Pulse">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <IndiaInflationPulseMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
-                </div>
+                {/* 8. Inflation Pulse */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Activity className="text-emerald-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Inflation Pulse</h2>
+                    </div>
+                    <SectionErrorBoundary name="India Inflation Pulse">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaInflationPulseMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                {/* 7. Digitization Premium */}
+                {/* 9. Digitization Premium */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-blue-400" size={28} />
