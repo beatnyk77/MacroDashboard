@@ -98,34 +98,33 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* 3. Central Bank & Hubs */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <Zap className="text-amber-500" size={28} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Central Bank Gold Net Purchases</h2>
-                        </div>
-                        <SectionErrorBoundary name="Gold Net Purchases">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CentralBankGoldNet />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
+                {/* 3. Central Bank Gold Net Purchases */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Zap className="text-amber-500" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Central Bank Gold Net Purchases</h2>
+                    </div>
+                    <SectionErrorBoundary name="Gold Net Purchases">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CentralBankGoldNet />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                    <section>
-                        <div className="flex items-center gap-3 mb-10">
-                            <Lock className="text-blue-400" size={28} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Financial Hubs & Gold Gateways</h2>
-                        </div>
-                        <SectionErrorBoundary name="Financial Hubs">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GlobalFinancialHubsGoldGateways />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </section>
-                </div>
+                {/* 4. Global Financial Hubs & Gold Gateways */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Lock className="text-blue-400" size={28} />
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Financial Hubs & Gold Gateways</h2>
+                    </div>
+                    <SectionErrorBoundary name="Financial Hubs">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GlobalFinancialHubsGoldGateways />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
 
-                {/* 4. Trade Flows & Misinvoicing */}
+                {/* 5. Trade Flows & Misinvoicing */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-rose-500" size={28} />
@@ -139,7 +138,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
                 </section>
 
-                {/* 5. Gold Positioning & Manipulation Monitor */}
+                {/* 6. Gold Positioning & Manipulation Monitor */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-amber-500" size={28} />
