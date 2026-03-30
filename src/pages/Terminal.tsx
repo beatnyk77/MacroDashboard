@@ -68,21 +68,18 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 1. STRATEGIC CONTEXT */}
-                <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    <div className="lg:col-span-8">
-                        <SectionErrorBoundary name="Weekly Narrative">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <WeeklyNarrativeSection />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-                    <div className="lg:col-span-4">
-                        <SectionErrorBoundary name="Today's Brief">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <TodaysBriefPanel />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
+                <section className="space-y-12">
+                    <SectionErrorBoundary name="Weekly Narrative">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <WeeklyNarrativeSection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+
+                    <SectionErrorBoundary name="Today's Brief">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TodaysBriefPanel />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </section>
 
                 {/* 2. LIQUIDITY PLUMBLINE (Core Macro Input) */}
@@ -123,16 +120,17 @@ export const Terminal: React.FC = () => {
                         <div className="h-px flex-1 bg-white/5" />
                     </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div className="space-y-8">
                         <SectionErrorBoundary name="Sovereign Risk Matrix">
                             <Suspense fallback={<LoadingFallback />}>
                                 <SovereignRiskMatrix />
                             </Suspense>
                         </SectionErrorBoundary>
+
                         <SectionErrorBoundary name="US Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated" className="h-full">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6">
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
                                         <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
                                         <LiveStatusIndicator source="Treasury" />
                                     </CardHeader>
@@ -152,24 +150,25 @@ export const Terminal: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div className="space-y-8">
                         <SectionErrorBoundary name="Yield Curve Monitor">
                             <Suspense fallback={<LoadingFallback />}>
                                 <YieldCurveMonitor />
                             </Suspense>
                         </SectionErrorBoundary>
+
                         <SectionErrorBoundary name="Auction Demand Gauge">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated" className="h-full">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6">
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
                                         <CardTitle className="text-sm uppercase">Auction Demand Gauge</CardTitle>
                                         <LiveStatusIndicator source="Treasury" />
                                     </CardHeader>
                                     <CardContent className="space-y-4">
                                         <USTreasuryDemandGauge />
                                         <div className="flex justify-end pt-2">
-                                            <DataProvenanceBadge 
-                                                source="FRED / Treasury" 
+                                            <DataProvenanceBadge
+                                                source="FRED / Treasury"
                                                 methodology="B/S Aggregation"
                                                 lastVerified={new Date()}
                                                 size="sm"
@@ -217,16 +216,17 @@ export const Terminal: React.FC = () => {
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/80">Regional Intelligence</h2>
                         <div className="h-px flex-1 bg-white/5" />
                     </div>
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div className="space-y-8">
                         <SectionErrorBoundary name="China Macro Pulse">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated" className="h-full">
+                                <Card variant="elevated">
                                     <CardContent>
                                         <ChinaMacroPulseSection />
                                     </CardContent>
                                 </Card>
                             </Suspense>
                         </SectionErrorBoundary>
+
                         <SectionErrorBoundary name="India Credit Cycle">
                             <Suspense fallback={<LoadingFallback />}>
                                 <IndiaCreditCycleClock />
@@ -241,19 +241,20 @@ export const Terminal: React.FC = () => {
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/80">Institutional Strategy</h2>
                         <div className="h-px flex-1 bg-white/5" />
                     </div>
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div className="space-y-8">
                         <SectionErrorBoundary name="Treasury Snapshot">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated" className="h-full">
+                                <Card variant="elevated">
                                     <CardContent>
                                         <TreasurySnapshotSection />
                                     </CardContent>
                                 </Card>
                             </Suspense>
                         </SectionErrorBoundary>
+
                         <SectionErrorBoundary name="Hedging Monitor">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated" className="h-full">
+                                <Card variant="elevated">
                                     <CardContent>
                                         <CorporateTreasuryHedgingSection />
                                     </CardContent>
@@ -283,12 +284,13 @@ export const Terminal: React.FC = () => {
                     </Card>
                 </section>
 
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <section className="space-y-8">
                     <SectionErrorBoundary name="Deflation Debasement">
                         <Suspense fallback={<LoadingFallback />}>
                             <DeflationDebasementMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
+
                     <SectionErrorBoundary name="Currency Wars">
                         <Suspense fallback={<LoadingFallback />}>
                             <CurrencyWarsMonitor />
