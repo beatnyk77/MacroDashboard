@@ -21,7 +21,7 @@ import {
 import { useRBIMoneyMarket } from '@/hooks/useRBIMoneyMarket';
 
 export const RBIMoneyMarketMonitor: React.FC = () => {
-  const { ops, liq, isLoading, isError } = useRBIMoneyMarket();
+  const { ops, liq, repoRate, isLoading, isError } = useRBIMoneyMarket();
 
   const latestLiq = liq?.[0];
   const latestOps = ops?.[0];
@@ -60,7 +60,8 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
     );
   }
 
-  const isSurplus = latestLiq.net_liquidity_total < 0; // Negative in RBI PR means absorption/surplus
+  const netLiquidity = latestLiq?.net_liquidity_total ?? 0;
+  const isSurplus = netLiquidity < 0; // Negative in RBI PR means absorption/surplus
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -77,7 +78,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
               </div>
               <div className="flex items-baseline gap-4">
                 <h2 className="text-5xl font-black tracking-heading text-white uppercase leading-none">
-                  {Math.abs(latestLiq.net_liquidity_total).toLocaleString('en-IN')}
+                  {Math.abs(netLiquidity).toLocaleString('en-IN')}
                   <span className="text-xl ml-2 text-muted-foreground/50 italic capitalize font-medium tracking-normal text-none">Cr</span>
                 </h2>
                 <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black uppercase tracking-uppercase ${
@@ -91,10 +92,26 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full md:w-auto mt-4 md:mt-0 pt-6 md:pt-0 border-t md:border-t-0 border-white/5">
               {[
-                { label: 'SDF Rate', val: '6.25%', sub: 'Standing Deposit' },
-                { label: 'Repo Rate', val: '6.50%', sub: 'Policy Anchor' },
-                { label: 'MSF Rate', val: '6.75%', sub: 'Marginal Standing' },
-                { label: 'WACR', val: `${latestOps?.call_money_rate?.toFixed(2)}%`, sub: 'Market Reality' }
+                {
+                  label: 'SDF Rate',
+                  val: latestLiq?.sdf_rate ? `${latestLiq.sdf_rate.toFixed(2)}%` : '—',
+                  sub: 'Standing Deposit'
+                },
+                {
+                  label: 'Repo Rate',
+                  val: repoRate ? `${repoRate.toFixed(2)}%` : '—',
+                  sub: 'Policy Anchor'
+                },
+                {
+                  label: 'MSF Rate',
+                  val: latestLiq?.msf_rate ? `${latestLiq.msf_rate.toFixed(2)}%` : '—',
+                  sub: 'Marginal Standing'
+                },
+                {
+                  label: 'WACR',
+                  val: latestOps?.call_money_rate ? `${latestOps.call_money_rate.toFixed(2)}%` : '—',
+                  sub: 'Market Reality'
+                }
               ].map((m, i) => (
                 <div key={i} className="flex flex-col">
                   <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-1">{m.label}</span>
@@ -119,7 +136,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
               Interest Rate Corridor Dynamics
             </h3>
             <div className="text-xs text-muted-foreground font-medium uppercase tracking-uppercase">
-              Last 30 Operations
+              Historical Series
             </div>
           </div>
           
@@ -196,10 +213,10 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
               <div key={i} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs font-black text-white uppercase tracking-uppercase">{s.label}</span>
-                  <span className="text-xs font-black text-blue-400">{s.rate?.toFixed(2)}%</span>
+                  <span className="text-xs font-black text-blue-400">{s.rate ? `${s.rate.toFixed(2)}%` : '—'}</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold text-white tracking-heading">₹{s.vol?.toLocaleString('en-IN')}</span>
+                  <span className="text-xl font-bold text-white tracking-heading">₹{s.vol != null ? s.vol.toLocaleString('en-IN') : '—'}</span>
                   <span className="text-xs text-muted-foreground/50 font-black uppercase">Cr</span>
                 </div>
                 <div className="mt-3 h-1 w-full bg-white/5 rounded-full overflow-hidden">
