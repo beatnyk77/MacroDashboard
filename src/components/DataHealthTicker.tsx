@@ -38,7 +38,7 @@ export const DataHealthTicker: React.FC = () => {
             <div className="relative flex items-center justify-center">
                 {isSuccess ? <CheckCircle2 size={14} /> : isError ? <AlertCircle size={14} /> : <Activity size={14} className="animate-pulse" />}
                 {isSuccess && (
-                    <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping" />
+                    <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping" aria-hidden="true" />
                 )}
             </div>
 

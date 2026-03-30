@@ -74,7 +74,7 @@ export const QuarterlyAggregator: React.FC = () => {
             <div className="py-20 text-center">
                 <ServerCrash size={32} className="mx-auto text-white/10 mb-4" />
                 <p className="text-sm font-black uppercase tracking-widest text-white/20">No Results Found</p>
-                <p className="text-[0.65rem] text-muted-foreground/30 mt-1 uppercase font-black">Data ingestion may still be running.</p>
+                <p className="text-xs text-muted-foreground/30 mt-1 uppercase font-black">Data ingestion may still be running.</p>
             </div>
         );
     }
@@ -149,7 +149,7 @@ export const QuarterlyAggregator: React.FC = () => {
                                     </div>
                                 </td>
                                 <td className="px-8 py-6 text-right">
-                                    <div className={`px-3 py-1 rounded-lg inline-flex text-xs font-black italic tracking-tighter ${fund.operating_margin > 0.15 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-white/5 text-white/40 border border-white/10'}`}>
+                                    <div className={`px-3 py-1 rounded-lg inline-flex text-xs font-black italic tracking-tighter ${fund.operating_margin > 0.15 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-white/5 text-white/40 border border-white/12'}`}>
                                         {fund.operating_margin ? `${(fund.operating_margin * 100).toFixed(1)}%` : 'N/A'}
                                     </div>
                                 </td>

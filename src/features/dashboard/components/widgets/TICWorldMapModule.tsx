@@ -50,7 +50,7 @@ export const TICWorldMapModule: React.FC = () => {
     if (isLoading) return <Skeleton variant="rectangular" height={750} className="rounded-[40px] bg-white/5" />;
 
     return (
-        <Box className="relative w-full min-h-[750px] rounded-[48px] border border-white/10 bg-[#050505] overflow-hidden group/module shadow-3xl">
+        <Box className="relative w-full min-h-[750px] rounded-[48px] border border-white/12 bg-[#050505] overflow-hidden group/module shadow-3xl">
             {/* 1. Header & Primary Controls */}
             <div className="absolute top-10 left-10 z-30 flex flex-col gap-8 max-w-sm">
                 <div>
@@ -61,7 +61,7 @@ export const TICWorldMapModule: React.FC = () => {
                     <h2 className="text-4xl font-black uppercase tracking-tighter text-white leading-none">
                         Top Foreign <span className="text-cyan-400">Holders</span>
                     </h2>
-                    <p className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-relaxed opacity-60">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-relaxed opacity-60">
                         Pinpointing institutional demand and sovereign accumulation of US government debt
                     </p>
                 </div>
@@ -91,19 +91,19 @@ export const TICWorldMapModule: React.FC = () => {
             </div>
 
             {/* 2. Top 5 Power List (Bottom Left Overlay) */}
-            <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-3xl w-80">
+            <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/12 p-8 rounded-[2.5rem] shadow-3xl w-80">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-black text-white uppercase tracking-widest">Top 5 Holders</span>
                     <Layers className="text-cyan-400 w-4 h-4" />
                 </div>
                 <div className="space-y-5">
                     {top5.map((h, i) => (
-                        <div key={h.country_name} className="flex items-center justify-between group/power cursor-pointer" onClick={() => setSelectedCountry(h)}>
+                        <div key={h.country_name} role="button" tabIndex={0} aria-label={`View details for ${h.country_name}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedCountry(h); } }} className="flex items-center justify-between group/power cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none" onClick={() => setSelectedCountry(h)}>
                             <div className="flex items-center gap-3">
                                 <span className="text-xl">{COUNTRY_FLAGS[h.country_name] || '🌐'}</span>
                                 <div className="flex flex-col">
                                     <span className="text-[0.75rem] font-bold text-white group-hover/power:text-cyan-400 transition-colors uppercase truncate w-32">{h.country_name}</span>
-                                    <span className="text-[0.55rem] font-black text-white/30 tabular-nums">RANK #{(i+1).toString().padStart(2, '0')}</span>
+                                    <span className="text-xs font-black text-white/30 tabular-nums">RANK #{(i+1).toString().padStart(2, '0')}</span>
                                 </div>
                             </div>
                             <div className="text-right">
@@ -117,7 +117,7 @@ export const TICWorldMapModule: React.FC = () => {
             {/* 3. Ranked Sidebar (Desktop Right) */}
             <div className="absolute top-10 right-10 z-30 w-72 max-h-[calc(100%-120px)] overflow-y-auto hidden lg:block scrollbar-hide bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 shadow-inner">
                 <div className="flex items-center justify-between mb-8">
-                    <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.3em]">Institutional Rank</span>
+                    <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">Institutional Rank</span>
                     <TrendingUp size={16} className="text-cyan-400" />
                 </div>
                 <div className="space-y-5">
@@ -133,10 +133,10 @@ export const TICWorldMapModule: React.FC = () => {
                             )}
                         >
                             <div className="flex items-center gap-4">
-                                <span className="text-[0.65rem] font-black text-white/10 tabular-nums">{(i + 1).toString().padStart(2, '0')}</span>
+                                <span className="text-xs font-black text-white/10 tabular-nums">{(i + 1).toString().padStart(2, '0')}</span>
                                 <div className="flex flex-col">
                                     <span className="text-xs font-bold text-white group-hover/item:text-cyan-400 transition-colors uppercase truncate w-20">{h.country_name}</span>
-                                    <span className="text-[0.55rem] font-black text-cyan-400/50 tabular-nums uppercase">
+                                    <span className="text-xs font-black text-cyan-400/50 tabular-nums uppercase">
                                         {formatPercentage(h.pct_of_total_foreign || 0, { decimals: 1 })} Share
                                     </span>
                                 </div>

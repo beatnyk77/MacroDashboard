@@ -37,7 +37,7 @@ const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/r
 
 const LoadingFallback = () => (
     <div className="w-full h-full min-h-[150px] bg-slate-900/50 border border-white/5 rounded-xl animate-pulse flex items-center justify-center">
-        <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Connecting...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Connecting...</span>
     </div>
 );
 
@@ -46,7 +46,7 @@ export const Terminal: React.FC = () => {
         <Container maxWidth={false} disableGutters className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto bg-slate-950 min-h-screen">
             <SEOManager title="GraphiQuestor Terminal" description="Live Institutional Macro Telemetry" isApp={true} />
 
-            <header className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-4">
+            <header className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/12 pb-4">
                 <div>
                     <h1 className="text-3xl font-black text-white uppercase tracking-tighter leading-none mb-1">
                         Macro Observatory
@@ -89,7 +89,7 @@ export const Terminal: React.FC = () => {
                 <div className="w-full space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-blue-400">Liquidity Plumbline</h2>
+                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-blue-400">Liquidity Plumbline</h2>
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
                     <SectionErrorBoundary name="Global Liquidity Monitor">
@@ -98,7 +98,7 @@ export const Terminal: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                     
-                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                         <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                             <div>
                                 <h2 className="text-lg font-black text-white uppercase tracking-tighter">US Net Liquidity Proxy</h2>
@@ -116,7 +116,7 @@ export const Terminal: React.FC = () => {
                 <div className="w-full space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-rose-400">Sovereign Stress</h2>
+                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-rose-400">Sovereign Stress</h2>
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
 
@@ -128,7 +128,7 @@ export const Terminal: React.FC = () => {
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="US Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
                                     <div className="flex justify-between items-center mb-6">
                                         <h3 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h3>
                                         <LiveStatusIndicator source="Treasury" />
@@ -155,7 +155,7 @@ export const Terminal: React.FC = () => {
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="Auction Demand Gauge">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
                                     <div className="flex justify-between items-center mb-6">
                                         <h3 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h3>
                                         <LiveStatusIndicator source="Treasury" />
@@ -179,7 +179,7 @@ export const Terminal: React.FC = () => {
                 <div className="w-full space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-emerald-400">Capital Positioning</h2>
+                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-emerald-400">Capital Positioning</h2>
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
                     <SectionErrorBoundary name="Smart Money Flow Monitor">
@@ -190,7 +190,7 @@ export const Terminal: React.FC = () => {
                     
                     <SectionErrorBoundary name="Capital Flows">
                         <Suspense fallback={<LoadingFallback />}>
-                            <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                            <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                                 <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                                     <h2 className="text-lg font-black text-white uppercase tracking-tighter">Global Capital Flows</h2>
                                     <LiveStatusIndicator source="BIS / SWIFT" />
@@ -205,13 +205,13 @@ export const Terminal: React.FC = () => {
                 <div className="w-full space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-amber-400">Regional Intelligence</h2>
+                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-amber-400">Regional Intelligence</h2>
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <SectionErrorBoundary name="China Macro Pulse">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
                                     <ChinaMacroPulseSection />
                                 </div>
                             </Suspense>
@@ -227,20 +227,20 @@ export const Terminal: React.FC = () => {
                 <div className="w-full space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-cyan-400">Institutional Strategy</h2>
+                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">Institutional Strategy</h2>
                         <div className="h-px flex-1 bg-white/10" />
                     </div>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <SectionErrorBoundary name="Treasury Snapshot">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
                                     <TreasurySnapshotSection />
                                 </div>
                             </Suspense>
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="Hedging Monitor">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
+                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
                                     <CorporateTreasuryHedgingSection />
                                 </div>
                             </Suspense>
@@ -249,7 +249,7 @@ export const Terminal: React.FC = () => {
                 </div>
 
                 {/* 6. SYSTEMIC RISK & MONITORING */}
-                <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
                         <div>
                             <h2 className="text-lg font-black text-white uppercase tracking-tighter">Geopolitical Risk Matrix</h2>

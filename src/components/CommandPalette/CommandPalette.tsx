@@ -46,7 +46,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
     return (
         <div className="fixed inset-0 z-[2000] flex items-start justify-center pt-[20vh] px-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
             <Command
-                className="w-full max-w-[640px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden ring-1 ring-white/5 animate-in zoom-in-95 duration-200"
+                className="w-full max-w-[640px] bg-slate-900 border border-white/12 rounded-2xl shadow-2xl overflow-hidden ring-1 ring-white/5 animate-in zoom-in-95 duration-200"
                 onKeyDown={(e) => {
                     if (e.key === 'Escape') {
                         setOpen(false);
@@ -63,7 +63,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         onValueChange={setSearch}
                     />
                     <div className="flex items-center gap-1">
-                        <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground opacity-100">
+                        <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-white/12 bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground opacity-100">
                             ESC
                         </kbd>
                     </div>
@@ -174,13 +174,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                 <div className="flex items-center justify-between px-4 h-10 border-t border-white/5 bg-slate-900/50">
                     <div className="flex gap-4">
                         <div className="flex items-center gap-1.5">
-                            <kbd className="flex h-5 select-none items-center gap-1 rounded bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground border border-white/10">
+                            <kbd className="flex h-5 select-none items-center gap-1 rounded bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground border border-white/12">
                                 ENTER
                             </kbd>
                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">to select</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <kbd className="flex h-5 select-none items-center gap-1 rounded bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground border border-white/10">
+                            <kbd className="flex h-5 select-none items-center gap-1 rounded bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground border border-white/12">
                                 ↓↑
                             </kbd>
                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">to navigate</span>

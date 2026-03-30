@@ -42,7 +42,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
     );
 
     return (
-        <Card className={cn("w-full bg-black/40 border-white/10 backdrop-blur-xl relative overflow-hidden", className)}>
+        <Card className={cn("w-full bg-black/40 border-white/12 backdrop-blur-xl relative overflow-hidden", className)}>
             {/* Ambient glow */}
             <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-[120px] bg-red-500/10 pointer-events-none" />
 
@@ -134,11 +134,11 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
 
                                                             {/* Tooltip on hover */}
                                                             {isHovered && row && (
-                                                                <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-black/95 border border-white/10 rounded-xl p-3 text-left shadow-2xl pointer-events-none">
+                                                                <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-black/95 border border-white/12 rounded-xl p-3 text-left shadow-2xl pointer-events-none">
                                                                     <div className="text-xs font-bold text-white/90 mb-2 font-mono">
                                                                         {origin} → {dest}
                                                                     </div>
-                                                                    <div className="space-y-1 text-[0.65rem] font-mono">
+                                                                    <div className="space-y-1 text-xs font-mono">
                                                                         <div className="flex justify-between">
                                                                             <span className="text-muted-foreground">Baseline ({row.baseline_period})</span>
                                                                             <span className="text-white">{formatUSD(row.baseline_usd)}</span>
@@ -147,7 +147,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
                                                                             <span className="text-muted-foreground">Current ({row.current_period})</span>
                                                                             <span className="text-red-300">{formatUSD(row.current_usd)}</span>
                                                                         </div>
-                                                                        <div className="flex justify-between border-t border-white/10 pt-1 mt-1">
+                                                                        <div className="flex justify-between border-t border-white/12 pt-1 mt-1">
                                                                             <span className="text-muted-foreground">Spike Ratio</span>
                                                                             <span className="text-red-200 font-bold">{ratio.toFixed(2)}×</span>
                                                                         </div>

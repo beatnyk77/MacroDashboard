@@ -33,7 +33,7 @@ export const China15thFYPLab: React.FC = () => {
                                 <Flag className="text-red-500 w-6 h-6" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-red-500">Mission Intelligence Lab</span>
+                                <span className="text-xs font-black uppercase tracking-[0.3em] text-red-500">Mission Intelligence Lab</span>
                                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white italic uppercase">
                                     China 15th <span className="text-red-500">Five-Year Plan</span>
                                 </h1>
@@ -43,11 +43,11 @@ export const China15thFYPLab: React.FC = () => {
                             An institutional-grade telemetry dashboard tracking the 2026–2030 roadmap for high-quality development, technological self-reliance, and national economic security.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[0.65rem] font-bold uppercase tracking-widest text-slate-300">
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-widest text-slate-300">
                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                                 Active Monitoring
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[0.65rem] font-bold uppercase tracking-widest text-slate-300">
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-widest text-slate-300">
                                 Last Updated: March 14, 2026
                             </div>
                         </div>

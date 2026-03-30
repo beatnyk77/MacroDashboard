@@ -51,7 +51,7 @@ const USFiscalComparisonChart: React.FC = () => {
     }
 
     return (
-        <div className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl p-6 glass-morphism overflow-hidden">
+        <div className="w-full bg-[#0A0A0A] border border-white/12 rounded-xl p-6 glass-morphism overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div>
                     <h3 className="text-xl font-bold text-white tracking-tight">

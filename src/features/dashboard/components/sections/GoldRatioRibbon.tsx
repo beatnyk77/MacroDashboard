@@ -9,7 +9,7 @@ import { AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     return (
-        <div className="bg-slate-950/95 border border-white/10 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
+        <div className="bg-slate-950/95 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
             <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-3">
                 {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
             </p>
@@ -145,7 +145,7 @@ export const GoldRatioRibbon: React.FC = () => {
                             <div className={cn("text-xs font-black uppercase tracking-widest", regimeColor)}>
                                 {regimeTitle}
                             </div>
-                            <p className="text-[0.65rem] leading-tight text-muted-foreground font-medium italic">
+                            <p className="text-xs leading-tight text-muted-foreground font-medium italic">
                                 {regimeDesc}
                             </p>
                         </div>
@@ -158,7 +158,7 @@ export const GoldRatioRibbon: React.FC = () => {
 
                     {!chartData || chartData.length === 0 ? (
                         <div className="h-full w-full flex flex-col items-center justify-center space-y-4">
-                            <div className="p-4 rounded-full bg-white/5 border border-white/10">
+                            <div className="p-4 rounded-full bg-white/5 border border-white/12">
                                 <AlertTriangle className="w-8 h-8 text-amber-500/20" />
                             </div>
                             <div className="text-center">

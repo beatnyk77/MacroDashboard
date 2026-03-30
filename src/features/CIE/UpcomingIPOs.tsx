@@ -82,7 +82,7 @@ export const UpcomingIPOs: React.FC = () => {
                         placeholder="Search IPO candidates..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-16 pr-6 text-sm font-medium text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all shadow-inner"
+                        className="w-full bg-black/40 border border-white/12 rounded-2xl py-4 pl-16 pr-6 text-sm font-medium text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all shadow-inner"
                     />
                 </div>
 
@@ -90,7 +90,7 @@ export const UpcomingIPOs: React.FC = () => {
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value as any)}
-                        className="bg-black/40 border border-white/10 rounded-2xl py-3 px-6 text-xs font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
+                        className="bg-black/40 border border-white/12 rounded-2xl py-3 px-6 text-xs font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
                     >
                         <option value="All">All Status</option>
                         <option value="Upcoming">Upcoming</option>
@@ -101,7 +101,7 @@ export const UpcomingIPOs: React.FC = () => {
                     <select
                         value={sectorFilter}
                         onChange={(e) => setSectorFilter(e.target.value)}
-                        className="bg-black/40 border border-white/10 rounded-2xl py-3 px-6 text-xs font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
+                        className="bg-black/40 border border-white/12 rounded-2xl py-3 px-6 text-xs font-black uppercase tracking-[0.2em] text-white/40 focus:outline-none focus:border-blue-500/50 appearance-none hover:text-white/60 transition-colors cursor-pointer"
                     >
                         {sectors.map(s => <option key={s ?? 'All'} value={s ?? 'All'}>{s ?? 'All'}</option>)}
                     </select>
@@ -183,7 +183,7 @@ export const UpcomingIPOs: React.FC = () => {
                                                 href={ipo.draft_prospectus_url}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-blue-400 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all inline-block group/link"
+                                                className="p-3 rounded-2xl bg-white/5 border border-white/12 text-white/40 hover:text-blue-400 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all inline-block group/link"
                                                 title="View DRHP"
                                             >
                                                 <ExternalLink size={16} className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
@@ -212,7 +212,7 @@ export const UpcomingIPOs: React.FC = () => {
                 </div>
                 <div>
                     <h4 className="text-xs font-black uppercase tracking-widest text-orange-400 mb-2">Protocol Overlay: Macro Risk Intelligence</h4>
-                    <p className="text-[0.65rem] text-muted-foreground/60 leading-relaxed font-medium max-w-4xl">
+                    <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium max-w-4xl">
                         The "Macro Risk Score" is calculated based on our proprietary India Macro Pulse signals (GFCF levels, formalization premiums, and state-capex resilience) applied to the candidate's primary sector and geographical exposure. This is an intelligence overlay and does not constitute financial advice.
                     </p>
                 </div>

@@ -101,7 +101,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                     />
                     <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest">Live Flow: FY 2024-25 Budgetary Pulse</span>
+                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">Live Flow: FY 2024-25 Budgetary Pulse</span>
                     </div>
                 </div>
 
@@ -170,7 +170,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 selectedStateCode={selectedState?.state_code}
                                 tooltipFormatter={(s) => `
                                     <div class="space-y-1">
-                                        <div class="text-xs font-black text-white/90 mb-1 border-b border-white/10 pb-1">${s.state_name}</div>
+                                        <div class="text-xs font-black text-white/90 mb-1 border-b border-white/12 pb-1">${s.state_name}</div>
                                         <div class="flex justify-between gap-4">
                                             <span class="text-muted-foreground/60">Capex/GSDP:</span>
                                             <span class="text-emerald-400 font-black">${s.capex_pct_gdp?.toFixed(1)}%</span>
@@ -184,8 +184,8 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                             />
 
                             {/* Legends */}
-                            <div className="absolute bottom-8 right-8 z-[1000] p-4 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-white/10 flex flex-col gap-3">
-                                <span className="text-[0.55rem] font-black text-muted-foreground/60 uppercase tracking-widest border-b border-white/5 pb-2">Capex Intensity (%)</span>
+                            <div className="absolute bottom-8 right-8 z-[1000] p-4 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-white/12 flex flex-col gap-3">
+                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-widest border-b border-white/5 pb-2">Capex Intensity (%)</span>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full bg-emerald-500" />
@@ -348,7 +348,7 @@ const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: a
                 {icon}
             </div>
             <div className={cn(
-                "px-3 py-1 rounded-full text-[0.55rem] font-black uppercase tracking-tighter",
+                "px-3 py-1 rounded-full text-xs font-black uppercase tracking-tighter",
                 trendStatus === 'positive' ? "bg-emerald-500/10 text-emerald-500" :
                     trendStatus === 'warning' ? "bg-amber-500/10 text-amber-500" :
                         "bg-blue-500/10 text-blue-500"
@@ -362,7 +362,7 @@ const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: a
                 <span className="text-4xl font-black text-white italic tracking-tighter tabular-nums">{value}</span>
                 <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">{sub}</span>
             </div>
-            <div className="text-[0.65rem] font-bold text-muted-foreground/50 leading-relaxed italic">
+            <div className="text-xs font-bold text-muted-foreground/50 leading-relaxed italic">
                 {description}
             </div>
         </div>
@@ -374,7 +374,7 @@ const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: a
 const StateDetailRow = ({ label, value, sub, color }: any) => (
     <div className="flex justify-between items-end border-b border-white/5 pb-3">
         <div className="flex flex-col">
-            <span className="text-[0.55rem] font-black text-white/30 uppercase tracking-widest leading-none mb-1">{label}</span>
+            <span className="text-xs font-black text-white/30 uppercase tracking-widest leading-none mb-1">{label}</span>
             <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-tighter">{sub}</span>
         </div>
         <span className={cn("text-xl font-black tabular-nums tracking-tighter", color)}>{value}</span>
@@ -384,7 +384,7 @@ const StateDetailRow = ({ label, value, sub, color }: any) => (
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/10 p-5 rounded-3xl shadow-3xl">
+            <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/12 p-5 rounded-3xl shadow-3xl">
                 <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
                     {label} Fiscal Matrix
                 </div>

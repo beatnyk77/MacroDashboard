@@ -208,11 +208,11 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                                 )}>
                                                     {getDeltaIcon()}
                                                     <span>{delta.value}</span>
-                                                    <span className="text-[0.65rem] font-medium text-muted-foreground/50 uppercase ml-1">{delta.period}</span>
+                                                    <span className="text-xs font-medium text-muted-foreground/50 uppercase ml-1">{delta.period}</span>
                                                 </div>
                                             </TooltipTrigger>
                                             {delta.tooltip && (
-                                                <TooltipContent className="p-3 bg-slate-950 border-white/10 shadow-2xl backdrop-blur-xl">
+                                                <TooltipContent className="p-3 bg-slate-950 border-white/12 shadow-2xl backdrop-blur-xl">
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
                                                             <span className="text-xs font-bold text-muted-foreground/60 uppercase">Current</span>

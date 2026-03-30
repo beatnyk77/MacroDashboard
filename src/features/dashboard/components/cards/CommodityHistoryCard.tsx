@@ -26,7 +26,7 @@ interface CommodityHistoryCardProps {
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-900/95 backdrop-blur-2xl border border-white/10 p-3 rounded-2xl shadow-2xl">
+            <div className="bg-slate-900/95 backdrop-blur-2xl border border-white/12 p-3 rounded-2xl shadow-2xl">
                 <div className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
                 <div className="text-sm font-black text-white tabular-nums">
                     ${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -90,7 +90,7 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
 
                     {delta !== undefined && (
                         <div className={cn(
-                            "flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.65rem] font-black border tabular-nums",
+                            "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border tabular-nums",
                             delta > 0 ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" : "text-rose-400 border-rose-500/20 bg-rose-500/5"
                         )}>
                             <TrendIcon size={12} />
@@ -105,7 +105,7 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
                         <span className="text-4xl font-black text-white tracking-tighter tabular-nums drop-shadow-md">
                             ${price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </span>
-                        <span className="text-[0.65rem] font-bold text-white/30 uppercase tracking-widest">{unit}</span>
+                        <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{unit}</span>
                     </div>
                 </div>
 
@@ -144,8 +144,8 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
             {/* Range Stats */}
             <div className="relative z-10 mt-6 pt-6 border-t border-white/5 flex justify-between items-end">
                 <div className="space-y-1">
-                    <span className="text-[0.55rem] font-bold text-muted-foreground/30 uppercase tracking-widest">25Y Min-Max Band</span>
-                    <div className="flex items-center gap-4 text-[0.65rem] font-bold text-white/50 tabular-nums">
+                    <span className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest">25Y Min-Max Band</span>
+                    <div className="flex items-center gap-4 text-xs font-bold text-white/50 tabular-nums">
                         <span>Low: <span className="text-white">${minVal.toFixed(1)}</span></span>
                         <div className="w-[1px] h-3 bg-white/10" />
                         <span>High: <span className="text-white">${maxVal.toFixed(1)}</span></span>

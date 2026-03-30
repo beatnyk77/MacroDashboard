@@ -53,7 +53,7 @@ export const BOPPressureTable: React.FC = () => {
                             <Activity className="w-4 h-4 text-blue-500 animate-pulse" />
                             <h3 className="text-xl font-black text-white italic tracking-tight uppercase">BOP Pressure Terminal</h3>
                         </div>
-                        <p className="text-[0.65rem] font-black tracking-[0.2em] text-muted-foreground/40 uppercase">External Sector Stability Matrix</p>
+                        <p className="text-xs font-black tracking-[0.2em] text-muted-foreground/40 uppercase">External Sector Stability Matrix</p>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -67,7 +67,7 @@ export const BOPPressureTable: React.FC = () => {
                 <div className="overflow-x-auto relative z-10 -mx-8 px-8">
                     <table className="w-full text-left min-w-[600px]">
                         <thead>
-                            <tr className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-[0.25em] border-b border-white/5">
+                            <tr className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.25em] border-b border-white/5">
                                 <th className="pb-4 font-black">Stability Indicator</th>
                                 <th className="pb-4 font-black">Live Value</th>
                                 <th className="pb-4 font-black">Risk Analysis</th>
@@ -86,7 +86,7 @@ export const BOPPressureTable: React.FC = () => {
                                                 <TooltipTrigger className="cursor-help opacity-20 hover:opacity-100 transition-opacity">
                                                     <Info className="w-3 h-3 text-white" />
                                                 </TooltipTrigger>
-                                                <TooltipContent className="bg-slate-950 border-white/10 p-3 text-[0.65rem] max-w-[200px] leading-relaxed">
+                                                <TooltipContent className="bg-slate-950 border-white/12 p-3 text-xs max-w-[200px] leading-relaxed">
                                                     {item.definition}
                                                 </TooltipContent>
                                             </Tooltip>
@@ -97,7 +97,7 @@ export const BOPPressureTable: React.FC = () => {
                                     </td>
                                     <td className="py-5">
                                         <div className={cn(
-                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-[0.55rem] font-black uppercase tracking-widest border",
+                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-black uppercase tracking-widest border",
                                             item.status === 'Safe'
                                                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
                                                 : "bg-amber-400/10 border-amber-400/20 text-amber-400"
@@ -117,8 +117,8 @@ export const BOPPressureTable: React.FC = () => {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center relative z-10">
-                    <span className="text-[0.55rem] font-medium text-muted-foreground/40 italic">Aggregated via Reserve Bank telemetry & Custom Flows</span>
-                    <button className="text-[0.55rem] font-black text-blue-500/60 hover:text-blue-400 tracking-[0.1em] uppercase">Export Stability Data</button>
+                    <span className="text-xs font-medium text-muted-foreground/40 italic">Aggregated via Reserve Bank telemetry & Custom Flows</span>
+                    <button className="text-xs font-black text-blue-500/60 hover:text-blue-400 tracking-[0.1em] uppercase">Export Stability Data</button>
                 </div>
             </div>
         </TooltipProvider>

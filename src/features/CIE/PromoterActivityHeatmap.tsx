@@ -55,7 +55,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
                                     <h3 className="text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">{sector.name}</h3>
                                     <div className="text-xs font-black text-white/20 uppercase tracking-[0.2em] mt-1">{sector.count} Entities Monitored</div>
                                 </div>
-                                <div className={`p-3 rounded-2xl border ${sector.netInsider > 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : sector.netInsider < 0 ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-white/5 text-white/40 border-white/10'}`}>
+                                <div className={`p-3 rounded-2xl border ${sector.netInsider > 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : sector.netInsider < 0 ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-white/5 text-white/40 border-white/12'}`}>
                                     {sector.netInsider > 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
                                 </div>
                             </div>

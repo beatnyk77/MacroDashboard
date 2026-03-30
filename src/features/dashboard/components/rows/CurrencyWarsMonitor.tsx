@@ -193,7 +193,7 @@ const MetricMiniCard = ({ label, value, sub, icon }: any) => (
     <div className="px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-4 hover:bg-white/[0.05] transition-all">
         <div className="p-2 rounded-xl bg-white/[0.03]">{icon}</div>
         <div>
-            <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</div>
+            <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</div>
             <div className="text-lg font-black tabular-nums text-white/90 leading-none">{value}</div>
             <div className="text-xs text-muted-foreground/30 mt-1">{sub}</div>
         </div>
@@ -201,7 +201,7 @@ const MetricMiniCard = ({ label, value, sub, icon }: any) => (
 );
 
 const InsightCard = ({ title, description, value, unit = '', trend }: any) => (
-    <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all flex flex-col justify-between">
+    <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-white/12 transition-all flex flex-col justify-between">
         <div>
             <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">{title}</div>
             <p className="text-xs text-muted-foreground/60 leading-relaxed">{description}</p>
@@ -233,7 +233,7 @@ const ZoomButton = ({ active, onClick, label }: any) => (
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-background-dashboard/90 backdrop-blur-md border border-white/10 p-4 rounded-xl shadow-2xl">
+            <div className="bg-background-dashboard/90 backdrop-blur-md border border-white/12 p-4 rounded-xl shadow-2xl">
                 <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-3">
                     {new Date(label).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                 </div>
@@ -242,7 +242,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                         <div key={entry.name} className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                <span className="text-[0.65rem] font-bold text-muted-foreground/80">{entry.name}</span>
+                                <span className="text-xs font-bold text-muted-foreground/80">{entry.name}</span>
                             </div>
                             <span className="text-xs font-black tabular-nums">{entry.value.toFixed(2)}{entry.name.includes('Rate') || entry.name.includes('Fed') || entry.name.includes('RBI') ? '%' : ''}</span>
                         </div>

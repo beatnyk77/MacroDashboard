@@ -76,15 +76,15 @@ export const CentralBankGoldNet: React.FC = () => {
             >
                 {/* Main Data Table */}
                 <motion.div variants={itemVariants} className="lg:col-span-2">
-                    <TableContainer component={Paper} className="bg-neutral-900/50 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                    <TableContainer component={Paper} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl overflow-hidden shadow-2xl">
                         <Table aria-label="central bank gold net purchases table">
                             <TableHead className="bg-white/5">
                                 <TableRow>
-                                    <TableCell className="text-neutral-400 font-medium border-b border-white/10">Period</TableCell>
-                                    <TableCell align="right" className="text-emerald-400 font-medium border-b border-white/10">Gross Buyers (t)</TableCell>
-                                    <TableCell align="right" className="text-rose-400 font-medium border-b border-white/10">Gross Sellers (t)</TableCell>
-                                    <TableCell align="right" className="text-yellow-400 font-bold border-b border-white/10">Net Change (t)</TableCell>
-                                    <TableCell align="right" className="text-neutral-400 font-medium border-b border-white/10">% Global Stock</TableCell>
+                                    <TableCell className="text-neutral-400 font-medium border-b border-white/12">Period</TableCell>
+                                    <TableCell align="right" className="text-emerald-400 font-medium border-b border-white/12">Gross Buyers (t)</TableCell>
+                                    <TableCell align="right" className="text-rose-400 font-medium border-b border-white/12">Gross Sellers (t)</TableCell>
+                                    <TableCell align="right" className="text-yellow-400 font-bold border-b border-white/12">Net Change (t)</TableCell>
+                                    <TableCell align="right" className="text-neutral-400 font-medium border-b border-white/12">% Global Stock</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -155,7 +155,7 @@ export const CentralBankGoldNet: React.FC = () => {
                 </motion.div>
 
                 {/* Inset Chart: Since 2020 Breakdown */}
-                <motion.div variants={itemVariants} className="bg-neutral-900/50 backdrop-blur-sm border border-white/10 rounded-xl p-6 shadow-2xl flex flex-col h-[400px]">
+                <motion.div variants={itemVariants} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl p-6 shadow-2xl flex flex-col h-[400px]">
                     <h3 className="text-lg font-medium text-white mb-2 flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-emerald-400" />
                         Since 2020 Breakdown

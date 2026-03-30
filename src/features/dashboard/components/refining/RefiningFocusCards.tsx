@@ -53,7 +53,7 @@ const FocusCard: React.FC<{
                         <div className="text-sm font-black text-white italic">{utilization}%</div>
                     </div>
                     <div className="flex justify-between mt-2">
-                        <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase">Median: {median}%</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase">Median: {median}%</span>
                         <BarChart3 size={12} className="text-white/20" />
                     </div>
                 </div>

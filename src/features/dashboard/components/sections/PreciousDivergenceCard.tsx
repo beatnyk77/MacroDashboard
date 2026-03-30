@@ -59,7 +59,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                         </div>
                         <div className="flex flex-wrap gap-6 items-center">
                             <div className="flex flex-col">
-                                <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-tighter mb-1">COMEX (West)</span>
+                                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-tighter mb-1">COMEX (West)</span>
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl font-black text-white/90 font-mono tracking-tighter tabular-nums">${comexMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
@@ -67,7 +67,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                             </div>
                             <div className="w-[1px] h-10 bg-white/5 hidden sm:block" />
                             <div className="flex flex-col">
-                                <span className="text-[0.55rem] font-black text-emerald-500/40 uppercase tracking-tighter mb-1">SHANGHAI (East)</span>
+                                <span className="text-xs font-black text-emerald-500/40 uppercase tracking-tighter mb-1">SHANGHAI (East)</span>
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl font-black text-emerald-400 font-mono tracking-tighter tabular-nums">${shanghaiMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -82,11 +82,11 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                     <div className="flex justify-between items-end mb-1">
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
-                                <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest px-2.5 py-1 rounded-full bg-white/5 border border-white/5">
+                                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest px-2.5 py-1 rounded-full bg-white/5 border border-white/5">
                                     Spread Delta
                                 </span>
                                 {Math.abs(spread) > 1.2 && (
-                                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[0.55rem] font-black text-amber-500 uppercase animate-in fade-in slide-in-from-left-2 transition-all">
+                                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs font-black text-amber-500 uppercase animate-in fade-in slide-in-from-left-2 transition-all">
                                         <Zap className="w-2.5 h-2.5 fill-amber-500" />
                                         Extreme Divergence
                                     </div>
@@ -100,7 +100,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                             )}>
                                 {isPremium ? '+' : ''}{spread.toFixed(2)}%
                             </div>
-                            <span className="text-[0.55rem] font-bold text-muted-foreground/30 uppercase mt-1">LME/LBMA Premium</span>
+                            <span className="text-xs font-bold text-muted-foreground/30 uppercase mt-1">LME/LBMA Premium</span>
                         </div>
                     </div>
 
@@ -184,7 +184,7 @@ export const PreciousDivergenceCard: React.FC = () => {
 
                 <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-2xl">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.15em]">Live Vault Signals</span>
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.15em]">Live Vault Signals</span>
                 </div>
             </div>
 
@@ -230,7 +230,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                                     <Info className="w-5 h-5 text-muted-foreground group-hover:text-white" />
                                 </button>
                             </TooltipTrigger>
-                            <TooltipContent className="bg-slate-950 border-white/10 p-4 max-w-[250px] rounded-xl shadow-2xl">
+                            <TooltipContent className="bg-slate-950 border-white/12 p-4 max-w-[250px] rounded-xl shadow-2xl">
                                 <p className="text-xs font-medium text-muted-foreground leading-relaxed">
                                     <span className="text-white font-bold block mb-1 uppercase tracking-wider">Arbitrage Calculation</span>
                                     Cross-exchange spread calculated as ((Shanghai Cash / USDCNH) - COMEX Front Month) / COMEX * 100. Accounts for offshore currency conversion and physical delivery fees.
@@ -240,7 +240,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                     </TooltipProvider>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-white/10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-white/12">
                     {[
                         {
                             label: 'Vault Drainage',
@@ -260,7 +260,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                     ].map((bullet, idx) => (
                         <div key={idx} className="group/bullet space-y-2.5">
                             <div className="flex items-center justify-between">
-                                <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-white/60 group-hover/bullet:text-white transition-colors">
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-white/60 group-hover/bullet:text-white transition-colors">
                                     {bullet.label}
                                 </span>
                                 <div className="px-2 py-0.5 rounded bg-white/5 text-xs font-black text-muted-foreground uppercase">

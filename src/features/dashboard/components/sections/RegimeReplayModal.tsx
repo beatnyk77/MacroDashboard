@@ -99,7 +99,7 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-white/12 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center mb-10">
                     <div className="flex items-center gap-4">
                         <div className="p-2 rounded-lg bg-primary text-primary-foreground">
@@ -164,9 +164,9 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                             <Table>
                                 <TableHeader className="bg-white/[0.02]">
                                     <TableRow className="border-b border-white/5 hover:bg-transparent">
-                                        <TableHead className="py-2 px-3 font-black text-[0.65rem] text-muted-foreground uppercase">ASSET</TableHead>
-                                        <TableHead className="py-2 px-3 font-black text-[0.65rem] text-muted-foreground uppercase">PERF (AVG)</TableHead>
-                                        <TableHead className="py-2 px-3 font-black text-[0.65rem] text-muted-foreground uppercase">MACRO CATALYST</TableHead>
+                                        <TableHead className="py-2 px-3 font-black text-xs text-muted-foreground uppercase">ASSET</TableHead>
+                                        <TableHead className="py-2 px-3 font-black text-xs text-muted-foreground uppercase">PERF (AVG)</TableHead>
+                                        <TableHead className="py-2 px-3 font-black text-xs text-muted-foreground uppercase">MACRO CATALYST</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

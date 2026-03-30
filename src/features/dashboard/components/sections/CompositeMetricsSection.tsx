@@ -145,7 +145,7 @@ export const CompositeMetricsSection: React.FC = () => {
                     <h3 className="text-lg font-black text-white tracking-tight uppercase">
                         Composite Efficiency Indices
                     </h3>
-                    <p className="text-[0.65rem] font-semibold text-slate-500 uppercase tracking-widest">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
                         Computed Real-Time • MoSPI + FRED Sources
                     </p>
                 </div>

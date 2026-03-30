@@ -71,13 +71,13 @@ export const AIComputeEnergyMonitor: React.FC = () => {
                     <div className="flex flex-wrap gap-4">
                         {oversupplyRisk && (
                             <div className="px-5 py-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex flex-col items-start gap-1">
-                                <span className="text-[0.55rem] font-black text-rose-500/60 uppercase tracking-widest">Compute Market Status</span>
-                                <span className="text-[0.65rem] font-black uppercase tracking-tighter text-rose-500">OVERSUPPLY RISK</span>
+                                <span className="text-xs font-black text-rose-500/60 uppercase tracking-widest">Compute Market Status</span>
+                                <span className="text-xs font-black uppercase tracking-tighter text-rose-500">OVERSUPPLY RISK</span>
                             </div>
                         )}
                         <div className="px-5 py-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex flex-col items-start gap-1">
-                            <span className="text-[0.55rem] font-black text-cyan-500/60 uppercase tracking-widest">Inference Deflation</span>
-                            <span className="text-[0.65rem] font-black uppercase tracking-tighter text-cyan-400">STRUCTURAL BEAR</span>
+                            <span className="text-xs font-black text-cyan-500/60 uppercase tracking-widest">Inference Deflation</span>
+                            <span className="text-xs font-black uppercase tracking-tighter text-cyan-400">STRUCTURAL BEAR</span>
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@ export const AIComputeEnergyMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <h3 className="text-xs font-black text-indigo-400/60 uppercase tracking-[0.2em]">H100 Rental Price</h3>
-                                <p className="text-[0.65rem] text-muted-foreground/50 mt-1">Average hourly rate ($/hr)</p>
+                                <p className="text-xs text-muted-foreground/50 mt-1">Average hourly rate ($/hr)</p>
                             </div>
                             <Cpu className="text-indigo-400 opacity-50" size={20} />
                         </div>
@@ -110,7 +110,7 @@ export const AIComputeEnergyMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <h3 className="text-xs font-black text-cyan-400/60 uppercase tracking-[0.2em]">Big Tech Capex Exuberance</h3>
-                                <p className="text-[0.65rem] text-muted-foreground/50 mt-1">Quarterly Capital Expenditure ($ Billions)</p>
+                                <p className="text-xs text-muted-foreground/50 mt-1">Quarterly Capital Expenditure ($ Billions)</p>
                             </div>
                             <Activity className="text-cyan-400 opacity-50" size={20} />
                         </div>
@@ -132,7 +132,7 @@ export const AIComputeEnergyMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <h3 className="text-xs font-black text-amber-500/60 uppercase tracking-[0.2em]">Datacenter Energy Demand</h3>
-                                <p className="text-[0.65rem] text-muted-foreground/50 mt-1">Physical constraint vector (TWh)</p>
+                                <p className="text-xs text-muted-foreground/50 mt-1">Physical constraint vector (TWh)</p>
                             </div>
                             <Zap className="text-amber-500 opacity-50" size={20} />
                         </div>
@@ -178,7 +178,7 @@ export const AIComputeEnergyMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <h3 className="text-xs font-black text-teal-400/60 uppercase tracking-[0.2em]">Inference Cost Curve</h3>
-                                <p className="text-[0.65rem] text-muted-foreground/50 mt-1">Cost per 1M tokens ($ Log Scale)</p>
+                                <p className="text-xs text-muted-foreground/50 mt-1">Cost per 1M tokens ($ Log Scale)</p>
                             </div>
                             <TrendingDown className="text-teal-400 opacity-50" size={20} />
                         </div>
@@ -196,13 +196,13 @@ export const AIComputeEnergyMonitor: React.FC = () => {
                     </div>
 
                     {/* Panel 6: Currie Shale Analogy */}
-                    <div className="lg:col-span-2 bg-gradient-to-br from-indigo-950/40 to-cyan-950/20 shadow-inner border border-white/10 rounded-[2.5rem] p-8 overflow-hidden">
+                    <div className="lg:col-span-2 bg-gradient-to-br from-indigo-950/40 to-cyan-950/20 shadow-inner border border-white/12 rounded-[2.5rem] p-8 overflow-hidden">
                         <div className="flex items-center gap-3 mb-8">
                             <Database className="text-indigo-400" size={20} />
                             <h3 className="text-sm font-black text-indigo-300 uppercase tracking-[0.2em]">The Shale Analogy Matrix</h3>
                         </div>
                         <div className="w-full">
-                            <div className="grid grid-cols-2 text-[0.65rem] font-bold text-muted-foreground/50 uppercase tracking-widest border-b border-white/10 pb-4 mb-4 gap-4">
+                            <div className="grid grid-cols-2 text-xs font-bold text-muted-foreground/50 uppercase tracking-widest border-b border-white/12 pb-4 mb-4 gap-4">
                                 <div>2014 Shale Boom Parallels</div>
                                 <div>2024 AI Compute Era</div>
                             </div>

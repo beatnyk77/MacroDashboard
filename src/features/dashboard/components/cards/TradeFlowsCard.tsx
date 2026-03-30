@@ -107,7 +107,7 @@ export const TradeFlowsCard: React.FC = () => {
     }
 
     return (
-        <Card className="w-full bg-[#0a0a0a] border-white/10 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl relative group">
+        <Card className="w-full bg-[#0a0a0a] border-white/12 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl relative group">
             {/* Imperial Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-blue-500/5 pointer-events-none" />
 

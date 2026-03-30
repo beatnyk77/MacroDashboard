@@ -111,7 +111,7 @@ export const SPAAccordion: React.FC<SPAAccordionProps> = ({
 
                     {/* Interpretation Bullets - Stitch MCP Style */}
                     {interpretations && interpretations.length > 0 && (
-                        <div className="flex flex-wrap gap-x-6 gap-y-2 lg:border-l lg:border-white/10 lg:pl-8">
+                        <div className="flex flex-wrap gap-x-6 gap-y-2 lg:border-l lg:border-white/12 lg:pl-8">
                             {interpretations.map((text, i) => (
                                 <div key={i} className="flex items-center gap-2">
                                     <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />

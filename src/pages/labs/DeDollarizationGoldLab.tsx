@@ -50,7 +50,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[0.65rem] font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-widest mb-4">
                     <Coins size={12} /> Hard Money Telemetry
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>

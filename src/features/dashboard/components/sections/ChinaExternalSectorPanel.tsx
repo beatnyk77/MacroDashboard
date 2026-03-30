@@ -9,7 +9,7 @@ import { Package2, Anchor } from 'lucide-react';
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-[0.65rem] shadow-xl">
+        <div className="bg-slate-950 border border-white/12 rounded-xl p-3 text-xs shadow-xl">
             <p className="text-muted-foreground mb-2 font-black uppercase tracking-widest">{label}</p>
             {payload.map((p: any) => (
                 <div key={p.name} className="flex justify-between gap-4">
@@ -82,18 +82,18 @@ export const ChinaExternalSectorPanel: React.FC = () => {
                 ].map(({ label, value, sub, color, status }) => (
                     <div key={label} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
                         <div className="flex justify-between items-start mb-2">
-                            <p className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest">{label}</p>
+                            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</p>
                             <div className={cn('w-1.5 h-1.5 rounded-full', status === 'safe' ? 'bg-emerald-500' : 'bg-amber-500')} />
                         </div>
                         <p className={cn('text-3xl font-black tabular-nums tracking-tighter mb-1', color)}>{value}</p>
-                        <p className="text-[0.55rem] text-muted-foreground/40">{sub}</p>
+                        <p className="text-xs text-muted-foreground/40">{sub}</p>
                     </div>
                 ))}
             </div>
 
             {/* Trade Balance Waterfall Chart */}
             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest mb-4">
+                <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">
                     Monthly Trade Balance — 12 Months (USD Bn)
                 </p>
                 <ResponsiveContainer width="100%" height={180}>
@@ -114,7 +114,7 @@ export const ChinaExternalSectorPanel: React.FC = () => {
             {/* Export Growth Trend + FX Reserves */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest mb-4">Export Growth YoY (%)</p>
+                    <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">Export Growth YoY (%)</p>
                     <ResponsiveContainer width="100%" height={130}>
                         <BarChart data={tradeData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -132,7 +132,7 @@ export const ChinaExternalSectorPanel: React.FC = () => {
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest mb-4">FX Reserves Trend (USD Tn)</p>
+                    <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">FX Reserves Trend (USD Tn)</p>
                     <ResponsiveContainer width="100%" height={130}>
                         <AreaChart data={tradeData}>
                             <defs>

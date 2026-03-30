@@ -24,7 +24,7 @@ export const PriceTerminalCard: React.FC = () => {
     if (isLoading) return <div className="h-48 animate-pulse bg-white/5 rounded-2xl" />;
 
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md">
+        <Card className="bg-black/40 border-white/12 backdrop-blur-md">
             <CardHeader className="pb-2 bg-white/[0.02] border-b border-white/5 px-4 lg:px-6">
                 <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                     Price Terminal & Forward Signals

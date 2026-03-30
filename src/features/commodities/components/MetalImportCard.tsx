@@ -23,7 +23,7 @@ interface ChartTooltipProps {
 const ChartTooltip: React.FC<ChartTooltipProps> = ({ active, payload, label, viewMode, formatVolume }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-black/90 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
+            <div className="bg-black/90 backdrop-blur-xl border border-white/12 p-3 rounded-xl shadow-2xl">
                 <p className="text-xs font-black text-white/40 mb-1 uppercase tracking-widest">{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <div key={index} className="flex items-center justify-between gap-8 py-1">
@@ -218,7 +218,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
             {/* Visualizations Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 px-4">
                 {/* Main Trend Chart */}
-                <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-black/40 border border-white/10 backdrop-blur-xl shadow-2xl">
+                <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-black/40 border border-white/12 backdrop-blur-xl shadow-2xl">
                     <div className="flex justify-between items-start mb-8">
                         <div className="space-y-1">
                             <h3 className="text-xl font-black tracking-tight uppercase">Longitudinal Trend</h3>

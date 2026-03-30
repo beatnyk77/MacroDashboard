@@ -80,7 +80,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
         >
-            <Card className="bg-slate-900/60 border-white/10 backdrop-blur-3xl overflow-hidden group p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] min-h-[520px] h-auto flex flex-col relative">
+            <Card className="bg-slate-900/60 border-white/12 backdrop-blur-3xl overflow-hidden group p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] min-h-[520px] h-auto flex flex-col relative">
                 {/* Background Decorative Gradients - Tamed */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 blur-[120px] -ml-48 -mb-48 pointer-events-none" />
@@ -231,8 +231,8 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             content={({ active, payload, label }) => {
                                                 if (!active || !payload) return null;
                                                 return (
-                                                    <div className="bg-slate-950/95 border border-white/10 p-4 sm:p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[180px] sm:min-w-[200px] z-[100]">
-                                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/10">{label} RECAPITULATION</p>
+                                                    <div className="bg-slate-950/95 border border-white/12 p-4 sm:p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[180px] sm:min-w-[200px] z-[100]">
+                                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/12">{label} RECAPITULATION</p>
                                                         <div className="space-y-3">
                                                             {payload.map((entry: any) => (
                                                                 <div key={entry.name} className="flex justify-between items-center gap-6 sm:gap-10">

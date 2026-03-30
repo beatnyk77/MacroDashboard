@@ -33,7 +33,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
     const flexibleVol = Math.abs(latest.cpi_flexible_yoy - previous.cpi_flexible_yoy);
 
     return (
-        <section className="w-full bg-[#0a0f1d] rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl font-sans relative group">
+        <section className="w-full bg-[#0a0f1d] rounded-[2.5rem] border border-white/12 overflow-hidden shadow-2xl font-sans relative group">
             {/* Header Area */}
             <div className="p-8 pb-6 border-b border-white/5 bg-white/[0.01]">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -46,7 +46,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                             <span className={`${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-400' : 'text-emerald-400'} text-xs font-black uppercase tracking-[0.2em]`}>
                                 Sticky Trend: {stickyTrend}
                             </span>
-                            <span className="text-slate-500 text-xs font-black uppercase tracking-[0.2em] ml-2 border-l border-white/10 pl-2">Alpha Signal: Structural Trend Monitor</span>
+                            <span className="text-slate-500 text-xs font-black uppercase tracking-[0.2em] ml-2 border-l border-white/12 pl-2">Alpha Signal: Structural Trend Monitor</span>
                         </div>
                         <h2 className="text-3xl font-black text-white tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                             India Inflation Pulse: Sticky vs Flexible
@@ -229,7 +229,7 @@ const LegendItem = ({ color, label, thick, dashed }: any) => (
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl z-50 min-w-[200px]">
+            <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/12 p-4 rounded-2xl shadow-2xl z-50 min-w-[200px]">
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 border-b border-white/5 pb-2 italic">
                     {label}
                 </div>

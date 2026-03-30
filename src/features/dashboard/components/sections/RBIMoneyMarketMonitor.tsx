@@ -66,12 +66,12 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
       {/* 1. Liquidity HUD */}
       <div className="xl:col-span-3">
-        <div className="p-8 rounded-[32px] bg-slate-900/40 border border-white/10 backdrop-blur-xl relative overflow-hidden group">
+        <div className="p-8 rounded-[32px] bg-slate-900/40 border border-white/12 backdrop-blur-xl relative overflow-hidden group">
           <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Landmark className="text-blue-400" size={16} />
-                <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                   RBI System Liquidity Position
                 </span>
               </div>
@@ -80,7 +80,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
                   {Math.abs(latestLiq.net_liquidity_total).toLocaleString('en-IN')}
                   <span className="text-xl ml-2 text-muted-foreground/50 italic capitalize font-medium tracking-normal text-none">Cr</span>
                 </h2>
-                <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-[0.65rem] font-black uppercase tracking-widest ${
+                <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest ${
                   isSurplus ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                 }`}>
                   {isSurplus ? <ArrowDownRight size={12} /> : <ArrowUpRight size={12} />}
@@ -99,7 +99,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
                 <div key={i} className="flex flex-col">
                   <span className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">{m.label}</span>
                   <span className="text-lg font-black text-white">{m.val}</span>
-                  <span className="text-[0.55rem] font-medium text-muted-foreground/40 uppercase">{m.sub}</span>
+                  <span className="text-xs font-medium text-muted-foreground/40 uppercase">{m.sub}</span>
                 </div>
               ))}
             </div>
@@ -195,7 +195,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
             ].map((s, i) => (
               <div key={i} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[0.65rem] font-black text-white uppercase tracking-wider">{s.label}</span>
+                  <span className="text-xs font-black text-white uppercase tracking-wider">{s.label}</span>
                   <span className="text-xs font-black text-blue-400">{s.rate?.toFixed(2)}%</span>
                 </div>
                 <div className="flex items-baseline gap-2">
@@ -211,7 +211,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
 
           <div className="mt-8 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex gap-4">
             <Info className="text-blue-400 shrink-0" size={16} />
-            <p className="text-[0.65rem] text-muted-foreground/80 leading-relaxed italic">
+            <p className="text-xs text-muted-foreground/80 leading-relaxed italic">
               <span className="text-blue-400 font-bold not-italic">Institutional Insight:</span> WACR is currently trading {(latestOps?.call_money_rate || 0) < 6.50 ? 'below' : 'above'} the Policy Repo Rate, reflecting {isSurplus ? 'comfortable liquidity' : 'tight interbank conditions'}.
             </p>
           </div>

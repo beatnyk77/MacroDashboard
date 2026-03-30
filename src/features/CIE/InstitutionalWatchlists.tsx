@@ -53,7 +53,7 @@ export const AlertHistory: React.FC = () => {
                     ))}
                 </div>
             ) : (
-                <div className="p-12 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-[2rem]">
+                <div className="p-12 text-center bg-white/[0.01] border border-dashed border-white/12 rounded-[2rem]">
                     <p className="text-xs text-white/20 uppercase font-black tracking-widest">No active alerts detected</p>
                 </div>
             )}
@@ -118,7 +118,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                                 >
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-xl font-black text-white group-hover:text-orange-400 transition-colors italic tracking-tight">{list.name}</h3>
-                                        <div className="p-3 rounded-2xl bg-white/5 text-white/20 group-hover:text-white transition-colors border border-white/10">
+                                        <div className="p-3 rounded-2xl bg-white/5 text-white/20 group-hover:text-white transition-colors border border-white/12">
                                             <Eye size={18} />
                                         </div>
                                     </div>
@@ -132,19 +132,19 @@ export const InstitutionalWatchlists: React.FC = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center group hover:bg-white/[0.02] transition-all">
+                        <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/12 rounded-[3rem] flex flex-col items-center group hover:bg-white/[0.02] transition-all">
                             <div className="p-6 rounded-full bg-white/5 mb-6 group-hover:scale-110 transition-transform">
                                 <Lock size={40} className="text-white/10" />
                             </div>
                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/20 mb-2">No Institutional Watchlists Provisioned</h3>
-                            <p className="text-[0.65rem] text-white/10 max-w-xs font-medium uppercase tracking-widest">Create a watchlist to enable real-time macro telemetry on specific tickers.</p>
+                            <p className="text-xs text-white/10 max-w-xs font-medium uppercase tracking-widest">Create a watchlist to enable real-time macro telemetry on specific tickers.</p>
                         </div>
                     )}
                 </div>
 
                 {/* Saved Views */}
                 <div className="space-y-8">
-                    <div className="flex items-center justify-between px-8 py-5 rounded-[2rem] bg-white/5 border border-white/10 text-white/40 backdrop-blur-md">
+                    <div className="flex items-center justify-between px-8 py-5 rounded-[2rem] bg-white/5 border border-white/12 text-white/40 backdrop-blur-md">
                         <div className="flex items-center gap-4">
                             <Activity size={20} />
                             <span className="text-xs font-black uppercase tracking-[0.2em]">Saved Macro Topographies</span>
@@ -164,7 +164,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                                     </div>
                                     <button
                                         onClick={() => deleteView(view.name)}
-                                        className="p-3 rounded-2xl bg-white/5 text-white/10 hover:text-rose-400 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/20 transition-all"
+                                        className="p-3 rounded-2xl bg-white/5 text-white/10 hover:text-rose-400 hover:bg-rose-500/10 border border-white/12 hover:border-rose-500/20 transition-all"
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -172,7 +172,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem]">
+                        <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/12 rounded-[3rem]">
                             <p className="text-xs text-white/20 uppercase font-black tracking-[0.2em]">No saved topographical views detected</p>
                         </div>
                     )}

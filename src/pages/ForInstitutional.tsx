@@ -48,8 +48,8 @@ export const ForInstitutional: React.FC = () => {
                 {/* Pricing Tiers Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
                     {/* Tier 1: Retail/Analyst */}
-                    <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/10 transition-all">
-                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Analyst Tier</h4>
+                    <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/12 transition-all">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Analyst Tier</h4>
                         <div className="flex items-baseline gap-1 mb-8">
                             <span className="text-4xl font-black text-white">$0</span>
                             <span className="text-muted-foreground/40 text-sm font-bold uppercase">/Mo</span>
@@ -73,12 +73,12 @@ export const ForInstitutional: React.FC = () => {
                     {/* Tier 2: The Core API Offer */}
                     <div className="p-10 rounded-[2.5rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] flex flex-col relative group md:scale-105 z-10">
                         <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-xs font-black uppercase tracking-widest shadow-xl">Most Popular</div>
-                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-blue-400 mb-6">Institutional API Access</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-6">Institutional API Access</h4>
                         <div className="flex items-baseline gap-1 mb-2">
                             <span className="text-5xl font-black text-white">$28</span>
                             <span className="text-blue-500 text-sm font-black uppercase">/Mo</span>
                         </div>
-                        <p className="text-[0.65rem] font-black text-blue-400/60 uppercase tracking-widest mb-8 text-left">Billed Monthly • Cancel Anytime</p>
+                        <p className="text-xs font-black text-blue-400/60 uppercase tracking-widest mb-8 text-left">Billed Monthly • Cancel Anytime</p>
 
                         <ul className="space-y-4 mb-10 flex-1">
                             {[
@@ -103,8 +103,8 @@ export const ForInstitutional: React.FC = () => {
                     </div>
 
                     {/* Tier 3: Bespoke/Enterprise */}
-                    <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/10 transition-all">
-                        <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Bespoke Advisory</h4>
+                    <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/12 transition-all">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Bespoke Advisory</h4>
                         <div className="flex items-baseline gap-1 mb-8">
                             <span className="text-3xl font-black text-white italic">Contact Us</span>
                         </div>

@@ -145,11 +145,11 @@ export const USTreasuryDemandGauge: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-3">
                                 {hasMainTailAlert && (
-                                    <div className="px-4 py-1.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest bg-rose-500/20 border border-rose-500/40 text-rose-500 animate-pulse">
+                                    <div className="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-rose-500/20 border border-rose-500/40 text-rose-500 animate-pulse">
                                         Tail Alert
                                     </div>
                                 )}
-                                <div className={cn("px-4 py-1.5 rounded-full text-[0.65rem] font-black uppercase tracking-widest bg-white/5 border border-white/10", regime.color)}>
+                                <div className={cn("px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-white/5 border border-white/12", regime.color)}>
                                     {regime.label}
                                 </div>
                             </div>
@@ -167,8 +167,8 @@ export const USTreasuryDemandGauge: React.FC = () => {
                             <div className="relative h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 shadow-inner">
                                 {/* Tracks */}
                                 <div className="absolute inset-0 flex">
-                                    <div className="h-full w-[40%] border-r border-white/10" />
-                                    <div className="h-full w-[32%] border-r border-white/10" />
+                                    <div className="h-full w-[40%] border-r border-white/12" />
+                                    <div className="h-full w-[32%] border-r border-white/12" />
                                 </div>
                                 {/* Fill */}
                                 <div
@@ -177,7 +177,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                                 />
                             </div>
 
-                            <div className="flex justify-between text-[0.55rem] font-black text-white/20 uppercase tracking-widest">
+                            <div className="flex justify-between text-xs font-black text-white/20 uppercase tracking-widest">
                                 <span>Weak</span>
                                 <span className="translate-x-4">Healthy</span>
                                 <span>Strong</span>
@@ -222,8 +222,8 @@ export const USTreasuryDemandGauge: React.FC = () => {
                                         if (active && payload && payload.length) {
                                             const data = payload[0].payload;
                                             return (
-                                                <div className="p-4 rounded-2xl bg-black/90 border border-white/10 backdrop-blur-xl shadow-2xl space-y-3 min-w-[180px]">
-                                                    <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                                                <div className="p-4 rounded-2xl bg-black/90 border border-white/12 backdrop-blur-xl shadow-2xl space-y-3 min-w-[180px]">
+                                                    <div className="flex items-center justify-between border-b border-white/12 pb-2">
                                                         <span className="text-xs font-black text-muted-foreground uppercase">{format(new Date(data.date), 'MMM d, yyyy')}</span>
                                                         <span className={cn("text-xs font-black uppercase", getRegime(data.score).color)}>
                                                             {getRegime(data.score).label}
@@ -288,7 +288,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                             <TrendingUp size={12} className="text-emerald-500" />
                             <span className="text-xs font-black text-white/40 uppercase tracking-widest">Regime: {regime.label}</span>
                         </div>
-                        <span className="text-[0.65rem] font-bold text-white/20">52W Range: 0.82 — 2.14</span>
+                        <span className="text-xs font-bold text-white/20">52W Range: 0.82 — 2.14</span>
                     </div>
                 </div>
             </div>

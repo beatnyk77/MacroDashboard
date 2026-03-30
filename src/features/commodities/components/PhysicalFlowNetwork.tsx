@@ -165,7 +165,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
         >
-            <Card className="bg-slate-900/60 border-white/10 backdrop-blur-3xl overflow-hidden group min-h-[560px] h-[560px] flex flex-col shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative transition-all duration-500 hover:bg-slate-900/80">
+            <Card className="bg-slate-900/60 border-white/12 backdrop-blur-3xl overflow-hidden group min-h-[560px] h-[560px] flex flex-col shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative transition-all duration-500 hover:bg-slate-900/80">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-transparent to-emerald-500/[0.05] pointer-events-none" />
                 <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
 
@@ -182,7 +182,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-4 self-end sm:self-auto">
                             <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] animate-pulse" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] animate-pulse" aria-hidden="true" />
                                 <span className="text-xs text-white font-black uppercase tracking-widest">LIVE MESH</span>
                             </div>
                             <TooltipProvider>
@@ -192,7 +192,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                             <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent className="bg-slate-900/95 border-white/10 max-w-xs p-4 backdrop-blur-xl z-[100]">
+                                    <TooltipContent className="bg-slate-900/95 border-white/12 max-w-xs p-4 backdrop-blur-xl z-[100]">
                                         <p className="text-xs leading-relaxed text-muted-foreground font-medium uppercase tracking-tight">
                                             Mapping top 10 physical commodity corridors. Volumes indexed in KT (kilotonnes).
                                         </p>
@@ -226,8 +226,8 @@ export const PhysicalFlowNetwork: React.FC = () => {
                                         if (isNode) return null;
 
                                         return (
-                                            <div className="bg-slate-950/95 border border-white/10 p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[220px] z-[100]">
-                                                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
+                                            <div className="bg-slate-950/95 border border-white/12 p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[220px] z-[100]">
+                                                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/12">
                                                     <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor]" style={{ backgroundColor: data.color, color: data.color }} />
                                                     <span className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">
                                                         {data.source?.name} <ArrowRight className="w-3 h-3 text-muted-foreground/40" /> {data.target?.name}

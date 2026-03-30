@@ -147,7 +147,7 @@ export const ClimateRiskDashboard: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Vector Analysis */}
-            <div className="bg-[#0f1115] border border-white/10 rounded-xl p-6 relative group overflow-hidden">
+            <div className="bg-[#0f1115] border border-white/12 rounded-xl p-6 relative group overflow-hidden">
                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors" />
               <div className="flex items-center justify-between mb-8 relative">
                 <div className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                   <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono italic">Exposure vectors</h3>
                 </div>
                 {countryDisplayData && (
-                  <div className="text-xs font-mono bg-white/5 px-2 py-0.5 rounded border border-white/10 text-emerald-400">
+                  <div className="text-xs font-mono bg-white/5 px-2 py-0.5 rounded border border-white/12 text-emerald-400">
                     {countryDisplayData.country_code}
                   </div>
                 )}
@@ -296,7 +296,7 @@ export const ClimateRiskDashboard: React.FC = () => {
             <span className="text-xs text-gray-500 font-mono uppercase tracking-[0.2em]">EDGAR GHG Tier-1 Source</span>
           </div>
         </div>
-        <div className="text-xs text-gray-600 font-mono tracking-tighter italic border-l border-white/10 pl-4">
+        <div className="text-xs text-gray-600 font-mono tracking-tighter italic border-l border-white/12 pl-4">
           SYSTEM_ALIGNED // PACTA_METHODOLOGY_V3
         </div>
       </div>

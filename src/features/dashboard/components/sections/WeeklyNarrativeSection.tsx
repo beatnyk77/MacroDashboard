@@ -88,7 +88,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                 />
                 <Link
                     to="/weekly-narrative"
-                    className="inline-flex items-center gap-2 text-[0.65rem] font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-widest bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl border border-white/10 w-fit"
+                    className="inline-flex items-center gap-2 text-xs font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-widest bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl border border-white/12 w-fit"
                 >
                     <History size={14} />
                     Intelligence Archive
@@ -106,10 +106,10 @@ export const WeeklyNarrativeSection: React.FC = () => {
                             <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
                             <CardContent className="p-8 md:p-10 relative z-10">
                                 <Stack direction="row" spacing={2} alignItems="center" mb={4}>
-                                    <div className="px-2.5 py-1 bg-blue-500 text-white text-[0.65rem] font-black tracking-widest uppercase rounded shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                    <div className="px-2.5 py-1 bg-blue-500 text-white text-xs font-black tracking-widest uppercase rounded shadow-[0_0_15px_rgba(59,130,246,0.5)]">
                                         REGIME FOCUS
                                     </div>
-                                    <span className="text-[0.65rem] font-bold text-blue-400 tracking-[0.25em] uppercase">
+                                    <span className="text-xs font-bold text-blue-400 tracking-[0.25em] uppercase">
                                         Structural Consensus
                                     </span>
                                 </Stack>
@@ -186,7 +186,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
 
                     {/* Forward Look */}
                     {forwardLook && (
-                        <Card className="bg-card/40 border-white/10 hover:border-white/20 transition-all shadow-xl">
+                        <Card className="bg-card/40 border-white/12 hover:border-white/20 transition-all shadow-xl">
                             <CardContent className="p-8">
                                 <h5 className="text-xs font-black tracking-[0.25em] text-muted-foreground uppercase mb-6 flex justify-between items-center">
                                     Next Window

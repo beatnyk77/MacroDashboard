@@ -60,7 +60,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
     return (
         <motion.div
             variants={cardVariants}
-            className="group relative bg-neutral-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 hover:bg-neutral-900/60 hover:border-white/10 transition-all duration-300 shadow-2xl overflow-hidden flex flex-col h-full"
+            className="group relative bg-neutral-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 hover:bg-neutral-900/60 hover:border-white/12 transition-all duration-300 shadow-2xl overflow-hidden flex flex-col h-full"
         >
             {/* Background Glow */}
             <div
@@ -115,11 +115,11 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <p className="text-[0.65rem] text-neutral-400 uppercase tracking-wider truncate cursor-help hover:text-white transition-colors">
+                                <p className="text-xs text-neutral-400 uppercase tracking-wider truncate cursor-help hover:text-white transition-colors">
                                     {hub.primary_metric_label}
                                 </p>
                             </TooltipTrigger>
-                            <TooltipContent className="bg-black/90 border-white/10 text-xs">
+                            <TooltipContent className="bg-black/90 border-white/12 text-xs">
                                 Source: {hub.source}
                             </TooltipContent>
                         </Tooltip>
@@ -142,7 +142,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                         .slice(0, 2)
                         .map(([key, value]) => (
                             <div key={key}>
-                                <p className="text-[0.55rem] text-neutral-500 uppercase tracking-tighter mb-0.5 truncate">
+                                <p className="text-xs text-neutral-500 uppercase tracking-tighter mb-0.5 truncate">
                                     {key.replace(/_/g, ' ').replace(/yoy/gi, 'YoY').replace(/aum/gi, 'AUM').replace(/tonnes/gi, '')}
                                 </p>
                                 <div className="text-xs font-bold text-white font-mono truncate">

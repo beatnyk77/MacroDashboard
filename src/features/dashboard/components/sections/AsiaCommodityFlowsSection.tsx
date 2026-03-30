@@ -40,7 +40,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
     if (hasNoData) {
         return (
             <div className="space-y-8">
-                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-[2.5rem] backdrop-blur-3xl">
+                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
                     <span className="text-sm font-black text-rose-500/50 uppercase tracking-widest mb-2">Flows Data Pending</span>
                     <p className="text-xs text-muted-foreground/40 italic">System is synchronizing.</p>
                 </div>
@@ -103,7 +103,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                                 {data.importData && data.importData.length > 0 ? (
                                     <OilImportVulnerabilityCard data={data.importData} isLoading={false} />
                                 ) : (
-                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
+                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
                                         <span className="text-xs text-muted-foreground uppercase tracking-widest mb-2 font-black">Data loading...</span>
                                     </div>
                                 )}
@@ -116,7 +116,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                                 {data.importData && data.importData.length > 0 ? (
                                     <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
                                 ) : (
-                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/10 p-8 text-center">
+                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
                                         <span className="text-xs text-rose-500/50 uppercase tracking-widest mb-2 font-black">Analysis Pending</span>
                                     </div>
                                 )}

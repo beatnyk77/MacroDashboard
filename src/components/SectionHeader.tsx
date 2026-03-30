@@ -60,7 +60,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                     {onRefresh && (
                         <button
                             onClick={onRefresh}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[0.65rem] font-black text-muted-foreground hover:text-primary hover:bg-white/10 transition-all active:scale-95"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-xs font-black text-muted-foreground hover:text-primary hover:bg-white/10 transition-all active:scale-95"
                         >
                             <RefreshCw size={14} className={cn(isLoading && "animate-spin text-blue-400")} />
                             REFRESH SIGNAL

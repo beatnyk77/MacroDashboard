@@ -21,7 +21,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
     lastUpdated
 }) => {
     return (
-        <Card className="w-full h-full min-h-[450px] p-6 bg-black/40 border-white/10 backdrop-blur-md flex flex-col gap-6 group shadow-2xl relative overflow-hidden rounded-[2.5rem]">
+        <Card className="w-full h-full min-h-[450px] p-6 bg-black/40 border-white/12 backdrop-blur-md flex flex-col gap-6 group shadow-2xl relative overflow-hidden rounded-[2.5rem]">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] pointer-events-none" />
 
             <div className="flex items-center justify-between px-0">
@@ -97,7 +97,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                                         content={({ active, payload, label }) => {
                                             if (!active || !payload) return null;
                                             return (
-                                                <div className="bg-slate-950/90 border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
+                                                <div className="bg-slate-950/90 border border-white/12 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
                                                     <p className="text-xs font-black text-white mb-3 uppercase tracking-widest border-b border-white/5 pb-2">{label}</p>
                                                     <div className="space-y-2 min-w-[140px]">
                                                         {payload.map((p: any) => (
@@ -128,7 +128,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                                 { color: '#3b82f6', label: 'Nuclear/Gas/Other' }
                             ].map(legend => (
                                 <div key={legend.label} className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full border border-white/10" style={{ backgroundColor: legend.color }} />
+                                    <div className="w-2 h-2 rounded-full border border-white/12" style={{ backgroundColor: legend.color }} />
                                     <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{legend.label}</span>
                                 </div>
                             ))}

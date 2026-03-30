@@ -77,7 +77,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
 
     if (isLoading) {
         return (
-            <Card className="h-[400px] animate-pulse bg-white/5 border-white/10">
+            <Card className="h-[400px] animate-pulse bg-white/5 border-white/12">
                 <CardHeader><div className="h-6 w-1/2 bg-white/10 rounded" /></CardHeader>
                 <CardContent><div className="h-24 bg-white/5 rounded mt-4" /></CardContent>
             </Card>
@@ -91,7 +91,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
     }[region as 'US' | 'EU' | 'Asia'];
 
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px] p-6">
+        <Card className="bg-black/40 border-white/12 backdrop-blur-md h-[450px] p-6">
             <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
                     <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
@@ -129,7 +129,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                         </div>
                         {region === 'US' && (
                             <div className="text-right">
-                                <span className="text-[0.65rem] uppercase text-muted-foreground block font-mono">Strategic Utilization</span>
+                                <span className="text-xs uppercase text-muted-foreground block font-mono">Strategic Utilization</span>
                                 <span className="text-2xl font-mono text-emerald-400">{latestUtil?.value.toFixed(1)}%</span>
                             </div>
                         )}

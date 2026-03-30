@@ -22,7 +22,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
     const isRising = (country.yoy_pct_change || 0) > 0;
 
     return (
-        <Box className="absolute bottom-0 left-0 right-0 z-50 bg-[#080808]/95 backdrop-blur-3xl border-t border-white/10 p-8 transform transition-transform duration-500 ease-out animate-in slide-in-from-bottom-full">
+        <Box className="absolute bottom-0 left-0 right-0 z-50 bg-[#080808]/95 backdrop-blur-3xl border-t border-white/12 p-8 transform transition-transform duration-500 ease-out animate-in slide-in-from-bottom-full">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 relative">
                 <IconButton
                     onClick={onClose}
@@ -62,7 +62,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                     <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
                         <div className="flex items-center gap-2 mb-3">
                             <Info size={14} className="text-cyan-400" />
-                            <span className="text-[0.65rem] font-black text-white uppercase tracking-widest">Macro Context</span>
+                            <span className="text-xs font-black text-white uppercase tracking-widest">Macro Context</span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed italic">
                             {country.country_name} remains a {country.pct_of_total_foreign && country.pct_of_total_foreign > 2 ? 'major' : 'significant'} pillar of UST liquidity.
@@ -114,6 +114,6 @@ const StatItem = ({ label, value, sub, color = "text-white", icon }: any) => (
             <span className={cn("text-xl font-black tabular-nums", color)}>{value}</span>
             {icon}
         </div>
-        {sub && <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-tighter">{sub}</span>}
+        {sub && <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-tighter">{sub}</span>}
     </div>
 );

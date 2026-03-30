@@ -42,9 +42,9 @@ export const MobileNav: React.FC = () => {
                             color: '#3b82f6',
                         },
                         '& .MuiBottomNavigationAction-label': {
-                            fontSize: '0.6rem',
+                            fontSize: '0.875rem',
                             '&.Mui-selected': {
-                                fontSize: '0.6rem',
+                                fontSize: '0.875rem',
                             }
                         }
                     }

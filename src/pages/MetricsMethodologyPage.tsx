@@ -94,7 +94,7 @@ export const MetricsMethodologyPage: React.FC = () => {
                                     <td className="py-3 px-4 text-muted-foreground">{row.frequency}</td>
                                     <td className="py-3 px-4">
                                         <span className={cn(
-                                            "inline-flex items-center px-2 py-0.5 rounded text-[0.65rem] font-bold border",
+                                            "inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border",
                                             row.tier === 'Core'
                                                 ? "bg-primary/10 text-primary border-primary/20"
                                                 : "bg-muted text-muted-foreground border-border"

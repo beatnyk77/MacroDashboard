@@ -20,12 +20,12 @@ const SignalCard: React.FC<{
     interpretation: string;
 }> = ({ label, sublabel, value, delta, trend, color, borderColor, desc, interpretation }) => (
     <div className={cn('p-5 rounded-2xl bg-white/[0.02] border transition-all hover:bg-white/[0.04]', borderColor)}>
-        <p className={cn('text-[0.55rem] font-black uppercase tracking-widest mb-1', color)}>{label}</p>
+        <p className={cn('text-xs font-black uppercase tracking-widest mb-1', color)}>{label}</p>
         <p className="text-xs text-muted-foreground/40 mb-3">{sublabel}</p>
         <div className="flex items-baseline justify-between mb-2">
             <p className={cn('text-3xl font-black tabular-nums tracking-tighter', color)}>{value}</p>
             {delta && (
-                <div className={cn('flex items-center gap-0.5 text-[0.65rem] font-black',
+                <div className={cn('flex items-center gap-0.5 text-xs font-black',
                     trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-muted-foreground/40'
                 )}>
                     {trend === 'up' ? <TrendingUp size={12} /> : trend === 'down' ? <TrendingDown size={12} /> : null}
@@ -166,8 +166,8 @@ export const ChinaProprietarySignals: React.FC = () => {
             {ciTrend.length > 0 && (
                 <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
                     <div className="flex justify-between items-center mb-4">
-                        <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest">Credit Impulse Trend — Lead Indicator for Global Demand</p>
-                        <span className="text-[0.55rem] text-muted-foreground/30">9-12M forward lead</span>
+                        <p className="text-xs font-black text-white/60 uppercase tracking-widest">Credit Impulse Trend — Lead Indicator for Global Demand</p>
+                        <span className="text-xs text-muted-foreground/30">9-12M forward lead</span>
                     </div>
                     <ResponsiveContainer width="100%" height={150}>
                         <AreaChart data={ciTrend}>
@@ -194,7 +194,7 @@ export const ChinaProprietarySignals: React.FC = () => {
 
             {/* Macro Radar */}
             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest mb-4">China Macro Composite — Radar View</p>
+                <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">China Macro Composite — Radar View</p>
                 <ResponsiveContainer width="100%" height={220}>
                     <RadarChart data={radarData}>
                         <PolarGrid stroke="rgba(255,255,255,0.08)" />

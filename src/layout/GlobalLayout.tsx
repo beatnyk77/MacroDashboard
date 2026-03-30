@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Activity } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, Zap, ShieldAlert, Database, BarChart3, Radio, FileText, ShieldCheck } from 'lucide-react';
+import { useLocation, NavLink } from 'react-router-dom';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
@@ -11,16 +11,33 @@ import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
 import { QuickTourModal } from '@/components/QuickTourModal';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
-import { Button } from '@mui/material';
+import { Button, Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
 }
 
+const terminalNavItems = [
+    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
+    { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
+    { id: 'treasury-hedging', label: 'Treasury Hedging', path: '/treasury-hedging', icon: <ShieldCheck size={18} /> },
+    { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },
+    { id: 'us-eq', label: 'US Corporate Terminal', path: '/us-equities', icon: <BarChart3 size={18} /> },
+    { id: 'china', label: 'China Macro Pulse', path: '/labs/china', icon: <TrendingUp size={18} /> },
+    { id: 'india-flow', label: 'India Flow Pulse (FII/DII)', path: '/india-equities/fii-dii', icon: <Activity size={18} /> },
+    { id: 'india', label: 'India Macro Pulse', path: '/labs/india', icon: <Globe size={18} /> },
+    { id: 'india-eq', label: 'Corporate India Engine', path: '/india-equities', icon: <BarChart3 size={18} /> },
+    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
+    { id: 'sustainable', label: 'Sustainable Finance', path: '/labs/sustainable-finance-climate-risk', icon: <Zap size={18} /> },
+    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
+    { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={18} /> },
+];
+
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [cmdKOpen, setCmdKOpen] = useState(false);
+    const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
     const isObservatory = location.pathname.includes('/macro-observatory');
 
@@ -66,8 +83,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             }}
         >
             {isObservatory && <DataHealthBanner />}
-            <header className="sticky top-0 z-[1300] w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
-                <div className="flex h-[60px] md:h-[72px] items-center justify-between px-4 md:px-8">
+            <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/80 backdrop-blur-md">
+                <div className="flex h-[72px] items-center justify-between px-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-6">
                         <div className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
                             <Activity
@@ -107,9 +124,18 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
 
                     <div className="flex items-center gap-4">
+                        {/* Hamburger menu button for mobile */}
+                        <button
+                            className="lg:hidden flex items-center justify-center w-12 h-12 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            onClick={() => setMobileDrawerOpen(true)}
+                            aria-label="Open navigation menu"
+                        >
+                            <Menu size={24} />
+                        </button>
+
                         {regime && (
                             <div className={cn(
-                                "flex items-center px-2 py-0.5 rounded border text-[0.65rem] font-black tracking-wider uppercase h-6",
+                                "flex items-center px-2 py-0.5 rounded border text-xs font-black tracking-wider uppercase h-6",
                                 regimeColorClass,
                                 regimeColorClass.replace('text-', 'bg-').replace('500', '500/10'),
                                 regimeColorClass.replace('text-', 'border-').replace('500', '500/30')
@@ -130,10 +156,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 display: { xs: 'none', sm: 'flex' },
                                 bgcolor: '#3b82f6',
                                 fontWeight: 900,
-                                fontSize: '0.65rem',
+                                fontSize: '0.875rem',
                                 borderRadius: '10px',
                                 px: 3,
-                                py: 1,
+                                minHeight: 44,
                                 '&:hover': { bgcolor: '#2563eb' }
                             }}
                         >
@@ -142,6 +168,71 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
                 </div>
             </header>
+
+            {/* Mobile Navigation Drawer */}
+            <Drawer
+                anchor="left"
+                open={mobileDrawerOpen}
+                onClose={() => setMobileDrawerOpen(false)}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                PaperProps={{
+                    sx: {
+                        width: 280,
+                        bgcolor: 'rgba(2, 6, 23, 0.98)',
+                        backdropFilter: 'blur(12px)',
+                        borderRight: '1px solid rgba(255,255,255,0.08)',
+                    },
+                }}
+            >
+                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span className="text-sm font-black text-white uppercase tracking-widest">Navigation</span>
+                    <button
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className="p-2 hover:bg-white/10 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
+                        aria-label="Close navigation menu"
+                    >
+                        <X size={20} className="text-white" />
+                    </button>
+                </Box>
+                <Box component="nav" sx={{ p: 2 }}>
+                    <List dense>
+                        {terminalNavItems.map((item) => {
+                            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
+                            return (
+                                <ListItem
+                                    button
+                                    key={item.id}
+                                    onClick={() => setMobileDrawerOpen(false)}
+                                    component={NavLink}
+                                    to={item.path}
+                                    sx={{
+                                        borderRadius: 1,
+                                        mb: 0.5,
+                                        color: isActive ? 'primary.main' : 'text.secondary',
+                                        bgcolor: isActive ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                                        '&:hover': {
+                                            bgcolor: 'rgba(255,255,255,0.05)',
+                                            color: 'text.primary',
+                                        }
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ color: isActive ? 'primary.main' : 'text.secondary', minWidth: 40 }}>
+                                        {item.icon}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={item.label}
+                                        primaryTypographyProps={{
+                                            className: "text-xs font-black uppercase tracking-widest"
+                                        }}
+                                    />
+                                </ListItem>
+                            );
+                        })}
+                    </List>
+                </Box>
+            </Drawer>
 
             <div className="flex flex-1">
                 {/* Persistent Terminal Sidebar */}

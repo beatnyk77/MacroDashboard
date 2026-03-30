@@ -18,7 +18,7 @@ export const DataProvenanceBadge: React.FC<DataProvenanceBadgeProps> = ({
     size = 'md'
 }) => {
     const sizeClasses = {
-        sm: "px-2 py-0.5 text-[0.65rem] gap-1.5",
+        sm: "px-2 py-0.5 text-xs gap-1.5",
         md: "px-3 py-1 text-xs gap-2",
         lg: "px-4 py-1.5 text-sm gap-2.5"
     };
@@ -31,17 +31,17 @@ export const DataProvenanceBadge: React.FC<DataProvenanceBadgeProps> = ({
 
     return (
         <div className={cn(
-            "inline-flex items-center rounded-full border border-white/10 bg-white/5 text-white/40 font-black uppercase tracking-widest",
+            "inline-flex items-center rounded-full border border-white/12 bg-white/5 text-white/40 font-black uppercase tracking-widest",
             sizeClasses[size],
             className
         )}>
-            <div className="flex items-center gap-1.5 border-r border-white/10 pr-2 mr-0.5">
+            <div className="flex items-center gap-1.5 border-r border-white/12 pr-2 mr-0.5">
                 <ShieldCheck className={cn("text-emerald-500", iconSizes[size])} />
                 <span className="text-white/60">{source}</span>
             </div>
             
             {methodology && (
-                <div className="flex items-center gap-1.5 border-r border-white/10 pr-2 mr-0.5">
+                <div className="flex items-center gap-1.5 border-r border-white/12 pr-2 mr-0.5">
                     <Database className={iconSizes[size]} />
                     <span>{methodology}</span>
                 </div>

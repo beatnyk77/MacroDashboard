@@ -51,7 +51,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-full h-96 flex flex-col items-center justify-center bg-slate-950/50 rounded-xl border border-white/10 backdrop-blur-xl border-dashed">
+      <div className="w-full h-96 flex flex-col items-center justify-center bg-slate-950/50 rounded-xl border border-white/12 backdrop-blur-xl border-dashed">
         <Cpu className="text-blue-500 animate-pulse mb-4 w-12 h-12" />
         <div className="text-blue-400 font-mono text-sm tracking-widest animate-pulse">DECRYPTING 13-F FILING STREAMS...</div>
         <div className="mt-2 text-[10px] text-slate-500 font-mono uppercase tracking-tighter">SEC EDGAR SOURCE [v4.2]</div>
@@ -60,9 +60,9 @@ const InstitutionalHoldingsWall: React.FC = () => {
   }
 
   return (
-    <div className="w-full bg-[#020617] border border-white/10 rounded-xl overflow-hidden shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] backdrop-blur-xl">
+    <div className="w-full bg-[#020617] border border-white/12 rounded-xl overflow-hidden shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] backdrop-blur-xl">
       {/* Terminal Header */}
-      <div className="px-8 py-6 border-b border-white/10 bg-gradient-to-r from-blue-900/20 via-slate-900/10 to-transparent flex justify-between items-center relative overflow-hidden">
+      <div className="px-8 py-6 border-b border-white/12 bg-gradient-to-r from-blue-900/20 via-slate-900/10 to-transparent flex justify-between items-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent animate-shimmer" />
         <div>
           <div className="flex items-center gap-3">

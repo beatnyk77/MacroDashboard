@@ -23,7 +23,7 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
             </div>
 
             <div className="flex-1 overflow-auto custom-scrollbar -mx-2 px-2">
-                <table className="w-full text-[0.65rem] font-bold uppercase tracking-wider">
+                <table className="w-full text-xs font-bold uppercase tracking-wider">
                     <thead>
                         <tr className="text-muted-foreground/40 border-b border-white/5">
                             <th className="pb-3 text-left font-black">Rank</th>
@@ -39,7 +39,7 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
                                 <td className="py-3">
                                     <div className="flex flex-col">
                                         <span className="text-white group-hover:text-blue-400 transition-colors">{fac.facility_name}</span>
-                                        <span className="text-[0.55rem] text-muted-foreground/60">{fac.country}</span>
+                                        <span className="text-xs text-muted-foreground/60">{fac.country}</span>
                                     </div>
                                 </td>
                                 <td className="py-3 text-right text-white italic">{fac.capacity_mbpd.toFixed(2)}</td>

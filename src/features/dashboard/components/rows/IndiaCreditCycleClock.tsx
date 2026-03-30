@@ -41,7 +41,7 @@ export const IndiaCreditCycleClock: React.FC = () => {
     const isExpanding = phase === 'Expansion' || phase === 'Recovery';
 
     return (
-        <section className="w-full bg-[#070b14] rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl relative font-sans">
+        <section className="w-full bg-[#070b14] rounded-[2.5rem] border border-white/12 overflow-hidden shadow-2xl relative font-sans">
             {/* Background Glow */}
             <div
                 className={`absolute top-0 right-0 w-[500px] h-[500px] blur-[120px] -z-10 opacity-10 transition-colors duration-1000
@@ -107,7 +107,7 @@ export const IndiaCreditCycleClock: React.FC = () => {
                 <div className="flex flex-col lg:flex-row p-8 md:p-12 gap-12 bg-black/20">
                     {/* Narrative / Context */}
                     <div className="w-full lg:w-1/3 space-y-6">
-                        <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                        <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/12 backdrop-blur-md">
                             <div className="flex items-center gap-4 mb-4">
                                 <div className={`p-3 rounded-2xl ${phase === 'Expansion' ? 'bg-blue-500/20 text-blue-400' : phase === 'Downturn' ? 'bg-amber-500/20 text-amber-400' : phase === 'Repair' ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
                                     <Clock className="w-6 h-6" />
@@ -226,7 +226,7 @@ interface MetricCardProps {
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({ label, value, caption, icon, trend, colorClass, highlight = false }) => (
-    <div className={`bg-white/[0.03] border border-white/10 rounded-2xl p-5 backdrop-blur-sm transition-all flex flex-col justify-between min-h-[140px]
+    <div className={`bg-white/[0.03] border border-white/12 rounded-2xl p-5 backdrop-blur-sm transition-all flex flex-col justify-between min-h-[140px]
         ${highlight ? 'ring-1 ring-amber-500/40 bg-amber-500/[0.03]' : 'hover:bg-white/[0.06] hover:border-white/20 hover:scale-[1.02]'}
     `}>
         <div className="flex items-center justify-between mb-4">
@@ -245,7 +245,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, caption, icon, tr
                     </div>
                 )}
             </div>
-            <p className="text-[0.65rem] text-slate-500 font-bold leading-tight italic">
+            <p className="text-xs text-slate-500 font-bold leading-tight italic">
                 {caption}
             </p>
         </div>
@@ -259,7 +259,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
         return (
             <div className="bg-slate-900 border border-white/20 p-5 rounded-2xl shadow-2xl z-50 min-w-[220px]">
-                <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <div className="flex items-center justify-between mb-4 border-b border-white/12 pb-3">
                     <span className="text-white font-black uppercase text-xs tracking-tight">{new Date(data.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} Report</span>
                     <span className="text-[9.5px] font-black uppercase tracking-tighter px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${color}40`, color: color }}>
                         {data.phase}

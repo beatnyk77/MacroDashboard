@@ -129,7 +129,7 @@ export const StateFiscalHeatmap: React.FC = () => {
                                 <AlertCircle size={14} className="text-rose-500" />
                                 <span className="text-xs font-black text-rose-500 uppercase tracking-widest">Stress Signal</span>
                             </div>
-                            <p className="text-[0.65rem] text-rose-200/60 leading-relaxed italic">
+                            <p className="text-xs text-rose-200/60 leading-relaxed italic">
                                 States in the <span className="text-rose-400 font-bold">Top-Right Trap</span> (GFD &gt; 3.5%, Debt &gt; 30%) are primary candidates for spread widening. Market demands higher liquidity premiums for these issuances.
                             </p>
                         </div>
@@ -139,7 +139,7 @@ export const StateFiscalHeatmap: React.FC = () => {
                                 <ShieldCheck size={14} className="text-emerald-500" />
                                 <span className="text-xs font-black text-emerald-500 uppercase tracking-widest">Solvency Alpha</span>
                             </div>
-                            <p className="text-[0.65rem] text-emerald-200/60 leading-relaxed italic">
+                            <p className="text-xs text-emerald-200/60 leading-relaxed italic">
                                 <span className="text-emerald-400 font-bold">Fiscal Fortresses</span> (Bottom-Left) typically trade at the tightest spreads to 10Y G-Sec, reflecting institutional confidence and superior treasury management.
                             </p>
                         </div>
@@ -167,17 +167,17 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
-            <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/10 p-5 rounded-3xl shadow-3xl">
+            <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/12 p-5 rounded-3xl shadow-3xl">
                 <div className="text-xs font-black text-white italic mb-1 border-b border-white/5 pb-2 uppercase tracking-widest">
                     {data.state_name} ({data.state_code})
                 </div>
                 <div className="space-y-2 mt-3">
                     <div className="flex justify-between gap-8">
-                        <span className="text-[0.65rem] text-muted-foreground/60">Debt/GSDP:</span>
+                        <span className="text-xs text-muted-foreground/60">Debt/GSDP:</span>
                         <span className="text-xs font-black text-white tabular-nums">{data.y}%</span>
                     </div>
                     <div className="flex justify-between gap-8">
-                        <span className="text-[0.65rem] text-muted-foreground/60">GFD/GSDP:</span>
+                        <span className="text-xs text-muted-foreground/60">GFD/GSDP:</span>
                         <span className="text-xs font-black text-rose-400 tabular-nums">{data.x}%</span>
                     </div>
                 </div>

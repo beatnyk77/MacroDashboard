@@ -18,7 +18,7 @@ const ENERGY_COLORS = {
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-[0.65rem] shadow-xl">
+        <div className="bg-slate-950 border border-white/12 rounded-xl p-3 text-xs shadow-xl">
             <p className="text-muted-foreground mb-2 font-black uppercase tracking-widest">{label || payload[0]?.name}</p>
             {payload.map((p: any) => (
                 <div key={p.name} className="flex justify-between gap-4">
@@ -52,7 +52,7 @@ const CarbonScoreGauge: React.FC<{ intensity: number }> = ({ intensity }) => {
                     <span className="text-[0.45rem] text-muted-foreground/50 uppercase tracking-widest">gCO₂/kWh</span>
                 </div>
             </div>
-            <span className="text-[0.55rem] font-black uppercase tracking-widest" style={{ color }}>
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color }}>
                 {intensity < 450 ? 'Clean' : intensity < 560 ? 'Moderate' : 'Heavy'}
             </span>
         </div>
@@ -107,7 +107,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                             { label: 'Wind Share', value: latest?.wind_share_pct, unit: '%', color: 'text-blue-400', desc: 'Installed capacity #1 global' },
                         ].map(({ label, value, unit, color, desc }) => (
                             <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                <p className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</p>
+                                <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</p>
                                 <p className="text-xs text-muted-foreground/30 mb-2">{desc}</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className={cn('text-2xl font-black tabular-nums tracking-tighter', color)}>
@@ -144,11 +144,11 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                                 <div className="space-y-1.5 flex-1">
                                     {pieData.map(({ name, value, color }) => (
                                         <div key={name} className="flex justify-between items-center">
-                                            <span className="flex items-center gap-1.5 text-[0.55rem] text-muted-foreground/60">
+                                            <span className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
                                                 <span className="w-2 h-2 rounded-full" style={{ background: color }} />
                                                 {name}
                                             </span>
-                                            <span className="text-[0.55rem] font-black text-white/70">{value?.toFixed(1)}%</span>
+                                            <span className="text-xs font-black text-white/70">{value?.toFixed(1)}%</span>
                                         </div>
                                     ))}
                                 </div>
@@ -160,7 +160,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                             <Zap size={20} className="text-green-400" />
                             <p className="text-xs font-black text-white/50 uppercase tracking-widest text-center">Carbon-Adj. Energy Security Score</p>
                             <p className="text-5xl font-black text-green-400 tabular-nums">{energySecScore ?? '--'}</p>
-                            <p className="text-[0.55rem] text-muted-foreground/40 text-center">/ 100 · Rising = transition progress</p>
+                            <p className="text-xs text-muted-foreground/40 text-center">/ 100 · Rising = transition progress</p>
                             <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full transition-all"
@@ -172,7 +172,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
 
                     {/* Historical Trend */}
                     <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest mb-4">
+                        <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">
                             Energy Transition Trajectory (2015–{latest?.year})
                         </p>
                         <ResponsiveContainer width="100%" height={180}>

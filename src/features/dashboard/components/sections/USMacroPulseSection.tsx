@@ -94,7 +94,7 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
         <div className="group/row flex flex-col md:flex-row items-center gap-6 py-6 px-4 hover:bg-white/[0.02] transition-all duration-300">
             {/* Label Block */}
             <div className="w-full md:w-56 space-y-1 shrink-0">
-                <div className="text-[0.65rem] font-black text-muted-foreground/40 uppercase tracking-widest">{config.label}</div>
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{config.label}</div>
                 <div className="text-xs font-bold text-white/30 uppercase tracking-tighter">{config.unit}</div>
             </div>
 
@@ -130,7 +130,7 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                         {data.current_value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                     </div>
                     <div className={cn(
-                        "text-[0.65rem] font-black tabular-nums tracking-tight flex items-center justify-end gap-1",
+                        "text-xs font-black tabular-nums tracking-tight flex items-center justify-end gap-1",
                         isPositive ? "text-emerald-500" : "text-rose-500"
                     )}>
                         {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -208,7 +208,7 @@ export const USMacroPulseSection: React.FC = () => {
                                     <span className="w-8 h-px" style={{ backgroundColor: cat.color }} />
                                     {cat.label}
                                 </h3>
-                                <p className="text-[0.65rem] text-muted-foreground/60 font-medium uppercase tracking-widest mt-0.5">
+                                <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-widest mt-0.5">
                                     Institutional Regime Monitoring
                                     {cat.metrics.some(m => pulseData.find(pd => pd.metric_id === m)?.isStale) && (
                                         <span className="ml-2 text-amber-500/80 font-black">• DATA DELAYED</span>
@@ -242,7 +242,7 @@ export const USMacroPulseSection: React.FC = () => {
                 </div>
                 <div>
                     <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Institutional Note:</span>
-                    <p className="text-[0.65rem] text-muted-foreground/50 leading-relaxed mt-1">
+                    <p className="text-xs text-muted-foreground/50 leading-relaxed mt-1">
                         All sparklines represent 25-year indexed historical distribution. Current levels are benchmarked against 3-year rolling standard deviations (Z-Scores) to identify regime instability. Sources include FRED, US Treasury, and BLS.
                     </p>
                 </div>

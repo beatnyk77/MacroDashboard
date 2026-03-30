@@ -43,12 +43,12 @@ export const SocialShareMode: React.FC = () => {
                     <TooltipTrigger asChild>
                         <button
                             onClick={() => setIsShareMode(true)}
-                            className="p-3 rounded-full bg-slate-900 border border-white/10 shadow-2xl text-white hover:bg-slate-800 transition-all active:scale-95"
+                            className="p-3 rounded-full bg-slate-900 border border-white/12 shadow-2xl text-white hover:bg-slate-800 transition-all active:scale-95"
                         >
                             <Camera size={20} />
                         </button>
                     </TooltipTrigger>
-                    <TooltipContent side="left" className="bg-slate-950 border-white/10 text-xs font-black uppercase tracking-widest">
+                    <TooltipContent side="left" className="bg-slate-950 border-white/12 text-xs font-black uppercase tracking-widest">
                         Clean Screenshot View
                     </TooltipContent>
                 </Tooltip>

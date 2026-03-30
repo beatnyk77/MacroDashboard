@@ -97,7 +97,7 @@ export const GoldValuationStrip: React.FC = () => {
                                 </span>
                                 {item.data?.z_score !== undefined && (
                                     <span className={cn(
-                                        "text-[0.65rem] font-black px-1 rounded-[2px]",
+                                        "text-xs font-black px-1 rounded-[2px]",
                                         getZColorClass(item.data.z_score)
                                     )}>
                                         Z: {item.data.z_score > 0 ? '+' : ''}{item.data.z_score.toFixed(1)}
@@ -124,7 +124,7 @@ export const GoldValuationStrip: React.FC = () => {
                                 ? "bg-emerald-500 shadow-emerald-500/50"
                                 : "bg-rose-500 shadow-rose-500/50"
                         )} />
-                        <span className="text-[0.65rem] font-bold text-muted-foreground">
+                        <span className="text-xs font-bold text-muted-foreground">
                             {status?.last_ingestion_at ? new Date(status.last_ingestion_at).toUTCString().replace('GMT', 'UTC') : 'CONNECTING...'}
                         </span>
                     </div>

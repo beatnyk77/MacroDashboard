@@ -110,7 +110,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 z-10 relative">
                 <div className="space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[0.65rem] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(244,63,94,0.15)]">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(244,63,94,0.15)]">
                         <Landmark size={12} /> Systemic Solvency
                     </div>
                     <h3 className="text-3xl lg:text-4xl font-black text-white tracking-tighter uppercase italic drop-shadow-md">
@@ -173,8 +173,8 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                         </ComposableMap>
 
                         {hoveredCountry && (
-                            <div className="absolute bottom-6 left-6 p-5 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/10 shadow-2xl z-50 min-w-[240px] animate-in fade-in slide-in-from-bottom-2">
-                                <div className="flex items-center gap-3 mb-3 border-b border-white/10 pb-2">
+                            <div className="absolute bottom-6 left-6 p-5 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/12 shadow-2xl z-50 min-w-[240px] animate-in fade-in slide-in-from-bottom-2">
+                                <div className="flex items-center gap-3 mb-3 border-b border-white/12 pb-2">
                                     <span className="text-2xl">{COUNTRY_FLAGS[hoveredCountry.country_code]}</span>
                                     <h4 className="text-sm font-black text-white uppercase tracking-wider">{COUNTRY_NAMES[hoveredCountry.country_code] || hoveredCountry.country_code}</h4>
                                 </div>
@@ -192,7 +192,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="pt-2 border-t border-white/5">
-                                        <p className="text-[0.65rem] text-amber-500/80 leading-tight italic">
+                                        <p className="text-xs text-amber-500/80 leading-tight italic">
                                             Local gold price must reach {formatCurrency(hoveredCountry.implied_gold_price_usd * hoveredCountry.fx_rate_local_per_usd, hoveredCountry.fx_rate_local_per_usd)} to fully back sovereign debt.
                                         </p>
                                     </div>
@@ -217,21 +217,21 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                     <div>
                                         <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">Inverse Coverage</p>
                                         <p className="text-xl font-black text-rose-500">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</p>
-                                        <p className="text-[0.55rem] text-muted-foreground italic">Debt to Gold Value</p>
+                                        <p className="text-xs text-muted-foreground italic">Debt to Gold Value</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">Debt / Gold Oz</p>
                                         <p className="text-xl font-black text-amber-400 font-mono">
                                             {formatCurrency(selectedCountryData.debt_per_oz_local, selectedCountryData.fx_rate_local_per_usd)}
                                         </p>
-                                        <p className="text-[0.55rem] text-muted-foreground italic">Local Currency Units</p>
+                                        <p className="text-xs text-muted-foreground italic">Local Currency Units</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="bg-slate-950/50 p-6 rounded-3xl border border-white/[0.03]">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h4 className="text-[0.65rem] font-black text-white/50 uppercase tracking-widest flex items-center gap-2">
+                                    <h4 className="text-xs font-black text-white/50 uppercase tracking-widest flex items-center gap-2">
                                         <TrendingDown size={12} className="text-amber-500" /> Coverage Trend (30D)
                                     </h4>
                                     <span className="text-xs font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Ingestion</span>
@@ -247,7 +247,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </div>
-                                <div className="mt-2 flex justify-between text-[0.55rem] font-black text-white/20 uppercase tracking-widest">
+                                <div className="mt-2 flex justify-between text-xs font-black text-white/20 uppercase tracking-widest">
                                     <span>T-30 Days</span>
                                     <span>Current</span>
                                 </div>
@@ -287,7 +287,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                         if (!active || !payload?.length) return null;
                                         const data = payload[0].payload as G20GoldDebtRow;
                                         return (
-                                            <div className="bg-black border border-white/10 p-3 rounded-lg shadow-xl backdrop-blur-md">
+                                            <div className="bg-black border border-white/12 p-3 rounded-lg shadow-xl backdrop-blur-md">
                                                 <div className="font-black text-xs text-white/70 mb-1">{COUNTRY_NAMES[data.country_code]}</div>
                                                 <div className="font-mono text-sm text-rose-400">{data.coverage_ratio.toFixed(2)}% Coverage</div>
                                             </div>
@@ -311,12 +311,12 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-white/[0.02] border-b border-white/5">
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground w-16">Rank</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground">Sovereign</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right">Coverage %</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right hidden sm:table-cell">Inverse Ratio</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right hidden lg:table-cell">Gold (Tonnes)</th>
-                                <th className="px-6 py-4 text-[0.65rem] font-black uppercase tracking-widest text-muted-foreground text-right">Debt / Gold Oz (Local)</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground w-16">Rank</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground">Sovereign</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-right">Coverage %</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-right hidden sm:table-cell">Inverse Ratio</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-right hidden lg:table-cell">Gold (Tonnes)</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-right">Debt / Gold Oz (Local)</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">

@@ -47,7 +47,7 @@ export const EnergySection: React.FC = () => {
     if (isLoading) return <div className="flex justify-center p-12"><Activity className="animate-spin text-blue-500" /></div>;
 
     if (error || !data || data.length === 0) return (
-        <div className="p-12 text-center border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
+        <div className="p-12 text-center border border-dashed border-white/12 rounded-3xl bg-white/[0.02]">
             <p className="text-muted-foreground text-sm font-medium italic">
                 {error ? 'Err: Telemetry Interrupted' : 'No state energy data in current buffer.'}
             </p>
@@ -78,7 +78,7 @@ export const EnergySection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent pointer-events-none" />
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Aggregate Coal</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Aggregate Coal</span>
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-black text-white font-mono tracking-tighter">{totalCoal.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
                         <span className="text-xs font-bold text-white/20 uppercase">KToE</span>
@@ -86,7 +86,7 @@ export const EnergySection: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Renewable Alpha</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Renewable Alpha</span>
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
                             {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-xs text-muted-foreground/30 uppercase tracking-widest italic font-bold">Sync...</span>}
@@ -95,7 +95,7 @@ export const EnergySection: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">System Demand</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">System Demand</span>
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-black text-blue-400 font-mono tracking-tighter">{(totalElectricity).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                         <span className="text-xs font-bold text-white/20 uppercase">KToE</span>
@@ -103,7 +103,7 @@ export const EnergySection: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Relative Intensity</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Relative Intensity</span>
                     <div className="flex items-center gap-2">
                         <span className="text-2xl font-black font-mono tracking-tighter text-emerald-400">
                             {avgEnergyIntensity.toFixed(1)}
@@ -118,7 +118,7 @@ export const EnergySection: React.FC = () => {
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div className="space-y-1">
                             <h3 className="text-lg font-black text-white italic tracking-tight uppercase">Sub-National Energy Matrix</h3>
-                            <p className="text-[0.65rem] font-bold text-muted-foreground/60 uppercase tracking-widest">Interactive choropleth • High-fidelity telemetry</p>
+                            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">Interactive choropleth • High-fidelity telemetry</p>
                         </div>
 
                         <div className="flex p-1 rounded-xl bg-white/5 border border-white/5 gap-1">
@@ -210,7 +210,7 @@ export const EnergySection: React.FC = () => {
                                         "w-full flex justify-between items-center p-4 rounded-2xl border transition-all group text-left",
                                         selectedState?.state_code === state.state_code
                                             ? "bg-blue-500/10 border-blue-500/20 shadow-lg shadow-blue-500/5"
-                                            : "bg-white/[0.02] border-white/5 hover:border-white/10"
+                                            : "bg-white/[0.02] border-white/5 hover:border-white/12"
                                     )}
                                 >
                                     <div className="flex items-center gap-4">
@@ -255,7 +255,7 @@ export const EnergySection: React.FC = () => {
                     ) : (
                         <div className="p-8 rounded-3xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center space-y-4">
                             <Activity className="w-5 h-5 text-white/10 animate-pulse" />
-                            <p className="text-[0.65rem] font-bold text-muted-foreground/40 uppercase tracking-widest leading-relaxed">
+                            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest leading-relaxed">
                                 Select a state on the map for <br /> high-frequency drill-down
                             </p>
                         </div>

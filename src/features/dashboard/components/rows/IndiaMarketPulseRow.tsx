@@ -82,24 +82,24 @@ export const IndiaMarketPulseRow: React.FC = () => {
                 />
                 <div className="flex gap-4 mb-2 items-center">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5">
-                        <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest">From</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">From</span>
                         <input
                             type="date"
                             value={exportStartDate}
                             onChange={(e) => setExportStartDate(e.target.value)}
-                            className="bg-transparent text-[0.65rem] font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
+                            className="bg-transparent text-xs font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
                         />
-                        <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-widest ml-1">To</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest ml-1">To</span>
                         <input
                             type="date"
                             value={exportEndDate}
                             onChange={(e) => setExportEndDate(e.target.value)}
-                            className="bg-transparent text-[0.65rem] font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
+                            className="bg-transparent text-xs font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
                         />
                     </div>
                     <button
                         onClick={handleExport}
-                        className="ml-2 px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/10 transition-all active:scale-95"
+                        className="ml-2 px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/12 transition-all active:scale-95"
                     >
                         <Download size={12} />
                         Export CSV
@@ -117,11 +117,11 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/10 transition-all duration-300"
+                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/12 transition-all duration-300"
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
                                 Flow Summary
                             </div>
                             <div className="flex items-baseline gap-6">
@@ -168,7 +168,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                         <div className="flex flex-col items-end gap-2">
                             {data.fii_percentile && (
                                 <div className="text-right">
-                                    <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">10Y Percentile</div>
+                                    <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">10Y Percentile</div>
                                     <div className="text-3xl font-black text-gold-500/80 tabular-nums">{data.fii_percentile.toFixed(0)}%</div>
                                 </div>
                             )}
@@ -187,11 +187,11 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/10 transition-all duration-300"
+                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/12 transition-all duration-300"
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
                                 Derivatives Sentiment
                             </div>
                             <div className="flex items-baseline gap-6">
@@ -253,11 +253,11 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/10 transition-all duration-300"
+                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/12 transition-all duration-300"
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
                                 Breadth & Quality
                             </div>
                             <div className="flex items-baseline gap-6">
@@ -307,9 +307,9 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/10 transition-all duration-300"
+                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/12 transition-all duration-300"
                 >
-                    <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">
+                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">
                         Sector Rotation
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -341,11 +341,11 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/10 transition-all duration-300"
+                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/12 transition-all duration-300"
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
                                 Cap Risk Pulse
                             </div>
                             <div className="flex items-baseline gap-6">

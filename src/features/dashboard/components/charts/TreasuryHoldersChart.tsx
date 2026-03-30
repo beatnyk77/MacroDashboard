@@ -45,7 +45,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
-            <div className="bg-slate-950/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl min-w-[200px]">
+            <div className="bg-slate-950/90 backdrop-blur-md border border-white/12 p-3 rounded-xl shadow-2xl min-w-[200px]">
                 <div className="flex items-center gap-2 mb-2">
                     <span className="text-lg">{COUNTRY_FLAGS[data.country_name] || '🌐'}</span>
                     <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">
@@ -54,19 +54,19 @@ const CustomTooltip = ({ active, payload }: any) => {
                 </div>
                 <div className="space-y-1">
                     <div className="flex justify-between items-end gap-4">
-                        <span className="text-[0.65rem] font-bold text-muted-foreground/70 uppercase">Holdings</span>
+                        <span className="text-xs font-bold text-muted-foreground/70 uppercase">Holdings</span>
                         <span className="text-lg font-black text-white tabular-nums">
                             {formatCurrency(data.holdings_usd_bn, { decimals: 1 })}B
                         </span>
                     </div>
                     <div className="flex justify-between items-end gap-4">
-                        <span className="text-[0.65rem] font-bold text-muted-foreground/70 uppercase">Share</span>
+                        <span className="text-xs font-bold text-muted-foreground/70 uppercase">Share</span>
                         <span className="text-sm font-bold text-yellow-400 tabular-nums">
                             {formatPercentage(data.pct_of_total_foreign, { decimals: 1 })}
                         </span>
                     </div>
                     <div className="flex justify-between items-end gap-4">
-                        <span className="text-[0.65rem] font-bold text-muted-foreground/70 uppercase">MoM Change</span>
+                        <span className="text-xs font-bold text-muted-foreground/70 uppercase">MoM Change</span>
                         <span className={cn(
                             "text-xs font-bold tabular-nums",
                             (data.mom_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"

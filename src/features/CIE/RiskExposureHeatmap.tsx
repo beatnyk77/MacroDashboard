@@ -116,7 +116,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
+                <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/12 backdrop-blur-md">
                     <button
                         onClick={() => setViewMode('sector')}
                         className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all ${viewMode === 'sector' ? 'bg-white/10 text-white shadow-lg' : 'text-white/30 hover:text-white/60'}`}
@@ -202,13 +202,13 @@ export const RiskExposureHeatmap: React.FC = () => {
                 </table>
             </div>
 
-            <div className="p-8 rounded-[2rem] bg-white/[0.01] border border-dashed border-white/10 flex items-start gap-6 text-white/40">
-                <div className="p-2 rounded-lg bg-white/5 border border-white/10 mt-0.5">
+            <div className="p-8 rounded-[2rem] bg-white/[0.01] border border-dashed border-white/12 flex items-start gap-6 text-white/40">
+                <div className="p-2 rounded-lg bg-white/5 border border-white/12 mt-0.5">
                     <AlertCircle size={18} className="flex-shrink-0" />
                 </div>
                 <div>
                     <h6 className="text-xs font-black uppercase tracking-widest text-white/60 mb-2">Protocol Brief: Risk Gameboard Intelligence</h6>
-                    <p className="text-[0.65rem] font-medium leading-relaxed max-w-4xl">
+                    <p className="text-xs font-medium leading-relaxed max-w-4xl">
                         Higher scores (Red) indicate elevated structural risk exposure to the specified macro factor. Sectoral scores are derived from our proprietary aggregation of underlying company filings, forex sensitivity analysis, and state-level capex intensity. <span className="text-blue-400 font-bold">Interactivity:</span> Click on any sector to instantly filter the main screener. Click on Liquidity or CDS scores to view granular exposure profiles.
                     </p>
                 </div>
@@ -226,7 +226,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                         <motion.div
                             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/10 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
+                            className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/12 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
                         >
                             <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
                                 <div className="flex items-center gap-4">
@@ -238,7 +238,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                         <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 mt-2 block">Liquidity Exposure Profile</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedSectorPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/10 hover:border-white/20">
+                                <button onClick={() => setSelectedSectorPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/12 hover:border-white/20">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -274,7 +274,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                     <h4 className="text-xs font-black uppercase tracking-widest text-white/30 mb-6 border-b border-white/5 pb-4">High Exposure Constituents</h4>
                                     <div className="space-y-3">
                                         {selectedSectorPanel.topExposed.map((comp: any) => (
-                                            <div key={comp.ticker} className="flex justify-between items-center p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group/comp cursor-pointer" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
+                                            <div key={comp.ticker} role="button" tabIndex={0} aria-label={`View details for ${comp.ticker.replace('.NS', '')}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`); } }} className="flex justify-between items-center p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group/comp cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
                                                 <div>
                                                     <div className="text-sm font-black text-white group-hover/comp:text-blue-400 transition-colors tracking-tight">{comp.ticker.replace('.NS', '')}</div>
                                                     <div className="text-xs font-medium text-white/30 truncate max-w-[200px] mt-1">{comp.name}</div>
@@ -307,7 +307,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                         <motion.div
                             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/10 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
+                            className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/12 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
                         >
                             <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
                                 <div className="flex items-center gap-4">
@@ -319,7 +319,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                         <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 mt-2 block">CDS Risk Profile</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedCDSPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/10 hover:border-white/20">
+                                <button onClick={() => setSelectedCDSPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/12 hover:border-white/20">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -351,7 +351,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                     <h4 className="text-xs font-black uppercase tracking-widest text-white/30 mb-6 border-b border-white/5 pb-4">Most Sensitive Constituents</h4>
                                     <div className="space-y-3">
                                         {selectedCDSPanel.topExposed.map((comp: any) => (
-                                            <div key={comp.ticker} className="flex justify-between items-center p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group/comp cursor-pointer" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
+                                            <div key={comp.ticker} role="button" tabIndex={0} aria-label={`View details for ${comp.ticker.replace('.NS', '')}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`); } }} className="flex justify-between items-center p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group/comp cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none" onClick={() => navigate(`/india-equities/${comp.ticker.replace('.NS', '')}`)}>
                                                 <div>
                                                     <div className="text-sm font-black text-white group-hover/comp:text-blue-400 transition-colors tracking-tight">{comp.ticker.replace('.NS', '')}</div>
                                                     <div className="text-xs font-medium text-white/30 truncate max-w-[200px] mt-1">{comp.name}</div>
@@ -371,7 +371,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                     <h4 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">Linked Macro Stressors</h4>
                                     <div className="flex flex-wrap gap-2">
                                         {['Liquidity Transmission', 'Fiscal Staleness', 'FX Volatility'].map(tag => (
-                                            <span key={tag} className="px-3 py-1.5 bg-white/5 rounded-full text-xs font-black uppercase tracking-widest text-white/40 border border-white/10">{tag}</span>
+                                            <span key={tag} className="px-3 py-1.5 bg-white/5 rounded-full text-xs font-black uppercase tracking-widest text-white/40 border border-white/12">{tag}</span>
                                         ))}
                                     </div>
                                 </div>

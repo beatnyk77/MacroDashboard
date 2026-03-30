@@ -68,7 +68,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                             status === 'safe' ? "text-emerald-400 border-emerald-500/20" :
                                 status === 'warning' ? "text-amber-400 border-amber-500/20" :
                                     status === 'danger' ? "text-rose-400 border-rose-500/20" :
-                                        "text-slate-400 border-white/10"
+                                        "text-slate-400 border-white/12"
                         )}>
                             {icon}
                         </div>
@@ -131,7 +131,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                         </span>
                         {trend !== undefined && (
                             <div className={cn(
-                                "flex items-center gap-0.5 text-[0.65rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full border",
+                                "flex items-center gap-0.5 text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full border",
                                 trend > 0 ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" :
                                     trend < 0 ? "text-rose-400 border-rose-500/20 bg-rose-500/5" :
                                         "text-slate-400 border-slate-500/20"
@@ -154,7 +154,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                         </span>
                     </div>
                     {directionality && (
-                        <span className="text-[0.55rem] text-slate-500 italic px-2">
+                        <span className="text-xs text-slate-500 italic px-2">
                             {directionality}
                         </span>
                     )}

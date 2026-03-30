@@ -119,7 +119,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1">
-                                                    <span className="text-[0.65rem] font-black uppercase tracking-widest hidden md:block">Read Digest</span>
+                                                    <span className="text-xs font-black uppercase tracking-widest hidden md:block">Read Digest</span>
                                                     <ChevronRight size={20} />
                                                 </div>
                                             </ListItemButton>

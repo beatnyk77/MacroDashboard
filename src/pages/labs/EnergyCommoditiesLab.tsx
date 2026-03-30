@@ -48,7 +48,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
 
             {/* Intro / How to Use This Lab */}
             <Box sx={{ mb: 12 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[0.65rem] font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-widest mb-4">
                     <Fuel size={12} /> Institutional Resource Security
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -58,8 +58,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     Analyzing global physical flow dynamics, refining capacity elasticity, and the energy intensity of the AI compute supercycle.
                 </Typography>
 
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 max-w-4xl">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2 border-b border-white/10 pb-2 inline-block">How to use this Lab</h3>
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/12 max-w-4xl">
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2 border-b border-white/12 pb-2 inline-block">How to use this Lab</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                         This environment translates physical commodity constraints into sovereign vulnerability metrics.
                         <strong> Start by assessing the US strategic stockpile (SPR) and refining limits.</strong> Then, trace the molecular shift of Russian and Middle Eastern crude eastward to Asia to understand inflation divergence. Finally, monitor the physical bottlenecks of the AI revolution via power demand.

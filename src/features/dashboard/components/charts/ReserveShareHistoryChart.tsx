@@ -23,7 +23,7 @@ interface ReserveShareHistoryChartProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-2xl">
+            <div className="bg-slate-900/90 backdrop-blur-xl border border-white/12 p-3 rounded-xl shadow-2xl">
                 <div className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
                 <div className="text-sm font-black text-white tabular-nums">
                     {payload[0].value.toFixed(1)}%
@@ -69,14 +69,14 @@ export const ReserveShareHistoryChart: React.FC<ReserveShareHistoryChartProps> =
                         <div className="text-3xl font-black text-white tracking-tighter tabular-nums">
                             {currentValue?.toFixed(1)}%
                         </div>
-                        <div className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest">
+                        <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">
                             Official Global Share
                         </div>
                     </div>
                 </div>
 
                 {description && (
-                    <p className="text-[0.65rem] text-muted-foreground/60 leading-relaxed font-medium max-w-[80%] italic">
+                    <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium max-w-[80%] italic">
                         {description}
                     </p>
                 )}

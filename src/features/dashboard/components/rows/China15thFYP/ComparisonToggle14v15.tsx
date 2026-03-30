@@ -49,7 +49,7 @@ export const ComparisonToggle14v15: React.FC = () => {
                                 
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 opacity-40">
-                                        <div className="text-[0.65rem] font-bold text-muted-foreground uppercase">14th FYP</div>
+                                        <div className="text-xs font-bold text-muted-foreground uppercase">14th FYP</div>
                                         <div className="flex-1 h-[1px] bg-white/5" />
                                     </div>
                                     <div className="text-sm font-bold text-muted-foreground/60">{shift.from}</div>
@@ -61,13 +61,13 @@ export const ComparisonToggle14v15: React.FC = () => {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <div className="text-[0.65rem] font-black text-red-400 uppercase">15th FYP</div>
+                                        <div className="text-xs font-black text-red-400 uppercase">15th FYP</div>
                                         <div className="flex-1 h-[1px] bg-red-500/20" />
                                     </div>
                                     <div className="text-lg font-black text-white leading-tight">{shift.to}</div>
                                 </div>
 
-                                <p className="mt-6 text-[0.65rem] text-muted-foreground leading-relaxed">
+                                <p className="mt-6 text-xs text-muted-foreground leading-relaxed">
                                     {shift.desc}
                                 </p>
                             </CardContent>

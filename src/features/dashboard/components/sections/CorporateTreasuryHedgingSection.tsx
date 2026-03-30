@@ -102,7 +102,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                         <h2 className="text-2xl font-black text-white uppercase tracking-tight italic">
                             Corporate <span className="text-emerald-500">Treasury Hedging</span> Monitor
                         </h2>
-                        <p className="text-[0.65rem] text-muted-foreground/60 font-bold uppercase tracking-[0.2em] mt-0.5">
+                        <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-[0.2em] mt-0.5">
                             Macro-driven exposure & mitigation intelligence
                         </p>
                     </div>
@@ -246,7 +246,7 @@ export const CorporateTreasuryHedgingSection: React.FC = () => {
                             ))}
                         </div>
 
-                        <p className="text-[0.55rem] text-muted-foreground/40 font-bold uppercase leading-relaxed italic">
+                        <p className="text-xs text-muted-foreground/40 font-bold uppercase leading-relaxed italic">
                             * Estimated impact on unhedged interest/FX expense based on historical volatility.
                         </p>
                     </div>

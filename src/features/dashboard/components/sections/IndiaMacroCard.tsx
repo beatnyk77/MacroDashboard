@@ -11,7 +11,7 @@ const MetricValue: React.FC<{ label: string; value: number | undefined | null; u
             <span className="text-2xl font-black text-white font-mono tracking-tighter">
                 {value !== undefined && value !== null ? value.toFixed(1) : '---'}
             </span>
-            <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">{unit}</span>
+            <span className="text-xs font-bold text-white/40 uppercase tracking-widest">{unit}</span>
         </div>
         {trend !== undefined && (
             <div className={cn("flex items-center gap-1 text-xs font-black mt-1.5 uppercase tracking-widest", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
@@ -61,11 +61,11 @@ export const IndiaMacroCard: React.FC = () => {
                             </div>
                             <h3 className="text-2xl font-black text-white tracking-tighter">INDIA MACRO</h3>
                         </div>
-                        <p className="text-[0.65rem] font-black text-white/30 uppercase tracking-[0.3em]">
+                        <p className="text-xs font-black text-white/30 uppercase tracking-[0.3em]">
                             MoSPI Institutional Feed
                         </p>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/12 backdrop-blur-md">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-xs font-black text-emerald-400/80 uppercase tracking-widest">Live Signal</span>
                     </div>
@@ -77,7 +77,7 @@ export const IndiaMacroCard: React.FC = () => {
                         <Activity className="w-48 h-48 text-white rotate-12" />
                     </div>
 
-                    <span className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-orange-400/60 block mb-4">
+                    <span className="text-xs font-black uppercase tracking-[0.25em] text-orange-400/60 block mb-4">
                         Economic Misery Index
                     </span>
                     <div className="flex items-baseline gap-4">
@@ -120,7 +120,7 @@ export const IndiaMacroCard: React.FC = () => {
             </div>
 
             {/* Premium Glow Border */}
-            <div className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none group-hover:border-white/20 transition-colors duration-500" />
+            <div className="absolute inset-0 border border-white/12 rounded-3xl pointer-events-none group-hover:border-white/20 transition-colors duration-500" />
         </div>
     );
 };

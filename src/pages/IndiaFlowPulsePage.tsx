@@ -17,7 +17,7 @@ const FIIDIIMonitorSection = lazy(() =>
 
 const LoadingFallback = () => (
     <div className="w-full h-full min-h-[200px] bg-slate-900/50 border border-white/5 rounded-xl animate-pulse flex items-center justify-center">
-        <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-[0.3em]">
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">
             Connecting...
         </span>
     </div>
@@ -63,7 +63,7 @@ export const IndiaFlowPulsePage: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-4">
                     <Activity size={12} /> Live Institutional Flow Data
                 </div>
                 <Typography

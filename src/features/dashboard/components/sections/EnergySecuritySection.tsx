@@ -82,7 +82,7 @@ export const EnergySecuritySection: React.FC = () => {
                     title="Energy Security & Supply Chain"
                     subtitle="US Refining Capacity, Crude Sourcing, and Supplier Concentration"
                 />
-                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-[2.5rem] backdrop-blur-3xl">
+                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
                     <span className="text-sm font-black text-rose-500/50 uppercase tracking-widest mb-2">Energy Security data temporarily unavailable</span>
                     <p className="text-xs text-muted-foreground/40 italic">System is currently normalizing upstream feeds. Please check back shortly.</p>
                 </div>
@@ -128,7 +128,7 @@ export const EnergySecuritySection: React.FC = () => {
                                 isLoading={false}
                             />
                         ) : (
-                            <div className="h-[400px] flex items-center justify-center bg-white/5 rounded-xl border border-white/10">
+                            <div className="h-[400px] flex items-center justify-center bg-white/5 rounded-xl border border-white/12">
                                 <span className="text-xs text-muted-foreground uppercase tracking-widest">No Refining Data Found</span>
                             </div>
                         )}
@@ -191,7 +191,7 @@ export const EnergySecuritySection: React.FC = () => {
                                         lastUpdated={data.powerMixLastUpdated}
                                     />
                                 ) : (
-                                    <div className="h-[450px] flex items-center justify-center bg-white/5 rounded-[2.5rem] border border-white/10">
+                                    <div className="h-[450px] flex items-center justify-center bg-white/5 rounded-[2.5rem] border border-white/12">
                                         <span className="text-xs text-muted-foreground uppercase tracking-widest">Loading Power Mix Data...</span>
                                     </div>
                                 )}

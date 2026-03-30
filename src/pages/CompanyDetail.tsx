@@ -181,14 +181,14 @@ export const CompanyDetail: React.FC = () => {
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header Section */}
                 <div className="mb-8">
-                    <Link to="/india-equities" className="inline-flex items-center text-[0.65rem] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-6">
+                    <Link to="/india-equities" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-6">
                         <ChevronLeft size={14} className="mr-1" /> Back to Screener
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
                                 <h1 className="text-4xl lg:text-5xl font-black tracking-tight">{company.name}</h1>
-                                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-white/60">
+                                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-widest text-white/60">
                                     {company.ticker.replace('.NS', '')}
                                 </span>
                             </div>
@@ -196,15 +196,15 @@ export const CompanyDetail: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap gap-6 text-right items-end">
                             <div>
-                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">Market Cap</p>
+                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Market Cap</p>
                                 <p className="text-2xl font-black">₹{mcap.toFixed(0)} <span className="text-sm text-white/40">Cr</span></p>
                             </div>
                             <div>
-                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">Current Price</p>
+                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Current Price</p>
                                 <p className="text-2xl font-black text-blue-400">₹{latestFund.metadata?.last_price?.toFixed(2) || 'N/A'}</p>
                             </div>
                             <div>
-                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">Short Interest</p>
+                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Short Interest</p>
                                 <p className={`text-2xl font-black ${(company.short_interest_pct || 0) > 20 ? 'text-rose-400' : 'text-white/40'}`}>
                                     {(company.short_interest_pct || 0).toFixed(1)}%
                                 </p>
@@ -226,7 +226,7 @@ export const CompanyDetail: React.FC = () => {
                                         <button
                                             key={metric}
                                             onClick={() => setChartMetric(metric as any)}
-                                            className={`px-3 py-1.5 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider transition-all ${chartMetric === metric ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${chartMetric === metric ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
                                         >
                                             {metric}
                                         </button>
@@ -257,7 +257,7 @@ export const CompanyDetail: React.FC = () => {
                                 <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 flex items-center">
                                     <Users size={16} className="mr-2 text-purple-400" /> Promoter Activity & Pledging Trend
                                 </h3>
-                                <div className="flex gap-4 text-[0.65rem] font-black uppercase tracking-widest text-white/30">
+                                <div className="flex gap-4 text-xs font-black uppercase tracking-widest text-white/30">
                                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-400" /> Pledging (%)</span>
                                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-purple-500" /> Insider (Cr)</span>
                                 </div>
@@ -350,7 +350,7 @@ export const CompanyDetail: React.FC = () => {
                                         ) : (
                                             <tr>
                                                 <td colSpan={6} className="py-10 text-center">
-                                                    <span className="text-[0.65rem] font-black uppercase tracking-widest text-white/10 italic">No significant deals reported in the last 30 days.</span>
+                                                    <span className="text-xs font-black uppercase tracking-widest text-white/10 italic">No significant deals reported in the last 30 days.</span>
                                                 </td>
                                             </tr>
                                         )}

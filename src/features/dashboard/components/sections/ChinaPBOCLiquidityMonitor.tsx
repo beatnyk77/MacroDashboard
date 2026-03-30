@@ -15,7 +15,7 @@ const REGIME_STYLES: Record<string, { bg: string; border: string; text: string; 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
-        <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-[0.65rem] shadow-xl">
+        <div className="bg-slate-950 border border-white/12 rounded-xl p-3 text-xs shadow-xl">
             <p className="text-muted-foreground mb-2 font-black uppercase tracking-widest">{label}</p>
             {payload.map((p: any) => (
                 <div key={p.name} className="flex justify-between gap-4">
@@ -90,7 +90,7 @@ export const ChinaPBOCLiquidityMonitor: React.FC = () => {
                             { label: 'PBOC vs Fed Gap', value: latest?.pboc_vs_fed_gap, unit: '%', color: latest?.pboc_vs_fed_gap && latest.pboc_vs_fed_gap < 0 ? 'text-rose-400' : 'text-emerald-400', desc: 'MLF minus Fed Funds Rate' },
                         ].map(({ label, value, unit, color, desc }) => (
                             <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                <p className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</p>
+                                <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</p>
                                 <p className="text-xs text-muted-foreground/40 mb-2">{desc}</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className={cn('text-2xl font-black tabular-nums tracking-tighter', color)}>
@@ -104,7 +104,7 @@ export const ChinaPBOCLiquidityMonitor: React.FC = () => {
 
                     {/* Rate Corridor Chart */}
                     <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <p className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest mb-4">
+                        <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">
                             Rate Corridor & M2 Growth — 12 Months
                         </p>
                         <ResponsiveContainer width="100%" height={200}>
@@ -137,7 +137,7 @@ export const ChinaPBOCLiquidityMonitor: React.FC = () => {
                                     style={{ width: `${Math.min(Math.abs(latest.net_liquidity_signal) / 5 * 100, 100)}%`, marginLeft: latest.net_liquidity_signal < 0 ? 'auto' : '0' }}
                                 />
                             </div>
-                            <p className="text-[0.55rem] text-muted-foreground/40 mt-1">
+                            <p className="text-xs text-muted-foreground/40 mt-1">
                                 {latest.net_liquidity_signal >= 0
                                     ? 'Positive: Excess liquidity supports credit expansion'
                                     : 'Negative: Liquidity tighter than nominal growth — watch for credit stress'}

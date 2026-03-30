@@ -67,14 +67,14 @@ export const USCompanyDetail: React.FC = () => {
         <div className="min-h-screen bg-[#020202] text-white pt-24 pb-20">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="mb-8">
-                    <Link to="/us-equities" className="inline-flex items-center text-[0.65rem] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-6">
+                    <Link to="/us-equities" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-6">
                         <ChevronLeft size={14} className="mr-1" /> Back to Terminal
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
                                 <h1 className="text-4xl lg:text-5xl font-black tracking-tight">{company.name}</h1>
-                                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xl font-black text-blue-400">
+                                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/12 text-xl font-black text-blue-400">
                                     {company.ticker}
                                 </span>
                             </div>
@@ -82,11 +82,11 @@ export const USCompanyDetail: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap gap-6 text-right items-end">
                             <div>
-                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">CIK</p>
+                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">CIK</p>
                                 <p className="text-xl font-black text-white/60">{company.cik}</p>
                             </div>
                             <div>
-                                <p className="text-[0.65rem] uppercase tracking-widest font-black text-white/30 mb-1">Fiscal Year End</p>
+                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Fiscal Year End</p>
                                 <p className="text-xl font-black">{company.fiscal_year_end || '12-31'}</p>
                             </div>
                         </div>
@@ -132,7 +132,7 @@ export const USCompanyDetail: React.FC = () => {
                                     </AreaChart>
                                 </ResponsiveContainer>
                             </div>
-                            <p className="mt-4 text-[0.65rem] text-white/20 italic">* Values in Millions USD (except ratios)</p>
+                            <p className="mt-4 text-xs text-white/20 italic">* Values in Millions USD (except ratios)</p>
                         </div>
 
                         {/* Recent Filings */}
@@ -157,7 +157,7 @@ export const USCompanyDetail: React.FC = () => {
                                                     </span>
                                                     <span className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">{f.description}</span>
                                                 </div>
-                                                <span className="text-[0.65rem] font-medium text-white/20">{format(new Date(f.filing_date), 'dd MMM yyyy')}</span>
+                                                <span className="text-xs font-medium text-white/20">{format(new Date(f.filing_date), 'dd MMM yyyy')}</span>
                                             </div>
                                         </a>
                                     ))
@@ -204,13 +204,13 @@ export const USCompanyDetail: React.FC = () => {
                             {company.us_insider_trades?.length > 0 ? (
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
-                                        <span className="text-[0.65rem] font-bold uppercase text-emerald-400">Total Buying</span>
+                                        <span className="text-xs font-bold uppercase text-emerald-400">Total Buying</span>
                                         <span className="text-sm font-black text-emerald-400">
                                             ${(company.us_insider_trades.filter((t: any) => t.transaction_type === 'BUY').reduce((acc: number, t: any) => acc + (t.total_value || 0), 0) / 1000).toFixed(1)}k
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center p-3 rounded-xl bg-rose-500/5 border border-rose-500/10">
-                                        <span className="text-[0.65rem] font-bold uppercase text-rose-400">Total Selling</span>
+                                        <span className="text-xs font-bold uppercase text-rose-400">Total Selling</span>
                                         <span className="text-sm font-black text-rose-400">
                                             ${(company.us_insider_trades.filter((t: any) => t.transaction_type === 'SELL').reduce((acc: number, t: any) => acc + (t.total_value || 0), 0) / 1000).toFixed(1)}k
                                         </span>

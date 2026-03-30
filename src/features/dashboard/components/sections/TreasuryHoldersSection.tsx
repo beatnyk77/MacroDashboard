@@ -85,7 +85,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                 />
 
                 {/* View Toggle */}
-                <div className="bg-slate-950/50 p-1 rounded-lg border border-white/10 flex items-center">
+                <div className="bg-slate-950/50 p-1 rounded-lg border border-white/12 flex items-center">
                     <button
                         onClick={() => setViewMode('map')}
                         className={cn(
@@ -131,7 +131,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                     <div className="w-full animate-in fade-in duration-500">
                         <TreasuryHoldersChart data={chartData} height={600} />
                         <div className="mt-4 flex justify-end">
-                            <span className="text-[0.65rem] text-muted-foreground/60 italic">
+                            <span className="text-xs text-muted-foreground/60 italic">
                                 Showing top 15 holders. Switch to Table view for full list.
                             </span>
                         </div>
@@ -141,18 +141,18 @@ export const TreasuryHoldersSection: React.FC = () => {
                     <div className="w-full animate-in fade-in duration-500">
                         <div
                             className={cn(
-                                "w-full bg-card/40 backdrop-blur-md border border-white/10 dark:border-white/5 rounded-xl overflow-hidden shadow-xl transition-all duration-300",
+                                "w-full bg-card/40 backdrop-blur-md border border-white/12 dark:border-white/5 rounded-xl overflow-hidden shadow-xl transition-all duration-300",
                                 isExpanded ? "max-h-[800px] overflow-y-auto" : "max-h-[500px]"
                             )}
                         >
                             <Table className="relative">
                                 <TableHeader className="sticky top-0 bg-slate-950/90 backdrop-blur-md z-10 box-decoration-clone">
                                     <TableRow className="border-b border-border/50 shadow-sm hover:bg-transparent">
-                                        <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest bg-transparent">Country / Holder</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">Holdings ($BN)</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">MoM %</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">YoY %</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-[0.65rem] text-muted-foreground tracking-widest text-right bg-transparent">Share (%)</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest bg-transparent">Country / Holder</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">Holdings ($BN)</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">MoM %</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">YoY %</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">Share (%)</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody className="divide-y divide-border/50">
@@ -222,7 +222,7 @@ export const TreasuryHoldersSection: React.FC = () => {
             {/* Insight Note */}
             <div className="mt-4 flex items-start gap-2 max-w-3xl">
                 <Info size={14} className="text-muted-foreground mt-0.5 shrink-0" />
-                <p className="text-[0.65rem] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                     Data source: U.S. Treasury International Capital (TIC). Monthly updates provided post-release (approx. 15th of month). Percentages based on total reported foreign holdings.
                 </p>
             </div>

@@ -33,7 +33,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
     }, [swingStates, selected]);
 
     return (
-        <Card className={cn("w-full bg-black/40 border-white/10 backdrop-blur-xl relative overflow-hidden", className)}>
+        <Card className={cn("w-full bg-black/40 border-white/12 backdrop-blur-xl relative overflow-hidden", className)}>
             {/* Ambient glow */}
             <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-[120px] bg-orange-500/10 pointer-events-none" />
             <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full blur-[120px] bg-blue-500/10 pointer-events-none" />
@@ -80,7 +80,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
 
                         {/* LEFT: World Map */}
                         <div className="flex flex-col gap-4">
-                            <div className="rounded-xl overflow-hidden border border-white/10 h-[300px] bg-[#0a0a1a]">
+                            <div className="rounded-xl overflow-hidden border border-white/12 h-[300px] bg-[#0a0a1a]">
                                 <MapContainer
                                     center={[20, 20]}
                                     zoom={2}
@@ -131,7 +131,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                                                 "w-full text-left rounded-lg p-3 border transition-all duration-200",
                                                 selected?.code === state.code
                                                     ? "border-white/20 bg-white/5"
-                                                    : "border-white/5 bg-black/20 hover:border-white/10"
+                                                    : "border-white/5 bg-black/20 hover:border-white/12"
                                             )}
                                         >
                                             <div className="flex justify-between items-center mb-1.5">
@@ -177,7 +177,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                                             {selected.name} — Trade Gravity Trend
                                         </h3>
                                         {selected.hasShifted && (
-                                            <span className="text-[0.65rem] font-mono font-bold text-orange-200 bg-orange-500/15 border border-orange-500/25 px-2 py-0.5 rounded-full">
+                                            <span className="text-xs font-mono font-bold text-orange-200 bg-orange-500/15 border border-orange-500/25 px-2 py-0.5 rounded-full">
                                                 ⚡ BRICS+ Dominant in 2023
                                             </span>
                                         )}

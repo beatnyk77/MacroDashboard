@@ -44,7 +44,7 @@ export const FYP_TargetGrid: React.FC = () => {
                                     <h4 className="text-xl font-black text-white tracking-tighter">{target.value_target}</h4>
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
-                                    <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase">Baseline: {target.value_baseline}</div>
+                                    <div className="text-xs font-bold text-muted-foreground/40 uppercase">Baseline: {target.value_baseline}</div>
                                     <div className="flex items-center gap-1 text-emerald-400 text-xs font-black">
                                         <TrendingUp size={10} />
                                         SHIFT

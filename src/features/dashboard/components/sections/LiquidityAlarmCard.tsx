@@ -11,11 +11,11 @@ import { Link } from 'react-router-dom';
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-950 p-2 border border-white/10 rounded-lg shadow-xl">
-                <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">Z-SCORE BIN</span>
+            <div className="bg-slate-950 p-2 border border-white/12 rounded-lg shadow-xl">
+                <span className="text-xs font-extrabold text-muted-foreground block uppercase">Z-SCORE BIN</span>
                 <span className="text-sm font-black text-white">{payload[0].payload.bin}σ</span>
                 <div className="mt-1">
-                    <span className="text-[0.65rem] font-extrabold text-muted-foreground block uppercase">FREQUENCY</span>
+                    <span className="text-xs font-extrabold text-muted-foreground block uppercase">FREQUENCY</span>
                     <span className="text-xs font-black text-primary">{payload[0].value} Days</span>
                 </div>
             </div>
@@ -65,7 +65,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                 onClick={() => setIsModalOpen(true)}
                 className={cn(
                     "p-6 h-full relative overflow-hidden flex flex-col gap-4 cursor-pointer transition-all duration-300",
-                    "bg-card/40 backdrop-blur-md border border-white/10 dark:border-white/5 shadow-xl",
+                    "bg-card/40 backdrop-blur-md border border-white/12 dark:border-white/5 shadow-xl",
                     "hover:-translate-y-1 hover:shadow-2xl hover:border-primary/50",
                     isExtreme ? "border-rose-500/50 shadow-rose-500/20" : isTightening ? "border-amber-500/50 shadow-amber-500/20" : ""
                 )}
@@ -77,7 +77,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                             LIQUIDITY ALARM
                         </h4>
                     </div>
-                    <div className={cn("px-2 py-1 rounded text-[0.65rem] font-black border", getStatusClass())}>
+                    <div className={cn("px-2 py-1 rounded text-xs font-black border", getStatusClass())}>
                         {liq.alarm_status}
                     </div>
                 </div>
@@ -88,15 +88,15 @@ export const LiquidityAlarmCard: React.FC = () => {
                             ${formatBillions(liq.current_value)}
                         </h3>
                         <div className="flex gap-2 mt-1">
-                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/10 flex items-center gap-1">
+                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/12 flex items-center gap-1">
                                 <span className="text-xs font-bold text-muted-foreground tracking-wide">RRP</span>
-                                <span className={cn("text-[0.65rem] font-black", (liq.rrp_balance || 0) > 500 ? 'text-amber-500' : 'text-foreground')}>
+                                <span className={cn("text-xs font-black", (liq.rrp_balance || 0) > 500 ? 'text-amber-500' : 'text-foreground')}>
                                     ${formatBillions(liq.rrp_balance)}
                                 </span>
                             </div>
-                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/10 flex items-center gap-1">
+                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/12 flex items-center gap-1">
                                 <span className="text-xs font-bold text-muted-foreground tracking-wide">TGA</span>
-                                <span className={cn("text-[0.65rem] font-black", (liq.tga_balance || 0) > 750 ? 'text-rose-500' : 'text-foreground')}>
+                                <span className={cn("text-xs font-black", (liq.tga_balance || 0) > 750 ? 'text-rose-500' : 'text-foreground')}>
                                     ${formatBillions(liq.tga_balance)}
                                 </span>
                             </div>
@@ -152,7 +152,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                 </div>
 
                 <div className={cn(
-                    "mt-auto px-3 py-2 rounded-lg text-[0.65rem] font-bold leading-relaxed border",
+                    "mt-auto px-3 py-2 rounded-lg text-xs font-bold leading-relaxed border",
                     isExtreme
                         ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
                         : isTightening
@@ -179,7 +179,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                         className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
                         onClick={() => setIsModalOpen(false)}
                     />
-                    <div className="relative w-full max-w-5xl bg-[#0f172a]/95 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
+                    <div className="relative w-full max-w-5xl bg-[#0f172a]/95 border border-white/12 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <div className="flex items-center gap-3 mb-2">

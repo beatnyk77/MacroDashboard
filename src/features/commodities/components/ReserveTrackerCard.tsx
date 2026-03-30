@@ -59,11 +59,11 @@ export const ReserveTrackerCard: React.FC = () => {
         });
     }, [reserves]);
 
-    if (isLoading) return <div className="h-48 animate-pulse bg-white/5 rounded-2xl border border-white/10" />;
+    if (isLoading) return <div className="h-48 animate-pulse bg-white/5 rounded-2xl border border-white/12" />;
 
     if (!chartData || chartData.length === 0) {
         return (
-            <Card className="bg-black/40 border-white/10 backdrop-blur-md shadow-2xl">
+            <Card className="bg-black/40 border-white/12 backdrop-blur-md shadow-2xl">
                 <CardHeader className="pb-2 bg-white/[0.02] border-b border-white/5 px-6">
                     <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                         <Box className="w-4 h-4 text-emerald-500" />
@@ -78,7 +78,7 @@ export const ReserveTrackerCard: React.FC = () => {
     }
 
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md shadow-2xl">
+        <Card className="bg-black/40 border-white/12 backdrop-blur-md shadow-2xl">
             <CardHeader className="pb-4 bg-white/[0.02] border-b border-white/5 px-6">
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
@@ -106,7 +106,7 @@ export const ReserveTrackerCard: React.FC = () => {
                 {/* Big Number Tiles */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     {chartData.slice(0, 4).map((item, idx) => (
-                        <div key={idx} className="p-5 rounded-[1.5rem] bg-white/[0.03] border border-white/10 hover:bg-white/[0.05] transition-all group/stat relative overflow-hidden">
+                        <div key={idx} className="p-5 rounded-[1.5rem] bg-white/[0.03] border border-white/12 hover:bg-white/[0.05] transition-all group/stat relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-white/5 to-transparent blur-xl pointer-events-none" />
                             <div className="flex items-start justify-between mb-3">
                                 <span className="text-xs font-black text-white/30 uppercase tracking-[0.2em] group-hover/stat:text-white/50 transition-colors">
@@ -164,7 +164,7 @@ export const ReserveTrackerCard: React.FC = () => {
                                     if (!active || !payload || !payload.length) return null;
                                     const data = payload[0].payload;
                                     return (
-                                        <div className="bg-slate-950 border border-white/10 rounded-lg p-3 shadow-xl backdrop-blur-xl">
+                                        <div className="bg-slate-950 border border-white/12 rounded-lg p-3 shadow-xl backdrop-blur-xl">
                                             <p className="text-xs font-bold text-white mb-2">{data.name}</p>
                                             <div className="space-y-1">
                                                 <div className="flex justify-between gap-4 text-xs">

@@ -23,7 +23,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
 
     if (isLoading) {
         return (
-            <Card className="h-[400px] animate-pulse bg-white/5 border-white/10">
+            <Card className="h-[400px] animate-pulse bg-white/5 border-white/12">
                 <CardHeader><div className="h-6 w-1/2 bg-white/10 rounded" /></CardHeader>
                 <CardContent><div className="h-24 bg-white/5 rounded mt-4" /></CardContent>
             </Card>
@@ -31,7 +31,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
     }
 
     return (
-        <Card className="bg-black/40 border-white/10 backdrop-blur-md h-[450px] p-6">
+        <Card className="bg-black/40 border-white/12 backdrop-blur-md h-[450px] p-6">
             <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
                     <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">

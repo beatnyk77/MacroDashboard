@@ -114,12 +114,12 @@ export const APIAccessPage: React.FC = () => {
                             className="p-10 rounded-[3rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] relative overflow-hidden"
                         >
                             <div className="relative z-10">
-                                <h4 className="text-[0.65rem] font-black uppercase tracking-widest text-blue-400 mb-8">Quantum Intelligence API</h4>
+                                <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-8">Quantum Intelligence API</h4>
                                 <div className="flex items-baseline gap-1 mb-2">
                                     <span className="text-6xl font-black text-white">$28</span>
                                     <span className="text-blue-500 text-sm font-black uppercase">/Mo</span>
                                 </div>
-                                <p className="text-[0.65rem] font-black text-blue-400/60 uppercase tracking-widest mb-10">Standard Professional License</p>
+                                <p className="text-xs font-black text-blue-400/60 uppercase tracking-widest mb-10">Standard Professional License</p>
 
                                 <ul className="space-y-4 mb-12">
                                     {[

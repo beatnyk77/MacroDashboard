@@ -94,7 +94,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                 <button
                                     onClick={() => setTimeRange('5Y')}
                                     className={cn(
-                                        "px-4 py-1.5 rounded-lg text-[0.65rem] font-black uppercase tracking-widest transition-all",
+                                        "px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
                                         timeRange === '5Y' ? "bg-white/10 text-white shadow-xl" : "text-white/30 hover:text-white"
                                     )}
                                 >
@@ -103,7 +103,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                 <button
                                     onClick={() => setTimeRange('ALL')}
                                     className={cn(
-                                        "px-4 py-1.5 rounded-lg text-[0.65rem] font-black uppercase tracking-widest transition-all",
+                                        "px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all",
                                         timeRange === 'ALL' ? "bg-white/10 text-white shadow-xl" : "text-white/30 hover:text-white"
                                     )}
                                 >
@@ -116,7 +116,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                 </span>
                                 <div className="flex flex-col">
                                     <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest">Current</span>
-                                    <span className="text-[0.55rem] font-black text-rose-500/50 uppercase tracking-tighter whitespace-nowrap">Crisis: &gt;35%</span>
+                                    <span className="text-xs font-black text-rose-500/50 uppercase tracking-tighter whitespace-nowrap">Crisis: &gt;35%</span>
                                 </div>
                             </div>
                         </div>
@@ -222,7 +222,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                 <div className="mt-12 flex justify-center">
                     <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest text-center">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">
                             Source: Union Budget / PRS India / RBI DBIE – updated monthly
                         </span>
                     </div>
@@ -234,9 +234,9 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
 
 const StatusChip = ({ label, status, color }: { label: string; status: string; color: 'rose' | 'amber' | 'emerald' }) => (
     <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
         <span className={cn(
-            "text-[0.65rem] font-black uppercase tracking-tighter",
+            "text-xs font-black uppercase tracking-tighter",
             color === 'rose' ? "text-rose-500" : color === 'amber' ? "text-amber-500" : "text-emerald-500"
         )}>{status}</span>
     </div>
@@ -269,7 +269,7 @@ const MetricCard = ({ title, value, unit, sub, icon, description, trend }: {
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
                 <span className="text-xs font-black uppercase tracking-widest text-white/20">{sub}</span>
                 <span className={cn(
-                    "text-[0.55rem] font-black px-2 py-0.5 rounded-full uppercase",
+                    "text-xs font-black px-2 py-0.5 rounded-full uppercase",
                     trend === 'up' ? "bg-rose-500/10 text-rose-500" : trend === 'down' ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
                 )}>{trend}</span>
             </div>
@@ -284,7 +284,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         const fy = `FY ${date.getFullYear()}`;
 
         return (
-            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-3xl">
+            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl">
                 <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
                     {fy} Fiscal Snapshot
                 </div>

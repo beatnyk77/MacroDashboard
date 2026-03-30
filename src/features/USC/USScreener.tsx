@@ -96,10 +96,10 @@ export const USScreener: React.FC = () => {
                     <tbody>
                         {filtered?.map((c: any) => (
                             <tr key={c.id} className="group hover:bg-white/[0.02] transition-all bg-white/[0.01]">
-                                <td className="px-6 py-4 rounded-l-2xl border-y border-l border-white/5 group-hover:border-white/10">
+                                <td className="px-6 py-4 rounded-l-2xl border-y border-l border-white/5 group-hover:border-white/12">
                                     <Link to={`/us-equities/equity/${c.ticker}`} className="block">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center font-black text-[0.65rem] text-blue-400">
+                                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center font-black text-xs text-blue-400">
                                                 {c.ticker}
                                             </div>
                                             <div>
@@ -111,31 +111,31 @@ export const USScreener: React.FC = () => {
                                         </div>
                                     </Link>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-mono font-bold text-white/80">{c.latest.pe_ratio?.toFixed(1) || '—'}</span>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-mono font-bold text-white/80">{c.latest.pb_ratio?.toFixed(1) || '—'}</span>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-mono font-bold text-white/80">{c.latest.ev_ebitda?.toFixed(1) || '—'}</span>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className={`text-xs font-mono font-bold ${c.latest.roe > 0.15 ? 'text-emerald-400' : 'text-white/60'}`}>
                                         {c.latest.roe ? `${(c.latest.roe * 100).toFixed(1)}%` : '—'}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-mono font-bold text-white/60">
                                         {c.latest.operating_margin ? `${(c.latest.operating_margin * 100).toFixed(1)}%` : '—'}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-mono font-bold text-emerald-400">
                                         {c.latest.fcf_yield ? `${(c.latest.fcf_yield * 100).toFixed(1)}%` : '—'}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 rounded-r-2xl border-y border-r border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 rounded-r-2xl border-y border-r border-white/5 group-hover:border-white/12 text-right">
                                     <span className={`text-xs font-mono font-bold ${c.latest.debt_equity > 1.5 ? 'text-rose-400' : 'text-white/60'}`}>
                                         {c.latest.debt_equity?.toFixed(2) || '—'}
                                     </span>

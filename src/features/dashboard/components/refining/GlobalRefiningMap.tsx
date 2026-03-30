@@ -35,7 +35,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
         <div className={cn("relative w-full h-[650px] bg-black/40 rounded-[2rem] overflow-hidden border border-white/5 backdrop-blur-sm", className)}>
             {/* Header Overlay */}
             <div className="absolute top-8 left-8 z-10 space-y-2 pointer-events-none">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[0.65rem] font-black uppercase tracking-[0.2em]">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-black uppercase tracking-[0.2em]">
                     <Activity size={12} /> Capacity Elasticity Grid
                 </div>
                 <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Global Refining <span className="text-blue-500">Imbalance Monitor</span></h2>
@@ -46,7 +46,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
 
             {/* Legend Overlay */}
             <div className="absolute bottom-8 right-8 z-10 hidden md:block">
-                <div className="px-5 py-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 space-y-3 shadow-2xl">
+                <div className="px-5 py-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/12 space-y-3 shadow-2xl">
                     <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Status Protocol</span>
                     {Object.entries(statusColors).map(([status, color]) => (
                         <div key={status} className="flex items-center gap-3">
@@ -150,7 +150,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         initial={{ x: 400 }}
                         animate={{ x: 0 }}
                         exit={{ x: 400 }}
-                        className="absolute top-6 bottom-6 right-6 w-80 z-20 p-6 rounded-[2rem] bg-black/90 backdrop-blur-3xl border border-white/10 shadow-2xl flex flex-col"
+                        className="absolute top-6 bottom-6 right-6 w-80 z-20 p-6 rounded-[2rem] bg-black/90 backdrop-blur-3xl border border-white/12 shadow-2xl flex flex-col"
                     >
                         <button
                             onClick={() => setSelectedFacility(null)}
@@ -160,11 +160,11 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         </button>
 
                         <div className="pt-4 mb-8">
-                            <div className="inline-block px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.55rem] font-black uppercase tracking-widest mb-3">
+                            <div className="inline-block px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-3">
                                 {selectedFacility.status} ASSET
                             </div>
                             <h3 className="text-xl font-black text-white uppercase tracking-tight leading-tight">{selectedFacility.facility_name}</h3>
-                            <div className="text-[0.65rem] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 border-l-2 border-white/10 pl-3">
+                            <div className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 border-l-2 border-white/12 pl-3">
                                 {selectedFacility.country} • {selectedFacility.region} Region
                             </div>
                         </div>
@@ -172,11 +172,11 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         <div className="space-y-6 flex-1">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                    <span className="text-[0.55rem] font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Capacity</span>
+                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Capacity</span>
                                     <div className="text-xl font-black text-white italic">{selectedFacility.capacity_mbpd}<span className="text-xs ml-1 not-italic opacity-40">MBPD</span></div>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                    <span className="text-[0.55rem] font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Utilization</span>
+                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Utilization</span>
                                     <div className="text-xl font-black text-emerald-400 italic">{selectedFacility.utilization_pct}%</div>
                                 </div>
                             </div>
@@ -202,13 +202,13 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
 
                             <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
                                 <Activity size={16} className="text-amber-500" />
-                                <div className="text-[0.65rem] text-amber-500/80 font-black uppercase tracking-tight">
+                                <div className="text-xs text-amber-500/80 font-black uppercase tracking-tight">
                                     Historical Median: {selectedFacility.historical_median_pct}%
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+                        <div className="mt-8 pt-6 border-t border-white/12 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 <span className="text-xs font-bold text-muted-foreground uppercase">Data Verified</span>

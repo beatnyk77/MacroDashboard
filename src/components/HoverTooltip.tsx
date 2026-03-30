@@ -60,10 +60,10 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                         transition={{ duration: 0.15 }}
                         className="absolute z-50 left-1/2 -translate-x-1/2 top-full mt-2 w-80"
                     >
-                        <div className="bg-black/95 backdrop-blur-xl border border-white/10 rounded-xl p-4 shadow-2xl">
+                        <div className="bg-black/95 backdrop-blur-xl border border-white/12 rounded-xl p-4 shadow-2xl">
                             {/* Header */}
-                            <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
-                                <div className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                            <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/12">
+                                <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                                     {metric}
                                 </div>
                                 <Activity size={12} className="text-muted-foreground/40" />
@@ -83,7 +83,7 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                             <div className="grid grid-cols-2 gap-3 mb-3">
                                 {percentile !== undefined && (
                                     <div>
-                                        <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">
+                                        <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">
                                             10Y Percentile
                                         </div>
                                         <div className={cn("text-lg font-black tabular-nums", getPercentileColor(percentile))}>
@@ -93,7 +93,7 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                                 )}
                                 {zScore !== undefined && (
                                     <div>
-                                        <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">
+                                        <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">
                                             Z-Score
                                         </div>
                                         <div className={cn("text-lg font-black tabular-nums flex items-center gap-1", getZScoreColor(zScore))}>
@@ -106,8 +106,8 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
 
                             {/* Historical Stats */}
                             {historicalStats && (
-                                <div className="pt-3 border-t border-white/10">
-                                    <div className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider mb-2">
+                                <div className="pt-3 border-t border-white/12">
+                                    <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider mb-2">
                                         10Y Historical Range
                                     </div>
                                     <div className="grid grid-cols-3 gap-2 text-center">
@@ -135,7 +135,7 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
 
                             {/* Z-Score Interpretation */}
                             {zScore !== undefined && Math.abs(zScore) > 1 && (
-                                <div className="mt-3 pt-3 border-t border-white/10">
+                                <div className="mt-3 pt-3 border-t border-white/12">
                                     <div className={cn(
                                         "text-xs font-bold uppercase tracking-wider px-2 py-1 rounded",
                                         Math.abs(zScore) > 2 ? "bg-rose-500/20 text-rose-400" : "bg-orange-500/20 text-orange-400"

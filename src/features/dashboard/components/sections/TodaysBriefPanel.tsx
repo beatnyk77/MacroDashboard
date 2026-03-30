@@ -121,7 +121,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
     return (
         <Card className={cn(
             "mb-8 border-l-4 border-l-primary relative overflow-hidden shadow-2xl transition-all duration-300",
-            "bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5",
+            "bg-card/40 backdrop-blur-md border-white/12 dark:border-white/5",
             className
         )}>
             {/* Subtle Gradient Overlay */}
@@ -145,7 +145,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                     {/* Column 1: Core Signals (4 cols) */}
                     <div className="md:col-span-4 space-y-4">
-                        <div className="p-5 rounded-lg bg-white/5 border border-white/10">
+                        <div className="p-5 rounded-lg bg-white/5 border border-white/12">
                             <div className="flex items-center gap-2 mb-3">
                                 {getStatusIcon(getRegimeStatus())}
                                 <span className="text-xs font-black tracking-widest text-muted-foreground uppercase" aria-label="Current Market Regime Status">
@@ -160,7 +160,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             </span>
                         </div>
 
-                        <div className="p-5 rounded-lg bg-white/5 border border-white/10">
+                        <div className="p-5 rounded-lg bg-white/5 border border-white/12">
                             <div className="flex items-center gap-2 mb-3">
                                 {liquidityDelta && liquidityDelta > 0 ? (
                                     <TrendingUp size={16} className="text-emerald-500" />
@@ -182,7 +182,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
 
                     {/* Column 2: Market Briefing with India/Global Tabs */}
                     <div className="md:col-span-8">
-                        <section className="p-5 rounded-lg bg-white/5 border border-white/10 h-full" aria-label="India Macro News Feed">
+                        <section className="p-5 rounded-lg bg-white/5 border border-white/12 h-full" aria-label="India Macro News Feed">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <Newspaper size={16} className="text-primary" />

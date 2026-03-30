@@ -30,7 +30,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                         {title}
                     </h3>
                     {subtitle && (
-                        <p className="text-[0.65rem] font-bold text-muted-foreground/50 mt-1 uppercase tracking-tighter">
+                        <p className="text-xs font-bold text-muted-foreground/50 mt-1 uppercase tracking-tighter">
                             {subtitle}
                         </p>
                     )}

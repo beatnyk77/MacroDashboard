@@ -146,7 +146,7 @@ export const Screener: React.FC = () => {
     const renderSortHeader = (label: string, sortKey: string) => (
         <th
             key={sortKey}
-            className="px-4 py-3 text-[0.65rem] font-bold uppercase tracking-wider text-white/50 cursor-pointer hover:text-white transition-colors select-none"
+            className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-white/50 cursor-pointer hover:text-white transition-colors select-none"
             onClick={() => requestSort(sortKey)}
         >
             <div className="flex items-center gap-1">
@@ -183,12 +183,12 @@ export const Screener: React.FC = () => {
                             placeholder="Search Name or Symbol..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/40 border border-white/10 text-sm focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-white/20 font-medium"
+                            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/40 border border-white/12 text-sm focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-white/20 font-medium"
                         />
                     </div>
 
                     <div className="flex flex-wrap items-center gap-4">
-                        <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-black/40 border border-white/10">
+                        <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-black/40 border border-white/12">
                             <span className="text-xs font-black uppercase tracking-widest text-white/30">Sector</span>
                             <select
                                 value={filters.sector}
@@ -270,7 +270,7 @@ export const Screener: React.FC = () => {
                                                 type="checkbox"
                                                 checked={filters.onlyRisingPledge}
                                                 onChange={(e) => setFilters({ ...filters, onlyRisingPledge: e.target.checked })}
-                                                className="w-4 h-4 rounded border-white/10 bg-black/40 checked:bg-blue-500 focus:ring-0 transition-all"
+                                                className="w-4 h-4 rounded border-white/12 bg-black/40 checked:bg-blue-500 focus:ring-0 transition-all"
                                             />
                                         </div>
                                     </div>
@@ -314,7 +314,7 @@ export const Screener: React.FC = () => {
                                             placeholder="View Name..."
                                             value={viewName}
                                             onChange={(e) => setViewName(e.target.value)}
-                                            className="px-4 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-blue-500/30 w-48 font-medium"
+                                            className="px-4 py-2 rounded-xl bg-black/40 border border-white/12 text-xs text-white focus:outline-none focus:border-blue-500/30 w-48 font-medium"
                                         />
                                         <button
                                             onClick={() => { saveView(viewName); setViewName(''); }}

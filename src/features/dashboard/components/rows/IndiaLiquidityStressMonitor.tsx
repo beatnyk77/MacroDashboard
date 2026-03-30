@@ -33,7 +33,7 @@ export const IndiaLiquidityStressMonitor: React.FC = () => {
     const lafStatus = latest.laf_net_injection_cr > 0 ? 'DEFICIT' : 'SURPLUS';
 
     return (
-        <section className="w-full bg-[#0a0f1d] rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl font-sans relative group">
+        <section className="w-full bg-[#0a0f1d] rounded-[2.5rem] border border-white/12 overflow-hidden shadow-2xl font-sans relative group">
             {/* Header Area */}
             <div className="p-8 pb-6 border-b border-white/5 bg-white/[0.01]">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -271,7 +271,7 @@ const MetricCard = ({ title, value, delta, subtext, icon, colorClass, trend }: a
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl z-50 min-w-[200px]">
+            <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/12 p-4 rounded-2xl shadow-2xl z-50 min-w-[200px]">
                 <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
                     {label}
                 </div>

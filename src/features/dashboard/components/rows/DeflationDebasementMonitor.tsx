@@ -81,7 +81,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
                                 {insolvencyPercent}%
                             </span>
                             <div className="flex flex-col">
-                                <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-tighter transition-all">Current</span>
+                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-tighter transition-all">Current</span>
                                 <span className="text-xs font-black text-rose-500/60 uppercase">Crisis Zone: &gt;25%</span>
                             </div>
                         </div>
@@ -171,7 +171,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
                 <div className="mt-12 flex justify-center">
                     <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest text-center">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">
                             Source: FRED / U.S. Treasury Fiscal Data – updated quarterly
                             {latest?.date && (
                                 <span className="opacity-40 italic ml-2">• Latest: {new Date(latest.date).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
@@ -186,9 +186,9 @@ export const DeflationDebasementMonitor: React.FC = () => {
 
 const StatusChip = ({ label, status, color }: any) => (
     <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
         <span className={cn(
-            "text-[0.65rem] font-black uppercase tracking-tighter",
+            "text-xs font-black uppercase tracking-tighter",
             color === 'rose' ? "text-rose-500" : "text-amber-500"
         )}>{status}</span>
     </div>
@@ -213,7 +213,7 @@ const MetricCard = ({ title, value, unit, sub, icon, description, trend }: any) 
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
                 <span className="text-xs font-black uppercase tracking-widest text-white/20">{sub}</span>
                 <span className={cn(
-                    "text-[0.55rem] font-black px-2 py-0.5 rounded-full uppercase",
+                    "text-xs font-black px-2 py-0.5 rounded-full uppercase",
                     trend === 'up' ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
                 )}>{trend}</span>
             </div>
@@ -226,7 +226,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         const val = payload[0].value;
         const date = new Date(label).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         return (
-            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-3xl">
+            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl">
                 <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
                     {date} Fiscal Snapshot
                 </div>

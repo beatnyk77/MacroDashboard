@@ -62,7 +62,7 @@ export const FYP_ImpactHeatmap: React.FC = () => {
                                 </div>
 
                                 <h4 className="text-sm font-black text-white uppercase mb-1">{corr.label}</h4>
-                                <p className="text-[0.65rem] text-muted-foreground leading-relaxed mb-4">
+                                <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                                     {corr.value_target} — {corr.value_baseline} influence.
                                 </p>
 

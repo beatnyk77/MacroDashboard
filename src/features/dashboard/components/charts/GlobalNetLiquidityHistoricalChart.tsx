@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     return (
-        <div className="bg-slate-950/95 border border-white/10 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
+        <div className="bg-slate-950/95 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
             <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-3">
                 {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
             </p>
@@ -91,7 +91,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="bg-white/5 border border-white/10 rounded-3xl p-5 flex flex-col justify-center">
+                    <div className="bg-white/5 border border-white/12 rounded-3xl p-5 flex flex-col justify-center">
                         <div className="flex items-center justify-between mb-1">
                             <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Current Outstanding</span>
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

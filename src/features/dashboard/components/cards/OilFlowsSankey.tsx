@@ -224,12 +224,12 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
     if (isLoading) return <div className="h-[520px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
 
     return (
-        <Card className="bg-slate-900/60 border-white/10 backdrop-blur-3xl overflow-hidden group min-h-[520px] h-auto flex flex-col p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative">
+        <Card className="bg-slate-900/60 border-white/12 backdrop-blur-3xl overflow-hidden group min-h-[520px] h-auto flex flex-col p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative">
             {/* Background Decorative Gradients - Tamed */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/5 blur-[120px] -ml-48 -mb-48 pointer-events-none" />
 
-            <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-white/10 gap-6">
+            <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-white/12 gap-6">
                 <div className="space-y-2 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-4">
                         <div className={`w-12 h-1 bg-gradient-to-r ${activeTab === 'IN' ? 'from-blue-500' : 'from-rose-500'} to-transparent rounded-full`} />
@@ -249,7 +249,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-black/30 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
+                <div className="flex items-center gap-4 bg-black/30 p-1.5 rounded-2xl border border-white/12 backdrop-blur-md">
                     <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
                             <TabsTrigger value="sankey" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Flow</TabsTrigger>
@@ -303,7 +303,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
 
                                         return (
                                             <div className="bg-slate-900 border border-white/20 p-5 rounded-2xl backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] min-w-[240px]">
-                                                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/10">
+                                                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/12">
                                                     <div className="w-3 h-3 rounded-full shadow-[0_0_12px_currentColor]" style={{ backgroundColor: item.color, color: item.color }} />
                                                     <span className="text-[12px] font-black text-white uppercase tracking-widest flex items-center gap-3">
                                                         {(item.source?.name || 'HUB')} <ArrowRight className="w-4 h-4 text-white/30" /> {(item.target?.name || 'TERMINAL')}
@@ -391,7 +391,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                 )}
             </CardContent>
 
-            <div className="mt-8 pt-8 border-t border-white/10">
+            <div className="mt-8 pt-8 border-t border-white/12">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="flex flex-wrap justify-center gap-8 items-center">
                         <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em] mr-2">Market Risk Tiering</span>
@@ -401,7 +401,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                             { color: '#ef4444', label: 'Tier 3 / Critical' }
                         ].map(legend => (
                             <div key={legend.label} className="flex items-center gap-3 group/legend">
-                                <div className="w-2.5 h-2.5 rounded-full border border-white/10 shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all group-hover/legend:scale-125" style={{ backgroundColor: legend.color, color: legend.color }} />
+                                <div className="w-2.5 h-2.5 rounded-full border border-white/12 shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all group-hover/legend:scale-125" style={{ backgroundColor: legend.color, color: legend.color }} />
                                 <span className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{legend.label}</span>
                             </div>
                         ))}

@@ -50,7 +50,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <Target size={16} className="text-rose-500" />
-                        <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                        <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60">
                             ADMINISTRATION INTELLIGENCE
                         </span>
                     </div>
@@ -81,13 +81,13 @@ export const PresidentialPolicyTracker: React.FC = () => {
                                 <div className="flex items-center gap-1.5">
                                     {isPositive ? <Zap size={12} className="text-amber-500" /> : <ShieldAlert size={12} className="text-rose-500" />}
                                     <span className={cn(
-                                        "text-[0.65rem] font-black uppercase tracking-widest",
+                                        "text-xs font-black uppercase tracking-widest",
                                         isPositive ? "text-amber-400/80" : "text-rose-400/80"
                                     )}>
                                         {policy.category}
                                     </span>
                                 </div>
-                                <span className="text-[0.65rem] font-bold text-muted-foreground/40">
+                                <span className="text-xs font-bold text-muted-foreground/40">
                                     {new Date(policy.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                             </div>
@@ -106,7 +106,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     {assetImpacts.map((asset, assetIdx) => (
                                         <div key={assetIdx} className={cn(
-                                            "flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[0.65rem] font-black",
+                                            "flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs font-black",
                                             asset.direction === 'up' ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400" : "bg-rose-500/5 border-rose-500/20 text-rose-400"
                                         )}>
                                             {asset.direction === 'up' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
@@ -120,7 +120,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                             <div className="mt-4">
                                 <div className="flex justify-between items-center mb-1.5">
                                     <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/40">Market Magnitude</span>
-                                    <span className={cn("text-[0.65rem] font-black", isPositive ? "text-emerald-400" : "text-rose-400")}>
+                                    <span className={cn("text-xs font-black", isPositive ? "text-emerald-400" : "text-rose-400")}>
                                         {absScore * 10}%
                                     </span>
                                 </div>

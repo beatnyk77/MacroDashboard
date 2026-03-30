@@ -45,7 +45,7 @@ export const BulkBlockReport: React.FC = () => {
             <div className="flex items-center justify-center p-20">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-10 h-10 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-                    <span className="text-[0.65rem] font-black uppercase tracking-widest text-white/40">Fetching Institutional Moves...</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-white/40">Fetching Institutional Moves...</span>
                 </div>
             </div>
         );
@@ -92,7 +92,7 @@ export const BulkBlockReport: React.FC = () => {
                 <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h3 className="text-lg font-black tracking-tight text-white mb-1">Top Institutional Deals</h3>
-                        <p className="text-[0.65rem] text-white/40 font-medium uppercase tracking-widest">Nifty 200 Bulk & Block Activity (Real-time)</p>
+                        <p className="text-xs text-white/40 font-medium uppercase tracking-widest">Nifty 200 Bulk & Block Activity (Real-time)</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="relative">
@@ -100,10 +100,10 @@ export const BulkBlockReport: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Search symbol or client..."
-                                className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 transition-all w-64"
+                                className="pl-9 pr-4 py-2 bg-white/5 border border-white/12 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 transition-all w-64"
                             />
                         </div>
-                        <button className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-colors">
+                        <button className="p-2 rounded-xl bg-white/5 border border-white/12 text-white/40 hover:text-white transition-colors">
                             <Filter size={14} />
                         </button>
                     </div>
@@ -149,7 +149,7 @@ export const BulkBlockReport: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`text-[0.65rem] font-bold ${deal.deal_type === 'BLOCK' ? 'text-blue-400' : 'text-orange-400'}`}>
+                                        <span className={`text-xs font-bold ${deal.deal_type === 'BLOCK' ? 'text-blue-400' : 'text-orange-400'}`}>
                                             {deal.deal_type}
                                         </span>
                                     </td>

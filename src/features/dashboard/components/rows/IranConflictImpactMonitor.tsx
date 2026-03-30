@@ -133,7 +133,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                     )}
                                 >
                                     <span className="text-xs font-black">{state.state_code}</span>
-                                    <div className="hidden group-hover/cell:flex absolute z-50 bg-slate-950 border border-white/10 p-2 rounded shadow-2xl -translate-y-12">
+                                    <div className="hidden group-hover/cell:flex absolute z-50 bg-slate-950 border border-white/12 p-2 rounded shadow-2xl -translate-y-12">
                                         <div className="text-xs font-bold uppercase whitespace-nowrap text-white">
                                             {state.state_name}: {state.risk_score.toFixed(0)} Risk
                                         </div>
@@ -239,7 +239,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                             <span className="text-xs font-black text-muted-foreground/40 uppercase">1990</span>
                                             <span className="text-xs font-bold text-muted-foreground/80 tabular-nums">{item.val1990}</span>
                                         </div>
-                                        <div className="bg-slate-900/60 p-1.5 rounded border border-white/10 flex flex-col group-hover/row:border-blue-500/30 transition-colors">
+                                        <div className="bg-slate-900/60 p-1.5 rounded border border-white/12 flex flex-col group-hover/row:border-blue-500/30 transition-colors">
                                             <span className="text-xs font-black text-blue-400/50 uppercase">2025</span>
                                             <span className="text-xs font-black text-foreground tabular-nums">{item.val2025}</span>
                                         </div>

@@ -33,12 +33,12 @@ const CustomTooltip = ({ active, payload }: any) => {
         const data = payload[0].payload;
         const regionColor = REGION_COLORS[data.region as G20Region] || '#94a3b8';
         return (
-            <div className="bg-slate-950 border border-white/10 p-4 rounded-xl shadow-2xl backdrop-blur-md min-w-[220px]">
+            <div className="bg-slate-950 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-md min-w-[220px]">
                 <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
                     <span className="text-2xl">{data.flag}</span>
                     <div>
                         <span className="font-black text-white text-base uppercase tracking-tight block">{data.name}</span>
-                        <span className="text-[0.55rem] font-bold uppercase tracking-widest" style={{ color: regionColor }}>{data.region}</span>
+                        <span className="text-xs font-bold uppercase tracking-widest" style={{ color: regionColor }}>{data.region}</span>
                     </div>
                 </div>
                 <div className="space-y-2">
@@ -130,13 +130,13 @@ export const SovereignRiskMatrix = React.memo(() => {
                         <ShieldAlert className="w-5 h-5 text-blue-500" />
                         Sovereign Risk Matrix
                     </h3>
-                    <p className="text-[0.65rem] font-black tracking-widest text-muted-foreground/50 uppercase mt-1">
+                    <p className="text-xs font-black tracking-widest text-muted-foreground/50 uppercase mt-1">
                         G20 Fiscal Vulnerability (Debt/GDP) vs Vitality (Growth) — {availableCount}/{totalCount} countries
                     </p>
                 </div>
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all"
+                    className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/12 rounded-xl transition-all"
                 >
                     <span className="text-xs font-black uppercase tracking-widest text-white/80 group-hover:text-white">
                         {isExpanded ? 'Collapse View' : 'Deep Analysis'}
@@ -153,12 +153,12 @@ export const SovereignRiskMatrix = React.memo(() => {
                 <div className="absolute inset-0 bg-grid-slate-800/[0.04] bg-[size:20px_20px] pointer-events-none" />
 
                 {!isExpanded && (
-                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-transparent to-slate-950/90 cursor-pointer group" onClick={() => setIsExpanded(true)}>
+                    <div role="button" tabIndex={0} aria-label="Expand global risk landscape" onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsExpanded(true); } }} className="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-transparent to-slate-950/90 cursor-pointer group focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none" onClick={() => setIsExpanded(true)}>
                         <div className="text-center transform transition-all duration-500 group-hover:-translate-y-2">
                             <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/20 group-hover:border-blue-500/50 transition-colors">
                                 <ArrowDown className="w-5 h-5 text-blue-400" />
                             </div>
-                            <span className="text-[0.65rem] font-black text-blue-300 uppercase tracking-[0.3em] bg-blue-950/50 px-3 py-1 rounded-full border border-blue-500/10">
+                            <span className="text-xs font-black text-blue-300 uppercase tracking-[0.3em] bg-blue-950/50 px-3 py-1 rounded-full border border-blue-500/10">
                                 Expand Global Risk Landscape
                             </span>
                         </div>

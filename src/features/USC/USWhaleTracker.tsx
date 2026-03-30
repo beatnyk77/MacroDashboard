@@ -51,7 +51,7 @@ export const USWhaleTracker: React.FC = () => {
                     <tbody>
                         {whaleHoldings?.map((h: any) => (
                             <tr key={h.id} className="group hover:bg-white/[0.02] transition-all bg-white/[0.01]">
-                                <td className="px-6 py-4 rounded-l-2xl border-y border-l border-white/5 group-hover:border-white/10">
+                                <td className="px-6 py-4 rounded-l-2xl border-y border-l border-white/5 group-hover:border-white/12">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                                             <ShieldCheck size={20} />
@@ -62,19 +62,19 @@ export const USWhaleTracker: React.FC = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12">
                                     <Link to={`/us-equities/equity/${h.ticker}`} className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all">
-                                        <span className="text-[0.65rem] font-black text-blue-400">{h.ticker}</span>
+                                        <span className="text-xs font-black text-blue-400">{h.ticker}</span>
                                         <span className="text-xs font-bold text-white/40 truncate max-w-[100px]">{h.us_companies?.name}</span>
                                     </Link>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-sm font-mono font-black text-white">{(h.shares_value / 1000000).toFixed(1)}M</span>
                                 </td>
-                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-mono font-bold text-white/40">{h.shares_count?.toLocaleString()}</span>
                                 </td>
-                                <td className="px-6 py-4 rounded-r-2xl border-y border-r border-white/5 group-hover:border-white/10 text-right">
+                                <td className="px-6 py-4 rounded-r-2xl border-y border-r border-white/5 group-hover:border-white/12 text-right">
                                     <span className="text-xs font-black text-emerald-400">NEW</span>
                                 </td>
                             </tr>

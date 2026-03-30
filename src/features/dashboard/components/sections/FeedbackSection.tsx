@@ -32,7 +32,7 @@ export const FeedbackSection: React.FC = () => {
                         onClick={() => {
                             trackClick('feedback_form', 'footer');
                         }}
-                        className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all duration-300"
+                        className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/12 hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
                             <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Observation Log</span>
@@ -48,7 +48,7 @@ export const FeedbackSection: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackClick('github_repo', 'footer')}
-                        className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-blue-500/30 transition-all duration-300"
+                        className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/12 hover:bg-white/[0.06] hover:border-blue-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
                             <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Source Control</span>
@@ -62,13 +62,13 @@ export const FeedbackSection: React.FC = () => {
 
                 <div className="pt-4 flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-500">
                     <div className="flex flex-col items-center">
-                        <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Version</span>
-                        <span className="text-[0.65rem] font-mono text-white">1.0.0-PRO</span>
+                        <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Version</span>
+                        <span className="text-xs font-mono text-white">1.0.0-PRO</span>
                     </div>
                     <div className="w-[1px] h-4 bg-white/10" />
                     <div className="flex flex-col items-center">
-                        <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Build</span>
-                        <span className="text-[0.65rem] font-mono text-white">2026.Q1</span>
+                        <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Build</span>
+                        <span className="text-xs font-mono text-white">2026.Q1</span>
                     </div>
                 </div>
             </div>

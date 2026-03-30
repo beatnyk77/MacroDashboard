@@ -8,7 +8,7 @@ export const InstitutionalFooter: React.FC = () => {
                 {/* Security Verification Band */}
                 <div className="mb-12 flex items-center gap-4 px-6 py-3 rounded-2xl bg-blue-500/5 border border-blue-500/10">
                     <ShieldCheck size={16} className="text-blue-400" />
-                    <span className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-blue-400/80">
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400/80">
                         Institutional Grade Security: Row-Level Security (RLS) Active & Verified
                     </span>
                     <div className="ml-auto flex gap-2">
@@ -21,7 +21,7 @@ export const InstitutionalFooter: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start opacity-60">
                     <div className="space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Legal Disclaimer</h3>
-                        <p className="text-[0.65rem] leading-relaxed text-muted-foreground font-medium">
+                        <p className="text-xs leading-relaxed text-muted-foreground font-medium">
                             GraphiQuestor is a macro intelligence platform provided for informational and educational purposes only.
                             The data, analytics, and interpretations presented do not constitute investment advice, financial planning,
                             or solicitation for any financial product. Past performance of macro indicators is not indicative of future market outcomes.
@@ -32,7 +32,7 @@ export const InstitutionalFooter: React.FC = () => {
                     <div className="flex flex-col md:items-end space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Contact & Intelligence</h3>
                         <div className="flex flex-col md:items-end gap-2">
-                            <span className="text-[0.65rem] font-mono">graphiquestor@gmail.com</span>
+                            <span className="text-xs font-mono">graphiquestor@gmail.com</span>
                             <span className="text-xs text-muted-foreground uppercase tracking-widest">Global Macro Strategy Division</span>
                         </div>
                     </div>
@@ -40,7 +40,7 @@ export const InstitutionalFooter: React.FC = () => {
 
                 {/* Crawlable Hash Deep-Links — native <a> tags for search engine discovery */}
                 <nav className="mt-8 pt-6 border-t border-white/[0.03]" aria-label="Dashboard Sections">
-                    <h3 className="text-[0.55rem] font-black uppercase tracking-[0.3em] text-muted-foreground/30 mb-3">Dashboard Deep Dives</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/30 mb-3">Dashboard Deep Dives</h3>
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
                         <a href="/#liquidity-hero" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Net Liquidity</a>
                         <a href="/#debt-maturity-hero" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50 hover:text-blue-400/80 transition-colors">Debt Maturity Wall</a>
@@ -54,7 +54,7 @@ export const InstitutionalFooter: React.FC = () => {
                 </nav>
 
                 <div className="mt-12 pt-8 border-t border-white/[0.03] flex justify-between items-center">
-                    <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.3em]">
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.3em]">
                         © 2026 GraphiQuestor. PRO-SERIES TERMINAL.
                     </span>
                     <div className="flex items-center gap-6">

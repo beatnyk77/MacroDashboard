@@ -92,25 +92,25 @@ export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric
             {/* Floating Tooltip Interface */}
             {hoveredCountry && (
                 <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 p-6 rounded-2xl bg-slate-950/95 backdrop-blur-3xl border border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] z-50 min-w-[260px] animate-in fade-in slide-in-from-bottom-4 duration-300">
-                    <div className="flex items-center gap-4 mb-4 border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-4 mb-4 border-b border-white/12 pb-3">
                         <span className="text-3xl filter drop-shadow-md">{COUNTRY_FLAGS[hoveredCountry.country_name] || '🌐'}</span>
                         <div className="flex flex-col">
                             <h4 className="text-sm font-black text-white uppercase tracking-tight italic">{hoveredCountry.country_name}</h4>
-                            <span className="text-[0.55rem] font-black text-cyan-400 uppercase tracking-widest">Sovereign Treasury Holder</span>
+                            <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">Sovereign Treasury Holder</span>
                         </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                         <div className="space-y-1">
-                            <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Holdings</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Holdings</span>
                             <div className="text-2xl font-black text-white tabular-nums">${Math.round(hoveredCountry.holdings_usd_bn)}B</div>
                         </div>
                         <div className="space-y-1 text-right">
-                            <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Share (%)</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Share (%)</span>
                             <div className="text-2xl font-black text-cyan-400 tabular-nums">{(hoveredCountry.pct_of_total_foreign || 0).toFixed(1)}%</div>
                         </div>
-                        <div className="col-span-2 pt-3 border-t border-white/10 flex items-center justify-between">
-                            <span className="text-[0.55rem] font-black text-muted-foreground uppercase tracking-widest">Year-on-Year Change</span>
+                        <div className="col-span-2 pt-3 border-t border-white/12 flex items-center justify-between">
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Year-on-Year Change</span>
                             <div className={cn(
                                 "flex items-center gap-1.5 text-sm font-black tabular-nums",
                                 (hoveredCountry.yoy_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"

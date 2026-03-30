@@ -31,7 +31,7 @@ export const CommodityTerminal: React.FC = () => {
                             <h2 className="text-3xl font-black tracking-tight text-white uppercase italic">
                                 Commodities <span className="text-orange-500">Terminal</span>
                             </h2>
-                            <p className="text-[0.65rem] font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">
+                            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">
                                 Cross-Asset Commodity Intelligence • 25-Year Context
                             </p>
                         </div>
@@ -43,11 +43,11 @@ export const CommodityTerminal: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/12 backdrop-blur-md">
                         <Calendar size={14} className="text-orange-500" />
                         <span className="text-xs font-black text-white/60 uppercase tracking-widest">25Y History Buffer</span>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/12 backdrop-blur-md">
                         <Target size={14} className="text-emerald-500" />
                         <span className="text-xs font-black text-white/60 uppercase tracking-widest">Real-Time Markers</span>
                     </div>

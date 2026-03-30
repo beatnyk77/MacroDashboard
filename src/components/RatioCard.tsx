@@ -82,7 +82,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             id={metricId || primaryLabel}
             className={cn(
                 "relative flex flex-col p-5 h-[250px] overflow-hidden transition-all duration-300",
-                "bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5",
+                "bg-card/40 backdrop-blur-md border-white/12 dark:border-white/5",
                 "hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/50",
                 isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse",
                 "group"
@@ -97,14 +97,14 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             <div className="mb-3">
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-2">
-                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.12em]">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.12em]">
                             {primaryLabel}
                         </span>
                     </div>
 
                     {!isLoading && typeof zScore === 'number' && !isNaN(zScore) && (
                         <div className={cn(
-                            "px-2 py-0.5 rounded text-[0.65rem] font-black border",
+                            "px-2 py-0.5 rounded text-xs font-black border",
                             getZScoreColorClass(zScore),
                             Math.abs(zScore) > 2 && "animate-pulse"
                         )}>

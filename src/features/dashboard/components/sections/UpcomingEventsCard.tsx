@@ -53,7 +53,7 @@ export const UpcomingEventsCard: React.FC = () => {
                     <td className="py-3 pl-0 pr-2 w-[130px] whitespace-nowrap">
                         <div className="flex flex-col">
                             <span className={cn(
-                                "font-bold text-[0.65rem] leading-tight",
+                                "font-bold text-xs leading-tight",
                                 isPast ? "text-muted-foreground" : "text-foreground"
                             )}>
                                 {new Date(event.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
@@ -64,7 +64,7 @@ export const UpcomingEventsCard: React.FC = () => {
                         </div>
                     </td>
                     <td className="py-3 px-2 w-[80px]">
-                        <span className="font-extrabold text-[0.65rem] text-blue-400">
+                        <span className="font-extrabold text-xs text-blue-400">
                             {event.country}
                         </span>
                     </td>
@@ -93,7 +93,7 @@ export const UpcomingEventsCard: React.FC = () => {
                                 {event.actual}
                             </span>
                         ) : (
-                            <span className="inline-block px-1.5 py-0.5 rounded text-[0.55rem] font-black bg-white/[0.05] text-muted-foreground/50 tracking-wider">
+                            <span className="inline-block px-1.5 py-0.5 rounded text-xs font-black bg-white/[0.05] text-muted-foreground/50 tracking-wider">
                                 PENDING
                             </span>
                         )}
@@ -104,7 +104,7 @@ export const UpcomingEventsCard: React.FC = () => {
     };
 
     return (
-        <Card className="h-full bg-card/40 backdrop-blur-md border-white/10 dark:border-white/5 flex flex-col gap-4 overflow-hidden p-6 shadow-xl transition-all duration-300">
+        <Card className="h-full bg-card/40 backdrop-blur-md border-white/12 dark:border-white/5 flex flex-col gap-4 overflow-hidden p-6 shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Calendar size={18} className="text-secondary-foreground/60" />

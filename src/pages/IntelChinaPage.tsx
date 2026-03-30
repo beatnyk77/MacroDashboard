@@ -143,7 +143,7 @@ export const IntelChinaPage: React.FC = () => {
                     >
                         <span className="text-6xl md:text-8xl select-none">🇨🇳</span>
                         <div className="flex-1">
-                            <p className="text-[0.65rem] font-black text-red-400 uppercase tracking-[0.3em] mb-2">GraphiQuestor Intelligence Series</p>
+                            <p className="text-xs font-black text-red-400 uppercase tracking-[0.3em] mb-2">GraphiQuestor Intelligence Series</p>
                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-none mb-4">
                                 China<br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-300 to-amber-400">
@@ -169,10 +169,10 @@ export const IntelChinaPage: React.FC = () => {
                                     <a
                                         key={href}
                                         href={href}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[0.65rem] font-black uppercase tracking-widest transition-colors ${
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
                                             active
                                                 ? 'bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20'
-                                                : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10'
+                                                : 'bg-white/5 border border-white/12 text-white/60 hover:bg-white/10'
                                         }`}
                                     >
                                         {label} <ArrowRight size={10} />
@@ -196,7 +196,7 @@ export const IntelChinaPage: React.FC = () => {
                                 className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-pointer hover:scale-[1.02] transition-all duration-200`}
                             >
                                 <Icon size={18} className="mb-3 opacity-80" />
-                                <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
+                                <p className="text-xs font-black uppercase tracking-widest mb-1">{label}</p>
                                 <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
                             </a>
                         ))}
@@ -330,7 +330,7 @@ export const IntelChinaPage: React.FC = () => {
                                 { title: 'CIPS Infrastructure', body: 'China\'s Cross-Border Interbank Payment System (CIPS) now processes $400B+ yearly, providing a parallel settlement rail to SWIFT for CNY transactions.', color: 'orange' },
                             ].map(({ title, body, color }) => (
                                 <div key={title} className={`p-5 rounded-2xl border ${colorMap[color]} space-y-3`}>
-                                    <p className="text-[0.65rem] font-black uppercase tracking-widest">{title}</p>
+                                    <p className="text-xs font-black uppercase tracking-widest">{title}</p>
                                     <p className="text-xs text-muted-foreground/70 leading-relaxed">{body}</p>
                                 </div>
                             ))}

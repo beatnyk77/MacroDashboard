@@ -113,7 +113,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
     }
 
     return (
-        <section className="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-black rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
+        <section className="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-black rounded-3xl border border-white/12 overflow-hidden shadow-2xl relative">
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[100px] -z-10" />
 
             {/* Header Area */}
@@ -133,7 +133,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 p-1 bg-white/5 rounded-2xl backdrop-blur-md border border-white/10">
+                    <div className="flex flex-wrap items-center gap-2 p-1 bg-white/5 rounded-2xl backdrop-blur-md border border-white/12">
                         {[
                             { id: 'central', label: 'Central G-Sec', icon: <Building2 className="w-4 h-4" /> },
                             { id: 'combined', label: 'Central + States', icon: <Scale className="w-4 h-4" /> },
@@ -159,7 +159,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 md:p-10 bg-white/[0.01]">
-                <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="bg-white/[0.03] border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <Calendar className="w-5 h-5 text-blue-400" />
                         <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Total Outstanding</span>
@@ -170,7 +170,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="bg-white/[0.03] border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <AlertTriangle className="w-5 h-5 text-amber-400" />
                         <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Next 12M Maturing</span>
@@ -230,7 +230,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                                 if (active && payload && payload.length) {
                                     return (
                                         <div className="bg-slate-900/95 backdrop-blur-xl border border-white/20 p-5 rounded-2xl shadow-2xl space-y-3 z-50">
-                                            <p className="text-white font-black border-b border-white/10 pb-2">{payload[0].payload.bucket} Maturity</p>
+                                            <p className="text-white font-black border-b border-white/12 pb-2">{payload[0].payload.bucket} Maturity</p>
                                             <div className="space-y-1">
                                                 {view === 'comparison' ? (
                                                     <>
@@ -253,7 +253,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                                                             <span className="text-violet-400 text-xs font-bold">States (SDL)</span>
                                                             <span className="text-white font-mono">₹{payload[0].payload.state.toFixed(2)}</span>
                                                         </div>
-                                                        <div className="border-t border-white/10 pt-2 flex justify-between gap-8">
+                                                        <div className="border-t border-white/12 pt-2 flex justify-between gap-8">
                                                             <span className="text-white text-xs font-black">Total</span>
                                                             <span className="text-white font-mono font-black">₹{payload[0].payload.combined.toFixed(2)}</span>
                                                         </div>

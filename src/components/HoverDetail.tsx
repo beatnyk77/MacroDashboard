@@ -42,7 +42,20 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
             }
             handleOpen();
         },
-        className: cn(children.props.className, "cursor-pointer transition-transform hover:scale-[1.005]")
+        onKeyDown: (e: React.KeyboardEvent) => {
+            // Call original onKeyDown if it exists
+            if (children.props.onKeyDown) {
+                children.props.onKeyDown(e);
+            }
+            // Open modal on Enter or Space
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleOpen();
+            }
+        },
+        role: children.props.role || 'button',
+        tabIndex: children.props.tabIndex !== undefined ? children.props.tabIndex : 0,
+        className: cn(children.props.className, "cursor-pointer transition-transform hover:scale-[1.005] focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none")
     });
 
     if (!open) return trigger;
@@ -54,7 +67,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={handleClose}>
                 {/* Modal Content */}
                 <div
-                    className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950 border border-white/10 rounded-xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200"
+                    className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950 border border-white/12 rounded-xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
@@ -81,7 +94,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             <div className="mb-8">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Info size={16} className="text-primary" />
-                                    <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">EXECUTIVE SUMMARY</span>
+                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">EXECUTIVE SUMMARY</span>
                                 </div>
                                 <p className="text-sm leading-relaxed text-foreground/90">
                                     {detailContent.description || 'No detailed description available for this metric.'}
@@ -95,7 +108,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                                         className="p-3 border rounded bg-white/[0.02] border-white/5"
                                         style={{ borderColor: stat.color ? `${stat.color}40` : undefined }}
                                     >
-                                        <span className="text-[0.65rem] font-bold text-muted-foreground block mb-1 uppercase">
+                                        <span className="text-xs font-bold text-muted-foreground block mb-1 uppercase">
                                             {stat.label}
                                         </span>
                                         <span
@@ -114,7 +127,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             <div className="mb-8">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Clock size={16} className="text-primary" />
-                                    <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">RECENT TREND (90D)</span>
+                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">RECENT TREND (90D)</span>
                                 </div>
                                 <div className="h-[200px] w-full mt-2 p-3 bg-white/[0.01] rounded border border-white/5">
                                     {detailContent.history && detailContent.history.length > 0 ? (
@@ -144,7 +157,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             <div>
                                 <div className="flex items-center gap-2 mb-2">
                                     <Layers size={16} className="text-primary" />
-                                    <span className="text-[0.65rem] font-black tracking-widest text-muted-foreground uppercase">METHODOLOGY</span>
+                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">METHODOLOGY</span>
                                 </div>
                                 <div className="text-xs text-muted-foreground bg-white/[0.02] p-3 rounded border border-white/5">
                                     {detailContent.methodology || 'Calculated using standardized Z-Score normalization against institutional source data.'}

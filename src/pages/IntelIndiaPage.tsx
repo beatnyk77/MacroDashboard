@@ -167,7 +167,7 @@ export const IntelIndiaPage: React.FC = () => {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
-                        className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500/10 via-transparent to-orange-500/5 border border-white/10 overflow-hidden hover:border-blue-500/30 transition-all mb-16"
+                        className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500/10 via-transparent to-orange-500/5 border border-white/12 overflow-hidden hover:border-blue-500/30 transition-all mb-16"
                     >
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <Building2 size={120} className="text-blue-500" />
@@ -194,13 +194,13 @@ export const IntelIndiaPage: React.FC = () => {
 
                     {/* Fast Signal Bar */}
                     <div className="flex flex-wrap gap-3 mt-6">
-                        <a href="#macro" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-black uppercase tracking-widest hover:bg-blue-500/20 transition-colors">
+                        <a href="#macro" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest hover:bg-blue-500/20 transition-colors">
                             Macro Pulse <ArrowRight size={12} />
                         </a>
-                        <a href="#fiscal" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                        <a href="#fiscal" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-white/60 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
                             Fiscal Stress <ArrowRight size={12} />
                         </a>
-                        <a href="#credit" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[0.65rem] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                        <a href="#credit" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-white/60 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
                             Credit Cycle <ArrowRight size={12} />
                         </a>
                     </div>
@@ -218,7 +218,7 @@ export const IntelIndiaPage: React.FC = () => {
                     {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color }) => (
                         <div key={label} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-default`}>
                             <Icon size={18} className="mb-3 opacity-80" />
-                            <p className="text-[0.65rem] font-black uppercase tracking-widest mb-1">{label}</p>
+                            <p className="text-xs font-black uppercase tracking-widest mb-1">{label}</p>
                             <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
                         </div>
                     ))}

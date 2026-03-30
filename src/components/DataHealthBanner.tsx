@@ -44,7 +44,7 @@ export const DataHealthBanner: React.FC = () => {
             <div className="flex items-center gap-4">
                 <button
                     onClick={() => window.location.reload()}
-                    className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                    className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/12 transition-colors"
                 >
                     <RefreshCcw className="w-3 h-3" />
                     <span className="text-xs font-bold uppercase tracking-wider">Refresh Data</span>

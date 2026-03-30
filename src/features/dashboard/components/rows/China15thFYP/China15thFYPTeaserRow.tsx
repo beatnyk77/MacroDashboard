@@ -43,7 +43,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
                             China 15th <br />
                             <span className="text-red-500">Five-Year Plan</span>
                         </h3 >
-                        <p className="text-[0.65rem] text-muted-foreground mt-2 line-clamp-2">
+                        <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                             Structural shift to high-quality development & tech self-reliance.
                         </p>
                     </div>
@@ -58,7 +58,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
                                         <Icon size={16} />
                                     </div>
                                     <div>
-                                        <div className="text-[0.55rem] font-black uppercase text-muted-foreground/50 tracking-widest">{target.label}</div>
+                                        <div className="text-xs font-black uppercase text-muted-foreground/50 tracking-widest">{target.label}</div>
                                         <div className="text-sm font-black text-white">{target.value_target}</div>
                                     </div>
                                 </div>
@@ -72,7 +72,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
                         className="p-6 flex items-center justify-center bg-white/5 hover:bg-white/10 cursor-pointer transition-colors border-t md:border-t-0 border-white/5"
                     >
                         <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                            <span className="text-[0.65rem] font-black uppercase tracking-widest text-red-400">Mission Control</span>
+                            <span className="text-xs font-black uppercase tracking-widest text-red-400">Mission Control</span>
                             <ArrowRight size={14} className="text-red-400" />
                         </div>
                     </div>

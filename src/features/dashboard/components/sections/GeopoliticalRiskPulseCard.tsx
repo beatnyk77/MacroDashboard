@@ -50,7 +50,7 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
             <div className="flex justify-between items-start mb-6">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.15em]">
+                        <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.15em]">
                             Systemic Risk Detection
                         </span>
                         <div className={cn("px-1.5 py-0.5 rounded-[3px] border text-xs font-black", statusBg, statusColor)}>
@@ -101,10 +101,10 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
 
             {/* Methodology & Legend Footer */}
             <div className="mt-auto pt-4 border-t border-white/5 space-y-3">
-                <p className="text-[0.65rem] text-muted-foreground font-medium leading-relaxed italic">
+                <p className="text-xs text-muted-foreground font-medium leading-relaxed italic">
                     "Tracks systemic risk by aggregating volatility across asset classes. Extreme readings indicate geopolitical pricing that exceeds historical norms."
                 </p>
-                <div className="flex items-center justify-between text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
+                <div className="flex items-center justify-between text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
                     <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> &lt;0.5 Calm</span>
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> 0.5-1.5 Elevated</span>

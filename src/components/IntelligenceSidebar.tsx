@@ -53,7 +53,7 @@ export const IntelligenceSidebar: React.FC = () => {
         return (
             <button
                 onClick={() => setIsCollapsed(false)}
-                className="fixed right-0 top-1/2 -translate-y-1/2 bg-background border border-r-0 border-white/10 p-2 rounded-l-xl hover:bg-white/5 transition-all z-[1100] shadow-2xl"
+                className="fixed right-0 top-1/2 -translate-y-1/2 bg-background border border-r-0 border-white/12 p-2 rounded-l-xl hover:bg-white/5 transition-all z-[1100] shadow-2xl"
             >
                 <div className="relative">
                     <ChevronLeft size={20} className="text-muted-foreground" />
@@ -64,8 +64,8 @@ export const IntelligenceSidebar: React.FC = () => {
     }
 
     return (
-        <aside className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/10 bg-background/50 backdrop-blur-xl z-[1100]">
-            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
+        <aside className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100]">
+            <div className="p-4 border-b border-white/12 flex items-center justify-between bg-white/5">
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
                         <Newspaper size={18} className="text-blue-400" />
@@ -105,12 +105,12 @@ export const IntelligenceSidebar: React.FC = () => {
                                 rel="noopener noreferrer"
                                 className="block group"
                             >
-                                <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300">
+                                <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/12 transition-all duration-300">
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-tighter">
                                             {item.source}
                                         </span>
-                                        <span className="text-[0.65rem] text-muted-foreground/50 flex items-center gap-1">
+                                        <span className="text-xs text-muted-foreground/50 flex items-center gap-1">
                                             <Clock size={10} />
                                             {new Date(item.published_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
@@ -133,8 +133,8 @@ export const IntelligenceSidebar: React.FC = () => {
                 </div>
             </div>
 
-            <div className="p-4 border-t border-white/10 bg-white/5">
-                <div className="flex items-center gap-2 text-[0.65rem] text-muted-foreground">
+            <div className="p-4 border-t border-white/12 bg-white/5">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <TrendingUp size={12} className="text-emerald-500" />
                     <span className="font-bold uppercase tracking-widest">Market Pulse: Active</span>
                 </div>

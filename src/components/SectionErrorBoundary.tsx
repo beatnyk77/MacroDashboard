@@ -46,7 +46,7 @@ export class SectionErrorBoundary extends Component<Props, State> {
                     </div>
                     <button
                         onClick={this.handleReset}
-                        className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-black text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/20 transition-all active:scale-95"
+                        className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/12 text-xs font-black text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/20 transition-all active:scale-95"
                     >
                         <RotateCcw size={14} />
                         RE-INITIALIZE FEED

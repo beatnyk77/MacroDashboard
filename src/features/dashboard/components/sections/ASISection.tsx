@@ -114,7 +114,7 @@ export const ASISection: React.FC = () => {
 
                     <div className="flex items-center justify-between mb-8 relative z-10">
                         <div className="space-y-1">
-                            <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Geospatial Intensity</span>
+                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Geospatial Intensity</span>
                             <h4 className="text-md font-black text-white/90">Regional Industrial Map</h4>
                         </div>
 
@@ -224,7 +224,7 @@ export const ASISection: React.FC = () => {
                             {selectedState && (
                                 <button
                                     onClick={() => setSelectedState(null)}
-                                    className="text-[0.55rem] font-black text-blue-400 hover:text-blue-300 underline underline-offset-4"
+                                    className="text-xs font-black text-blue-400 hover:text-blue-300 underline underline-offset-4"
                                 >
                                     RESET
                                 </button>
@@ -235,7 +235,7 @@ export const ASISection: React.FC = () => {
                             <div className="space-y-1.5">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <Globe className="w-3 h-3" />
-                                    <span className="text-[0.55rem] font-black uppercase">GVA Total</span>
+                                    <span className="text-xs font-black uppercase">GVA Total</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-xl font-black text-white font-mono tracking-tighter">₹{(activeStats.gva / 100000).toFixed(1)}</span>
@@ -245,7 +245,7 @@ export const ASISection: React.FC = () => {
                             <div className="space-y-1.5">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <Users className="w-3 h-3" />
-                                    <span className="text-[0.55rem] font-black uppercase">Employment</span>
+                                    <span className="text-xs font-black uppercase">Employment</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-xl font-black text-white font-mono tracking-tighter">{(activeStats.employment / 1000).toFixed(1)}</span>
@@ -255,7 +255,7 @@ export const ASISection: React.FC = () => {
                             <div className="space-y-1.5 pt-4 border-t border-white/5">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <TrendingUp className="w-3 h-3" />
-                                    <span className="text-[0.55rem] font-black uppercase">Cap Util</span>
+                                    <span className="text-xs font-black uppercase">Cap Util</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-xl font-black text-emerald-500 font-mono tracking-tighter">{activeStats.capacity.toFixed(1)}%</span>
@@ -264,7 +264,7 @@ export const ASISection: React.FC = () => {
                             <div className="space-y-1.5 pt-4 border-t border-white/5">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <Briefcase className="w-3 h-3" />
-                                    <span className="text-[0.55rem] font-black uppercase">YoY Growth</span>
+                                    <span className="text-xs font-black uppercase">YoY Growth</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className={cn(
@@ -280,7 +280,7 @@ export const ASISection: React.FC = () => {
                                 <div className="col-span-2 space-y-1.5 pt-4 border-t border-white/5">
                                     <div className="flex items-center gap-2 opacity-40">
                                         <DollarSign className="w-3 h-3 text-emerald-500" />
-                                        <span className="text-[0.55rem] font-black uppercase tracking-widest">Loan-to-Job Efficiency</span>
+                                        <span className="text-xs font-black uppercase tracking-widest">Loan-to-Job Efficiency</span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
                                         <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
@@ -324,7 +324,7 @@ export const ASISection: React.FC = () => {
                                         "w-full flex justify-between items-center p-4 rounded-2xl border transition-all group",
                                         selectedState?.state_code === state.state_code
                                             ? "bg-emerald-500/10 border-emerald-500/20"
-                                            : "bg-white/[0.01] border-white/5 hover:border-white/10"
+                                            : "bg-white/[0.01] border-white/5 hover:border-white/12"
                                     )}
                                 >
                                     <span className="text-xs font-black text-white/80 uppercase tracking-tight">{state.state_name}</span>

@@ -145,7 +145,7 @@ export const YieldCurveMonitor: React.FC = () => {
                                 </p>
                             </div>
                             {latestDate && (
-                                <span className="text-[0.55rem] font-bold text-muted-foreground/40 uppercase tracking-wider">
+                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
                                     As of {new Date(latestDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                             )}
@@ -222,7 +222,7 @@ export const YieldCurveMonitor: React.FC = () => {
                 <div className="mt-12 flex justify-center">
                     <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest text-center">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">
                             Sources: FRED · ECB SDW · RBI DBIE — updated daily
                         </span>
                     </div>
@@ -235,9 +235,9 @@ export const YieldCurveMonitor: React.FC = () => {
 /* ── Status Chip ──────────────────────────────────────────────── */
 const StatusChip = ({ label, status, color }: { label: string; status: string; color: 'rose' | 'amber' | 'emerald' }) => (
     <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
         <span className={cn(
-            "text-[0.65rem] font-black uppercase tracking-tighter",
+            "text-xs font-black uppercase tracking-tighter",
             color === 'rose' ? "text-rose-500" : color === 'amber' ? "text-amber-500" : "text-emerald-500"
         )}>{status}</span>
     </div>
@@ -254,14 +254,14 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
     source: string;
 }) => (
     <motion.div
-        className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] hover:border-white/10 transition-all group cursor-default"
+        className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] hover:border-white/12 transition-all group cursor-default"
         whileHover={{ y: -2 }}
     >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
                 <span className="text-lg">{config.flag}</span>
-                <span className="text-[0.65rem] font-black text-white/60 uppercase tracking-widest">{country}</span>
+                <span className="text-xs font-black text-white/60 uppercase tracking-widest">{country}</span>
             </div>
             <div className="flex items-center gap-1">
                 <span className="text-xl font-black tabular-nums" style={{ color: config.color }}>{y10y}%</span>
@@ -287,7 +287,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
             </div>
 
             {/* Term Premium Glossary Link */}
-            <Link to="/glossary/term-premium" className="flex items-center gap-1.5 text-[0.55rem] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest transition-colors mb-2">
+            <Link to="/glossary/term-premium" className="flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest transition-colors mb-2">
                 <BookOpen size={10} /> Read Term Premium Definition
             </Link>
 
@@ -328,7 +328,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
 const CurveTooltip = ({ active, payload, label, gauges }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-3xl min-w-[220px]">
+            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl min-w-[220px]">
                 <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
                     Tenor: {label}
                 </div>

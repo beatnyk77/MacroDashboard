@@ -55,7 +55,7 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
                         <Icon className="w-5 h-5" />
                     </div>
                     {delta !== undefined && (
-                        <div className={cn("flex items-center text-[0.65rem] font-black px-2 py-1 rounded-xl bg-white/5 border border-white/10 tabular-nums", trendColor)}>
+                        <div className={cn("flex items-center text-xs font-black px-2 py-1 rounded-xl bg-white/5 border border-white/12 tabular-nums", trendColor)}>
                             {isPositive ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
                             {Math.abs(delta).toFixed(2)}{suffix === '%' ? 'pp' : suffix} {deltaType.toUpperCase()}
                         </div>
@@ -159,14 +159,14 @@ export const GlobalReserveTracker: React.FC = () => {
                     <TabsTrigger
                         value="dedollarization"
                         onClick={() => trackClick('reserve_tab_dedollarization', 'global_reserve_tracker')}
-                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-[0.65rem] uppercase tracking-widest transition-all"
+                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-widest transition-all"
                     >
                         De-Dollarization Pulse
                     </TabsTrigger>
                     <TabsTrigger
                         value="brics"
                         onClick={() => trackClick('reserve_tab_brics', 'global_reserve_tracker')}
-                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-[0.65rem] uppercase tracking-widest transition-all"
+                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-widest transition-all"
                     >
                         BRICS+ Momentum
                     </TabsTrigger>
@@ -197,7 +197,7 @@ export const GlobalReserveTracker: React.FC = () => {
                         </div>
                         <div className="space-y-1">
                             <h4 className="text-xs font-black text-white uppercase tracking-widest">Structural Signal</h4>
-                            <p className="text-[0.65rem] text-muted-foreground leading-relaxed italic">
+                            <p className="text-xs text-muted-foreground leading-relaxed italic">
                                 Central banks are currently in a <span className="text-amber-400 font-bold">rotation phase</span>. While USD remains the primary denominator, the persistent accumulation of physical gold by non-Western powers indicates a "shadow" hedging regime against future fiat volatility.
                             </p>
                         </div>
@@ -236,14 +236,14 @@ export const GlobalReserveTracker: React.FC = () => {
                     </div>
 
                     {/* Gold Leaderboard */}
-                    <div className="bg-white/[0.02] rounded-3xl p-6 border border-white/10">
+                    <div className="bg-white/[0.02] rounded-3xl p-6 border border-white/12">
                         <div className="flex justify-between items-end mb-8">
                             <div>
                                 <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                     <Globe className="w-4 h-4 text-emerald-500" />
                                     Strategic Accumulation Leaderboard
                                 </h3>
-                                <p className="text-[0.65rem] text-muted-foreground/60 mt-1 uppercase tracking-tight">
+                                <p className="text-xs text-muted-foreground/60 mt-1 uppercase tracking-tight">
                                     Top 5 BRICS+ Nations by Official Gold Reserves (Tonnes)
                                 </p>
                             </div>
@@ -296,7 +296,7 @@ export const GlobalReserveTracker: React.FC = () => {
                                 <div className={cn("w-1 h-8 rounded-full opacity-20 group-hover/bullet:opacity-100 transition-opacity", `bg-${bullet.color}-500`)} />
                                 <div className="space-y-0.5">
                                     <div className="text-xs font-black uppercase tracking-widest text-white/40">{bullet.label}</div>
-                                    <p className="text-[0.65rem] text-muted-foreground leading-snug">{bullet.content}</p>
+                                    <p className="text-xs text-muted-foreground leading-snug">{bullet.content}</p>
                                 </div>
                             </div>
                         ))}

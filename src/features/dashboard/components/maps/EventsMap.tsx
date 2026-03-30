@@ -54,7 +54,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
         <div className={cn("relative w-full h-full min-h-[500px] bg-slate-950/50 rounded-3xl overflow-hidden border border-white/5", className)}>
             {/* Header with Status */}
             <div className="absolute top-4 left-4 z-10 flex items-center gap-3">
-                <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center gap-2">
+                <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12 flex items-center gap-2">
                     <Activity className="w-3 h-3 text-emerald-400" />
                     <span className="text-xs font-black text-white uppercase tracking-widest">
                         Live Event Feed
@@ -83,7 +83,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
                 {/* Last Sync Timestamp */}
                 {lastSync && (
-                    <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center gap-2">
+                    <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12 flex items-center gap-2">
                         <Clock className="w-3 h-3 text-blue-400" />
                         <span className="text-xs font-mono text-muted-foreground">
                             {new Date().getTime() - lastSync.getTime() < 3600000
@@ -97,7 +97,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
             {/* Event Count Badge */}
             {hasEvents && (
-                <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10">
+                <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12">
                     <div className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-0.5">
                         Active Events
                     </div>
@@ -170,7 +170,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
             {/* Hover Tooltip */}
             {hoveredEvent && (
-                <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-20 p-4 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/10 shadow-2xl">
+                <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-20 p-4 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/12 shadow-2xl">
                     <div className="flex items-start gap-3">
                         <div className={cn(
                             "p-2 rounded-xl",

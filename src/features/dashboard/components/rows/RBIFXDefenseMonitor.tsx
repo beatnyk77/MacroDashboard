@@ -40,7 +40,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
     }
 
     return (
-        <section className="w-full bg-[#0a0f1d] rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl font-sans relative">
+        <section className="w-full bg-[#0a0f1d] rounded-[2rem] border border-white/12 overflow-hidden shadow-2xl font-sans relative">
             {/* Header Area */}
             <div className="p-8 pb-6 border-b border-white/5 bg-white/[0.01]">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -240,8 +240,8 @@ const MetricCard = ({ title, value, delta, subtext, icon, colorClass, trend }: a
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-2xl z-50 min-w-[240px]">
-                <div className="text-xs font-black text-white uppercase tracking-widest mb-3 pb-2 border-b border-white/10">
+            <div className="bg-slate-900/95 backdrop-blur-xl border border-white/12 p-4 rounded-xl shadow-2xl z-50 min-w-[240px]">
+                <div className="text-xs font-black text-white uppercase tracking-widest mb-3 pb-2 border-b border-white/12">
                     {label}
                 </div>
                 <div className="space-y-3">
