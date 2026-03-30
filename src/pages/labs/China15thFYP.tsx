@@ -8,7 +8,7 @@ import { FYP_MissionControlRadar } from '@/features/dashboard/components/rows/Ch
 import { FYP_TargetGrid } from '@/features/dashboard/components/rows/China15thFYP/FYP_TargetGrid';
 import { FYP_ImpactHeatmap } from '@/features/dashboard/components/rows/China15thFYP/FYP_ImpactHeatmap';
 import { ComparisonToggle14v15 } from '@/features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15';
-import { Button } from '@mui/material';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const China15thFYPLab: React.FC = () => {
@@ -55,36 +55,16 @@ export const China15thFYPLab: React.FC = () => {
 
                     <div className="flex flex-col gap-3 w-full md:w-auto">
                         <Button 
-                            variant="contained"
-                            startIcon={<Download size={18} />}
-                            sx={{ 
-                                bgcolor: '#dc2626', 
-                                '&:hover': { bgcolor: '#b91c1c' },
-                                borderRadius: '12px',
-                                px: 4,
-                                py: 1.5,
-                                fontWeight: 900,
-                                fontSize: '0.7rem',
-                                letterSpacing: '0.1em'
-                            }}
+                            className="bg-red-600 hover:bg-red-700 text-white font-black text-[10px] tracking-widest uppercase rounded-xl px-6"
                         >
+                            <Download size={14} className="mr-2" />
                             Download Strategist PDF
                         </Button>
                         <Button 
-                            variant="outlined"
-                            startIcon={<Share2 size={18} />}
-                            sx={{ 
-                                borderColor: 'rgba(255,255,255,0.1)',
-                                color: 'rgba(255,255,255,0.7)',
-                                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.2)' },
-                                borderRadius: '12px',
-                                px: 4,
-                                py: 1.5,
-                                fontWeight: 900,
-                                fontSize: '0.7rem',
-                                letterSpacing: '0.1em'
-                            }}
+                            variant="outline"
+                            className="border-white/10 text-white/70 hover:bg-white/5 hover:border-white/20 font-black text-[10px] tracking-widest uppercase rounded-xl px-6"
                         >
+                            <Share2 size={14} className="mr-2" />
                             Share Intelligence
                         </Button>
                     </div>

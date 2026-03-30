@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Breadcrumbs, Link, Button } from '@mui/material';
+import { Button } from '@/components/ui/button';
 import {
     ChevronRight,
     ArrowLeft,
@@ -36,20 +36,13 @@ export const USMacroFiscalLab: React.FC = () => {
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
             <div className="mb-8">
-                <Breadcrumbs
-                    separator={<ChevronRight size={14} className="text-muted-foreground/50" />}
-                    aria-label="breadcrumb"
-                >
-                    <Link underline="hover" color="inherit" href="/" className="flex items-center text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-white transition-colors">
-                        Home
-                    </Link>
-                    <Link underline="hover" color="inherit" href="/macro-observatory" className="flex items-center text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-white transition-colors">
-                        Observatory
-                    </Link>
-                    <span className="flex items-center text-[10px] font-black uppercase tracking-[0.15em] text-blue-500">
-                        US Macro & Fiscal
-                    </span>
-                </Breadcrumbs>
+                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                    <a href="/" className="hover:text-white transition-colors">Home</a>
+                    <ChevronRight size={10} />
+                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <ChevronRight size={10} />
+                    <span className="text-blue-500">US Macro & Fiscal</span>
+                </nav>
             </div>
 
             <div className="mb-16">
@@ -187,23 +180,11 @@ export const USMacroFiscalLab: React.FC = () => {
                                     Deep macro-to-corporate correlation engine. Analyze how sovereign debt dynamics and policy shifts impact US corporate margins, valuation tiers, and institutional positioning through official SEC EDGAR telemetry.
                                 </p>
                                 <Button
-                                    variant="contained"
-                                    size="large"
-                                    href="/us-equities"
-                                    sx={{
-                                        bgcolor: '#2563eb',
-                                        color: '#ffffff',
-                                        fontWeight: 900,
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.1em',
-                                        borderRadius: '12px',
-                                        px: 6,
-                                        py: 2,
-                                        boxShadow: '0 0 30px rgba(37,99,235,0.2)',
-                                        '&:hover': { bgcolor: '#1d4ed8' }
-                                    }}
+                                    asChild
+                                    size="lg"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest rounded-xl px-6 py-2 shadow-[0_0_30px_rgba(37,99,235,0.2)]"
                                 >
-                                    Launch Equities Terminal
+                                    <a href="/us-equities">Launch Equities Terminal</a>
                                 </Button>
                             </div>
                             
@@ -243,18 +224,13 @@ export const USMacroFiscalLab: React.FC = () => {
 
             <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
-                    variant="text"
-                    href="/macro-observatory"
-                    startIcon={<ArrowLeft size={18} />}
-                    sx={{
-                        color: 'rgba(255,255,255,0.4)',
-                        fontWeight: 900,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.1em',
-                        '&:hover': { color: '#ffffff', bgcolor: 'transparent' }
-                    }}
+                    variant="ghost"
+                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+                    asChild
                 >
-                    Back to Observatory
+                    <a href="/macro-observatory" className="flex items-center gap-2">
+                        <ArrowLeft size={18} /> Back to Observatory
+                    </a>
                 </Button>
             </div>
         </div>

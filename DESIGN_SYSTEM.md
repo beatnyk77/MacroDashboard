@@ -104,32 +104,48 @@ Use these through semantic utilities like `bg-terminal-bg`, `text-terminal-gold`
 - [x] Add Card variants (`metric`, `elevated`)
 - [x] Replace all `text-[...]` with scale tokens (partial, high‑visibility components done)
 - [x] Remove MUI `<Card>` usage (core components migrated)
-- [ ] Replace MUI `spacing` props with Tailwind across all files
-- [ ] Migrate all custom card `div`s to Card component
-- [ ] Update documentation and verification
+- [x] Migrate all Lab pages to Tailwind layout (`Container`, `Typography`, `Box`, `Button`, `Breadcrumbs`, `Link` replaced)
+- [ ] Replace MUI `spacing` props with Tailwind across all remaining files
+- [ ] Migrate all custom card `div`s to Card component in remaining low-priority files
+- [x] Update documentation and verification
 
 ## Files Modified
 
+### Core Settings & Components
 - `tailwind.config.js` — added `fontSize`, `letterSpacing`, `spacing` scales
 - `src/theme.ts` — added design tokens and preserved MUI theme compatibility
 - `src/components/ui/card.tsx` — added variants
+- `src/components/ChartInsightSummary.tsx` — fixed font size
+
+### Component Migrations
 - `src/components/MetricCard.tsx` — migrated to Card variant
 - `src/components/RatioCard.tsx` — migrated to Card variant
 - `src/features/dashboard/components/rows/YieldCurveMonitor.tsx` — MUI Card → Card, typography cleanup
 - `src/features/dashboard/components/sections/UPIAutopayFailureCard.tsx` — full MUI Card migration + Tailwind typography
 - `src/features/dashboard/components/charts/GoldReturnsChart.tsx` — MUI Card (tooltip) migration
 - `src/features/dashboard/components/sections/ScenarioStudio.tsx` — MUI Card removal + Tailwind conversion
-- `src/pages/BlogPage.tsx` — MUI Card removal + layout conversion
-- `src/components/ChartInsightSummary.tsx` — fixed font size
+
+### Lab Page Migrations (MUI removed completely)
+- `src/pages/ForInstitutional.tsx`
+- `src/pages/labs/SovereignStressLab.tsx`
+- `src/pages/labs/ChinaLab.tsx`
+- `src/pages/labs/IndiaLab.tsx`
+- `src/pages/labs/USMacroFiscalLab.tsx`
+- `src/pages/labs/SustainableFinanceLab.tsx`
+- `src/pages/labs/EnergyCommoditiesLab.tsx`
+- `src/pages/labs/DeDollarizationGoldLab.tsx`
+- `src/pages/labs/ShadowSystemLab.tsx`
+- `src/pages/labs/China15thFYP.tsx`
+- `src/pages/BlogPage.tsx`
 
 ## Verification
 
-- Lint: `npm run lint` passes with zero warnings.
-- Build: `npm run build` succeeds.
-- Visual regression: Compare key screens (Terminal, MacroObservatory, IndiaLab) before/after to ensure typography hierarchy and card consistency.
+- Lint: `npm run lint` passes with zero warnings (minor unused import warnings addressed).
+- Build: `npm run build` succeeds perfectly.
+- Visual regression: Key screens (Labs, Terminal, MacroObservatory) successfully verified to maintain typography hierarchy and card consistency without Material UI imports.
 
 ## Notes
 
-- The dark glassmorphic aesthetic is preserved.
+- The dark glassmorphic aesthetic is preserved and institutional-grade "pure data terminal" look is enforced.
 - All Card hover effects and spacing follow the new scale.
-- Further cleanup of remaining custom divs and MUI spacing will follow the patterns established above.
+- Further cleanup of remaining custom divs and MUI spacing will fall under ongoing refactoring tasks for low-level components.

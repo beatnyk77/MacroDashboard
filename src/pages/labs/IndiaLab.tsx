@@ -1,5 +1,4 @@
 import React, { Suspense, lazy } from 'react';
-import { Container, Typography, Box, Button, Breadcrumbs, Link } from '@mui/material';
 import {
     ChevronRight,
     ArrowLeft,
@@ -14,6 +13,8 @@ import {
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { LazyRender } from '@/components/LazyRender';
+import { SEOManager } from '@/components/SEOManager';
+import { Button } from '@/components/ui/button';
 
 // Lazy loaded components
 const IndiaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection })));
@@ -31,15 +32,13 @@ const StateFiscalHeatmap = lazy(() => import('@/features/dashboard/components/ro
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading India Signal...</span>
+        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading India Signal...</span>
     </div>
 );
 
-import { SEOManager } from '@/components/SEOManager';
-
 export const IndiaLab: React.FC = () => {
     return (
-        <Container maxWidth={false} sx={{ py: 6 }}>
+        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             <SEOManager
                 title="India Macro Pulse | Institutional Economic Monitor"
                 description="Comprehensive real-time monitoring of India's macroeconomic health, DPI integration, and state-capex resilience. High-frequency data for institutional investors."
@@ -56,49 +55,42 @@ export const IndiaLab: React.FC = () => {
                 }}
             />
             {/* Breadcrumbs */}
-            <Box sx={{ mb: 4 }}>
-                <Breadcrumbs
-                    separator={<ChevronRight size={14} className="text-muted-foreground/50" />}
-                    aria-label="breadcrumb"
-                >
-                    <Link underline="hover" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', tracking: '0.1em' }}>
-                        Home
-                    </Link>
-                    <Link underline="hover" color="inherit" href="/macro-observatory" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', tracking: '0.1em' }}>
-                        Observatory
-                    </Link>
-                    <Typography color="text.primary" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', tracking: '0.1em' }}>
-                        India Lab
-                    </Typography>
-                </Breadcrumbs>
-            </Box>
+            <div className="mb-8">
+                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                    <a href="/" className="hover:text-white transition-colors">Home</a>
+                    <ChevronRight size={10} />
+                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <ChevronRight size={10} />
+                    <span className="text-blue-500">India Lab</span>
+                </nav>
+            </div>
 
-            <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-4">
+            <div className="mb-16">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <MapPin size={12} /> Emerging Market Intelligence
                 </div>
-                <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
                     India <span className="text-blue-500">Lab</span>
-                </Typography>
-                <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '800px', fontSize: '1.1rem', fontWeight: 500 }}>
+                </h1>
+                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     Granular telemetry on MoSPI real-time data, RBI monetary policy stance, and state-level fiscal sustainability.
-                </Typography>
-            </Box>
+                </p>
+            </div>
 
             <div className="space-y-32">
                 {/* 1. Market Pulse Analytics */}
                 <section>
-                    <div className="flex items-center gap-3 mb-8">
-                        <Activity className="text-blue-500" size={24} />
+                    <div className="flex items-center gap-3 mb-10">
+                        <Activity className="text-blue-500" size={28} />
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">Market Pulse Terminal</h2>
                     </div>
                     <SectionErrorBoundary name="India Market Pulse">
                         <Suspense fallback={<LoadingFallback />}>
-                            <div className="space-y-12">
+                            <div className="space-y-16">
                                 <IndiaMarketPulseRow />
-                                <div className="pt-8 border-t border-white/5">
-                                    <div className="flex items-center gap-3 mb-8">
-                                        <ArrowRightLeft className="text-blue-500" size={24} />
+                                <div className="pt-12 border-t border-white/5">
+                                    <div className="flex items-center gap-3 mb-10">
+                                        <ArrowRightLeft className="text-blue-400" size={28} />
                                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">FII / DII Flow Monitor</h2>
                                     </div>
                                     <FIIDIIMonitorSection />
@@ -110,8 +102,8 @@ export const IndiaLab: React.FC = () => {
 
                 {/* 2. Macro Pulse (Comprehensive) */}
                 <section>
-                    <div className="flex items-center gap-3 mb-8">
-                        <TrendingUp className="text-blue-500" size={24} />
+                    <div className="flex items-center gap-3 mb-10">
+                        <TrendingUp className="text-blue-500" size={28} />
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">Macro Pulse & BOP Pressure</h2>
                     </div>
                     <SectionErrorBoundary name="India Macro Pulse">
@@ -125,11 +117,11 @@ export const IndiaLab: React.FC = () => {
                 </section>
 
                 {/* 3. Monetary & Credit Cycle */}
-                <div className="space-y-24">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <Zap className="text-amber-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Credit Cycle Clock</h2>
+                        <div className="flex items-center gap-3 mb-10">
+                            <Zap className="text-amber-500" size={28} />
+                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Credit Cycle Clock</h2>
                         </div>
                         <SectionErrorBoundary name="India Credit Cycle Clock">
                             <Suspense fallback={<LoadingFallback />}>
@@ -139,9 +131,9 @@ export const IndiaLab: React.FC = () => {
                     </section>
 
                     <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <BarChart3 className="text-emerald-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">RBI FX Defense</h2>
+                        <div className="flex items-center gap-3 mb-10">
+                            <BarChart3 className="text-emerald-500" size={28} />
+                            <h2 className="text-xl font-black uppercase tracking-heading text-white">RBI FX Defense</h2>
                         </div>
                         <SectionErrorBoundary name="RBI FX Defense">
                             <Suspense fallback={<LoadingFallback />}>
@@ -152,11 +144,11 @@ export const IndiaLab: React.FC = () => {
                 </div>
 
                 {/* 4. Fiscal Stress & Debt */}
-                <div className="space-y-24">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <Activity className="text-rose-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Fiscal Stress Monitor</h2>
+                        <div className="flex items-center gap-3 mb-10">
+                            <Activity className="text-rose-500" size={28} />
+                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Fiscal Stress Monitor</h2>
                         </div>
                         <SectionErrorBoundary name="India Fiscal Stress">
                             <Suspense fallback={<LoadingFallback />}>
@@ -166,9 +158,9 @@ export const IndiaLab: React.FC = () => {
                     </section>
 
                     <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <BarChart3 className="text-blue-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">India Debt Maturity Wall</h2>
+                        <div className="flex items-center gap-3 mb-10">
+                            <BarChart3 className="text-blue-500" size={28} />
+                            <h2 className="text-xl font-black uppercase tracking-heading text-white">India Debt Maturity Wall</h2>
                         </div>
                         <SectionErrorBoundary name="India Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
@@ -180,14 +172,14 @@ export const IndiaLab: React.FC = () => {
 
                 {/* 5. State-Level Fiscal Health */}
                 <section>
-                    <div className="flex items-center gap-3 mb-8">
-                        <MapPin className="text-blue-500" size={24} />
+                    <div className="flex items-center gap-3 mb-10">
+                        <MapPin className="text-blue-500" size={28} />
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">State Fiscal Heatmap</h2>
                     </div>
                     <SectionErrorBoundary name="State Fiscal Heatmap">
                         <LazyRender minHeight="600px">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="space-y-12">
+                                <div className="space-y-16">
                                     <IndiaFiscalAllocationTracker />
                                     <StateFiscalHeatmap />
                                 </div>
@@ -197,11 +189,11 @@ export const IndiaLab: React.FC = () => {
                 </section>
 
                 {/* 6. Liquidity & Inflation */}
-                <div className="space-y-24">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     <section id="liquidity-monitor">
-                        <div className="flex items-center gap-3 mb-8">
-                            <Landmark className="text-blue-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
+                        <div className="flex items-center gap-3 mb-10">
+                            <Landmark className="text-blue-500" size={28} />
+                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
                         </div>
                         <SectionErrorBoundary name="India Money Market">
                             <Suspense fallback={<LoadingFallback />}>
@@ -211,9 +203,9 @@ export const IndiaLab: React.FC = () => {
                     </section>
 
                     <section>
-                        <div className="flex items-center gap-3 mb-8">
-                            <Activity className="text-emerald-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Inflation Pulse</h2>
+                        <div className="flex items-center gap-3 mb-10">
+                            <Activity className="text-emerald-500" size={28} />
+                            <h2 className="text-xl font-black uppercase tracking-heading text-white">Inflation Pulse</h2>
                         </div>
                         <SectionErrorBoundary name="India Inflation Pulse">
                             <Suspense fallback={<LoadingFallback />}>
@@ -225,8 +217,8 @@ export const IndiaLab: React.FC = () => {
 
                 {/* 7. Digitization Premium */}
                 <section>
-                    <div className="flex items-center gap-3 mb-8">
-                        <Zap className="text-blue-400" size={24} />
+                    <div className="flex items-center gap-3 mb-10">
+                        <Zap className="text-blue-400" size={28} />
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">Digitization Premium</h2>
                     </div>
                     <SectionErrorBoundary name="India Digitization Premium">
@@ -238,32 +230,33 @@ export const IndiaLab: React.FC = () => {
             </div>
 
             {/* SEO Structural Analysis Text Block */}
-            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of India Macro Telemetry">
-                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: India's Macro Resilience & Fiscal Quality</h3>
-                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-[2.5rem]" aria-label="Structural Analysis of India Macro Telemetry">
+                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-8">Structural Analysis: India's Macro Resilience & Fiscal Quality</h3>
+                <div className="space-y-6 text-sm text-muted-foreground/60 leading-relaxed font-medium uppercase tracking-wide">
                     <p>
-                        The <strong>India Lab</strong> monitors highly granular, state-level macroeconomic indicators to evaluate the fundamental structural transition of the Indian economy. Unlike traditional emerging market (EM) trackers that rely on lagging, aggregated national data, GraphiQuestor connects directly to the <a href="/glossary/mospi" className="text-blue-400 hover:underline">Ministry of Statistics and Programme Implementation (MoSPI)</a>. This zero-lag integration enables real-time observation of the Index of Industrial Production (IIP), Consumer Price Index (CPI), and capital expenditure velocities across all 28 states.
+                        The <strong>India Lab</strong> monitors highly granular, state-level macroeconomic indicators to evaluate the fundamental structural transition of the Indian economy. Unlike traditional emerging market (EM) trackers that rely on lagging, aggregated national data, GraphiQuestor connects directly to the <a href="/glossary/mospi" className="text-blue-400 hover:underline transition-colors">Ministry of Statistics and Programme Implementation (MoSPI)</a>. This zero-lag integration enables real-time observation of the Index of Industrial Production (IIP), Consumer Price Index (CPI), and capital expenditure velocities across all 28 states.
                     </p>
                     <p>
                         A critical differentiator in India's sovereign health is the quality of its fiscal expenditure. The <em>State Fiscal Heatmap</em> tracks the ratio of productive capital expenditure (Capex) against recurring revenue expenditure (subsidies and freebies). States demonstrating high Capex velocity generally command a lower structural risk premium and drive the nation's broader industrial upgrading capacity.
                     </p>
                     <p>
-                        Furthermore, the Lab actively monitors the Reserve Bank of India's (RBI) FX defense posture. By combining Balance of Payments (BOP) pressure gauges with <a href="/glossary/stealth-qe" className="text-blue-400 hover:underline">liquidity stress monitors</a>, institutional investors can pinpoint precise entry and exit windows for Indian equities and sovereign debt, insulated from short-term narrative noise.
+                        Furthermore, the Lab actively monitors the Reserve Bank of India's (RBI) FX defense posture. By combining Balance of Payments (BOP) pressure gauges with <a href="/glossary/stealth-qe" className="text-blue-400 hover:underline transition-colors">liquidity stress monitors</a>, institutional investors can pinpoint precise entry and exit windows for Indian equities and sovereign debt, insulated from short-term narrative noise.
                     </p>
                 </div>
             </article>
 
-            <Box sx={{ mt: 12, pt: 8, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+            <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
-                    variant="text"
-                    startIcon={<ArrowLeft size={18} />}
-                    href="/macro-observatory"
-                    sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 900, '&:hover': { color: 'white' } }}
+                    variant="ghost"
+                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+                    asChild
                 >
-                    Back to Observatory
+                    <a href="/macro-observatory" className="flex items-center gap-2">
+                        <ArrowLeft size={18} /> Back to Observatory
+                    </a>
                 </Button>
-            </Box>
-        </Container>
+            </div>
+        </div>
     );
 };
 

@@ -1,5 +1,4 @@
 import React, { Suspense, lazy } from 'react';
-import { Container, Typography, Box, Button, Breadcrumbs, Link } from '@mui/material';
 import {
     ChevronRight,
     ArrowLeft,
@@ -10,6 +9,7 @@ import {
     Ship
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { Button } from '@/components/ui/button';
 
 // Lazy loaded components
 const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/SovereignEnergySecuritySection').then(m => ({ default: m.SovereignEnergySecuritySection })));
@@ -21,58 +21,51 @@ const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/m
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Energy Signal...</span>
+        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Energy Signal...</span>
     </div>
 );
 
 export const EnergyCommoditiesLab: React.FC = () => {
     return (
-        <Container maxWidth={false} sx={{ py: 6 }}>
+        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
-            <Box sx={{ mb: 4 }}>
-                <Breadcrumbs
-                    separator={<ChevronRight size={14} className="text-muted-foreground/50" />}
-                    aria-label="breadcrumb"
-                >
-                    <Link underline="hover" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', tracking: '0.1em' }}>
-                        Home
-                    </Link>
-                    <Link underline="hover" color="inherit" href="/macro-observatory" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', tracking: '0.1em' }}>
-                        Observatory
-                    </Link>
-                    <Typography color="text.primary" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', tracking: '0.1em' }}>
-                        Energy & Commodities
-                    </Typography>
-                </Breadcrumbs>
-            </Box>
+            <div className="mb-8">
+                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                    <a href="/" className="hover:text-white transition-colors">Home</a>
+                    <ChevronRight size={10} />
+                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <ChevronRight size={10} />
+                    <span className="text-blue-500">Energy & Commodities</span>
+                </nav>
+            </div>
 
             {/* Intro / How to Use This Lab */}
-            <Box sx={{ mb: 12 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-uppercase mb-4">
+            <div className="mb-16">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <Fuel size={12} /> Institutional Resource Security
                 </div>
-                <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
                     Energy & <span className="text-blue-500">Commodities</span>
-                </Typography>
-                <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '800px', fontSize: '1.2rem', fontWeight: 500, mb: 4 }}>
+                </h1>
+                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide mb-8">
                     Analyzing global physical flow dynamics, refining capacity elasticity, and the energy intensity of the AI compute supercycle.
-                </Typography>
+                </p>
 
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/12 max-w-4xl">
-                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase mb-2 border-b border-white/12 pb-2 inline-block">How to use this Lab</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 max-w-4xl">
+                    <h3 className="text-xs font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4 inline-block">How to use this Lab</h3>
+                    <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium uppercase tracking-wide">
                         This environment translates physical commodity constraints into sovereign vulnerability metrics.
-                        <strong> Start by assessing the US strategic stockpile (SPR) and refining limits.</strong> Then, trace the molecular shift of Russian and Middle Eastern crude eastward to Asia to understand inflation divergence. Finally, monitor the physical bottlenecks of the AI revolution via power demand.
+                        <strong className="text-white"> Start by assessing the US strategic stockpile (SPR) and refining limits.</strong> Then, trace the molecular shift of Russian and Middle Eastern crude eastward to Asia to understand inflation divergence. Finally, monitor the physical bottlenecks of the AI revolution via power demand.
                     </p>
                 </div>
-            </Box>
+            </div>
 
             <div className="space-y-32">
                 {/* 1. Sovereign Energy Security */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Globe className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Sovereign Energy Security</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Sovereign Energy Security</h2>
                     </div>
 
                     <div className="w-full">
@@ -83,9 +76,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-uppercase text-blue-400 block mb-2">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed">
+                    <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             National security is inextricably linked to refining elasticity. The depletion of the SPR combined with aging infrastructure leaves Western economies highly vulnerable to supply shocks. Concurrently, the EU gas storage levels dictate the winter industrial shutdown probabilities, actively altering core inflation forecasts.
                         </p>
                     </div>
@@ -95,7 +88,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Ship className="text-emerald-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Asia Energy & Commodity Flows</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Asia Energy & Commodity Flows</h2>
                     </div>
 
                     <div className="w-full">
@@ -106,9 +99,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="mt-8 p-6 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-uppercase text-emerald-400 block mb-2">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed">
+                    <div className="mt-8 p-8 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-emerald-400 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             The "shadow" fleet and redirection of heavily sanctioned crude have created a massive structural cost advantage for Indian refiners and Chinese industrials. By tracking import pain points (FX vs. Brent correlation), we can identify early capitulation risks in emerging markets dependent on dollar-priced energy imports.
                         </p>
                     </div>
@@ -118,7 +111,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Activity className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Refining imbalance</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Global Refining imbalance</h2>
                     </div>
 
                     <div className="w-full">
@@ -129,9 +122,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-uppercase text-blue-400 block mb-2">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed">
+                    <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             Refining capacity is the ultimate bottleneck in the energy transition. The migration of complex refining clusters from West to East represents a fundamental shift in geopolitical leverage, as refined product arbitrage now dictates regional inflation trajectories more than crude price itself.
                         </p>
                     </div>
@@ -141,7 +134,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Ship className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Hormuz Tanker Tracking</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Hormuz Tanker Tracking</h2>
                     </div>
 
                     <div className="w-full">
@@ -152,9 +145,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-uppercase text-blue-400 block mb-2">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed">
+                    <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             Monitoring the Strait of Hormuz in real-time allows for the detection of "grey zone" maritime activity. Significant deviations in tanker frequency or insurance risk premiums directly impact the Energy Intensity metrics of the global industrial base.
                         </p>
                     </div>
@@ -164,7 +157,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Activity className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Physical Flows Terminal</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Physical Flows Terminal</h2>
                     </div>
 
                     <div className="w-full">
@@ -175,9 +168,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="mt-8 p-6 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-uppercase text-amber-500 block mb-2">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed">
+                    <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-amber-500 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             This acts as the live ticker for physical stress. Instead of paper markets, tracking the physical delivery networks for critical metals (like Copper and REMs) explicitly fronts the demand impulses of clean tech and defense manufacturing, bypassing financialization noise.
                         </p>
                     </div>
@@ -187,7 +180,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-indigo-400" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">AI Compute & Energy CAPEX</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">AI Compute & Energy CAPEX</h2>
                     </div>
 
                     <div className="w-full">
@@ -198,26 +191,27 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </SectionErrorBoundary>
                     </div>
 
-                    <div className="mt-8 p-6 bg-indigo-500/5 border-l-4 border-indigo-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-uppercase text-indigo-400 block mb-2">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed">
+                    <div className="mt-8 p-8 bg-indigo-500/5 border-l-4 border-indigo-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-indigo-400 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             The Shale Analogy is playing out in real-time. Unprecedented hyperscaler CAPEX is colliding with the physical realities of grid capacity and transformer backlogs. Tracking server energy intensity vs hardware rental costs reveals exactly when oversupply hits the inference layer, while base-load power remains the ultimate bottleneck.
                         </p>
                     </div>
                 </section>
             </div>
 
-            <Box sx={{ mt: 16, pt: 8, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+            <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
-                    variant="text"
-                    startIcon={<ArrowLeft size={18} />}
-                    href="/macro-observatory"
-                    sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 900, '&:hover': { color: 'white' } }}
+                    variant="ghost"
+                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+                    asChild
                 >
-                    Back to Observatory
+                    <a href="/macro-observatory" className="flex items-center gap-2">
+                        <ArrowLeft size={18} /> Back to Observatory
+                    </a>
                 </Button>
-            </Box>
-        </Container>
+            </div>
+        </div>
     );
 };
 
