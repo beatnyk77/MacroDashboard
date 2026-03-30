@@ -103,7 +103,7 @@ export const YieldCurveMonitor: React.FC = () => {
     }
 
     return (
-        <SPASection id="yield-curve-monitor" className="py-24" disableAnimation>
+        <SPASection id="yield-curve-monitor" className="py-16" disableAnimation>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -111,12 +111,12 @@ export const YieldCurveMonitor: React.FC = () => {
                 viewport={{ once: true }}
             >
                 {/* Header */}
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
                     <SectionHeader
                         title="Yield Curve Monitor"
                         subtitle="Government bond yield curves across major economies — inversion & steepening signals"
                     />
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-3">
                         {COUNTRIES.map(c => {
                             const g = gauges[c];
                             if (!g) return null;
@@ -132,16 +132,16 @@ export const YieldCurveMonitor: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main grid: chart + gauges */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main container: full-width chart + gauge grid below */}
+                <div className="flex flex-col gap-10">
                     {/* ── Hero Chart ───────────────────────────────────── */}
-                    <Card variant="elevated" className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group">
-                        <div className="flex items-center justify-between mb-6">
+                    <Card variant="elevated" className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-6 relative overflow-hidden">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                             <div>
                                 <h3 className="text-xs font-black text-white/40 uppercase tracking-uppercase">
                                     Sovereign Yield Curves
                                 </h3>
-                                <p className="text-xs text-muted-foreground/60 mt-1">
+                                <p className="text-xs text-muted-foreground/60 mt-0.5">
                                     x = Tenor · y = Yield (%) · Lines = Countries
                                 </p>
                             </div>
@@ -153,29 +153,29 @@ export const YieldCurveMonitor: React.FC = () => {
                         </div>
 
                         {/* Legend */}
-                        <div className="flex flex-wrap gap-6 mb-4">
+                        <div className="flex flex-wrap gap-x-6 gap-y-2 mb-4 justify-center sm:justify-start">
                             {COUNTRIES.map(c => (
                                 <div key={c} className="flex items-center gap-2">
                                     <div className="w-3 h-[3px] rounded-full" style={{ backgroundColor: COUNTRY_CONFIG[c].color }} />
-                                    <span className="text-xs font-bold text-muted-foreground/60">{COUNTRY_CONFIG[c].flag} {COUNTRY_CONFIG[c].label}</span>
+                                    <span className="text-[11px] font-medium text-white/70">{COUNTRY_CONFIG[c].label}</span>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="h-[420px] w-full">
+                        <div className="h-[600px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
+                                <LineChart data={chartData} margin={{ top: 20, right: 60, left: 20, bottom: 30 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
                                     <XAxis
                                         dataKey="tenor"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 700 }}
+                                        tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.4)', fontWeight: 600 }}
                                     />
                                     <YAxis
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)' }}
+                                        tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.3)', fontWeight: 500 }}
                                         tickFormatter={(val: number) => `${val.toFixed(1)}%`}
                                         domain={['auto', 'auto']}
                                     />
@@ -187,9 +187,9 @@ export const YieldCurveMonitor: React.FC = () => {
                                             dataKey={c}
                                             name={COUNTRY_CONFIG[c].label}
                                             stroke={COUNTRY_CONFIG[c].color}
-                                            strokeWidth={2.5}
-                                            dot={{ r: 4, strokeWidth: 0, fill: COUNTRY_CONFIG[c].color }}
-                                            activeDot={{ r: 6, strokeWidth: 0 }}
+                                            strokeWidth={3}
+                                            dot={{ r: 5, strokeWidth: 0, fill: COUNTRY_CONFIG[c].color }}
+                                            activeDot={{ r: 7, strokeWidth: 0 }}
                                             connectNulls={false}
                                         />
                                     ))}
@@ -198,8 +198,8 @@ export const YieldCurveMonitor: React.FC = () => {
                         </div>
                     </Card>
 
-                    {/* ── Gauge Cards ──────────────────────────────────── */}
-                    <div className="flex flex-col gap-6">
+                    {/* ── Gauge Cards Grid ─────────────────────────────── */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {COUNTRIES.map(c => {
                             const g = gauges[c];
                             if (!g) return null;
@@ -220,10 +220,10 @@ export const YieldCurveMonitor: React.FC = () => {
                 </div>
 
                 {/* Source footer */}
-                <div className="mt-12 flex justify-center">
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
-                        <Info size={14} className="text-blue-400" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase text-center">
+                <div className="mt-10 flex justify-center">
+                    <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/5">
+                        <Info size={13} className="text-blue-400" />
+                        <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-uppercase text-center">
                             Sources: FRED · ECB SDW · RBI DBIE — updated daily
                         </span>
                     </div>
@@ -235,10 +235,10 @@ export const YieldCurveMonitor: React.FC = () => {
 
 /* ── Status Chip ──────────────────────────────────────────────── */
 const StatusChip = ({ label, status, color }: { label: string; status: string; color: 'rose' | 'amber' | 'emerald' }) => (
-    <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
+    <div className="px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-0.5">
+        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
         <span className={cn(
-            "text-xs font-black uppercase tracking-heading",
+            "text-[11px] font-black uppercase tracking-heading",
             color === 'rose' ? "text-rose-500" : color === 'amber' ? "text-amber-500" : "text-emerald-500"
         )}>{status}</span>
     </div>
@@ -255,60 +255,60 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
     source: string;
 }) => (
     <motion.div whileHover={{ y: -2 }}>
-        <Card variant="elevated" className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] group cursor-default">
+        <Card variant="elevated" className="p-4 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] group cursor-default h-full">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-                <span className="text-lg">{config.flag}</span>
-                <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">{country}</span>
+        <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5">
+                <span className="text-base">{config.flag}</span>
+                <span className="text-[10px] font-black text-white/60 uppercase tracking-uppercase">{country}</span>
             </div>
             <div className="flex items-center gap-1">
-                <span className="text-xl font-black tabular-nums" style={{ color: config.color }}>{y10y}%</span>
-                <span className="text-xs font-bold text-muted-foreground/40 uppercase">10Y</span>
+                <span className="text-lg font-black tabular-nums" style={{ color: config.color }}>{y10y}%</span>
+                <span className="text-[10px] font-bold text-muted-foreground/40 uppercase">10Y</span>
             </div>
         </div>
 
         {/* Metrics */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
             {/* Slope */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <TrendingUp size={14} className="text-blue-400" />
-                    <span className="text-xs font-bold text-muted-foreground/60">Slope (30Y−3M)</span>
+                <div className="flex items-center gap-1.5">
+                    <TrendingUp size={12} className="text-blue-400" />
+                    <span className="text-[10px] font-bold text-muted-foreground/60">Slope (30Y−3M)</span>
                 </div>
                 <span className={cn(
-                    "text-sm font-black tabular-nums",
+                    "text-xs font-black tabular-nums",
                     parseFloat(slope) > 0 ? "text-emerald-400" : parseFloat(slope) < 0 ? "text-rose-500" : "text-white/40"
                 )}>
                     {slope !== '—' ? `${parseFloat(slope) > 0 ? '+' : ''}${slope}` : '—'}
-                    <span className="text-xs font-bold text-muted-foreground/40 ml-1">bps</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/40 ml-1">bps</span>
                 </span>
             </div>
 
             {/* Term Premium Glossary Link */}
-            <Link to="/glossary/term-premium" className="flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-uppercase transition-colors mb-2">
-                <BookOpen size={10} /> Read Term Premium Definition
+            <Link to="/glossary/term-premium" className="flex items-center gap-1 text-[10px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-uppercase transition-colors">
+                <BookOpen size={9} /> Term Premium
             </Link>
 
             {/* 2s10s Spread */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                     {inverted
-                        ? <AlertTriangle size={14} className="text-rose-500" />
-                        : <TrendingDown size={14} className="text-amber-400" />
+                        ? <AlertTriangle size={12} className="text-rose-500" />
+                        : <TrendingDown size={12} className="text-amber-400" />
                     }
-                    <span className="text-xs font-bold text-muted-foreground/60">2Y−10Y Spread</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/60">2Y−10Y</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                     <span className={cn(
-                        "text-sm font-black tabular-nums",
+                        "text-xs font-black tabular-nums",
                         inverted ? "text-rose-500" : "text-emerald-400"
                     )}>
                         {spread !== '—' ? `${parseFloat(spread) > 0 ? '+' : ''}${spread}` : '—'}
                     </span>
                     {inverted && (
-                        <span className="text-xs font-black px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 uppercase">
-                            Inverted
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 uppercase">
+                            Inv
                         </span>
                     )}
                 </div>
@@ -316,9 +316,9 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
         </div>
 
         {/* Footer */}
-        <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
-            <span className="text-xs font-black text-white/15 uppercase tracking-uppercase">{config.label}</span>
-            <span className="text-xs font-bold text-muted-foreground/30 uppercase">{source}</span>
+        <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
+            <span className="text-[10px] font-black text-white/15 uppercase tracking-uppercase">{config.label}</span>
+            <span className="text-[10px] font-bold text-muted-foreground/30 uppercase">{source}</span>
         </div>
     </Card>
 </motion.div>
