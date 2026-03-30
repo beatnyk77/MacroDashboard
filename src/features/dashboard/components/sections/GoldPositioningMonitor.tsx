@@ -1,20 +1,18 @@
 import React, { useMemo } from 'react';
-import { Box, Typography, Grid, alpha, useTheme, Tooltip as MuiTooltip } from '@mui/material';
+import { Box, Typography, Grid, alpha, Tooltip as MuiTooltip } from '@mui/material';
 import {
     Activity,
-    ShieldAlert,
     Layers,
     Zap,
     Info
 } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, AreaChart, Area, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, AreaChart, Area, CartesianGrid, Cell } from 'recharts';
 import { useGoldPositioning } from '@/hooks/useGoldPositioning';
 import { MotionCard } from '@/components/MotionCard';
 
 
 export const GoldPositioningMonitor: React.FC = () => {
     const { data: historyData, isLoading } = useGoldPositioning();
-    const theme = useTheme();
 
     if (isLoading || !historyData || historyData.length === 0) return null;
 
@@ -84,12 +82,6 @@ export const GoldPositioningMonitor: React.FC = () => {
         );
     };
 
-    // Color thresholds for basis spread
-    const getBasisColor = (value: number) => {
-        if (value > 10) return '#34d399'; // emerald - strong physical premium
-        if (value < -10) return '#f43f5e'; // rose - strong paper premium
-        return '#0ea5e9'; // sky - neutral
-    };
 
     return (
         <Box sx={{ mb: 12 }}>
