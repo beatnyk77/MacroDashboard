@@ -38,10 +38,10 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                             <ShieldCheck className="text-cyan-400" size={24} />
                         </div>
                         <div>
-                            <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic">
+                            <h3 className="text-3xl font-black text-white uppercase tracking-heading italic">
                                 {country.country_name}
                             </h3>
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
                                 Sovereign Exposure Profile
                             </span>
                         </div>
@@ -62,7 +62,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                     <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
                         <div className="flex items-center gap-2 mb-3">
                             <Info size={14} className="text-cyan-400" />
-                            <span className="text-xs font-black text-white uppercase tracking-widest">Macro Context</span>
+                            <span className="text-xs font-black text-white uppercase tracking-uppercase">Macro Context</span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed italic">
                             {country.country_name} remains a {country.pct_of_total_foreign && country.pct_of_total_foreign > 2 ? 'major' : 'significant'} pillar of UST liquidity.
@@ -76,7 +76,7 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                 <div className="flex-1 min-h-[250px] bg-black/40 rounded-3xl border border-white/5 overflow-hidden p-6 relative">
                     <div className="absolute top-6 left-6 z-10">
                         <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.22em] block mb-1">UST Accumulation Path</span>
-                        <span className="text-xs font-bold text-white tracking-widest uppercase">Historical Trend (LTM+)</span>
+                        <span className="text-xs font-bold text-white tracking-uppercase uppercase">Historical Trend (LTM+)</span>
                     </div>
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={history}>
@@ -109,11 +109,11 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
 
 const StatItem = ({ label, value, sub, color = "text-white", icon }: any) => (
     <div className="flex flex-col gap-1">
-        <span className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none">{label}</span>
+        <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase leading-none">{label}</span>
         <div className="flex items-center gap-2">
             <span className={cn("text-xl font-black tabular-nums", color)}>{value}</span>
             {icon}
         </div>
-        {sub && <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-tighter">{sub}</span>}
+        {sub && <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-heading">{sub}</span>}
     </div>
 );

@@ -35,21 +35,21 @@ export const CompactChinaCard: React.FC = () => {
 
                 <div className="flex flex-wrap gap-8 items-center bg-white/[0.02] p-6 rounded-xl border border-white/5">
                     <div>
-                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">Credit Impulse</div>
+                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mb-1">Credit Impulse</div>
                         <div className={cn("text-2xl font-black tabular-nums", creditImpulse > 0 ? "text-emerald-500" : "text-rose-500")}>
                             {creditImpulse > 0 ? '+' : ''}{creditImpulse.toFixed(1)}
                             <span className="text-xs ml-1 text-muted-foreground/50 uppercase">%</span>
                         </div>
                     </div>
                     <div>
-                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">1Y LPR</div>
+                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mb-1">1Y LPR</div>
                         <div className="text-2xl font-black tabular-nums text-white">
                             {policyRate.toFixed(2)}
                             <span className="text-xs ml-1 text-muted-foreground/50 uppercase">%</span>
                         </div>
                     </div>
                     <div>
-                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-1">USD/CNY</div>
+                        <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mb-1">USD/CNY</div>
                         <div className="text-2xl font-black tabular-nums text-rose-400">
                             {usdCny.toFixed(2)}
                         </div>

@@ -21,13 +21,13 @@ export const RegionalImbalanceGauge: React.FC<{ className?: string }> = ({ class
         <div className={cn("p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-sm flex flex-col h-full", className)}>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h3 className="text-sm font-black text-blue-500 uppercase tracking-widest flex items-center gap-2">
+                    <h3 className="text-sm font-black text-blue-500 uppercase tracking-uppercase flex items-center gap-2">
                         <ArrowRightLeft size={14} /> Regional Imbalance
                     </h3>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-tight mt-1">West vs East Capacity Drift</p>
+                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-heading mt-1">West vs East Capacity Drift</p>
                 </div>
                 {isBreach && (
-                    <div className="px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-rose-500 text-xs font-black uppercase tracking-widest animate-pulse">
+                    <div className="px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-rose-500 text-xs font-black uppercase tracking-uppercase animate-pulse">
                         Critical Breach
                     </div>
                 )}
@@ -56,26 +56,26 @@ export const RegionalImbalanceGauge: React.FC<{ className?: string }> = ({ class
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-4">
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">West Closures</span>
+                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">West Closures</span>
                             <div className="text-lg font-black text-rose-500 italic">
                                 {west?.closure_count || 0} <span className="text-xs not-italic opacity-40">Assets</span>
                             </div>
                         </div>
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-right">
-                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Avg Utilization</span>
+                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Avg Utilization</span>
                             <div className="text-lg font-black text-white italic">{Math.round(west?.avg_utilization || 0)}%</div>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
-                            <span className="text-xs font-black text-blue-500/50 uppercase tracking-widest block mb-1">East Expansion</span>
+                            <span className="text-xs font-black text-blue-500/50 uppercase tracking-uppercase block mb-1">East Expansion</span>
                             <div className="text-lg font-black text-blue-400 italic">
                                 +{east?.expansion_count || 0} <span className="text-xs not-italic opacity-40">Active</span>
                             </div>
                         </div>
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-right">
-                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Avg Utilization</span>
+                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Avg Utilization</span>
                             <div className="text-lg font-black text-emerald-400 italic">{Math.round(east?.avg_utilization || 0)}%</div>
                         </div>
                     </div>

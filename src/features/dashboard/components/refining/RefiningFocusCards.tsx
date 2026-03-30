@@ -15,7 +15,7 @@ const FocusCard: React.FC<{
     return (
         <div className="p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 backdrop-blur-sm space-y-6">
             <div className="flex items-center justify-between">
-                <h4 className="text-lg font-black text-white uppercase tracking-tighter">{country} <span className="text-blue-500">Focus</span></h4>
+                <h4 className="text-lg font-black text-white uppercase tracking-heading">{country} <span className="text-blue-500">Focus</span></h4>
                 <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
                     <Shield size={16} className="text-blue-500" />
                 </div>
@@ -23,7 +23,7 @@ const FocusCard: React.FC<{
 
             <div className="space-y-4">
                 <div>
-                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-2">Import Dependency Correlation</span>
+                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-2">Import Dependency Correlation</span>
                     <div className="flex items-end gap-2">
                         <div className="text-3xl font-black text-white italic leading-none">{correlation.toFixed(2)}</div>
                         <div className="text-xs font-bold text-emerald-400 uppercase pb-1 flex items-center gap-1">
@@ -34,9 +34,9 @@ const FocusCard: React.FC<{
 
                 <div className="pt-4 border-t border-white/5">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest">Cap Utilization</span>
+                        <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">Cap Utilization</span>
                         <span className={cn(
-                            "text-xs font-black uppercase tracking-widest px-1.5 py-0.5 rounded",
+                            "text-xs font-black uppercase tracking-uppercase px-1.5 py-0.5 rounded",
                             isOverMedian ? "text-blue-400 bg-blue-500/10" : "text-amber-400 bg-amber-500/10"
                         )}>
                             {isOverMedian ? "Above Median" : "Below Median"}

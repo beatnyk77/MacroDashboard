@@ -11,7 +11,8 @@ import {
     ReferenceLine,
     Brush,
 } from 'recharts';
-import { Box, Button, Card, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Button, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { Card } from '@/components/ui/card';
 import { ZoomOut, Maximize2 } from 'lucide-react';
 import { useGoldReturns } from '@/hooks/useGoldReturns';
 
@@ -21,89 +22,36 @@ const CustomTooltip = ({ active, payload }: any) => {
     const data = payload[0].payload;
 
     return (
-        <Card sx={{
-            p: 2,
-            bgcolor: 'rgba(0,0,0,0.95)',
-            border: '1px solid rgba(255,215,0,0.3)',
-            backdropFilter: 'blur(10px)',
-            maxWidth: 280
-        }}>
-            <Typography variant="caption" sx={{
-                color: 'text.secondary',
-                display: 'block',
-                fontFamily: 'monospace',
-                fontSize: '0.65rem',
-                mb: 0.5
-            }}>
+        <Card variant="default" className="bg-slate-950/90 border border-white/12 backdrop-blur-xl max-w-[280px] p-2">
+            <p className="text-xs font-mono text-muted-foreground/60 mb-0.5">
                 {data.formattedDate}
-            </Typography>
+            </p>
 
-            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1 }}>
-                <Typography variant="h5" sx={{
-                    color: data.return_pct >= 0 ? 'success.main' : 'error.main',
-                    fontWeight: 900,
-                    fontFamily: 'monospace'
-                }}>
+            <div className="flex items-baseline gap-1 mb-1">
+                <h5 className={`text-lg font-black font-mono ${data.return_pct >= 0 ? 'text-success' : 'text-error'}`}>
                     {data.return_pct >= 0 ? '+' : ''}{data.return_pct.toFixed(2)}%
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.6rem' }}>
-                    Monthly Return
-                </Typography>
-            </Box>
+                </h5>
+                <span className="text-xs text-muted-foreground/50">Monthly Return</span>
+            </div>
 
-            <Typography variant="caption" sx={{
-                color: 'text.secondary',
-                display: 'block',
-                fontSize: '0.65rem',
-                fontFamily: 'monospace'
-            }}>
+            <p className="text-xs font-mono text-muted-foreground/60">
                 Gold: ${data.gold_price?.toFixed(2)}/oz
-            </Typography>
+            </p>
 
             {data.event_name && (
-                <Box sx={{
-                    mt: 1.5,
-                    pt: 1.5,
-                    borderTop: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                    <Typography variant="caption" sx={{
-                        fontWeight: 800,
-                        color: 'warning.main',
-                        display: 'block',
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.05em',
-                        textTransform: 'uppercase',
-                        mb: 0.5
-                    }}>
+                <div className="mt-4 pt-4 border-t border-white/10">
+                    <p className="text-xs font-black text-warning mb-1 uppercase tracking-uppercase">
                         ⚡ {data.event_name}
-                    </Typography>
-                    <Typography variant="caption" sx={{
-                        display: 'block',
-                        color: 'text.secondary',
-                        fontSize: '0.65rem',
-                        lineHeight: 1.4
-                    }}>
+                    </p>
+                    <p className="text-xs text-muted-foreground/60 leading-relaxed">
                         {data.event_description}
-                    </Typography>
+                    </p>
                     {data.macro_regime && (
-                        <Box sx={{
-                            mt: 1,
-                            px: 1,
-                            py: 0.5,
-                            bgcolor: 'rgba(255,255,255,0.05)',
-                            borderRadius: 0.5,
-                            display: 'inline-block'
-                        }}>
-                            <Typography variant="caption" sx={{
-                                fontSize: '0.6rem',
-                                fontFamily: 'monospace',
-                                color: 'text.disabled'
-                            }}>
-                                {data.macro_regime}
-                            </Typography>
-                        </Box>
+                        <span className="inline-block mt-1 px-1 py-0.5 bg-white/5 rounded text-xs font-mono text-muted-foreground/50">
+                            {data.macro_regime}
+                        </span>
                     )}
-                </Box>
+                </div>
             )}
         </Card>
     );

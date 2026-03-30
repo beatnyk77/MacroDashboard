@@ -56,7 +56,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
             <div className="absolute top-4 left-4 z-10 flex items-center gap-3">
                 <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12 flex items-center gap-2">
                     <Activity className="w-3 h-3 text-emerald-400" />
-                    <span className="text-xs font-black text-white uppercase tracking-widest">
+                    <span className="text-xs font-black text-white uppercase tracking-uppercase">
                         Live Event Feed
                     </span>
                 </div>
@@ -74,7 +74,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                         <AlertCircle className="w-3 h-3 text-amber-400" />
                     )}
                     <span className={cn(
-                        "text-xs font-bold uppercase tracking-widest",
+                        "text-xs font-bold uppercase tracking-uppercase",
                         ingestionSuccess ? "text-emerald-400" : "text-amber-400"
                     )}>
                         {ingestionSuccess ? 'Feed Active' : 'Feed Degraded'}
@@ -98,7 +98,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
             {/* Event Count Badge */}
             {hasEvents && (
                 <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12">
-                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-0.5">
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-0.5">
                         Active Events
                     </div>
                     <div className="text-2xl font-black text-white tabular-nums">
@@ -179,7 +179,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                             {eventIcons[hoveredEvent.type] || eventIcons.default}
                         </div>
                         <div className="flex-1">
-                            <div className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">
+                            <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-1">
                                 {hoveredEvent.type}
                             </div>
                             <div className="text-sm font-bold text-white mb-2 line-clamp-2">
@@ -200,7 +200,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                         {isFeedAvailable ? (
                             <>
                                 <Activity className="w-12 h-12 text-emerald-500/30 mx-auto mb-4" />
-                                <h3 className="text-lg font-black text-white uppercase tracking-widest mb-2">
+                                <h3 className="text-lg font-black text-white uppercase tracking-uppercase mb-2">
                                     All Quiet
                                 </h3>
                                 <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
@@ -213,7 +213,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                         ) : (
                             <>
                                 <AlertCircle className="w-12 h-12 text-amber-500/30 mx-auto mb-4" />
-                                <h3 className="text-lg font-black text-white uppercase tracking-widest mb-2">
+                                <h3 className="text-lg font-black text-white uppercase tracking-uppercase mb-2">
                                     Feed Unavailable
                                 </h3>
                                 <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
@@ -233,7 +233,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                 <div className="absolute inset-0 flex items-center justify-center z-10 bg-slate-950/80 backdrop-blur-sm">
                     <div className="text-center">
                         <Activity className="w-12 h-12 text-blue-500 mx-auto mb-4 animate-pulse" />
-                        <p className="text-sm font-black text-muted-foreground uppercase tracking-widest">
+                        <p className="text-sm font-black text-muted-foreground uppercase tracking-uppercase">
                             Scanning Global Events...
                         </p>
                     </div>

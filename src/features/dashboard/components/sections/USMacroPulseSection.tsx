@@ -94,8 +94,8 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
         <div className="group/row flex flex-col md:flex-row items-center gap-6 py-6 px-4 hover:bg-white/[0.02] transition-all duration-300">
             {/* Label Block */}
             <div className="w-full md:w-56 space-y-1 shrink-0">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{config.label}</div>
-                <div className="text-xs font-bold text-white/30 uppercase tracking-tighter">{config.unit}</div>
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{config.label}</div>
+                <div className="text-xs font-bold text-white/30 uppercase tracking-heading">{config.unit}</div>
             </div>
 
             {/* Sparkline Block */}
@@ -120,17 +120,17 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                     </AreaChart>
                 </ResponsiveContainer>
                 {/* 25Y context label floating inside sparkline */}
-                <div className="absolute top-0 right-0 text-[0.45rem] font-black text-white/10 uppercase tracking-widest pointer-events-none">25-YEAR CONTEXT</div>
+                <div className="absolute top-0 right-0 text-xs font-black text-white/10 uppercase tracking-uppercase pointer-events-none">25-YEAR CONTEXT</div>
             </div>
 
             {/* Value Block */}
             <div className="w-full md:w-48 flex items-center justify-between md:justify-end gap-6 shrink-0">
                 <div className="text-right">
-                    <div className="text-2xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                    <div className="text-2xl font-black text-white tracking-heading tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                         {data.current_value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                     </div>
                     <div className={cn(
-                        "text-xs font-black tabular-nums tracking-tight flex items-center justify-end gap-1",
+                        "text-xs font-black tabular-nums tracking-heading flex items-center justify-end gap-1",
                         isPositive ? "text-emerald-500" : "text-rose-500"
                     )}>
                         {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -148,7 +148,7 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                                     "text-emerald-500 bg-emerald-500"
                     )} />
                     {data.isStale && (
-                        <span className="text-xs font-black text-amber-500/60 uppercase tracking-tighter">Delay</span>
+                        <span className="text-xs font-black text-amber-500/60 uppercase tracking-heading">Delay</span>
                     )}
                 </div>
             </div>
@@ -208,7 +208,7 @@ export const USMacroPulseSection: React.FC = () => {
                                     <span className="w-8 h-px" style={{ backgroundColor: cat.color }} />
                                     {cat.label}
                                 </h3>
-                                <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-widest mt-0.5">
+                                <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-uppercase mt-0.5">
                                     Institutional Regime Monitoring
                                     {cat.metrics.some(m => pulseData.find(pd => pd.metric_id === m)?.isStale) && (
                                         <span className="ml-2 text-amber-500/80 font-black">• DATA DELAYED</span>
@@ -241,7 +241,7 @@ export const USMacroPulseSection: React.FC = () => {
                     <ActivityIcon color="#3b82f6" size={16} />
                 </div>
                 <div>
-                    <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Institutional Note:</span>
+                    <span className="text-xs font-bold text-blue-400 uppercase tracking-uppercase">Institutional Note:</span>
                     <p className="text-xs text-muted-foreground/50 leading-relaxed mt-1">
                         All sparklines represent 25-year indexed historical distribution. Current levels are benchmarked against 3-year rolling standard deviations (Z-Scores) to identify regime instability. Sources include FRED, US Treasury, and BLS.
                     </p>

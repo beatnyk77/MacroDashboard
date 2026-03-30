@@ -24,7 +24,7 @@ export const FYP_MissionControlRadar: React.FC = () => {
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-2">
                         <Target className="text-red-500" size={18} />
-                        <h3 className="text-sm font-black uppercase tracking-widest text-white">Mission Control Radar</h3>
+                        <h3 className="text-sm font-black uppercase tracking-uppercase text-white">Mission Control Radar</h3>
                     </div>
                     <Info size={14} className="text-muted-foreground/30 cursor-help" />
                 </div>
@@ -51,7 +51,7 @@ export const FYP_MissionControlRadar: React.FC = () => {
                 <div className="mt-6 grid grid-cols-2 gap-2">
                     {pillars.slice(0, 4).map(p => (
                         <div key={p.id} className="p-2 bg-white/5 rounded-lg border border-white/5">
-                            <div className="text-xs font-black text-muted-foreground/60 uppercase tracking-tighter">{p.label}</div>
+                            <div className="text-xs font-black text-muted-foreground/60 uppercase tracking-heading">{p.label}</div>
                             <div className="flex items-center justify-between">
                                 <div className="text-xs font-bold text-white uppercase">{p.value_target}</div>
                                 <div className="text-xs font-black text-red-400">Idx: {p.impact_score}</div>

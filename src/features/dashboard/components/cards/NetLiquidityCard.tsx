@@ -25,7 +25,7 @@ export const NetLiquidityCard: React.FC = () => {
             methodology={
                 <div className="space-y-2">
                     <p>Institutional Formula: (Fed Assets - Treasury General Account Balance - Reverse Repo). Z-Score provides the deviation from the 3-year trend.</p>
-                    <Link to="/glossary/net-liquidity-z-score" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-wider mt-2 transition-colors">
+                    <Link to="/glossary/net-liquidity-z-score" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-uppercase mt-2 transition-colors">
                         <BookOpen size={14} /> Read Full Definition
                     </Link>
                 </div>

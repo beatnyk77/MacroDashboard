@@ -116,12 +116,12 @@ export const TradeFlowsCard: React.FC = () => {
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 mb-2">
                             <Crown className="w-4 h-4 text-amber-500" />
-                            <span className="text-xs font-black uppercase tracking-[0.3em] text-amber-500/80 shadow-amber-500/20 drop-shadow-sm">
+                            <span className="text-xs font-black uppercase tracking-uppercase text-amber-500/80 shadow-amber-500/20 drop-shadow-sm">
                                 Imperial Resource Flow
                             </span>
                         </div>
                         <div className="flex items-center gap-4">
-                            <CardTitle className="text-3xl font-bold tracking-tight text-white">Global Trade Architecture</CardTitle>
+                            <CardTitle className="text-3xl font-bold tracking-heading text-white">Global Trade Architecture</CardTitle>
                             {latestStat && (
                                 <div className="flex items-center gap-2 text-xs font-mono font-bold text-muted-foreground/60 bg-white/5 px-2 py-1 rounded-md border border-white/5">
                                     <Calendar className="w-3 h-3" />
@@ -155,11 +155,11 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* 4xl Primaries */}
                         <div className="space-y-8">
                             <div className="group">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-primary">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50 block mb-2 transition-colors group-hover:text-primary">
                                     Annualized Exports (USD)
                                 </span>
                                 <div className="flex items-baseline gap-3">
-                                    <span className="text-5xl font-black tracking-tighter transition-transform group-hover:scale-[1.02] inline-block text-white">
+                                    <span className="text-5xl font-black tracking-heading transition-transform group-hover:scale-[1.02] inline-block text-white">
                                         ${latestStat?.exports_usd_bn}B
                                     </span>
                                     {latestStat?.exports_yoy_pct && (
@@ -175,22 +175,22 @@ export const TradeFlowsCard: React.FC = () => {
                             </div>
 
                             <div className="group">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2 transition-colors group-hover:text-amber-500">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50 block mb-2 transition-colors group-hover:text-amber-500">
                                     Annualized Imports (USD)
                                 </span>
                                 <div className="flex items-baseline gap-3">
-                                    <span className="text-5xl font-black tracking-tighter transition-transform group-hover:scale-[1.02] inline-block text-white/90">
+                                    <span className="text-5xl font-black tracking-heading transition-transform group-hover:scale-[1.02] inline-block text-white/90">
                                         ${latestStat?.imports_usd_bn}B
                                     </span>
                                 </div>
                             </div>
 
                             <div className="pt-6 border-t border-white/5">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-2">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50 block mb-2">
                                     Trade Balance
                                 </span>
                                 <div className={cn(
-                                    "text-3xl font-black tracking-tight",
+                                    "text-3xl font-black tracking-heading",
                                     (latestStat?.trade_balance_usd_bn || 0) >= 0 ? "text-emerald-400" : "text-rose-400"
                                 )}>
                                     {(latestStat?.trade_balance_usd_bn || 0) >= 0 ? '+' : ''}${latestStat?.trade_balance_usd_bn}B
@@ -203,7 +203,7 @@ export const TradeFlowsCard: React.FC = () => {
                             <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-full pointer-events-none" />
                             <div className="flex items-center gap-2 mb-6">
                                 <Link className="w-4 h-4 text-amber-400" />
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-amber-400/80">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-amber-400/80">
                                     Strategic Alliances
                                 </span>
                             </div>
@@ -213,7 +213,7 @@ export const TradeFlowsCard: React.FC = () => {
                                         <div key={key} className="flex items-start justify-between group">
                                             <div>
                                                 <div className="text-sm font-bold text-white/80 transition-colors group-hover:text-white">{key.replace('_', ' ')}</div>
-                                                <div className="text-xs text-muted-foreground/50 font-bold uppercase tracking-wider">{data.status}</div>
+                                                <div className="text-xs text-muted-foreground/50 font-bold uppercase tracking-uppercase">{data.status}</div>
                                             </div>
                                             {data.impact_yoy && (
                                                 <div className="text-emerald-400 text-xs font-black">
@@ -231,7 +231,7 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* Tariff Gauge */}
                         <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5">
                             <div>
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 block mb-1">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50 block mb-1">
                                     Avg. Weighted Tariff
                                 </span>
                                 <div className="text-2xl font-black font-mono">
@@ -253,7 +253,7 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* Geography Share (Sankey) */}
                         <div className="h-[400px] relative">
                             <div className="absolute top-0 left-0 z-10">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50">
                                     Bilateral Volume Flow
                                 </span>
                             </div>
@@ -276,7 +276,7 @@ export const TradeFlowsCard: React.FC = () => {
                         {/* Historical Trend (Line Chart) */}
                         <div className="h-[300px] relative">
                             <div className="absolute top-0 left-0 z-10 flex items-center gap-4">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50">
                                     Export vs Import Trajectory
                                 </span>
                                 <div className="flex items-center gap-3">
@@ -351,7 +351,7 @@ export const TradeFlowsCard: React.FC = () => {
                             )}>
                                 {insight.type === 'negative' ? <AlertTriangle className="w-5 h-5 text-rose-500" /> : <TrendingUp className="w-5 h-5 text-emerald-500" />}
                                 <div className="space-y-0.5">
-                                    <span className={cn("text-xs font-black uppercase tracking-wider", insight.type === 'negative' ? "text-rose-400" : "text-emerald-400")}>
+                                    <span className={cn("text-xs font-black uppercase tracking-uppercase", insight.type === 'negative' ? "text-rose-400" : "text-emerald-400")}>
                                         {insight.metric || 'Insight'} Alert
                                     </span>
                                     <p className="text-sm font-medium text-white/90 leading-tight">

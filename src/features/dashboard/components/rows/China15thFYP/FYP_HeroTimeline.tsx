@@ -33,7 +33,7 @@ export const FYP_HeroTimeline: React.FC = () => {
 
                         {/* Event Content */}
                         <div className="text-center space-y-2 p-4 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.05] transition-all group-hover:border-red-500/30">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-red-400">
+                            <h4 className="text-xs font-black uppercase tracking-uppercase text-red-400">
                                 {ms.value_target}
                             </h4>
                             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">

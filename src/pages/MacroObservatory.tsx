@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
     Activity,
@@ -14,6 +13,7 @@ import {
     Leaf
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 
 const labs = [
     { title: 'US Corporate Terminal', path: '/us-equities', icon: <Building2 size={24} />, color: 'blue', desc: 'SEC EDGAR fundamentals, whale tracking & insider conviction' },
@@ -42,65 +42,72 @@ export const MacroObservatory: React.FC = () => {
 
     return (
         <div className="min-h-screen pt-24 pb-32">
-            <Container maxWidth="lg">
-                <Box sx={{ mb: 16, textAlign: 'center' }}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+                <div className="mb-16 text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-8"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8"
                     >
                         <Search size={14} /> Intelligence Network
                     </motion.div>
-                    <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', mb: 3, fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9 }}>
+                    
+                    <h1 className="text-4xl md:text-7xl font-black uppercase mb-3 letter-spacing-tight tracking-heading leading-none text-white">
                         Macro <span className="text-blue-500">Observatory</span>
-                    </Typography>
-                    <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '700px', mx: 'auto', fontWeight: 500, lineHeight: 1.5, fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                    </h1>
+                    
+                    <p className="text-muted-foreground/60 text-lg md:text-xl font-medium max-w-2xl mx-auto uppercase tracking-wide leading-relaxed">
                         Access specialized research labs. Institutional-grade telemetry across global credit, currency, and commodity regimes.
-                    </Typography>
-                </Box>
+                    </p>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {labs.map((lab, index) => (
-                        <motion.button
+                        <motion.div
                             key={lab.path}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            onClick={() => navigate(lab.path)}
-                            className="group text-left p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/20 transition-all hover:bg-white/[0.04] relative overflow-hidden flex flex-col h-full"
                         >
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 ${colorMap[lab.color]}`}>
-                                {lab.icon}
-                            </div>
+                            <Card 
+                                variant="elevated" 
+                                className="group cursor-pointer h-full border-white/5 bg-white/[0.02] flex flex-col transition-all duration-300 hover:bg-white/[0.04] p-2"
+                                onClick={() => navigate(lab.path)}
+                            >
+                                <CardHeader>
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${colorMap[lab.color]}`}>
+                                        {lab.icon}
+                                    </div>
+                                    <CardTitle className="text-xl group-hover:text-blue-400 transition-colors uppercase">
+                                        {lab.title}
+                                    </CardTitle>
+                                    <CardDescription className="uppercase tracking-wide leading-relaxed flex-1">
+                                        {lab.desc}
+                                    </CardDescription>
+                                </CardHeader>
+                                
+                                <CardFooter className="justify-between border-t border-white/5 py-4">
+                                    <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 group-hover:text-white transition-colors">Enter Lab</span>
+                                    <ChevronRight size={14} className="text-muted-foreground/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                                </CardFooter>
 
-                            <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-blue-400 transition-colors">
-                                {lab.title}
-                            </h3>
-                            <p className="text-muted-foreground/60 text-xs leading-relaxed font-medium flex-1 mb-8 uppercase tracking-wide">
-                                {lab.desc}
-                            </p>
-
-                            <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 group-hover:text-white transition-colors">Enter Lab</span>
-                                <ChevronRight size={14} className="text-muted-foreground/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                            </div>
-
-                            {/* Background decoration */}
-                            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none">
-                                {React.cloneElement(lab.icon as React.ReactElement, { size: 120 })}
-                            </div>
-                        </motion.button>
+                                {/* Background decoration overlay */}
+                                <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none">
+                                    {React.cloneElement(lab.icon as React.ReactElement, { size: 120 })}
+                                </div>
+                            </Card>
+                        </motion.div>
                     ))}
 
                     {/* Coming Soon Card */}
-                    <div className="p-8 rounded-[2rem] border border-white/5 bg-white/[0.01] flex flex-col justify-center items-center text-center opacity-40 border-dashed">
+                    <Card variant="default" className="p-8 border-dashed border-white/5 bg-white/[0.01] flex flex-col justify-center items-center text-center opacity-40">
                         <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
                             <Activity size={24} className="text-white/20" />
                         </div>
-                        <p className="text-xs font-black uppercase tracking-widest text-white/40">New Module Pending</p>
-                    </div>
+                        <p className="text-xs font-black uppercase tracking-uppercase text-white/40">New Module Pending</p>
+                    </Card>
                 </div>
-            </Container>
+            </div>
         </div>
     );
 };

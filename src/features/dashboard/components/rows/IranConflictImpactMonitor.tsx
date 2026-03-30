@@ -32,7 +32,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                    <h2 className="text-2xl font-bold tracking-heading text-foreground flex items-center gap-2">
                         <Globe className="text-orange-500" size={24} />
                         Iran Conflict Impact Monitor
                     </h2>
@@ -56,7 +56,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <Droplet className="text-blue-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">Oil Shock Gauge</span>
+                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">Oil Shock Gauge</span>
                             </div>
                             <Info size={14} className="text-muted-foreground/30 cursor-help" />
                         </div>
@@ -117,7 +117,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <Shield className="text-orange-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">State Risk Heatmap</span>
+                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">State Risk Heatmap</span>
                             </div>
                         </div>
 
@@ -164,7 +164,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <TrendingUp className="text-emerald-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">Resilience Buffer</span>
+                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">Resilience Buffer</span>
                             </div>
                         </div>
 
@@ -219,7 +219,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <History className="text-purple-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">1990 vs 2025 Baseline</span>
+                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">1990 vs 2025 Baseline</span>
                             </div>
                         </div>
 
@@ -257,7 +257,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                         <Info className="text-orange-400" size={20} />
                     </div>
                     <div className="space-y-1">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-orange-400">Strategic Intelligence Summary</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-orange-400">Strategic Intelligence Summary</h4>
                         <p className="text-xs leading-relaxed text-muted-foreground font-medium">
                             <span className="text-foreground font-bold italic">India far more exposed but resilient</span> — $125bn remittances at risk vs $2.4bn in 1990. Oil shock threshold shifted to $80/bbl due to higher imports, however $680bn FX reserves provide 11-month cover (vs 14 days in 1990). Kerala and Tamil Nadu face highest fiscal-remittance risk correlation.
                         </p>

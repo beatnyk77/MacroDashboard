@@ -79,10 +79,11 @@ export const RatioCard: React.FC<RatioCardProps> = ({
 
     const cardContent = (
         <Card
+            variant="metric"
             id={metricId || primaryLabel}
             className={cn(
-                "relative flex flex-col p-5 h-[250px] overflow-hidden transition-all duration-300",
-                "bg-card/40 backdrop-blur-md border-white/12 dark:border-white/5",
+                "relative flex flex-col p-5 h-[250px] overflow-hidden",
+                "backdrop-blur-md border-white/12 dark:border-white/5",
                 "hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/50",
                 isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse",
                 "group"
@@ -97,7 +98,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             <div className="mb-3">
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.12em]">
+                        <span className="text-xs font-bold text-muted-foreground tracking-uppercase">
                             {primaryLabel}
                         </span>
                     </div>
@@ -126,7 +127,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                     </h4>
                 ) : (
                     <>
-                        <h3 className="text-4xl font-extrabold text-foreground tracking-tight">
+                        <h3 className="text-4xl font-extrabold text-foreground tracking-heading">
                             {formattedValue}
                         </h3>
                         {typeof zScore === 'number' && !isNaN(zScore) && Math.abs(zScore) > 2 && (
@@ -143,7 +144,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 {typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
                     <div className="space-y-1">
                         <div className="flex justify-between">
-                            <span className="text-xs font-extrabold text-muted-foreground tracking-wider uppercase">VALUATION PERCENTILE</span>
+                            <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase uppercase">VALUATION PERCENTILE</span>
                             <span className={cn(
                                 "text-xs font-black",
                                 percentile > 90 || percentile < 10 ? "text-amber-500" : "text-primary"

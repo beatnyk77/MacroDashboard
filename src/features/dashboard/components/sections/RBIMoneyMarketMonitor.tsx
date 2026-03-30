@@ -46,7 +46,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
       <div className="w-full h-96 bg-white/[0.02] border border-white/5 rounded-3xl animate-pulse flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Activity className="text-blue-500/20 animate-spin" size={40} />
-          <span className="text-xs font-black text-white/20 uppercase tracking-[0.3em]">Synchronizing RBI Telemetry...</span>
+          <span className="text-xs font-black text-white/20 uppercase tracking-uppercase">Synchronizing RBI Telemetry...</span>
         </div>
       </div>
     );
@@ -55,7 +55,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
   if (isError || !latestLiq) {
     return (
       <div className="w-full h-48 bg-rose-500/5 border border-rose-500/10 rounded-3xl flex items-center justify-center">
-        <span className="text-xs text-rose-500 font-bold tracking-widest uppercase">Failed to load RBI Data</span>
+        <span className="text-xs text-rose-500 font-bold tracking-uppercase uppercase">Failed to load RBI Data</span>
       </div>
     );
   }
@@ -71,16 +71,16 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Landmark className="text-blue-400" size={16} />
-                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+                <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
                   RBI System Liquidity Position
                 </span>
               </div>
               <div className="flex items-baseline gap-4">
-                <h2 className="text-5xl font-black tracking-tighter text-white uppercase leading-none">
+                <h2 className="text-5xl font-black tracking-heading text-white uppercase leading-none">
                   {Math.abs(latestLiq.net_liquidity_total).toLocaleString('en-IN')}
                   <span className="text-xl ml-2 text-muted-foreground/50 italic capitalize font-medium tracking-normal text-none">Cr</span>
                 </h2>
-                <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest ${
+                <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black uppercase tracking-uppercase ${
                   isSurplus ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                 }`}>
                   {isSurplus ? <ArrowDownRight size={12} /> : <ArrowUpRight size={12} />}
@@ -97,7 +97,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
                 { label: 'WACR', val: `${latestOps?.call_money_rate?.toFixed(2)}%`, sub: 'Market Reality' }
               ].map((m, i) => (
                 <div key={i} className="flex flex-col">
-                  <span className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">{m.label}</span>
+                  <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-1">{m.label}</span>
                   <span className="text-lg font-black text-white">{m.val}</span>
                   <span className="text-xs font-medium text-muted-foreground/40 uppercase">{m.sub}</span>
                 </div>
@@ -114,11 +114,11 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
       <div className="xl:col-span-2">
         <div className="p-8 rounded-[32px] bg-white/[0.01] border border-white/5 h-full">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-sm font-black text-white uppercase tracking-uppercase flex items-center gap-2">
               <Activity size={16} className="text-blue-500" />
               Interest Rate Corridor Dynamics
             </h3>
-            <div className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+            <div className="text-xs text-muted-foreground font-medium uppercase tracking-uppercase">
               Last 30 Operations
             </div>
           </div>
@@ -182,7 +182,7 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
       {/* 3. Operations Breakdown & Insights */}
       <div className="xl:col-span-1 space-y-8">
         <div className="p-8 rounded-[32px] bg-white/[0.01] border border-white/5 flex flex-col h-full">
-          <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2 mb-8">
+          <h3 className="text-sm font-black text-white uppercase tracking-uppercase flex items-center gap-2 mb-8">
             <Zap size={16} className="text-amber-500" />
             Segment Allocation
           </h3>
@@ -195,11 +195,11 @@ export const RBIMoneyMarketMonitor: React.FC = () => {
             ].map((s, i) => (
               <div key={i} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-black text-white uppercase tracking-wider">{s.label}</span>
+                  <span className="text-xs font-black text-white uppercase tracking-uppercase">{s.label}</span>
                   <span className="text-xs font-black text-blue-400">{s.rate?.toFixed(2)}%</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold text-white tracking-tighter">₹{s.vol?.toLocaleString('en-IN')}</span>
+                  <span className="text-xl font-bold text-white tracking-heading">₹{s.vol?.toLocaleString('en-IN')}</span>
                   <span className="text-xs text-muted-foreground/50 font-black uppercase">Cr</span>
                 </div>
                 <div className="mt-3 h-1 w-full bg-white/5 rounded-full overflow-hidden">

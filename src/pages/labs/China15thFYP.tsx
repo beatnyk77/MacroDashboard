@@ -33,8 +33,8 @@ export const China15thFYPLab: React.FC = () => {
                                 <Flag className="text-red-500 w-6 h-6" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xs font-black uppercase tracking-[0.3em] text-red-500">Mission Intelligence Lab</span>
-                                <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white italic uppercase">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-red-500">Mission Intelligence Lab</span>
+                                <h1 className="text-4xl md:text-5xl font-black tracking-heading text-white italic uppercase">
                                     China 15th <span className="text-red-500">Five-Year Plan</span>
                                 </h1>
                             </div>
@@ -43,11 +43,11 @@ export const China15thFYPLab: React.FC = () => {
                             An institutional-grade telemetry dashboard tracking the 2026–2030 roadmap for high-quality development, technological self-reliance, and national economic security.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-widest text-slate-300">
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-uppercase text-slate-300">
                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                                 Active Monitoring
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-widest text-slate-300">
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-uppercase text-slate-300">
                                 Last Updated: March 14, 2026
                             </div>
                         </div>
@@ -99,7 +99,7 @@ export const China15thFYPLab: React.FC = () => {
                                 <div className="p-6 border-b border-white/5 flex justify-between items-center">
                                     <div className="flex items-center gap-3">
                                         <TerminalIcon className="text-red-500" size={18} />
-                                        <h2 className="text-sm font-black uppercase tracking-widest text-white">2026-2030 Strategic Milestone Timeline</h2>
+                                        <h2 className="text-sm font-black uppercase tracking-uppercase text-white">2026-2030 Strategic Milestone Timeline</h2>
                                     </div>
                                     <Info size={14} className="text-muted-foreground/30 cursor-help" />
                                 </div>
@@ -118,7 +118,7 @@ export const China15thFYPLab: React.FC = () => {
                         {/* Alpha Insight Box */}
                         <Card className="bg-red-500/5 border-red-500/20">
                             <CardContent className="p-6 space-y-4">
-                                <div className="flex items-center gap-2 text-red-500 uppercase font-black text-xs tracking-widest">
+                                <div className="flex items-center gap-2 text-red-500 uppercase font-black text-xs tracking-uppercase">
                                     <Shield size={16} />
                                     Strategist Deep Insight
                                 </div>
@@ -145,7 +145,7 @@ export const China15thFYPLab: React.FC = () => {
                     <div className="p-3 rounded-full bg-red-500/10">
                         <ArrowUpRight className="text-red-500 w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold text-white tracking-tight italic">
+                    <h3 className="text-xl font-bold text-white tracking-heading italic">
                         "Development and Security must be in dynamic equilibrium."
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">

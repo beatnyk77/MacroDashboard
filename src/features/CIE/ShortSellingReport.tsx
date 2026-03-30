@@ -79,8 +79,8 @@ export const ShortSellingReport: React.FC = () => {
                             <div>
                                 <div className="flex justify-between items-start mb-8">
                                     <div>
-                                        <h3 className="text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">{sector.name}</h3>
-                                        <div className="text-xs font-black text-white/20 uppercase tracking-[0.2em] mt-1">{sector.count} Entities Analyzed</div>
+                                        <h3 className="text-sm font-black uppercase tracking-uppercase text-white/40 group-hover:text-white transition-colors">{sector.name}</h3>
+                                        <div className="text-xs font-black text-white/20 uppercase tracking-uppercase mt-1">{sector.count} Entities Analyzed</div>
                                     </div>
                                     <div className={`p-3 rounded-2xl border ${riskLabel === 'HIGH' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)]' : riskLabel === 'MODERATE' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                                         {riskLabel === 'HIGH' ? <AlertTriangle size={20} /> : <ShieldAlert size={20} />}
@@ -90,8 +90,8 @@ export const ShortSellingReport: React.FC = () => {
                                 <div className="space-y-8">
                                     <div>
                                         <div className="flex justify-between items-end mb-3">
-                                            <span className="text-xs font-black uppercase tracking-widest text-white/30">Short Intensity</span>
-                                            <span className={`text-lg font-black italic tracking-tighter ${sector.avgShort > 10 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                            <span className="text-xs font-black uppercase tracking-uppercase text-white/30">Short Intensity</span>
+                                            <span className={`text-lg font-black italic tracking-heading ${sector.avgShort > 10 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                                 {sector.avgShort.toFixed(1)}%
                                             </span>
                                         </div>
@@ -106,8 +106,8 @@ export const ShortSellingReport: React.FC = () => {
 
                                     <div>
                                         <div className="flex justify-between items-end mb-3">
-                                            <span className="text-xs font-black uppercase tracking-widest text-white/30">30D Momentum Pulse</span>
-                                            <span className={`text-lg font-black italic tracking-tighter ${sector.avgMomentum > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            <span className="text-xs font-black uppercase tracking-uppercase text-white/30">30D Momentum Pulse</span>
+                                            <span className={`text-lg font-black italic tracking-heading ${sector.avgMomentum > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                                 {sector.avgMomentum > 0 ? '+' : ''}{sector.avgMomentum.toFixed(2)}%
                                             </span>
                                         </div>
@@ -126,10 +126,10 @@ export const ShortSellingReport: React.FC = () => {
                             </div>
 
                             <div className="mt-10 pt-6 border-t border-white/5 flex justify-between items-center">
-                                <div className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border ${riskLabel === 'HIGH' ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : riskLabel === 'MODERATE' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
+                                <div className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-uppercase border ${riskLabel === 'HIGH' ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : riskLabel === 'MODERATE' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
                                     Systemic Risk: {riskLabel}
                                 </div>
-                                <button className="text-xs font-black uppercase tracking-widest text-white/20 hover:text-blue-400 transition-colors">
+                                <button className="text-xs font-black uppercase tracking-uppercase text-white/20 hover:text-blue-400 transition-colors">
                                     Details
                                 </button>
                             </div>

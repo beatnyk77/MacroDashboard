@@ -45,7 +45,7 @@ export const BulkBlockReport: React.FC = () => {
             <div className="flex items-center justify-center p-20">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-10 h-10 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-                    <span className="text-xs font-black uppercase tracking-widest text-white/40">Fetching Institutional Moves...</span>
+                    <span className="text-xs font-black uppercase tracking-uppercase text-white/40">Fetching Institutional Moves...</span>
                 </div>
             </div>
         );
@@ -60,7 +60,7 @@ export const BulkBlockReport: React.FC = () => {
                         <Briefcase size={80} />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Total Deals (30D)</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-1">Total Deals (30D)</h4>
                         <div className="text-3xl font-black text-white">42</div>
                         <p className="text-xs text-emerald-400 font-bold mt-2">+12% vs Prev Month</p>
                     </div>
@@ -70,7 +70,7 @@ export const BulkBlockReport: React.FC = () => {
                         <ArrowUpRight size={80} />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Institutional Buy Value</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-1">Institutional Buy Value</h4>
                         <div className="text-3xl font-black text-emerald-400">₹2,480 Cr</div>
                         <p className="text-xs text-white/40 font-bold mt-2">Across 18 Nifty 200 Assets</p>
                     </div>
@@ -80,7 +80,7 @@ export const BulkBlockReport: React.FC = () => {
                         <Filter size={80} />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Max Conviction Deal</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-1">Max Conviction Deal</h4>
                         <div className="text-3xl font-black text-blue-400">1.8% Equity</div>
                         <p className="text-xs text-white/40 font-bold mt-2">Morgan Stanley in HDFC BANK</p>
                     </div>
@@ -91,8 +91,8 @@ export const BulkBlockReport: React.FC = () => {
             <div className="rounded-2xl border border-white/5 bg-black/20 overflow-hidden">
                 <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h3 className="text-lg font-black tracking-tight text-white mb-1">Top Institutional Deals</h3>
-                        <p className="text-xs text-white/40 font-medium uppercase tracking-widest">Nifty 200 Bulk & Block Activity (Real-time)</p>
+                        <h3 className="text-lg font-black tracking-heading text-white mb-1">Top Institutional Deals</h3>
+                        <p className="text-xs text-white/40 font-medium uppercase tracking-uppercase">Nifty 200 Bulk & Block Activity (Real-time)</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="relative">
@@ -113,15 +113,15 @@ export const BulkBlockReport: React.FC = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-white/5">
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Date</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Symbol</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Client Name</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Type</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20">Deal Type</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Qty</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Price</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">% Equity</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-white/20"></th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20">Date</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20">Symbol</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20">Client Name</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20">Type</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20">Deal Type</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20 text-right">Qty</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20 text-right">Price</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20 text-right">% Equity</th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-white/20"></th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">
@@ -140,7 +140,7 @@ export const BulkBlockReport: React.FC = () => {
                                         <span className="text-xs font-medium text-white/80">{deal.client_name}</span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-black uppercase tracking-widest ${deal.type === 'BUY'
+                                        <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-black uppercase tracking-uppercase ${deal.type === 'BUY'
                                             ? 'bg-emerald-500/10 text-emerald-400'
                                             : 'bg-rose-500/10 text-rose-400'
                                             }`}>
@@ -182,8 +182,8 @@ export const BulkBlockReport: React.FC = () => {
                 </div>
 
                 <div className="p-4 border-t border-white/5 bg-black/20 flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-widest text-white/20">Showing top 50 transactions</span>
-                    <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors">
+                    <span className="text-xs font-black uppercase tracking-uppercase text-white/20">Showing top 50 transactions</span>
+                    <button className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-blue-400 hover:text-blue-300 transition-colors">
                         View Historical Archive <ChevronRight size={12} />
                     </button>
                 </div>

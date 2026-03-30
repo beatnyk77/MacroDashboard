@@ -26,7 +26,7 @@ export const PriceTerminalCard: React.FC = () => {
     return (
         <Card className="bg-black/40 border-white/12 backdrop-blur-md">
             <CardHeader className="pb-2 bg-white/[0.02] border-b border-white/5 px-4 lg:px-6">
-                <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+                <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
                     Price Terminal & Forward Signals
                 </CardTitle>
             </CardHeader>
@@ -49,7 +49,7 @@ export const PriceTerminalCard: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-lg font-black tracking-tighter">
+                                    <span className="text-lg font-black tracking-heading">
                                         ${latest.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                     <div className="flex items-center gap-2">

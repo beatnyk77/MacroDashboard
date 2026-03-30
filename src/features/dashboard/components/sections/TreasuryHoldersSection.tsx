@@ -148,11 +148,11 @@ export const TreasuryHoldersSection: React.FC = () => {
                             <Table className="relative">
                                 <TableHeader className="sticky top-0 bg-slate-950/90 backdrop-blur-md z-10 box-decoration-clone">
                                     <TableRow className="border-b border-border/50 shadow-sm hover:bg-transparent">
-                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest bg-transparent">Country / Holder</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">Holdings ($BN)</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">MoM %</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">YoY %</TableHead>
-                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-widest text-right bg-transparent">Share (%)</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-uppercase bg-transparent">Country / Holder</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-uppercase text-right bg-transparent">Holdings ($BN)</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-uppercase text-right bg-transparent">MoM %</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-uppercase text-right bg-transparent">YoY %</TableHead>
+                                        <TableHead className="py-3 px-4 font-black uppercase text-xs text-muted-foreground tracking-uppercase text-right bg-transparent">Share (%)</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody className="divide-y divide-border/50">
@@ -201,7 +201,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                             <div className="mt-4 text-center">
                                 <button
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    className="inline-flex items-center gap-2 text-xs font-black text-primary hover:text-primary/80 uppercase tracking-widest transition-colors hover:underline"
+                                    className="inline-flex items-center gap-2 text-xs font-black text-primary hover:text-primary/80 uppercase tracking-uppercase transition-colors hover:underline"
                                 >
                                     {isExpanded ? (
                                         <>

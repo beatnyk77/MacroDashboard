@@ -104,9 +104,9 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-500/20 uppercase tracking-wider">Institutional Grade</span>
-                            <span className="text-slate-500 text-[10px]">•</span>
-                            <span className="text-slate-500 text-[10px]">Source: SEC EDGAR XBRL</span>
+                            <span className="bg-blue-500/10 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/20 uppercase tracking-uppercase">Institutional Grade</span>
+                            <span className="text-slate-500 text-xs">•</span>
+                            <span className="text-slate-500 text-xs">Source: SEC EDGAR XBRL</span>
                         </div>
                         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                             <Building2 className="w-6 h-6 text-blue-400" />
@@ -125,7 +125,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="flex items-center gap-2 text-slate-500 text-xs mb-1 font-medium italic">
                         <DollarSign className="w-3 h-3" /> AGGREGATE DEBT (TOP {stats.count})
                     </div>
-                    <div className="text-3xl font-mono font-bold text-white tracking-tighter">
+                    <div className="text-3xl font-mono font-bold text-white tracking-heading">
                         ${stats.total.toFixed(2)}T
                     </div>
                 </div>
@@ -133,7 +133,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="flex items-center gap-2 text-red-400/70 text-xs mb-1 font-medium italic">
                         <AlertTriangle className="w-3 h-3" /> IMMEDIATE ROLLOVER ({"<1Y"})
                     </div>
-                    <div className="text-3xl font-mono font-bold text-red-500 tracking-tighter">
+                    <div className="text-3xl font-mono font-bold text-red-500 tracking-heading">
                         ${stats.yr1Total.toFixed(2)}T
                     </div>
                 </div>
@@ -141,7 +141,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="flex items-center gap-2 text-slate-500 text-xs mb-1 font-medium italic">
                         <Percent className="w-3 h-3" /> REFINANCING CONCENTRATION
                     </div>
-                    <div className="text-3xl font-mono font-bold text-slate-300 tracking-tighter">
+                    <div className="text-3xl font-mono font-bold text-slate-300 tracking-heading">
                         {((stats.yr1Total / stats.total) * 100).toFixed(1)}%
                     </div>
                 </div>
@@ -180,7 +180,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                                         Amount: <span className="text-white font-mono">${Number(payload[0].value).toFixed(2)}T</span>
                                                     </p>
                                                 </div>
-                                                <p className="text-slate-500 text-[10px] mt-1 italic">
+                                                <p className="text-slate-500 text-xs mt-1 italic">
                                                     {payload[0].payload.percent.toFixed(1)}% of total aggregate debt
                                                 </p>
                                             </div>
@@ -207,7 +207,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="bg-slate-900/40 border border-slate-800 p-4 rounded-xl">
                         <div className="flex items-center gap-2 mb-3">
                             <ArrowUpRight className="w-4 h-4 text-red-400" />
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Refinancing Pressure</h4>
+                            <h4 className="text-xs font-bold text-white uppercase tracking-uppercase">Refinancing Pressure</h4>
                         </div>
                         <p className="text-slate-400 text-xs leading-relaxed">
                             A significant portion of low-coupon corporate debt issued in 2020-2021 is approaching the <span className="text-red-400 font-bold">1-year cliff</span>. Implied refinancing costs have increased by ~350bps on average.
@@ -217,7 +217,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="bg-slate-900/40 border border-slate-800 p-4 rounded-xl">
                         <div className="flex items-center gap-2 mb-3">
                             <Calendar className="w-4 h-4 text-blue-400" />
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Sector Concentration</h4>
+                            <h4 className="text-xs font-bold text-white uppercase tracking-uppercase">Sector Concentration</h4>
                         </div>
                         <p className="text-slate-400 text-xs leading-relaxed">
                             Financials and Industrials represent 78% of the upcoming "maturing debt wall". Cash-flow coverage ratios are being monitored for tier-2 industrials.
@@ -226,7 +226,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                 </div>
             </div>
             
-            <div className="p-4 bg-slate-900/40 border-t border-slate-800 text-[10px] text-slate-500 font-mono flex items-center justify-center gap-4">
+            <div className="p-4 bg-slate-900/40 border-t border-slate-800 text-xs text-slate-500 font-mono flex items-center justify-center gap-4">
                 <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-red-500"></div> HIGH RISK</span>
                 <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div> ELEVATED</span>
                 <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div> MANAGEABLE</span>

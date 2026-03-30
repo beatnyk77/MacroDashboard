@@ -41,7 +41,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
         return (
             <div className="space-y-8">
                 <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
-                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-widest mb-2">Flows Data Pending</span>
+                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">Flows Data Pending</span>
                     <p className="text-xs text-muted-foreground/40 italic">System is synchronizing.</p>
                 </div>
             </div>
@@ -54,7 +54,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 {/* Row 3.5: Asia Commodity Flows */}
                 <MotionCard delay={0.4} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Asia Commodity Flow Dynamics
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -69,7 +69,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 {/* Row 3.6: Import Dependency Monitor */}
                 <MotionCard delay={0.45} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-rose-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Import Dependency Monitor
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -88,7 +88,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 {/* Row 4: Import Vulnerability & Flow Matrix */}
                 <MotionCard delay={0.5} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Supplier Concentration Matrix
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -104,7 +104,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                                     <OilImportVulnerabilityCard data={data.importData} isLoading={false} />
                                 ) : (
                                     <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
-                                        <span className="text-xs text-muted-foreground uppercase tracking-widest mb-2 font-black">Data loading...</span>
+                                        <span className="text-xs text-muted-foreground uppercase tracking-uppercase mb-2 font-black">Data loading...</span>
                                     </div>
                                 )}
                             </Suspense>
@@ -117,7 +117,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                                     <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
                                 ) : (
                                     <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
-                                        <span className="text-xs text-rose-500/50 uppercase tracking-widest mb-2 font-black">Analysis Pending</span>
+                                        <span className="text-xs text-rose-500/50 uppercase tracking-uppercase mb-2 font-black">Analysis Pending</span>
                                     </div>
                                 )}
                             </Suspense>

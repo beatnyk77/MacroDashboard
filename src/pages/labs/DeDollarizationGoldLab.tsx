@@ -24,7 +24,7 @@ const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/compone
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Gold Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Gold Signal...</span>
     </div>
 );
 
@@ -50,7 +50,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-uppercase mb-4">
                     <Coins size={12} /> Hard Money Telemetry
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -66,7 +66,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Gold Anchor Ratios</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Gold Anchor Ratios</h2>
                     </div>
                     <div className="space-y-12">
                         <SectionErrorBoundary name="US Debt Gold Backing">
@@ -96,7 +96,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Globe className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Global Reserve Composition</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Reserve Composition</h2>
                     </div>
                     <SectionErrorBoundary name="Global Reserve Tracker">
                         <Suspense fallback={<LoadingFallback />}>
@@ -110,7 +110,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-10">
                             <Zap className="text-amber-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Central Bank Gold Net Purchases</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Central Bank Gold Net Purchases</h2>
                         </div>
                         <SectionErrorBoundary name="Gold Net Purchases">
                             <Suspense fallback={<LoadingFallback />}>
@@ -122,7 +122,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-10">
                             <Lock className="text-blue-400" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Financial Hubs & Gold Gateways</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Financial Hubs & Gold Gateways</h2>
                         </div>
                         <SectionErrorBoundary name="Financial Hubs">
                             <Suspense fallback={<LoadingFallback />}>
@@ -136,7 +136,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-rose-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Trade Settlement & Misinvoicing</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Trade Settlement & Misinvoicing</h2>
                     </div>
                     <SectionErrorBoundary name="Trade Flows">
                         <Suspense fallback={<LoadingFallback />}>
@@ -150,7 +150,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Futures & Manipulation Monitor</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Futures & Manipulation Monitor</h2>
                     </div>
                     <SectionErrorBoundary name="Gold Positioning">
                         <Suspense fallback={<LoadingFallback />}>

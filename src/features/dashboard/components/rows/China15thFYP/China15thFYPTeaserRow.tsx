@@ -37,9 +37,9 @@ export const China15thFYPTeaserRow: React.FC = () => {
                     <div className="md:w-1/4 p-6 flex flex-col justify-center border-b md:border-b-0 md:border-r border-white/5 bg-red-500/5">
                         <div className="flex items-center gap-2 mb-2">
                             <Flag className="text-red-500" size={16} />
-                            <span className="text-xs font-black uppercase tracking-[0.2em] text-red-400">Policy Intelligence</span>
+                            <span className="text-xs font-black uppercase tracking-uppercase text-red-400">Policy Intelligence</span>
                         </div>
-                        <h3 className="text-lg font-black tracking-tighter text-white leading-tight">
+                        <h3 className="text-lg font-black tracking-heading text-white leading-tight">
                             China 15th <br />
                             <span className="text-red-500">Five-Year Plan</span>
                         </h3 >
@@ -58,7 +58,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
                                         <Icon size={16} />
                                     </div>
                                     <div>
-                                        <div className="text-xs font-black uppercase text-muted-foreground/50 tracking-widest">{target.label}</div>
+                                        <div className="text-xs font-black uppercase text-muted-foreground/50 tracking-uppercase">{target.label}</div>
                                         <div className="text-sm font-black text-white">{target.value_target}</div>
                                     </div>
                                 </div>
@@ -72,7 +72,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
                         className="p-6 flex items-center justify-center bg-white/5 hover:bg-white/10 cursor-pointer transition-colors border-t md:border-t-0 border-white/5"
                     >
                         <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                            <span className="text-xs font-black uppercase tracking-widest text-red-400">Mission Control</span>
+                            <span className="text-xs font-black uppercase tracking-uppercase text-red-400">Mission Control</span>
                             <ArrowRight size={14} className="text-red-400" />
                         </div>
                     </div>

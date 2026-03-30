@@ -51,15 +51,15 @@ export const BOPPressureTable: React.FC = () => {
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
                             <Activity className="w-4 h-4 text-blue-500 animate-pulse" />
-                            <h3 className="text-xl font-black text-white italic tracking-tight uppercase">BOP Pressure Terminal</h3>
+                            <h3 className="text-xl font-black text-white italic tracking-heading uppercase">BOP Pressure Terminal</h3>
                         </div>
-                        <p className="text-xs font-black tracking-[0.2em] text-muted-foreground/40 uppercase">External Sector Stability Matrix</p>
+                        <p className="text-xs font-black tracking-uppercase text-muted-foreground/40 uppercase">External Sector Stability Matrix</p>
                     </div>
 
                     <div className="flex items-center gap-4">
                         <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="text-xs font-black text-emerald-500 uppercase tracking-widest">Protocol: Stable</span>
+                            <span className="text-xs font-black text-emerald-500 uppercase tracking-uppercase">Protocol: Stable</span>
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@ export const BOPPressureTable: React.FC = () => {
                                 <tr key={i} className="group/row hover:bg-white/[0.02] transition-colors">
                                     <td className="py-5 pr-4">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-xs font-black text-white/80 uppercase tracking-tight group-hover/row:text-blue-400 transition-colors">
+                                            <span className="text-xs font-black text-white/80 uppercase tracking-heading group-hover/row:text-blue-400 transition-colors">
                                                 {item.name}
                                             </span>
                                             <Tooltip>
@@ -93,11 +93,11 @@ export const BOPPressureTable: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="py-5 font-mono">
-                                        <span className="text-sm font-black text-white/90 tracking-tighter">{item.value}</span>
+                                        <span className="text-sm font-black text-white/90 tracking-heading">{item.value}</span>
                                     </td>
                                     <td className="py-5">
                                         <div className={cn(
-                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-black uppercase tracking-widest border",
+                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-black uppercase tracking-uppercase border",
                                             item.status === 'Safe'
                                                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
                                                 : "bg-amber-400/10 border-amber-400/20 text-amber-400"
@@ -106,7 +106,7 @@ export const BOPPressureTable: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="py-5 hidden sm:table-cell">
-                                        <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/30">
+                                        <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/30">
                                             {item.trend}
                                         </span>
                                     </td>

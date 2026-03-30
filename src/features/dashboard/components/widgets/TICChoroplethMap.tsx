@@ -95,22 +95,22 @@ export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric
                     <div className="flex items-center gap-4 mb-4 border-b border-white/12 pb-3">
                         <span className="text-3xl filter drop-shadow-md">{COUNTRY_FLAGS[hoveredCountry.country_name] || '🌐'}</span>
                         <div className="flex flex-col">
-                            <h4 className="text-sm font-black text-white uppercase tracking-tight italic">{hoveredCountry.country_name}</h4>
-                            <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">Sovereign Treasury Holder</span>
+                            <h4 className="text-sm font-black text-white uppercase tracking-heading italic">{hoveredCountry.country_name}</h4>
+                            <span className="text-xs font-black text-cyan-400 uppercase tracking-uppercase">Sovereign Treasury Holder</span>
                         </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                         <div className="space-y-1">
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Holdings</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Holdings</span>
                             <div className="text-2xl font-black text-white tabular-nums">${Math.round(hoveredCountry.holdings_usd_bn)}B</div>
                         </div>
                         <div className="space-y-1 text-right">
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Share (%)</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Share (%)</span>
                             <div className="text-2xl font-black text-cyan-400 tabular-nums">{(hoveredCountry.pct_of_total_foreign || 0).toFixed(1)}%</div>
                         </div>
                         <div className="col-span-2 pt-3 border-t border-white/12 flex items-center justify-between">
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Year-on-Year Change</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Year-on-Year Change</span>
                             <div className={cn(
                                 "flex items-center gap-1.5 text-sm font-black tabular-nums",
                                 (hoveredCountry.yoy_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"

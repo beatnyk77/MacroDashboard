@@ -69,7 +69,7 @@ export const UpcomingEventsCard: React.FC = () => {
                         </span>
                     </td>
                     <td className="py-3 px-2">
-                        <div className="font-semibold text-[0.75rem] truncate max-w-[200px] text-foreground">
+                        <div className="font-semibold text-sm truncate max-w-[200px] text-foreground">
                             {event.event_name}
                         </div>
                     </td>
@@ -89,11 +89,11 @@ export const UpcomingEventsCard: React.FC = () => {
                     </td>
                     <td className="py-3 pl-2 pr-0 text-right w-[90px]">
                         {event.actual ? (
-                            <span className="font-extrabold text-[0.75rem] text-foreground font-mono">
+                            <span className="font-extrabold text-sm text-foreground font-mono">
                                 {event.actual}
                             </span>
                         ) : (
-                            <span className="inline-block px-1.5 py-0.5 rounded text-xs font-black bg-white/[0.05] text-muted-foreground/50 tracking-wider">
+                            <span className="inline-block px-1.5 py-0.5 rounded text-xs font-black bg-white/[0.05] text-muted-foreground/50 tracking-uppercase">
                                 PENDING
                             </span>
                         )}
@@ -143,7 +143,7 @@ export const UpcomingEventsCard: React.FC = () => {
                                         <td colSpan={7} className="py-4 border-none">
                                             <div className="flex items-center gap-4 opacity-50">
                                                 <div className="flex-1 h-px bg-border" />
-                                                <span className="text-xs font-black text-muted-foreground tracking-[0.2em]">RECENT RELEASES</span>
+                                                <span className="text-xs font-black text-muted-foreground tracking-uppercase">RECENT RELEASES</span>
                                                 <div className="flex-1 h-px bg-border" />
                                             </div>
                                         </td>

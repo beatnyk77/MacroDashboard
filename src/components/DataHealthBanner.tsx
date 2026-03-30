@@ -47,12 +47,12 @@ export const DataHealthBanner: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/12 transition-colors"
                 >
                     <RefreshCcw className="w-3 h-3" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Refresh Data</span>
+                    <span className="text-xs font-bold uppercase tracking-uppercase">Refresh Data</span>
                 </button>
 
                 <a
                     href="#health"
-                    className="text-xs font-bold uppercase tracking-wider underline underline-offset-4 opacity-60 hover:opacity-100"
+                    className="text-xs font-bold uppercase tracking-uppercase underline underline-offset-4 opacity-60 hover:opacity-100"
                 >
                     Details
                 </a>

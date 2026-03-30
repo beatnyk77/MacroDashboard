@@ -62,10 +62,10 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
                     )}
                 </div>
 
-                <h3 className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em] mb-1">
+                <h3 className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase mb-1">
                     {title}
                 </h3>
-                <div className="text-3xl font-black text-white/90 tracking-tighter tabular-nums">
+                <div className="text-3xl font-black text-white/90 tracking-heading tabular-nums">
                     {value?.toLocaleString(undefined, { maximumFractionDigits: 1 })}{suffix}
                 </div>
             </div>
@@ -144,7 +144,7 @@ export const GlobalReserveTracker: React.FC = () => {
                         <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20">
                             <Compass className="text-rose-500 w-5 h-5" />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
+                        <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
                             Global <span className="text-rose-500">Reserve</span> Tracker
                         </h2>
                     </div>
@@ -159,14 +159,14 @@ export const GlobalReserveTracker: React.FC = () => {
                     <TabsTrigger
                         value="dedollarization"
                         onClick={() => trackClick('reserve_tab_dedollarization', 'global_reserve_tracker')}
-                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-widest transition-all"
+                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-uppercase transition-all"
                     >
                         De-Dollarization Pulse
                     </TabsTrigger>
                     <TabsTrigger
                         value="brics"
                         onClick={() => trackClick('reserve_tab_brics', 'global_reserve_tracker')}
-                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-widest transition-all"
+                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-uppercase transition-all"
                     >
                         BRICS+ Momentum
                     </TabsTrigger>
@@ -196,7 +196,7 @@ export const GlobalReserveTracker: React.FC = () => {
                             <AlertTriangle className="text-amber-500 w-5 h-5" />
                         </div>
                         <div className="space-y-1">
-                            <h4 className="text-xs font-black text-white uppercase tracking-widest">Structural Signal</h4>
+                            <h4 className="text-xs font-black text-white uppercase tracking-uppercase">Structural Signal</h4>
                             <p className="text-xs text-muted-foreground leading-relaxed italic">
                                 Central banks are currently in a <span className="text-amber-400 font-bold">rotation phase</span>. While USD remains the primary denominator, the persistent accumulation of physical gold by non-Western powers indicates a "shadow" hedging regime against future fiat volatility.
                             </p>
@@ -239,11 +239,11 @@ export const GlobalReserveTracker: React.FC = () => {
                     <div className="bg-white/[0.02] rounded-3xl p-6 border border-white/12">
                         <div className="flex justify-between items-end mb-8">
                             <div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                <h3 className="text-sm font-black text-white uppercase tracking-uppercase flex items-center gap-2">
                                     <Globe className="w-4 h-4 text-emerald-500" />
                                     Strategic Accumulation Leaderboard
                                 </h3>
-                                <p className="text-xs text-muted-foreground/60 mt-1 uppercase tracking-tight">
+                                <p className="text-xs text-muted-foreground/60 mt-1 uppercase tracking-heading">
                                     Top 5 BRICS+ Nations by Official Gold Reserves (Tonnes)
                                 </p>
                             </div>
@@ -295,7 +295,7 @@ export const GlobalReserveTracker: React.FC = () => {
                             <div key={idx} className="flex gap-3 group/bullet">
                                 <div className={cn("w-1 h-8 rounded-full opacity-20 group-hover/bullet:opacity-100 transition-opacity", `bg-${bullet.color}-500`)} />
                                 <div className="space-y-0.5">
-                                    <div className="text-xs font-black uppercase tracking-widest text-white/40">{bullet.label}</div>
+                                    <div className="text-xs font-black uppercase tracking-uppercase text-white/40">{bullet.label}</div>
                                     <p className="text-xs text-muted-foreground leading-snug">{bullet.content}</p>
                                 </div>
                             </div>

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useYieldCurves } from '@/hooks/useYieldCurves';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
+import { Card } from '@/components/ui/card';
 import {
     ResponsiveContainer,
     LineChart,
@@ -96,7 +97,7 @@ export const YieldCurveMonitor: React.FC = () => {
     if (isLoading) {
         return (
             <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Yield Curves...</span>
+                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Yield Curves...</span>
             </div>
         );
     }
@@ -134,10 +135,10 @@ export const YieldCurveMonitor: React.FC = () => {
                 {/* Main grid: chart + gauges */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* ── Hero Chart ───────────────────────────────────── */}
-                    <div className="lg:col-span-2 bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group">
+                    <Card variant="elevated" className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h3 className="text-xs font-black text-white/40 uppercase tracking-[0.3em]">
+                                <h3 className="text-xs font-black text-white/40 uppercase tracking-uppercase">
                                     Sovereign Yield Curves
                                 </h3>
                                 <p className="text-xs text-muted-foreground/60 mt-1">
@@ -145,7 +146,7 @@ export const YieldCurveMonitor: React.FC = () => {
                                 </p>
                             </div>
                             {latestDate && (
-                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider">
+                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">
                                     As of {new Date(latestDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                             )}
@@ -195,7 +196,7 @@ export const YieldCurveMonitor: React.FC = () => {
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
-                    </div>
+                    </Card>
 
                     {/* ── Gauge Cards ──────────────────────────────────── */}
                     <div className="flex flex-col gap-6">
@@ -222,7 +223,7 @@ export const YieldCurveMonitor: React.FC = () => {
                 <div className="mt-12 flex justify-center">
                     <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase text-center">
                             Sources: FRED · ECB SDW · RBI DBIE — updated daily
                         </span>
                     </div>
@@ -235,9 +236,9 @@ export const YieldCurveMonitor: React.FC = () => {
 /* ── Status Chip ──────────────────────────────────────────────── */
 const StatusChip = ({ label, status, color }: { label: string; status: string; color: 'rose' | 'amber' | 'emerald' }) => (
     <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
         <span className={cn(
-            "text-xs font-black uppercase tracking-tighter",
+            "text-xs font-black uppercase tracking-heading",
             color === 'rose' ? "text-rose-500" : color === 'amber' ? "text-amber-500" : "text-emerald-500"
         )}>{status}</span>
     </div>
@@ -253,15 +254,13 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
     y10y: string;
     source: string;
 }) => (
-    <motion.div
-        className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] hover:border-white/12 transition-all group cursor-default"
-        whileHover={{ y: -2 }}
-    >
+    <motion.div whileHover={{ y: -2 }}>
+        <Card variant="elevated" className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] group cursor-default">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
                 <span className="text-lg">{config.flag}</span>
-                <span className="text-xs font-black text-white/60 uppercase tracking-widest">{country}</span>
+                <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">{country}</span>
             </div>
             <div className="flex items-center gap-1">
                 <span className="text-xl font-black tabular-nums" style={{ color: config.color }}>{y10y}%</span>
@@ -287,7 +286,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
             </div>
 
             {/* Term Premium Glossary Link */}
-            <Link to="/glossary/term-premium" className="flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest transition-colors mb-2">
+            <Link to="/glossary/term-premium" className="flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-uppercase transition-colors mb-2">
                 <BookOpen size={10} /> Read Term Premium Definition
             </Link>
 
@@ -318,10 +317,11 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
 
         {/* Footer */}
         <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
-            <span className="text-xs font-black text-white/15 uppercase tracking-widest">{config.label}</span>
+            <span className="text-xs font-black text-white/15 uppercase tracking-uppercase">{config.label}</span>
             <span className="text-xs font-bold text-muted-foreground/30 uppercase">{source}</span>
         </div>
-    </motion.div>
+    </Card>
+</motion.div>
 );
 
 /* ── Custom Tooltip ───────────────────────────────────────────── */
@@ -329,7 +329,7 @@ const CurveTooltip = ({ active, payload, label, gauges }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl min-w-[220px]">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-3 border-b border-white/5 pb-2">
                     Tenor: {label}
                 </div>
                 <div className="space-y-2">
@@ -346,11 +346,11 @@ const CurveTooltip = ({ active, payload, label, gauges }: any) => {
                                         <span className="text-xs font-bold text-muted-foreground/80">{cfg?.flag} {countryCode}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[0.8rem] font-black tabular-nums text-white/90">
+                                        <span className="text-xs font-black tabular-nums text-white/90">
                                             {Number(p.value).toFixed(2)}%
                                         </span>
                                         {gData?.source && (
-                                            <span className="text-[0.45rem] font-bold text-muted-foreground/30 uppercase">{gData.source}</span>
+                                            <span className="text-xs font-bold text-muted-foreground/30 uppercase">{gData.source}</span>
                                         )}
                                     </div>
                                 </div>

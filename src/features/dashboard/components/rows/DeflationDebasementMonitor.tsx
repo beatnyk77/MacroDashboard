@@ -35,7 +35,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
     if (isLoading) {
         return (
             <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Analyzing Fiscal Vulnerability...</span>
+                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Analyzing Fiscal Vulnerability...</span>
             </div>
         );
     }
@@ -72,7 +72,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
                     {/* Main Chart Section */}
                     <div className="lg:col-span-3 bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group">
                         <div className="absolute top-8 left-8 z-10">
-                            <h3 className="text-xs font-black text-white/40 uppercase tracking-[0.3em]">US Federal Insolvency Ratio</h3>
+                            <h3 className="text-xs font-black text-white/40 uppercase tracking-uppercase">US Federal Insolvency Ratio</h3>
                             <p className="text-xs text-muted-foreground/60 mt-1">Gross Interest Expense ÷ Total Federal Receipts</p>
                         </div>
 
@@ -81,7 +81,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
                                 {insolvencyPercent}%
                             </span>
                             <div className="flex flex-col">
-                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-tighter transition-all">Current</span>
+                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-heading transition-all">Current</span>
                                 <span className="text-xs font-black text-rose-500/60 uppercase">Crisis Zone: &gt;25%</span>
                             </div>
                         </div>
@@ -171,7 +171,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
                 <div className="mt-12 flex justify-center">
                     <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest text-center">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase text-center">
                             Source: FRED / U.S. Treasury Fiscal Data – updated quarterly
                             {latest?.date && (
                                 <span className="opacity-40 italic ml-2">• Latest: {new Date(latest.date).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
@@ -186,9 +186,9 @@ export const DeflationDebasementMonitor: React.FC = () => {
 
 const StatusChip = ({ label, status, color }: any) => (
     <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
         <span className={cn(
-            "text-xs font-black uppercase tracking-tighter",
+            "text-xs font-black uppercase tracking-heading",
             color === 'rose' ? "text-rose-500" : "text-amber-500"
         )}>{status}</span>
     </div>
@@ -201,7 +201,7 @@ const MetricCard = ({ title, value, unit, sub, icon, description, trend }: any) 
                 {icon}
             </div>
             <div className="text-right">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">{title}</div>
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1">{title}</div>
                 <div className="flex items-baseline justify-end gap-1">
                     <span className="text-3xl font-black text-white/90 tabular-nums">{value}</span>
                     <span className="text-xs font-bold text-muted-foreground/40">{unit}</span>
@@ -211,7 +211,7 @@ const MetricCard = ({ title, value, unit, sub, icon, description, trend }: any) 
         <div>
             <div className="text-xs font-bold text-muted-foreground/60 leading-relaxed mb-4">{description}</div>
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                <span className="text-xs font-black uppercase tracking-widest text-white/20">{sub}</span>
+                <span className="text-xs font-black uppercase tracking-uppercase text-white/20">{sub}</span>
                 <span className={cn(
                     "text-xs font-black px-2 py-0.5 rounded-full uppercase",
                     trend === 'up' ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
@@ -227,13 +227,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         const date = new Date(label).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         return (
             <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
+                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-4 border-b border-white/5 pb-2">
                     {date} Fiscal Snapshot
                 </div>
                 <div className="space-y-3">
                     <div className="flex items-center justify-between gap-12">
                         <span className="text-xs font-bold text-muted-foreground/80">Insolvency Ratio</span>
-                        <span className={cn("text-[0.8rem] font-black tabular-nums", val > 0.25 ? "text-rose-500" : "text-amber-500")}>
+                        <span className={cn("text-sm font-black tabular-nums", val > 0.25 ? "text-rose-500" : "text-amber-500")}>
                             {(val * 100).toFixed(2)}%
                         </span>
                     </div>

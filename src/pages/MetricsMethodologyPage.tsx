@@ -47,7 +47,7 @@ export const MetricsMethodologyPage: React.FC = () => {
     return (
         <div className="container max-w-7xl mx-auto py-12 px-4 space-y-16">
             <div className="space-y-4">
-                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+                <h1 className="text-4xl font-extrabold tracking-heading text-foreground">
                     Data Methodology
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
@@ -57,7 +57,7 @@ export const MetricsMethodologyPage: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Calculation Formulas</h2>
+                <h2 className="text-2xl font-bold tracking-heading text-foreground">Calculation Formulas</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                         { label: 'Net Liquidity', formula: '(WALCL - TGA - RRP*1000) / 1000' },
@@ -66,7 +66,7 @@ export const MetricsMethodologyPage: React.FC = () => {
                         { label: 'Z-Score', formula: '(Current Value - Rolling Mean) / Rolling StdDev' }
                     ].map((item) => (
                         <div key={item.label} className="p-4 bg-muted/20 border border-border rounded-xl">
-                            <span className="text-xs font-black uppercase text-muted-foreground tracking-wider block mb-2">{item.label}</span>
+                            <span className="text-xs font-black uppercase text-muted-foreground tracking-uppercase block mb-2">{item.label}</span>
                             <p className="font-serif italic text-lg text-foreground/90">{item.formula}</p>
                         </div>
                     ))}
@@ -110,7 +110,7 @@ export const MetricsMethodologyPage: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                <h2 className="text-2xl font-bold tracking-heading text-foreground">
                     Regime Detection
                 </h2>
                 <p className="text-muted-foreground max-w-3xl">
@@ -139,7 +139,7 @@ export const MetricsMethodologyPage: React.FC = () => {
             </div>
 
             <div className="pt-8 border-t border-border space-y-4">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                <h2 className="text-2xl font-bold tracking-heading text-foreground">
                     Data Integrity & Sources
                 </h2>
                 <p className="text-muted-foreground">

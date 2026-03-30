@@ -19,7 +19,7 @@ const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/compo
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[400px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Signal...</span>
     </div>
 );
 
@@ -62,7 +62,7 @@ export const ChinaLab: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 10 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-black uppercase tracking-uppercase mb-4">
                     <Globe size={12} /> Systemic Influence Monitor
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -78,7 +78,7 @@ export const ChinaLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-rose-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">China Macro Pulse</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">China Macro Pulse</h2>
                     </div>
                     <SectionErrorBoundary name="China Macro Pulse">
                         <LazyRender minHeight="500px">
@@ -94,7 +94,7 @@ export const ChinaLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Spheres of Institutional Influence</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Spheres of Institutional Influence</h2>
                     </div>
                     <SectionErrorBoundary name="Institutional Influence">
                         <LazyRender minHeight="500px">
@@ -109,7 +109,7 @@ export const ChinaLab: React.FC = () => {
                 <section className="bg-white/[0.01] p-12 rounded-3xl border border-white/5">
                     <div className="flex items-center gap-3 mb-10">
                         <MapPin className="text-emerald-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">G20 GDP Per Capita Convergence</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">G20 GDP Per Capita Convergence</h2>
                     </div>
                     <SectionErrorBoundary name="G20 Convergence">
                         <Suspense fallback={<LoadingFallback />}>
@@ -121,7 +121,7 @@ export const ChinaLab: React.FC = () => {
 
             {/* SEO Structural Analysis Text Block */}
             <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of China's Systemic Pivot">
-                <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6">Structural Analysis: China's Economic Pivot & Global Influence</h3>
+                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: China's Economic Pivot & Global Influence</h3>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>China Lab</strong> tracks the deliberate structural deceleration of China's property sector alongside the corresponding acceleration in high-end manufacturing, green technology, and sovereign influence architecture. Analyzing the People's Bank of China (PBoC) monetary plumbing and credit impulse cycles provides leading indicators for global commodity demand and emerging market liquidity.

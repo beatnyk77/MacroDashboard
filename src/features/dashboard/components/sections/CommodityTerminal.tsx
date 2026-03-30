@@ -28,10 +28,10 @@ export const CommodityTerminal: React.FC = () => {
                             <Droplets className="text-orange-500 w-5 h-5" />
                         </div>
                         <div>
-                            <h2 className="text-3xl font-black tracking-tight text-white uppercase italic">
+                            <h2 className="text-3xl font-black tracking-heading text-white uppercase italic">
                                 Commodities <span className="text-orange-500">Terminal</span>
                             </h2>
-                            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">
+                            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase mt-0.5">
                                 Cross-Asset Commodity Intelligence • 25-Year Context
                             </p>
                         </div>
@@ -45,11 +45,11 @@ export const CommodityTerminal: React.FC = () => {
                 <div className="flex flex-wrap gap-3">
                     <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/12 backdrop-blur-md">
                         <Calendar size={14} className="text-orange-500" />
-                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">25Y History Buffer</span>
+                        <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">25Y History Buffer</span>
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/12 backdrop-blur-md">
                         <Target size={14} className="text-emerald-500" />
-                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">Real-Time Markers</span>
+                        <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">Real-Time Markers</span>
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@ export const CommodityTerminal: React.FC = () => {
                     <Info className="text-blue-500 w-6 h-6" />
                 </div>
                 <div className="space-y-2">
-                    <h4 className="text-sm font-black text-white uppercase tracking-widest">Macro Logic: The Real Asset Pivot</h4>
+                    <h4 className="text-sm font-black text-white uppercase tracking-uppercase">Macro Logic: The Real Asset Pivot</h4>
                     <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl italic">
                         Commodities act as the ultimate "Regime Verification" engine. While liquidity drives nominal prices, industrial activity
                         manifests in metal spreads. High energy costs act as a <span className="text-rose-400 font-bold">tax on consumption</span>, while rising

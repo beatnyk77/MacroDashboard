@@ -81,7 +81,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-8">
-                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground/40 mb-8">
+                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-8">
                         <Link to="/" className="hover:text-white transition-colors">Home</Link>
                         <span>/</span>
                         <Link to="/intel/india" className="hover:text-white transition-colors">India Intel</Link>
@@ -91,10 +91,10 @@ export const CorporateIndiaEngine: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-black uppercase tracking-widest mb-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-black uppercase tracking-uppercase mb-4">
                                 <Activity size={12} /> Institutional Equity Lab
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-tight">
+                            <h1 className="text-4xl md:text-6xl font-black tracking-heading text-white leading-tight">
                                 Corporate India<br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-orange-400">
                                     Engine v1.0
@@ -109,18 +109,18 @@ export const CorporateIndiaEngine: React.FC = () => {
                             <div className="flex items-center bg-white/5 border border-white/12 rounded-2xl p-1">
                                 <button
                                     onClick={() => setShowMacroOverlay(true)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${showMacroOverlay ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'text-muted-foreground/60 hover:text-white'}`}
+                                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-all ${showMacroOverlay ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'text-muted-foreground/60 hover:text-white'}`}
                                 >
                                     Macro Overlay On
                                 </button>
                                 <button
                                     onClick={() => setShowMacroOverlay(false)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${!showMacroOverlay ? 'bg-white/10 text-white' : 'text-muted-foreground/60 hover:text-white'}`}
+                                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-all ${!showMacroOverlay ? 'bg-white/10 text-white' : 'text-muted-foreground/60 hover:text-white'}`}
                                 >
                                     Pure Fundamentals
                                 </button>
                             </div>
-                            <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/12 text-white/80 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+                            <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/12 text-white/80 text-xs font-black uppercase tracking-uppercase hover:bg-white/10 transition-all">
                                 <Download size={14} /> Export CSV
                             </button>
                         </div>
@@ -135,9 +135,9 @@ export const CorporateIndiaEngine: React.FC = () => {
                         <div className="lg:w-1/3">
                             <div className="inline-flex items-center gap-2 mb-4">
                                 <Shield className="text-blue-400" size={16} />
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400/60">CIE Intelligence Brief</span>
+                                <span className="text-xs font-black uppercase tracking-uppercase text-blue-400/60">CIE Intelligence Brief</span>
                             </div>
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-4">The Formalization Convergence</h2>
+                            <h2 className="text-2xl font-black text-white uppercase tracking-heading mb-4">The Formalization Convergence</h2>
                             <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium">
                                 Tracking the structural pivot from informal to formal credit. We prioritize companies capturing the <span className="text-blue-400 font-bold italic">Formalization Premium</span> — where DPI (Digital Public Infrastructure) integration and state-capex resilience intersect with pure-play fundamentals.
                             </p>
@@ -150,9 +150,9 @@ export const CorporateIndiaEngine: React.FC = () => {
                                             <div className={`p-1.5 rounded-lg bg-${stat.color}-500/10 text-${stat.color}-400`}>
                                                 <stat.icon size={16} />
                                             </div>
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-white/40">{stat.label}</h4>
+                                            <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40">{stat.label}</h4>
                                         </div>
-                                        <div className="text-2xl font-black text-white italic tracking-tight">{stat.value}</div>
+                                        <div className="text-2xl font-black text-white italic tracking-heading">{stat.value}</div>
                                         <p className="text-xs text-muted-foreground/30 mt-1 font-medium">{stat.desc}</p>
                                     </div>
                                     <div className="flex flex-col items-end gap-2">
@@ -188,7 +188,7 @@ export const CorporateIndiaEngine: React.FC = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
-                                    className={`flex items-center gap-3 px-6 py-4 text-xs font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all relative group/tab ${activeTab === tab.id ? 'text-blue-400' : 'text-white/30 hover:text-white/60'
+                                    className={`flex items-center gap-3 px-6 py-4 text-xs font-black uppercase tracking-uppercase whitespace-nowrap transition-all relative group/tab ${activeTab === tab.id ? 'text-blue-400' : 'text-white/30 hover:text-white/60'
                                         }`}
                                 >
                                     <tab.icon size={14} className={activeTab === tab.id ? 'text-blue-400' : 'text-white/20 group-hover/tab:text-white/40'} />
@@ -232,7 +232,7 @@ export const CorporateIndiaEngine: React.FC = () => {
             </main>
 
             <footer className="max-w-7xl mx-auto px-4 sm:px-8 py-12 border-t border-white/5">
-                <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-muted-foreground/30">
+                <div className="flex justify-between items-center text-xs font-black uppercase tracking-uppercase text-muted-foreground/30">
                     <span>GraphiQuestor CIE Engine Alpha</span>
                     <div className="flex gap-6">
                         <a href="#" className="hover:text-white transition-colors">Term of use</a>

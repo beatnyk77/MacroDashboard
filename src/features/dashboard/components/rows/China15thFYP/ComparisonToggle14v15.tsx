@@ -31,7 +31,7 @@ export const ComparisonToggle14v15: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center gap-3">
                 <History className="text-red-500" size={18} />
-                <h3 className="text-sm font-black uppercase tracking-widest text-white">Strategic Policy Shifts: 14th vs 15th Plan</h3>
+                <h3 className="text-sm font-black uppercase tracking-uppercase text-white">Strategic Policy Shifts: 14th vs 15th Plan</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -41,7 +41,7 @@ export const ComparisonToggle14v15: React.FC = () => {
                         <Card key={idx} className="bg-white/[0.02] border-white/5 relative overflow-hidden h-full">
                             <CardContent className="p-6">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="text-xs font-black text-red-400 uppercase tracking-widest">{shift.pillar}</div>
+                                    <div className="text-xs font-black text-red-400 uppercase tracking-uppercase">{shift.pillar}</div>
                                     <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500">
                                         <Icon size={14} />
                                     </div>

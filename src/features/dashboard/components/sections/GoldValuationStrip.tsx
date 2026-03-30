@@ -59,7 +59,7 @@ export const GoldValuationStrip: React.FC = () => {
                             <span className="text-xs font-black text-primary block leading-tight">25Y CYCLE</span>
                         </div>
                     </div>
-                    <span className="text-base md:text-lg font-black text-foreground tracking-tight">
+                    <span className="text-base md:text-lg font-black text-foreground tracking-heading">
                         GOLD ${gold?.value.toLocaleString() || '-'}
                     </span>
                 </div>

@@ -101,7 +101,7 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
         }
     };
 
-    if (!geoJsonData) return <div className="h-full w-full flex items-center justify-center text-white/20 uppercase tracking-widest font-black text-xs">Loading Cartography...</div>;
+    if (!geoJsonData) return <div className="h-full w-full flex items-center justify-center text-white/20 uppercase tracking-uppercase font-black text-xs">Loading Cartography...</div>;
 
     const indiaBounds: L.LatLngBoundsExpression = [
         [6.4626999, 68.1097], // Southwest

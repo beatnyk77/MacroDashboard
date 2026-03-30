@@ -15,15 +15,15 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
         <div className={cn("p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-sm flex flex-col", className)}>
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h3 className="text-sm font-black text-blue-500 uppercase tracking-widest flex items-center gap-2">
+                    <h3 className="text-sm font-black text-blue-500 uppercase tracking-uppercase flex items-center gap-2">
                         <Trophy size={14} /> Refining Alpha Ranking
                     </h3>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-tight mt-1">Top 10 Global Assets by Scale</p>
+                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-heading mt-1">Top 10 Global Assets by Scale</p>
                 </div>
             </div>
 
             <div className="flex-1 overflow-auto custom-scrollbar -mx-2 px-2">
-                <table className="w-full text-xs font-bold uppercase tracking-wider">
+                <table className="w-full text-xs font-bold uppercase tracking-uppercase">
                     <thead>
                         <tr className="text-muted-foreground/40 border-b border-white/5">
                             <th className="pb-3 text-left font-black">Rank</th>

@@ -27,7 +27,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/95 backdrop-blur-2xl border border-white/12 p-3 rounded-2xl shadow-2xl">
-                <div className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
+                <div className="text-xs font-black text-white/40 uppercase tracking-uppercase mb-1">{label}</div>
                 <div className="text-sm font-black text-white tabular-nums">
                     ${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </div>
@@ -79,11 +79,11 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
                                 "w-1.5 h-1.5 rounded-full animate-pulse",
                                 color === 'red' ? 'bg-red-500' : color === 'orange' ? 'bg-orange-500' : 'bg-slate-400'
                             )} />
-                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em]">
+                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">
                                 {category}
                             </span>
                         </div>
-                        <h3 className="text-xl font-black text-white tracking-tight uppercase italic underline decoration-white/5 underline-offset-8">
+                        <h3 className="text-xl font-black text-white tracking-heading uppercase italic underline decoration-white/5 underline-offset-8">
                             {title}
                         </h3>
                     </div>
@@ -102,10 +102,10 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
                 {/* Price Display */}
                 <div className="space-y-1">
                     <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black text-white tracking-tighter tabular-nums drop-shadow-md">
+                        <span className="text-4xl font-black text-white tracking-heading tabular-nums drop-shadow-md">
                             ${price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </span>
-                        <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{unit}</span>
+                        <span className="text-xs font-bold text-white/30 uppercase tracking-uppercase">{unit}</span>
                     </div>
                 </div>
 
@@ -144,7 +144,7 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
             {/* Range Stats */}
             <div className="relative z-10 mt-6 pt-6 border-t border-white/5 flex justify-between items-end">
                 <div className="space-y-1">
-                    <span className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest">25Y Min-Max Band</span>
+                    <span className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase">25Y Min-Max Band</span>
                     <div className="flex items-center gap-4 text-xs font-bold text-white/50 tabular-nums">
                         <span>Low: <span className="text-white">${minVal.toFixed(1)}</span></span>
                         <div className="w-[1px] h-3 bg-white/10" />
@@ -152,8 +152,8 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
                     </div>
                 </div>
                 <div className="text-right">
-                    <div className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">Institutional Telemetry</div>
-                    <div className="text-xs font-bold text-white/10 uppercase tracking-tighter">Source: NYMEX / COMEX</div>
+                    <div className="text-xs font-black text-white/20 uppercase tracking-uppercase">Institutional Telemetry</div>
+                    <div className="text-xs font-bold text-white/10 uppercase tracking-heading">Source: NYMEX / COMEX</div>
                 </div>
             </div>
         </div>

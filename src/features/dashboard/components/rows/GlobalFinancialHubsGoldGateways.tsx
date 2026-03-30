@@ -76,10 +76,10 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                             {HUB_ICONS[hub.hub] || <Coins className="text-yellow-400 w-8 h-8" />}
                         </div>
                         <div>
-                            <h3 className="text-lg font-black text-white tracking-tight leading-none mb-1">
+                            <h3 className="text-lg font-black text-white tracking-heading leading-none mb-1">
                                 {hub.hub === 'GIFT City' ? 'GIFT City' : hub.hub}
                             </h3>
-                            <p className="text-xs text-neutral-500 uppercase tracking-widest font-black">
+                            <p className="text-xs text-neutral-500 uppercase tracking-uppercase font-black">
                                 {hub.hub === 'Switzerland' ? 'Safe-Haven' :
                                     hub.hub === 'Singapore' ? 'Asian Wealth' :
                                         hub.hub === 'London' ? 'Fin. Plumbing' :
@@ -115,7 +115,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <p className="text-xs text-neutral-400 uppercase tracking-wider truncate cursor-help hover:text-white transition-colors">
+                                <p className="text-xs text-neutral-400 uppercase tracking-uppercase truncate cursor-help hover:text-white transition-colors">
                                     {hub.primary_metric_label}
                                 </p>
                             </TooltipTrigger>
@@ -142,7 +142,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                         .slice(0, 2)
                         .map(([key, value]) => (
                             <div key={key}>
-                                <p className="text-xs text-neutral-500 uppercase tracking-tighter mb-0.5 truncate">
+                                <p className="text-xs text-neutral-500 uppercase tracking-heading mb-0.5 truncate">
                                     {key.replace(/_/g, ' ').replace(/yoy/gi, 'YoY').replace(/aum/gi, 'AUM').replace(/tonnes/gi, '')}
                                 </p>
                                 <div className="text-xs font-bold text-white font-mono truncate">
@@ -206,12 +206,12 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
             </motion.div>
 
             <div className="mt-8 flex flex-col md:flex-row items-center justify-between border-t border-white/5 pt-6 gap-4">
-                <p className="text-xs text-neutral-500 uppercase tracking-widest font-medium text-center md:text-left">
+                <p className="text-xs text-neutral-500 uppercase tracking-uppercase font-medium text-center md:text-left">
                     Data: SNB, MAS, LBMA, DMCC, HKMA, SGE, PBoC – Updated Monthly
                 </p>
                 <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-xs text-neutral-500 uppercase tracking-widest">Live Signals Active</span>
+                    <span className="text-xs text-neutral-500 uppercase tracking-uppercase">Live Signals Active</span>
                 </div>
             </div>
         </div>

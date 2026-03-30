@@ -50,16 +50,16 @@ export const PresidentialPolicyTracker: React.FC = () => {
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <Target size={16} className="text-rose-500" />
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                        <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60">
                             ADMINISTRATION INTELLIGENCE
                         </span>
                     </div>
-                    <h3 className="text-xl font-black tracking-tight text-foreground">
+                    <h3 className="text-xl font-black tracking-heading text-foreground">
                         Policy Impact Monitor: Trump 2.0
                     </h3>
                 </div>
                 <div className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
-                    <span className="text-xs font-black text-rose-400 uppercase tracking-widest">H-S CONFIDENCE</span>
+                    <span className="text-xs font-black text-rose-400 uppercase tracking-uppercase">H-S CONFIDENCE</span>
                 </div>
             </div>
 
@@ -81,7 +81,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                                 <div className="flex items-center gap-1.5">
                                     {isPositive ? <Zap size={12} className="text-amber-500" /> : <ShieldAlert size={12} className="text-rose-500" />}
                                     <span className={cn(
-                                        "text-xs font-black uppercase tracking-widest",
+                                        "text-xs font-black uppercase tracking-uppercase",
                                         isPositive ? "text-amber-400/80" : "text-rose-400/80"
                                     )}>
                                         {policy.category}
@@ -119,7 +119,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                             {/* Magnitude Bar */}
                             <div className="mt-4">
                                 <div className="flex justify-between items-center mb-1.5">
-                                    <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/40">Market Magnitude</span>
+                                    <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40">Market Magnitude</span>
                                     <span className={cn("text-xs font-black", isPositive ? "text-emerald-400" : "text-rose-400")}>
                                         {absScore * 10}%
                                     </span>
@@ -140,7 +140,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                                     >
                                         <div className="flex items-center gap-2">
                                             <Flag size={10} className="text-amber-500/60" />
-                                            <span className="text-xs font-black uppercase tracking-widest text-amber-500/60 group-hover:text-amber-400 transition-colors">Macro Analogue</span>
+                                            <span className="text-xs font-black uppercase tracking-uppercase text-amber-500/60 group-hover:text-amber-400 transition-colors">Macro Analogue</span>
                                         </div>
                                         <ChevronDown size={14} className={cn("text-amber-500/60 transition-transform", isExpanded && "rotate-180")} />
                                     </button>
@@ -161,7 +161,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
             <div className="mt-auto p-3 rounded-2xl bg-rose-500/5 border border-rose-500/10">
                 <div className="flex items-center gap-2">
                     <Flag size={10} className="text-rose-400/60" />
-                    <p className="text-xs font-bold text-rose-400/60 uppercase tracking-widest leading-tight">
+                    <p className="text-xs font-bold text-rose-400/60 uppercase tracking-uppercase leading-tight">
                         Live policy tracking with deep historical correlation analysis
                     </p>
                 </div>

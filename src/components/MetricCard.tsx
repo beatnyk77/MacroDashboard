@@ -124,11 +124,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
     const cardContent = (
         <Card
+            variant="metric"
             id={metricId || label}
             className={cn(
-                "relative flex flex-col h-full min-h-[180px] overflow-hidden transition-all duration-300",
-                "bg-card/95 border-border/60",
-                "hover:shadow-md hover:border-blue-500/30 group",
+                "relative flex flex-col h-full min-h-[180px] overflow-hidden",
                 isHighlighted && "ring-2 ring-blue-500 ring-offset-2 ring-offset-background",
                 isNullValue && "opacity-60",
                 className
@@ -142,12 +141,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 <div className="flex justify-between items-start">
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase group-hover:text-blue-500/80 transition-colors">
+                            <span className="text-xs font-semibold tracking-uppercase text-muted-foreground/70 uppercase group-hover:text-blue-500/80 transition-colors">
                                 {label}
                             </span>
                             {status !== 'neutral' && (
                                 <div className={cn(
-                                    "px-1.5 py-0.5 rounded-[4px] text-xs font-bold tracking-tight",
+                                    "px-1.5 py-0.5 rounded-[4px] text-xs font-bold tracking-heading",
                                     status === 'safe' && "bg-emerald-500/10 text-emerald-500",
                                     status === 'warning' && "bg-amber-500/10 text-amber-500",
                                     status === 'danger' && "bg-rose-500/10 text-rose-500",
@@ -156,7 +155,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                                 </div>
                             )}
                             {isStale && (
-                                <div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-xs font-bold tracking-tight animate-pulse border border-amber-500/20">
+                                <div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-xs font-bold tracking-heading animate-pulse border border-amber-500/20">
                                     OFFLINE
                                 </div>
                             )}
@@ -185,7 +184,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                         <div className="space-y-3">
                             <div className="flex items-baseline gap-1">
                                 <span className={cn(
-                                    "text-4xl font-bold tracking-tight text-foreground tabular-nums leading-none",
+                                    "text-4xl font-bold tracking-heading text-foreground tabular-nums leading-none",
                                     (String(value).length > 8) && "text-3xl" // Auto-scale for long numbers
                                 )}>
                                     {prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}

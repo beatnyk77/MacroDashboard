@@ -31,7 +31,7 @@ export const DataProvenanceBadge: React.FC<DataProvenanceBadgeProps> = ({
 
     return (
         <div className={cn(
-            "inline-flex items-center rounded-full border border-white/12 bg-white/5 text-white/40 font-black uppercase tracking-widest",
+            "inline-flex items-center rounded-full border border-white/12 bg-white/5 text-white/40 font-black uppercase tracking-uppercase",
             sizeClasses[size],
             className
         )}>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography, Container, Grid, Card, CardContent, CardActionArea, Chip, Stack } from '@mui/material';
+import { Typography, Container, Chip } from '@mui/material';
+import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { blogArticles } from '@/features/blog/blogData';
 import { SEOManager } from '@/components/SEOManager';
@@ -7,7 +8,7 @@ import { Calendar, User } from 'lucide-react';
 
 export const BlogPage: React.FC = () => {
     return (
-        <Box sx={{ py: 4 }}>
+        <div className="py-8">
             <SEOManager
                 title="Intelligence Journal | Macro Research & Analysis"
                 description="Institutional-grade macro research, de-dollarization trackers, and India real-economy analysis."
@@ -15,69 +16,52 @@ export const BlogPage: React.FC = () => {
             />
 
             <Container maxWidth="lg">
-                <Box sx={{ mb: 6, textAlign: 'center' }}>
-                    <Typography variant="h3" sx={{ fontWeight: 900, mb: 2, tracking: '-0.02em' }}>
+                <div className="mb-12 text-center">
+                    <Typography variant="h3" className="font-black tracking-heading mb-2">
                         Intelligence <span style={{ color: '#3b82f6' }}>Journal</span>
                     </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>
+                    <Typography variant="body1" className="text-muted-foreground mx-auto mb-4" style={{ maxWidth: 600 }}>
                         Deep-dive analysis on the structural shifts reshaping the global monetary order and the physical economy.
                     </Typography>
-                </Box>
+                </div>
 
-                <Grid container spacing={4}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {blogArticles.map((article) => (
-                        <Grid item xs={12} md={6} key={article.id}>
-                            <Card sx={{
-                                height: '100%',
-                                bgcolor: 'background.paper',
-                                border: '1px solid rgba(255,255,255,0.05)',
-                                '&:hover': {
-                                    borderColor: 'primary.main',
-                                    transform: 'translateY(-4px)',
-                                    transition: 'all 0.3s ease'
-                                }
-                            }}>
-                                <CardActionArea component={Link} to={`/blog/${article.slug}`} sx={{ height: '100%' }}>
-                                    <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                        <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                                            <Chip
-                                                label={article.category}
-                                                size="small"
-                                                sx={{
-                                                    bgcolor: 'rgba(59, 130, 246, 0.1)',
-                                                    color: '#3b82f6',
-                                                    fontWeight: 800,
-                                                    fontSize: '0.6rem',
-                                                    borderRadius: '4px'
-                                                }}
-                                            />
-                                        </Stack>
+                        <div key={article.id}>
+                            <Link to={`/blog/${article.slug}`} className="block h-full">
+                                <Card variant="elevated" className="h-full p-8 flex flex-col border-border/50 duration-300 hover:-translate-y-1 hover:border-primary">
+                                    <div className="flex gap-1 mb-2">
+                                        <Chip
+                                            label={article.category}
+                                            size="small"
+                                            className="bg-blue-500/10 text-blue-500 font-extrabold text-xs rounded-sm"
+                                        />
+                                    </div>
 
-                                        <Typography variant="h5" sx={{ fontWeight: 800, mb: 2, leading: 1.2 }}>
-                                            {article.title}
-                                        </Typography>
+                                    <Typography variant="h5" className="font-extrabold mb-2 leading-tight">
+                                        {article.title}
+                                    </Typography>
 
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, flexGrow: 1 }}>
-                                            {article.description}
-                                        </Typography>
+                                    <Typography variant="body2" className="text-muted-foreground mb-3 flex-grow">
+                                        {article.description}
+                                    </Typography>
 
-                                        <Stack direction="row" alignItems="center" spacing={3} sx={{ color: 'text.secondary' }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Calendar size={14} />
-                                                <Typography variant="caption" sx={{ fontWeight: 600 }}>{article.date}</Typography>
-                                            </Box>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <User size={14} />
-                                                <Typography variant="caption" sx={{ fontWeight: 600 }}>{article.author}</Typography>
-                                            </Box>
-                                        </Stack>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                        </Grid>
+                                    <div className="flex items-center gap-6 text-muted-foreground mt-auto">
+                                        <div className="flex items-center gap-1">
+                                            <Calendar size={14} />
+                                            <Typography variant="caption" className="font-semibold">{article.date}</Typography>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <User size={14} />
+                                            <Typography variant="caption" className="font-semibold">{article.author}</Typography>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </Link>
+                        </div>
                     ))}
-                </Grid>
+                </div>
             </Container>
-        </Box>
+        </div>
     );
 };

@@ -23,7 +23,7 @@ export const ForInstitutional: React.FC = () => {
             />
             <Container maxWidth="lg">
                 <Box sx={{ textAlign: 'center', mb: 16 }}>
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-8 animate-fade-in">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8 animate-fade-in">
                         <Crown size={14} /> Institutional Intelligence Console
                     </div>
                     <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
@@ -49,7 +49,7 @@ export const ForInstitutional: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
                     {/* Tier 1: Retail/Analyst */}
                     <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/12 transition-all">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Analyst Tier</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 mb-6">Analyst Tier</h4>
                         <div className="flex items-baseline gap-1 mb-8">
                             <span className="text-4xl font-black text-white">$0</span>
                             <span className="text-muted-foreground/40 text-sm font-bold uppercase">/Mo</span>
@@ -72,13 +72,13 @@ export const ForInstitutional: React.FC = () => {
 
                     {/* Tier 2: The Core API Offer */}
                     <div className="p-10 rounded-[2.5rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] flex flex-col relative group md:scale-105 z-10">
-                        <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-xs font-black uppercase tracking-widest shadow-xl">Most Popular</div>
-                        <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-6">Institutional API Access</h4>
+                        <div className="absolute top-0 right-10 -translate-y-1/2 px-4 py-1.5 rounded-full bg-blue-500 text-white text-xs font-black uppercase tracking-uppercase shadow-xl">Most Popular</div>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-blue-400 mb-6">Institutional API Access</h4>
                         <div className="flex items-baseline gap-1 mb-2">
                             <span className="text-5xl font-black text-white">$28</span>
                             <span className="text-blue-500 text-sm font-black uppercase">/Mo</span>
                         </div>
-                        <p className="text-xs font-black text-blue-400/60 uppercase tracking-widest mb-8 text-left">Billed Monthly • Cancel Anytime</p>
+                        <p className="text-xs font-black text-blue-400/60 uppercase tracking-uppercase mb-8 text-left">Billed Monthly • Cancel Anytime</p>
 
                         <ul className="space-y-4 mb-10 flex-1">
                             {[
@@ -104,7 +104,7 @@ export const ForInstitutional: React.FC = () => {
 
                     {/* Tier 3: Bespoke/Enterprise */}
                     <div className="p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] flex flex-col group hover:border-white/12 transition-all">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-6">Bespoke Advisory</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 mb-6">Bespoke Advisory</h4>
                         <div className="flex items-baseline gap-1 mb-8">
                             <span className="text-3xl font-black text-white italic">Contact Us</span>
                         </div>
@@ -131,7 +131,7 @@ export const ForInstitutional: React.FC = () => {
                         <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
                             <Database size={28} />
                         </div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-tight">Direct API Feed</h3>
+                        <h3 className="text-xl font-black text-white uppercase tracking-heading">Direct API Feed</h3>
                         <p className="text-muted-foreground/60 text-sm leading-relaxed font-medium">
                             Don't wait for reports. Access the raw telemetric feed that powers our terminal. Direct REST access to all our proprietary data structures including the US Debt Maturity Wall and India Fiscal Matrix.
                         </p>
@@ -140,7 +140,7 @@ export const ForInstitutional: React.FC = () => {
                         <div className="w-14 h-14 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
                             <Building2 size={28} />
                         </div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-tight">CI Engine Pro</h3>
+                        <h3 className="text-xl font-black text-white uppercase tracking-heading">CI Engine Pro</h3>
                         <p className="text-muted-foreground/60 text-sm leading-relaxed font-medium">
                             Full unlocked access to the Corporate India Engine. Deep fundamental analysis on 500+ Indian large caps with an integrated Macro Overlay for regime-based filtering.
                         </p>
@@ -149,7 +149,7 @@ export const ForInstitutional: React.FC = () => {
                         <div className="w-14 h-14 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500">
                             <Shield size={28} />
                         </div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-tight">Proof of Sovereign</h3>
+                        <h3 className="text-xl font-black text-white uppercase tracking-heading">Proof of Sovereign</h3>
                         <p className="text-muted-foreground/60 text-sm leading-relaxed font-medium">
                             Navigating the US Treasury maturity wall. We provide the institutional tracking necessary for identifying the shift into hard-money and reserve multi-polarity.
                         </p>

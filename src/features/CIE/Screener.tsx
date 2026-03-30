@@ -146,7 +146,7 @@ export const Screener: React.FC = () => {
     const renderSortHeader = (label: string, sortKey: string) => (
         <th
             key={sortKey}
-            className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-white/50 cursor-pointer hover:text-white transition-colors select-none"
+            className="px-4 py-3 text-xs font-bold uppercase tracking-uppercase text-white/50 cursor-pointer hover:text-white transition-colors select-none"
             onClick={() => requestSort(sortKey)}
         >
             <div className="flex items-center gap-1">
@@ -189,7 +189,7 @@ export const Screener: React.FC = () => {
 
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-black/40 border border-white/12">
-                            <span className="text-xs font-black uppercase tracking-widest text-white/30">Sector</span>
+                            <span className="text-xs font-black uppercase tracking-uppercase text-white/30">Sector</span>
                             <select
                                 value={filters.sector}
                                 onChange={(e) => setFilters({ ...filters, sector: e.target.value })}
@@ -201,7 +201,7 @@ export const Screener: React.FC = () => {
 
                         <button
                             onClick={() => setShowMacroFilters(!showMacroFilters)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${showMacroFilters ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.2)]' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-uppercase transition-all ${showMacroFilters ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.2)]' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
                         >
                             Advanced Filters {showMacroFilters ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                         </button>
@@ -219,7 +219,7 @@ export const Screener: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 py-8">
                                 {/* Macro Resilience */}
                                 <div className="space-y-6">
-                                    <h5 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400/60 pb-2 border-b border-blue-500/10">Macro Resilience</h5>
+                                    <h5 className="text-xs font-black uppercase tracking-uppercase text-blue-400/60 pb-2 border-b border-blue-500/10">Macro Resilience</h5>
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
@@ -250,7 +250,7 @@ export const Screener: React.FC = () => {
 
                                 {/* Governance & Insider */}
                                 <div className="space-y-6">
-                                    <h5 className="text-xs font-black uppercase tracking-[0.2em] text-rose-400/60 pb-2 border-b border-rose-500/10">Risk & Governance</h5>
+                                    <h5 className="text-xs font-black uppercase tracking-uppercase text-rose-400/60 pb-2 border-b border-rose-500/10">Risk & Governance</h5>
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
@@ -278,7 +278,7 @@ export const Screener: React.FC = () => {
 
                                 {/* Institutional Telemetry */}
                                 <div className="space-y-6">
-                                    <h5 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400/60 pb-2 border-b border-emerald-500/10">Institutional Flow</h5>
+                                    <h5 className="text-xs font-black uppercase tracking-uppercase text-emerald-400/60 pb-2 border-b border-emerald-500/10">Institutional Flow</h5>
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
@@ -318,7 +318,7 @@ export const Screener: React.FC = () => {
                                         />
                                         <button
                                             onClick={() => { saveView(viewName); setViewName(''); }}
-                                            className="px-4 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-xs font-black uppercase tracking-widest text-blue-400 transition-all border border-blue-500/20"
+                                            className="px-4 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-xs font-black uppercase tracking-uppercase text-blue-400 transition-all border border-blue-500/20"
                                         >
                                             Save View
                                         </button>
@@ -329,7 +329,7 @@ export const Screener: React.FC = () => {
                                             minStateResilience: 0, minCapexEfficiency: 0, minFormalization: 0, maxOilSensitivity: 100, maxGovRisk: 100,
                                             minInsiderNet: -1000, onlyRisingPledge: false, minInstitutionalBuy: 0, minShortRatio: 0
                                         })}
-                                        className="text-xs uppercase font-black text-rose-400/40 hover:text-rose-400 transition-colors tracking-widest"
+                                        className="text-xs uppercase font-black text-rose-400/40 hover:text-rose-400 transition-colors tracking-uppercase"
                                     >
                                         Reset All Filters
                                     </button>
@@ -344,9 +344,9 @@ export const Screener: React.FC = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/[0.01]">
-                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30">#</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-uppercase text-white/30">#</th>
                             {renderSortHeader("Entity", "name")}
-                            <th className="px-6 py-6 text-xs font-black uppercase tracking-[0.2em] text-white/30 text-center">Sector</th>
+                            <th className="px-6 py-6 text-xs font-black uppercase tracking-uppercase text-white/30 text-center">Sector</th>
                             {renderSortHeader("Market Cap", "mcap")}
                             {renderSortHeader("Macro Score", "macro_impact")}
                             {renderSortHeader("Insider Net", "insider")}
@@ -375,9 +375,9 @@ export const Screener: React.FC = () => {
                                         <td className="px-6 py-6 text-xs font-black text-white/20 italic">{idx + 1}</td>
                                         <td className="px-6 py-6">
                                             <Link to={`/india-equities/${company.ticker.replace('.NS', '')}`} className="flex flex-col group/name">
-                                                <span className="text-sm font-black text-white group-hover/name:text-blue-400 transition-colors tracking-tight">{company.name}</span>
+                                                <span className="text-sm font-black text-white group-hover/name:text-blue-400 transition-colors tracking-heading">{company.name}</span>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{company.ticker.replace('.NS', '')}</span>
+                                                    <span className="text-xs font-bold text-white/30 uppercase tracking-uppercase">{company.ticker.replace('.NS', '')}</span>
                                                     <span className="text-xs text-white/10">|</span>
                                                     <span className="text-xs font-medium text-white/20 italic">{company.industry}</span>
                                                 </div>
@@ -385,14 +385,14 @@ export const Screener: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-6">
                                             <div className="flex justify-center">
-                                                <span className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/5 text-xs font-bold text-white/40 uppercase tracking-widest whitespace-nowrap">
+                                                <span className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/5 text-xs font-bold text-white/40 uppercase tracking-uppercase whitespace-nowrap">
                                                     {company.sector || 'N/A'}
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-6">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-black text-white italic tracking-tighter">
+                                                <span className="text-sm font-black text-white italic tracking-heading">
                                                     ₹{((company.cie_fundamentals?.[0]?.revenue || 0) * (company.cie_fundamentals?.[0]?.metadata?.last_price || 0) / 1000 / 10000000).toFixed(0)}
                                                     <span className="text-xs text-white/20 ml-1">Cr</span>
                                                 </span>
@@ -406,7 +406,7 @@ export const Screener: React.FC = () => {
                                                         style={{ width: `${score}%` }}
                                                     />
                                                 </div>
-                                                <span className={`text-sm font-black italic tracking-tighter ${score > 70 ? 'text-emerald-400' : score > 50 ? 'text-amber-400' : 'text-rose-400'}`}>
+                                                <span className={`text-sm font-black italic tracking-heading ${score > 70 ? 'text-emerald-400' : score > 50 ? 'text-amber-400' : 'text-rose-400'}`}>
                                                     {score}
                                                 </span>
                                             </div>
@@ -414,14 +414,14 @@ export const Screener: React.FC = () => {
                                         <td className="px-6 py-6">
                                             <div className="flex flex-col items-end">
                                                 <div className="flex items-center gap-1">
-                                                    <span className={`text-sm font-black italic tracking-tighter ${insider > 0 ? 'text-emerald-400' : insider < 0 ? 'text-rose-400' : 'text-white/20'}`}>
+                                                    <span className={`text-sm font-black italic tracking-heading ${insider > 0 ? 'text-emerald-400' : insider < 0 ? 'text-rose-400' : 'text-white/20'}`}>
                                                         {insider > 0 ? '+' : ''}{insider}
                                                     </span>
-                                                    <span className="text-xs font-black text-white/20 uppercase tracking-widest">Cr</span>
+                                                    <span className="text-xs font-black text-white/20 uppercase tracking-uppercase">Cr</span>
                                                 </div>
                                                 {pDelta !== 0 && (
                                                     <div className={`flex items-center gap-1 mt-0.5 ${pDelta > 0 ? 'text-rose-400/60' : 'text-emerald-400/60'}`}>
-                                                        <span className="text-xs font-black uppercase tracking-tighter">Pledge {pDelta > 0 ? '▲' : '▼'}</span>
+                                                        <span className="text-xs font-black uppercase tracking-heading">Pledge {pDelta > 0 ? '▲' : '▼'}</span>
                                                         <span className="text-xs font-black">{Math.abs(pDelta).toFixed(1)}%</span>
                                                     </div>
                                                 )}
@@ -429,14 +429,14 @@ export const Screener: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-6">
                                             <div className="flex flex-col items-center">
-                                                <span className={`text-sm font-black italic tracking-tighter ${(company.short_interest_pct || 0) > 20 ? 'text-rose-400' : 'text-white/40'}`}>
+                                                <span className={`text-sm font-black italic tracking-heading ${(company.short_interest_pct || 0) > 20 ? 'text-rose-400' : 'text-white/40'}`}>
                                                     {(company.short_interest_pct || 0).toFixed(1)}<span className="text-xs ml-0.5">%</span>
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-6">
                                             <div className="flex justify-end">
-                                                <div className={`px-4 py-1.5 rounded-xl border font-black text-xs italic tracking-tighter ${govRisk < 30 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.1)]' :
+                                                <div className={`px-4 py-1.5 rounded-xl border font-black text-xs italic tracking-heading ${govRisk < 30 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.1)]' :
                                                         govRisk < 60 ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.1)]' :
                                                             'bg-rose-500/10 border-rose-500/20 text-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.1)]'
                                                     }`}>

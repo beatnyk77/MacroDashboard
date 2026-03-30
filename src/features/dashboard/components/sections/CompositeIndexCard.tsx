@@ -93,7 +93,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                         </div>
                         <div className="flex flex-wrap gap-1 mt-1.5">
                             {sources.map(src => (
-                                <span key={src} className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-0.5">
+                                <span key={src} className="text-xs font-semibold text-slate-500 uppercase tracking-uppercase flex items-center gap-0.5">
                                     <Database size={8} /> {src}
                                 </span>
                             ))}
@@ -117,12 +117,12 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                 ) : isZeroWithNeutral ? (
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-mono text-slate-600">Awaiting wiring</span>
-                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-slate-700/30 bg-slate-800/30">Pending</span>
+                        <span className="text-xs font-bold text-slate-600 uppercase tracking-uppercase px-1.5 py-0.5 rounded-full border border-slate-700/30 bg-slate-800/30">Pending</span>
                     </div>
                 ) : (
                     <div className="flex items-baseline gap-2">
                         <span className={cn(
-                            "text-3xl font-black font-mono tracking-tighter tabular-nums",
+                            "text-3xl font-black font-mono tracking-heading tabular-nums",
                             status === 'safe' ? "text-emerald-400" :
                                 status === 'warning' ? "text-amber-400" :
                                     status === 'danger' ? "text-rose-400" : "text-slate-200"
@@ -131,7 +131,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                         </span>
                         {trend !== undefined && (
                             <div className={cn(
-                                "flex items-center gap-0.5 text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full border",
+                                "flex items-center gap-0.5 text-xs font-bold uppercase tracking-uppercase px-1.5 py-0.5 rounded-full border",
                                 trend > 0 ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" :
                                     trend < 0 ? "text-rose-400 border-rose-500/20 bg-rose-500/5" :
                                         "text-slate-400 border-slate-500/20"

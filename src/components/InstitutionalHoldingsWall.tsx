@@ -53,8 +53,8 @@ const InstitutionalHoldingsWall: React.FC = () => {
     return (
       <div className="w-full h-96 flex flex-col items-center justify-center bg-slate-950/50 rounded-xl border border-white/12 backdrop-blur-xl border-dashed">
         <Cpu className="text-blue-500 animate-pulse mb-4 w-12 h-12" />
-        <div className="text-blue-400 font-mono text-sm tracking-widest animate-pulse">DECRYPTING 13-F FILING STREAMS...</div>
-        <div className="mt-2 text-[10px] text-slate-500 font-mono uppercase tracking-tighter">SEC EDGAR SOURCE [v4.2]</div>
+        <div className="text-blue-400 font-mono text-sm tracking-uppercase animate-pulse">DECRYPTING 13-F FILING STREAMS...</div>
+        <div className="mt-2 text-xs text-slate-500 font-mono uppercase tracking-heading">SEC EDGAR SOURCE [v4.2]</div>
       </div>
     );
   }
@@ -66,23 +66,23 @@ const InstitutionalHoldingsWall: React.FC = () => {
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent animate-shimmer" />
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-3xl font-black text-white tracking-tighter uppercase italic">
+            <h2 className="text-3xl font-black text-white tracking-heading uppercase italic">
               13-F Smart Money <span className="text-blue-500">Tracker</span>
             </h2>
-            <div className="flex items-center gap-1 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded text-[8px] text-blue-400 font-mono font-bold uppercase tracking-widest">
+            <div className="flex items-center gap-1 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded text-xs text-blue-400 font-mono font-bold uppercase tracking-uppercase">
               <Activity size={8} className="animate-pulse" />
               Flagship Monitor
             </div>
           </div>
-          <p className="text-[10px] text-slate-500 font-mono mt-1.5 uppercase tracking-widest leading-none">
+          <p className="text-xs text-slate-500 font-mono mt-1.5 uppercase tracking-uppercase leading-none">
             Institutional Capital Allocation Registry • SEC Consolidated Tape • Actual Flows v4
           </p>
         </div>
         <div className="text-right hidden sm:block font-mono">
-          <div className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Node Status: <span className="text-emerald-500">Nominal</span></div>
-          <div className="text-lg font-black text-blue-400 tracking-tighter">
+          <div className="text-xs text-slate-500 uppercase tracking-uppercase mb-1">Node Status: <span className="text-emerald-500">Nominal</span></div>
+          <div className="text-lg font-black text-blue-400 tracking-heading">
             {formatAUM(data.reduce((acc, curr) => acc + curr.total_aum, 0))}
-            <span className="text-[10px] text-slate-500 font-normal ml-2 uppercase">Total Monitored AUM</span>
+            <span className="text-xs text-slate-500 font-normal ml-2 uppercase">Total Monitored AUM</span>
           </div>
         </div>
       </div>
@@ -93,9 +93,9 @@ const InstitutionalHoldingsWall: React.FC = () => {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4 text-blue-500" />
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Institutional Ranking by AUM</h3>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-uppercase">Institutional Ranking by AUM</h3>
             </div>
-            <div className="text-[9px] text-slate-600 font-mono uppercase tracking-widest">Ranked by Size (Market Value)</div>
+            <div className="text-xs text-slate-600 font-mono uppercase tracking-uppercase">Ranked by Size (Market Value)</div>
           </div>
           
           <div className="h-[400px] w-full bg-slate-900/20 p-6 rounded-lg border border-white/5 relative group">
@@ -135,7 +135,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
         <div className="lg:col-span-12 xl:col-span-5 space-y-6">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="w-4 h-4 text-emerald-500" />
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Cross-Entity Sector Density</h3>
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-uppercase">Cross-Entity Sector Density</h3>
           </div>
 
           <div className="grid grid-cols-1 gap-3 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
@@ -144,13 +144,13 @@ const InstitutionalHoldingsWall: React.FC = () => {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-blue-500 font-mono font-bold tracking-tighter">[{fund.fund_name.split(' ')[0].toUpperCase()}]</span>
-                      <h4 className="text-xs font-black text-slate-200 uppercase tracking-tight">{fund.fund_name}</h4>
+                      <span className="text-xs text-blue-500 font-mono font-bold tracking-heading">[{fund.fund_name.split(' ')[0].toUpperCase()}]</span>
+                      <h4 className="text-xs font-black text-slate-200 uppercase tracking-heading">{fund.fund_name}</h4>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-sm font-bold text-white font-mono">{formatAUM(fund.total_aum)}</span>
                       {fund.qoq_delta !== 0 && (
-                        <div className={`text-[10px] font-mono flex items-center ${fund.qoq_delta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        <div className={`text-xs font-mono flex items-center ${fund.qoq_delta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                           {fund.qoq_delta >= 0 ? <TrendingUp size={10} className="mr-1" /> : <TrendingDown size={10} className="mr-1" />}
                           {Math.abs(fund.qoq_delta).toFixed(1)}%
                         </div>
@@ -172,7 +172,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                       }}
                     >
                       {/* Hover details */}
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black border border-white/20 p-2 rounded text-[8px] whitespace-nowrap hidden group-hover/sector:block z-50">
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black border border-white/20 p-2 rounded text-xs whitespace-nowrap hidden group-hover/sector:block z-50">
                         <span className="text-slate-400 font-bold">{sector}:</span> <span className="text-white font-mono">{allocation.toFixed(1)}%</span>
                       </div>
                     </div>
@@ -180,7 +180,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {Object.entries(fund.top_sectors || {}).slice(0, 3).map(([sector, allocation], sIdx) => (
-                    <div key={sIdx} className="text-[8px] text-slate-500 font-mono uppercase tracking-tighter">
+                    <div key={sIdx} className="text-xs text-slate-500 font-mono uppercase tracking-heading">
                       {sector}: <span className="text-slate-300">{allocation.toFixed(0)}%</span>
                     </div>
                   ))}
@@ -195,19 +195,19 @@ const InstitutionalHoldingsWall: React.FC = () => {
       <div className="px-8 py-3 bg-slate-900/60 border-t border-white/5 flex flex-wrap items-center gap-x-12 gap-y-2">
         <div className="flex items-center gap-2">
           <Shield size={10} className="text-blue-500" />
-          <span className="text-[9px] text-slate-600 font-mono uppercase font-bold tracking-widest">Compliance:</span>
-          <span className="text-[9px] text-slate-400 font-mono font-black italic uppercase">SEC 13-F AUDIT COMPLETE</span>
+          <span className="text-xs text-slate-600 font-mono uppercase font-bold tracking-uppercase">Compliance:</span>
+          <span className="text-xs text-slate-400 font-mono font-black italic uppercase">SEC 13-F AUDIT COMPLETE</span>
         </div>
         <div className="flex items-center gap-2">
           <Database size={10} className="text-emerald-500" />
-          <span className="text-[9px] text-slate-600 font-mono uppercase font-bold tracking-widest">Aggregator:</span>
-          <span className="text-[9px] text-slate-400 font-mono">SUPABASE_EDGE_CLUSTER_SEC_V3</span>
+          <span className="text-xs text-slate-600 font-mono uppercase font-bold tracking-uppercase">Aggregator:</span>
+          <span className="text-xs text-slate-400 font-mono">SUPABASE_EDGE_CLUSTER_SEC_V3</span>
         </div>
         <div className="ml-auto flex items-center gap-4">
           <div className="w-24 h-5 bg-blue-500/5 rounded flex bg-grid-white-05 overflow-hidden">
             <div className="h-full bg-blue-500/30 animate-pulse" style={{ width: '65%' }} />
           </div>
-          <span className="text-[9px] text-slate-700 font-mono uppercase font-black">X_TAP_STREAM: NOMINAL</span>
+          <span className="text-xs text-slate-700 font-mono uppercase font-black">X_TAP_STREAM: NOMINAL</span>
         </div>
       </div>
 

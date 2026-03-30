@@ -31,7 +31,7 @@ const StateFiscalHeatmap = lazy(() => import('@/features/dashboard/components/ro
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading India Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading India Signal...</span>
     </div>
 );
 
@@ -74,7 +74,7 @@ export const IndiaLab: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-4">
                     <MapPin size={12} /> Emerging Market Intelligence
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -90,7 +90,7 @@ export const IndiaLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <Activity className="text-blue-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Market Pulse Terminal</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Market Pulse Terminal</h2>
                     </div>
                     <SectionErrorBoundary name="India Market Pulse">
                         <Suspense fallback={<LoadingFallback />}>
@@ -99,7 +99,7 @@ export const IndiaLab: React.FC = () => {
                                 <div className="pt-8 border-t border-white/5">
                                     <div className="flex items-center gap-3 mb-8">
                                         <ArrowRightLeft className="text-blue-500" size={24} />
-                                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">FII / DII Flow Monitor</h2>
+                                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">FII / DII Flow Monitor</h2>
                                     </div>
                                     <FIIDIIMonitorSection />
                                 </div>
@@ -112,7 +112,7 @@ export const IndiaLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <TrendingUp className="text-blue-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Macro Pulse & BOP Pressure</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Macro Pulse & BOP Pressure</h2>
                     </div>
                     <SectionErrorBoundary name="India Macro Pulse">
                         <LazyRender minHeight="500px">
@@ -129,7 +129,7 @@ export const IndiaLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <Zap className="text-amber-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Credit Cycle Clock</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Credit Cycle Clock</h2>
                         </div>
                         <SectionErrorBoundary name="India Credit Cycle Clock">
                             <Suspense fallback={<LoadingFallback />}>
@@ -141,7 +141,7 @@ export const IndiaLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <BarChart3 className="text-emerald-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">RBI FX Defense</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">RBI FX Defense</h2>
                         </div>
                         <SectionErrorBoundary name="RBI FX Defense">
                             <Suspense fallback={<LoadingFallback />}>
@@ -156,7 +156,7 @@ export const IndiaLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <Activity className="text-rose-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Fiscal Stress Monitor</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Fiscal Stress Monitor</h2>
                         </div>
                         <SectionErrorBoundary name="India Fiscal Stress">
                             <Suspense fallback={<LoadingFallback />}>
@@ -168,7 +168,7 @@ export const IndiaLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <BarChart3 className="text-blue-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">India Debt Maturity Wall</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">India Debt Maturity Wall</h2>
                         </div>
                         <SectionErrorBoundary name="India Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
@@ -182,7 +182,7 @@ export const IndiaLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <MapPin className="text-blue-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">State Fiscal Heatmap</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">State Fiscal Heatmap</h2>
                     </div>
                     <SectionErrorBoundary name="State Fiscal Heatmap">
                         <LazyRender minHeight="600px">
@@ -201,7 +201,7 @@ export const IndiaLab: React.FC = () => {
                     <section id="liquidity-monitor">
                         <div className="flex items-center gap-3 mb-8">
                             <Landmark className="text-blue-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Daily Money Market Terminal</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
                         </div>
                         <SectionErrorBoundary name="India Money Market">
                             <Suspense fallback={<LoadingFallback />}>
@@ -213,7 +213,7 @@ export const IndiaLab: React.FC = () => {
                     <section>
                         <div className="flex items-center gap-3 mb-8">
                             <Activity className="text-emerald-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Inflation Pulse</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Inflation Pulse</h2>
                         </div>
                         <SectionErrorBoundary name="India Inflation Pulse">
                             <Suspense fallback={<LoadingFallback />}>
@@ -227,7 +227,7 @@ export const IndiaLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <Zap className="text-blue-400" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Digitization Premium</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Digitization Premium</h2>
                     </div>
                     <SectionErrorBoundary name="India Digitization Premium">
                         <Suspense fallback={<LoadingFallback />}>
@@ -239,7 +239,7 @@ export const IndiaLab: React.FC = () => {
 
             {/* SEO Structural Analysis Text Block */}
             <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of India Macro Telemetry">
-                <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6">Structural Analysis: India's Macro Resilience & Fiscal Quality</h3>
+                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: India's Macro Resilience & Fiscal Quality</h3>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>India Lab</strong> monitors highly granular, state-level macroeconomic indicators to evaluate the fundamental structural transition of the Indian economy. Unlike traditional emerging market (EM) trackers that rely on lagging, aggregated national data, GraphiQuestor connects directly to the <a href="/glossary/mospi" className="text-blue-400 hover:underline">Ministry of Statistics and Programme Implementation (MoSPI)</a>. This zero-lag integration enables real-time observation of the Index of Industrial Production (IIP), Consumer Price Index (CPI), and capital expenditure velocities across all 28 states.

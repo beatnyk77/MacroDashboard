@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="bg-slate-950 border border-white/12 rounded-xl p-3 text-xs shadow-xl">
-            <p className="text-muted-foreground mb-2 font-black uppercase tracking-widest">{label || payload[0]?.name}</p>
+            <p className="text-muted-foreground mb-2 font-black uppercase tracking-uppercase">{label || payload[0]?.name}</p>
             {payload.map((p: any) => (
                 <div key={p.name} className="flex justify-between gap-4">
                     <span style={{ color: p.color ?? '#fff' }}>{p.name}</span>
@@ -49,10 +49,10 @@ const CarbonScoreGauge: React.FC<{ intensity: number }> = ({ intensity }) => {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-lg font-black text-white tabular-nums">{intensity}</span>
-                    <span className="text-[0.45rem] text-muted-foreground/50 uppercase tracking-widest">gCO₂/kWh</span>
+                    <span className="text-xs text-muted-foreground/50 uppercase tracking-uppercase">gCO₂/kWh</span>
                 </div>
             </div>
-            <span className="text-xs font-black uppercase tracking-widest" style={{ color }}>
+            <span className="text-xs font-black uppercase tracking-uppercase" style={{ color }}>
                 {intensity < 450 ? 'Clean' : intensity < 560 ? 'Moderate' : 'Heavy'}
             </span>
         </div>
@@ -87,7 +87,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                     <Leaf className="text-green-400 w-5 h-5" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-black tracking-tight text-white uppercase">
+                    <h3 className="text-xl font-black tracking-heading text-white uppercase">
                         Energy &amp; <span className="text-green-400">Transition Risk</span>
                     </h3>
                     <p className="text-muted-foreground text-xs mt-0.5">Grid carbon intensity · Coal share · Renewable growth · Energy security</p>
@@ -107,10 +107,10 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                             { label: 'Wind Share', value: latest?.wind_share_pct, unit: '%', color: 'text-blue-400', desc: 'Installed capacity #1 global' },
                         ].map(({ label, value, unit, color, desc }) => (
                             <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-1">{label}</p>
+                                <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1">{label}</p>
                                 <p className="text-xs text-muted-foreground/30 mb-2">{desc}</p>
                                 <div className="flex items-baseline gap-1">
-                                    <span className={cn('text-2xl font-black tabular-nums tracking-tighter', color)}>
+                                    <span className={cn('text-2xl font-black tabular-nums tracking-heading', color)}>
                                         {value != null ? value.toFixed(1) : '--'}
                                     </span>
                                     <span className="text-xs text-white/20 uppercase">{unit}</span>
@@ -123,7 +123,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {/* Carbon Intensity Gauge */}
                         <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col items-center gap-2">
-                            <p className="text-xs font-black text-white/50 uppercase tracking-widest">Grid Carbon Intensity</p>
+                            <p className="text-xs font-black text-white/50 uppercase tracking-uppercase">Grid Carbon Intensity</p>
                             {latest && <CarbonScoreGauge intensity={latest.carbon_intensity_gco2kwh} />}
                             <p className="text-xs text-muted-foreground/30 text-center">
                                 Global avg ≈ 473 gCO₂/kWh (2024)
@@ -132,7 +132,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
 
                         {/* Generation Mix Donut */}
                         <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
-                            <p className="text-xs font-black text-white/50 uppercase tracking-widest mb-1">Generation Mix {latest?.year}</p>
+                            <p className="text-xs font-black text-white/50 uppercase tracking-uppercase mb-1">Generation Mix {latest?.year}</p>
                             <div className="flex items-center gap-4">
                                 <PieChart width={110} height={110}>
                                     <Pie data={pieData} cx={55} cy={55} innerRadius={30} outerRadius={50} paddingAngle={2} dataKey="value" stroke="none">
@@ -158,7 +158,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                         {/* Carbon-adjusted Energy Security Score */}
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-green-500/10 via-transparent to-blue-500/5 border border-green-500/20 flex flex-col items-center justify-center gap-3">
                             <Zap size={20} className="text-green-400" />
-                            <p className="text-xs font-black text-white/50 uppercase tracking-widest text-center">Carbon-Adj. Energy Security Score</p>
+                            <p className="text-xs font-black text-white/50 uppercase tracking-uppercase text-center">Carbon-Adj. Energy Security Score</p>
                             <p className="text-5xl font-black text-green-400 tabular-nums">{energySecScore ?? '--'}</p>
                             <p className="text-xs text-muted-foreground/40 text-center">/ 100 · Rising = transition progress</p>
                             <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -172,7 +172,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
 
                     {/* Historical Trend */}
                     <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">
+                        <p className="text-xs font-black text-white/60 uppercase tracking-uppercase mb-4">
                             Energy Transition Trajectory (2015–{latest?.year})
                         </p>
                         <ResponsiveContainer width="100%" height={180}>
@@ -203,7 +203,7 @@ export const ChinaEnergyGridPanel: React.FC = () => {
                         <div className="flex items-start gap-3">
                             <Wind size={14} className="text-green-400 mt-0.5 shrink-0" />
                             <div>
-                                <p className="text-xs font-black text-green-400 uppercase tracking-widest mb-1">Transition Alpha Signal</p>
+                                <p className="text-xs font-black text-green-400 uppercase tracking-uppercase mb-1">Transition Alpha Signal</p>
                                 <p className="text-xs text-muted-foreground/60 leading-relaxed">
                                     China is the world's largest renewable energy installer. Every 1% shift from coal to renewables reduces the carbon intensity by ~7 gCO₂/kWh. The trajectory indicates China will cross the global average threshold around 2028–2030 — a key milestone for ESG qualification of Chinese sovereign debt.
                                 </p>

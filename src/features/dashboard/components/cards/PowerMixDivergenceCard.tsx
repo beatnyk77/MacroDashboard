@@ -31,7 +31,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                         Power Mix Divergence
                     </h4>
                     <div className="flex items-center gap-3 mt-1 ml-10">
-                        <span className="text-xs font-bold text-emerald-500/80 flex items-center gap-1.5 uppercase tracking-widest">
+                        <span className="text-xs font-bold text-emerald-500/80 flex items-center gap-1.5 uppercase tracking-uppercase">
                             {lastUpdated ? (
                                 <>
                                     <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
@@ -43,7 +43,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                         </span>
                     </div>
                 </div>
-                <div className="px-3 py-1.5 rounded-2xl bg-white/5 border border-white/5 text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <div className="px-3 py-1.5 rounded-2xl bg-white/5 border border-white/5 text-xs font-black text-muted-foreground uppercase tracking-uppercase flex items-center gap-2">
                     {data.length > 0 ? (
                         <>
                             <div className="w-1 h-1 rounded-full bg-emerald-500" />
@@ -81,7 +81,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                                         fontSize={9}
                                         fontWeight="900"
                                         tickFormatter={(v) => `${v}%`}
-                                        className="uppercase tracking-tighter"
+                                        className="uppercase tracking-heading"
                                     />
                                     <YAxis
                                         dataKey="region"
@@ -90,7 +90,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                                         fontSize={10}
                                         fontWeight="900"
                                         width={80}
-                                        className="uppercase tracking-widest text-white"
+                                        className="uppercase tracking-uppercase text-white"
                                     />
                                     <Tooltip
                                         cursor={{ fill: 'rgba(255,255,255,0.02)' }}
@@ -98,7 +98,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                                             if (!active || !payload) return null;
                                             return (
                                                 <div className="bg-slate-950/90 border border-white/12 rounded-2xl p-4 shadow-2xl backdrop-blur-xl">
-                                                    <p className="text-xs font-black text-white mb-3 uppercase tracking-widest border-b border-white/5 pb-2">{label}</p>
+                                                    <p className="text-xs font-black text-white mb-3 uppercase tracking-uppercase border-b border-white/5 pb-2">{label}</p>
                                                     <div className="space-y-2 min-w-[140px]">
                                                         {payload.map((p: any) => (
                                                             <div key={p.name} className="flex justify-between items-center gap-4">
@@ -129,7 +129,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                             ].map(legend => (
                                 <div key={legend.label} className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full border border-white/12" style={{ backgroundColor: legend.color }} />
-                                    <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{legend.label}</span>
+                                    <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">{legend.label}</span>
                                 </div>
                             ))}
                         </div>
@@ -139,7 +139,7 @@ export const PowerMixDivergenceCard: React.FC<PowerMixDivergenceCardProps> = ({
                 <div className="mt-8 p-6 rounded-3xl bg-white/[0.02] border border-white/5 relative group/insight overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/50 group-hover/insight:bg-emerald-400 transition-colors" />
                     <p className="text-xs leading-relaxed text-muted-foreground/80 font-medium">
-                        <span className="text-white font-black uppercase tracking-widest mr-2 underline decoration-emerald-500/30">Strategic Insight:</span>
+                        <span className="text-white font-black uppercase tracking-uppercase mr-2 underline decoration-emerald-500/30">Strategic Insight:</span>
                         The structural divergence in power generation is the primary driver of 2025 energy cost disparities.
                         <span className="text-white"> China and India</span> prioritize energy density via coal to fuel industrial expansion,
                         while the <span className="text-white">EU and US</span> Clean Energy transition creates intermittency risks

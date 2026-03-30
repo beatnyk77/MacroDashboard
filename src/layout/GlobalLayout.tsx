@@ -92,10 +92,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 className={regimeColorClass}
                                 style={{ filter: `drop-shadow(0 0 8px ${regimeColorHex}40)` }}
                             />
-                            <div className="hidden sm:block text-2xl font-black tracking-tighter leading-none">
+                            <div className="hidden sm:block text-2xl font-black tracking-heading leading-none">
                                 <span className="text-foreground">Graphi</span>
                                 <span className="text-blue-500">Questor</span>
-                                <div className="text-xs font-bold text-muted-foreground/50 tracking-widest mt-1 uppercase">
+                                <div className="text-xs font-bold text-muted-foreground/50 tracking-uppercase mt-1 uppercase">
                                     Macro Observatory · Not Sovereign AI
                                 </div>
                             </div>
@@ -135,7 +135,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
                         {regime && (
                             <div className={cn(
-                                "flex items-center px-2 py-0.5 rounded border text-xs font-black tracking-wider uppercase h-6",
+                                "flex items-center px-2 py-0.5 rounded border text-xs font-black tracking-uppercase uppercase h-6",
                                 regimeColorClass,
                                 regimeColorClass.replace('text-', 'bg-').replace('500', '500/10'),
                                 regimeColorClass.replace('text-', 'border-').replace('500', '500/30')
@@ -187,7 +187,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 }}
             >
                 <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <span className="text-sm font-black text-white uppercase tracking-widest">Navigation</span>
+                    <span className="text-sm font-black text-white uppercase tracking-uppercase">Navigation</span>
                     <button
                         onClick={() => setMobileDrawerOpen(false)}
                         className="p-2 hover:bg-white/10 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -224,7 +224,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                     <ListItemText
                                         primary={item.label}
                                         primaryTypographyProps={{
-                                            className: "text-xs font-black uppercase tracking-widest"
+                                            className: "text-xs font-black uppercase tracking-uppercase"
                                         }}
                                     />
                                 </ListItem>

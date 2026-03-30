@@ -24,7 +24,7 @@ export const FYP_ImpactHeatmap: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center gap-3">
                 <Activity className="text-red-500" size={18} />
-                <h3 className="text-sm font-black uppercase tracking-widest text-white">Cross-Terminal Impact Matrix</h3>
+                <h3 className="text-sm font-black uppercase tracking-uppercase text-white">Cross-Terminal Impact Matrix</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -46,7 +46,7 @@ export const FYP_ImpactHeatmap: React.FC = () => {
                                         <div className="p-1.5 rounded-lg bg-red-500/10 text-red-400">
                                             <Icon size={14} />
                                         </div>
-                                        <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60">{corr.category}</span>
+                                        <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60">{corr.category}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                         {[...Array(10)].map((_, i) => (
@@ -68,7 +68,7 @@ export const FYP_ImpactHeatmap: React.FC = () => {
 
                                 <Link 
                                     to={corr.metadata?.link || '#'} 
-                                    className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-red-400 hover:text-red-300 transition-colors"
+                                    className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-red-400 hover:text-red-300 transition-colors"
                                 >
                                     View Logic <ArrowRight size={10} />
                                 </Link>

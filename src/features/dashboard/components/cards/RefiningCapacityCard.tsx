@@ -94,7 +94,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
         <Card className="bg-black/40 border-white/12 backdrop-blur-md h-[450px] p-6">
             <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
-                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-uppercase flex items-center gap-2">
                         <Factory className="h-4 w-4 text-emerald-400" />
                         Atmospheric Crude Distillation Capacity
                     </CardTitle>
@@ -117,7 +117,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                 <div className="space-y-6">
                     <div className="flex items-baseline justify-between">
                         <div>
-                            <div className="text-5xl font-light text-white tracking-tighter">
+                            <div className="text-5xl font-light text-white tracking-heading">
                                 {currentStats?.latest?.capacity_mbpd.toFixed(2) || '0.00'}
                                 <span className="text-xl text-muted-foreground ml-1">mbpd</span>
                             </div>

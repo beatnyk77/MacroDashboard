@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Container, Typography, Box, Button, Breadcrumbs, Link } from '@mui/material';
+import { Breadcrumbs, Link, Button } from '@mui/material';
 import {
     ChevronRight,
     ArrowLeft,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
+import { Card, CardContent } from '@/components/ui/card';
 
 // Components
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
@@ -26,49 +27,49 @@ const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/compon
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Signal...</span>
     </div>
 );
 
 export const USMacroFiscalLab: React.FC = () => {
     return (
-        <Container maxWidth={false} sx={{ py: 6 }}>
+        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
-            <Box sx={{ mb: 4 }}>
+            <div className="mb-8">
                 <Breadcrumbs
                     separator={<ChevronRight size={14} className="text-muted-foreground/50" />}
                     aria-label="breadcrumb"
                 >
-                    <Link underline="hover" color="inherit" href="/" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', tracking: '0.1em' }}>
+                    <Link underline="hover" color="inherit" href="/" className="flex items-center text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-white transition-colors">
                         Home
                     </Link>
-                    <Link underline="hover" color="inherit" href="/macro-observatory" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', tracking: '0.1em' }}>
+                    <Link underline="hover" color="inherit" href="/macro-observatory" className="flex items-center text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-white transition-colors">
                         Observatory
                     </Link>
-                    <Typography color="text.primary" sx={{ display: 'flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', tracking: '0.1em' }}>
+                    <span className="flex items-center text-[10px] font-black uppercase tracking-[0.15em] text-blue-500">
                         US Macro & Fiscal
-                    </Typography>
+                    </span>
                 </Breadcrumbs>
-            </Box>
+            </div>
 
-            <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-4">
+            <div className="mb-16">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <Zap size={12} /> Core Sovereign Telemetry
                 </div>
-                <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
                     US Macro & Fiscal <span className="text-blue-500">Lab</span>
-                </Typography>
-                <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '800px', fontSize: '1.1rem', fontWeight: 500 }}>
+                </h1>
+                <p className="text-muted-foreground/60 max-w-3xl text-base md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     Tracking the structural debt dynamics, treasury demand vectors, and fiscal policy impact of the world's reserve currency issuer.
-                </Typography>
-            </Box>
+                </p>
+            </div>
 
             <div className="space-y-32">
                 {/* Section 1: Debt Maturity Wall */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <TrendingUp className="text-blue-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">US Debt Maturity Wall</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">US Debt Maturity Wall</h2>
                     </div>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <LazyRender minHeight="500px">
@@ -84,7 +85,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <Zap className="text-amber-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Auction Demand</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Auction Demand</h2>
                     </div>
                     <SectionErrorBoundary name="Treasury Demand Gauge">
                         <LazyRender minHeight="300px">
@@ -99,7 +100,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <ShieldAlert className="text-emerald-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Foreign Holders</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Foreign Holders</h2>
                     </div>
                     <SectionErrorBoundary name="Top Treasury Holders">
                         <LazyRender minHeight="700px">
@@ -114,7 +115,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <TrendingUp className="text-indigo-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Defense vs Interest</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Defense vs Interest</h2>
                     </div>
                     <SectionErrorBoundary name="US Fiscal Comparison">
                         <LazyRender minHeight="400px">
@@ -131,7 +132,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
                             <TrendingUp className="text-blue-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-tight text-white">Capital & Energy Liquidity Flows</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Capital & Energy Liquidity Flows</h2>
                         </div>
                     </div>
                     <SectionErrorBoundary name="US Macro Pulse">
@@ -143,11 +144,11 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 6: Corporate Treasury Hedging (New) */}
+                {/* Section 6: Corporate Treasury Hedging */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <ShieldCheck className="text-emerald-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Hedging Opportunities</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Hedging Opportunities</h2>
                     </div>
                     <SectionErrorBoundary name="Corporate Hedging monitor">
                         <LazyRender minHeight="400px">
@@ -158,11 +159,11 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 6: Policy Tracker */}
+                {/* Section 7: Policy Tracker */}
                 <section className="pt-12 border-t border-white/5">
                     <div className="flex items-center gap-3 mb-8">
                         <ShieldAlert className="text-rose-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white">Trump Action Monitor</h2>
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Trump Action Monitor</h2>
                     </div>
                     <SectionErrorBoundary name="Policy Tracker">
                         <LazyRender minHeight="300px">
@@ -173,65 +174,60 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 7: Equity Fundamental Pulse (New) */}
-                <section className="pt-12 border-t border-white/5">
-                    <Box sx={{
-                        p: 8,
-                        borderRadius: '40px',
-                        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(0, 0, 0, 0) 100%)',
-                        border: '1px solid rgba(59, 130, 246, 0.1)',
-                        display: 'flex',
-                        flexDirection: { xs: 'column', md: 'row' },
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 6
-                    }}>
-                        <Box sx={{ flex: 1 }}>
-                            <div className="flex items-center gap-3 mb-4">
-                                <BarChart3 className="text-blue-400" size={24} />
-                                <h2 className="text-2xl font-black uppercase tracking-tight text-white">US Equity Fundamental Pulse</h2>
+                {/* Section 8: Equity Fundamental Pulse Card */}
+                <section>
+                    <Card variant="elevated" className="border-blue-500/10 bg-gradient-to-br from-blue-500/[0.05] to-transparent p-1">
+                        <CardContent className="flex flex-col md:flex-row items-center justify-between gap-12 p-8 md:p-12">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <BarChart3 className="text-blue-400" size={32} />
+                                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-heading text-white">US Equity Fundamental Pulse</h2>
+                                </div>
+                                <p className="text-muted-foreground/60 text-base md:text-lg font-medium leading-relaxed mb-8 uppercase tracking-wide max-w-2xl">
+                                    Deep macro-to-corporate correlation engine. Analyze how sovereign debt dynamics and policy shifts impact US corporate margins, valuation tiers, and institutional positioning through official SEC EDGAR telemetry.
+                                </p>
+                                <Button
+                                    variant="contained"
+                                    size="large"
+                                    href="/us-equities"
+                                    sx={{
+                                        bgcolor: '#2563eb',
+                                        color: '#ffffff',
+                                        fontWeight: 900,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.1em',
+                                        borderRadius: '12px',
+                                        px: 6,
+                                        py: 2,
+                                        boxShadow: '0 0 30px rgba(37,99,235,0.2)',
+                                        '&:hover': { bgcolor: '#1d4ed8' }
+                                    }}
+                                >
+                                    Launch Equities Terminal
+                                </Button>
                             </div>
-                            <Typography variant="body1" sx={{ color: 'white/60', mb: 6, fontWeight: 500, lineHeight: 1.6 }}>
-                                Deep macro-to-corporate correlation engine. Analyze how sovereign debt dynamics and policy shifts impact US corporate margins, valuation tiers, and institutional positioning through official SEC EDGAR telemetry.
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                endIcon={<ChevronRight size={16} />}
-                                href="/us-equities"
-                                sx={{
-                                    bgcolor: '#3b82f6',
-                                    fontWeight: 900,
-                                    fontSize: '0.75rem',
-                                    borderRadius: '12px',
-                                    px: 4,
-                                    py: 1.5,
-                                    boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)',
-                                    '&:hover': { bgcolor: '#2563eb' }
-                                }}
-                            >
-                                Launch Equities Terminal
-                            </Button>
-                        </Box>
-                        <Box sx={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, width: '100%' }}>
-                            {[
-                                { label: 'Valuation Tiers', sub: 'P/E Heatmaps' },
-                                { label: 'Insider Ops', sub: 'Conviction Feed' },
-                                { label: 'Leverage Pulse', sub: 'Debt/Equity' },
-                                { label: 'Whale Tracking', sub: '13F Holdings' }
-                            ].map((item, i) => (
-                                <Box key={i} sx={{ p: 4, borderRadius: '24px', bgcolor: 'white/[0.03]', border: '1px solid white/5' }}>
-                                    <Typography variant="caption" sx={{ display: 'block', color: 'blue.400', fontWeight: 900, mb: 0.5, textTransform: 'uppercase' }}>{item.label}</Typography>
-                                    <Typography variant="body2" sx={{ color: 'white/40', fontWeight: 700 }}>{item.sub}</Typography>
-                                </Box>
-                            ))}
-                        </Box>
-                    </Box>
+                            
+                            <div className="w-full md:flex-1 grid grid-cols-2 gap-4">
+                                {[
+                                    { label: 'Valuation Tiers', sub: 'P/E Heatmaps' },
+                                    { label: 'Insider Ops', sub: 'Conviction Feed' },
+                                    { label: 'Leverage Pulse', sub: 'Debt/Equity' },
+                                    { label: 'Whale Tracking', sub: '13F Holdings' }
+                                ].map((item, i) => (
+                                    <Card key={i} variant="metric" className="p-4 bg-white/[0.02] border-white/5 group hover:border-blue-500/20 transition-colors">
+                                        <span className="block text-[10px] font-black text-blue-400 uppercase tracking-uppercase mb-1">{item.label}</span>
+                                        <span className="block text-xs font-bold text-white/40 group-hover:text-white/60 transition-colors uppercase">{item.sub}</span>
+                                    </Card>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </section>
             </div>
 
             {/* SEO Structural Analysis Text Block */}
             <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of US Fiscal Trajectory">
-                <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6">Structural Analysis: The US Fiscal Trajectory & Sovereign Debt</h3>
+                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: The US Fiscal Trajectory & Sovereign Debt</h3>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>US Macro & Fiscal Lab</strong> provides high-frequency telemetry on the structural constraints facing the United States Treasury and the Federal Reserve. Over the past decade, the reliance on short-term debt issuance (Treasury Bills) has created a significant <em>maturity wall</em>, forcing the sovereign to constantly refinance obligations rather than lock in long-term capital.
@@ -245,17 +241,23 @@ export const USMacroFiscalLab: React.FC = () => {
                 </div>
             </article>
 
-            <Box sx={{ mt: 12, pt: 8, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+            <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
                     variant="text"
-                    startIcon={<ArrowLeft size={18} />}
                     href="/macro-observatory"
-                    sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 900, '&:hover': { color: 'white' } }}
+                    startIcon={<ArrowLeft size={18} />}
+                    sx={{
+                        color: 'rgba(255,255,255,0.4)',
+                        fontWeight: 900,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        '&:hover': { color: '#ffffff', bgcolor: 'transparent' }
+                    }}
                 >
                     Back to Observatory
                 </Button>
-            </Box>
-        </Container>
+            </div>
+        </div>
     );
 };
 

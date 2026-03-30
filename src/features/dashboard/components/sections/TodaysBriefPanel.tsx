@@ -130,14 +130,14 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
             <CardContent className="p-6 md:p-8 relative z-10">
                 <div className="flex justify-between items-start mb-8">
                     <div>
-                        <span className="block text-primary font-black tracking-[0.2em] text-xs font-sans mb-2">
+                        <span className="block text-primary font-black tracking-uppercase text-xs font-sans mb-2">
                             GRAPHIQUESTOR INTELLIGENCE
                         </span>
-                        <h3 className="text-3xl md:text-4xl font-serif text-foreground tracking-tight leading-tight">
+                        <h3 className="text-3xl md:text-4xl font-serif text-foreground tracking-heading leading-tight">
                             {formatDate(new Date())}
                         </h3>
                     </div>
-                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-xs font-black tracking-wider uppercase">
+                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-xs font-black tracking-uppercase uppercase">
                         Proprietary View
                     </div>
                 </div>
@@ -148,7 +148,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                         <div className="p-5 rounded-lg bg-white/5 border border-white/12">
                             <div className="flex items-center gap-2 mb-3">
                                 {getStatusIcon(getRegimeStatus())}
-                                <span className="text-xs font-black tracking-widest text-muted-foreground uppercase" aria-label="Current Market Regime Status">
+                                <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase" aria-label="Current Market Regime Status">
                                     Regime Consensus
                                 </span>
                             </div>
@@ -167,7 +167,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                 ) : (
                                     <TrendingDown size={16} className="text-rose-500" />
                                 )}
-                                <span className="text-xs font-black tracking-widest text-muted-foreground uppercase" aria-label="Liquidity Signal">
+                                <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase" aria-label="Liquidity Signal">
                                     Liquidity Impulse
                                 </span>
                             </div>
@@ -186,7 +186,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <Newspaper size={16} className="text-primary" />
-                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+                                    <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">
                                         LIVE INTELLIGENCE FEED
                                     </span>
                                 </div>
@@ -197,7 +197,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                             key={tab.key}
                                             onClick={() => setActiveTab(tab.key)}
                                             className={cn(
-                                                "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200",
+                                                "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-uppercase transition-all duration-200",
                                                 activeTab === tab.key
                                                     ? "bg-blue-500/20 text-blue-400 shadow-sm"
                                                     : "text-muted-foreground/60 hover:text-muted-foreground"
@@ -230,7 +230,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                                                 handleHighlight(headline.title, '#macro-orientation-section');
                                                             }
                                                         }}
-                                                        className="text-[0.75rem] font-semibold text-foreground hover:text-primary transition-colors line-clamp-2 leading-relaxed cursor-pointer inline-flex items-start gap-1.5"
+                                                        className="text-sm font-semibold text-foreground hover:text-primary transition-colors line-clamp-2 leading-relaxed cursor-pointer inline-flex items-start gap-1.5"
                                                         title={headline.title}
                                                     >
                                                         {headline.title}

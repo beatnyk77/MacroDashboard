@@ -52,24 +52,24 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-black text-xs uppercase tracking-[0.3em] text-muted-foreground/40">
+                            <h3 className="font-black text-xs uppercase tracking-uppercase text-muted-foreground/40">
                                 {title} Arbitrage
                             </h3>
                             <div className="h-[1px] flex-1 bg-white/5" />
                         </div>
                         <div className="flex flex-wrap gap-6 items-center">
                             <div className="flex flex-col">
-                                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-tighter mb-1">COMEX (West)</span>
+                                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-heading mb-1">COMEX (West)</span>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xl font-black text-white/90 font-mono tracking-tighter tabular-nums">${comexMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
+                                    <span className="text-xl font-black text-white/90 font-mono tracking-heading tabular-nums">${comexMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
                                 </div>
                             </div>
                             <div className="w-[1px] h-10 bg-white/5 hidden sm:block" />
                             <div className="flex flex-col">
-                                <span className="text-xs font-black text-emerald-500/40 uppercase tracking-tighter mb-1">SHANGHAI (East)</span>
+                                <span className="text-xs font-black text-emerald-500/40 uppercase tracking-heading mb-1">SHANGHAI (East)</span>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xl font-black text-emerald-400 font-mono tracking-tighter tabular-nums">${shanghaiMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
+                                    <span className="text-xl font-black text-emerald-400 font-mono tracking-heading tabular-nums">${shanghaiMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 </div>
                             </div>
@@ -82,7 +82,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                     <div className="flex justify-between items-end mb-1">
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
-                                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest px-2.5 py-1 rounded-full bg-white/5 border border-white/5">
+                                <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/5">
                                     Spread Delta
                                 </span>
                                 {Math.abs(spread) > 1.2 && (
@@ -95,7 +95,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                         </div>
                         <div className="flex flex-col items-end">
                             <div className={cn(
-                                "text-4xl font-black tracking-tighter tabular-nums leading-none",
+                                "text-4xl font-black tracking-heading tabular-nums leading-none",
                                 isPremium ? "text-emerald-400" : "text-rose-400"
                             )}>
                                 {isPremium ? '+' : ''}{spread.toFixed(2)}%
@@ -141,7 +141,7 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                             />
                         </AreaChart>
                     </ResponsiveContainer>
-                    <div className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest text-center mt-2">60D Flow Velocity</div>
+                    <div className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase text-center mt-2">60D Flow Velocity</div>
                 </div>
             </div>
         </div>
@@ -173,7 +173,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                         <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                             <TrendingUp className="text-emerald-500 w-5 h-5" />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
+                        <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
                             Shanghai <span className="text-emerald-500">Divergence</span> Engine
                         </h2>
                     </div>
@@ -214,7 +214,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                             <AlertTriangle className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div className="space-y-1">
-                            <div className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Institutional Engine Note</div>
+                            <div className="text-xs font-black text-emerald-400 uppercase tracking-uppercase">Institutional Engine Note</div>
                             <p className="text-sm font-medium text-white/90 leading-relaxed max-w-2xl">
                                 {goldSpread && goldSpread.value > 0.5
                                     ? "Persistent Shanghai Premium confirmed. Bullion flow velocity remains skewed toward Asian sovereign vaults, potentially front-running a global reserve diversification cycle."
@@ -232,7 +232,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                             </TooltipTrigger>
                             <TooltipContent className="bg-slate-950 border-white/12 p-4 max-w-[250px] rounded-xl shadow-2xl">
                                 <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                                    <span className="text-white font-bold block mb-1 uppercase tracking-wider">Arbitrage Calculation</span>
+                                    <span className="text-white font-bold block mb-1 uppercase tracking-uppercase">Arbitrage Calculation</span>
                                     Cross-exchange spread calculated as ((Shanghai Cash / USDCNH) - COMEX Front Month) / COMEX * 100. Accounts for offshore currency conversion and physical delivery fees.
                                 </p>
                             </TooltipContent>
@@ -260,14 +260,14 @@ export const PreciousDivergenceCard: React.FC = () => {
                     ].map((bullet, idx) => (
                         <div key={idx} className="group/bullet space-y-2.5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-black uppercase tracking-[0.2em] text-white/60 group-hover/bullet:text-white transition-colors">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-white/60 group-hover/bullet:text-white transition-colors">
                                     {bullet.label}
                                 </span>
                                 <div className="px-2 py-0.5 rounded bg-white/5 text-xs font-black text-muted-foreground uppercase">
                                     {bullet.status}
                                 </div>
                             </div>
-                            <p className="text-[0.75rem] text-muted-foreground/80 font-medium leading-[1.4] italic border-l-2 border-white/5 pl-4 group-hover/bullet:border-emerald-500/30 transition-colors">
+                            <p className="text-sm text-muted-foreground/80 font-medium leading-[1.4] italic border-l-2 border-white/5 pl-4 group-hover/bullet:border-emerald-500/30 transition-colors">
                                 {bullet.content}
                             </p>
                         </div>

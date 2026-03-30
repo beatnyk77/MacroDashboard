@@ -21,7 +21,7 @@ const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/m
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Energy Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Energy Signal...</span>
     </div>
 );
 
@@ -48,7 +48,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
 
             {/* Intro / How to Use This Lab */}
             <Box sx={{ mb: 12 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-uppercase mb-4">
                     <Fuel size={12} /> Institutional Resource Security
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -59,7 +59,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 </Typography>
 
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/12 max-w-4xl">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2 border-b border-white/12 pb-2 inline-block">How to use this Lab</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase mb-2 border-b border-white/12 pb-2 inline-block">How to use this Lab</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                         This environment translates physical commodity constraints into sovereign vulnerability metrics.
                         <strong> Start by assessing the US strategic stockpile (SPR) and refining limits.</strong> Then, trace the molecular shift of Russian and Middle Eastern crude eastward to Asia to understand inflation divergence. Finally, monitor the physical bottlenecks of the AI revolution via power demand.
@@ -72,7 +72,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Globe className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Sovereign Energy Security</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Sovereign Energy Security</h2>
                     </div>
 
                     <div className="w-full">
@@ -84,7 +84,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 block mb-2">So What? — Institutional Insight</span>
+                        <span className="text-xs font-black uppercase tracking-uppercase text-blue-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             National security is inextricably linked to refining elasticity. The depletion of the SPR combined with aging infrastructure leaves Western economies highly vulnerable to supply shocks. Concurrently, the EU gas storage levels dictate the winter industrial shutdown probabilities, actively altering core inflation forecasts.
                         </p>
@@ -95,7 +95,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Ship className="text-emerald-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Asia Energy & Commodity Flows</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Asia Energy & Commodity Flows</h2>
                     </div>
 
                     <div className="w-full">
@@ -107,7 +107,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 block mb-2">So What? — Institutional Insight</span>
+                        <span className="text-xs font-black uppercase tracking-uppercase text-emerald-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             The "shadow" fleet and redirection of heavily sanctioned crude have created a massive structural cost advantage for Indian refiners and Chinese industrials. By tracking import pain points (FX vs. Brent correlation), we can identify early capitulation risks in emerging markets dependent on dollar-priced energy imports.
                         </p>
@@ -118,7 +118,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Activity className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Global Refining imbalance</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Refining imbalance</h2>
                     </div>
 
                     <div className="w-full">
@@ -130,7 +130,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 block mb-2">So What? — Institutional Insight</span>
+                        <span className="text-xs font-black uppercase tracking-uppercase text-blue-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             Refining capacity is the ultimate bottleneck in the energy transition. The migration of complex refining clusters from West to East represents a fundamental shift in geopolitical leverage, as refined product arbitrage now dictates regional inflation trajectories more than crude price itself.
                         </p>
@@ -141,7 +141,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Ship className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Hormuz Tanker Tracking</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Hormuz Tanker Tracking</h2>
                     </div>
 
                     <div className="w-full">
@@ -153,7 +153,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 block mb-2">So What? — Institutional Insight</span>
+                        <span className="text-xs font-black uppercase tracking-uppercase text-blue-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             Monitoring the Strait of Hormuz in real-time allows for the detection of "grey zone" maritime activity. Significant deviations in tanker frequency or insurance risk premiums directly impact the Energy Intensity metrics of the global industrial base.
                         </p>
@@ -164,7 +164,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Activity className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Physical Flows Terminal</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Physical Flows Terminal</h2>
                     </div>
 
                     <div className="w-full">
@@ -176,7 +176,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-amber-500 block mb-2">So What? — Institutional Insight</span>
+                        <span className="text-xs font-black uppercase tracking-uppercase text-amber-500 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             This acts as the live ticker for physical stress. Instead of paper markets, tracking the physical delivery networks for critical metals (like Copper and REMs) explicitly fronts the demand impulses of clean tech and defense manufacturing, bypassing financialization noise.
                         </p>
@@ -187,7 +187,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-indigo-400" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">AI Compute & Energy CAPEX</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">AI Compute & Energy CAPEX</h2>
                     </div>
 
                     <div className="w-full">
@@ -199,7 +199,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-indigo-500/5 border-l-4 border-indigo-500 rounded-r-2xl max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 block mb-2">So What? — Institutional Insight</span>
+                        <span className="text-xs font-black uppercase tracking-uppercase text-indigo-400 block mb-2">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed">
                             The Shale Analogy is playing out in real-time. Unprecedented hyperscaler CAPEX is colliding with the physical realities of grid capacity and transformer backlogs. Tracking server energy intensity vs hardware rental costs reveals exactly when oversupply hits the inference layer, while base-load power remains the ultimate bottleneck.
                         </p>

@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
-import { Container } from '@mui/material';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Components
 import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
@@ -37,38 +37,38 @@ const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/r
 
 const LoadingFallback = () => (
     <div className="w-full h-full min-h-[150px] bg-slate-900/50 border border-white/5 rounded-xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Connecting...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Connecting...</span>
     </div>
 );
 
 export const Terminal: React.FC = () => {
     return (
-        <Container maxWidth={false} disableGutters className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto bg-slate-950 min-h-screen">
+        <div className="w-full max-w-[1920px] mx-auto bg-slate-950 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <SEOManager title="GraphiQuestor Terminal" description="Live Institutional Macro Telemetry" isApp={true} />
 
-            <header className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/12 pb-4">
+            <header className="mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
                 <div>
-                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter leading-none mb-1">
+                    <h1 className="text-3xl font-black text-white uppercase tracking-heading leading-tight mb-2">
                         Macro Observatory
                     </h1>
-                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+                    <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase">
                         High-Frequency Liquidity & Sovereign Stress Telemetry
                     </p>
                 </div>
             </header>
 
-            <main className="space-y-16 pb-32">
+            <main className="space-y-24 pb-32">
                 {/* 0. FLAGSHIP: 13-F SMART MONEY TRACKER */}
-                <div className="w-full">
+                <section>
                     <SectionErrorBoundary name="13-F Smart Money Tracker">
                         <Suspense fallback={<LoadingFallback />}>
                             <InstitutionalHoldingsWall />
                         </Suspense>
                     </SectionErrorBoundary>
-                </div>
+                </section>
 
                 {/* 1. STRATEGIC CONTEXT */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     <div className="lg:col-span-8">
                         <SectionErrorBoundary name="Weekly Narrative">
                             <Suspense fallback={<LoadingFallback />}>
@@ -83,41 +83,44 @@ export const Terminal: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
-                </div>
+                </section>
 
                 {/* 2. LIQUIDITY PLUMBLINE (Core Macro Input) */}
-                <div className="w-full space-y-8">
+                <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-blue-400">Liquidity Plumbline</h2>
-                        <div className="h-px flex-1 bg-white/10" />
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">Liquidity Plumbline</h2>
+                        <div className="h-px flex-1 bg-white/5" />
                     </div>
+                    
                     <SectionErrorBoundary name="Global Liquidity Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <GlobalLiquidityMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
                     
-                    <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                    <Card variant="elevated">
+                        <CardHeader className="flex flex-row justify-between items-center border-b border-white/5 pb-4 mb-6">
                             <div>
-                                <h2 className="text-lg font-black text-white uppercase tracking-tighter">US Net Liquidity Proxy</h2>
-                                <p className="text-xs text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Monetary Base & Treasury General Account Telemetry</p>
+                                <CardTitle className="text-lg uppercase">US Net Liquidity Proxy</CardTitle>
+                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Monetary Base & Treasury General Account Telemetry</p>
                             </div>
                             <LiveStatusIndicator source="FRED / Treasury" />
-                        </div>
-                        <SectionErrorBoundary name="Net Liquidity">
-                            <NetLiquidityRow />
-                        </SectionErrorBoundary>
-                    </div>
-                </div>
+                        </CardHeader>
+                        <CardContent>
+                            <SectionErrorBoundary name="Net Liquidity">
+                                <NetLiquidityRow />
+                            </SectionErrorBoundary>
+                        </CardContent>
+                    </Card>
+                </section>
 
                 {/* 3. SOVEREIGN STRESS (Risk Indicators) */}
-                <div className="w-full space-y-8">
+                <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-rose-400">Sovereign Stress</h2>
-                        <div className="h-px flex-1 bg-white/10" />
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-rose-500/80">Sovereign Stress</h2>
+                        <div className="h-px flex-1 bg-white/5" />
                     </div>
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -128,13 +131,15 @@ export const Terminal: React.FC = () => {
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="US Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-sm font-black text-white uppercase tracking-widest">US Debt Maturity Wall</h3>
+                                <Card variant="elevated" className="h-full">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6">
+                                        <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
                                         <LiveStatusIndicator source="Treasury" />
-                                    </div>
-                                    <USDebtMaturityWall />
-                                </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <USDebtMaturityWall />
+                                    </CardContent>
+                                </Card>
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
@@ -155,32 +160,34 @@ export const Terminal: React.FC = () => {
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="Auction Demand Gauge">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Auction Demand Gauge</h3>
+                                <Card variant="elevated" className="h-full">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6">
+                                        <CardTitle className="text-sm uppercase">Auction Demand Gauge</CardTitle>
                                         <LiveStatusIndicator source="Treasury" />
-                                    </div>
-                                    <USTreasuryDemandGauge />
-                                    <div className="flex justify-end pt-2">
-                                        <DataProvenanceBadge 
-                                            source="FRED / Treasury" 
-                                            methodology="B/S Aggregation"
-                                            lastVerified={new Date()}
-                                            size="sm"
-                                        />
-                                    </div>
-                                </div>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <USTreasuryDemandGauge />
+                                        <div className="flex justify-end pt-2">
+                                            <DataProvenanceBadge 
+                                                source="FRED / Treasury" 
+                                                methodology="B/S Aggregation"
+                                                lastVerified={new Date()}
+                                                size="sm"
+                                            />
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
-                </div>
+                </section>
 
                 {/* 4. INSTITUTIONAL POSITIONING */}
-                <div className="w-full space-y-8">
+                <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-emerald-400">Capital Positioning</h2>
-                        <div className="h-px flex-1 bg-white/10" />
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500/80">Capital Positioning</h2>
+                        <div className="h-px flex-1 bg-white/5" />
                     </div>
                     <SectionErrorBoundary name="Smart Money Flow Monitor">
                         <Suspense fallback={<LoadingFallback />}>
@@ -190,30 +197,34 @@ export const Terminal: React.FC = () => {
                     
                     <SectionErrorBoundary name="Capital Flows">
                         <Suspense fallback={<LoadingFallback />}>
-                            <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                                <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                                    <h2 className="text-lg font-black text-white uppercase tracking-tighter">Global Capital Flows</h2>
+                            <Card variant="elevated">
+                                <CardHeader className="flex flex-row justify-between items-center mb-8 border-b border-white/5 pb-4">
+                                    <CardTitle className="text-lg uppercase">Global Capital Flows</CardTitle>
                                     <LiveStatusIndicator source="BIS / SWIFT" />
-                                </div>
-                                <CapitalFlowsTerminal hideHeader />
-                            </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <CapitalFlowsTerminal hideHeader />
+                                </CardContent>
+                            </Card>
                         </Suspense>
                     </SectionErrorBoundary>
-                </div>
+                </section>
 
                 {/* 5. REGIONAL INTELLIGENCE */}
-                <div className="w-full space-y-8">
+                <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-amber-400">Regional Intelligence</h2>
-                        <div className="h-px flex-1 bg-white/10" />
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/80">Regional Intelligence</h2>
+                        <div className="h-px flex-1 bg-white/5" />
                     </div>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <SectionErrorBoundary name="China Macro Pulse">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
-                                    <ChinaMacroPulseSection />
-                                </div>
+                                <Card variant="elevated" className="h-full">
+                                    <CardContent>
+                                        <ChinaMacroPulseSection />
+                                    </CardContent>
+                                </Card>
                             </Suspense>
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="India Credit Cycle">
@@ -222,49 +233,57 @@ export const Terminal: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
-                </div>
+                </section>
 
-                <div className="w-full space-y-8">
+                <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/10" />
-                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">Institutional Strategy</h2>
-                        <div className="h-px flex-1 bg-white/10" />
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/80">Institutional Strategy</h2>
+                        <div className="h-px flex-1 bg-white/5" />
                     </div>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <SectionErrorBoundary name="Treasury Snapshot">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
-                                    <TreasurySnapshotSection />
-                                </div>
+                                <Card variant="elevated" className="h-full">
+                                    <CardContent>
+                                        <TreasurySnapshotSection />
+                                    </CardContent>
+                                </Card>
                             </Suspense>
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="Hedging Monitor">
                             <Suspense fallback={<LoadingFallback />}>
-                                <div className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl h-full">
-                                    <CorporateTreasuryHedgingSection />
-                                </div>
+                                <Card variant="elevated" className="h-full">
+                                    <CardContent>
+                                        <CorporateTreasuryHedgingSection />
+                                    </CardContent>
+                                </Card>
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
-                </div>
+                </section>
 
                 {/* 6. SYSTEMIC RISK & MONITORING */}
-                <div id="geopolitical-matrix" className="bg-white/[0.02] border border-white/12 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-                        <div>
-                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Geopolitical Risk Matrix</h2>
-                            <p className="text-xs text-muted-foreground/50 font-bold uppercase tracking-widest mt-1">Hormuz Tanker Tracking & ADS-B Conflict Telemetry</p>
-                        </div>
-                        <LiveStatusIndicator source="GDELT / OpenSky" />
-                    </div>
-                    <SectionErrorBoundary name="Geopolitical Matrix">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GeopoliticalEventsRow />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </div>
+                <section>
+                    <Card variant="elevated" id="geopolitical-matrix">
+                        <CardHeader className="flex flex-row justify-between items-center mb-8 border-b border-white/5 pb-4">
+                            <div>
+                                <CardTitle className="text-lg uppercase">Geopolitical Risk Matrix</CardTitle>
+                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Hormuz Tanker Tracking & ADS-B Conflict Telemetry</p>
+                            </div>
+                            <LiveStatusIndicator source="GDELT / OpenSky" />
+                        </CardHeader>
+                        <CardContent>
+                            <SectionErrorBoundary name="Geopolitical Matrix">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GeopoliticalEventsRow />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </CardContent>
+                    </Card>
+                </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <SectionErrorBoundary name="Deflation Debasement">
                         <Suspense fallback={<LoadingFallback />}>
                             <DeflationDebasementMonitor />
@@ -275,9 +294,9 @@ export const Terminal: React.FC = () => {
                             <CurrencyWarsMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
-                </div>
+                </section>
             </main>
-        </Container>
+        </div>
     );
 };
 

@@ -23,7 +23,7 @@ export const AlertBadge: React.FC<AlertBadgeProps> = ({ zScore, size = 'md' }) =
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className={cn(
-                "inline-flex items-center gap-1 rounded-full font-black uppercase tracking-wider",
+                "inline-flex items-center gap-1 rounded-full font-black uppercase tracking-uppercase",
                 sizeClasses[size],
                 absZ > 3 ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
             )}

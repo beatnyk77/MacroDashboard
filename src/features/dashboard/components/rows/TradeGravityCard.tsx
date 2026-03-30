@@ -43,7 +43,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
                             <Globe className="w-5 h-5 text-orange-400" />
-                            <CardTitle className="text-xl font-medium tracking-tight text-white/90 font-mono uppercase">
+                            <CardTitle className="text-xl font-medium tracking-heading text-white/90 font-mono uppercase">
                                 BRICS+ vs. G7 Trade Gravity Shift
                             </CardTitle>
                         </div>
@@ -173,7 +173,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                             {selected && (
                                 <>
                                     <div className="flex items-center justify-between">
-                                        <h3 className="text-sm font-mono font-semibold text-white/80 uppercase tracking-wider">
+                                        <h3 className="text-sm font-mono font-semibold text-white/80 uppercase tracking-uppercase">
                                             {selected.name} — Trade Gravity Trend
                                         </h3>
                                         {selected.hasShifted && (

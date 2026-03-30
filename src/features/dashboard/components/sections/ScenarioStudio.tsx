@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { Box, Typography, Card, Grid, Slider, Stack, Divider } from '@mui/material';
+import { Slider } from '@mui/material';
+import { Grid } from '@mui/material'; // Temporary; will replace spacing later
 import { Target, TrendingUp, AlertTriangle, ShieldCheck, Info } from 'lucide-react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useViewContext } from '@/context/ViewContext';
+import { Card } from '@/components/ui/card';
 
 // Institutional Baselines for Simulation (124Y Context)
 const BASELINES = {
@@ -46,25 +48,25 @@ export const ScenarioStudio: React.FC = () => {
     if (!isInstitutionalView) return null;
 
     return (
-        <Box sx={{ mb: 6 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+        <div className="mb-6">
+            <div className="flex items-center gap-1.5 mb-3">
                 <Target color="#3b82f6" size={24} />
-                <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
-                    Scenario Studio <Typography component="span" variant="h5" color="text.secondary" sx={{ fontWeight: 400 }}>(Beta)</Typography>
-                </Typography>
-            </Box>
+                <h2 className="text-2xl font-extrabold tracking-heading">
+                    Scenario Studio <span className="text-xl font-normal text-muted-foreground">(Beta)</span>
+                </h2>
+            </div>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={{ xs: 2, md: 3 }}> {/* spacing={3} -> gap-6? We'll keep for now */}
                 <Grid item xs={12} md={7}>
-                    <Card sx={{ p: 4, height: '100%', bgcolor: 'background.paper' }}>
-                        <Typography variant="overline" sx={{ color: 'text.secondary', fontWeight: 800 }}>Simulation Inputs</Typography>
+                    <Card variant="elevated" className="p-8 h-full bg-card">
+                        <p className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/70 mb-3">Simulation Inputs</p>
 
-                        <Stack spacing={4} sx={{ mt: 3 }}>
-                            <Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Simulated Gold Price (USD)</Typography>
-                                    <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 800 }}>${simGold.toLocaleString()}</Typography>
-                                </Box>
+                        <div className="space-y-6 mt-3">
+                            <div>
+                                <div className="flex justify-between mb-1">
+                                    <span className="text-sm font-bold">Simulated Gold Price (USD)</span>
+                                    <span className="text-sm font-bold text-primary">${simGold.toLocaleString()}</span>
+                                </div>
                                 <Slider
                                     value={simGold}
                                     onChange={(_, v) => setSimGold(v as number)}
@@ -80,13 +82,13 @@ export const ScenarioStudio: React.FC = () => {
                                         '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
                                     }}
                                 />
-                            </Box>
+                            </div>
 
-                            <Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>M2 Annual Growth Rate</Typography>
-                                    <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 800 }}>{simM2Growth}%</Typography>
-                                </Box>
+                            <div>
+                                <div className="flex justify-between mb-1">
+                                    <span className="text-sm font-bold">M2 Annual Growth Rate</span>
+                                    <span className="text-sm font-bold text-primary">{simM2Growth}%</span>
+                                </div>
                                 <Slider
                                     value={simM2Growth}
                                     onChange={(_, v) => setSimM2Growth(v as number)}
@@ -102,13 +104,13 @@ export const ScenarioStudio: React.FC = () => {
                                         '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
                                     }}
                                 />
-                            </Box>
+                            </div>
 
-                            <Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Reserve Displacement (USD)</Typography>
-                                    <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 800 }}>-{simReserveShift}%</Typography>
-                                </Box>
+                            <div>
+                                <div className="flex justify-between mb-1">
+                                    <span className="text-sm font-bold">Reserve Displacement (USD)</span>
+                                    <span className="text-sm font-bold text-primary">-{simReserveShift}%</span>
+                                </div>
                                 <Slider
                                     value={simReserveShift}
                                     onChange={(_, v) => setSimReserveShift(v as number)}
@@ -124,80 +126,80 @@ export const ScenarioStudio: React.FC = () => {
                                         '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
                                     }}
                                 />
-                            </Box>
-                        </Stack>
+                            </div>
+                        </div>
 
-                        <Box sx={{ mt: 6, p: 2, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px dashed', borderColor: 'divider' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <div className="mt-6 p-2 bg-white/[0.02] rounded-lg border border-white/10">
+                            <div className="flex items-center gap-1 mb-1">
                                 <Info size={14} color="#94a3b8" />
-                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
-                                    INSTITUTIONAL MODELING NOTE
-                                </Typography>
-                            </Box>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+                                <span className="text-xs font-bold text-muted-foreground">INSTITUTIONAL MODELING NOTE</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">
                                 This engine uses 124 years of fiscal and monetary data.
                                 **Reserve Displacement** simulates a global shift away from USD reserves, impacting sovereign refinancing capacity and the 124Y historical Z-Score relative to Gold.
-                            </Typography>
-                        </Box>
+                            </p>
+                        </div>
                     </Card>
                 </Grid>
 
                 <Grid item xs={12} md={5}>
-                    <Card sx={{ p: 4, height: '100%', bgcolor: 'rgba(59, 130, 246, 0.03)', border: '1px solid', borderColor: 'primary.main', position: 'relative', overflow: 'hidden' }}>
-                        <Box sx={{ position: 'absolute', top: -20, right: -20, opacity: 0.05 }}>
+                    <Card variant="elevated" className="p-8 h-full bg-blue-500/[0.03] border border-primary relative overflow-hidden">
+                        <div className="absolute top-[-20px] right-[-20px] opacity-5">
                             <TrendingUp size={120} color="#3b82f6" />
-                        </Box>
+                        </div>
 
-                        <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900 }}>Simulated Outputs</Typography>
+                        <p className="text-xs font-bold uppercase tracking-uppercase text-primary mb-3">Simulated Outputs</p>
 
-                        <Stack spacing={3} sx={{ mt: 3 }}>
-                            <Box>
-                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>M2 / GOLD RATIO</Typography>
-                                <Typography variant="h3" sx={{ fontWeight: 900 }}>{(simRatio !== undefined && simRatio !== null && !isNaN(simRatio)) ? simRatio.toFixed(2) : '-'}</Typography>
-                            </Box>
+                        <div className="space-y-6 mt-3">
+                            <div>
+                                <span className="text-xs font-bold text-muted-foreground/60 block mb-1">M2 / GOLD RATIO</span>
+                                <div className="text-2xl font-black">
+                                    {(simRatio !== undefined && simRatio !== null && !isNaN(simRatio)) ? simRatio.toFixed(2) : '-'}
+                                </div>
+                            </div>
 
-                            <Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 700 }}>INSTITUTIONAL Z-SCORE</Typography>
-                                    <Typography variant="caption" sx={{ fontWeight: 900, color: Math.abs(zScore) > 2 ? 'error.main' : 'primary.main' }}>
+                            <div>
+                                <div className="flex justify-between mb-0.5">
+                                    <span className="text-xs font-bold text-muted-foreground/60">INSTITUTIONAL Z-SCORE</span>
+                                    <span className={`text-xs font-black ${Math.abs(zScore) > 2 ? 'text-error' : 'text-primary'}`}>
                                         {zScore > 0 ? '+' : ''}{(zScore !== undefined && zScore !== null && !isNaN(zScore)) ? zScore.toFixed(2) : '-'}σ
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ height: 4, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 1, overflow: 'hidden' }}>
-                                    <Box sx={{
-                                        width: `${Math.min(100, Math.max(0, (percentile)))}%`,
-                                        height: '100%',
-                                        bgcolor: Math.abs(zScore) > 2 ? 'error.main' : 'primary.main',
-                                        transition: 'width 0.5s ease'
-                                    }} />
-                                </Box>
-                                <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary', fontSize: '0.65rem' }}>
+                                    </span>
+                                </div>
+                                <div className="h-1 bg-white/10 rounded overflow-hidden">
+                                    <div
+                                        className={`h-full transition-all duration-500 ${Math.abs(zScore) > 2 ? 'bg-error' : 'bg-primary'}`}
+                                        style={{ width: `${Math.min(100, Math.max(0, percentile))}%` }}
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
                                     Percentile Rank: <strong>{(percentile !== undefined && percentile !== null && !isNaN(percentile)) ? percentile.toFixed(1) : '-'}%</strong>
-                                </Typography>
-                            </Box>
+                                </p>
+                            </div>
 
-                            <Divider sx={{ my: 1 }} />
+                            <hr className="border-white/10 my-2" />
 
-                            <Box>
-                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>REGIME PROJECTION</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                            <div>
+                                <span className="text-xs font-bold text-muted-foreground/60">REGIME PROJECTION</span>
+                                <div className="flex items-center gap-1 mt-1">
                                     {zScore > 2 ? <AlertTriangle size={18} color="#f43f5e" /> : <ShieldCheck size={18} color="#10b981" />}
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>{regimeLabel}</Typography>
-                                </Box>
-                            </Box>
+                                    <span className="text-lg font-bold">{regimeLabel}</span>
+                                </div>
+                            </div>
 
-                            <Box>
-                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>SIMULATED LIQUIDITY POOL</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800 }}>${(effectiveM2 !== undefined && effectiveM2 !== null && !isNaN(effectiveM2)) ? (effectiveM2 / 1000).toFixed(1) : '-'}T</Typography>
-                                <Typography variant="caption" color="text.disabled">
+                            <div>
+                                <span className="text-xs font-bold text-muted-foreground/60">SIMULATED LIQUIDITY POOL</span>
+                                <div className="text-2xl font-bold">
+                                    ${(effectiveM2 !== undefined && effectiveM2 !== null && !isNaN(effectiveM2)) ? (effectiveM2 / 1000).toFixed(1) : '-'}T
+                                </div>
+                                <p className="text-xs text-muted-foreground/50">
                                     {(effectiveM2 / currentM2 - 1) > 0 ? '+' : ''}{(!isNaN(effectiveM2) && !isNaN(currentM2) && currentM2 !== 0) ? ((effectiveM2 / currentM2 - 1) * 100).toFixed(1) : '-'}% vs Current
-                                </Typography>
-                            </Box>
-                        </Stack>
+                                </p>
+                            </div>
+                        </div>
                     </Card>
                 </Grid>
             </Grid>
-        </Box>
+        </div>
     );
 };
 

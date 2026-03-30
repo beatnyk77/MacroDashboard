@@ -36,7 +36,7 @@ export const DataQualityBadge: React.FC<DataQualityBadgeProps> = ({
 
     return (
         <div className={cn(
-            "flex items-center gap-2 rounded-full border uppercase tracking-widest font-black transition-all",
+            "flex items-center gap-2 rounded-full border uppercase tracking-uppercase font-black transition-all",
             sizeClasses[size],
             type === 'live' && "bg-emerald-500/10 border-emerald-500/20 text-emerald-500",
             type === 'simulated' && "bg-amber-500/10 border-amber-500/20 text-amber-500",

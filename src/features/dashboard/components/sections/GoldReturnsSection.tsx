@@ -21,7 +21,7 @@ const GoldReturnsSection: React.FC = () => {
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h3 className="text-xl font-bold text-white tracking-tight">Institutional Memory</h3>
+                                <h3 className="text-xl font-bold text-white tracking-heading">Institutional Memory</h3>
                                 <p className="text-gray-400 text-sm mt-1">Highlighted bars indicate major systemic events or policy shocks.</p>
                             </div>
                             <div className="flex gap-4">

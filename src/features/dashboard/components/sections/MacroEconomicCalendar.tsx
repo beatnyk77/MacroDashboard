@@ -37,7 +37,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                         <Calendar className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                        <CardTitle className="text-lg font-bold tracking-tight text-foreground">Global Economic Calendar</CardTitle>
+                        <CardTitle className="text-lg font-bold tracking-heading text-foreground">Global Economic Calendar</CardTitle>
                         <p className="text-xs text-muted-foreground font-medium mt-0.5">Live high-impact macro events & policy decisions</p>
                     </div>
                 </div>
@@ -71,7 +71,7 @@ export const MacroEconomicCalendar: React.FC = () => {
             <CardContent className="p-0">
                 <div className="overflow-x-auto overflow-y-auto max-h-[450px] md:max-h-[320px] lg:max-h-[380px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     <table className="w-full text-sm text-left border-separate border-spacing-0">
-                        <thead className="text-xs font-black uppercase tracking-wider text-muted-foreground/50 sticky top-0 z-20 bg-slate-950/95 backdrop-blur-md">
+                        <thead className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/50 sticky top-0 z-20 bg-slate-950/95 backdrop-blur-md">
                             <tr>
                                 <th className="px-6 py-3 w-[120px] border-b border-white/5">Date / Time</th>
                                 <th className="px-6 py-3 w-[80px] border-b border-white/5">Curr</th>
@@ -139,7 +139,7 @@ export const MacroEconomicCalendar: React.FC = () => {
                 </div>
 
                 <div className="p-4 border-t border-white/5 bg-white/[0.01]">
-                    <div className="flex items-center justify-between text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
+                    <div className="flex items-center justify-between text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">
                         <div className="flex items-center gap-2">
                             <Clock className="w-3 h-3" />
                             <span>Time Zone: Local Time</span>

@@ -100,7 +100,7 @@ export const ASISection: React.FC = () => {
                     <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                         <Factory className="text-emerald-500 w-5 h-5" />
                     </div>
-                    <h3 className="text-xl font-black text-white italic tracking-tight uppercase">ASI Industrial Matrix</h3>
+                    <h3 className="text-xl font-black text-white italic tracking-heading uppercase">ASI Industrial Matrix</h3>
                 </div>
                 <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
                     Sub-national industrial resolution tracking Manufacturing and Mining output with high-fidelity labor benchmarks.
@@ -114,7 +114,7 @@ export const ASISection: React.FC = () => {
 
                     <div className="flex items-center justify-between mb-8 relative z-10">
                         <div className="space-y-1">
-                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Geospatial Intensity</span>
+                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Geospatial Intensity</span>
                             <h4 className="text-md font-black text-white/90">Regional Industrial Map</h4>
                         </div>
 
@@ -129,7 +129,7 @@ export const ASISection: React.FC = () => {
                                 )}
                             >
                                 <Globe className="w-3.5 h-3.5" />
-                                <span className="text-xs font-black uppercase tracking-wider">Geopolitical Alignment</span>
+                                <span className="text-xs font-black uppercase tracking-uppercase">Geopolitical Alignment</span>
                             </button>
                             <div className="w-[1px] h-4 bg-white/10 self-center mx-1" />
                             {metricTabs.map((tab) => (
@@ -147,7 +147,7 @@ export const ASISection: React.FC = () => {
                                     )}
                                 >
                                     <tab.icon className="w-3.5 h-3.5" />
-                                    <span className="text-xs font-black uppercase tracking-wider">{tab.label.split(' ')[0]}</span>
+                                    <span className="text-xs font-black uppercase tracking-uppercase">{tab.label.split(' ')[0]}</span>
                                 </button>
                             ))}
                         </div>
@@ -157,7 +157,7 @@ export const ASISection: React.FC = () => {
                         <Suspense fallback={
                             <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl gap-4">
                                 <Activity className="w-6 h-6 text-emerald-500 animate-spin" />
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Calibrating Industrial Sensors...</span>
+                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Calibrating Industrial Sensors...</span>
                             </div>
                         }>
                             <IndiaLeafletMap
@@ -216,7 +216,7 @@ export const ASISection: React.FC = () => {
                     )}>
                         <div className="flex justify-between items-start mb-6">
                             <div className="space-y-1">
-                                <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em]">
+                                <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">
                                     {selectedState ? 'Selected Node' : 'National Buffer'}
                                 </span>
                                 <h4 className="text-xl font-black text-white/90 truncate">{activeStats.title}</h4>
@@ -238,7 +238,7 @@ export const ASISection: React.FC = () => {
                                     <span className="text-xs font-black uppercase">GVA Total</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-black text-white font-mono tracking-tighter">₹{(activeStats.gva / 100000).toFixed(1)}</span>
+                                    <span className="text-xl font-black text-white font-mono tracking-heading">₹{(activeStats.gva / 100000).toFixed(1)}</span>
                                     <span className="text-xs font-bold text-white/30 uppercase">T</span>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@ export const ASISection: React.FC = () => {
                                     <span className="text-xs font-black uppercase">Employment</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-black text-white font-mono tracking-tighter">{(activeStats.employment / 1000).toFixed(1)}</span>
+                                    <span className="text-xl font-black text-white font-mono tracking-heading">{(activeStats.employment / 1000).toFixed(1)}</span>
                                     <span className="text-xs font-bold text-white/30 uppercase">M</span>
                                 </div>
                             </div>
@@ -258,7 +258,7 @@ export const ASISection: React.FC = () => {
                                     <span className="text-xs font-black uppercase">Cap Util</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-black text-emerald-500 font-mono tracking-tighter">{activeStats.capacity.toFixed(1)}%</span>
+                                    <span className="text-xl font-black text-emerald-500 font-mono tracking-heading">{activeStats.capacity.toFixed(1)}%</span>
                                 </div>
                             </div>
                             <div className="space-y-1.5 pt-4 border-t border-white/5">
@@ -268,7 +268,7 @@ export const ASISection: React.FC = () => {
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className={cn(
-                                        "text-xl font-black font-mono tracking-tighter",
+                                        "text-xl font-black font-mono tracking-heading",
                                         activeStats.growth >= 0 ? "text-emerald-400" : "text-rose-400"
                                     )}>
                                         {activeStats.growth > 0 ? '+' : ''}{activeStats.growth.toFixed(1)}%
@@ -280,13 +280,13 @@ export const ASISection: React.FC = () => {
                                 <div className="col-span-2 space-y-1.5 pt-4 border-t border-white/5">
                                     <div className="flex items-center gap-2 opacity-40">
                                         <DollarSign className="w-3 h-3 text-emerald-500" />
-                                        <span className="text-xs font-black uppercase tracking-widest">Loan-to-Job Efficiency</span>
+                                        <span className="text-xs font-black uppercase tracking-uppercase">Loan-to-Job Efficiency</span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
+                                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-heading">
                                             ${Math.round(activeStats.efficiency).toLocaleString()}
                                         </span>
-                                        <span className="text-xs font-bold text-emerald-400/40 uppercase tracking-widest pl-1">CAPEX / NEW JOB</span>
+                                        <span className="text-xs font-bold text-emerald-400/40 uppercase tracking-uppercase pl-1">CAPEX / NEW JOB</span>
                                     </div>
                                 </div>
                             )}
@@ -302,7 +302,7 @@ export const ASISection: React.FC = () => {
                     {/* Rankings */}
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Tier-1 States</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Tier-1 States</h4>
                             <select
                                 value={rankingMetric}
                                 onChange={(e) => setRankingMetric(e.target.value as any)}
@@ -327,7 +327,7 @@ export const ASISection: React.FC = () => {
                                             : "bg-white/[0.01] border-white/5 hover:border-white/12"
                                     )}
                                 >
-                                    <span className="text-xs font-black text-white/80 uppercase tracking-tight">{state.state_name}</span>
+                                    <span className="text-xs font-black text-white/80 uppercase tracking-heading">{state.state_name}</span>
                                     <div className="flex items-center gap-3">
                                         <span className="text-sm font-black text-emerald-400 font-mono">
                                             {formatValue(state, rankingMetric)}

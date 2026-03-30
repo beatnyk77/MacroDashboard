@@ -50,10 +50,10 @@ export const RBIFXDefenseMonitor: React.FC = () => {
                                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            <span className="text-emerald-400 text-xs font-black uppercase tracking-[0.2em]">Live Signal</span>
-                            <span className="text-slate-500 text-xs font-black uppercase tracking-[0.2em] ml-2">Source: RBI DBIE</span>
+                            <span className="text-emerald-400 text-xs font-black uppercase tracking-uppercase">Live Signal</span>
+                            <span className="text-slate-500 text-xs font-black uppercase tracking-uppercase ml-2">Source: RBI DBIE</span>
                         </div>
-                        <h2 className="text-3xl font-black text-white tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                        <h2 className="text-3xl font-black text-white tracking-heading leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                             FX Defense & Currency War Monitor
                         </h2>
                     </div>
@@ -189,7 +189,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
                 <div className="lg:col-span-3 bg-white/[0.02] border-t lg:border-t-0 lg:border-l border-white/5 p-6 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-4">
                         <Activity className="w-5 h-5 text-blue-400" />
-                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Analyst Insight</h3>
+                        <h3 className="text-sm font-black text-white uppercase tracking-uppercase">Analyst Insight</h3>
                     </div>
                     <div className="relative">
                         <div className="absolute -left-1 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 to-fuchsia-500 rounded-full" />
@@ -200,7 +200,7 @@ export const RBIFXDefenseMonitor: React.FC = () => {
 
                     <div className="mt-8 space-y-4">
                         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
-                            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Defense Stance</div>
+                            <div className="text-xs text-slate-400 font-bold uppercase tracking-uppercase mb-1">Defense Stance</div>
                             <div className="text-white font-bold text-sm">
                                 {reservesDelta > 0 && (latest.forward_book_net_bn || 0) < 0 ? "Asymmetric (Spot Buy, Forward Sell)" : "Symmetrical Accumulation"}
                             </div>
@@ -217,13 +217,13 @@ export const RBIFXDefenseMonitor: React.FC = () => {
 const MetricCard = ({ title, value, delta, subtext, icon, colorClass, trend }: any) => (
     <div className="p-6 bg-transparent hover:bg-white/[0.01] transition-colors group">
         <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-300 transition-colors">{title}</span>
+            <span className="text-xs font-black text-slate-400 uppercase tracking-uppercase group-hover:text-slate-300 transition-colors">{title}</span>
             <div className="p-2 rounded-lg bg-white/[0.03] backdrop-blur-sm border border-white/5">
                 {icon}
             </div>
         </div>
         <div className="flex items-end gap-3">
-            <span className={`text-4xl font-black tracking-tighter leading-none ${colorClass}`}>{value}</span>
+            <span className={`text-4xl font-black tracking-heading leading-none ${colorClass}`}>{value}</span>
             {delta && (
                 <span className={`flex items-center text-sm font-bold mb-1 ${trend === 'up' ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {trend === 'up' ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
@@ -241,7 +241,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/95 backdrop-blur-xl border border-white/12 p-4 rounded-xl shadow-2xl z-50 min-w-[240px]">
-                <div className="text-xs font-black text-white uppercase tracking-widest mb-3 pb-2 border-b border-white/12">
+                <div className="text-xs font-black text-white uppercase tracking-uppercase mb-3 pb-2 border-b border-white/12">
                     {label}
                 </div>
                 <div className="space-y-3">

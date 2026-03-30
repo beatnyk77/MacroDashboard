@@ -124,7 +124,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                             <div className="p-2 bg-blue-500/20 rounded-lg">
                                 <Scale className="w-6 h-6 text-blue-400" />
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter">
+                            <h2 className="text-3xl md:text-5xl font-black text-white tracking-heading">
                                 INDIA DEBT <span className="text-blue-500">MATURITY WALL</span>
                             </h2>
                         </div>
@@ -162,7 +162,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                 <div className="bg-white/[0.03] border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <Calendar className="w-5 h-5 text-blue-400" />
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Total Outstanding</span>
+                        <span className="text-slate-400 text-sm font-bold uppercase tracking-uppercase">Total Outstanding</span>
                     </div>
                     <div className="flex items-baseline gap-2">
                         <span className="text-4xl font-black text-white">₹{stats?.total}</span>
@@ -173,7 +173,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                 <div className="bg-white/[0.03] border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <AlertTriangle className="w-5 h-5 text-amber-400" />
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Next 12M Maturing</span>
+                        <span className="text-slate-400 text-sm font-bold uppercase tracking-uppercase">Next 12M Maturing</span>
                     </div>
                     <div className="flex items-baseline gap-2">
                         <span className="text-4xl font-black text-white">₹{stats?.next1Y}</span>
@@ -189,7 +189,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-2">
                             <Info className="w-5 h-5 text-blue-400" />
-                            <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Rollover Status</span>
+                            <span className="text-slate-400 text-sm font-bold uppercase tracking-uppercase">Rollover Status</span>
                         </div>
                         <p className="text-sm text-slate-300 font-medium leading-relaxed">
                             {Number(stats?.next1YPercent) > 15
@@ -302,7 +302,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
 
             {/* Educational Footnote */}
             <div className="px-8 md:px-10 pb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-uppercase">
                     <span>Source: RBI DBIE / Handbook of Statistics</span>
                     <div className="w-1 h-1 rounded-full bg-slate-700" />
                     <span>Updated Monthly</span>
@@ -310,7 +310,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                 {view === 'comparison' && (
                     <div className="flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
                         <ArrowRightLeft className="w-3 h-3 text-red-400" />
-                        <span className="text-red-400 text-xs font-black uppercase tracking-tighter">Dual Scale View: Indian ₹ Lakh Cr vs US $ Trillion</span>
+                        <span className="text-red-400 text-xs font-black uppercase tracking-heading">Dual Scale View: Indian ₹ Lakh Cr vs US $ Trillion</span>
                     </div>
                 )}
             </div>

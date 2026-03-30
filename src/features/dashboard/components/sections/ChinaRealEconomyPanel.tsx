@@ -39,7 +39,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="bg-slate-950 border border-white/12 rounded-xl p-3 text-xs shadow-xl">
-            <p className="text-muted-foreground mb-2 font-black uppercase tracking-widest">{label}</p>
+            <p className="text-muted-foreground mb-2 font-black uppercase tracking-uppercase">{label}</p>
             {payload.map((p: any) => (
                 <div key={p.name} className="flex justify-between gap-4">
                     <span style={{ color: p.color }}>{p.name}</span>
@@ -85,7 +85,7 @@ export const ChinaRealEconomyPanel: React.FC = () => {
                     <Factory className="text-orange-500 w-5 h-5" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-black tracking-tight text-white uppercase">
+                    <h3 className="text-xl font-black tracking-heading text-white uppercase">
                         Real Economy <span className="text-orange-500">Activity</span>
                     </h3>
                     <p className="text-muted-foreground text-xs mt-0.5">PMI · Industrial Production · Retail · Deflation Pressure</p>
@@ -106,9 +106,9 @@ export const ChinaRealEconomyPanel: React.FC = () => {
                             return (
                                 <div key={label} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col items-center text-center gap-2">
                                     <GaugeNeedle value={value} />
-                                    <p className={cn('text-3xl font-black tabular-nums tracking-tighter', color)}>{value.toFixed(1)}</p>
-                                    <p className={cn('text-xs font-black uppercase tracking-widest', s.cls)}>{s.label}</p>
-                                    <p className="text-xs font-black text-white/50 uppercase tracking-widest">{label}</p>
+                                    <p className={cn('text-3xl font-black tabular-nums tracking-heading', color)}>{value.toFixed(1)}</p>
+                                    <p className={cn('text-xs font-black uppercase tracking-uppercase', s.cls)}>{s.label}</p>
+                                    <p className="text-xs font-black text-white/50 uppercase tracking-uppercase">{label}</p>
                                     <p className="text-xs text-muted-foreground/40">{sub}</p>
                                     <div className={cn('w-full h-0.5 rounded-full mt-1', value >= 50 ? 'bg-emerald-500/30' : 'bg-rose-500/30')} />
                                     <p className="text-xs text-muted-foreground/30">50.0 expansion threshold</p>
@@ -119,7 +119,7 @@ export const ChinaRealEconomyPanel: React.FC = () => {
 
                     {/* NBS vs Caixin 12-month trend */}
                     <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-4">PMI — NBS vs Caixin (12 Months)</p>
+                        <p className="text-xs font-black text-white/60 uppercase tracking-uppercase mb-4">PMI — NBS vs Caixin (12 Months)</p>
                         <ResponsiveContainer width="100%" height={160}>
                             <LineChart data={pmiData}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -143,9 +143,9 @@ export const ChinaRealEconomyPanel: React.FC = () => {
                             { label: 'Corp. Distress', data: latestDistress, unit: 'pts', color: (latestDistress?.value ?? 0) < -1.5 ? 'text-rose-400' : 'text-amber-400', desc: 'CPI-PPI spread: negative = margin compression' },
                         ].map(({ label, data, unit, color }) => (
                             <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
-                                <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest mb-2">{label}</p>
+                                <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-2">{label}</p>
                                 <div className="flex items-baseline gap-1">
-                                    <span className={cn('text-2xl font-black tabular-nums tracking-tighter', color)}>
+                                    <span className={cn('text-2xl font-black tabular-nums tracking-heading', color)}>
                                         {data?.value != null ? (data.value >= 0 ? '+' : '') + data.value.toFixed(1) : '--'}
                                     </span>
                                     <span className="text-xs text-white/20 uppercase">{unit}</span>
@@ -157,7 +157,7 @@ export const ChinaRealEconomyPanel: React.FC = () => {
 
                     {/* Institutional Insight */}
                     <div className="p-5 rounded-2xl bg-gradient-to-r from-rose-500/5 via-transparent to-amber-500/5 border border-white/5">
-                        <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-2">📡 Analyst Insight</p>
+                        <p className="text-xs font-black text-amber-400 uppercase tracking-uppercase mb-2">📡 Analyst Insight</p>
                         <p className="text-xs text-muted-foreground/70 leading-relaxed">
                             <strong className="text-white/80">PMI Divergence:</strong> When Caixin PMI significantly outperforms NBS PMI, it suggests private-sector SMEs are recovering faster than state-owned enterprises — a positive signal for urban employment and consumption. Watch for convergence as a regime confirmation trigger.
                         </p>

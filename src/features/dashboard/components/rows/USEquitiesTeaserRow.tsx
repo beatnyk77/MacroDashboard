@@ -28,7 +28,7 @@ export const USEquitiesTeaserRow: React.FC = () => {
 
                 <Grid container spacing={6} alignItems="center" sx={{ position: 'relative', zIndex: 1 }}>
                     <Grid item xs={12} md={7}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] mb-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-4">
                             <Activity size={12} /> Live SEC EDGAR Feed
                         </div>
                         <Typography variant="h3" sx={{ fontWeight: 950, color: 'white', textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>

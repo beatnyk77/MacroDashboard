@@ -64,7 +64,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
         return (
             <div className="space-y-8">
                 <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
-                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-widest mb-2">Energy Security data temporarily unavailable</span>
+                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">Energy Security data temporarily unavailable</span>
                     <p className="text-xs text-muted-foreground/40 italic">System is currently normalizing upstream feeds. Please check back shortly.</p>
                 </div>
             </div>
@@ -77,7 +77,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                 <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between group">
                     <div className="flex items-center gap-3">
                         <DataQualityBadge type="simulated" />
-                        <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-500/90 flex items-center gap-2">
+                        <p className="text-xs font-black uppercase tracking-uppercase text-amber-500/90 flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                             Live Feed Normalizing — Displaying Institutional Proxies
                         </p>
@@ -89,7 +89,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                 {/* Row 1: US Refining Strategic Capacity */}
                 <MotionCard delay={0.1} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Refining Strategic Capacity
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -105,7 +105,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                             />
                         ) : (
                             <div className="h-[400px] flex items-center justify-center bg-white/5 rounded-xl border border-white/12">
-                                <span className="text-xs text-muted-foreground uppercase tracking-widest">No Refining Data Found</span>
+                                <span className="text-xs text-muted-foreground uppercase tracking-uppercase">No Refining Data Found</span>
                             </div>
                         )}
                     </Suspense>
@@ -114,7 +114,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                 {/* Row 2: Strategic Petroleum Reserve */}
                 <MotionCard delay={0.2} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-orange-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Strategic Petroleum Reserve <span className="text-orange-500/40">(SPR)</span>
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -129,7 +129,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                 {/* Row 2.5: Global Strategic Reserves & Stockpiles */}
                 <MotionCard delay={0.25} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Strategic Reserve & Stockpile Tracker
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -144,7 +144,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                 {/* Row 3: Power Mix Divergence */}
                 <MotionCard delay={0.3} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
                             Power Mix Divergence
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
@@ -162,7 +162,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                     />
                                 ) : (
                                     <div className="h-[450px] flex items-center justify-center bg-white/5 rounded-[2.5rem] border border-white/12">
-                                        <span className="text-xs text-muted-foreground uppercase tracking-widest">Loading Power Mix Data...</span>
+                                        <span className="text-xs text-muted-foreground uppercase tracking-uppercase">Loading Power Mix Data...</span>
                                     </div>
                                 )}
                             </Suspense>
@@ -174,9 +174,9 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                 <div className="min-w-[200px]">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-                                        <h4 className="text-xs font-black uppercase tracking-[0.3em] text-blue-400">EU Gas Resilience</h4>
+                                        <h4 className="text-xs font-black uppercase tracking-uppercase text-blue-400">EU Gas Resilience</h4>
                                     </div>
-                                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-widest pl-4">Aggregate Storage Trend</p>
+                                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-uppercase pl-4">Aggregate Storage Trend</p>
                                 </div>
                                 <div className="flex items-center gap-12 flex-1 h-20">
                                     <div className="flex-1 h-full w-full opacity-60 group-hover:opacity-100 transition-opacity">
@@ -201,14 +201,14 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                     </div>
                                     <div className="flex flex-col items-end shrink-0">
                                         <div className="flex items-baseline gap-2">
-                                            <span className="text-5xl font-black text-white tracking-tighter italic">
+                                            <span className="text-5xl font-black text-white tracking-heading italic">
                                                 {data.euGasData && data.euGasData.length > 0
                                                     ? Math.round(data.euGasData[data.euGasData.length - 1].value)
                                                     : 'N/A'}
                                             </span>
                                             <span className="text-xl font-black text-blue-500/40">%</span>
                                         </div>
-                                        <span className="text-xs font-black text-blue-500/40 uppercase tracking-widest">Storage Level</span>
+                                        <span className="text-xs font-black text-blue-500/40 uppercase tracking-uppercase">Storage Level</span>
                                     </div>
                                 </div>
                             </div>
@@ -217,9 +217,9 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                 <div className="min-w-[200px]">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
-                                        <h4 className="text-xs font-black uppercase tracking-[0.3em] text-rose-400">Refining Stress</h4>
+                                        <h4 className="text-xs font-black uppercase tracking-uppercase text-rose-400">Refining Stress</h4>
                                     </div>
-                                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-widest pl-4">Historical Utilization Rate</p>
+                                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-uppercase pl-4">Historical Utilization Rate</p>
                                 </div>
                                 <div className="flex items-center gap-12 flex-1 h-20">
                                     <div className="flex-1 h-full w-full opacity-60 group-hover:opacity-100 transition-opacity">
@@ -245,14 +245,14 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                                     </div>
                                     <div className="flex flex-col items-end shrink-0">
                                         <div className="flex items-baseline gap-2">
-                                            <span className="text-5xl font-black text-white tracking-tighter italic">
+                                            <span className="text-5xl font-black text-white tracking-heading italic">
                                                 {data.utilizationData && data.utilizationData.length > 0
                                                     ? Math.round(data.utilizationData[data.utilizationData.length - 1].value)
                                                     : 'N/A'}
                                             </span>
                                             <span className="text-xl font-black text-rose-500/40">%</span>
                                         </div>
-                                        <span className="text-xs font-black text-rose-500/40 uppercase tracking-widest">Util Rate</span>
+                                        <span className="text-xs font-black text-rose-500/40 uppercase tracking-uppercase">Util Rate</span>
                                     </div>
                                 </div>
                             </div>

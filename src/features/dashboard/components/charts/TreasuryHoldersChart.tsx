@@ -48,7 +48,7 @@ const CustomTooltip = ({ active, payload }: any) => {
             <div className="bg-slate-950/90 backdrop-blur-md border border-white/12 p-3 rounded-xl shadow-2xl min-w-[200px]">
                 <div className="flex items-center gap-2 mb-2">
                     <span className="text-lg">{COUNTRY_FLAGS[data.country_name] || '🌐'}</span>
-                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
                         {data.country_name}
                     </div>
                 </div>

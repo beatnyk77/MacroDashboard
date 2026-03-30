@@ -35,11 +35,11 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
         <div className={cn("relative w-full h-[650px] bg-black/40 rounded-[2rem] overflow-hidden border border-white/5 backdrop-blur-sm", className)}>
             {/* Header Overlay */}
             <div className="absolute top-8 left-8 z-10 space-y-2 pointer-events-none">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-black uppercase tracking-[0.2em]">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-black uppercase tracking-uppercase">
                     <Activity size={12} /> Capacity Elasticity Grid
                 </div>
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Global Refining <span className="text-blue-500">Imbalance Monitor</span></h2>
-                <p className="text-xs text-muted-foreground/60 uppercase font-bold tracking-widest max-w-sm">
+                <h2 className="text-3xl font-black text-white uppercase tracking-heading">Global Refining <span className="text-blue-500">Imbalance Monitor</span></h2>
+                <p className="text-xs text-muted-foreground/60 uppercase font-bold tracking-uppercase max-w-sm">
                     Structural shift visualization: West closing infrastructure vs. East/ME mega-complex expansion.
                 </p>
             </div>
@@ -47,17 +47,17 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
             {/* Legend Overlay */}
             <div className="absolute bottom-8 right-8 z-10 hidden md:block">
                 <div className="px-5 py-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/12 space-y-3 shadow-2xl">
-                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Status Protocol</span>
+                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Status Protocol</span>
                     {Object.entries(statusColors).map(([status, color]) => (
                         <div key={status} className="flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}80` }} />
-                            <span className="text-xs font-black text-white/70 uppercase tracking-widest">{status}</span>
+                            <span className="text-xs font-black text-white/70 uppercase tracking-uppercase">{status}</span>
                         </div>
                     ))}
                     <div className="pt-2 border-t border-white/5">
                         <div className="flex items-center gap-3">
                             <div className="w-4 h-[1px] border-t border-dashed border-white/40" />
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Tanker Routes</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Tanker Routes</span>
                         </div>
                     </div>
                 </div>
@@ -160,11 +160,11 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         </button>
 
                         <div className="pt-4 mb-8">
-                            <div className="inline-block px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-3">
+                            <div className="inline-block px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-3">
                                 {selectedFacility.status} ASSET
                             </div>
-                            <h3 className="text-xl font-black text-white uppercase tracking-tight leading-tight">{selectedFacility.facility_name}</h3>
-                            <div className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 border-l-2 border-white/12 pl-3">
+                            <h3 className="text-xl font-black text-white uppercase tracking-heading leading-tight">{selectedFacility.facility_name}</h3>
+                            <div className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase mt-1 border-l-2 border-white/12 pl-3">
                                 {selectedFacility.country} • {selectedFacility.region} Region
                             </div>
                         </div>
@@ -172,18 +172,18 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         <div className="space-y-6 flex-1">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Capacity</span>
+                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Capacity</span>
                                     <div className="text-xl font-black text-white italic">{selectedFacility.capacity_mbpd}<span className="text-xs ml-1 not-italic opacity-40">MBPD</span></div>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest block mb-1">Utilization</span>
+                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Utilization</span>
                                     <div className="text-xl font-black text-emerald-400 italic">{selectedFacility.utilization_pct}%</div>
                                 </div>
                             </div>
 
                             <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5">
                                 <div className="flex justify-between items-center mb-3">
-                                    <span className="text-xs font-black text-blue-500 uppercase tracking-widest underline decoration-blue-500/30 underline-offset-4">
+                                    <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase underline decoration-blue-500/30 underline-offset-4">
                                         Import Dependency
                                     </span>
                                     <Shield size={12} className="text-blue-500/50" />
@@ -202,7 +202,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
 
                             <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
                                 <Activity size={16} className="text-amber-500" />
-                                <div className="text-xs text-amber-500/80 font-black uppercase tracking-tight">
+                                <div className="text-xs text-amber-500/80 font-black uppercase tracking-heading">
                                     Historical Median: {selectedFacility.historical_median_pct}%
                                 </div>
                             </div>
@@ -222,10 +222,10 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
             {/* Chokepoint Alerts (Static labels) */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-12 pointer-events-none">
                 <div className="flex gap-4">
-                    <div className="px-2 py-1 bg-black/40 border border-white/5 backdrop-blur-md rounded text-xs font-black text-white/40 uppercase tracking-widest">
+                    <div className="px-2 py-1 bg-black/40 border border-white/5 backdrop-blur-md rounded text-xs font-black text-white/40 uppercase tracking-uppercase">
                         Malacca Transit Open
                     </div>
-                    <div className="px-2 py-1 bg-rose-500/10 border border-rose-500/20 backdrop-blur-md rounded text-xs font-black text-rose-500 uppercase tracking-widest animate-pulse">
+                    <div className="px-2 py-1 bg-rose-500/10 border border-rose-500/20 backdrop-blur-md rounded text-xs font-black text-rose-500 uppercase tracking-uppercase animate-pulse">
                         Hormuz Risk Elevated
                     </div>
                 </div>

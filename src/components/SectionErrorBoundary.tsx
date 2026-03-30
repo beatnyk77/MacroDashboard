@@ -37,7 +37,7 @@ export class SectionErrorBoundary extends Component<Props, State> {
                         <AlertTriangle size={32} />
                     </div>
                     <div className="max-w-md space-y-2">
-                        <h3 className="text-lg font-black text-foreground uppercase tracking-widest">
+                        <h3 className="text-lg font-black text-foreground uppercase tracking-uppercase">
                             {this.props.name || 'Section'} Latency Breakdown
                         </h3>
                         <p className="text-sm text-muted-foreground/60 leading-relaxed italic">

@@ -57,7 +57,7 @@ export const USFilingsFeed: React.FC = () => {
                     }}>
                         <Box sx={{ flex: 1 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
-                                <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-black uppercase tracking-widest leading-none">
+                                <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-black uppercase tracking-uppercase leading-none">
                                     {f.form_type}
                                 </span>
                                 <Typography variant="body2" sx={{ fontWeight: 800, color: 'white' }}>{f.description}</Typography>

@@ -34,9 +34,9 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
 
     const renderSubMetric = (label: string, value: number | undefined, color: string) => (
         <div className="flex flex-col gap-1">
-            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</span>
+            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">{label}</span>
             <div className="flex items-baseline gap-1">
-                <span className={cn("text-lg font-black tracking-tighter", color)}>
+                <span className={cn("text-lg font-black tracking-heading", color)}>
                     {value !== undefined ? (value > 0 ? '+' : '') + value.toFixed(1) : '-'}
                 </span>
                 <span className="text-xs font-bold text-muted-foreground/40">Z</span>
@@ -57,7 +57,7 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
                             {status.toUpperCase()}
                         </div>
                     </div>
-                    <h3 className="text-lg font-black text-foreground tracking-tight">
+                    <h3 className="text-lg font-black text-foreground tracking-heading">
                         Geopolitical Risk Pulse
                     </h3>
                 </div>
@@ -69,12 +69,12 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
                 {/* Hero Gauge Area */}
                 <div className="flex flex-col justify-center">
                     <div className="flex items-baseline gap-2 mb-2">
-                        <h2 className={cn("text-5xl font-black tracking-tighter", statusColor)}>
+                        <h2 className={cn("text-5xl font-black tracking-heading", statusColor)}>
                             {compositeZ.toFixed(2)}
                         </h2>
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Composite Z</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase">Composite Z</span>
                     </div>
-                    <div className={cn("flex items-center gap-2 text-xs font-extrabold uppercase tracking-tight", statusColor)}>
+                    <div className={cn("flex items-center gap-2 text-xs font-extrabold uppercase tracking-heading", statusColor)}>
                         <Icon size={14} />
                         {statusText}
                     </div>
@@ -104,7 +104,7 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
                 <p className="text-xs text-muted-foreground font-medium leading-relaxed italic">
                     "Tracks systemic risk by aggregating volatility across asset classes. Extreme readings indicate geopolitical pricing that exceeds historical norms."
                 </p>
-                <div className="flex items-center justify-between text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
+                <div className="flex items-center justify-between text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
                     <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> &lt;0.5 Calm</span>
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> 0.5-1.5 Elevated</span>

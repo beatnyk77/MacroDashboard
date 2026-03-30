@@ -40,7 +40,7 @@ export const USWhaleTracker: React.FC = () => {
             <Box sx={{ overflowX: 'auto' }}>
                 <table className="w-full text-left border-separate border-spacing-y-2">
                     <thead>
-                        <tr className="text-xs font-black uppercase tracking-widest text-white/20">
+                        <tr className="text-xs font-black uppercase tracking-uppercase text-white/20">
                             <th className="px-6 pb-2">Institutional Manager</th>
                             <th className="px-6 pb-2">Securities Held</th>
                             <th className="px-6 pb-2 text-right">Value ($M)</th>

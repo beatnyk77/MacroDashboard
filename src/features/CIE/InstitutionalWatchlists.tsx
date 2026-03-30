@@ -36,7 +36,7 @@ export const AlertHistory: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center gap-4 px-8 py-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 backdrop-blur-md">
                 <Bell size={18} />
-                <span className="text-xs font-black uppercase tracking-[0.2em]">Macro Alert History</span>
+                <span className="text-xs font-black uppercase tracking-uppercase">Macro Alert History</span>
             </div>
             {isLoading ? (
                 <div className="h-20 bg-white/[0.02] rounded-3xl animate-pulse" />
@@ -45,16 +45,16 @@ export const AlertHistory: React.FC = () => {
                     {alerts.map(alert => (
                         <div key={alert.id} className="p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-3xl flex justify-between items-start group hover:border-blue-500/30 transition-all">
                             <div className="flex-1">
-                                <span className="text-xs font-black uppercase text-blue-400 tracking-widest block mb-2">{alert.ticker}</span>
+                                <span className="text-xs font-black uppercase text-blue-400 tracking-uppercase block mb-2">{alert.ticker}</span>
                                 <p className="text-xs text-white/60 font-medium leading-relaxed">{alert.message}</p>
                             </div>
-                            <span className="text-xs text-white/20 uppercase font-black tracking-widest ml-4">{new Date(alert.created_at).toLocaleDateString()}</span>
+                            <span className="text-xs text-white/20 uppercase font-black tracking-uppercase ml-4">{new Date(alert.created_at).toLocaleDateString()}</span>
                         </div>
                     ))}
                 </div>
             ) : (
                 <div className="p-12 text-center bg-white/[0.01] border border-dashed border-white/12 rounded-[2rem]">
-                    <p className="text-xs text-white/20 uppercase font-black tracking-widest">No active alerts detected</p>
+                    <p className="text-xs text-white/20 uppercase font-black tracking-uppercase">No active alerts detected</p>
                 </div>
             )}
         </div>
@@ -94,9 +94,9 @@ export const InstitutionalWatchlists: React.FC = () => {
                     <div className="flex items-center justify-between px-8 py-5 rounded-[2rem] bg-orange-500/10 border border-orange-500/20 text-orange-400 backdrop-blur-md">
                         <div className="flex items-center gap-4">
                             <Shield size={20} />
-                            <span className="text-xs font-black uppercase tracking-[0.2em]">CIE Institutional Watchlists</span>
+                            <span className="text-xs font-black uppercase tracking-uppercase">CIE Institutional Watchlists</span>
                         </div>
-                        <button className="px-6 py-2 rounded-xl bg-orange-500/20 text-xs font-black uppercase tracking-widest hover:bg-orange-500/30 transition-all border border-orange-500/20">
+                        <button className="px-6 py-2 rounded-xl bg-orange-500/20 text-xs font-black uppercase tracking-uppercase hover:bg-orange-500/30 transition-all border border-orange-500/20">
                             + Initialize
                         </button>
                     </div>
@@ -117,13 +117,13 @@ export const InstitutionalWatchlists: React.FC = () => {
                                     className="p-8 rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl hover:border-orange-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[220px]"
                                 >
                                     <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-xl font-black text-white group-hover:text-orange-400 transition-colors italic tracking-tight">{list.name}</h3>
+                                        <h3 className="text-xl font-black text-white group-hover:text-orange-400 transition-colors italic tracking-heading">{list.name}</h3>
                                         <div className="p-3 rounded-2xl bg-white/5 text-white/20 group-hover:text-white transition-colors border border-white/12">
                                             <Eye size={18} />
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <div className="text-xs font-black uppercase tracking-widest text-white/20">
+                                        <div className="text-xs font-black uppercase tracking-uppercase text-white/20">
                                             {list.company_ids.length} Equities Tracking
                                         </div>
                                         <span className="text-xs font-black uppercase text-orange-400/60 bg-orange-500/5 px-3 py-1.5 rounded-full border border-orange-500/10">Active Protection</span>
@@ -136,8 +136,8 @@ export const InstitutionalWatchlists: React.FC = () => {
                             <div className="p-6 rounded-full bg-white/5 mb-6 group-hover:scale-110 transition-transform">
                                 <Lock size={40} className="text-white/10" />
                             </div>
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/20 mb-2">No Institutional Watchlists Provisioned</h3>
-                            <p className="text-xs text-white/10 max-w-xs font-medium uppercase tracking-widest">Create a watchlist to enable real-time macro telemetry on specific tickers.</p>
+                            <h3 className="text-xs font-black uppercase tracking-uppercase text-white/20 mb-2">No Institutional Watchlists Provisioned</h3>
+                            <p className="text-xs text-white/10 max-w-xs font-medium uppercase tracking-uppercase">Create a watchlist to enable real-time macro telemetry on specific tickers.</p>
                         </div>
                     )}
                 </div>
@@ -147,7 +147,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                     <div className="flex items-center justify-between px-8 py-5 rounded-[2rem] bg-white/5 border border-white/12 text-white/40 backdrop-blur-md">
                         <div className="flex items-center gap-4">
                             <Activity size={20} />
-                            <span className="text-xs font-black uppercase tracking-[0.2em]">Saved Macro Topographies</span>
+                            <span className="text-xs font-black uppercase tracking-uppercase">Saved Macro Topographies</span>
                         </div>
                     </div>
                     {savedViews.length > 0 ? (
@@ -155,9 +155,9 @@ export const InstitutionalWatchlists: React.FC = () => {
                             {savedViews.map((view) => (
                                 <div key={view.name} className="p-8 rounded-[2.5rem] bg-black/40 border border-white/5 backdrop-blur-3xl flex justify-between items-center group hover:border-blue-500/30 transition-all">
                                     <div>
-                                        <h4 className="text-lg font-black text-white italic tracking-tight mb-2 group-hover:text-blue-400 transition-colors uppercase">{view.name}</h4>
+                                        <h4 className="text-lg font-black text-white italic tracking-heading mb-2 group-hover:text-blue-400 transition-colors uppercase">{view.name}</h4>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xs font-black text-blue-400/60 bg-blue-500/5 px-2.5 py-1 rounded-md border border-blue-500/10 uppercase tracking-widest">
+                                            <span className="text-xs font-black text-blue-400/60 bg-blue-500/5 px-2.5 py-1 rounded-md border border-blue-500/10 uppercase tracking-uppercase">
                                                 {Object.keys(view.filters).length} Parameter Overlays
                                             </span>
                                         </div>
@@ -173,7 +173,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                         </div>
                     ) : (
                         <div className="p-16 text-center bg-white/[0.01] border border-dashed border-white/12 rounded-[3rem]">
-                            <p className="text-xs text-white/20 uppercase font-black tracking-[0.2em]">No saved topographical views detected</p>
+                            <p className="text-xs text-white/20 uppercase font-black tracking-uppercase">No saved topographical views detected</p>
                         </div>
                     )}
                 </div>

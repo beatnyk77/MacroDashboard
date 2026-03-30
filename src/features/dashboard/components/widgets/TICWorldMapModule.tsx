@@ -58,10 +58,10 @@ export const TICWorldMapModule: React.FC = () => {
                         <Globe className="text-cyan-400 w-4 h-4" />
                         <span className="text-xs font-black text-cyan-400 uppercase tracking-[0.4em]">Global TIC Exposure</span>
                     </div>
-                    <h2 className="text-4xl font-black uppercase tracking-tighter text-white leading-none">
+                    <h2 className="text-4xl font-black uppercase tracking-heading text-white leading-none">
                         Top Foreign <span className="text-cyan-400">Holders</span>
                     </h2>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-relaxed opacity-60">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mt-2 leading-relaxed opacity-60">
                         Pinpointing institutional demand and sovereign accumulation of US government debt
                     </p>
                 </div>
@@ -71,7 +71,7 @@ export const TICWorldMapModule: React.FC = () => {
                         size="small"
                         onClick={() => setMetric('holdings')}
                         className={cn(
-                            "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                            "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-uppercase transition-all",
                             metric === 'holdings' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
                         )}
                     >
@@ -81,7 +81,7 @@ export const TICWorldMapModule: React.FC = () => {
                         size="small"
                         onClick={() => setMetric('share')}
                         className={cn(
-                            "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                            "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-uppercase transition-all",
                             metric === 'share' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-white"
                         )}
                     >
@@ -93,7 +93,7 @@ export const TICWorldMapModule: React.FC = () => {
             {/* 2. Top 5 Power List (Bottom Left Overlay) */}
             <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/12 p-8 rounded-[2.5rem] shadow-3xl w-80">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-black text-white uppercase tracking-widest">Top 5 Holders</span>
+                    <span className="text-xs font-black text-white uppercase tracking-uppercase">Top 5 Holders</span>
                     <Layers className="text-cyan-400 w-4 h-4" />
                 </div>
                 <div className="space-y-5">
@@ -102,7 +102,7 @@ export const TICWorldMapModule: React.FC = () => {
                             <div className="flex items-center gap-3">
                                 <span className="text-xl">{COUNTRY_FLAGS[h.country_name] || '🌐'}</span>
                                 <div className="flex flex-col">
-                                    <span className="text-[0.75rem] font-bold text-white group-hover/power:text-cyan-400 transition-colors uppercase truncate w-32">{h.country_name}</span>
+                                    <span className="text-xs font-bold text-white group-hover/power:text-cyan-400 transition-colors tracking-uppercase truncate w-32">{h.country_name}</span>
                                     <span className="text-xs font-black text-white/30 tabular-nums">RANK #{(i+1).toString().padStart(2, '0')}</span>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@ export const TICWorldMapModule: React.FC = () => {
             {/* 3. Ranked Sidebar (Desktop Right) */}
             <div className="absolute top-10 right-10 z-30 w-72 max-h-[calc(100%-120px)] overflow-y-auto hidden lg:block scrollbar-hide bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 shadow-inner">
                 <div className="flex items-center justify-between mb-8">
-                    <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">Institutional Rank</span>
+                    <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Institutional Rank</span>
                     <TrendingUp size={16} className="text-cyan-400" />
                 </div>
                 <div className="space-y-5">
@@ -167,7 +167,7 @@ export const TICWorldMapModule: React.FC = () => {
 
             {/* 5. Quantized Legend (Bottom Right Center) */}
             <div className="absolute bottom-10 right-10 z-30 hidden md:flex flex-col gap-4 bg-black/60 backdrop-blur-3xl border border-white/5 p-6 rounded-[2rem] shadow-2xl min-w-[320px]">
-                <div className="flex justify-between text-xs font-black text-white/40 uppercase tracking-[0.2em]">
+                <div className="flex justify-between text-xs font-black text-white/40 uppercase tracking-uppercase">
                     <span>Minimum Exposure</span>
                     <span>Median</span>
                     <span>High Demand</span>
@@ -180,7 +180,7 @@ export const TICWorldMapModule: React.FC = () => {
                     <div className="flex-1 bg-[#67e8f9] rounded-r-md border border-white/5" />
                 </div>
                 <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-muted-foreground/40 font-mono uppercase tracking-tight italic">
+                    <span className="text-xs text-muted-foreground/40 font-mono uppercase tracking-heading italic">
                         As of {latestHolders[0] ? new Date(latestHolders[0].as_of_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '--'} • US Treasury TIC Stats
                     </span>
                     <Globe size={12} className="text-muted-foreground/20" />

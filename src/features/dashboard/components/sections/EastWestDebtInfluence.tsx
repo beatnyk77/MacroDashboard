@@ -34,7 +34,7 @@ export const EastWestDebtInfluence: React.FC = () => {
                         <Scale className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div>
-                        <CardTitle className="text-lg font-bold tracking-tight text-foreground">Sovereign Debt Architectures</CardTitle>
+                        <CardTitle className="text-lg font-bold tracking-heading text-foreground">Sovereign Debt Architectures</CardTitle>
                         <p className="text-xs text-muted-foreground font-medium mt-0.5">West (G7) vs East (BRICS+): Leverage & Yield Comparison</p>
                     </div>
                 </div>
@@ -45,7 +45,7 @@ export const EastWestDebtInfluence: React.FC = () => {
 
                     {/* Visual Comparison */}
                     <div className="space-y-6">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">Leverage vs Yield</h4>
+                        <h4 className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 mb-4">Leverage vs Yield</h4>
                         <div className="h-[250px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={DEBT_DATA} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
@@ -90,9 +90,9 @@ export const EastWestDebtInfluence: React.FC = () => {
                     {/* Metric Deep Dive Table */}
                     <div className="flex flex-col justify-center">
                         <div className="grid grid-cols-3 gap-y-6 pb-6 border-b border-white/5">
-                            <div className="col-span-1 text-xs font-black uppercase text-muted-foreground tracking-widest self-end pb-2">Metric</div>
-                            <div className="col-span-1 text-center text-xs font-black uppercase text-rose-400 tracking-widest pb-2">West (G7)</div>
-                            <div className="col-span-1 text-center text-xs font-black uppercase text-emerald-400 tracking-widest pb-2">East (BRICS+)</div>
+                            <div className="col-span-1 text-xs font-black uppercase text-muted-foreground tracking-uppercase self-end pb-2">Metric</div>
+                            <div className="col-span-1 text-center text-xs font-black uppercase text-rose-400 tracking-uppercase pb-2">West (G7)</div>
+                            <div className="col-span-1 text-center text-xs font-black uppercase text-emerald-400 tracking-uppercase pb-2">East (BRICS+)</div>
 
                             {/* Row 1: Debt to GDP */}
                             <div className="col-span-1 font-bold text-sm text-foreground">Debt / GDP</div>
@@ -114,7 +114,7 @@ export const EastWestDebtInfluence: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <TrendingUp className="w-4 h-4 text-indigo-400 mt-1" />
                                 <div>
-                                    <span className="text-xs font-black uppercase tracking-wider text-indigo-400 mb-1 block">
+                                    <span className="text-xs font-black uppercase tracking-uppercase text-indigo-400 mb-1 block">
                                         Strategic Implication
                                     </span>
                                     <p className="text-xs text-indigo-200/80 leading-relaxed font-medium">

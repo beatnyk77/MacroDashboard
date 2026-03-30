@@ -22,7 +22,7 @@ export const FYP_TargetGrid: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center gap-3">
                 <Target className="text-red-500" size={18} />
-                <h3 className="text-sm font-black uppercase tracking-widest text-white">Quantitative Performance Targets</h3>
+                <h3 className="text-sm font-black uppercase tracking-uppercase text-white">Quantitative Performance Targets</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -40,8 +40,8 @@ export const FYP_TargetGrid: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-xs font-black uppercase text-muted-foreground/50 tracking-widest">{target.label}</p>
-                                    <h4 className="text-xl font-black text-white tracking-tighter">{target.value_target}</h4>
+                                    <p className="text-xs font-black uppercase text-muted-foreground/50 tracking-uppercase">{target.label}</p>
+                                    <h4 className="text-xl font-black text-white tracking-heading">{target.value_target}</h4>
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
                                     <div className="text-xs font-bold text-muted-foreground/40 uppercase">Baseline: {target.value_baseline}</div>

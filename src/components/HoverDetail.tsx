@@ -94,7 +94,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             <div className="mb-8">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Info size={16} className="text-primary" />
-                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">EXECUTIVE SUMMARY</span>
+                                    <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">EXECUTIVE SUMMARY</span>
                                 </div>
                                 <p className="text-sm leading-relaxed text-foreground/90">
                                     {detailContent.description || 'No detailed description available for this metric.'}
@@ -127,7 +127,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             <div className="mb-8">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Clock size={16} className="text-primary" />
-                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">RECENT TREND (90D)</span>
+                                    <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">RECENT TREND (90D)</span>
                                 </div>
                                 <div className="h-[200px] w-full mt-2 p-3 bg-white/[0.01] rounded border border-white/5">
                                     {detailContent.history && detailContent.history.length > 0 ? (
@@ -157,7 +157,7 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             <div>
                                 <div className="flex items-center gap-2 mb-2">
                                     <Layers size={16} className="text-primary" />
-                                    <span className="text-xs font-black tracking-widest text-muted-foreground uppercase">METHODOLOGY</span>
+                                    <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">METHODOLOGY</span>
                                 </div>
                                 <div className="text-xs text-muted-foreground bg-white/[0.02] p-3 rounded border border-white/5">
                                     {detailContent.methodology || 'Calculated using standardized Z-Score normalization against institutional source data.'}

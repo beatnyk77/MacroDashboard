@@ -26,11 +26,11 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors group text-left"
             >
                 <div>
-                    <h3 className="text-sm font-black tracking-widest uppercase text-foreground group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-sm font-black tracking-uppercase uppercase text-foreground group-hover:text-blue-400 transition-colors">
                         {title}
                     </h3>
                     {subtitle && (
-                        <p className="text-xs font-bold text-muted-foreground/50 mt-1 uppercase tracking-tighter">
+                        <p className="text-xs font-bold text-muted-foreground/50 mt-1 uppercase tracking-heading">
                             {subtitle}
                         </p>
                     )}

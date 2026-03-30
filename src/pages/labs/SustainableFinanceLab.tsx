@@ -15,7 +15,7 @@ const ClimateRiskDashboard = lazy(() => import('@/features/dashboard/components/
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[400px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Synchronizing Climate Telemetry...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Synchronizing Climate Telemetry...</span>
     </div>
 );
 
@@ -59,7 +59,7 @@ export const SustainableFinanceLab: React.FC = () => {
 
             {/* Intro Header */}
             <Box sx={{ mb: 12 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-black uppercase tracking-uppercase mb-4">
                     <Leaf size={12} /> ESG Transition & Climate Alpha
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -70,7 +70,7 @@ export const SustainableFinanceLab: React.FC = () => {
                 </Typography>
 
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/12 max-w-4xl">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2 border-b border-white/12 pb-2 inline-block">Lab Objectives</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase mb-2 border-b border-white/12 pb-2 inline-block">Lab Objectives</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                         This lab translates environmental physical risks and transition policies into institutional-grade macro signals. 
                         <strong> Start by assessing the "Temperature Alignment" of key economies</strong> to understand looming regulatory and tax pressures. Then, pivot to the "Grid Intensity" monitor to identify supply-chain bottlenecks and renewable-ready industrial pockets.

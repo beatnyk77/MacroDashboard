@@ -69,12 +69,12 @@ export const IntelligenceSidebar: React.FC = () => {
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
                         <Newspaper size={18} className="text-blue-400" />
-                        <span className="text-xs font-black tracking-widest uppercase text-primary">Intelligence</span>
+                        <span className="text-xs font-black tracking-uppercase uppercase text-primary">Intelligence</span>
                     </div>
                     {lastUpdatedDate && (
                         <div className="flex items-center gap-1.5 mt-1">
                             <div className={`w-1.5 h-1.5 rounded-full ${isStale ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
-                            <span className={`text-xs font-bold uppercase tracking-tighter ${isStale ? 'text-rose-400' : 'text-muted-foreground/60'}`}>
+                            <span className={`text-xs font-bold uppercase tracking-heading ${isStale ? 'text-rose-400' : 'text-muted-foreground/60'}`}>
                                 {isStale ? `STALE: ${diffMin}m AGO` : `LIVE: ${diffMin}m AGO`}
                             </span>
                         </div>
@@ -107,7 +107,7 @@ export const IntelligenceSidebar: React.FC = () => {
                             >
                                 <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/12 transition-all duration-300">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-tighter">
+                                        <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-heading">
                                             {item.source}
                                         </span>
                                         <span className="text-xs text-muted-foreground/50 flex items-center gap-1">
@@ -136,7 +136,7 @@ export const IntelligenceSidebar: React.FC = () => {
             <div className="p-4 border-t border-white/12 bg-white/5">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <TrendingUp size={12} className="text-emerald-500" />
-                    <span className="font-bold uppercase tracking-widest">Market Pulse: Active</span>
+                    <span className="font-bold uppercase tracking-uppercase">Market Pulse: Active</span>
                 </div>
             </div>
         </aside>

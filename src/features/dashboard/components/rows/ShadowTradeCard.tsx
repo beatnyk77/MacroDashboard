@@ -51,7 +51,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
                             <ShieldAlert className="w-5 h-5 text-red-400" />
-                            <CardTitle className="text-xl font-medium tracking-tight text-white/90 font-mono uppercase">
+                            <CardTitle className="text-xl font-medium tracking-heading text-white/90 font-mono uppercase">
                                 Shadow Trade &amp; Sanctions Evasion Monitor
                             </CardTitle>
                         </div>
@@ -104,7 +104,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
                                 <tbody>
                                     {ORIGINS.map(origin => (
                                         <tr key={origin} className="border-t border-white/5">
-                                            <td className="text-xs font-mono text-white/80 font-semibold px-3 py-4 uppercase tracking-wider">
+                                            <td className="text-xs font-mono text-white/80 font-semibold px-3 py-4 uppercase tracking-uppercase">
                                                 {origin}
                                             </td>
                                             {DESTINATIONS.map(dest => {
@@ -128,7 +128,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
                                                             <div className="text-2xl font-black font-mono tabular-nums">
                                                                 {ratio.toFixed(1)}×
                                                             </div>
-                                                            <div className="text-xs font-bold uppercase tracking-widest mt-1 opacity-80">
+                                                            <div className="text-xs font-bold uppercase tracking-uppercase mt-1 opacity-80">
                                                                 {getSpikeLabel(ratio)}
                                                             </div>
 
@@ -171,7 +171,7 @@ export const ShadowTradeCard: React.FC<ShadowTradeCardProps> = ({ className }) =
 
                         {/* Legend */}
                         <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-mono text-muted-foreground">
-                            <span className="text-white/50 uppercase tracking-wider">Spike Intensity:</span>
+                            <span className="text-white/50 uppercase tracking-uppercase">Spike Intensity:</span>
                             {[
                                 { label: 'Normal (<2×)', color: 'bg-white/10' },
                                 { label: 'Elevated (2–4×)', color: 'bg-yellow-500/60' },

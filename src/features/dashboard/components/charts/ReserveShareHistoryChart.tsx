@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/90 backdrop-blur-xl border border-white/12 p-3 rounded-xl shadow-2xl">
-                <div className="text-xs font-black text-white/40 uppercase tracking-widest mb-1">{label}</div>
+                <div className="text-xs font-black text-white/40 uppercase tracking-uppercase mb-1">{label}</div>
                 <div className="text-sm font-black text-white tabular-nums">
                     {payload[0].value.toFixed(1)}%
                 </div>
@@ -56,20 +56,20 @@ export const ReserveShareHistoryChart: React.FC<ReserveShareHistoryChartProps> =
             <div className="relative z-10 space-y-4 mb-6">
                 <div className="flex justify-between items-start">
                     <div className="space-y-1">
-                        <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">
+                        <h3 className="text-sm font-black text-white uppercase tracking-uppercase">
                             {title}
                         </h3>
                         <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">
+                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase">
                                 {years}-Year Institutional History
                             </span>
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="text-3xl font-black text-white tracking-tighter tabular-nums">
+                        <div className="text-3xl font-black text-white tracking-heading tabular-nums">
                             {currentValue?.toFixed(1)}%
                         </div>
-                        <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">
+                        <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
                             Official Global Share
                         </div>
                     </div>
@@ -119,7 +119,7 @@ export const ReserveShareHistoryChart: React.FC<ReserveShareHistoryChartProps> =
                                 fill: 'rgba(255,255,255,0.4)',
                                 fontSize: 9,
                                 fontWeight: 900,
-                                className: 'uppercase tracking-tighter'
+                                className: 'uppercase tracking-heading'
                             }}
                         />
                     </AreaChart>
@@ -133,11 +133,11 @@ export const ReserveShareHistoryChart: React.FC<ReserveShareHistoryChartProps> =
                         "w-2 h-2 rounded-full animate-pulse",
                         isDeclining ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" : "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
                     )} />
-                    <span className="text-xs font-black text-white/40 uppercase tracking-widest">
+                    <span className="text-xs font-black text-white/40 uppercase tracking-uppercase">
                         {isDeclining ? "Structural Erosion" : "Strategic Expansion"}
                     </span>
                 </div>
-                <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-[0.2em]">
+                <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase">
                     Source: IMF COFER / WGC
                 </div>
             </div>

@@ -65,7 +65,7 @@ export const ReserveTrackerCard: React.FC = () => {
         return (
             <Card className="bg-black/40 border-white/12 backdrop-blur-md shadow-2xl">
                 <CardHeader className="pb-2 bg-white/[0.02] border-b border-white/5 px-6">
-                    <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                    <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-uppercase flex items-center gap-2">
                         <Box className="w-4 h-4 text-emerald-500" />
                         Strategic Reserve & Stockpile Tracker
                     </CardTitle>
@@ -81,7 +81,7 @@ export const ReserveTrackerCard: React.FC = () => {
         <Card className="bg-black/40 border-white/12 backdrop-blur-md shadow-2xl">
             <CardHeader className="pb-4 bg-white/[0.02] border-b border-white/5 px-6">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                    <CardTitle className="text-xl font-black text-white uppercase tracking-heading flex items-center gap-3">
                         <Box className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60">
                             Resource Security & Stockpile Tracker
@@ -90,15 +90,15 @@ export const ReserveTrackerCard: React.FC = () => {
                     <div className="flex gap-4">
                         <div className="flex items-center gap-2">
                             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-                            <span className="text-xs font-black text-white/60 uppercase tracking-widest leading-none">Strategic</span>
+                            <span className="text-xs font-black text-white/60 uppercase tracking-uppercase leading-none">Strategic</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)]" />
-                            <span className="text-xs font-black text-white/60 uppercase tracking-widest leading-none">Commercial</span>
+                            <span className="text-xs font-black text-white/60 uppercase tracking-uppercase leading-none">Commercial</span>
                         </div>
                     </div>
                 </div>
-                <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-tight mt-1">
+                <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-heading mt-1">
                     India Grains & Global Crude Oil Stockpiles
                 </p>
             </CardHeader>
@@ -109,11 +109,11 @@ export const ReserveTrackerCard: React.FC = () => {
                         <div key={idx} className="p-5 rounded-[1.5rem] bg-white/[0.03] border border-white/12 hover:bg-white/[0.05] transition-all group/stat relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-white/5 to-transparent blur-xl pointer-events-none" />
                             <div className="flex items-start justify-between mb-3">
-                                <span className="text-xs font-black text-white/30 uppercase tracking-[0.2em] group-hover/stat:text-white/50 transition-colors">
+                                <span className="text-xs font-black text-white/30 uppercase tracking-uppercase group-hover/stat:text-white/50 transition-colors">
                                     {item.commodity}
                                 </span>
                                 <span className={cn(
-                                    "text-xs font-black px-2 py-0.5 rounded-full uppercase tracking-widest border",
+                                    "text-xs font-black px-2 py-0.5 rounded-full uppercase tracking-uppercase border",
                                     item.stressRegime === 'Comfortable' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
                                         item.stressRegime === 'Watch' ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
                                             "bg-rose-500/10 text-rose-400 border-rose-500/20"
@@ -121,7 +121,7 @@ export const ReserveTrackerCard: React.FC = () => {
                                     {item.stressRegime}
                                 </span>
                             </div>
-                            <div className="text-3xl font-black text-white italic tabular-nums leading-none mb-2 tracking-tighter">
+                            <div className="text-3xl font-black text-white italic tabular-nums leading-none mb-2 tracking-heading">
                                 {item.volume.toLocaleString()}
                             </div>
                             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide mt-1">
@@ -136,7 +136,7 @@ export const ReserveTrackerCard: React.FC = () => {
                             </div>
                             {item.coverage && (
                                 <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                                    <span className="text-xs text-white/20 font-black uppercase tracking-widest">Inventory Coverage</span>
+                                    <span className="text-xs text-white/20 font-black uppercase tracking-uppercase">Inventory Coverage</span>
                                     <span className="text-xs font-mono font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{item.coverage} <span className="text-xs opacity-40 italic">DAYS</span></span>
                                 </div>
                             )}

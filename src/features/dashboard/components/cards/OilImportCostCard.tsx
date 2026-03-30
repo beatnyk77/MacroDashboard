@@ -88,12 +88,12 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                     <div className="space-y-1.5 font-sans">
                         <div className="flex items-center gap-3">
                             <div className={`w-10 h-px bg-gradient-to-r ${activeCountry === 'IN' ? 'from-blue-500' : 'from-rose-500'} to-transparent`} />
-                            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.3em]">
+                            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
                                 Local <span className="text-white">Import Pressure</span>
                             </h3>
                         </div>
                         <div className="flex items-center gap-3 pl-[3.25rem]">
-                            <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-widest leading-none">
+                            <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-uppercase leading-none">
                                 Measuring FX Sensitivity vs. Brent Benchmark
                             </p>
                         </div>
@@ -102,15 +102,15 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                         {stats && (
                             <div className="hidden xs:flex px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse" />
-                                <span className="text-xs text-white font-black uppercase tracking-widest">
+                                <span className="text-xs text-white font-black uppercase tracking-uppercase">
                                     FY {stats.year}
                                 </span>
                             </div>
                         )}
                         <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-black/40 p-1 rounded-2xl border border-white/5">
                             <TabsList className="bg-transparent border-0 gap-1 h-8">
-                                <TabsTrigger value="IN" className="rounded-xl text-xs font-black uppercase px-4 sm:px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">BHARAT</TabsTrigger>
-                                <TabsTrigger value="CN" className="rounded-xl text-xs font-black uppercase px-4 sm:px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400">CHINA</TabsTrigger>
+                                <TabsTrigger value="IN" className="rounded-xl text-xs font-black uppercase px-4 sm:px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">BHARAT</TabsTrigger>
+                                <TabsTrigger value="CN" className="rounded-xl text-xs font-black uppercase px-4 sm:px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400">CHINA</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -122,12 +122,12 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                             {stats ? (
                                 <div className="space-y-6 sm:space-y-10">
                                     <div className="space-y-2">
-                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Weighted Avg Cost</p>
+                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Weighted Avg Cost</p>
                                         <div className="flex items-baseline gap-3 flex-wrap">
                                             <span className={`text-3xl sm:text-5xl font-black text-white drop-shadow-[0_0_15px_${stats.color === 'blue' ? 'rgba(59,130,246,0.2)' : 'rgba(239,68,68,0.2)'}]`}>
                                                 {stats.currency}{stats.currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                             </span>
-                                            <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest">/BBL</span>
+                                            <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">/BBL</span>
                                         </div>
                                         <div className="flex items-center gap-3 mt-4">
                                             {stats.yoyDelta !== null && (
@@ -146,7 +146,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1 h-3 rounded-full bg-amber-500/50" />
-                                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-widest">Brent Benchmark</span>
+                                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Brent Benchmark</span>
                                             </div>
                                             <div className="flex items-baseline gap-2">
                                                 <p className="text-xl sm:text-2xl font-black text-white">${stats.brentVal.toFixed(2)}</p>
@@ -160,24 +160,24 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className={`w-1 h-3 rounded-full ${stats.color === 'blue' ? 'bg-blue-500/50' : 'bg-rose-500/50'}`} />
-                                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-widest">Currency Sensitivity</span>
+                                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Currency Sensitivity</span>
                                             </div>
-                                            <p className="text-xs font-bold text-white uppercase tracking-tight leading-relaxed">
+                                            <p className="text-xs font-bold text-white uppercase tracking-heading leading-relaxed">
                                                 {activeCountry === 'IN' ? 'INR RISK: High Vol' : 'CNY RISK: Managed Float'}
                                             </p>
-                                            <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tighter italic">Amplification: {activeCountry === 'IN' ? '+18%' : '+12%'} vs USD</p>
+                                            <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-heading italic">Amplification: {activeCountry === 'IN' ? '+18%' : '+12%'} vs USD</p>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-12">
                                     <div className="w-10 h-10 rounded-full border-2 border-white/5 border-t-emerald-500 animate-spin" />
-                                    <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">Awaiting Feed Integration</p>
+                                    <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Awaiting Feed Integration</p>
                                 </div>
                             )}
 
                             <div className="mt-auto pt-6 border-t border-white/5 hidden lg:block">
-                                <p className="text-xs text-muted-foreground/30 font-black uppercase tracking-[0.2em] leading-relaxed">
+                                <p className="text-xs text-muted-foreground/30 font-black uppercase tracking-uppercase leading-relaxed">
                                     Terminal Source: EIA-X8 / FRED-M2<br />
                                     Composite calculation enabled.
                                 </p>
@@ -232,7 +232,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                                 if (!active || !payload) return null;
                                                 return (
                                                     <div className="bg-slate-950/95 border border-white/12 p-4 sm:p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[180px] sm:min-w-[200px] z-[100]">
-                                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/12">{label} RECAPITULATION</p>
+                                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-4 pb-3 border-b border-white/12">{label} RECAPITULATION</p>
                                                         <div className="space-y-3">
                                                             {payload.map((entry: any) => (
                                                                 <div key={entry.name} className="flex justify-between items-center gap-6 sm:gap-10">
@@ -240,7 +240,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                                                         <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: entry.color, color: entry.color }} />
                                                                         <span className="text-xs font-black text-muted-foreground uppercase">{entry.name}</span>
                                                                     </div>
-                                                                    <span className="text-xs sm:text-[12px] font-mono font-black text-white">
+                                                                    <span className="text-xs sm:text-sm font-mono font-black text-white">
                                                                         {entry.name.includes('USD') ? '$' : (activeCountry === 'IN' ? '₹' : '¥')}
                                                                         {entry.value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                                     </span>
@@ -284,7 +284,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-center gap-6 py-12">
                                     <div className="w-12 h-12 rounded-full border-[3px] border-white/5 border-t-blue-500 animate-spin" />
-                                    <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest tracking-[0.2em]">Synchronizing Institutional Feeds...</p>
+                                    <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase tracking-uppercase">Synchronizing Institutional Feeds...</p>
                                 </div>
                             )}
                         </div>

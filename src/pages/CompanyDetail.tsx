@@ -181,30 +181,30 @@ export const CompanyDetail: React.FC = () => {
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header Section */}
                 <div className="mb-8">
-                    <Link to="/india-equities" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-6">
+                    <Link to="/india-equities" className="inline-flex items-center text-xs font-bold uppercase tracking-uppercase text-white/40 hover:text-white transition-colors mb-6">
                         <ChevronLeft size={14} className="mr-1" /> Back to Screener
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-4xl lg:text-5xl font-black tracking-tight">{company.name}</h1>
-                                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-widest text-white/60">
+                                <h1 className="text-4xl lg:text-5xl font-black tracking-heading">{company.name}</h1>
+                                <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-uppercase text-white/60">
                                     {company.ticker.replace('.NS', '')}
                                 </span>
                             </div>
-                            <p className="text-sm font-medium text-white/40 uppercase tracking-widest">{company.sector} &bull; {company.industry}</p>
+                            <p className="text-sm font-medium text-white/40 uppercase tracking-uppercase">{company.sector} &bull; {company.industry}</p>
                         </div>
                         <div className="flex flex-wrap gap-6 text-right items-end">
                             <div>
-                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Market Cap</p>
+                                <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Market Cap</p>
                                 <p className="text-2xl font-black">₹{mcap.toFixed(0)} <span className="text-sm text-white/40">Cr</span></p>
                             </div>
                             <div>
-                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Current Price</p>
+                                <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Current Price</p>
                                 <p className="text-2xl font-black text-blue-400">₹{latestFund.metadata?.last_price?.toFixed(2) || 'N/A'}</p>
                             </div>
                             <div>
-                                <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Short Interest</p>
+                                <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Short Interest</p>
                                 <p className={`text-2xl font-black ${(company.short_interest_pct || 0) > 20 ? 'text-rose-400' : 'text-white/40'}`}>
                                     {(company.short_interest_pct || 0).toFixed(1)}%
                                 </p>
@@ -218,7 +218,7 @@ export const CompanyDetail: React.FC = () => {
                         {/* Fundamental Trends */}
                         <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 flex items-center">
+                                <h3 className="text-sm font-bold uppercase tracking-uppercase text-white/60 flex items-center">
                                     <Activity size={16} className="mr-2 text-blue-400" /> Fundamental Trend
                                 </h3>
                                 <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
@@ -226,7 +226,7 @@ export const CompanyDetail: React.FC = () => {
                                         <button
                                             key={metric}
                                             onClick={() => setChartMetric(metric as any)}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${chartMetric === metric ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-uppercase transition-all ${chartMetric === metric ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
                                         >
                                             {metric}
                                         </button>
@@ -254,10 +254,10 @@ export const CompanyDetail: React.FC = () => {
                         {/* Promoter & Governance Activity Section */}
                         <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 flex items-center">
+                                <h3 className="text-sm font-bold uppercase tracking-uppercase text-white/60 flex items-center">
                                     <Users size={16} className="mr-2 text-purple-400" /> Promoter Activity & Pledging Trend
                                 </h3>
-                                <div className="flex gap-4 text-xs font-black uppercase tracking-widest text-white/30">
+                                <div className="flex gap-4 text-xs font-black uppercase tracking-uppercase text-white/30">
                                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-400" /> Pledging (%)</span>
                                     <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-purple-500" /> Insider (Cr)</span>
                                 </div>
@@ -265,25 +265,25 @@ export const CompanyDetail: React.FC = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Current Pledge</p>
+                                    <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Current Pledge</p>
                                     <p className={`text-xl font-black ${(company.promoter_pledge_pct || 0) > 10 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                         {company.promoter_pledge_pct || 0}%
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Pledge 1Y Delta</p>
+                                    <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Pledge 1Y Delta</p>
                                     <p className={`text-xl font-black ${(company.pledge_delta || 0) > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                         {company.pledge_delta > 0 ? '+' : ''}{(company.pledge_delta || 0).toFixed(1)}%
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Insider Buy (12M)</p>
+                                    <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Insider Buy (12M)</p>
                                     <p className={`text-xl font-black ${(company.insider_buy_sell_net || 0) > 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
                                         {company.insider_buy_sell_net > 0 ? `+${company.insider_buy_sell_net}` : company.insider_buy_sell_net || 0} Cr
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                                    <p className="text-xs uppercase tracking-widest font-black text-white/30 mb-1">Sector Avg Pledge</p>
+                                    <p className="text-xs uppercase tracking-uppercase font-black text-white/30 mb-1">Sector Avg Pledge</p>
                                     <p className="text-xl font-black text-blue-400">{peerComparison?.avgSectorPledge.toFixed(1)}%</p>
                                 </div>
                             </div>
@@ -303,7 +303,7 @@ export const CompanyDetail: React.FC = () => {
                         </div>
                         {/* Bulk & Block Deals Section (Phase 11) */}
                         <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 mb-6 flex items-center">
+                            <h3 className="text-sm font-bold uppercase tracking-uppercase text-white/60 mb-6 flex items-center">
                                 <Briefcase size={16} className="mr-2 text-blue-400" /> Bulk & Block Deals (Last 30 Days)
                             </h3>
 
@@ -311,12 +311,12 @@ export const CompanyDetail: React.FC = () => {
                                 <table className="w-full text-left">
                                     <thead>
                                         <tr className="border-b border-white/5">
-                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20">Date</th>
-                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20">Client</th>
-                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20">Type</th>
-                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Qty</th>
-                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">Price</th>
-                                            <th className="pb-4 text-xs font-black uppercase tracking-widest text-white/20 text-right">% Eq</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-uppercase text-white/20">Date</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-uppercase text-white/20">Client</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-uppercase text-white/20">Type</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-uppercase text-white/20 text-right">Qty</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-uppercase text-white/20 text-right">Price</th>
+                                            <th className="pb-4 text-xs font-black uppercase tracking-uppercase text-white/20 text-right">% Eq</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/[0.02]">
@@ -350,7 +350,7 @@ export const CompanyDetail: React.FC = () => {
                                         ) : (
                                             <tr>
                                                 <td colSpan={6} className="py-10 text-center">
-                                                    <span className="text-xs font-black uppercase tracking-widest text-white/10 italic">No significant deals reported in the last 30 days.</span>
+                                                    <span className="text-xs font-black uppercase tracking-uppercase text-white/10 italic">No significant deals reported in the last 30 days.</span>
                                                 </td>
                                             </tr>
                                         )}
@@ -362,7 +362,7 @@ export const CompanyDetail: React.FC = () => {
                         {/* Benchmark & Radar */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 mb-6 flex items-center">
+                                <h3 className="text-sm font-bold uppercase tracking-uppercase text-white/60 mb-6 flex items-center">
                                     <Activity size={16} className="mr-2 text-rose-400" /> Short Selling Trend
                                 </h3>
                                 <div className="h-64 w-full">
@@ -384,7 +384,7 @@ export const CompanyDetail: React.FC = () => {
                             </div>
 
                             <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 mb-6 flex items-center">
+                                <h3 className="text-sm font-bold uppercase tracking-uppercase text-white/60 mb-6 flex items-center">
                                     <Activity size={16} className="mr-2 text-orange-400" /> Macro Risk Radar
                                 </h3>
                                 <div className="h-64 w-full">
@@ -403,17 +403,17 @@ export const CompanyDetail: React.FC = () => {
                     <div className="space-y-6">
                         {/* Governance Snapshot */}
                         <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-white/60 mb-6 flex items-center">
+                            <h3 className="text-sm font-bold uppercase tracking-uppercase text-white/60 mb-6 flex items-center">
                                 <ShieldAlert size={16} className="mr-2 text-rose-400" /> Governance Snapshot
                             </h3>
                             <div className="space-y-5">
                                 <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10">
                                     <div className="flex justify-between items-end mb-2">
                                         <div>
-                                            <p className="text-xs uppercase tracking-widest font-black text-rose-400/60 mb-1">Gov Risk Score</p>
+                                            <p className="text-xs uppercase tracking-uppercase font-black text-rose-400/60 mb-1">Gov Risk Score</p>
                                             <p className="text-2xl font-black text-white">{company.governance_risk_score || 0}<span className="text-xs text-white/30">/100</span></p>
                                         </div>
-                                        <span className={`px-2 py-0.5 rounded-md text-xs font-black uppercase tracking-widest ${(company.governance_risk_score || 0) < 30 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                                        <span className={`px-2 py-0.5 rounded-md text-xs font-black uppercase tracking-uppercase ${(company.governance_risk_score || 0) < 30 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                                             {(company.governance_risk_score || 0) < 30 ? 'Low Risk' : 'High Risk'}
                                         </span>
                                     </div>
@@ -423,7 +423,7 @@ export const CompanyDetail: React.FC = () => {
                                 </div>
 
                                 <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
-                                    <p className="text-xs uppercase tracking-widest font-black text-blue-400/60 mb-2">Last Regulatory Action</p>
+                                    <p className="text-xs uppercase tracking-uppercase font-black text-blue-400/60 mb-2">Last Regulatory Action</p>
                                     <p className="text-xs font-bold text-white/80 leading-relaxed italic">
                                         "{company.last_sebi_action || 'No SEBI/ED observations reported in the last 24 months.'}"
                                     </p>

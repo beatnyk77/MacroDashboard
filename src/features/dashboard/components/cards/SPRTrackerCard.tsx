@@ -34,7 +34,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
         <Card className="bg-black/40 border-white/12 backdrop-blur-md h-[450px] p-6">
             <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
-                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-uppercase flex items-center gap-2">
                         <Database className="h-4 w-4 text-orange-400" />
                         Storage Inventory & Strategic Buffers
                     </CardTitle>
@@ -44,17 +44,17 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                    <span className="text-xs text-muted-foreground font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground font-black uppercase tracking-uppercase bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         DATA CURRENT AS OF: {latest?.date}
                     </span>
-                    <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tight">Updated Weekly via EIA/FRED</span>
+                    <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-heading">Updated Weekly via EIA/FRED</span>
                 </div>
             </CardHeader>
             <CardContent className="px-0 pb-0">
                 <div className="flex items-baseline justify-between mb-8">
                     <div>
-                        <div className="text-5xl font-light text-white tracking-tighter">
+                        <div className="text-5xl font-light text-white tracking-heading">
                             {latest?.value.toFixed(1)}
                             <span className="text-xl text-muted-foreground ml-2">M bbl</span>
                         </div>
@@ -70,7 +70,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                                 style={{ width: `${fillPct}%` }}
                             />
                         </div>
-                        <span className="text-xs text-muted-foreground uppercase tracking-tighter">Inventory Health Index</span>
+                        <span className="text-xs text-muted-foreground uppercase tracking-heading">Inventory Health Index</span>
                     </div>
                 </div>
 

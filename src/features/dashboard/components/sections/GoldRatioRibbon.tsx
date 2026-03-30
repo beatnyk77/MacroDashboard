@@ -10,7 +10,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     return (
         <div className="bg-slate-950/95 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
-            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-3">
+            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-3">
                 {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
             </p>
             <div className="space-y-2.5">
@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                     <div key={entry.name} className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-xs font-bold text-white/80 tracking-tight">{entry.name}</span>
+                            <span className="text-xs font-bold text-white/80 tracking-heading">{entry.name}</span>
                         </div>
                         <div className="text-right">
                             <div className={cn(
@@ -123,7 +123,7 @@ export const GoldRatioRibbon: React.FC = () => {
                             <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 shadow-inner">
                                 <Zap className="text-amber-500 w-5 h-5 fill-amber-500/20" />
                             </div>
-                            <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
+                            <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
                                 Unified <span className="text-amber-500">Gold</span> Ratio Ribbon
                             </h2>
                         </div>
@@ -142,7 +142,7 @@ export const GoldRatioRibbon: React.FC = () => {
                             {React.createElement(regimeIcon, { className: "w-5 h-5" })}
                         </div>
                         <div className="space-y-1">
-                            <div className={cn("text-xs font-black uppercase tracking-widest", regimeColor)}>
+                            <div className={cn("text-xs font-black uppercase tracking-uppercase", regimeColor)}>
                                 {regimeTitle}
                             </div>
                             <p className="text-xs leading-tight text-muted-foreground font-medium italic">
@@ -162,7 +162,7 @@ export const GoldRatioRibbon: React.FC = () => {
                                 <AlertTriangle className="w-8 h-8 text-amber-500/20" />
                             </div>
                             <div className="text-center">
-                                <p className="text-sm font-black text-white/40 uppercase tracking-widest">Ribbon visualization temporarily unavailable</p>
+                                <p className="text-sm font-black text-white/40 uppercase tracking-uppercase">Ribbon visualization temporarily unavailable</p>
                                 <p className="text-xs text-muted-foreground/30 italic mt-1">Fetching historical correlation matrix...</p>
                             </div>
                         </div>
@@ -260,18 +260,18 @@ export const GoldRatioRibbon: React.FC = () => {
                                 <div className="flex justify-between items-center mb-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: sConfig?.color }} />
-                                        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">
+                                        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
                                             {ratio.ratio_name}
                                         </span>
                                     </div>
                                     {isExtreme && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />}
                                 </div>
                                 <div className="flex items-baseline justify-between">
-                                    <div className="text-xl font-black text-white/90 tabular-nums tracking-tighter">
+                                    <div className="text-xl font-black text-white/90 tabular-nums tracking-heading">
                                         {ratio.current_value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                     </div>
                                     <div className={cn(
-                                        "text-xs font-black tabular-nums tracking-tight",
+                                        "text-xs font-black tabular-nums tracking-heading",
                                         isExtreme ? "text-rose-500" : Math.abs(ratio.z_score) > 1.2 ? "text-amber-500" : "text-emerald-500"
                                     )}>
                                         {ratio.z_score != null ? (ratio.z_score > 0 ? '+' : '') + ratio.z_score.toFixed(2) + 'σ' : '--'}

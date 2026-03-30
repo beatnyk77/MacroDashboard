@@ -84,7 +84,7 @@ export const LiquidityAlarmCard: React.FC = () => {
 
                 <div className="flex items-baseline gap-3">
                     <div className="flex flex-col">
-                        <h3 className="text-4xl font-black tracking-tighter text-foreground">
+                        <h3 className="text-4xl font-black tracking-heading text-foreground">
                             ${formatBillions(liq.current_value)}
                         </h3>
                         <div className="flex gap-2 mt-1">
@@ -112,13 +112,13 @@ export const LiquidityAlarmCard: React.FC = () => {
 
                 <div className="flex gap-6 mt-2">
                     <div>
-                        <span className="text-xs font-extrabold text-muted-foreground tracking-wider block mb-0.5">Z-SCORE (25Y)</span>
+                        <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase block mb-0.5">Z-SCORE (25Y)</span>
                         <span className={cn("text-lg font-black", getStatusClass().split(' ')[0])}>
                             {liq?.z_score !== undefined && liq?.z_score !== null ? liq.z_score.toFixed(2) : '-'}σ
                         </span>
                     </div>
                     <div className="flex-1">
-                        <span className="text-xs font-extrabold text-muted-foreground tracking-wider block mb-0.5">SOFR-EFFR</span>
+                        <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase block mb-0.5">SOFR-EFFR</span>
                         <div className="flex items-center gap-2">
                             <span className={cn(
                                 "text-lg font-black px-1.5 rounded",
@@ -144,7 +144,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                         </div>
                     </div>
                     <div>
-                        <span className="text-xs font-extrabold text-muted-foreground tracking-wider block mb-0.5">PERCENTILE</span>
+                        <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase block mb-0.5">PERCENTILE</span>
                         <span className="text-lg font-black text-foreground">
                             {liq?.percentile !== undefined && liq?.percentile !== null ? liq.percentile.toFixed(1) : '-'}%
                         </span>
@@ -186,7 +186,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                                     <div className={cn("p-2 rounded-lg bg-opacity-20 flex", getStatusClass())}>
                                         {getStatusIcon()}
                                     </div>
-                                    <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+                                    <h2 className="text-2xl md:text-3xl font-black tracking-heading text-white">
                                         Liquidity Regime Analysis
                                     </h2>
                                 </div>
@@ -207,7 +207,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-4">
                                         <Activity size={18} className="text-primary" />
-                                        <h5 className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+                                        <h5 className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">
                                             25-Year Z-Score Distribution
                                         </h5>
                                     </div>
@@ -248,7 +248,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div className="p-4 bg-white/5 rounded-xl border border-white/5">
                                     <div className="flex items-center gap-2 mb-3">
                                         <Target size={18} className="text-secondary" />
-                                        <h5 className="text-xs font-black text-muted-foreground uppercase tracking-wider">Formula & Methodology</h5>
+                                        <h5 className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Formula & Methodology</h5>
                                     </div>
                                     <code className="block text-sm font-bold text-primary mb-2 font-mono">
                                         Net Liquidity = WALCL - TGA - RRP
@@ -257,10 +257,10 @@ export const LiquidityAlarmCard: React.FC = () => {
                                         Calculated as the Federal Reserve Total Assets (WALCL) minus the Treasury General Account (TGA) and Reverse Repo Facility (RRP). Data ingested daily from NY Fed Markets API for high-fidelity signal.
                                     </p>
                                     <div className="flex gap-4 mt-3">
-                                        <Link to="/glossary/tga" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-widest transition-colors">
+                                        <Link to="/glossary/tga" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-uppercase transition-colors">
                                             <BookOpen size={12} /> What is the TGA?
                                         </Link>
-                                        <Link to="/glossary/reverse-repo-facility-rrp" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-widest transition-colors">
+                                        <Link to="/glossary/reverse-repo-facility-rrp" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-uppercase transition-colors">
                                             <BookOpen size={12} /> What is RRP?
                                         </Link>
                                     </div>
@@ -272,7 +272,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-4">
                                         <Info size={18} className="text-amber-500" />
-                                        <h5 className="text-xs font-black tracking-widest text-muted-foreground uppercase">
+                                        <h5 className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">
                                             Macro Significance
                                         </h5>
                                     </div>
@@ -291,23 +291,23 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div className="p-5 bg-rose-500/5 rounded-xl border border-rose-500/10">
                                     <div className="flex items-center gap-2 mb-4">
                                         <TrendingDown size={18} className="text-rose-500" />
-                                        <h5 className="text-xs font-black tracking-widest text-rose-500 uppercase">
+                                        <h5 className="text-xs font-black tracking-uppercase text-rose-500 uppercase">
                                             Historical Risk Context
                                         </h5>
                                     </div>
                                     <div className="space-y-4">
                                         <div>
-                                            <span className="text-xs font-black text-rose-400 block tracking-widest mb-1">DEC 2018 (QT SHOCK)</span>
+                                            <span className="text-xs font-black text-rose-400 block tracking-uppercase mb-1">DEC 2018 (QT SHOCK)</span>
                                             <p className="text-xs font-semibold text-muted-foreground">Last {'>'}2σ tightening regime. SPX declined 20% in 6 months as liquidity drained.</p>
                                         </div>
                                         <div className="h-px bg-white/5" />
                                         <div>
-                                            <span className="text-xs font-black text-amber-400 block tracking-widest mb-1">MAR 2020 (COLLAPSE)</span>
+                                            <span className="text-xs font-black text-amber-400 block tracking-uppercase mb-1">MAR 2020 (COLLAPSE)</span>
                                             <p className="text-xs font-semibold text-muted-foreground">Rapid liquidity contraction preceded the 34% SPX correction.</p>
                                         </div>
                                         <div className="h-px bg-white/5" />
                                         <div>
-                                            <span className="text-xs font-black text-emerald-400 block tracking-widest mb-1">JAN 2024 (RESILIENCE)</span>
+                                            <span className="text-xs font-black text-emerald-400 block tracking-uppercase mb-1">JAN 2024 (RESILIENCE)</span>
                                             <p className="text-xs font-semibold text-muted-foreground">Positive liquidity z-score supported market resilience despite high rates.</p>
                                         </div>
                                     </div>

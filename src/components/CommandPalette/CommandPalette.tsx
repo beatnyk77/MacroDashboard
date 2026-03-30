@@ -74,7 +74,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         No results found.
                     </Command.Empty>
 
-                    <Command.Group heading="Navigation" className="px-2 py-2 text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">
+                    <Command.Group heading="Navigation" className="px-2 py-2 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase">
                         <Item
                             onSelect={() => runCommand(() => navigate('/'))}
                             icon={<Home className="h-4 w-4" />}
@@ -95,7 +95,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         </Item>
                     </Command.Group>
 
-                    <Command.Group heading="Thematic Labs" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-widest border-t border-white/5 mt-1">
+                    <Command.Group heading="Thematic Labs" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
                         <Item
                             onSelect={() => runCommand(() => navigate('/labs/india'))}
                             icon={<Flag className="h-4 w-4 text-emerald-500" />}
@@ -128,7 +128,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         </Item>
                     </Command.Group>
 
-                    <Command.Group heading="Terminal Sections" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-widest border-t border-white/5 mt-1">
+                    <Command.Group heading="Terminal Sections" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
                         <Item
                             onSelect={() => runCommand(() => {
                                 navigate('/');
@@ -140,7 +140,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         </Item>
                     </Command.Group>
 
-                    <Command.Group heading="Knowledge" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-widest border-t border-white/5 mt-1">
+                    <Command.Group heading="Knowledge" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
                         <Item
                             onSelect={() => runCommand(() => navigate('/glossary'))}
                             icon={<Book className="h-4 w-4" />}
@@ -155,7 +155,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                         </Item>
                     </Command.Group>
 
-                    <Command.Group heading="External & API" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-widest border-t border-white/5 mt-1">
+                    <Command.Group heading="External & API" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
                         <Item
                             onSelect={() => runCommand(() => navigate('/api-access'))}
                             icon={<Settings className="h-4 w-4" />}
@@ -177,13 +177,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             <kbd className="flex h-5 select-none items-center gap-1 rounded bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground border border-white/12">
                                 ENTER
                             </kbd>
-                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">to select</span>
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-uppercase">to select</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <kbd className="flex h-5 select-none items-center gap-1 rounded bg-white/5 px-1.5 font-mono text-xs font-medium text-muted-foreground border border-white/12">
                                 ↓↑
                             </kbd>
-                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">to navigate</span>
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-uppercase">to navigate</span>
                         </div>
                     </div>
                 </div>

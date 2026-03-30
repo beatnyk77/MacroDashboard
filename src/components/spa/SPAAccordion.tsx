@@ -98,7 +98,7 @@ export const SPAAccordion: React.FC<SPAAccordionProps> = ({
                             </div>
                         )}
                         <div>
-                            <h3 className="text-xl lg:text-3xl font-black tracking-tighter text-foreground">
+                            <h3 className="text-xl lg:text-3xl font-black tracking-heading text-foreground">
                                 {title}
                             </h3>
                             {subtitle && (
@@ -115,7 +115,7 @@ export const SPAAccordion: React.FC<SPAAccordionProps> = ({
                             {interpretations.map((text, i) => (
                                 <div key={i} className="flex items-center gap-2">
                                     <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-                                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 whitespace-nowrap">
+                                    <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/60 whitespace-nowrap">
                                         {text}
                                     </span>
                                 </div>

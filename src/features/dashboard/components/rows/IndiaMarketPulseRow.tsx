@@ -82,14 +82,14 @@ export const IndiaMarketPulseRow: React.FC = () => {
                 />
                 <div className="flex gap-4 mb-2 items-center">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5">
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">From</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">From</span>
                         <input
                             type="date"
                             value={exportStartDate}
                             onChange={(e) => setExportStartDate(e.target.value)}
                             className="bg-transparent text-xs font-bold text-muted-foreground/80 border-none focus:ring-0 p-0 w-24 [color-scheme:dark]"
                         />
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest ml-1">To</span>
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase ml-1">To</span>
                         <input
                             type="date"
                             value={exportEndDate}
@@ -99,12 +99,12 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     </div>
                     <button
                         onClick={handleExport}
-                        className="ml-2 px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/12 transition-all active:scale-95"
+                        className="ml-2 px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase flex items-center gap-2 hover:bg-white/[0.06] hover:border-white/12 transition-all active:scale-95"
                     >
                         <Download size={12} />
                         Export CSV
                     </button>
-                    <div className="ml-2 px-3 py-1.5 rounded bg-white/[0.03] border border-white/5 text-xs font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-2">
+                    <div className="ml-2 px-3 py-1.5 rounded bg-white/[0.03] border border-white/5 text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase flex items-center gap-2">
                         <Activity size={10} /> Live NSE Data
                     </div>
                 </div>
@@ -121,7 +121,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-3">
                                 Flow Summary
                             </div>
                             <div className="flex items-baseline gap-6">
@@ -134,7 +134,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                 >
                                     <div className="flex items-center gap-2">
                                         <div>
-                                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">FII</span>
+                                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">FII</span>
                                             <span className={cn(
                                                 "text-2xl font-black tabular-nums",
                                                 data.fii_cash_net > 0 ? "text-emerald-500/90" : "text-rose-500/90"
@@ -146,7 +146,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </div>
                                 </HoverTooltip>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">DII</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">DII</span>
                                     <span className={cn(
                                         "text-2xl font-black tabular-nums",
                                         data.dii_cash_net > 0 ? "text-emerald-500/90" : "text-rose-500/90"
@@ -155,7 +155,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Absorption</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Absorption</span>
                                     <span className="text-xl font-black tabular-nums text-blue-400/80">
                                         {localAbsorption}x
                                     </span>
@@ -168,7 +168,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                         <div className="flex flex-col items-end gap-2">
                             {data.fii_percentile && (
                                 <div className="text-right">
-                                    <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-wider mb-1">10Y Percentile</div>
+                                    <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mb-1">10Y Percentile</div>
                                     <div className="text-3xl font-black text-gold-500/80 tabular-nums">{data.fii_percentile.toFixed(0)}%</div>
                                 </div>
                             )}
@@ -191,12 +191,12 @@ export const IndiaMarketPulseRow: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-3">
                                 Derivatives Sentiment
                             </div>
                             <div className="flex items-baseline gap-6">
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">OI Net</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">OI Net</span>
                                     <span className={cn(
                                         "text-2xl font-black tabular-nums",
                                         data.fii_idx_fut_net > 0 ? "text-emerald-500/90" : "text-rose-500/90"
@@ -205,7 +205,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">PCR</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">PCR</span>
                                     <span className="text-2xl font-black tabular-nums text-purple-400/80">
                                         {data.pcr?.toFixed(2)}
                                     </span>
@@ -218,7 +218,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                 >
                                     <div className="flex items-center gap-2">
                                         <div>
-                                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">VIX</span>
+                                            <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">VIX</span>
                                             <span className="text-2xl font-black tabular-nums text-orange-400/80">
                                                 {data.india_vix?.toFixed(1)}
                                             </span>
@@ -257,24 +257,24 @@ export const IndiaMarketPulseRow: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-3">
                                 Breadth & Quality
                             </div>
                             <div className="flex items-baseline gap-6">
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Advances</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Advances</span>
                                     <span className="text-2xl font-black tabular-nums text-emerald-500/90">
                                         {data.advances}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Declines</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Declines</span>
                                     <span className="text-2xl font-black tabular-nums text-rose-500/90">
                                         {data.declines}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Breadth Ratio</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Breadth Ratio</span>
                                     <span className={cn(
                                         "text-xl font-black tabular-nums",
                                         parseFloat(breadthRatio) > 0 ? "text-emerald-400/80" : "text-rose-400/80"
@@ -283,7 +283,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Delivery</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Delivery</span>
                                     <span className="text-xl font-black tabular-nums text-blue-400/80">
                                         {data.delivery_pct?.toFixed(1)}%
                                     </span>
@@ -309,13 +309,13 @@ export const IndiaMarketPulseRow: React.FC = () => {
                     variants={cardVariants}
                     className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/[0.05] p-6 hover:border-white/12 transition-all duration-300"
                 >
-                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">
+                    <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-4">
                         Sector Rotation
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                         {Object.entries(data.sector_returns || {}).slice(0, 12).map(([sector, change]) => (
                             <div key={sector} className="flex flex-col items-center p-3 rounded-lg bg-white/[0.02] border border-white/[0.03] hover:border-white/[0.08] transition-colors group/sector">
-                                <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mb-2 text-center truncate w-full">
+                                <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mb-2 text-center truncate w-full">
                                     {sector.replace('NIFTY ', '')}
                                 </span>
                                 <span className={cn(
@@ -345,12 +345,12 @@ export const IndiaMarketPulseRow: React.FC = () => {
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
-                            <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-3">
+                            <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-3">
                                 Cap Risk Pulse
                             </div>
                             <div className="flex items-baseline gap-6">
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Midcap</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Midcap</span>
                                     <span className={cn(
                                         "text-2xl font-black tabular-nums",
                                         data.midcap_perf > 0 ? "text-emerald-500/90" : "text-rose-500/90"
@@ -359,7 +359,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Smallcap</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Smallcap</span>
                                     <span className={cn(
                                         "text-2xl font-black tabular-nums",
                                         data.smallcap_perf > 0 ? "text-emerald-500/90" : "text-rose-500/90"
@@ -368,7 +368,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-wider mr-2">Nifty</span>
+                                    <span className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mr-2">Nifty</span>
                                     <span className={cn(
                                         "text-2xl font-black tabular-nums",
                                         data.nifty_perf > 0 ? "text-emerald-500/90" : "text-rose-500/90"
@@ -377,7 +377,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
                                     </span>
                                 </div>
                             </div>
-                            <div className="mt-4 text-xs font-bold text-muted-foreground/60 uppercase tracking-wider flex items-center gap-3">
+                            <div className="mt-4 text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase flex items-center gap-3">
                                 <span className="flex items-center gap-1.5">
                                     <span className="text-white/20">52W Highs:</span>
                                     <span className="text-emerald-500/80">{data.new_highs_52w || 0}</span>
@@ -410,7 +410,7 @@ export const IndiaMarketPulseRow: React.FC = () => {
             } >
                 <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-uppercase">
                         Data Exported Successfully
                     </span>
                 </div>

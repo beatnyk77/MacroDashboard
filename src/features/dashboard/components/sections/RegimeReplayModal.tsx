@@ -106,10 +106,10 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                             <Activity size={24} />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black tracking-tight text-foreground">
+                            <h2 className="text-2xl font-black tracking-heading text-foreground">
                                 Regime Replay: {regime}
                             </h2>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mt-1">
                                 CROSS-ASSET CORRELATION & HISTORICAL ANALOGUES
                             </p>
                         </div>
@@ -128,7 +128,7 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                         <div className="p-6 bg-white/[0.02] rounded-xl border border-white/5 h-full">
                             <div className="flex items-center gap-2 mb-6 text-blue-500">
                                 <AlertCircle size={18} />
-                                <span className="text-xs font-black uppercase tracking-widest">Live Regime Triggers</span>
+                                <span className="text-xs font-black uppercase tracking-uppercase">Live Regime Triggers</span>
                             </div>
                             {currentTriggers.map((trigger, i) => (
                                 <div key={i} className="flex items-start gap-3 mb-4 last:mb-0">
@@ -144,7 +144,7 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                     {/* Right Panel: Precedent */}
                     <div className="md:col-span-7">
                         <div className="mb-8 p-4 bg-blue-500/5 rounded-lg border border-blue-500/20 border-dashed">
-                            <span className="text-xs font-black text-primary uppercase tracking-wider mb-2 block">
+                            <span className="text-xs font-black text-primary uppercase tracking-uppercase mb-2 block">
                                 Historical Precedent
                             </span>
                             <h3 className="text-lg font-extrabold text-foreground mb-2">
@@ -157,7 +157,7 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
 
                         <div className="flex items-center gap-2 mb-4 text-amber-500">
                             <History size={18} />
-                            <span className="text-xs font-black uppercase tracking-widest">Historical Asset Performance</span>
+                            <span className="text-xs font-black uppercase tracking-uppercase">Historical Asset Performance</span>
                         </div>
 
                         <div className="w-full overflow-hidden rounded-lg border border-white/5 bg-transparent">

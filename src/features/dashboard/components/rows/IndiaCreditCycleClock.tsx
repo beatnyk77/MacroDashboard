@@ -61,9 +61,9 @@ export const IndiaCreditCycleClock: React.FC = () => {
                                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                             </span>
-                            <span className="text-blue-400 text-xs font-black uppercase tracking-[0.3em]">Proprietary RBI Signal</span>
+                            <span className="text-blue-400 text-xs font-black uppercase tracking-uppercase">Proprietary RBI Signal</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase mb-1">
+                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-heading uppercase mb-1">
                             Credit Cycle <span className="text-blue-500">Clock</span>
                         </h2>
                         <p className="text-slate-400 text-sm md:text-base font-medium max-w-2xl">
@@ -113,8 +113,8 @@ export const IndiaCreditCycleClock: React.FC = () => {
                                     <Clock className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <span className="text-slate-500 text-xs font-black uppercase tracking-widest block">{new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} Regime</span>
-                                    <h3 className="text-2xl font-black text-white leading-none tracking-tight uppercase">{phase}</h3>
+                                    <span className="text-slate-500 text-xs font-black uppercase tracking-uppercase block">{new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} Regime</span>
+                                    <h3 className="text-2xl font-black text-white leading-none tracking-heading uppercase">{phase}</h3>
                                 </div>
                             </div>
                             <p className="text-sm text-slate-300 font-medium leading-relaxed">
@@ -138,10 +138,10 @@ export const IndiaCreditCycleClock: React.FC = () => {
                     {/* Highly Crisp Quadrant Chart */}
                     <div className="w-full lg:w-2/3 h-[450px] md:h-[550px] relative bg-black/40 rounded-[2rem] border border-white/5 p-6 shadow-inner">
                         {/* High-Contrast Labels for Quadrants */}
-                        <div className="absolute top-8 right-8 text-blue-500/40 font-black text-xs md:text-xs uppercase tracking-[0.2em] pointer-events-none">Expansion</div>
-                        <div className="absolute top-8 left-8 text-emerald-500/40 font-black text-xs md:text-xs uppercase tracking-[0.2em] pointer-events-none">Recovery</div>
-                        <div className="absolute bottom-8 right-8 text-amber-500/40 font-black text-xs md:text-xs uppercase tracking-[0.2em] pointer-events-none">Downturn</div>
-                        <div className="absolute bottom-8 left-8 text-red-500/40 font-black text-xs md:text-xs uppercase tracking-[0.2em] pointer-events-none">Repair</div>
+                        <div className="absolute top-8 right-8 text-blue-500/40 font-black text-xs md:text-xs uppercase tracking-uppercase pointer-events-none">Expansion</div>
+                        <div className="absolute top-8 left-8 text-emerald-500/40 font-black text-xs md:text-xs uppercase tracking-uppercase pointer-events-none">Recovery</div>
+                        <div className="absolute bottom-8 right-8 text-amber-500/40 font-black text-xs md:text-xs uppercase tracking-uppercase pointer-events-none">Downturn</div>
+                        <div className="absolute bottom-8 left-8 text-red-500/40 font-black text-xs md:text-xs uppercase tracking-uppercase pointer-events-none">Repair</div>
 
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 10 }}>
@@ -204,7 +204,7 @@ export const IndiaCreditCycleClock: React.FC = () => {
                     {Object.entries(PHASE_COLORS).map(([name, color]) => (
                         <div key={name} className="flex items-center gap-2">
                             <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,1)]" style={{ backgroundColor: color }} />
-                            <span className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">{name}</span>
+                            <span className="text-xs font-black text-white/50 uppercase tracking-uppercase">{name}</span>
                         </div>
                     ))}
                 </div>
@@ -230,14 +230,14 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, caption, icon, tr
         ${highlight ? 'ring-1 ring-amber-500/40 bg-amber-500/[0.03]' : 'hover:bg-white/[0.06] hover:border-white/20 hover:scale-[1.02]'}
     `}>
         <div className="flex items-center justify-between mb-4">
-            <span className="text-slate-400 text-xs font-black uppercase tracking-widest">{label}</span>
+            <span className="text-slate-400 text-xs font-black uppercase tracking-uppercase">{label}</span>
             <div className={`${colorClass} opacity-80`}>
                 {icon}
             </div>
         </div>
         <div className="space-y-1">
             <div className="flex items-end gap-2">
-                <span className={`text-4xl font-black tracking-tighter text-white`}>{value}</span>
+                <span className={`text-4xl font-black tracking-heading text-white`}>{value}</span>
                 {trend !== 'neutral' && (
                     <div className={`flex items-center h-8 mb-1 px-2 rounded-lg bg-black/40 text-xs font-black ${trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
                         {trend === 'up' ? <ArrowUpRight className="w-3.5 h-3.5 mr-1" /> : <ArrowDownRight className="w-3.5 h-3.5 mr-1" />}
@@ -260,22 +260,22 @@ const CustomTooltip = ({ active, payload }: any) => {
         return (
             <div className="bg-slate-900 border border-white/20 p-5 rounded-2xl shadow-2xl z-50 min-w-[220px]">
                 <div className="flex items-center justify-between mb-4 border-b border-white/12 pb-3">
-                    <span className="text-white font-black uppercase text-xs tracking-tight">{new Date(data.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} Report</span>
-                    <span className="text-[9.5px] font-black uppercase tracking-tighter px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${color}40`, color: color }}>
+                    <span className="text-white font-black uppercase text-xs tracking-heading">{new Date(data.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} Report</span>
+                    <span className="text-xs font-black uppercase tracking-heading px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${color}40`, color: color }}>
                         {data.phase}
                     </span>
                 </div>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-xs font-black uppercase tracking-widest">Credit YoY</span>
+                        <span className="text-slate-400 text-xs font-black uppercase tracking-uppercase">Credit YoY</span>
                         <span className="text-white font-black text-sm">{data.credit_growth_yoy}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-xs font-black uppercase tracking-widest">Dep. YoY</span>
+                        <span className="text-slate-400 text-xs font-black uppercase tracking-uppercase">Dep. YoY</span>
                         <span className="text-white font-black text-sm">{data.deposit_growth_yoy}%</span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                        <span className="text-blue-400 text-xs font-black uppercase tracking-widest">CD Ratio</span>
+                        <span className="text-blue-400 text-xs font-black uppercase tracking-uppercase">CD Ratio</span>
                         <span className="text-white font-black text-base">{data.cd_ratio}%</span>
                     </div>
                 </div>

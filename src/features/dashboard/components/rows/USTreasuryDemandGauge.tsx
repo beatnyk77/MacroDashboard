@@ -46,8 +46,8 @@ const MiniGauge: React.FC<{ auction: USTreasuryAuction | undefined; label: strin
             hasTailAlert ? "bg-rose-500/10 border-rose-500/30 animate-pulse" : "bg-white/[0.03] border-white/5"
         )}>
             <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</span>
-                {hasTailAlert && <span className="text-xs font-black text-rose-500 uppercase tracking-tighter">Tail!</span>}
+                <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">{label}</span>
+                {hasTailAlert && <span className="text-xs font-black text-rose-500 uppercase tracking-heading">Tail!</span>}
             </div>
             <div className="flex items-end justify-between gap-2">
                 <span className={cn("text-xl font-black leading-none", regime.color)}>
@@ -140,16 +140,16 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     <div className="relative z-10 space-y-8">
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                                <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.2em]">10-Year Benchmark Demand</h3>
+                                <h3 className="text-sm font-black text-white/40 uppercase tracking-uppercase">10-Year Benchmark Demand</h3>
                                 <p className="text-xs font-bold text-muted-foreground">Latest Auction Results</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 {hasMainTailAlert && (
-                                    <div className="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-rose-500/20 border border-rose-500/40 text-rose-500 animate-pulse">
+                                    <div className="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-uppercase bg-rose-500/20 border border-rose-500/40 text-rose-500 animate-pulse">
                                         Tail Alert
                                     </div>
                                 )}
-                                <div className={cn("px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-white/5 border border-white/12", regime.color)}>
+                                <div className={cn("px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-uppercase bg-white/5 border border-white/12", regime.color)}>
                                     {regime.label}
                                 </div>
                             </div>
@@ -158,10 +158,10 @@ export const USTreasuryDemandGauge: React.FC = () => {
                         {/* Large Gauge */}
                         <div className="space-y-4">
                             <div className="flex items-baseline gap-4">
-                                <span className={cn("text-7xl font-black tracking-tighter transition-all duration-1000", regime.color)}>
+                                <span className={cn("text-7xl font-black tracking-heading transition-all duration-1000", regime.color)}>
                                     {currentScore.toFixed(2)}
                                 </span>
-                                <span className="text-lg font-bold text-white/20 uppercase tracking-widest">/ 2.50</span>
+                                <span className="text-lg font-bold text-white/20 uppercase tracking-uppercase">/ 2.50</span>
                             </div>
 
                             <div className="relative h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 shadow-inner">
@@ -177,7 +177,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                                 />
                             </div>
 
-                            <div className="flex justify-between text-xs font-black text-white/20 uppercase tracking-widest">
+                            <div className="flex justify-between text-xs font-black text-white/20 uppercase tracking-uppercase">
                                 <span>Weak</span>
                                 <span className="translate-x-4">Healthy</span>
                                 <span>Strong</span>
@@ -196,7 +196,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                 {/* SPARKLINE TREND SECTION */}
                 <div className="lg:col-span-4 flex flex-col gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 backdrop-blur-2xl overflow-hidden">
                     <div className="space-y-1">
-                        <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.2em]">1-Year Absorption Trend</h3>
+                        <h3 className="text-sm font-black text-white/40 uppercase tracking-uppercase">1-Year Absorption Trend</h3>
                         <p className="text-xs font-bold text-muted-foreground">10-Year Note Signal Volatility</p>
                     </div>
 
@@ -286,7 +286,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     <div className="pt-4 border-t border-white/5 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <TrendingUp size={12} className="text-emerald-500" />
-                            <span className="text-xs font-black text-white/40 uppercase tracking-widest">Regime: {regime.label}</span>
+                            <span className="text-xs font-black text-white/40 uppercase tracking-uppercase">Regime: {regime.label}</span>
                         </div>
                         <span className="text-xs font-bold text-white/20">52W Range: 0.82 — 2.14</span>
                     </div>
@@ -297,7 +297,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
             <div className="flex justify-center pt-8">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/5">
                     <Info size={12} className="text-blue-400" />
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase leading-none">
                         Source: U.S. Treasury Auction Results – updated weekly via FiscalData API
                     </span>
                 </div>

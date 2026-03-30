@@ -17,7 +17,7 @@ const CompactPulseMetric: React.FC<{
     <div className="group/metric p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] transition-all duration-300">
         <div className="flex justify-between items-start mb-2">
             <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">{label}</span>
+                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
                 {description && (
                     <TooltipProvider>
                         <Tooltip>
@@ -42,12 +42,12 @@ const CompactPulseMetric: React.FC<{
         </div>
         <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-1">
-                <span className="text-xl font-black text-white/90 tabular-nums tracking-tighter">{value}</span>
-                <span className="text-xs font-bold text-white/20 uppercase tracking-widest">{unit}</span>
+                <span className="text-xl font-black text-white/90 tabular-nums tracking-heading">{value}</span>
+                <span className="text-xs font-bold text-white/20 uppercase tracking-uppercase">{unit}</span>
             </div>
             {delta && (
                 <div className={cn(
-                    "text-xs font-black tabular-nums tracking-tight flex items-center gap-0.5",
+                    "text-xs font-black tabular-nums tracking-heading flex items-center gap-0.5",
                     trend === 'up' ? "text-emerald-500" : "text-rose-500"
                 )}>
                     {delta}
@@ -84,7 +84,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                         <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
                             <Globe className="text-red-500 w-5 h-5" />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
+                        <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
                             China <span className="text-red-500">Macro Pulse</span>
                         </h2>
                     </div>
@@ -97,7 +97,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                     onClick={() => setIsExpanded(!isExpanded)}
                     className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/12 transition-all group"
                 >
-                    <span className="text-xs font-black uppercase tracking-widest text-white/70 group-hover:text-white">
+                    <span className="text-xs font-black uppercase tracking-uppercase text-white/70 group-hover:text-white">
                         {isExpanded ? 'Collapse Pulse' : 'Expand Full Engine'}
                     </span>
                     {isExpanded ? <ChevronUp className="w-4 h-4 text-red-500" /> : <ChevronDown className="w-4 h-4 text-red-500" />}
@@ -129,7 +129,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                 <div className="space-y-6">
                     <div className="flex items-center gap-4">
                         <div className="h-[2px] w-8 bg-red-500" />
-                        <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Core Activity & Liquidity</h4>
+                        <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Core Activity & Liquidity</h4>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -177,7 +177,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-orange-500" />
-                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Industrial & Consumption Velocity</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Industrial & Consumption Velocity</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <CompactPulseMetric
@@ -210,7 +210,7 @@ export const ChinaMacroPulseSection: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-blue-500" />
-                            <h4 className="text-xs font-black text-white/90 uppercase tracking-[0.3em]">Monetary Policy & External</h4>
+                            <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Monetary Policy & External</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <CompactPulseMetric

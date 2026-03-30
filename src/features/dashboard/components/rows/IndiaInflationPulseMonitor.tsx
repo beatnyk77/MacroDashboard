@@ -43,12 +43,12 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                                 <span className={`animate-ping absolute inline-flex h-2 w-2 rounded-full ${stickyTrend === 'ACCELERATING' ? 'bg-fuchsia-400' : 'bg-emerald-400'} opacity-75`}></span>
                                 <span className={`relative inline-flex rounded-full h-2 w-2 ${stickyTrend === 'ACCELERATING' ? 'bg-fuchsia-500' : 'bg-emerald-500'}`}></span>
                             </span>
-                            <span className={`${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-400' : 'text-emerald-400'} text-xs font-black uppercase tracking-[0.2em]`}>
+                            <span className={`${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-400' : 'text-emerald-400'} text-xs font-black uppercase tracking-uppercase`}>
                                 Sticky Trend: {stickyTrend}
                             </span>
-                            <span className="text-slate-500 text-xs font-black uppercase tracking-[0.2em] ml-2 border-l border-white/12 pl-2">Alpha Signal: Structural Trend Monitor</span>
+                            <span className="text-slate-500 text-xs font-black uppercase tracking-uppercase ml-2 border-l border-white/12 pl-2">Alpha Signal: Structural Trend Monitor</span>
                         </div>
-                        <h2 className="text-3xl font-black text-white tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                        <h2 className="text-3xl font-black text-white tracking-heading leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                             India Inflation Pulse: Sticky vs Flexible
                         </h2>
                     </div>
@@ -84,7 +84,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                     <div className="flex flex-col gap-2">
                         <div className={`flex items-center gap-2 ${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-500' : 'text-emerald-500'}`}>
                             {stickyTrend === 'ACCELERATING' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
-                            <span className="text-sm font-black uppercase tracking-widest">Structural Signal</span>
+                            <span className="text-sm font-black uppercase tracking-uppercase">Structural Signal</span>
                         </div>
                         <p className="text-xs text-slate-400 font-medium leading-tight">
                             {stickyTrend === 'ACCELERATING'
@@ -104,7 +104,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                         <LegendItem color="#06b6d4" label="Flexible (Volatile)" dashed />
                     </div>
                     <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white/[0.03] border border-white/5 rounded-full capitalize">
-                        <span className="text-xs font-black text-slate-500 tracking-wider">RBI Corridor: 2% - 6%</span>
+                        <span className="text-xs font-black text-slate-500 tracking-uppercase">RBI Corridor: 2% - 6%</span>
                     </div>
                 </div>
 
@@ -177,7 +177,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                         <div className="p-1.5 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/20">
                             <Info className="w-4 h-4 text-fuchsia-400" />
                         </div>
-                        <h4 className="text-xs font-black text-white uppercase tracking-widest">Macro Analyst Insight</h4>
+                        <h4 className="text-xs font-black text-white uppercase tracking-uppercase">Macro Analyst Insight</h4>
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed font-medium">
                         {stickyDivergence > 0
@@ -187,7 +187,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-4 shrink-0 px-6 py-4 rounded-3xl bg-white/[0.02] border border-white/5 group-hover:border-fuchsia-500/20 transition-all duration-500">
                     <div className="flex flex-col gap-1 items-end">
-                        <span className="text-xs font-black text-fuchsia-400 tracking-widest uppercase italic">The Divergence</span>
+                        <span className="text-xs font-black text-fuchsia-400 tracking-uppercase uppercase italic">The Divergence</span>
                         <div className="flex items-center gap-2">
                             <span className="text-xl font-black text-white">{(stickyDivergence * 100).toFixed(0)}</span>
                             <span className="text-xs font-black text-slate-500">BPS</span>
@@ -205,16 +205,16 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
 const MetricCard = ({ title, value, subtext, icon, colorClass }: any) => (
     <div className="p-6 bg-transparent hover:bg-white/[0.01] transition-colors group">
         <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-300 transition-colors tracking-[0.2em]">{title}</span>
+            <span className="text-xs font-black text-slate-500 uppercase tracking-uppercase group-hover:text-slate-300 transition-colors tracking-uppercase">{title}</span>
             <div className="p-1.5 rounded-lg bg-white/[0.02] border border-white/5">
                 {icon}
             </div>
         </div>
         <div className="flex items-end gap-2">
-            <span className={`text-3xl font-black tracking-tighter leading-none ${colorClass}`}>{value}</span>
+            <span className={`text-3xl font-black tracking-heading leading-none ${colorClass}`}>{value}</span>
         </div>
         {subtext && (
-            <div className="mt-2 text-xs font-black tracking-widest uppercase text-slate-600 italic tracking-[0.15em]">{subtext}</div>
+            <div className="mt-2 text-xs font-black tracking-uppercase uppercase text-slate-600 italic tracking-[0.15em]">{subtext}</div>
         )}
     </div>
 );
@@ -222,7 +222,7 @@ const MetricCard = ({ title, value, subtext, icon, colorClass }: any) => (
 const LegendItem = ({ color, label, thick, dashed }: any) => (
     <div className="flex items-center gap-2">
         <div className={`h-1 rounded-full ${thick ? 'w-6 h-1.5' : 'w-4 h-1'}`} style={{ backgroundColor: color, borderBottom: dashed ? `2px dashed ${color}` : 'none' }} />
-        <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-slate-500 uppercase tracking-uppercase">{label}</span>
     </div>
 );
 
@@ -230,13 +230,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/12 p-4 rounded-2xl shadow-2xl z-50 min-w-[200px]">
-                <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 border-b border-white/5 pb-2 italic">
+                <div className="text-xs font-black text-slate-400 uppercase tracking-uppercase mb-3 border-b border-white/5 pb-2 italic">
                     {label}
                 </div>
                 <div className="space-y-2">
                     {payload.filter((p: any) => p.dataKey !== 'corridor_range').map((entry: any) => (
                         <div key={entry.name} className="flex justify-between items-center">
-                            <span className="text-xs text-slate-300 font-bold flex items-center gap-2 uppercase tracking-tighter">
+                            <span className="text-xs text-slate-300 font-bold flex items-center gap-2 uppercase tracking-heading">
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
                                 {entry.name}
                             </span>

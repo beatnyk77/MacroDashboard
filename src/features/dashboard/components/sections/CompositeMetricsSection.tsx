@@ -142,16 +142,16 @@ export const CompositeMetricsSection: React.FC = () => {
                     <Activity className="w-5 h-5 text-orange-400" />
                 </div>
                 <div className="flex flex-col">
-                    <h3 className="text-lg font-black text-white tracking-tight uppercase">
+                    <h3 className="text-lg font-black text-white tracking-heading uppercase">
                         Composite Efficiency Indices
                     </h3>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-uppercase">
                         Computed Real-Time • MoSPI + FRED Sources
                     </p>
                 </div>
                 <div className="ml-auto flex items-center gap-2 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Live</span>
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-uppercase">Live</span>
                 </div>
             </div>
 

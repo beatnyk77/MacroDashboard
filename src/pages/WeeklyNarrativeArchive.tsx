@@ -54,11 +54,11 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <Calendar size={24} />
                             </div>
-                            <Typography variant="overline" className="text-primary font-black tracking-[0.3em]">
+                            <Typography variant="overline" className="text-primary font-black tracking-uppercase">
                                 INTELLIGENCE ARCHIVE
                             </Typography>
                         </Stack>
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium tracking-tight text-foreground mb-6">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium tracking-heading text-foreground mb-6">
                             Weekly Macro Narratives
                         </h1>
                         <p className="text-lg text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
@@ -110,16 +110,16 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                                             <Chip
                                                                 label="LATEST"
                                                                 size="small"
-                                                                className="bg-primary/20 text-primary font-black text-xs tracking-widest border-none h-5"
+                                                                className="bg-primary/20 text-primary font-black text-xs tracking-uppercase border-none h-5"
                                                             />
                                                         )}
                                                     </Box>
-                                                    <p className="text-[0.95rem] text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl font-medium italic group-hover:text-foreground/80 transition-colors">
+                                                    <p className="text-base text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl font-medium italic group-hover:text-foreground/80 transition-colors">
                                                         "{narrative.description}"
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1">
-                                                    <span className="text-xs font-black uppercase tracking-widest hidden md:block">Read Digest</span>
+                                                    <span className="text-xs font-black uppercase tracking-uppercase hidden md:block">Read Digest</span>
                                                     <ChevronRight size={20} />
                                                 </div>
                                             </ListItemButton>
@@ -136,7 +136,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                     <Box mt={10} textAlign="center">
                         <Link
                             to="/"
-                            className="text-xs font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
+                            className="text-xs font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-uppercase"
                         >
                             ← Back to Dashboard
                         </Link>

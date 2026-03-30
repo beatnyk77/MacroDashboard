@@ -71,7 +71,7 @@ export const GoldPositioningMonitor: React.FC = () => {
                     <MotionCard>
                         <Box sx={{ p: 3 }}>
                             <div className="flex items-center justify-between mb-6">
-                                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
+                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2">
                                     <Activity size={12} /> Institutional Net Position
                                 </span>
                                 <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold">COT PROXY</div>
@@ -99,7 +99,7 @@ export const GoldPositioningMonitor: React.FC = () => {
                 <Grid item xs={12} lg={5}>
                     <MotionCard>
                         <Box sx={{ p: 3, height: '100%', minHeight: 330 }}>
-                            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 mb-6">
+                            <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2 mb-6">
                                 <Layers size={12} /> Paper vs Physical Flows
                             </span>
                             <Box sx={{ height: 230 }}>
@@ -170,7 +170,7 @@ export const GoldPositioningMonitor: React.FC = () => {
                     <Box sx={{ p: 2, bgcolor: 'rgba(255,215,0,0.02)', display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <Zap size={16} className="text-amber-500 mt-1 flex-shrink-0" />
                         <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', fontWeight: 500 }}>
-                            {data.interpretation} — <span className="text-xs opacity-50 uppercase font-black tracking-tighter">Verified @ {data.as_of_date}</span>
+                            {data.interpretation} — <span className="text-xs opacity-50 uppercase font-black tracking-heading">Verified @ {data.as_of_date}</span>
                         </Typography>
                     </Box>
                 </MotionCard>

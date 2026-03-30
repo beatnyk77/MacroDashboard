@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     return (
         <div className="bg-slate-950/95 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
-            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-3">
+            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-3">
                 {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
             </p>
             <div className="space-y-2.5">
@@ -27,7 +27,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                     <div key={entry.name} className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-xs font-bold text-white/80 tracking-tight">{entry.name}</span>
+                            <span className="text-xs font-bold text-white/80 tracking-heading">{entry.name}</span>
                         </div>
                         <div className="text-right">
                             <div className="text-xs font-black text-white">
@@ -93,17 +93,17 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
 
                     <div className="bg-white/5 border border-white/12 rounded-3xl p-5 flex flex-col justify-center">
                         <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Current Outstanding</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Current Outstanding</span>
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         </div>
-                        <div className="text-4xl font-black text-white tracking-tighter tabular-nums">
+                        <div className="text-4xl font-black text-white tracking-heading tabular-nums">
                             ${latest?.value.toFixed(2)}<span className="textxl text-muted-foreground/60 ml-1">T</span>
                         </div>
                         <div className="mt-3 pt-3 border-t border-white/5">
-                            <span className="text-xs text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1.5 leading-none">
+                            <span className="text-xs text-muted-foreground font-black uppercase tracking-uppercase flex items-center gap-1.5 leading-none">
                                 DATA CURRENT AS OF: {latest ? new Date(latest.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '--'}
                             </span>
-                            <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tight mt-1 block">Updated Weekly via Federal Reserve H.4.1</span>
+                            <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-heading mt-1 block">Updated Weekly via Federal Reserve H.4.1</span>
                         </div>
                     </div>
                 </div>
@@ -186,7 +186,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <Info className="text-blue-400 w-4 h-4" />
-                            <h3 className="text-xs font-black text-white uppercase tracking-widest">Why It Matters</h3>
+                            <h3 className="text-xs font-black text-white uppercase tracking-uppercase">Why It Matters</h3>
                         </div>
                         <div className="space-y-3">
                             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -195,7 +195,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 <span className="text-white font-bold"> TGA</span> or drained via the
                                 <span className="text-white font-bold"> RRP</span>.
                             </p>
-                            <Link to="/glossary/stealth-qe" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-widest mt-2 transition-colors">
+                            <Link to="/glossary/stealth-qe" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-uppercase mt-2 transition-colors">
                                 <BookOpen size={12} /> Learn about Stealth QE
                             </Link>
                         </div>
@@ -204,7 +204,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <Zap className="text-amber-400 w-4 h-4" />
-                            <h3 className="text-xs font-black text-white uppercase tracking-widest">Historical Interpretation</h3>
+                            <h3 className="text-xs font-black text-white uppercase tracking-uppercase">Historical Interpretation</h3>
                         </div>
                         <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-4">
                             <div className="flex justify-between items-center text-xs">

@@ -24,10 +24,10 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({ active, payload, label, vie
     if (active && payload && payload.length) {
         return (
             <div className="bg-black/90 backdrop-blur-xl border border-white/12 p-3 rounded-xl shadow-2xl">
-                <p className="text-xs font-black text-white/40 mb-1 uppercase tracking-widest">{label}</p>
+                <p className="text-xs font-black text-white/40 mb-1 uppercase tracking-uppercase">{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <div key={index} className="flex items-center justify-between gap-8 py-1">
-                        <span className="text-xs font-black uppercase tracking-widest" style={{ color: entry.color }}>
+                        <span className="text-xs font-black uppercase tracking-uppercase" style={{ color: entry.color }}>
                             {entry.name}
                         </span>
                         <span className="text-xs font-black text-white tabular-nums">
@@ -106,7 +106,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <div className={cn("w-1.5 h-10 rounded-full", `bg-${accentColor}-500`)} />
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase whitespace-pre-wrap">
+                        <h2 className="text-4xl md:text-5xl font-black tracking-heading uppercase whitespace-pre-wrap">
                             {metal} <span className="text-muted-foreground/30">Imports</span>
                         </h2>
                     </div>
@@ -119,7 +119,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                     <button
                         onClick={() => setViewMode('value')}
                         className={cn(
-                            "px-6 py-2 rounded-lg text-xs font-black tracking-widest uppercase transition-all",
+                            "px-6 py-2 rounded-lg text-xs font-black tracking-uppercase uppercase transition-all",
                             viewMode === 'value' ? "bg-white/10 text-white shadow-lg" : "text-muted-foreground/40 hover:text-muted-foreground"
                         )}
                     >
@@ -128,7 +128,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                     <button
                         onClick={() => setViewMode('volume')}
                         className={cn(
-                            "px-6 py-2 rounded-lg text-xs font-black tracking-widest uppercase transition-all",
+                            "px-6 py-2 rounded-lg text-xs font-black tracking-uppercase uppercase transition-all",
                             viewMode === 'volume' ? "bg-white/10 text-white shadow-lg" : "text-muted-foreground/40 hover:text-muted-foreground"
                         )}
                     >
@@ -142,16 +142,16 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
                     <div className="flex justify-between items-start mb-4">
                         <Globe className="w-5 h-5 text-blue-500" />
-                        <span className="text-xs font-black text-blue-500 uppercase tracking-widest">India Latest</span>
+                        <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase">India Latest</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-3xl sm:text-4xl font-black tracking-tighter truncate">
+                        <span className="text-3xl sm:text-4xl font-black tracking-heading truncate">
                             {viewMode === 'value'
                                 ? formatValue(latestIndia?.value_usd || 0)
                                 : formatVolume(latestIndia?.volume || 0)
                             }
                         </span>
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
                             {latestYear} Absolute Flow
                         </span>
                     </div>
@@ -160,16 +160,16 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
                     <div className="flex justify-between items-start mb-4">
                         <Globe className="w-5 h-5 text-rose-500" />
-                        <span className="text-xs font-black text-rose-500 uppercase tracking-widest">China Latest</span>
+                        <span className="text-xs font-black text-rose-500 uppercase tracking-uppercase">China Latest</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-3xl sm:text-4xl font-black tracking-tighter truncate">
+                        <span className="text-3xl sm:text-4xl font-black tracking-heading truncate">
                             {viewMode === 'value'
                                 ? formatValue(latestChina?.value_usd || 0)
                                 : formatVolume(latestChina?.volume || 0)
                             }
                         </span>
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
                             {latestYear} Absolute Flow
                         </span>
                     </div>
@@ -178,20 +178,20 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <Anchor className="w-5 h-5 text-amber-500" />
-                        <span className="text-xs font-black text-amber-500 uppercase tracking-widest">Risk Index (HHI)</span>
+                        <span className="text-xs font-black text-amber-500 uppercase tracking-uppercase">Risk Index (HHI)</span>
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex justify-between items-end">
-                            <span className={cn("text-3xl font-black tracking-tighter", getHHILevel(indiaHHI).color)}>
+                            <span className={cn("text-3xl font-black tracking-heading", getHHILevel(indiaHHI).color)}>
                                 {Math.round(indiaHHI)}
                             </span>
-                            <span className="text-xs font-bold text-blue-500/40 uppercase tracking-widest mb-1">India</span>
+                            <span className="text-xs font-bold text-blue-500/40 uppercase tracking-uppercase mb-1">India</span>
                         </div>
                         <div className="flex justify-between items-end border-t border-white/5 pt-2">
-                            <span className={cn("text-3xl font-black tracking-tighter", getHHILevel(chinaHHI).color)}>
+                            <span className={cn("text-3xl font-black tracking-heading", getHHILevel(chinaHHI).color)}>
                                 {Math.round(chinaHHI)}
                             </span>
-                            <span className="text-xs font-bold text-rose-500/40 uppercase tracking-widest mb-1">China</span>
+                            <span className="text-xs font-bold text-rose-500/40 uppercase tracking-uppercase mb-1">China</span>
                         </div>
                     </div>
                 </div>
@@ -199,16 +199,16 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <ShieldAlert className="w-5 h-5 text-emerald-500" />
-                        <span className="text-xs font-black text-emerald-500 uppercase tracking-widest">Dependency</span>
+                        <span className="text-xs font-black text-emerald-500 uppercase tracking-uppercase">Dependency</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-4xl font-black tracking-tighter">
+                        <span className="text-4xl font-black tracking-heading">
                             {metal === 'Rare Earth Metals'
                                 ? (latestIndia?.country === 'India' ? '98.2%' : 'High')
                                 : (latestIndia && latestIndia.value_usd > 1e9 ? 'Deep' : 'Neutral')
                             }
                         </span>
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
+                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
                             {metal === 'Rare Earth Metals' ? 'Import Dependency Ratio' : 'Strategic Importance'}
                         </span>
                     </div>
@@ -221,8 +221,8 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-black/40 border border-white/12 backdrop-blur-xl shadow-2xl">
                     <div className="flex justify-between items-start mb-8">
                         <div className="space-y-1">
-                            <h3 className="text-xl font-black tracking-tight uppercase">Longitudinal Trend</h3>
-                            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">Comparison of India vs China (2000–2025)</p>
+                            <h3 className="text-xl font-black tracking-heading uppercase">Longitudinal Trend</h3>
+                            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">Comparison of India vs China (2000–2025)</p>
                         </div>
                     </div>
                     <div className="h-[400px] w-full">
@@ -274,13 +274,13 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 {/* Partner Breakdown */}
                 <div className="lg:col-span-4 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 flex flex-col">
                     <div className="mb-8">
-                        <h3 className="text-xl font-black tracking-tight uppercase">Supply Origins</h3>
-                        <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">{latestYear} Partner Share (% Share)</p>
+                        <h3 className="text-xl font-black tracking-heading uppercase">Supply Origins</h3>
+                        <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">{latestYear} Partner Share (% Share)</p>
                     </div>
 
                     <div className="space-y-8 flex-grow">
                         <div className="space-y-4">
-                            <span className="text-xs font-black text-blue-500 uppercase tracking-widest">India Directives</span>
+                            <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase">India Directives</span>
                             <div className="space-y-3">
                                 {latestIndia?.top_partners_json.map((p) => (
                                     <div key={p.partner} className="space-y-1">
@@ -300,7 +300,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                         </div>
 
                         <div className="space-y-4 pt-4 border-t border-white/5">
-                            <span className="text-xs font-black text-rose-500 uppercase tracking-widest">China Directives</span>
+                            <span className="text-xs font-black text-rose-500 uppercase tracking-uppercase">China Directives</span>
                             <div className="space-y-3">
                                 {latestChina?.top_partners_json.map((p) => (
                                     <div key={p.partner} className="space-y-1">
@@ -321,7 +321,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-white/5">
-                        <div className="flex items-center gap-2 text-xs font-black text-muted-foreground/30 uppercase tracking-[0.2em]">
+                        <div className="flex items-center gap-2 text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">
                             <Layers className="w-3 h-3" />
                             Source: UN Comtrade / WGC / OEC.world
                         </div>

@@ -19,7 +19,7 @@ const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/compon
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Stress Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Stress Signal...</span>
     </div>
 );
 
@@ -45,7 +45,7 @@ export const SovereignStressLab: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-black uppercase tracking-uppercase mb-4">
                     <ShieldAlert size={12} /> Fiscal Sustainability Monitor
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -63,7 +63,7 @@ export const SovereignStressLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-purple-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Sovereign Risk Matrix</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Sovereign Risk Matrix</h2>
                     </div>
                     <SectionErrorBoundary name="Sovereign Risk">
                         <Suspense fallback={<LoadingFallback />}>
@@ -77,7 +77,7 @@ export const SovereignStressLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Activity className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Yield Curve Dynamics</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Yield Curve Dynamics</h2>
                     </div>
                     <SectionErrorBoundary name="Yield Curve">
                         <Suspense fallback={<LoadingFallback />}>

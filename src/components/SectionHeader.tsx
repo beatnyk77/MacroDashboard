@@ -40,7 +40,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             <div className="flex items-end justify-between border-l-4 border-blue-500 pl-6 py-2">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <HeadingTag className="text-3xl md:text-4xl font-black tracking-tighter text-foreground uppercase leading-none">
+                        <HeadingTag className="text-3xl md:text-4xl font-black tracking-heading text-foreground uppercase leading-none">
                             {title}
                         </HeadingTag>
                         {lastUpdated && (

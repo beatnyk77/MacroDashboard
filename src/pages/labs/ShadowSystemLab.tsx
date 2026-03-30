@@ -15,7 +15,7 @@ const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.3em]">Loading Shadow Signal...</span>
+        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Shadow Signal...</span>
     </div>
 );
 
@@ -41,7 +41,7 @@ export const ShadowSystemLab: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 8 }}>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-xs font-black uppercase tracking-uppercase mb-4">
                     <EyeOff size={12} /> Off-Grid Telemetry
                 </div>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.02em', mb: 2 }}>
@@ -57,7 +57,7 @@ export const ShadowSystemLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Globe className="text-slate-400" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-white">Shadow Trade Terminal</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Shadow Trade Terminal</h2>
                     </div>
                     <SectionErrorBoundary name="Shadow Trade">
                         <Suspense fallback={<LoadingFallback />}>

@@ -54,7 +54,7 @@ const USFiscalComparisonChart: React.FC = () => {
         <div className="w-full bg-[#0A0A0A] border border-white/12 rounded-xl p-6 glass-morphism overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div>
-                    <h3 className="text-xl font-bold text-white tracking-tight">
+                    <h3 className="text-xl font-bold text-white tracking-heading">
                         US Defense Spending vs Federal Debt Interest
                     </h3>
                     <p className="text-white/50 text-sm font-mono mt-1">
@@ -149,14 +149,14 @@ const USFiscalComparisonChart: React.FC = () => {
 
             <div className="mt-6 flex flex-wrap gap-6 border-t border-white/5 pt-6">
                 <div className="flex-1 min-w-[200px]">
-                    <span className="text-white/30 text-xs font-mono uppercase tracking-wider block mb-2">Sources</span>
+                    <span className="text-white/30 text-xs font-mono uppercase tracking-uppercase block mb-2">Sources</span>
                     <div className="flex gap-4">
                         <span className="text-white/60 text-sm">BEA (National Defense)</span>
                         <span className="text-white/60 text-sm">Treasury (Interest)</span>
                     </div>
                 </div>
                 <div className="flex-1 min-w-[200px]">
-                    <span className="text-white/30 text-xs font-mono uppercase tracking-wider block mb-2">Note</span>
+                    <span className="text-white/30 text-xs font-mono uppercase tracking-uppercase block mb-2">Note</span>
                     <p className="text-white/50 text-xs leading-relaxed">
                         Data indexed to 1995. Federal debt interest encompasses all payments on public debt securities.
                         Defense spending includes gross investment and consumption expenditures.

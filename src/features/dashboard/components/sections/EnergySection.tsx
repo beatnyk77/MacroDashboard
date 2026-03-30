@@ -78,34 +78,34 @@ export const EnergySection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent pointer-events-none" />
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Aggregate Coal</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Aggregate Coal</span>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-white font-mono tracking-tighter">{totalCoal.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
+                        <span className="text-2xl font-black text-white font-mono tracking-heading">{totalCoal.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
                         <span className="text-xs font-bold text-white/20 uppercase">KToE</span>
                     </div>
                 </div>
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Renewable Alpha</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Renewable Alpha</span>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
-                            {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-xs text-muted-foreground/30 uppercase tracking-widest italic font-bold">Sync...</span>}
+                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-heading">
+                            {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-xs text-muted-foreground/30 uppercase tracking-uppercase italic font-bold">Sync...</span>}
                         </span>
                     </div>
                 </div>
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">System Demand</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">System Demand</span>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-blue-400 font-mono tracking-tighter">{(totalElectricity).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                        <span className="text-2xl font-black text-blue-400 font-mono tracking-heading">{(totalElectricity).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                         <span className="text-xs font-bold text-white/20 uppercase">KToE</span>
                     </div>
                 </div>
 
                 <div className="space-y-1.5 relative z-10">
-                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Relative Intensity</span>
+                    <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Relative Intensity</span>
                     <div className="flex items-center gap-2">
-                        <span className="text-2xl font-black font-mono tracking-tighter text-emerald-400">
+                        <span className="text-2xl font-black font-mono tracking-heading text-emerald-400">
                             {avgEnergyIntensity.toFixed(1)}
                         </span>
                     </div>
@@ -117,8 +117,8 @@ export const EnergySection: React.FC = () => {
                 <div className="lg:col-span-8 space-y-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div className="space-y-1">
-                            <h3 className="text-lg font-black text-white italic tracking-tight uppercase">Sub-National Energy Matrix</h3>
-                            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">Interactive choropleth • High-fidelity telemetry</p>
+                            <h3 className="text-lg font-black text-white italic tracking-heading uppercase">Sub-National Energy Matrix</h3>
+                            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase">Interactive choropleth • High-fidelity telemetry</p>
                         </div>
 
                         <div className="flex p-1 rounded-xl bg-white/5 border border-white/5 gap-1">
@@ -132,7 +132,7 @@ export const EnergySection: React.FC = () => {
                                 )}
                             >
                                 <Zap className="w-3.5 h-3.5" />
-                                <span className="text-xs font-black uppercase tracking-wider">Infrared Overlay</span>
+                                <span className="text-xs font-black uppercase tracking-uppercase">Infrared Overlay</span>
                             </button>
                             <div className="w-[1px] h-4 bg-white/10 self-center mx-1" />
                             {metricTabs.map((tab) => (
@@ -150,7 +150,7 @@ export const EnergySection: React.FC = () => {
                                     )}
                                 >
                                     <tab.icon className="w-3.5 h-3.5" />
-                                    <span className="text-xs font-black uppercase tracking-wider">{tab.label.split(' ')[0]}</span>
+                                    <span className="text-xs font-black uppercase tracking-uppercase">{tab.label.split(' ')[0]}</span>
                                 </button>
                             ))}
                         </div>
@@ -160,7 +160,7 @@ export const EnergySection: React.FC = () => {
                         <Suspense fallback={
                             <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl gap-4">
                                 <Activity className="w-6 h-6 text-blue-500 animate-spin" />
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Initializing Geospatial Environment...</span>
+                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Initializing Geospatial Environment...</span>
                             </div>
                         }>
                             <IndiaLeafletMap
@@ -198,8 +198,8 @@ export const EnergySection: React.FC = () => {
                 <div className="lg:col-span-4 space-y-10">
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-black text-white italic tracking-tight uppercase px-4 border-l-2 border-emerald-500">Tier-1 Node Ranking</h3>
-                            <span className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Live Buffer</span>
+                            <h3 className="text-lg font-black text-white italic tracking-heading uppercase px-4 border-l-2 border-emerald-500">Tier-1 Node Ranking</h3>
+                            <span className="text-xs font-black text-white/30 uppercase tracking-uppercase">Live Buffer</span>
                         </div>
                         <div className="space-y-3">
                             {topStates.map((state, i) => (
@@ -215,7 +215,7 @@ export const EnergySection: React.FC = () => {
                                 >
                                     <div className="flex items-center gap-4">
                                         <span className="text-xs font-black text-muted-foreground/20 italic">0{i + 1}</span>
-                                        <span className="text-xs font-black text-white/80 uppercase tracking-tight">{state.state_name}</span>
+                                        <span className="text-xs font-black text-white/80 uppercase tracking-heading">{state.state_name}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm font-black text-blue-400 font-mono">
@@ -234,16 +234,16 @@ export const EnergySection: React.FC = () => {
                     {selectedState ? (
                         <div className="p-6 rounded-3xl bg-blue-500/10 border border-blue-500/20 space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
                             <div className="flex justify-between items-center">
-                                <span className="text-xs font-black text-blue-400 uppercase tracking-widest">Node Focus: {selectedState.state_name}</span>
+                                <span className="text-xs font-black text-blue-400 uppercase tracking-uppercase">Node Focus: {selectedState.state_name}</span>
                                 <button onClick={() => setSelectedState(null)} className="text-xs font-black text-white/30 hover:text-white underline uppercase">Clear</button>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest">Coal Prod</span>
+                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">Coal Prod</span>
                                     <div className="text-sm font-black text-white font-mono">{selectedState.coal_production.toFixed(1)} <span className="text-xs text-white/20">KToE</span></div>
                                 </div>
                                 <div className="space-y-1">
-                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-widest">RE Share</span>
+                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">RE Share</span>
                                     <div className="text-sm font-black text-emerald-400 font-mono">{selectedState.renewable_share.toFixed(1)}%</div>
                                 </div>
                             </div>
@@ -255,7 +255,7 @@ export const EnergySection: React.FC = () => {
                     ) : (
                         <div className="p-8 rounded-3xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center space-y-4">
                             <Activity className="w-5 h-5 text-white/10 animate-pulse" />
-                            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest leading-relaxed">
+                            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase leading-relaxed">
                                 Select a state on the map for <br /> high-frequency drill-down
                             </p>
                         </div>

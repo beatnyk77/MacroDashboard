@@ -67,17 +67,17 @@ export const FIIDIIMonitorSection: React.FC = () => {
             >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-1">
-                        <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                        <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/30 flex items-center gap-2">
                             <Activity size={10} /> Smart Money Regime
                         </div>
                         <div className="flex items-baseline gap-3">
                             <span className={cn(
-                                "text-3xl font-black tabular-nums tracking-tighter",
+                                "text-3xl font-black tabular-nums tracking-heading",
                                 (data.sentiment_score || 0) > 0.5 ? "text-emerald-400" : (data.sentiment_score || 0) < -0.5 ? "text-rose-400" : "text-amber-400"
                             )}>
                                 {(data.sentiment_score || 0).toFixed(2)}
                             </span>
-                            <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
+                            <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">
                                 {(data.sentiment_score || 0) > 0.5 ? 'RISK-ON' : (data.sentiment_score || 0) < -0.5 ? 'RISK-OFF' : 'NEUTRAL'}
                             </span>
                         </div>
@@ -85,25 +85,25 @@ export const FIIDIIMonitorSection: React.FC = () => {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 flex-1 md:px-12 border-x border-white/5">
                         <div>
-                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest mb-1">Inst. Net Cash</div>
+                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase mb-1">Inst. Net Cash</div>
                             <div className={cn("text-xl font-black tabular-nums", (data.fii_dii_net || 0) > 0 ? "text-emerald-500/80" : "text-rose-500/80")}>
                                 {(data.fii_dii_net || 0) > 0 ? '+' : ''}{formatNumber(data.fii_dii_net || 0)} Cr
                             </div>
                         </div>
                         <div>
-                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest mb-1">FII F&O Net</div>
+                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase mb-1">FII F&O Net</div>
                             <div className={cn("text-xl font-black tabular-nums", (data.fii_fno_net || 0) > 0 ? "text-emerald-500/80" : "text-rose-500/80")}>
                                 {(data.fii_fno_net || 0) > 0 ? '+' : ''}{formatNumber(data.fii_fno_net || 0)} Cr
                             </div>
                         </div>
                         <div>
-                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest mb-1">Retail F&O Net</div>
+                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase mb-1">Retail F&O Net</div>
                             <div className={cn("text-xl font-black tabular-nums", (data.client_fno_net || 0) > 0 ? "text-rose-500/80" : "text-emerald-500/80")}>
                                 {(data.client_fno_net || 0) > 0 ? '+' : ''}{formatNumber(data.client_fno_net || 0)} Cr
                             </div>
                         </div>
                         <div>
-                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest mb-1">FII Position</div>
+                            <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase mb-1">FII Position</div>
                             <div className="flex items-center gap-2">
                                 <span className="text-xl font-black text-white/80 tabular-nums">
                                     {(data.fii_zscore || 0).toFixed(1)}σ
@@ -114,7 +114,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                     </div>
 
                     <div className="min-w-[120px] text-right">
-                        <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest mb-1">Trend Signal</div>
+                        <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase mb-1">Trend Signal</div>
                         <div className="h-10 w-32 ml-auto">
                             <Sparkline
                                 data={history.slice(-30).map(h => ({ date: h.date, value: h.fii_cash_net }))}
@@ -136,21 +136,21 @@ export const FIIDIIMonitorSection: React.FC = () => {
             >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="space-y-1 min-w-[200px]">
-                        <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                        <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/30 flex items-center gap-2">
                             <ArrowRightLeft size={10} /> FII vs DII Tug-of-War
                         </div>
-                        <div className="text-2xl font-black text-white tracking-tighter">
+                        <div className="text-2xl font-black text-white tracking-heading">
                             {data.fii_cash_net < 0 && data.dii_cash_net > 0
                                 ? (data.dii_cash_net / Math.abs(data.fii_cash_net)).toFixed(1)
                                 : (data.fii_cash_net > 0 && data.dii_cash_net > 0 ? 'CO-BUY' : 'DIVERGE')}
                         </div>
-                        <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-widest">
+                        <div className="text-xs font-bold text-muted-foreground/30 uppercase tracking-uppercase">
                             Absorption Ratio
                         </div>
                     </div>
 
                     <div className="flex-1 space-y-3">
-                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
+                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-uppercase">
                             <span className="text-rose-400">FII Net: {formatNumber(data.fii_cash_net)} Cr</span>
                             <span className="text-emerald-400">DII Net: +{formatNumber(data.dii_cash_net)} Cr</span>
                         </div>
@@ -177,17 +177,17 @@ export const FIIDIIMonitorSection: React.FC = () => {
                 className="rounded-xl bg-white/[0.02] border border-white/[0.05] p-5"
             >
                 <div className="flex items-center justify-between mb-6">
-                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                    <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/30 flex items-center gap-2">
                         <Layers size={10} /> Sector-wise FPI Velocity (Fortnightly)
                     </div>
-                    <div className="text-xs font-bold text-muted-foreground/20 uppercase tracking-widest">
+                    <div className="text-xs font-bold text-muted-foreground/20 uppercase tracking-uppercase">
                         As of {latestSectorFlows[0]?.fortnight_end_date}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                        <div className="text-xs font-black text-emerald-400/50 uppercase tracking-widest flex items-center gap-2">
+                        <div className="text-xs font-black text-emerald-400/50 uppercase tracking-uppercase flex items-center gap-2">
                             <Flame size={10} /> Priority Accumulation
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
@@ -200,7 +200,7 @@ export const FIIDIIMonitorSection: React.FC = () => {
                         </div>
                     </div>
                     <div className="space-y-3">
-                        <div className="text-xs font-black text-rose-400/50 uppercase tracking-widest flex items-center gap-2">
+                        <div className="text-xs font-black text-rose-400/50 uppercase tracking-uppercase flex items-center gap-2">
                             <Wind size={10} /> Strategic Liquidation
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
@@ -224,10 +224,10 @@ export const FIIDIIMonitorSection: React.FC = () => {
                 className="rounded-xl bg-white/[0.02] border border-white/[0.05] p-5 h-[350px]"
             >
                 <div className="flex items-center justify-between mb-6">
-                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/30 flex items-center gap-2">
+                    <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/30 flex items-center gap-2">
                         <TrendingUp size={10} /> Flow Regime vs Benchmark Returns
                     </div>
-                    <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
+                    <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-uppercase">
                         <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500" /> FII Cash</div>
                         <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-purple-500" /> F&O Net</div>
                     </div>

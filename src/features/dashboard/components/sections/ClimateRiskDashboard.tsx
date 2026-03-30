@@ -36,7 +36,7 @@ export const ClimateRiskDashboard: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center p-20 bg-[#0a0a0b] rounded-xl border border-white/5 animate-pulse">
         <Leaf className="w-8 h-8 text-emerald-500 mb-4 animate-bounce" />
-        <span className="text-gray-400 font-mono text-xs uppercase tracking-[0.3em]">Calibrating Planetary Boundaries...</span>
+        <span className="text-gray-400 font-mono text-xs uppercase tracking-uppercase">Calibrating Planetary Boundaries...</span>
       </div>
     );
   }
@@ -80,9 +80,9 @@ export const ClimateRiskDashboard: React.FC = () => {
         <div className="md:col-span-2 p-6 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-xl">
           <div className="flex items-center gap-2 text-emerald-500 mb-2">
             <Leaf className="w-4 h-4" />
-            <span className="text-xs font-black tracking-widest uppercase">Transition Signal active</span>
+            <span className="text-xs font-black tracking-uppercase uppercase">Transition Signal active</span>
           </div>
-          <h2 className="text-4xl font-black text-white tracking-tighter uppercase italic leading-none">
+          <h2 className="text-4xl font-black text-white tracking-heading uppercase italic leading-none">
             Transition <span className="text-emerald-500">Risk Matrix</span>
           </h2>
           <p className="text-gray-400 mt-2 font-mono text-xs max-w-xl">
@@ -96,7 +96,7 @@ export const ClimateRiskDashboard: React.FC = () => {
             {globalAvgRisk.toFixed(1)}
             <span className="text-xs text-emerald-500/70">TR_SCORE</span>
           </div>
-          <div className="text-xs text-gray-600 font-mono mt-2 uppercase tracking-tighter">v1.2.0-CLIMATE-CORE</div>
+          <div className="text-xs text-gray-600 font-mono mt-2 uppercase tracking-heading">v1.2.0-CLIMATE-CORE</div>
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export const ClimateRiskDashboard: React.FC = () => {
             <div className="bg-white/5 p-4 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4 text-emerald-500" />
-                <span className="text-xs font-bold text-white uppercase tracking-wider font-mono italic">Market Pulse</span>
+                <span className="text-xs font-bold text-white uppercase tracking-uppercase font-mono italic">Market Pulse</span>
               </div>
               <Activity className="w-3 h-3 text-emerald-500/50 animate-pulse" />
             </div>
@@ -122,7 +122,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-gray-600 font-mono text-xs w-4">{(idx + 1).toString().padStart(2, '0')}</span>
                     <div>
-                      <div className="text-white font-bold text-sm tracking-tight">{item.country_code}</div>
+                      <div className="text-white font-bold text-sm tracking-heading">{item.country_code}</div>
                       <div className="flex items-center gap-1.5 mt-1">
                         <Thermometer size={10} style={{ color: getTempColor(item.temperature_alignment_c) }} />
                         <span className="text-xs font-mono" style={{ color: getTempColor(item.temperature_alignment_c) }}>
@@ -135,7 +135,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                     <div className="text-lg font-black font-mono leading-none text-white">
                       {item.transition_risk_score.toFixed(1)}
                     </div>
-                    <div className="text-xs text-gray-500 font-mono uppercase tracking-tighter mt-1">RI_SCORE</div>
+                    <div className="text-xs text-gray-500 font-mono uppercase tracking-heading mt-1">RI_SCORE</div>
                   </div>
                 </button>
               ))}
@@ -152,7 +152,7 @@ export const ClimateRiskDashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-8 relative">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-emerald-500" />
-                  <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono italic">Exposure vectors</h3>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-uppercase font-mono italic">Exposure vectors</h3>
                 </div>
                 {countryDisplayData && (
                   <div className="text-xs font-mono bg-white/5 px-2 py-0.5 rounded border border-white/12 text-emerald-400">
@@ -188,11 +188,11 @@ export const ClimateRiskDashboard: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2 text-amber-500 mb-4 border-b border-white/5 pb-2">
                     <Zap size={14} />
-                    <span className="text-xs font-black uppercase tracking-widest">Grid Intensity</span>
+                    <span className="text-xs font-black uppercase tracking-uppercase">Grid Intensity</span>
                   </div>
                   {countryDisplayData ? (
                     <div className="flex items-end gap-3">
-                      <div className="text-4xl font-black text-white font-mono leading-none tracking-tighter">
+                      <div className="text-4xl font-black text-white font-mono leading-none tracking-heading">
                         {countryDisplayData.grid_co2_intensity}
                       </div>
                       <div className="text-xs text-gray-500 font-mono mb-1">gCO₂/kWh</div>
@@ -216,7 +216,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                  <div>
                   <div className="flex items-center gap-2 text-emerald-500 mb-4 border-b border-emerald-500/10 pb-2">
                     <ShieldCheck size={14} />
-                    <span className="text-xs font-black uppercase tracking-widest">Renewable Share</span>
+                    <span className="text-xs font-black uppercase tracking-uppercase">Renewable Share</span>
                   </div>
                   {countryDisplayData ? (
                     <div className="flex items-end gap-2">
@@ -240,7 +240,7 @@ export const ClimateRiskDashboard: React.FC = () => {
           <div className="bg-[#0f1115] border border-white/5 rounded-xl p-6 relative overflow-hidden">
              <div className="flex items-center gap-2 mb-6">
                <Database className="w-4 h-4 text-emerald-500" />
-               <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono italic">India State telemetry</h3>
+               <h3 className="text-xs font-bold text-white uppercase tracking-uppercase font-mono italic">India State telemetry</h3>
              </div>
              
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -249,7 +249,7 @@ export const ClimateRiskDashboard: React.FC = () => {
                    <div key={state.region_code} className="p-4 bg-white/[0.02] border border-white/5 rounded-lg">
                      <div className="flex justify-between items-center mb-3">
                        <span className="text-xs font-bold text-white font-mono uppercase">{state.region_code === 'MH' ? 'Maharashtra' : 'Karnataka'}</span>
-                       <span className="text-xs text-gray-500 font-mono tracking-tighter">NODE_ID: {state.region_code}</span>
+                       <span className="text-xs text-gray-500 font-mono tracking-heading">NODE_ID: {state.region_code}</span>
                      </div>
                      <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -289,14 +289,14 @@ export const ClimateRiskDashboard: React.FC = () => {
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2 group cursor-help">
             <ShieldCheck className="w-4 h-4 text-emerald-500 transform group-hover:scale-110 transition-transform" />
-            <span className="text-xs text-gray-500 font-mono uppercase tracking-[0.2em] group-hover:text-emerald-400 transition-colors">Institutional Node</span>
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-uppercase group-hover:text-emerald-400 transition-colors">Institutional Node</span>
           </div>
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-indigo-400" />
-            <span className="text-xs text-gray-500 font-mono uppercase tracking-[0.2em]">EDGAR GHG Tier-1 Source</span>
+            <span className="text-xs text-gray-500 font-mono uppercase tracking-uppercase">EDGAR GHG Tier-1 Source</span>
           </div>
         </div>
-        <div className="text-xs text-gray-600 font-mono tracking-tighter italic border-l border-white/12 pl-4">
+        <div className="text-xs text-gray-600 font-mono tracking-heading italic border-l border-white/12 pl-4">
           SYSTEM_ALIGNED // PACTA_METHODOLOGY_V3
         </div>
       </div>

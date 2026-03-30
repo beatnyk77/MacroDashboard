@@ -88,7 +88,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                 />
                 <Link
                     to="/weekly-narrative"
-                    className="inline-flex items-center gap-2 text-xs font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-widest bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl border border-white/12 w-fit"
+                    className="inline-flex items-center gap-2 text-xs font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-uppercase bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl border border-white/12 w-fit"
                 >
                     <History size={14} />
                     Intelligence Archive
@@ -106,7 +106,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                             <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
                             <CardContent className="p-8 md:p-10 relative z-10">
                                 <Stack direction="row" spacing={2} alignItems="center" mb={4}>
-                                    <div className="px-2.5 py-1 bg-blue-500 text-white text-xs font-black tracking-widest uppercase rounded shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                    <div className="px-2.5 py-1 bg-blue-500 text-white text-xs font-black tracking-uppercase uppercase rounded shadow-[0_0_15px_rgba(59,130,246,0.5)]">
                                         REGIME FOCUS
                                     </div>
                                     <span className="text-xs font-bold text-blue-400 tracking-[0.25em] uppercase">
@@ -135,7 +135,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                 {sections.map((section, idx) => (
                                     <div key={idx} className="group/item relative">
                                         <div className="flex justify-between items-start mb-4">
-                                            <h6 className="text-[0.8rem] font-black text-foreground group-hover/item:text-primary transition-colors uppercase tracking-widest">
+                                            <h6 className="text-sm font-black text-foreground group-hover/item:text-primary transition-colors uppercase tracking-uppercase">
                                                 {section.section_name}
                                             </h6>
                                             {section.wow_change_pct !== null && (
@@ -150,7 +150,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <p className="text-[1rem] leading-relaxed text-muted-foreground group-hover/item:text-foreground/90 transition-colors font-medium">
+                                        <p className="text-base leading-relaxed text-muted-foreground group-hover/item:text-foreground/90 transition-colors font-medium">
                                             {section.narrative_snippet}
                                         </p>
                                         {idx < sections.length - 1 && (
@@ -173,11 +173,11 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                     <div className="p-1.5 rounded-full bg-emerald-500/10">
                                         <Info size={16} className="text-emerald-500" />
                                     </div>
-                                    <span className="text-xs font-black tracking-[0.2em] text-emerald-500 uppercase">
+                                    <span className="text-xs font-black tracking-uppercase text-emerald-500 uppercase">
                                         PROPRIETARY VIEW
                                     </span>
                                 </div>
-                                <p className="text-[1rem] font-medium italic text-foreground/90 leading-relaxed border-l-2 border-emerald-500/30 pl-5 py-1">
+                                <p className="text-base font-medium italic text-foreground/90 leading-relaxed border-l-2 border-emerald-500/30 pl-5 py-1">
                                     "{insight.narrative_snippet}"
                                 </p>
                             </CardContent>
@@ -192,7 +192,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                     Next Window
                                     <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">HIGH IMPACT</span>
                                 </h5>
-                                <p className="text-[0.9rem] text-muted-foreground leading-relaxed mb-8 font-medium">
+                                <p className="text-sm text-muted-foreground leading-relaxed mb-8 font-medium">
                                     {forwardLook.narrative_snippet}
                                 </p>
                                 <Button
