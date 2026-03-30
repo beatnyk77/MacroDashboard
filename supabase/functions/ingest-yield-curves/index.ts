@@ -5,8 +5,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-/* ─── FRED series map (US full curve + CN 10Y) ──────────────────── */
+/* ─── FRED series map (full US + China curves) ─────────────────── */
+// US: Daily Treasury Yield Curve Rates (H.15)
+// CN: International Financial Statistics (IFS) Government Bond Yields
 const FRED_SERIES: { country: string; tenor: string; seriesId: string; source: string }[] = [
+  // United States
   { country: 'US', tenor: '3M', seriesId: 'DGS3MO', source: 'FRED' },
   { country: 'US', tenor: '6M', seriesId: 'DGS6MO', source: 'FRED' },
   { country: 'US', tenor: '1Y', seriesId: 'DGS1', source: 'FRED' },
@@ -14,7 +17,18 @@ const FRED_SERIES: { country: string; tenor: string; seriesId: string; source: s
   { country: 'US', tenor: '5Y', seriesId: 'DGS5', source: 'FRED' },
   { country: 'US', tenor: '10Y', seriesId: 'DGS10', source: 'FRED' },
   { country: 'US', tenor: '30Y', seriesId: 'DGS30', source: 'FRED' },
+
+  // China: Full curve from IFS (INTDSRCNMXXXN where XXX = months)
+  // Primary series: IFS standard tenors
+  { country: 'CN', tenor: '3M', seriesId: 'INTDSRCNM003N', source: 'FRED' },
+  { country: 'CN', tenor: '6M', seriesId: 'INTDSRCNM006N', source: 'FRED' },
+  { country: 'CN', tenor: '1Y', seriesId: 'INTDSRCNM012N', source: 'FRED' },
+  { country: 'CN', tenor: '2Y', seriesId: 'INTDSRCNM024N', source: 'FRED' },
+  { country: 'CN', tenor: '5Y', seriesId: 'INTDSRCNM060N', source: 'FRED' },
+  // 10Y: Use the established series (INTDSRCNM193N) - primary source
   { country: 'CN', tenor: '10Y', seriesId: 'INTDSRCNM193N', source: 'FRED' },
+  // 30Y: IFS 30-year
+  { country: 'CN', tenor: '30Y', seriesId: 'INTDSRCNM360N', source: 'FRED' },
 ]
 
 /* ─── ECB SDW keys for German Bund yields ───────────────────────── */
