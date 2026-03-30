@@ -6,7 +6,8 @@ import {
     Zap,
     Activity,
     Globe,
-    Ship
+    Ship,
+    Clock
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ const GlobalRefiningMonitorSection = lazy(() => import('@/features/dashboard/com
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
 const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
+const FuelSecurityClockIndia = lazy(() => import('@/features/energy/components/FuelSecurityClockIndia'));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -149,6 +151,29 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
                         <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
                             Monitoring the Strait of Hormuz in real-time allows for the detection of "grey zone" maritime activity. Significant deviations in tanker frequency or insurance risk premiums directly impact the Energy Intensity metrics of the global industrial base.
+                        </p>
+                    </div>
+                </section>
+
+                {/* 2.75 Fuel Security Clock – India */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Clock className="text-amber-500" size={28} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Fuel Security Clock – India</h2>
+                    </div>
+
+                    <div className="w-full">
+                        <SectionErrorBoundary name="Fuel Security Clock India">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <FuelSecurityClockIndia />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
+                        <span className="text-xs font-black uppercase tracking-widest text-amber-400 block mb-4">So What? — Institutional Insight</span>
+                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
+                            India's import dependency creates structural inflation vulnerability. The countdown clock and tanker pipeline provide early warning for supply shocks. Track INR/barrel for currency pressure signals and geopolitical risk for black swan exposure.
                         </p>
                     </div>
                 </section>
