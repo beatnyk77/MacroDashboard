@@ -1,32 +1,9 @@
-import React, { Suspense, useMemo } from 'react';
-import { Clock } from 'lucide-react';
-import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import React, { useMemo } from 'react';
 import { DataQualityBadge } from '@/components/DataQualityBadge';
 import { MotionCard } from '@/components/MotionCard';
-import { Button } from '@/components/ui/button';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  Cell
-} from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
 import { useFuelSecurityIndia, FuelSecurityIndia } from '../hooks/useFuelSecurityIndia';
 import { cn } from '@/lib/utils';
-
-const LoadingFallback = () => (
-  <div className="w-full min-h-[600px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-    <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Fuel Security Data...</span>
-  </div>
-);
 
 const MOCK_DATA: FuelSecurityIndia = {
   as_of_date: new Date().toISOString().split('T')[0],
@@ -57,7 +34,8 @@ const MOCK_DATA: FuelSecurityIndia = {
   last_updated_at: new Date().toISOString(),
   metadata: {
     source_reliability: 'high',
-    notes: 'Mock data for development'
+    notes: 'Mock data for development',
+    ingestion_version: 1
   }
 };
 
@@ -65,12 +43,6 @@ const getRiskColor = (score: number): string => {
   if (score < 30) return '#10b981'; // emerald
   if (score < 60) return '#f59e0b'; // amber
   return '#ef4444'; // rose
-};
-
-const getRiskBadgeVariant = (days: number): 'green' | 'yellow' | 'red' => {
-  if (days >= 15) return 'green';
-  if (days >= 7) return 'yellow';
-  return 'red';
 };
 
 const getRiskLevel = (days: number): { label: string; colorClass: string } => {
@@ -127,11 +99,20 @@ export const FuelSecurityClockIndia: React.FC = () => {
     return { data: apiData, isFallback: false };
   }, [apiData, isError]);
 
-  const riskLevel = getRiskBadgeVariant(data.reserves_days_coverage);
   const projData = useMemo(() =>
     projectionData(data.scenario_baseline_days, data.scenario_disruption_days, data.scenario_rationing_days),
     [data]
   );
+
+  // Precompute days remaining for tankers to avoid impure calls in render
+  const tankersWithDays = useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now();
+    return data.tanker_pipeline_json.slice(0, 15).map(tanker => ({
+      ...tanker,
+      daysRemaining: Math.max(0, Math.ceil((new Date(tanker.eta).getTime() - now) / (1000 * 60 * 60 * 24)))
+    }));
+  }, [data.tanker_pipeline_json]);
 
   return (
     <MotionCard className="w-full" delay={0.35}>
@@ -230,14 +211,14 @@ export const FuelSecurityClockIndia: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {data.tanker_pipeline_json.slice(0, 15).map((tanker, i) => (
+                {tankersWithDays.map((tanker, i) => (
                   <tr key={tanker.id || i} className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-6 py-4 text-white font-black">{tanker.vessel_name}</td>
                     <td className="px-6 py-4 text-white/80">{tanker.origin}</td>
                     <td className="px-6 py-4 text-white/80">
                       {new Date(tanker.eta).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       <span className="text-[10px] text-muted-foreground/40 ml-2">
-                        {Math.max(0, Math.ceil((new Date(tanker.eta).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))}d
+                        {tanker.daysRemaining}d
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right text-white font-black">
