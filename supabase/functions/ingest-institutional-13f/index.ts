@@ -1,5 +1,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 
+// Alpha Vantage rate limit: 5 calls per minute free tier => 12 seconds between calls
+const ALPHA_VANTAGE_DELAY_MS = parseInt(Deno.env.get('ALPHA_VANTAGE_DELAY_MS') || '12000');
+
 // @ts-ignore
 Deno.serve(async (req: Request) => {
     const start = new Date().toISOString();
@@ -155,8 +158,8 @@ async function processInstitutional13F(client: any) {
             totalValue += value;
         }
 
-        // Process top holdings (up to 30) with Alpha Vantage enrichment
-        const topHoldings = holdings.slice(0, 30);
+        // Process top holdings (up to 20) with Alpha Vantage enrichment
+        const topHoldings = holdings.slice(0, 20);
         const sectorMapping: Record<string, number> = {};
         const enrichedHoldings: typeof holdings = [];
 
@@ -167,12 +170,14 @@ async function processInstitutional13F(client: any) {
                 const searchRes = await fetch(searchUrl);
                 const searchData = (await searchRes.json()) as any;
                 const symbol = searchData.bestMatches?.[0]?.['1. symbol'];
+                await sleep(ALPHA_VANTAGE_DELAY_MS); // Respect rate limit between API calls
 
                 if (symbol) {
                     // 2. Ticker to Overview for sector and name
                     const overviewUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${alphaVantageKey}`;
                     const overviewRes = await fetch(overviewUrl);
                     const overviewData = (await overviewRes.json()) as any;
+                    await sleep(ALPHA_VANTAGE_DELAY_MS);
 
                     const sector = overviewData.Sector || 'Other';
                     const name = overviewData.Name || overviewData.description || null;
@@ -196,7 +201,6 @@ async function processInstitutional13F(client: any) {
                 sectorMapping['Other'] = (sectorMapping['Other'] || 0) + (holding.value / totalValue) * 100;
                 enrichedHoldings.push(holding);
             }
-            await sleep(200); // Rate limit respect
         }
 
         // Compute asset class allocation
@@ -326,6 +330,127 @@ async function processInstitutional13F(client: any) {
         }, { onConflict: 'cik, as_of_date' });
 
         if (upsertErr) throw upsertErr;
+
+        // Infer recent trades from QoQ position changes
+        // Fetch previous top_holdings to compare
+        const { data: prevHoldingRow } = await client
+            .from('institutional_13f_holdings')
+            .select('top_holdings')
+            .eq('cik', inst.cik)
+            .lt('as_of_date', reportDate)
+            .order('as_of_date', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        const prevHoldingsList = (prevHoldingRow?.top_holdings as any[]) || [];
+
+        // Build map: key = ticker or cusip, value = holding
+        const prevHoldingsMap = new Map<string, any>();
+        prevHoldingsList.forEach(h => {
+            const key = (h.ticker || h.cusip);
+            if (key) prevHoldingsMap.set(key, h);
+        });
+
+        const tradesToInsert: any[] = [];
+
+        // Compare current enrichedHoldings with previous
+        for (const cur of enrichedHoldings) {
+            const curUsd = cur.value;
+            const key = cur.ticker || cur.cusip;
+            const prev = prevHoldingsMap.get(key);
+            const prevUsd = prev?.value || 0;
+
+            const deltaUsd = curUsd - prevUsd;
+            let deltaPct = 0;
+            if (prevUsd > 0) {
+                deltaPct = (deltaUsd / prevUsd) * 100;
+            } else if (prevUsd === 0 && curUsd > 0) {
+                deltaPct = 100; // new position
+            } else if (curUsd === 0 && prevUsd > 0) {
+                deltaPct = -100; // exit
+            }
+
+            // Determine significance
+            const isNew = prevUsd === 0 && curUsd > 0;
+            const isExit = curUsd === 0 && prevUsd > 0;
+            const isSignificant = Math.abs(deltaPct) > 2;
+
+            if (!isNew && !isExit && !isSignificant) continue;
+
+            let trade_type: string;
+            let direction: string;
+            if (isNew) {
+                trade_type = 'INITIATE';
+                direction = 'ACCUMULATE';
+            } else if (isExit) {
+                trade_type = 'EXIT';
+                direction = 'DISTRIBUTE';
+            } else if (deltaPct > 0) {
+                trade_type = 'INCREASE';
+                direction = 'ACCUMULATE';
+            } else {
+                trade_type = 'DECREASE';
+                direction = 'DISTRIBUTE';
+            }
+
+            // Base conviction: 1-10 from delta magnitude
+            let conviction = Math.min(10, Math.abs(deltaPct) * 2);
+
+            const trade = {
+                cik: inst.cik,
+                fund_name: inst.name,
+                ticker: cur.ticker || null,
+                cusip: cur.cusip,
+                trade_type,
+                direction,
+                sector: cur.sector || null,
+                prior_qty_usd: prevUsd,
+                current_qty_usd: curUsd,
+                delta_usd: deltaUsd,
+                delta_pct: deltaPct,
+                price_change_pct: null,
+                conviction_score: conviction,
+                as_of_date: reportDate
+            };
+            tradesToInsert.push(trade);
+        }
+
+        // Optionally fetch price change for each trade to refine conviction
+        if (tradesToInsert.length > 0 && alphaVantageKey) {
+            for (const trade of tradesToInsert) {
+                if (!trade.ticker) continue;
+                try {
+                    const priceUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${trade.ticker}&apikey=${alphaVantageKey}`;
+                    const res = await fetch(priceUrl);
+                    const data = await res.json();
+                    const ts = data['Monthly Time Series'];
+                    if (ts) {
+                        const dates = Object.keys(ts).sort().reverse();
+                        if (dates.length >= 4) {
+                            const latest = parseFloat(ts[dates[0]]['4. close']);
+                            const threeMonthsAgo = dates[3];
+                            const old = parseFloat(ts[threeMonthsAgo]['4. close']);
+                            const priceChange = ((latest - old) / old) * 100;
+                            trade.price_change_pct = priceChange;
+                            // Boost conviction if strong price momentum in same direction as trade
+                            if (Math.abs(priceChange) > 5) {
+                                trade.conviction_score = Math.min(10, conviction + 2);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn(`Failed to fetch price for ${trade.ticker}: ${e}`);
+                }
+                await sleep(ALPHA_VANTAGE_DELAY_MS);
+            }
+        }
+
+        // Insert trades after deleting any existing for this institution+date
+        if (tradesToInsert.length > 0) {
+            await client.from('institutional_trades_inferred').delete().eq('cik', inst.cik).eq('as_of_date', reportDate);
+            const { error: insertErr } = await client.from('institutional_trades_inferred').insert(tradesToInsert);
+            if (insertErr) throw insertErr;
+        }
 
         processedCount++;
         return {

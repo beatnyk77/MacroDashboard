@@ -134,7 +134,7 @@ export function useSmartMoneyHoldings() {
             concentration_contribution: h.concentration_contribution
         }));
 
-    // Derived: sector rotation heatmap data
+    // Derived: sector rotation heatmap data with direction
     // Get all unique sectors from topInstitutions
     const allSectors = new Set<string>();
     topInstitutions.forEach(inst => {
@@ -142,12 +142,25 @@ export function useSmartMoneyHoldings() {
     });
     const sectorsList = Array.from(allSectors).sort();
 
-    const heatmapData = topInstitutions.map(inst => ({
-        fund: inst.fund_name,
-        type: inst.fund_type,
-        sectors: inst.top_sectors,
-        regime_z: inst.regime_z_score
-    }));
+    // For each institution, compute per-sector delta vs previous quarter
+    const heatmapData = topInstitutions.map(inst => {
+        // Find previous quarter for this institution
+        const prev = institutions.find(i => i.cik === inst.cik && i.as_of_date < inst.as_of_date) || null;
+        const sectorsWithDelta: Record<string, { allocation: number; delta: number }> = {};
+        Object.entries(inst.top_sectors).forEach(([sector, allocation]) => {
+            const prevAllocation = prev?.top_sectors?.[sector] || 0;
+            sectorsWithDelta[sector] = {
+                allocation,
+                delta: allocation - prevAllocation
+            };
+        });
+        return {
+            fund: inst.fund_name,
+            type: inst.fund_type,
+            sectors: sectorsWithDelta,
+            regime_z: inst.regime_z_score
+        };
+    });
 
     // Derived: collective allocation history for stacked area chart (use the institution with longest history as proxy? Or we can combine)
     // We'll use the collective view if it had history, but it doesn't. So we'll take average of historical_allocation arrays across institutions

@@ -11,6 +11,7 @@ import { useSmartMoneyHoldings } from '@/hooks/useSmartMoneyHoldings';
 import { MotionCard } from '@/components/MotionCard';
 import { SectionErrorBoundary } from './SectionErrorBoundary';
 import { formatNumber } from '@/utils/formatNumber';
+import TradeTape from './TradeTape';
 
 // Color palette consistent with terminal theme
 const COLORS = {
@@ -141,11 +142,14 @@ const InstitutionCard: React.FC<{ data: any; history: any[] }> = ({ data, histor
     );
 };
 
-// Sector Heatmap Cell
-const SectorCell: React.FC<{ value: number; max: number }> = ({ value, max }) => {
-    const intensity = Math.min(value / max, 1);
+// Sector Heatmap Cell with directional arrow
+const SectorCell: React.FC<{ allocation: number; max: number; delta?: number }> = ({ allocation, max, delta }) => {
+    const intensity = Math.min(allocation / max, 1);
     const bgColor = `rgba(59, 130, 246, ${0.15 + intensity * 0.85})`;
     const textColor = intensity > 0.5 ? '#ffffff' : '#cbd5e1';
+    const showArrow = delta !== undefined && Math.abs(delta) > 0.5;
+    const arrowColor = delta && delta > 0 ? '#0df259' : delta && delta < 0 ? '#f87171' : textColor;
+
     return (
         <Box
             sx={{
@@ -166,8 +170,13 @@ const SectorCell: React.FC<{ value: number; max: number }> = ({ value, max }) =>
                 }
             }}
         >
+            {showArrow && (
+                <Typography component="span" sx={{ mr: 0.5, color: arrowColor, fontWeight: 900, fontSize: '0.875rem', lineHeight: 1 }}>
+                    {delta! > 0 ? '↑' : '↓'}
+                </Typography>
+            )}
             <Typography variant="body2" sx={{ color: textColor, fontWeight: 800, fontSize: '0.875rem', fontFamily: 'monospace', letterSpacing: '-0.01em' }}>
-                {value.toFixed(1)}%
+                {allocation.toFixed(1)}%
             </Typography>
         </Box>
     );
@@ -200,11 +209,23 @@ const InstitutionalHoldingsWall: React.FC = () => {
         other: point.other_pct
     }));
 
-    // Max sector allocation for heatmap scaling
-    const maxSectorPct = Math.max(...heatmapData.flatMap(d => Object.values(d.sectors)), 1);
+    // Max sector allocation for heatmap scaling (now sectors have {allocation, delta})
+    const maxSectorPct = Math.max(...heatmapData.flatMap(d => Object.values(d.sectors).map((s: any) => s.allocation)), 1);
 
     return (
         <Box sx={{ mb: 6 }}>
+            {/* Trade Tape */}
+            <Box sx={{ mb: 4 }}>
+                <TradeTape />
+            </Box>
+
+            {/* Disclaimers */}
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600, fontStyle: 'italic' }}>
+                    Inferred from latest 13-F filings (quarterly, ~45-day lag)
+                </Typography>
+            </Box>
+
             {/* Header */}
             <Box sx={{ mb: 5, display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Box sx={{ p: 1.5, bgcolor: alpha(COLORS.equity, 0.15), color: COLORS.equity, borderRadius: 1, display: 'flex' }}>
@@ -363,12 +384,12 @@ const InstitutionalHoldingsWall: React.FC = () => {
                     </MotionCard>
                 </Grid>
 
-                {/* Col 3: Sector Rotation Heatmap */}
+                {/* Col 3: Sector Flow Heatmap */}
                 <Grid item xs={12} lg={4}>
                     <MotionCard delay={0.4} className="h-full">
                         <Box sx={{ p: 4 }}>
                             <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 800, mb: 3, fontSize: '1rem', letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Globe size={18} className="text-blue-500" /> Sector Rotation Heatmap
+                                <Globe size={18} className="text-blue-500" /> Sector Flow Heatmap
                             </Typography>
                             <Box sx={{ overflowX: 'auto' }}>
                                 <Box sx={{ minWidth: 500, mb: 2 }}>
@@ -396,9 +417,11 @@ const InstitutionalHoldingsWall: React.FC = () => {
                                                 </Typography>
                                             </Box>
                                             {sectorsList.map(sector => {
-                                                const value = row.sectors[sector] || 0;
+                                                const cellData = row.sectors[sector] || { allocation: 0, delta: 0 };
+                                                const value = cellData.allocation;
+                                                const delta = cellData.delta;
                                                 return (
-                                                    <SectorCell key={`${row.fund}-${sector}`} value={value} max={maxSectorPct} />
+                                                    <SectorCell key={`${row.fund}-${sector}`} allocation={value} max={maxSectorPct} delta={delta} />
                                                 );
                                             })}
                                         </Box>
