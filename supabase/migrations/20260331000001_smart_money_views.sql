@@ -49,4 +49,4 @@ COMMENT ON COLUMN vw_smart_money_collective.total_aum IS 'Total AUM monitored (s
 COMMENT ON COLUMN vw_smart_money_collective.avg_equity IS 'Average equity allocation (%) across institutions';
 COMMENT ON COLUMN vw_smart_money_collective.risk_signal IS 'Collective risk posture: RISK_ON, RISK_OFF, NEUTRAL';
 COMMENT ON COLUMN vw_smart_money_collective.regime_label IS 'Regime classification based on z-score: BULLISH/BEARISH/NEUTRAL';
-COMMENT ON COLUMN vw_smart_money_collective.equity_z_score IS 'Z-score of equity allocation vs historical average';
+COMMENT ON COLUMN vw_smart_money_collective.avg_regime_z IS 'Z-score of equity allocation vs historical average';

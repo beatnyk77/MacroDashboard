@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box, Grid, Skeleton, alpha } from '@mui/material';
+import { Box, Grid, alpha, Typography } from '@mui/material';
 import {
-    TrendingUp, TrendingDown, Activity, Globe, Database, Shield,
-    BarChart3, GitCompare, Zap, Gauge, ChevronUp, ChevronDown, Minus
+    Activity, Globe, Shield,
+    BarChart3, GitCompare, Zap, ChevronUp, ChevronDown, Minus
 } from 'lucide-react';
 import {
-    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend, PieChart
+    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend, PieChart, Pie
 } from 'recharts';
 import { useSmartMoneyHoldings } from '@/hooks/useSmartMoneyHoldings';
 import { MotionCard } from '@/components/MotionCard';
@@ -88,7 +88,7 @@ const InstitutionCard: React.FC<{ data: any; history: any[] }> = ({ data, histor
     const trend = history.length >= 2 ? (latestEquity - history[history.length - 2].equity_pct) : 0;
 
     return (
-        <MotionCard delay={0.1} sx={{ height: '100%', p: 2.5, bgcolor: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <MotionCard delay={0.1} className="h-full p-[2.5rem] bg-[rgba(15,23,42,0.4)] border border-[rgba(255,255,255,0.05)]">
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                 <Box>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -100,7 +100,7 @@ const InstitutionCard: React.FC<{ data: any; history: any[] }> = ({ data, histor
                 </Box>
                 <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="body2" sx={{ fontWeight: 800, color: 'text.primary', fontFamily: 'monospace', fontSize: '1rem' }}>
-                        {formatNumber(data.total_aum, { notation: 'compact', compactDisplay: 'short' })}
+                        {formatNumber(data.total_aum, { notation: 'compact' })}
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.6rem' }}>
                         AUM
@@ -171,7 +171,6 @@ const InstitutionalHoldingsWall: React.FC = () => {
     const {
         institutions,
         collective,
-        topInstitutions,
         institutionCards,
         aggregatedTopHoldings,
         sectorsList,
@@ -226,7 +225,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
             {/* Row 1: Collective Regime + Stacked Allocation History */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid item xs={12} md={4}>
-                    <MotionCard sx={{ height: '100%' }}>
+                    <MotionCard className="h-full">
                         <Box sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, mb: 2, display: 'block', textTransform: 'uppercase' }}>
                                 Smart Money Regime
@@ -245,7 +244,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                     </MotionCard>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                    <MotionCard delay={0.1} sx={{ height: '100%' }}>
+                    <MotionCard delay={0.1} className="h-full">
                         <Box sx={{ p: 3 }}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 600, mb: 2, textTransform: 'uppercase', fontSize: '0.8rem' }}>
                                 Asset Allocation Trend (8 Quarters)
@@ -292,7 +291,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 {/* Col 1: Institution Cards */}
                 <Grid item xs={12} lg={4}>
-                    <MotionCard delay={0.2} sx={{ height: '100%' }}>
+                    <MotionCard delay={0.2} className="h-full">
                         <Box sx={{ p: 3 }}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 700, mb: 2, textTransform: 'uppercase', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <Activity size={14} /> Key Institutions
@@ -313,7 +312,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
 
                 {/* Col 2: Top Holdings Concentration */}
                 <Grid item xs={12} lg={4}>
-                    <MotionCard delay={0.3} sx={{ height: '100%' }}>
+                    <MotionCard delay={0.3} className="h-full">
                         <Box sx={{ p: 3 }}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 700, mb: 2, textTransform: 'uppercase', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <BarChart3 size={14} /> Top Holdings Concentration
@@ -325,13 +324,13 @@ const InstitutionalHoldingsWall: React.FC = () => {
                                         <YAxis type="category" dataKey="ticker" tick={{ fill: '#94a3b8', fontSize: 9, fontFamily: 'monospace' }} width={75} />
                                         <Tooltip
                                             contentStyle={{ background: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontFamily: 'monospace', fontSize: 10 }}
-                                            formatter={(value: number, name: string, props: any) => [
+                                            formatter={(value: number, _name: string, props: any) => [
                                                 `$${(value/1e9).toFixed(2)}B (${props.payload.concentration_contribution.toFixed(1)}%)`,
                                                 props.payload.name || props.payload.ticker
                                             ]}
                                         />
                                         <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                                            {aggregatedTopHoldings.slice(0, 12).map((entry, index) => (
+                                            {aggregatedTopHoldings.slice(0, 12).map((_entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={`hsl(${210 + (index * 15)}, 70%, 60%)`} />
                                             ))}
                                         </Bar>
@@ -344,7 +343,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
 
                 {/* Col 3: Sector Rotation Heatmap */}
                 <Grid item xs={12} lg={4}>
-                    <MotionCard delay={0.4} sx={{ height: '100%' }}>
+                    <MotionCard delay={0.4} className="h-full">
                         <Box sx={{ p: 3 }}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 700, mb: 2, textTransform: 'uppercase', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <Globe size={14} /> Sector Rotation Heatmap
@@ -392,7 +391,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
             {/* Row 3: Benchmark Comparisons & Signals */}
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                    <MotionCard delay={0.5}>
+                    <MotionCard delay={0.5} className="h-full">
                         <Box sx={{ p: 3 }}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 700, mb: 2, textTransform: 'uppercase', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <GitCompare size={14} /> Benchmark Relative Performance (Avg QoQ)
@@ -422,7 +421,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                     </MotionCard>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <MotionCard delay={0.6}>
+                    <MotionCard delay={0.6} className="h-full">
                         <Box sx={{ p: 3, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: alpha(riskSignal === 'RISK_ON' ? COLORS.bull : riskSignal === 'RISK_OFF' ? COLORS.bear : COLORS.neutral, 0.05) }}>
                             <Box sx={{ textAlign: 'center' }}>
                                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, mb: 1, display: 'block', textTransform: 'uppercase', fontSize: '0.8rem' }}>
