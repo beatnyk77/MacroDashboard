@@ -13,44 +13,58 @@ export const GlossaryTermPage: React.FC = () => {
         return <Navigate to="/glossary" replace />;
     }
 
+    // Build enhanced JSON-LD for individual term
+    const termJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "DefinedTerm",
+        "@id": `https://graphiquestor.com/glossary/${termData.slug}#definedterm`,
+        "name": termData.term,
+        "description": termData.definition,
+        "url": `https://graphiquestor.com/glossary/${termData.slug}`,
+        "inDefinedTermSet": {
+            "@type": "DefinedTermSet",
+            "name": "GraphiQuestor Macro Intelligence Glossary",
+            "url": "https://graphiquestor.com/glossary"
+        },
+        "category": termData.category,
+        "identifier": termData.id,
+        "termCode": termData.slug,
+        "dateModified": "2026-03-31",
+        ...(termData.relatedMetrics && termData.relatedMetrics.length > 0 && {
+            "relatedMetrics": termData.relatedMetrics
+        })
+    };
+
+    // BreadcrumbList schema
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://graphiquestor.com"
+        }, {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Glossary",
+            "item": "https://graphiquestor.com/glossary"
+        }, {
+            "@type": "ListItem",
+            "position": 3,
+            "name": termData.term,
+            "item": `https://graphiquestor.com/glossary/${termData.slug}`
+        }]
+    };
+
     return (
         <Box sx={{ py: 8, minHeight: '100vh' }}>
             <SEOManager
                 title={`${termData.term} - Macro Concept Definition`}
                 description={termData.definition.substring(0, 160) + '...'}
                 keywords={[termData.term, termData.category, "Macro Definition", "Institutional Finance Glossary"]}
-                jsonLd={{
-                    "@context": "https://schema.org",
-                    "@type": "DefinedTerm",
-                    "name": termData.term,
-                    "description": termData.definition,
-                    "inDefinedTermSet": "https://graphiquestor.com/glossary"
-                }}
+                jsonLd={[termJsonLd, breadcrumbJsonLd]}
             />
-
-            {/* Breadcrumb Schema */}
-            <script type="application/ld+json">
-                {JSON.stringify({
-                    "@context": "https://schema.org",
-                    "@type": "BreadcrumbList",
-                    "itemListElement": [{
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Home",
-                        "item": "https://graphiquestor.com"
-                    }, {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Glossary",
-                        "item": "https://graphiquestor.com/glossary"
-                    }, {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": termData.term,
-                        "item": `https://graphiquestor.com/glossary/${termData.slug}`
-                    }]
-                })}
-            </script>
 
             <Container maxWidth="md">
                 <Button

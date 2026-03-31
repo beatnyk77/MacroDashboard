@@ -18,12 +18,35 @@ export const GlossaryIndexPage: React.FC = () => {
         return matchesSearch && matchesCategory;
     }).sort((a, b) => a.term.localeCompare(b.term));
 
+    // Build comprehensive JSON-LD for the glossary set
+    const glossarySetJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "DefinedTermSet",
+        "name": "GraphiQuestor Macro Intelligence Glossary",
+        "description": "A comprehensive institutional-grade dictionary of macro-economic, monetary policy, and geopolitical terminology used in global capital markets.",
+        "url": "https://graphiquestor.com/glossary",
+        "hasDefinedTerm": glossaryData.map(term => ({
+            "@type": "DefinedTerm",
+            "name": term.term,
+            "description": term.definition,
+            "url": `https://graphiquestor.com/glossary/${term.slug}`,
+            "inDefinedTermSet": "https://graphiquestor.com/glossary",
+            "category": term.category,
+            "identifier": term.id,
+            "termCode": term.slug,
+            ...(term.relatedMetrics && term.relatedMetrics.length > 0 && {
+                "relatedMetrics": term.relatedMetrics
+            })
+        }))
+    };
+
     return (
         <Box sx={{ py: 6, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
                 title="Macro Concepts Glossary"
                 description="Institutional definitions for macro liquidity, sovereign debt risk, and geo-economic terminology."
                 keywords={["Macro Concepts", "Liquidity Glossary", "Institutional Finance Dictionary", "Sovereign Debt Terms"]}
+                jsonLd={glossarySetJsonLd}
             />
 
             <Container maxWidth="lg">

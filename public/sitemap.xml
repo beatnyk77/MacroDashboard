@@ -1,171 +1,310 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Terminal (Homepage) - Core Entry Point -->
   <url>
     <loc>https://graphiquestor.com/</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>1.0</priority>
+    <changefreq>hourly</changefreq>
   </url>
+
+  <!-- Primary Macro Terminals -->
   <url>
-    <loc>https://graphiquestor.com/#debt-maturity-hero</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://graphiquestor.com/macro-observatory</loc>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.9</priority>
+    <changefreq>hourly</changefreq>
   </url>
-  <url>
-    <loc>https://graphiquestor.com/#liquidity-hero</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#india-pulse</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#thematic-labs</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#country-pulses</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#policy-geopolitics</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#sovereign-debt-stress</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#brics-dedollarization</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/#yield-curve-monitor</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/blog</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/regime-digest</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/methodology</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/glossary</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://graphiquestor.com/intel/india</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.9</priority>
+    <changefreq>hourly</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/intel/china</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.9</priority>
+    <changefreq>hourly</changefreq>
   </url>
-  <url>
-    <loc>https://graphiquestor.com/about</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/institutional</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
+
   <url>
     <loc>https://graphiquestor.com/india-equities</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.9</priority>
+    <changefreq>hourly</changefreq>
   </url>
+
   <url>
-    <loc>https://graphiquestor.com/api-access</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://graphiquestor.com/us-equities</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.9</priority>
+    <changefreq>hourly</changefreq>
   </url>
+
   <url>
-    <loc>https://graphiquestor.com/api-docs</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://graphiquestor.com/institutional</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.9</priority>
+    <changefreq>daily</changefreq>
   </url>
+
+  <!-- Macro Intelligence Labs -->
   <url>
     <loc>https://graphiquestor.com/labs/us-macro-fiscal</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/labs/india</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/labs/china</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/labs/de-dollarization-gold</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/labs/energy-commodities</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/labs/sovereign-stress</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
   </url>
+
   <url>
     <loc>https://graphiquestor.com/labs/shadow-system</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-03-31</lastmod>
     <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/labs/sustainable-finance-climate-risk</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/labs/china-15th-fyp</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- Specialized Tools & Terminals -->
+  <url>
+    <loc>https://graphiquestor.com/treasury-hedging</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/weekly-narrative</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/india-equities/fii-dii</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- India Equities Tool Pages (Pattern-based) -->
+  <url>
+    <loc>https://graphiquestor.com/india-equities/screener</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/india-equities/bulk-block</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/india-equities/shorts</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/india-equities/deals</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/india-equities/ipos</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/india-equities/quarterly-aggregator</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- US Equities Tool Pages (Pattern-based) -->
+  <url>
+    <loc>https://graphiquestor.com/us-equities/earnings</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- Company Detail Pages (Dynamic) -->
+  <url>
+    <loc>https://graphiquestor.com/india-equities/equity/</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/us-equities/equity/</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.7</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- Content & Documentation -->
+  <url>
+    <loc>https://graphiquestor.com/methodology</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/blog</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.6</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Blog article archive (example pattern) -->
+  <url>
+    <loc>https://graphiquestor.com/blog/</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.5</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/regime-digest</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.6</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Regime digest archive by period -->
+  <url>
+    <loc>https://graphiquestor.com/regime-digest/</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.5</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/glossary</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Individual glossary terms (dynamic) -->
+  <url>
+    <loc>https://graphiquestor.com/glossary/</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.4</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/about</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.4</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- API & Developer Resources -->
+  <url>
+    <loc>https://graphiquestor.com/api-access</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/api-docs</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://graphiquestor.com/terms</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.3</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/privacy</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.3</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <!-- Admin & Monitoring (No-index recommended in robots.txt) -->
+  <url>
+    <loc>https://graphiquestor.com/admin</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.2</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <url>
+    <loc>https://graphiquestor.com/admin/data-health</loc>
+    <lastmod>2026-03-31</lastmod>
+    <priority>0.2</priority>
+    <changefreq>daily</changefreq>
   </url>
 </urlset>
