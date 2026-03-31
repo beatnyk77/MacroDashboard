@@ -1,9 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
-import { runIngestion, IngestionContext } from '../_shared/logging.ts'
-import { withTimeout } from '../_shared/timeout-guard.ts'
-
-const EIA_API_BASE = "https://api.eia.gov/v2";
-const FRED_API_BASE = "https://api.stlouisfed.org/fred";
+import { runIngestion, IngestionContext } from '@shared/logging.ts'
+import { withTimeout } from '@shared/timeout-guard.ts'
 
 // Transit days by origin region for heuristic tanker pipeline
 const TRANSIT_DAYS_BY_ORIGIN: Record<string, number> = {
@@ -31,17 +28,12 @@ const CHOKEPOINT_EXPOSED_ORIGINS = new Set([
   'Saudi Arabia', 'Iraq', 'UAE', 'Kuwait', 'Iran', 'Qatar', 'Oman'
 ]);
 
-Deno.serve(async (req: Request) => {
+Deno.serve(async (_req: Request) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  return runIngestion(supabase, 'ingest-fuel-security-india', async (ctx: IngestionContext) => {
-    const eiaApiKey = Deno.env.get('EIA_API_KEY');
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
-
-    if (!eiaApiKey) throw new Error("Missing EIA_API_KEY");
-    if (!fredApiKey) throw new Error("Missing FRED_API_KEY");
+  return runIngestion(supabase, 'ingest-fuel-security-india', async (_ctx: IngestionContext) => {
 
     const today = new Date().toISOString().split('T')[0];
     const stepLogs: any[] = [];
@@ -174,7 +166,7 @@ Deno.serve(async (req: Request) => {
 
       // Build pipeline: for each origin, estimate vessels en route
       const now = new Date();
-      const tankerIdCounter = 1;
+      let tankerIdCounter = 1;
 
       for (const [origin, volume] of importsByOrigin.entries()) {
         const share = volume / totalImportsMbbl;
@@ -231,7 +223,6 @@ Deno.serve(async (req: Request) => {
         geopoliticalRiskScore = Number(riskData.geopolitical_risk_score);
       } else {
         // Compute today's score from events table directly if view returns empty
-        const todayStr = new Date().toISOString().split('T')[0];
         const { data: events, error: eventsErr } = await supabase
           .from('geopolitical_risk_events')
           .select('chokepoint, severity')
