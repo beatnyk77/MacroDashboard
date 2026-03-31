@@ -388,7 +388,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                                         ))}
                                     </Box>
                                     {/* Data rows */}
-                                    {heatmapData.map((row, idx) => (
+                                    {heatmapData.map((row) => (
                                         <Box key={row.fund} sx={{ display: 'flex', gap: 1, mb: 1, flexWrap: 'nowrap' }}>
                                             <Box sx={{ width: 140, p: 1, textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', borderRight: '1px solid rgba(255,255,255,0.06)', pr: 2 }}>
                                                 <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '0.8125rem', fontFamily: 'monospace', letterSpacing: '-0.01em', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '120px' }}>
