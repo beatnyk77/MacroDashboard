@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 export interface FuelSecurityIndia {
@@ -33,26 +33,33 @@ export interface FuelSecurityIndia {
 }
 
 export const useFuelSecurityIndia = () => {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ['fuel_security_india'],
-    queryFn: async (): Promise<FuelSecurityIndia> => {
-      const { data, error } = await supabase
-        .from('fuel_security_clock_india')
-        .select('*')
-        .order('as_of_date', { ascending: false })
-        .limit(1)
-        .single();
+    queryFn: async (): Promise<FuelSecurityIndia | null> => {
+      try {
+        const { data, error } = await supabase
+          .from('fuel_security_clock_india')
+          .select('*')
+          .order('as_of_date', { ascending: false })
+          .limit(1)
+          .single();
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          throw new Error('No fuel security data available yet');
+        if (error) {
+          // PGRST116 = no rows found — handled as a valid "no data" state
+          if (error.code === 'PGRST116') {
+            return null;
+          }
+          console.error('Fuel Security Query error:', error);
+          return null;
         }
-        throw error;
-      }
 
-      return data as FuelSecurityIndia;
+        return data as FuelSecurityIndia;
+      } catch (err) {
+        console.error('Unexpected Fuel Security error:', err);
+        return null;
+      }
     },
     staleTime: 1000 * 60 * 60, // 1 hour
-    retry: 2,
+    retry: 1,
   });
 };

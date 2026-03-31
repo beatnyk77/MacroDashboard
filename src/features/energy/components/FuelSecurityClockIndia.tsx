@@ -79,12 +79,8 @@ export const FuelSecurityClockIndia: React.FC = () => {
 
   // Merge API data with fallback if API data is empty or error
   const { data, isFallback } = React.useMemo(() => {
-    if (isError) {
-      console.warn('Fuel Security API error, using fallback data');
-      return { data: MOCK_DATA, isFallback: true };
-    }
-
-    if (!apiData) {
+    if (isError || !apiData) {
+      if (isError) console.warn('Fuel Security API error, using fallback data');
       return { data: MOCK_DATA, isFallback: true };
     }
 
@@ -100,7 +96,11 @@ export const FuelSecurityClockIndia: React.FC = () => {
   }, [apiData, isError]);
 
   const projData = useMemo(() =>
-    projectionData(data.scenario_baseline_days, data.scenario_disruption_days, data.scenario_rationing_days),
+    projectionData(
+      data.scenario_baseline_days ?? MOCK_DATA.scenario_baseline_days, 
+      data.scenario_disruption_days ?? MOCK_DATA.scenario_disruption_days, 
+      data.scenario_rationing_days ?? MOCK_DATA.scenario_rationing_days
+    ),
     [data]
   );
 
@@ -108,10 +108,15 @@ export const FuelSecurityClockIndia: React.FC = () => {
   const tankersWithDays = useMemo(() => {
     // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
-    return data.tanker_pipeline_json.slice(0, 15).map(tanker => ({
-      ...tanker,
-      daysRemaining: Math.max(0, Math.ceil((new Date(tanker.eta).getTime() - now) / (1000 * 60 * 60 * 24)))
-    }));
+    const pipeline = Array.isArray(data.tanker_pipeline_json) ? data.tanker_pipeline_json : [];
+    
+    return pipeline.slice(0, 15).map(tanker => {
+      const etaTime = tanker.eta ? new Date(tanker.eta).getTime() : 0;
+      return {
+        ...tanker,
+        daysRemaining: etaTime > 0 ? Math.max(0, Math.ceil((etaTime - now) / (1000 * 60 * 60 * 24))) : 0
+      };
+    });
   }, [data.tanker_pipeline_json]);
 
   return (
