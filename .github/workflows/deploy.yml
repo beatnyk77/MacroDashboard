@@ -34,5 +34,5 @@ jobs:
         # Vite needs these at build time for import.meta.env
         # Using fallback values for CI builds where secrets might not be set
         # Netlify will inject the real values during its own build
-        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+        VITE_SUPABASE_URL: "${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}"
+        VITE_SUPABASE_ANON_KEY: "${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}"

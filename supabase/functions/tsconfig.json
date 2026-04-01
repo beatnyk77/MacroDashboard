@@ -3,9 +3,7 @@
         "target": "ESNext",
         "module": "ESNext",
         "lib": [
-            "ESNext",
-            "deno.ns",
-            "deno.window"
+            "ESNext"
         ],
         "strict": true,
         "noEmit": true,
