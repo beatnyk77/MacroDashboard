@@ -53,7 +53,7 @@ export const CompactIndiaCard: React.FC = () => {
             <div className="mt-8 pt-6 border-t border-white/5 flex justify-end">
                 <Button
                     variant="text"
-                    href="/labs/india"
+                    href="/intel/india"
                     endIcon={<ArrowRight size={16} />}
                     sx={{ color: '#3b82f6', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}
                 >

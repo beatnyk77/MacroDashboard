@@ -18,7 +18,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/comp
 const labs = [
     { title: 'US Corporate Terminal', path: '/us-equities', icon: <Building2 size={24} />, color: 'blue', desc: 'SEC EDGAR fundamentals, whale tracking & insider conviction' },
     { title: 'US Macro & Fiscal', path: '/labs/us-macro-fiscal', icon: <ShieldAlert size={24} />, color: 'blue', desc: 'Sovereign maturity walls & auction demand dynamics' },
-    { title: 'India Lab', path: '/labs/india', icon: <Activity size={24} />, color: 'emerald', desc: 'RBI credit impulse & state-side fiscal telemetry' },
+    { title: 'India Intelligence Hub', path: '/intel/india', icon: <Activity size={24} />, color: 'emerald', desc: 'RBI credit impulse & state-side fiscal telemetry' },
     { title: 'China Macro Hub', path: '/intel/china', icon: <Globe size={24} />, color: 'rose', desc: 'PBoC liquidity cycles & de-dollarization flows' },
     { title: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Coins size={24} />, color: 'amber', desc: 'Hard money regimes & reserve asset multi-polarity' },
     { title: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Fuel size={24} />, color: 'orange', desc: 'Strategic supply chains & oil-rupee settlement pulse' },

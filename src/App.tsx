@@ -39,7 +39,6 @@ const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(
 
 // Labs
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
-const IndiaLab = lazy(() => import('@/pages/labs/IndiaLab').then(module => ({ default: module.IndiaLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
 const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLab').then(module => ({ default: module.EnergyCommoditiesLab })));
 const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').then(module => ({ default: module.SovereignStressLab })));
@@ -100,7 +99,7 @@ function App() {
 
                                         {/* Labs */}
                                         <Route path="/labs/us-macro-fiscal" element={<USMacroFiscalLab />} />
-                                        <Route path="/labs/india" element={<IndiaLab />} />
+                                        <Route path="/labs/india" element={<Navigate to="/intel/india" replace />} />
                                         <Route path="/labs/china" element={<Navigate to="/intel/china" replace />} />
                                         <Route path="/labs/de-dollarization-gold" element={<DeDollarizationGoldLab />} />
                                         <Route path="/labs/energy-commodities" element={<EnergyCommoditiesLab />} />

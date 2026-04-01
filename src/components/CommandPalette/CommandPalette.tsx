@@ -97,7 +97,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
 
                     <Command.Group heading="Thematic Labs" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
                         <Item
-                            onSelect={() => runCommand(() => navigate('/labs/india'))}
+                            onSelect={() => runCommand(() => navigate('/intel/india'))}
                             icon={<Flag className="h-4 w-4 text-emerald-500" />}
                         >
                             India Intelligence Lab

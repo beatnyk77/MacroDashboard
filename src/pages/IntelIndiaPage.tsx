@@ -4,7 +4,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, Building2 } from 'lucide-react';
+import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, Building2, BarChart3, MapPin, Landmark, ArrowRightLeft } from 'lucide-react';
 
 // Lazy-load heavy sub-sections
 const IndiaMacroPulseSection = lazy(() =>
@@ -28,17 +28,39 @@ const IndiaCreditCycleClock = lazy(() =>
 const IndiaDebtMaturityWall = lazy(() =>
     import('@/features/dashboard/components/rows/IndiaDebtMaturityWall').then(m => ({ default: m.IndiaDebtMaturityWall }))
 );
+// Migrated from IndiaLab
+const FIIDIIMonitorSection = lazy(() =>
+    import('@/features/dashboard/components/sections/FIIDIIMonitorSection').then(m => ({ default: m.FIIDIIMonitorSection }))
+);
+const RBIFXDefenseMonitor = lazy(() =>
+    import('@/features/dashboard/components/rows/RBIFXDefenseMonitor').then(m => ({ default: m.RBIFXDefenseMonitor }))
+);
+const RBIMoneyMarketMonitor = lazy(() =>
+    import('@/features/dashboard/components/sections/RBIMoneyMarketMonitor').then(m => ({ default: m.RBIMoneyMarketMonitor }))
+);
+const IndiaDigitizationPremiumMonitor = lazy(() =>
+    import('@/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor').then(m => ({ default: m.IndiaDigitizationPremiumMonitor }))
+);
+const IndiaFiscalAllocationTracker = lazy(() =>
+    import('@/features/dashboard/components/rows/IndiaFiscalAllocationTracker').then(m => ({ default: m.IndiaFiscalAllocationTracker }))
+);
+const StateFiscalHeatmap = lazy(() =>
+    import('@/features/dashboard/components/rows/StateFiscalHeatmap').then(m => ({ default: m.StateFiscalHeatmap }))
+);
 
 const SectionSkeleton = () => (
     <div className="h-[300px] w-full rounded-3xl bg-white/[0.02] animate-pulse" />
 );
 
 const SIGNAL_CARDS = [
-    { icon: Activity, label: 'Macro Pulse', desc: 'IIP, WPI, gold accumulation & BOP stress', color: 'blue' },
-    { icon: BarChart2, label: 'Credit Cycle', desc: 'RBI credit impulse & banking stress clock', color: 'amber' },
-    { icon: TrendingUp, label: 'Fiscal Health', desc: 'Interest payments / revenue receipts ratio', color: 'emerald' },
-    { icon: Zap, label: 'Liquidity Stress', desc: 'Rupee liquidity surplus/deficit & SOFR spread', color: 'rose' },
-    { icon: Shield, label: 'Debt Maturity Wall', desc: 'G-Sec rollover risk by coupon bucket', color: 'purple' },
+    { icon: Activity,   label: 'Macro Pulse',    desc: 'IIP, WPI, gold accumulation & BOP stress',         color: 'blue',    anchor: '#macro' },
+    { icon: BarChart2,  label: 'Credit Cycle',   desc: 'RBI credit impulse & banking stress clock',         color: 'amber',   anchor: '#credit' },
+    { icon: TrendingUp, label: 'Fiscal Health',  desc: 'Interest payments / revenue receipts ratio',        color: 'emerald', anchor: '#fiscal' },
+    { icon: Zap,        label: 'Liquidity',      desc: 'Rupee liquidity surplus/deficit & SOFR spread',     color: 'rose',    anchor: '#liquidity' },
+    { icon: Shield,     label: 'Debt Wall',      desc: 'G-Sec rollover risk by coupon bucket',              color: 'purple',  anchor: '#debt' },
+    { icon: BarChart3,  label: 'RBI FX Defense', desc: 'Forex reserves & RBI intervention posture',         color: 'blue',    anchor: '#monetary' },
+    { icon: MapPin,     label: 'State Fiscal',   desc: 'Capex vs revenue expenditure by state',             color: 'emerald', anchor: '#state-fiscal' },
+    { icon: Landmark,   label: 'Money Market',   desc: 'Daily RBI money market terminal',                   color: 'amber',   anchor: '#monetary' },
 ];
 
 const colorMap: Record<string, string> = {
@@ -194,15 +216,28 @@ export const IntelIndiaPage: React.FC = () => {
 
                     {/* Fast Signal Bar */}
                     <div className="flex flex-wrap gap-3 mt-6">
-                        <a href="#macro" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase hover:bg-blue-500/20 transition-colors">
-                            Macro Pulse <ArrowRight size={12} />
-                        </a>
-                        <a href="#fiscal" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-white/60 text-xs font-black uppercase tracking-uppercase hover:bg-white/10 transition-colors">
-                            Fiscal Stress <ArrowRight size={12} />
-                        </a>
-                        <a href="#credit" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-white/60 text-xs font-black uppercase tracking-uppercase hover:bg-white/10 transition-colors">
-                            Credit Cycle <ArrowRight size={12} />
-                        </a>
+                        {[
+                            { href: '#macro',        label: 'Macro Pulse',    active: true },
+                            { href: '#market',       label: 'FII/DII Flows' },
+                            { href: '#fiscal',       label: 'Fiscal Stress' },
+                            { href: '#credit',       label: 'Credit Cycle' },
+                            { href: '#monetary',     label: 'RBI & FX' },
+                            { href: '#state-fiscal', label: 'State Fiscal' },
+                            { href: '#digital',      label: 'Digital Premium' },
+                            { href: '#debt',         label: 'Debt Wall' },
+                        ].map(({ href, label, active }) => (
+                            <a
+                                key={href}
+                                href={href}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors ${
+                                    active
+                                        ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20'
+                                        : 'bg-white/5 border border-white/12 text-white/60 hover:bg-white/10'
+                                }`}
+                            >
+                                {label} <ArrowRight size={10} />
+                            </a>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -215,12 +250,12 @@ export const IntelIndiaPage: React.FC = () => {
                     transition={{ duration: 0.7, delay: 0.2 }}
                     className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
                 >
-                    {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color }) => (
-                        <div key={label} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-default`}>
+                    {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color, anchor }) => (
+                        <a key={label} href={anchor} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-pointer hover:scale-[1.02] transition-all duration-200`}>
                             <Icon size={18} className="mb-3 opacity-80" />
                             <p className="text-xs font-black uppercase tracking-uppercase mb-1">{label}</p>
                             <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
-                        </div>
+                        </a>
                     ))}
                 </motion.div>
             </div>
@@ -238,11 +273,20 @@ export const IntelIndiaPage: React.FC = () => {
 
                 <div className="border-t border-white/5" />
 
-                {/* India Market Pulse */}
+                {/* India Market Pulse + FII/DII (from Lab) */}
                 <section id="market">
                     <SectionErrorBoundary name="India Market Pulse">
                         <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaMarketPulseRow />
+                            <div className="space-y-16">
+                                <IndiaMarketPulseRow />
+                                <div className="pt-12 border-t border-white/5">
+                                    <div className="flex items-center gap-3 mb-10">
+                                        <ArrowRightLeft className="text-blue-400" size={24} />
+                                        <h2 className="text-xl font-black uppercase tracking-heading text-white">FII / DII Flow Monitor</h2>
+                                    </div>
+                                    <FIIDIIMonitorSection />
+                                </div>
+                            </div>
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
@@ -301,6 +345,87 @@ export const IntelIndiaPage: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* RBI Monetary & FX Defense (from Lab) */}
+                <section id="monetary">
+                    <div className="space-y-16">
+                        <div>
+                            <div className="flex items-center gap-3 mb-10">
+                                <BarChart3 className="text-emerald-500" size={24} />
+                                <h2 className="text-xl font-black uppercase tracking-heading text-white">RBI FX Defense Monitor</h2>
+                            </div>
+                            <SectionErrorBoundary name="RBI FX Defense">
+                                <Suspense fallback={<SectionSkeleton />}>
+                                    <RBIFXDefenseMonitor />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
+                        <div className="pt-12 border-t border-white/5">
+                            <div className="flex items-center gap-3 mb-10">
+                                <Landmark className="text-blue-500" size={24} />
+                                <h2 className="text-xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
+                            </div>
+                            <SectionErrorBoundary name="India Money Market">
+                                <Suspense fallback={<SectionSkeleton />}>
+                                    <RBIMoneyMarketMonitor />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
+                    </div>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* State-Level Fiscal (from Lab) */}
+                <section id="state-fiscal">
+                    <div className="flex items-center gap-3 mb-10">
+                        <MapPin className="text-blue-500" size={24} />
+                        <h2 className="text-xl font-black uppercase tracking-heading text-white">State-Level Fiscal Intelligence</h2>
+                    </div>
+                    <SectionErrorBoundary name="State Fiscal">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <div className="space-y-16">
+                                <IndiaFiscalAllocationTracker />
+                                <StateFiscalHeatmap />
+                            </div>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Digitization Premium (from Lab) */}
+                <section id="digital">
+                    <div className="flex items-center gap-3 mb-10">
+                        <Zap className="text-blue-400" size={24} />
+                        <h2 className="text-xl font-black uppercase tracking-heading text-white">India Stack — Digitization Premium</h2>
+                    </div>
+                    <SectionErrorBoundary name="India Digitization Premium">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <IndiaDigitizationPremiumMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Structural Analysis Article (from Lab) */}
+                <article className="p-12 bg-white/[0.02] border border-white/5 rounded-[2.5rem]" aria-label="Structural Analysis of India Macro Resilience">
+                    <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: India's Macro Resilience &amp; Fiscal Quality</h3>
+                    <div className="space-y-6 text-sm text-muted-foreground/60 leading-relaxed font-medium">
+                        <p>
+                            The <strong>India Intelligence Hub</strong> monitors highly granular, state-level macroeconomic indicators to evaluate the fundamental structural transition of the Indian economy. Unlike traditional emerging market (EM) trackers that rely on lagging, aggregated national data, GraphiQuestor connects directly to the <a href="/glossary/mospi" className="text-blue-400 hover:underline transition-colors">Ministry of Statistics and Programme Implementation (MoSPI)</a>. This zero-lag integration enables real-time observation of the Index of Industrial Production (IIP), Consumer Price Index (CPI), and capital expenditure velocities across all 28 states.
+                        </p>
+                        <p>
+                            A critical differentiator in India's sovereign health is the quality of its fiscal expenditure. The <em>State Fiscal Heatmap</em> tracks the ratio of productive capital expenditure (Capex) against recurring revenue expenditure (subsidies and freebies). States demonstrating high Capex velocity generally command a lower structural risk premium and drive the nation's broader industrial upgrading capacity.
+                        </p>
+                        <p>
+                            Furthermore, the hub actively monitors the Reserve Bank of India's (RBI) FX defense posture. By combining Balance of Payments (BOP) pressure gauges with <a href="/glossary/stealth-qe" className="text-blue-400 hover:underline transition-colors">liquidity stress monitors</a>, institutional investors can pinpoint precise entry and exit windows for Indian equities and sovereign debt, insulated from short-term narrative noise.
+                        </p>
+                    </div>
+                </article>
             </div>
 
             <InstitutionalFooter />
