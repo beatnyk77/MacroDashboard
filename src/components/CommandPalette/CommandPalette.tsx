@@ -103,7 +103,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             India Intelligence Lab
                         </Item>
                         <Item
-                            onSelect={() => runCommand(() => navigate('/labs/china'))}
+                            onSelect={() => runCommand(() => navigate('/intel/china'))}
                             icon={<Flag className="h-4 w-4 text-rose-500" />}
                         >
                             China Macro Lab

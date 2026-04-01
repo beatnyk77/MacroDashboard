@@ -25,6 +25,9 @@ const ChinaEnergyGridPanel = lazy(() =>
 const ChinaProprietarySignals = lazy(() =>
     import('@/features/dashboard/components/sections/ChinaProprietarySignals').then(m => ({ default: m.ChinaProprietarySignals }))
 );
+const InstitutionalInfluenceSection = lazy(() => 
+    import('@/features/dashboard/components/sections/InstitutionalInfluenceSection').then(m => ({ default: m.InstitutionalInfluenceSection }))
+);
 const China15thFYPTeaserRow = lazy(() =>
     import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow }))
 );
@@ -316,7 +319,7 @@ export const IntelChinaPage: React.FC = () => {
 
                 <div className="border-t border-white/5" />
 
-                {/* De-Dollarization Context (existing) */}
+                {/* De-Dollarization Context */}
                 <section id="dedollarization">
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
@@ -335,8 +338,39 @@ export const IntelChinaPage: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Added from Labs: Institutional Influence Section */}
+                        <div className="mt-16">
+                            <div className="flex items-center gap-3 mb-10">
+                                <h2 className="text-xl font-black uppercase tracking-heading text-white">Spheres of Institutional Influence</h2>
+                            </div>
+                            <SectionErrorBoundary name="Institutional Influence">
+                                <Suspense fallback={<SectionSkeleton />}>
+                                    <InstitutionalInfluenceSection />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                        </div>
                     </div>
                 </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* Added from Labs: Structural Analysis Article */}
+                <article className="p-12 bg-white/[0.02] border border-white/5 rounded-[2.5rem]" aria-label="Structural Analysis of China's Systemic Pivot">
+                    <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: China's Economic Pivot & Global Influence</h3>
+                    <div className="space-y-6 text-sm text-muted-foreground/60 leading-relaxed font-medium">
+                        <p>
+                            The <strong>China Macro Hub</strong> tracks the deliberate structural deceleration of China's property sector alongside the corresponding acceleration in high-quality manufacturing, green technology, and sovereign influence architecture. Analyzing the People's Bank of China (PBoC) monetary plumbing and credit impulse cycles provides leading indicators for global commodity demand and emerging market liquidity.
+                        </p>
+                        <p>
+                            A key focus of this hub is the tracking of <a href="/glossary/de-dollarization" className="text-blue-400 hover:underline transition-colors">De-Dollarization</a> vectors and the expansion of parallel settlement infrastructure like the <a href="/glossary/mbridge" className="text-blue-400 hover:underline transition-colors">mBridge</a> network. By monitoring the spheres of institutional influence, including BRICS+ trade alignments and bilateral swap lines, the timeline for multi-polar reserve optionality becomes quantifiable.
+                        </p>
+                        <p>
+                            The shift from export-led accumulation to domestic consumption and strategic industrial autonomy is modeled through our proprietary alpha signals, visualizing the long-term relative growth rate of the Chinese economy against developed market peers.
+                        </p>
+                    </div>
+                </article>
+
             </div>
 
             <InstitutionalFooter />

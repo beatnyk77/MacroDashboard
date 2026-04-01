@@ -22,6 +22,7 @@ const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/
 
 // 2. SOVEREIGN STRESS
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
+const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/components/sections/TreasurySnapshotSection').then(m => ({ default: m.TreasurySnapshotSection })));
@@ -124,6 +125,20 @@ export const Terminal: React.FC = () => {
                         <SectionErrorBoundary name="Sovereign Risk Matrix">
                             <Suspense fallback={<LoadingFallback />}>
                                 <SovereignRiskMatrix />
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        <SectionErrorBoundary name="G20 Convergence">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                        <CardTitle className="text-sm uppercase italic text-blue-400">Proprietary Signal: G20 GDP Per Capita Convergence</CardTitle>
+                                        <LiveStatusIndicator source="World Bank / IMF" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <G20GdpPerCapitaConvergence />
+                                    </CardContent>
+                                </Card>
                             </Suspense>
                         </SectionErrorBoundary>
 

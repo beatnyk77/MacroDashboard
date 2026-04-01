@@ -60,7 +60,7 @@ export const CompactChinaCard: React.FC = () => {
             <div className="mt-8 pt-6 border-t border-white/5 flex justify-end">
                 <Button
                     variant="text"
-                    href="/labs/china"
+                    href="/intel/china"
                     endIcon={<ArrowRight size={16} />}
                     sx={{ color: '#f43f5e', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}
                 >
