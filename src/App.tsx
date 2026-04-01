@@ -35,6 +35,7 @@ const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(modu
 const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
 const CorporateTreasuryHedging = lazy(() => import('@/pages/CorporateTreasuryHedging').then(module => ({ default: module.CorporateTreasuryHedging })));
 const IndiaFlowPulsePage = lazy(() => import('@/pages/IndiaFlowPulsePage').then(module => ({ default: module.IndiaFlowPulsePage })));
+const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
 
 // Labs
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
@@ -96,6 +97,7 @@ function App() {
                                         <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
                                         <Route path="/treasury-hedging" element={<CorporateTreasuryHedging />} />
                                         <Route path="/india-equities/fii-dii" element={<IndiaFlowPulsePage />} />
+                                        <Route path="/countries/:iso" element={<CountryProfilePage />} />
 
                                         {/* Labs */}
                                         <Route path="/labs/us-macro-fiscal" element={<USMacroFiscalLab />} />

@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
+import { createClient } from '@supabase/supabase-js'
 
 // Alpha Vantage rate limit: 5 calls per minute free tier => 12 seconds between calls
 const ALPHA_VANTAGE_DELAY_MS = parseInt(Deno.env.get('ALPHA_VANTAGE_DELAY_MS') || '12000');
@@ -67,7 +67,7 @@ async function fetchBenchmarkReturns(alphaVantageKey: string): Promise<{spy: num
         try {
             const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${ticker}&apikey=${alphaVantageKey}`;
             const res = await fetch(url);
-            const data = await res.json();
+            const data = (await res.json()) as any;
             const ts = data['Monthly Time Series'];
             if (!ts) {
                 console.warn(`No time series for ${ticker}`);
@@ -285,7 +285,7 @@ async function processInstitutional13F(client: any) {
                         ...holding,
                         ticker,
                         sector,
-                        name
+                        name: name || undefined
                     });
                 } else {
                     sectorMapping['Other'] = (sectorMapping['Other'] || 0) + (holding.value / totalValue) * 100;
@@ -533,7 +533,7 @@ async function processInstitutional13F(client: any) {
                 try {
                     const priceUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${trade.ticker}&apikey=${alphaVantageKey}`;
                     const res = await fetch(priceUrl);
-                    const data = await res.json();
+                    const data = (await res.json()) as any;
                     const ts = data['Monthly Time Series'];
                     if (ts) {
                         const dates = Object.keys(ts).sort().reverse();

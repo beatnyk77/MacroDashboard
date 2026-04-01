@@ -3,7 +3,9 @@
         "target": "ESNext",
         "module": "ESNext",
         "lib": [
-            "ESNext"
+            "ESNext",
+            "deno.ns",
+            "deno.window"
         ],
         "strict": true,
         "noEmit": true,
@@ -18,6 +20,9 @@
             ],
             "@std/assert": [
                 "https://deno.land/std@0.211.0/assert/mod.ts"
+            ],
+            "@shared/*": [
+                "./_shared/*"
             ]
         }
     },

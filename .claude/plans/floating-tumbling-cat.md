@@ -1,9 +1,9 @@
 # Country Pages Dynamic Route Implementation Plan
 
 ## Context
-GraphiQuestor needs programmatic country pages for SEO and institutional reference. This plan creates the Next.js dynamic route template at `/countries/[iso]` that displays 33 specific macro metrics for each country, leveraging existing patterns from the codebase.
+GraphiQuestor needs programmatic country pages for SEO and institutional reference. This plan creates the dynamic route template at `/countries/:iso` that displays 33 specific macro metrics for each country, leveraging existing patterns from the codebase.
 
-**Key Discovery**: The codebase uses Next.js Pages Router (not App Router), with react-router-dom for routing. Pages live in `src/pages/`. Existing patterns include `GlossaryTermPage.tsx` and `IntelIndiaPage.tsx`. The UI uses Tailwind CSS with glassmorphic dark terminal aesthetic, shadcn/ui components, and the existing `MetricCard` component for metric display. Data health is managed via `getStaleness` hook and provenance tracking.
+**Key Discovery**: The codebase is a **Vite-based Single Page Application (SPA)** using **React Router (v7)** for routing. Pages live in `src/pages/`. Next.js patterns (like `getStaticProps`) are not applicable. The UI uses Tailwind CSS with a glassmorphic dark terminal aesthetic, shadcn/ui components, and the existing `MetricCard` component. Data health is managed via `getStaleness` and presence of a `MetricCard` logic.
 
 ---
 
@@ -27,19 +27,18 @@ GraphiQuestor needs programmatic country pages for SEO and institutional referen
 - Update pattern: Upsert on `(iso, metric_key)` to ensure idempotency
 
 ### Page Structure
-- Route: `/countries/[iso]` (Pages Router => `src/pages/countries/[iso]/page.tsx`)
-- Server Component: Fetches latest metric values for given ISO from `country_metrics` (via view or direct query)
-- Uses existing `MetricCard` component in a dense grid layout
-- Displays regime badge (from macro-data-health staleness logic)
-- Includes SEO metadata with JSON-LD Country schema
-- Flags gaps with "DEGRADED" status if any metric is stale/overdue
+- Route: `/countries/:iso` (Vite / React Router v7)
+- Component: `src/pages/CountryProfilePage.tsx`
+- Data Fetching: `@tanstack/react-query` to fetch latest metrics from `country_metrics` via Supabase.
+- UI: Uses existing `MetricCard` component in a dense grid layout.
+- SEO: `SEOManager` for meta tags and JSON-LD (Country/Dataset schemas).
 
 ---
 
 ## Implementation Steps
 
 ### 1. Database Migration
-Create migration: `supabase/migrations/20260401000000_create_country_metrics.sql`
+Create migration: `supabase/migrations/20260402000000_create_country_metrics.sql`
 
 ```sql
 -- Country-level metrics table (single table for all 33 metrics)
@@ -83,7 +82,7 @@ const COUNTRIES = [
   'SG','CH','TH','MY','AE','QA','IL','CL','NL','ES'
 ];
 ```
-Note: EU treated as aggregate entity; adjust as needed.
+Note: EU treated as aggregate entity; adjust as needed. **Post-V1**: May remove if data quality inconsistent (IMF treats EU as separate entity but coverage may vary).
 
 **Write optimization**: Aggregate all metric rows in memory and perform a **single bulk upsert** at the end:
 ```ts
@@ -176,6 +175,75 @@ This reduces connection overhead and ensures atomic update of all 1,320 rows.
 
 ---
 
+### Shared Constants
+
+To avoid duplication and ensure type safety, define the canonical list of 33 metric keys in a shared module:
+
+**File**: `src/lib/macro-metrics.ts` (or `src/constants/countryMetrics.ts`)
+
+```ts
+export const COUNTRY_METRIC_KEYS: Readonly<string[]> = [
+  // Header (computed, not stored)
+  // 'name', 'iso', 'flag_emoji', 'regime_badge', '30d_liquidity_delta' — derived at render time
+
+  // Basics
+  'area_sqkm',
+  'population_mn',
+
+  // Macro Heartbeat (11)
+  'gdp_yoy_pct',
+  'cpi_yoy_pct',
+  'm1_bn',
+  'm2_bn',
+  'central_bank_rate_pct',
+  'deposit_growth_yoy',
+  'credit_growth_yoy',
+  'ca_gdp_pct',
+  'fx_reserves_bn',
+  'debt_gold_ratio',
+  'industrial_prod_yoy',
+
+  // Financial Stability (5)
+  'household_debt_gdp_pct',
+  'debt_gdp_pct',
+  'external_debt_gdp_pct',
+  'fiscal_balance_gdp_pct',
+  'unemployment_pct',
+
+  // Debt Maturity Wall (3)
+  'debt_outstanding_bn',
+  'short_term_debt_pct',
+  'medium_term_pct', // long_term_pct = 1 - short - medium (derived)
+
+  // Yield Curve (5)
+  'yield_2y',
+  'yield_5y',
+  'yield_10y',
+  'yield_30y',
+  'slope_2s10s',
+
+  // Import Dependency & Energy (4)
+  'energy_import_pct_gdp',
+  'oil_import_dependency_pct',
+  'top_partner_share_pct',
+  'import_coverage_months',
+
+  // Reserves & West-vs-East (3)
+  'fx_reserves_gold_tonnes',
+  'fx_reserves_usd_share_pct_approx',
+  'brics_alignment_score',
+] as const;
+
+export type CountryMetricKey = typeof COUNTRY_METRIC_KEYS[number];
+```
+
+This constant is used by:
+- Edge Function: to iterate through all keys when fetching/storing
+- Page component: to map `metric_key` → card display config (label, unit, format)
+- Validation: TypeScript ensures all 33 keys are accounted for
+
+---
+
 ### 2. Ingestion Edge Function
 Create: `supabase/functions/ingest-country-metrics/index.ts`
 
@@ -191,7 +259,7 @@ await supabase
 ```
 This reduces connection overhead and ensures atomic update of all 1,320 rows.
 
-**Cron schedule**: Add to `supabase/migrations/20260401000001_country_metrics_cron.sql`
+**Cron schedule**: Add to `supabase/migrations/20260402000001_country_metrics_cron.sql`
 
 ```sql
 SELECT cron.schedule(
@@ -207,45 +275,21 @@ SELECT cron.schedule(
 );
 ```
 
-### 3. Next.js Page Template (ISR for Scale)
-File: `src/pages/countries/[iso]/page.tsx`
-
-**Rendering strategy**: Use **Incremental Static Regeneration (ISR)** to protect database from traffic spikes.
-```tsx
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Generate paths for all 40 countries at build time
-  const { data } = await supabase.from('country_metrics').select('iso');
-  const isos = [...new Set(data.map(d => d.iso))];
-  const paths = isos.map(iso => ({ params: { iso } }));
-  return { paths, fallback: false }; // All countries known upfront
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const iso = params?.iso as string;
-  // Fetch all metrics for this country (query uses PK index => instant)
-  const { data } = await supabase
-    .from('country_metrics')
-    .select('*')
-    .eq('iso', iso);
-
-  return {
-    props: { iso, metrics: data },
-    revalidate: 3600, // 1 hour ISR: rebuilds in background once per hour
-    // Alternative: revalidate: 86400 (24h) for daily sync after cron runs
-  };
-};
-```
+### 3. React Page Component
+File: `src/pages/CountryProfilePage.tsx`
 
 **Structure**:
-- Receive `iso` and `metrics` array from props
-- Transform `metrics` into map keyed by `metric_key`
-- Group metrics into 8 cards (Basics, Macro Heartbeat, Financial Stability, Debt Maturity, Yield Curve, Import Dependency, Reserves)
-- Use existing `MetricCard` component for each metric tile
-- Apply regime color coding based on aggregated data health (fresh/stale)
-- Add "DEGRADED" banner if any metric staleness > threshold (via `getStaleness`)
+- Get `iso` from `useParams<{ iso: string }>()`.
+- Fetch all metrics using `useQuery` from `country_metrics`.
+- Map source-specific `metric_key` to display configurations.
+- Group metrics into logical terminal sections (Basics, Macro Heartbeat, etc.).
+- Use `SEOManager` for titles/meta.
 
-**Layout**: Full-width dense grid, 4-6 columns on desktop, glassmorphic cards
-**SEO**: SEOManager with Country schema.org + BreadcrumbList + Dataset for the country page
+**Integration**:
+- Add `<Route path="/countries/:iso" element={<CountryProfilePage />} />` to `src/App.tsx`.
+- Update legacy `/countries` redirect in `App.tsx` if needed, or point it to a new index.
+
+Country schema.org + BreadcrumbList + Dataset for the country page
 **Pilot data**: Pre-seed USA metrics to validate rendering
 
 **Performance guarantee**: With ISR + `fallback: false`, Next.js serves static HTML from CDN for 99% of requests. Database hit only once per country per `revalidate` interval (1h). Crawlers and traffic spikes do **not** hit the DB.
@@ -267,7 +311,7 @@ Validate:
 1. **Database**: Run migration, verify `country_metrics` table created with correct constraints and indexes
 2. **Ingestion**: Manually invoke Edge Function, check rows inserted for USA, verify `confidence` and `last_cron` populated (expect ~30-33 rows for USA)
 3. **Page development**: 
-   - Create `src/pages/countries/[iso]/page.tsx`
+   - Create `src/pages/CountryProfilePage.tsx`
    - Test with USA (`/countries/USA`)
    - Check React DevTools for warnings
    - Verify no TypeScript errors on build
@@ -283,12 +327,14 @@ Validate:
 
 ## Critical Files to Create/Modify
 
-1. **NEW**: `supabase/migrations/20260401000000_create_country_metrics.sql`
+1. **NEW**: `supabase/migrations/20260402000000_create_country_metrics.sql`
 2. **NEW**: `supabase/functions/ingest-country-metrics/index.ts`
-3. **NEW**: `supabase/migrations/20260401000001_country_metrics_cron.sql`
-4. **NEW**: `src/pages/countries/[iso]/page.tsx`
-5. **OPTIONAL**: Seed script `scripts/seed-country-metrics.ts` (one-time)
-6. **UPDATE**: If needed, extend `src/lib/supabase.ts` with TypeScript types for `country_metrics`
+3. **NEW**: `supabase/migrations/20260402000001_country_metrics_cron.sql`
+4. **NEW**: `src/pages/CountryProfilePage.tsx`
+5. **UPDATE**: `src/App.tsx` (Add route)
+6. **NEW**: `src/lib/macro-metrics.ts` (shared constant `COUNTRY_METRIC_KEYS`)
+7. **OPTIONAL**: Seed script `scripts/seed-country-metrics.ts` (one-time)
+8. **UPDATE**: If needed, extend `src/lib/supabase.ts` with TypeScript types for `country_metrics`
 
 ---
 
@@ -348,5 +394,4 @@ Validate:
 - [ ] Page passes Lighthouse accessibility audit (min 90)
 - [ ] Build passes (`npm run build`) without warnings
 - [ ] No existing tests broken (if any)
-- [ ] Build passes (`npm run build`) without warnings
 - [ ] No existing tests broken (if any)
