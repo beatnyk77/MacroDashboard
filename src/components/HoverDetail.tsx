@@ -82,9 +82,10 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                         </div>
                         <button
                             onClick={handleClose}
+                            aria-label="Close details panel"
                             className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                            <X size={24} />
+                            <X size={24} aria-hidden="true" />
                         </button>
                     </div>
 

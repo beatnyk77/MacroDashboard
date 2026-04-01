@@ -43,9 +43,10 @@ export const SocialShareMode: React.FC = () => {
                     <TooltipTrigger asChild>
                         <button
                             onClick={() => setIsShareMode(true)}
+                            aria-label="Clean screenshot view"
                             className="p-3 rounded-full bg-slate-900 border border-white/12 shadow-2xl text-white hover:bg-slate-800 transition-all active:scale-95"
                         >
-                            <Camera size={20} />
+                            <Camera size={20} aria-hidden="true" />
                         </button>
                     </TooltipTrigger>
                     <TooltipContent side="left" className="bg-slate-950 border-white/12 text-xs font-black uppercase tracking-uppercase">
@@ -65,9 +66,10 @@ export const SocialShareMode: React.FC = () => {
                     </span>
                     <button
                         onClick={() => setIsShareMode(false)}
+                        aria-label="Exit screenshot mode"
                         className="p-1 rounded-full hover:bg-white/10 transition-colors text-white"
                     >
-                        <X size={16} />
+                        <X size={16} aria-hidden="true" />
                     </button>
                 </div>
             </div>

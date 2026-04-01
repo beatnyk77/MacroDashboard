@@ -53,10 +53,11 @@ export const IntelligenceSidebar: React.FC = () => {
         return (
             <button
                 onClick={() => setIsCollapsed(false)}
+                aria-label="Expand intelligence sidebar"
                 className="fixed right-0 top-1/2 -translate-y-1/2 bg-background border border-r-0 border-white/12 p-2 rounded-l-xl hover:bg-white/5 transition-all z-[1100] shadow-2xl"
             >
                 <div className="relative">
-                    <ChevronLeft size={20} className="text-muted-foreground" />
+                    <ChevronLeft size={20} className="text-muted-foreground" aria-hidden="true" />
                     {isStale && <div className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full animate-pulse" />}
                 </div>
             </button>
@@ -82,9 +83,10 @@ export const IntelligenceSidebar: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setIsCollapsed(true)}
+                    aria-label="Collapse intelligence sidebar"
                     className="p-1 hover:bg-white/10 rounded-md transition-colors"
                 >
-                    <ChevronRight size={18} className="text-muted-foreground" />
+                    <ChevronRight size={18} className="text-muted-foreground" aria-hidden="true" />
                 </button>
             </div>
 

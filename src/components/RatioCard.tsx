@@ -182,9 +182,10 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                     )}
                 </div>
                 <button
-                    className="text-muted-foreground/20 hover:text-primary transition-colors p-1"
+                    aria-label="View external source"
+                    className="text-muted-foreground/20 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] rounded"
                 >
-                    <ExternalLink size={12} />
+                    <ExternalLink size={12} aria-hidden="true" />
                 </button>
             </div>
         </Card>

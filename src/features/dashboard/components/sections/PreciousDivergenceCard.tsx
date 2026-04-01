@@ -226,8 +226,11 @@ export const PreciousDivergenceCard: React.FC = () => {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <button className="p-3 hover:bg-white/5 rounded-2xl border border-white/5 transition-all group">
-                                    <Info className="w-5 h-5 text-muted-foreground group-hover:text-white" />
+                                <button
+                                    aria-label="Arbitrage calculation information"
+                                    className="p-3 hover:bg-white/5 rounded-2xl border border-white/5 transition-all group cursor-pointer"
+                                >
+                                    <Info className="w-5 h-5 text-muted-foreground group-hover:text-white" aria-hidden="true" />
                                 </button>
                             </TooltipTrigger>
                             <TooltipContent className="bg-slate-950 border-white/12 p-4 max-w-[250px] rounded-xl shadow-2xl">

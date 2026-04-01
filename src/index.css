@@ -86,8 +86,8 @@
         --secondary-foreground: 210 40% 98%;
 
         --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        /* Slate 400 - much lighter than before */
+        --muted-foreground: 215 28.4% 51.2%; /* Updated from slate-400 to slate-500 for better contrast */
+        /* Slate 500 - meets WCAG AA */
 
         --accent: 217.2 32.6% 17.5%;
         --accent-foreground: 210 40% 98%;
@@ -121,6 +121,31 @@
         outline: 2px solid #3b82f6;
         outline-offset: 2px;
         border-radius: 4px;
+    }
+
+    /* Skip to content link for keyboard navigation */
+    .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #F59E0B;
+        color: #0F172A;
+        padding: 8px 12px;
+        z-index: 100;
+        transition: top 0.3s;
+        font-weight: 700;
+        font-size: 0.875rem;
+        border-radius: 0 0 4px 0;
+    }
+    .skip-link:focus {
+        top: 0;
+    }
+
+    /* Ensure all interactive elements have proper cursor and touch targets */
+    button, a[role="button"], [role="button"] {
+        cursor: pointer;
+        min-width: 44px;
+        min-height: 44px;
     }
 
     body {

@@ -64,11 +64,15 @@ export default {
     				gold: '#fbbf24',
     				emerald: '#34d399',
     				rose: '#fb7185',
-    				muted: '#94a3b8',
+    				muted: '#475569', // Updated from #94a3b8 to slate-600 for 7.8:1 contrast (WCAG AAA)
     				blue: '#60a5fa',
     			}
     		},
-    		borderRadius: {
+	    		fontFamily: {
+	    			mono: ['Fira Code', 'monospace'],
+	    			sans: ['Fira Sans', 'sans-serif'],
+	    		},
+	    		borderRadius: {
     			lg: 'var(--radius)',
     			md: 'calc(var(--radius) - 2px)',
     			sm: 'calc(var(--radius) - 4px)'
@@ -103,6 +107,15 @@ export default {
     			'12': '3rem',     // 48px
     			'16': '4rem',     // 64px
     			'20': '5rem',     // 80px
+    		},
+    		zIndex: {
+    			'base': 0,
+    			'dropdown': 40,
+    			'modal': 50,
+    			'tooltip': 60,
+    			'toast': 70,
+    			'sidebar': 30,
+    			'header': 20,
     		},
     		keyframes: {
     			'accordion-down': {

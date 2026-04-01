@@ -238,8 +238,12 @@ export const RiskExposureHeatmap: React.FC = () => {
                                         <span className="text-xs font-black uppercase tracking-uppercase text-emerald-400 mt-2 block">Liquidity Exposure Profile</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedSectorPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/12 hover:border-white/20">
-                                    <X size={20} />
+                                <button
+                                    onClick={() => setSelectedSectorPanel(null)}
+                                    aria-label="Close sector panel"
+                                    className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/12 hover:border-white/20 cursor-pointer min-w-[44px] min-h-[44px]"
+                                >
+                                    <X size={20} aria-hidden="true" />
                                 </button>
                             </div>
 
@@ -319,8 +323,12 @@ export const RiskExposureHeatmap: React.FC = () => {
                                         <span className="text-xs font-black uppercase tracking-uppercase text-emerald-400 mt-2 block">CDS Risk Profile</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedCDSPanel(null)} className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/12 hover:border-white/20">
-                                    <X size={20} />
+                                <button
+                                    onClick={() => setSelectedCDSPanel(null)}
+                                    aria-label="Close CDS panel"
+                                    className="p-3 text-white/40 hover:text-white bg-white/5 rounded-2xl transition-all border border-white/12 hover:border-white/20 cursor-pointer min-w-[44px] min-h-[44px]"
+                                >
+                                    <X size={20} aria-hidden="true" />
                                 </button>
                             </div>
 

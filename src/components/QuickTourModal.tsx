@@ -86,9 +86,10 @@ export const QuickTourModal: React.FC = () => {
         >
             <IconButton
                 onClick={handleClose}
+                aria-label="Close welcome tour"
                 sx={{ position: 'absolute', right: 16, top: 16, color: 'white/40', '&:hover': { color: 'white' } }}
             >
-                <X size={20} />
+                <X size={20} aria-hidden="true" />
             </IconButton>
 
             <DialogContent sx={{ p: 6, pt: 8 }}>

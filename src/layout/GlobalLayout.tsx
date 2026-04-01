@@ -82,6 +82,27 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 backgroundImage: `radial-gradient(circle at 50% -20%, ${bgTintStyle}, transparent 70%)`
             }}
         >
+            {/* Skip to main content for keyboard navigation */}
+            <a
+                href="#main-content"
+                className="skip-link"
+                style={{
+                    position: 'absolute',
+                    top: '-40px',
+                    left: 0,
+                    backgroundColor: '#F59E0B',
+                    color: '#0F172A',
+                    padding: '8px 12px',
+                    zIndex: 100,
+                    transition: 'top 0.3s',
+                    fontWeight: 700,
+                    fontSize: '0.875rem',
+                    borderRadius: '0 0 4px 0'
+                }}
+            >
+                Skip to main content
+            </a>
+
             {isObservatory && <DataHealthBanner />}
             <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/80 backdrop-blur-md">
                 <div className="flex h-[72px] items-center justify-between px-4 md:px-8">
@@ -238,7 +259,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 {/* Persistent Terminal Sidebar */}
                 <TerminalSidebar />
 
-                <main className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden min-w-0">
+                <main id="main-content" tabIndex={-1} className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden min-w-0">
                     <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
                         {children}
                     </div>

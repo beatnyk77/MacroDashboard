@@ -103,8 +103,11 @@ export const BulkBlockReport: React.FC = () => {
                                 className="pl-9 pr-4 py-2 bg-white/5 border border-white/12 rounded-xl text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-blue-500/50 transition-all w-64"
                             />
                         </div>
-                        <button className="p-2 rounded-xl bg-white/5 border border-white/12 text-white/40 hover:text-white transition-colors">
-                            <Filter size={14} />
+                        <button
+                            aria-label="Filter bulk block report"
+                            className="p-3 rounded-xl bg-white/5 border border-white/12 text-white/40 hover:text-white transition-colors cursor-pointer min-w-[44px] min-h-[44px]"
+                        >
+                            <Filter size={14} aria-hidden="true" />
                         </button>
                     </div>
                 </div>
