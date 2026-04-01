@@ -87,14 +87,28 @@ async function fetchBenchmarkReturns(alphaVantageKey: string): Promise<{spy: num
 }
 
 const INSTITUTIONS = [
+    // Sovereign Wealth Funds (5)
     { name: 'Norges Bank', cik: '0001164748', type: 'Sovereign Wealth' },
     { name: 'GIC Private Ltd', cik: '0000930796', type: 'Sovereign Wealth' },
     { name: 'Abu Dhabi Investment Authority', cik: '0001426425', type: 'Sovereign Wealth' },
     { name: 'CPPIB', cik: '0001006540', type: 'Sovereign Wealth' },
-    { name: 'CalPERS', cik: '0000919079', type: 'Asset Manager' },
+    { name: 'Temasek Holdings', cik: '0001021944', type: 'Sovereign Wealth' },
+
+    // Asset Managers (6)
     { name: 'BlackRock Inc.', cik: '0001364762', type: 'Asset Manager' },
     { name: 'Vanguard Group Inc.', cik: '0000102905', type: 'Asset Manager' },
-    { name: 'Temasek Holdings', cik: '0001021944', type: 'Sovereign Wealth' }
+    { name: 'State Street Corp', cik: '0000093751', type: 'Asset Manager' },
+    { name: 'FMR LLC', cik: '0000315066', type: 'Asset Manager' },
+    { name: 'Capital Research and Management Co', cik: '0000702011', type: 'Asset Manager' },
+    { name: 'Blackstone Inc', cik: '0001342606', type: 'Asset Manager' },
+
+    // Hedge Fund (1)
+    { name: 'Bridgewater Associates, LP', cik: '0001352464', type: 'Hedge Fund' },
+
+    // Pension Funds (3)
+    { name: 'CalPERS', cik: '0000919079', type: 'Pension Fund' },
+    { name: 'CalSTRS', cik: '0000919844', type: 'Pension Fund' },
+    { name: 'Ontario Teachers\' Pension Plan', cik: '0001563816', type: 'Pension Fund' }
 ];
 
 async function sleep(ms: number) {
@@ -122,7 +136,10 @@ async function processInstitutional13F(client: any) {
 
         // Find the latest 13F-HR or 13F-HR/A
         const idx = filings.form.findIndex((f: string) => f === '13F-HR' || f === '13F-HR/A');
-        if (idx === -1) return { name: inst.name, status: 'No 13F found' };
+        if (idx === -1) {
+            console.warn(`[${inst.name}] No 13F-HR filing found in recent submissions. Available forms: ${filings.form.join(', ')}`);
+            return { name: inst.name, status: 'No 13F found', cik: inst.cik };
+        }
 
         const accessionNum = filings.accessionNumber[idx].replace(/-/g, '');
         const primaryDoc = filings.primaryDocument[idx];
@@ -158,19 +175,39 @@ async function processInstitutional13F(client: any) {
             totalValue += value;
         }
 
-        // Process top holdings (up to 20) with Alpha Vantage enrichment
+        // Process top holdings (up to 20) with Alpha Vantage enrichment, using cache
         const topHoldings = holdings.slice(0, 20);
         const sectorMapping: Record<string, number> = {};
         const enrichedHoldings: typeof holdings = [];
 
-        for (const holding of topHoldings) {
+        // Helper: Fetch ticker info from cache or Alpha Vantage
+        async function getTickerInfo(cusip: string): Promise<{ticker: string | null, name: string | null, sector: string | null}> {
+            // Check cache (valid for 90 days)
+            const { data: cached } = await client
+                .from('cusip_ticker_cache')
+                .select('ticker, company_name, sector, fetched_at')
+                .eq('cusip', cusip)
+                .maybeSingle();
+
+            const cacheValid = cached && (new Date(cached.fetched_at) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
+            if (cacheValid) {
+                // Update last_used_at (fire and forget)
+                client.from('cusip_ticker_cache').update({ last_used_at: new Date().toISOString() }).eq('cusip', cusip).catch(() => {});
+                return { ticker: cached.ticker, name: cached.company_name, sector: cached.sector };
+            }
+
+            // Cache miss: fetch from Alpha Vantage
             try {
                 // 1. CUSIP to Ticker via SYMBOL_SEARCH
-                const searchUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${holding.cusip}&apikey=${alphaVantageKey}`;
+                const searchUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${cusip}&apikey=${alphaVantageKey}`;
                 const searchRes = await fetch(searchUrl);
                 const searchData = (await searchRes.json()) as any;
                 const symbol = searchData.bestMatches?.[0]?.['1. symbol'];
                 await sleep(ALPHA_VANTAGE_DELAY_MS); // Respect rate limit between API calls
+
+                let ticker: string | null = null;
+                let name: string | null = null;
+                let sector: string | null = null;
 
                 if (symbol) {
                     // 2. Ticker to Overview for sector and name
@@ -179,16 +216,41 @@ async function processInstitutional13F(client: any) {
                     const overviewData = (await overviewRes.json()) as any;
                     await sleep(ALPHA_VANTAGE_DELAY_MS);
 
-                    const sector = overviewData.Sector || 'Other';
-                    const name = overviewData.Name || overviewData.description || null;
+                    sector = overviewData.Sector || 'Other';
+                    name = overviewData.Name || overviewData.description || null;
+                    ticker = symbol;
+                }
 
-                    // Update sector mapping (weight by value)
+                // Upsert into cache for future use
+                await client.from('cusip_ticker_cache').upsert({
+                    cusip,
+                    ticker,
+                    company_name: name,
+                    sector,
+                    fetched_at: new Date().toISOString(),
+                    last_used_at: new Date().toISOString()
+                }, { onConflict: 'cusip' });
+
+                return { ticker, name, sector };
+            } catch (e: any) {
+                console.warn(`Alpha Vantage fetch failed for CUSIP ${cusip}: ${e.message}`);
+                return { ticker: null, name: null, sector: null };
+            }
+        }
+
+        // Process each top holding
+        for (const holding of topHoldings) {
+            try {
+                const info = await getTickerInfo(holding.cusip);
+                const ticker = info.ticker;
+                const sector = info.sector || 'Other';
+                const name = info.name;
+
+                if (ticker) {
                     sectorMapping[sector] = (sectorMapping[sector] || 0) + (holding.value / totalValue) * 100;
-
-                    // Store enriched holding
                     enrichedHoldings.push({
                         ...holding,
-                        ticker: symbol,
+                        ticker,
                         sector,
                         name
                     });
@@ -434,7 +496,7 @@ async function processInstitutional13F(client: any) {
                             trade.price_change_pct = priceChange;
                             // Boost conviction if strong price momentum in same direction as trade
                             if (Math.abs(priceChange) > 5) {
-                                trade.conviction_score = Math.min(10, conviction + 2);
+                                trade.conviction_score = Math.min(10, trade.conviction_score + 2);
                             }
                         }
                     }

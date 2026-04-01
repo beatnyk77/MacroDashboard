@@ -92,14 +92,24 @@ export function useSmartMoneyHoldings() {
         staleTime: 1000 * 60 * 60,
     });
 
-    // Derived: top 5 institutions by AUM (already sorted)
-    const topInstitutions = institutions.slice(0, 8);
+    // Derived: top institutions by AUM (show up to 15 for heatmap)
+    const topInstitutions = institutions.slice(0, 15);
 
-    // Derived: Get key institutions by name for cards
-    const keyInstitutions = ['Norges Bank', 'GIC Private Ltd', 'Abu Dhabi Investment Authority', 'CPPIB', 'CalPERS'];
+    // Derived: Get key institutions by name for cards (prioritized list)
+    const keyInstitutions = [
+        // Sovereign Wealth (prioritize)
+        'Norges Bank', 'GIC Private Ltd', 'Abu Dhabi Investment Authority', 'CPPIB', 'Temasek Holdings',
+        // Asset Managers
+        'BlackRock Inc.', 'Vanguard Group Inc.', 'State Street Corp', 'FMR LLC', 'Capital Research and Management Co', 'Blackstone Inc',
+        // Hedge Fund
+        'Bridgewater Associates, LP',
+        // Pension Funds
+        'CalPERS', 'CalSTRS', 'Ontario Teachers\' Pension Plan'
+    ];
     const institutionCards = institutions
         .filter(inst => keyInstitutions.includes(inst.fund_name))
-        .slice(0, 5); // Keep order consistent
+        .sort((a, b) => keyInstitutions.indexOf(a.fund_name) - keyInstitutions.indexOf(b.fund_name))
+        .slice(0, 10); // Show top 10 key institutions
 
     // Derived: aggregate top holdings across all institutions
     // Build a map: cusip/ticker -> holding data with total value

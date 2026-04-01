@@ -89,7 +89,7 @@ const InstitutionCard: React.FC<{ data: any; history: any[] }> = ({ data, histor
     const trend = history.length >= 2 ? (latestEquity - history[history.length - 2].equity_pct) : 0;
 
     return (
-        <MotionCard delay={0.1} className="h-full p-6 bg-[rgba(15,23,42,0.4)] border border-[rgba(255,255,255,0.05)]">
+        <MotionCard delay={0.1} className="h-full p-5 bg-[rgba(15,23,42,0.4)] border border-[rgba(255,255,255,0.05)]">
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                 <Box>
                     <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '1rem', lineHeight: 1.3, mb: 0.5 }}>
