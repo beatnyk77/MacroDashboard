@@ -26,15 +26,19 @@ Deno.serve(async (req: Request) => {
         return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } });
 
     } catch (e: any) {
+        console.error(`[CRITICAL] Function failed: ${e.message}`, e);
         await client.from('ingestion_logs').insert({
             function_name: 'ingest-institutional-13f',
             status: 'failed',
-            error_message: e.message,
+            error_message: e.message || 'Unknown error',
             start_time: start,
             completed_at: new Date().toISOString(),
             status_code: 500
         });
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: e.message || 'Internal Server Error' }), { 
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 });
 
@@ -128,11 +132,19 @@ async function processInstitutional13F(client: any) {
         const submissionUrl = `https://data.sec.gov/submissions/CIK${cikStr}.json`;
 
         const subRes = await fetch(submissionUrl, { headers: secHeaders });
-        if (!subRes.ok) throw new Error(`Failed to fetch submissions for ${inst.name}`);
+        if (!subRes.ok) {
+            console.error(`[SEC] Failed to fetch submissions for ${inst.name}: ${subRes.status}`);
+            throw new Error(`Failed to fetch submissions for ${inst.name}`);
+        }
 
         const subData = (await subRes.json()) as any;
+        if (!subData) throw new Error(`Empty submission data for ${inst.name}`);
+        
         const filings = subData.filings?.recent;
-        if (!filings) throw new Error(`No recent filings for ${inst.name}`);
+        if (!filings) {
+            console.warn(`[${inst.name}] No recent filings found in SEC metadata.`);
+            return { name: inst.name, status: 'No direct filings', cik: inst.cik };
+        }
 
         // Find the latest 13F-HR or 13F-HR/A
         const idx = filings.form.findIndex((f: string) => f === '13F-HR' || f === '13F-HR/A');
@@ -201,24 +213,34 @@ async function processInstitutional13F(client: any) {
                 // 1. CUSIP to Ticker via SYMBOL_SEARCH
                 const searchUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${cusip}&apikey=${alphaVantageKey}`;
                 const searchRes = await fetch(searchUrl);
+                if (!searchRes.ok) throw new Error(`Alpha Vantage search failed: ${searchRes.status}`);
+                
                 const searchData = (await searchRes.json()) as any;
+                if (!searchData) throw new Error('Alpha Vantage returned empty search data');
+                
+                if (searchData.Note || searchData['Error Message']) {
+                    console.warn(`[AV] API Limit or Error: ${JSON.stringify(searchData)}`);
+                    return { ticker: null, name: null, sector: null };
+                }
+
                 const symbol = searchData.bestMatches?.[0]?.['1. symbol'];
-                await sleep(ALPHA_VANTAGE_DELAY_MS); // Respect rate limit between API calls
+                await sleep(ALPHA_VANTAGE_DELAY_MS); 
 
                 let ticker: string | null = null;
                 let name: string | null = null;
                 let sector: string | null = null;
 
                 if (symbol) {
-                    // 2. Ticker to Overview for sector and name
                     const overviewUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${alphaVantageKey}`;
                     const overviewRes = await fetch(overviewUrl);
                     const overviewData = (await overviewRes.json()) as any;
                     await sleep(ALPHA_VANTAGE_DELAY_MS);
 
-                    sector = overviewData.Sector || 'Other';
-                    name = overviewData.Name || overviewData.description || null;
-                    ticker = symbol;
+                    if (overviewData && overviewData.Symbol) {
+                        sector = overviewData.Sector || 'Other';
+                        name = overviewData.Name || overviewData.description || null;
+                        ticker = symbol;
+                    }
                 }
 
                 // Upsert into cache for future use
@@ -370,7 +392,7 @@ async function processInstitutional13F(client: any) {
         const gldComparison = qoqDelta - benchmarks.gld;
 
         // Upsert all fields
-        const { error: upsertErr } = await client.from('institutional_13f_holdings').upsert({
+        const upsertResult = await client.from('institutional_13f_holdings').upsert({
             fund_name: inst.name,
             fund_type: inst.type,
             cik: inst.cik,
@@ -379,7 +401,6 @@ async function processInstitutional13F(client: any) {
             qoq_delta: qoqDelta,
             as_of_date: reportDate,
             last_updated: new Date().toISOString(),
-            // New fields
             asset_class_allocation: assetClassAllocation,
             top_holdings: top10,
             concentration_score: concentrationScore,
@@ -391,7 +412,8 @@ async function processInstitutional13F(client: any) {
             historical_allocation: historicalAllocation
         }, { onConflict: 'cik, as_of_date' });
 
-        if (upsertErr) throw upsertErr;
+        if (!upsertResult) throw new Error(`Upsert result undefined for ${inst.name}`);
+        if (upsertResult.error) throw upsertResult.error;
 
         // Infer recent trades from QoQ position changes
         // Fetch previous top_holdings to compare
@@ -510,8 +532,9 @@ async function processInstitutional13F(client: any) {
         // Insert trades after deleting any existing for this institution+date
         if (tradesToInsert.length > 0) {
             await client.from('institutional_trades_inferred').delete().eq('cik', inst.cik).eq('as_of_date', reportDate);
-            const { error: insertErr } = await client.from('institutional_trades_inferred').insert(tradesToInsert);
-            if (insertErr) throw insertErr;
+            const insertResult = await client.from('institutional_trades_inferred').insert(tradesToInsert);
+            if (!insertResult) throw new Error(`Trade insert result undefined for ${inst.name}`);
+            if (insertResult.error) throw insertResult.error;
         }
 
         processedCount++;
