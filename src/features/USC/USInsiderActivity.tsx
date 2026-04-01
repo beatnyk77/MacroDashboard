@@ -12,7 +12,7 @@ export const USInsiderActivity: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('us_insider_trades')
-                .select('*, us_companies(name)')
+                .select('id, ticker, insider_name, insider_title, transaction_type, transaction_date, shares_traded, price_per_share, total_value, us_companies(name)')
                 .order('transaction_date', { ascending: false })
                 .limit(50);
 

@@ -11,7 +11,7 @@ export const USWhaleTracker: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('institutional_13f_holdings')
-                .select('*, us_companies(name, sector)')
+                .select('id, manager_name, ticker, company_name, sector, shares_count, shares_value, value_usd, as_of_date, quarter')
                 .order('value_usd', { ascending: false })
                 .limit(50);
 
@@ -65,7 +65,7 @@ export const USWhaleTracker: React.FC = () => {
                                 <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12">
                                     <Link to={`/us-equities/equity/${h.ticker}`} className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all">
                                         <span className="text-xs font-black text-blue-400">{h.ticker}</span>
-                                        <span className="text-xs font-bold text-white/40 truncate max-w-[100px]">{h.us_companies?.name}</span>
+                                        <span className="text-xs font-bold text-white/40 truncate max-w-[100px]">{h.company_name}</span>
                                     </Link>
                                 </td>
                                 <td className="px-6 py-4 border-y border-white/5 group-hover:border-white/12 text-right">

@@ -12,7 +12,7 @@ export const USFilingsFeed: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('us_filings')
-                .select('*, us_companies(name, sector)')
+                .select('id, ticker, form_type, filing_date, description, url, us_companies(name, sector)')
                 .order('filing_date', { ascending: false })
                 .limit(40);
 

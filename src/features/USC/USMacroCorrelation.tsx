@@ -9,13 +9,13 @@ export const USMacroCorrelation: React.FC = () => {
     const { data: macroMetrics, isLoading } = useQuery({
         queryKey: ['us-macro-correlation-data'],
         queryFn: async () => {
-            const metricsList = ['US Federal Funds Rate', 'US 10-Year Treasury Yield', 'US CPI Inflation', 'US GDP Growth'];
+            const metricsList = ['US_POLICY_RATE', 'US_CPI_YOY', 'US_GDP_GROWTH_YOY', 'US_GDP_NOMINAL_TN'];
             const { data, error } = await supabase
                 .from('metric_observations')
-                .select('*, metrics!inner(name)')
-                .in('metrics.name', metricsList)
-                .order('date', { ascending: false })
-                .limit(40);
+                .select('metric_id, as_of_date, value, z_score, metrics!metric_id(id, name)')
+                .in('metric_id', metricsList)
+                .order('as_of_date', { ascending: false })
+                .limit(60);
 
             if (error) throw error;
             return data;
@@ -43,10 +43,10 @@ export const USMacroCorrelation: React.FC = () => {
                         </Typography>
                         <Box sx={{ height: 300, width: '100%' }}>
                             <ResponsiveContainer>
-                                <LineChart data={macroMetrics?.filter((d: any) => d.metrics.name.includes('Rate') || d.metrics.name.includes('Yield'))}>
+                                <LineChart data={macroMetrics?.filter((d: any) => d.metric_id?.includes('RATE') || d.metric_id?.includes('YIELD'))}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                     <XAxis
-                                        dataKey="date"
+                                        dataKey="as_of_date"
                                         tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
                                         axisLine={false}
                                         tickLine={false}
