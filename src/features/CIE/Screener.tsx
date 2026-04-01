@@ -79,10 +79,9 @@ export const Screener: React.FC = () => {
             const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 company.ticker.toLowerCase().includes(searchTerm.toLowerCase());
 
-            const latestFund = company.cie_fundamentals?.[0] || {};
-            const mcap = latestFund.metadata?.last_price ? (latestFund.revenue * latestFund.metadata.last_price / 1000) / 10000000 : 0;
-
             const latestSignal = company.cie_macro_signals?.[0] || {};
+            const mcap = latestFund.metadata?.market_cap || (latestFund.revenue * (latestFund.metadata?.last_price || 0) / 1000) / 10000000;
+
             const matchesMacroScore = (latestSignal?.macro_impact_score || 0) >= filters.minMacroScore;
             const matchesMcap = mcap >= filters.minMarketCap;
             const matchesSector = filters.sector === 'All' || company.sector === filters.sector;
@@ -163,10 +162,22 @@ export const Screener: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className="h-10 w-full rounded bg-white/[0.02] animate-pulse" />
-                ))}
+            <div className="space-y-6">
+                <div className="h-24 w-full rounded-[2rem] bg-white/[0.02] border border-white/5 animate-pulse" />
+                <div className="rounded-[2.5rem] border border-white/5 bg-black/40 overflow-hidden">
+                    {[1, 2, 3, 4, 5, 6].map(i => (
+                        <div key={i} className="flex gap-6 p-8 border-b border-white/5 animate-pulse">
+                            <div className="w-8 h-4 bg-white/5 rounded" />
+                            <div className="flex-1 space-y-2">
+                                <div className="w-48 h-4 bg-white/10 rounded" />
+                                <div className="w-24 h-3 bg-white/5 rounded" />
+                            </div>
+                            <div className="w-32 h-8 bg-white/5 rounded-xl" />
+                            <div className="w-24 h-6 bg-white/5 rounded" />
+                            <div className="w-32 h-4 bg-white/5 rounded" />
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }
@@ -393,7 +404,7 @@ export const Screener: React.FC = () => {
                                         <td className="px-6 py-6">
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-black text-white italic tracking-heading">
-                                                    ₹{((company.cie_fundamentals?.[0]?.revenue || 0) * (company.cie_fundamentals?.[0]?.metadata?.last_price || 0) / 1000 / 10000000).toFixed(0)}
+                                                    ₹{((company.cie_fundamentals?.[0]?.metadata?.market_cap || (company.cie_fundamentals?.[0]?.revenue || 0) * (company.cie_fundamentals?.[0]?.metadata?.last_price || 0) / 1000) / 10000000).toFixed(0)}
                                                     <span className="text-xs text-white/20 ml-1">Cr</span>
                                                 </span>
                                             </div>
@@ -448,6 +459,31 @@ export const Screener: React.FC = () => {
                                 );
                             })}
                         </AnimatePresence>
+                        {filteredCompanies.length === 0 && (
+                            <tr>
+                                <td colSpan={8} className="px-6 py-24 text-center">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="p-4 rounded-full bg-white/[0.02] border border-white/5">
+                                            <Search size={24} className="text-white/20" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-white uppercase tracking-uppercase">No Companies Found</p>
+                                            <p className="text-xs text-muted-foreground/40 mt-1">Try adjusting your filters or search term</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setFilters({
+                                                minMarketCap: 0, minMacroScore: 0, sector: 'All',
+                                                minStateResilience: 0, minCapexEfficiency: 0, minFormalization: 0, maxOilSensitivity: 100, maxGovRisk: 100,
+                                                minInsiderNet: -1000, onlyRisingPledge: false, minInstitutionalBuy: 0, minShortRatio: 0
+                                            })}
+                                            className="mt-2 px-6 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-xs font-black uppercase tracking-uppercase text-blue-400 transition-all"
+                                        >
+                                            Clear Filters
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

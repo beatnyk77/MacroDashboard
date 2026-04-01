@@ -16,37 +16,47 @@ export const TradeSettlementFlows = React.memo(() => {
 
     if (!deDollar || !brics) return null;
 
-    // Combine history for a dual-axis chart if possible, or just two areas
-    const mergedHistory = usdHistory?.map((d, i: number) => ({
-        date: d.date,
-        usd: d.value,
-        gold: goldHistory?.[i]?.value || null
-    })) || [];
+    // Robust merge by date
+    const historyMap: Record<string, { date: string; usd: number | null; gold: number | null }> = {};
+    
+    usdHistory?.forEach(d => {
+        historyMap[d.date] = { date: d.date, usd: d.value, gold: null };
+    });
+    
+    goldHistory?.forEach(d => {
+        if (historyMap[d.date]) {
+            historyMap[d.date].gold = d.value;
+        } else {
+            historyMap[d.date] = { date: d.date, usd: null, gold: d.value };
+        }
+    });
+
+    const mergedHistory = Object.values(historyMap).sort((a, b) => a.date.localeCompare(b.date));
 
     const stats = [
         {
             label: 'USD Reserve Share',
-            value: deDollar.usdShare?.value,
-            delta: deDollar.usdShare?.delta_yoy,
+            value: deDollar.usdShare?.value ?? 0,
+            delta: deDollar.usdShare?.delta_yoy ?? 0,
             unit: '%',
-            color: '#ef4444',
-            trend: 'down'
+            color: '#3b82f6',
+            trend: (deDollar.usdShare?.delta_yoy ?? 0) > 0 ? 'up' : 'down'
         },
         {
             label: 'Gold Reserve Share',
-            value: deDollar.goldShare?.value,
-            delta: deDollar.goldShare?.delta_yoy,
+            value: deDollar.goldShare?.value ?? 0,
+            delta: deDollar.goldShare?.delta_yoy ?? 0,
             unit: '%',
-            color: '#10b981',
-            trend: 'up'
+            color: '#fbbf24',
+            trend: (deDollar.goldShare?.delta_yoy ?? 0) > 0 ? 'up' : 'down'
         },
         {
             label: 'BRICS+ USD Share',
-            value: brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.value,
-            delta: -1.2, // Mocking delta if not in view
+            value: brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.value ?? 0,
+            delta: brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.delta_qoq ?? 0,
             unit: '%',
             color: '#f59e0b',
-            trend: 'down'
+            trend: (brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.delta_qoq ?? 0) > 0 ? 'up' : 'down'
         }
     ];
 

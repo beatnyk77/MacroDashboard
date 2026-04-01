@@ -188,23 +188,22 @@ async function syncFundamentals(client: any) {
                 company_id: company.id,
                 cik: company.cik,
                 period_end: periodEnd,
-                form_type: '10-K',
+                period_type: 'annual', // mapping 10-K to annual
                 revenue: revenueVal,
                 operating_income: opIncomeVal,
                 net_income: netIncomeVal,
-                eps_diluted: eps,
+                eps: eps,
                 shares_outstanding: sharesVal,
                 total_assets: assetsVal,
-                total_debt: debtVal,
-                stockholders_equity: equityVal,
-                cash_equivalents: cashVal,
+                debt: debtVal,
+                equity: equityVal,
                 pe_ratio: peRatio,
                 pb_ratio: pbRatio,
                 ev_ebitda: evEbitda,
                 roe: roe,
                 operating_margin: opMargin,
                 debt_equity: debtEquity
-            }, { onConflict: 'cik, period_end, form_type' });
+            }, { onConflict: 'company_id, period_end' });
 
             processed++;
             await sleep(200); // Protect rate limits (10 req/s max)

@@ -38,37 +38,65 @@ Deno.serve(async (req: Request) => {
             const latest = fundamentals[0]
             const prev = fundamentals[1]
 
-            // Calculate Growth Score (0-100)
+            // === Growth Score (0-100) — revenue + profit momentum ===
             let growthScore = 50
-            if (prev) {
-                const revGrowth = prev.revenue > 0 ? (latest.revenue - prev.revenue) / prev.revenue : 0
+            if (prev && prev.revenue > 0) {
+                const revGrowth = (latest.revenue - prev.revenue) / prev.revenue
                 const profitGrowth = prev.net_profit > 0 ? (latest.net_profit - prev.net_profit) / prev.net_profit : 0
                 growthScore = Math.min(100, Math.max(0, 50 + (revGrowth * 100) + (profitGrowth * 50)))
             }
 
-            // Calculate Quality Score (0-100)
+            // === Quality Score (0-100) — ROE, margin, leverage ===
+            const roe = latest.return_on_equity || 0
+            const margin = latest.operating_margin || 0
+            const debtEq = latest.debt_equity_ratio || 0
             const qualityScore = Math.min(100, Math.max(0,
-                (latest.return_on_equity * 200) + // ROE 20% -> 40 pts
-                (latest.operating_margin * 100) + // Margin 20% -> 20 pts
-                (latest.debt_equity_ratio < 1 ? 40 : 10) // Low debt -> 40 pts
+                (roe * 200) +      // ROE 20% => 40 pts
+                (margin * 100) +   // Op Margin 20% => 20 pts
+                (debtEq < 1 ? 40 : debtEq < 2 ? 20 : 5) // Leverage penalty
             ))
 
-            // Calculate Momentum Score (Price relative to moving average - simplified)
-            const momentumScore = 60 // Baseline
+            // === Composite macro_impact_score ===
+            const momentumBaseline = 60
+            const macroImpactScore = Math.round(
+                (growthScore * 0.4) + (qualityScore * 0.4) + (momentumBaseline * 0.2)
+            )
 
-            const totalScore = (growthScore * 0.4) + (qualityScore * 0.4) + (momentumScore * 0.2)
+            // === Sector-specific signal heuristics ===
+            // state_resilience: high for infra, banking; lower for pure consumer/IT
+            const meta = latest.metadata || {}
+            const sector = meta.sector || ''
+            const stateResilience = (['Financial Services', 'Energy', 'Industrials'].includes(sector)) ? 70 :
+                                   (['Technology', 'Consumer Defensive'].includes(sector)) ? 40 : 55
+
+            // oil_sensitivity: higher for energy/chemicals, lower for IT
+            const oilSensitivity = (['Energy'].includes(sector)) ? 85 :
+                                   (['Technology', 'Financial Services'].includes(sector)) ? 20 : 50
+
+            // formalization_premium: higher for large-cap, digital-first sectors
+            const mcap = meta.market_cap || 0
+            const formalizationPremium = mcap > 500_000_000_000 ? 80 :
+                                         mcap > 100_000_000_000 ? 60 : 40
+
+            // fiscal_exposure: proxy via capex-intensity
+            const capex = latest.capex || 0
+            const ebitda = latest.ebitda || 1
+            const fiscalExposure = Math.min(100, (capex / ebitda) * 100)
 
             await supabase.from('cie_macro_signals').upsert({
                 company_id: company.id,
                 as_of_date: new Date().toISOString().split('T')[0],
-                growth_score: growthScore,
-                quality_score: qualityScore,
-                momentum_score: momentumScore,
-                total_macro_score: totalScore
+                macro_impact_score: macroImpactScore,
+                state_resilience: stateResilience,
+                fiscal_exposure: fiscalExposure,
+                oil_sensitivity: oilSensitivity,
+                formalization_premium: formalizationPremium,
+                digitization_premium: sector === 'Technology' ? 85 : 45,
+                state_exposure_json: { sector, capex_intensity: (capex / ebitda).toFixed(2) }
             }, { onConflict: 'company_id,as_of_date' })
 
             processed++
-            results.push({ ticker: company.ticker, score: totalScore })
+            results.push({ ticker: company.ticker, score: macroImpactScore })
         }
 
         await supabase.from('ingestion_logs').insert({

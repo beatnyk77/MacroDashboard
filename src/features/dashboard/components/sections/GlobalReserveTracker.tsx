@@ -54,10 +54,10 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
                     <div className={cn("p-2.5 rounded-2xl bg-white/5 shadow-inner transition-transform group-hover:scale-110", `text-${color}-400`)}>
                         <Icon className="w-5 h-5" />
                     </div>
-                    {delta !== undefined && (
+                    {delta !== undefined && delta !== null && (
                         <div className={cn("flex items-center text-xs font-black px-2 py-1 rounded-xl bg-white/5 border border-white/12 tabular-nums", trendColor)}>
                             {isPositive ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
-                            {Math.abs(delta).toFixed(2)}{suffix === '%' ? 'pp' : suffix} {deltaType.toUpperCase()}
+                            {Math.abs(delta || 0).toFixed(2)}{suffix === '%' ? 'pp' : suffix} {deltaType.toUpperCase()}
                         </div>
                     )}
                 </div>

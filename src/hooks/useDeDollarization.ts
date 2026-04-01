@@ -87,38 +87,6 @@ export function useDeDollarizationHistory(metricId: string) {
                 value: Number(d.value)
             }));
 
-            // If we have less than 10 points (e.g. only recent data), inject 25-year representative history
-            if (realData.length < 10) {
-                const now = new Date();
-                const currentYear = now.getFullYear();
-                const fallbackPoints = [];
-
-                if (metricId === 'GLOBAL_USD_SHARE_PCT') {
-                    // USD Share: Gradual decline from ~71% in 2000 to ~58% today
-                    for (let y = 2000; y < currentYear; y++) {
-                        const progress = (y - 2000) / (currentYear - 2000);
-                        const value = 71.5 - (progress * 13.5) + (Math.sin(y) * 0.5); // 71.5 -> 58.0 with some noise
-                        fallbackPoints.push({ date: `${y}-01-01`, value });
-                    }
-                } else if (metricId === 'GLOBAL_GOLD_SHARE_PCT') {
-                    // Gold Share: ~10% in 2000, dipped, then structural rise to ~15.4%
-                    // Pattern: High (10%) -> Dip (2005, 8%) -> Rise (2015, 12%) -> Accelerate (2024, 15.4%)
-                    for (let y = 2000; y < currentYear; y++) {
-                        let value;
-                        if (y < 2005) value = 10 - (y - 2000) * 0.4;
-                        else if (y < 2015) value = 8 + (y - 2005) * 0.4;
-                        else value = 12 + (y - 2015) * 0.35 + (Math.cos(y) * 0.2);
-                        fallbackPoints.push({ date: `${y}-01-01`, value });
-                    }
-                }
-
-                // Append real data if it's more recent than fallback
-                const lastFallbackDate = fallbackPoints.length > 0 ? fallbackPoints[fallbackPoints.length - 1].date : '0000';
-                const freshData = realData.filter(d => d.date > lastFallbackDate);
-
-                return [...fallbackPoints, ...freshData];
-            }
-
             return realData;
         },
         staleTime: 1000 * 60 * 60 * 24, // 24 hours

@@ -48,10 +48,11 @@ export const CommodityHistoryCard: React.FC<CommodityHistoryCardProps> = ({
 }) => {
     const gradId = `grad-${title.replace(/\s+/g, '')}`;
 
-    // Calculate 25y min/max
-    const values = history.map(h => h.value);
-    const minVal = Math.min(...values);
-    const maxVal = Math.max(...values);
+    // Calculate 25y min/max with fallback
+    const values = (history || []).map(h => h.value);
+    const hasData = values.length > 0;
+    const minVal = hasData ? Math.min(...values) : 0;
+    const maxVal = hasData ? Math.max(...values) : 0;
 
     const colorMap = {
         red: { stroke: '#ef4444', fill: '#ef4444', shadow: 'rgba(239, 68, 68, 0.4)' },

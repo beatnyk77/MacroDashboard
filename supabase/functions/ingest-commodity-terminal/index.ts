@@ -21,33 +21,41 @@ Deno.serve(async (req) => {
 
         console.log("Starting Commodity Terminal Ingestion...");
 
-        // 1. Commodity Prices (FRED & Mock for Futures)
-        // Symbols: WTI (DCOILWTICO), BRENT (DCOILBRENTEU), COPPER (PCOPPUSDM), WHEAT (PWHEAMT), CORN (PCORNUSDM)
+        // 1. Commodity Prices (FRED)
+        // Mappings: WTI (DCOILWTICO), BRENT (DCOILBRENTEU), COPPER (PCOPPUSDM), NICKEL (PNICKUSDM)
         const priceSeries = [
-            { id: 'DCOILWTICO', symbol: 'WTI', category: 'Energy' },
-            { id: 'DCOILBRENTEU', symbol: 'Brent', category: 'Energy' },
-            { id: 'PCOPPUSDM', symbol: 'Copper', category: 'Metals' },
-            { id: 'PNICKUSDM', symbol: 'Nickel', category: 'Metals' },
-            { id: 'PWHEAMT', symbol: 'Wheat', category: 'Ag' },
-            { id: 'PCORNUSDM', symbol: 'Corn', category: 'Ag' }
+            { id: 'DCOILWTICO', metric_id: 'WTI_CRUDE_PRICE' },
+            { id: 'DCOILBRENTEU', metric_id: 'BRENT_CRUDE_PRICE' },
+            { id: 'PCOPPUSDM', metric_id: 'COPPER_PRICE_USD' },
+            { id: 'PNICKUSDM', metric_id: 'NICKEL_PRICE_USD' }
         ];
 
         let pricesProcessed = 0;
         if (fredApiKey) {
+            // Check for 'backfill' query param
+            const urlObj = new URL(req.url);
+            const isBackfill = urlObj.searchParams.get('backfill') === 'true';
+            const limit = isBackfill ? 1000 : 5; // 1000 observations ~4 years of daily or 20 years of monthly/weekly
+
             for (const series of priceSeries) {
-                const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${series.id}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
+                const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${series.id}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=${limit}`;
                 const res = await fetch(url);
                 if (res.ok) {
-                    const json = await res.json();
-                    const latest = json.observations?.[0];
-                    if (latest && latest.value !== '.') {
-                        const { error } = await supabase.from('commodity_prices').upsert({
-                            symbol: series.symbol,
-                            as_of_date: latest.date,
-                            price: parseFloat(latest.value),
-                            curve_type: 'spot'
-                        }, { onConflict: 'symbol, as_of_date, curve_type' });
-                        if (!error) pricesProcessed++;
+                    const json = await res.json() as { observations: any[] };
+                    const observations = (json.observations || [])
+                        .filter((o: any) => o.value !== '.')
+                        .map((o: any) => ({
+                            metric_id: series.metric_id,
+                            as_of_date: o.date,
+                            value: parseFloat(o.value),
+                            last_updated_at: new Date().toISOString()
+                        }));
+
+                    if (observations.length > 0) {
+                        const { error } = await supabase
+                            .from('metric_observations')
+                            .upsert(observations, { onConflict: 'metric_id, as_of_date' });
+                        if (!error) pricesProcessed += observations.length;
                     }
                 }
             }
@@ -59,7 +67,7 @@ Deno.serve(async (req) => {
             const sprUrl = `https://api.eia.gov/v2/petroleum/stoc/wrs/data/?api_key=${eiaApiKey}&frequency=weekly&data[0]=value&facets[series][]=WCSSTUS1&sort[0][column]=period&sort[0][direction]=desc&length=1`;
             const res = await fetch(sprUrl);
             if (res.ok) {
-                const json = await res.json();
+                const json = await res.json() as { response: { data: any[] } };
                 const latest = json.response?.data?.[0];
                 if (latest) {
                     const { error } = await supabase.from('commodity_reserves').upsert({
