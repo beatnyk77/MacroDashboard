@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
 
 export const USWhaleTracker: React.FC = () => {
     const { data: whaleHoldings, isLoading } = useQuery({
-        queryKey: ['us-whale-holdings'],
+        queryKey: ['institutional-13f'],
         queryFn: async () => {
             const { data, error } = await supabase
-                .from('us_13f_holdings')
+                .from('institutional_13f_holdings')
                 .select('*, us_companies(name, sector)')
                 .order('value_usd', { ascending: false })
                 .limit(50);

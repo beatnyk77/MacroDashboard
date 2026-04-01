@@ -11,7 +11,7 @@ export const USMacroCorrelation: React.FC = () => {
         queryFn: async () => {
             const metricsList = ['US Federal Funds Rate', 'US 10-Year Treasury Yield', 'US CPI Inflation', 'US GDP Growth'];
             const { data, error } = await supabase
-                .from('metric_data')
+                .from('metric_observations')
                 .select('*, metrics!inner(name)')
                 .in('metrics.name', metricsList)
                 .order('date', { ascending: false })

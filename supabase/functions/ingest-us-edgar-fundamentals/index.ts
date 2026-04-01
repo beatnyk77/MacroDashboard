@@ -178,6 +178,11 @@ async function syncFundamentals(client: any) {
             const roe = equityVal > 0 ? netIncomeVal / equityVal : 0;
             const opMargin = revenueVal > 0 ? opIncomeVal / revenueVal : 0;
             const debtEquity = equityVal > 0 ? debtVal / equityVal : 0;
+            
+            // Placeholder for price-based metrics (to be updated by a separate price sync)
+            const peRatio = 0;
+            const pbRatio = 0;
+            const evEbitda = 0;
 
             await client.from('us_fundamentals').upsert({
                 company_id: company.id,
@@ -193,6 +198,9 @@ async function syncFundamentals(client: any) {
                 total_debt: debtVal,
                 stockholders_equity: equityVal,
                 cash_equivalents: cashVal,
+                pe_ratio: peRatio,
+                pb_ratio: pbRatio,
+                ev_ebitda: evEbitda,
                 roe: roe,
                 operating_margin: opMargin,
                 debt_equity: debtEquity
