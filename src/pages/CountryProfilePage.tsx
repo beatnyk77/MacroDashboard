@@ -29,7 +29,7 @@ export const CountryProfilePage: React.FC = () => {
   const uppercaseIso = iso?.toUpperCase();
 
   // 1. Fetch Metrics from Supabase
-  const { data: metrics, isLoading: _isLoading, error } = useQuery({
+  const { data: metrics, error } = useQuery({
     queryKey: ['country-metrics', uppercaseIso],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -111,7 +111,7 @@ export const CountryProfilePage: React.FC = () => {
           </Box>
         )}
 
-        {Object.entries(TERMINAL_SECTIONS).map(([_, section]) => (
+        {TERMINAL_SECTIONS.map((section) => (
           <Box key={section.id} mb={12}>
             <div className="flex items-center gap-3 mb-8">
               <section.icon size={20} className="text-blue-400" />
