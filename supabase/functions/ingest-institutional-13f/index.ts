@@ -11,6 +11,7 @@ Deno.serve(async (req: Request) => {
     const client = createClient(supabaseUrl, supabaseKey);
     let result: any = { success: false };
 
+    console.log(`[HARDENING_v2_ACTIVE] Starting 13-F Ingestion at ${start}`);
     try {
         result = await processInstitutional13F(client);
 
@@ -195,11 +196,21 @@ async function processInstitutional13F(client: any) {
         // Helper: Fetch ticker info from cache or Alpha Vantage
         async function getTickerInfo(cusip: string): Promise<{ticker: string | null, name: string | null, sector: string | null}> {
             // Check cache (valid for 90 days)
-            const { data: cached } = await client
+            const cacheRes = await client
                 .from('cusip_ticker_cache')
                 .select('ticker, company_name, sector, fetched_at')
                 .eq('cusip', cusip)
                 .maybeSingle();
+
+            if (!cacheRes) {
+                console.error(`[Hardening] Database fetch for cache returned undefined for ${cusip}`);
+                return { ticker: null, name: null, sector: null };
+            }
+
+            const { data: cached, error: cacheErr } = cacheRes;
+            if (cacheErr) {
+                console.warn(`[Hardening] Cache select error for ${cusip}: ${cacheErr.message}`);
+            }
 
             const cacheValid = cached && (new Date(cached.fetched_at) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
             if (cacheValid) {
@@ -325,7 +336,7 @@ async function processInstitutional13F(client: any) {
         const concentrationScore = top5.reduce((sum, h) => sum + (h.value / totalValue) * 100, 0);
 
         // Fetch previous AUM for QoQ delta
-        const { data: prevData } = await client
+        const prevAumRes = await client
             .from('institutional_13f_holdings')
             .select('total_aum, top_sectors, asset_class_allocation')
             .eq('cik', inst.cik)
@@ -334,6 +345,11 @@ async function processInstitutional13F(client: any) {
             .limit(1)
             .maybeSingle();
 
+        if (!prevAumRes) {
+            console.warn(`[Hardening] prevAumRes is undefined for ${inst.name}`);
+        }
+        
+        const prevData = prevAumRes?.data || null;
         const qoqDelta = prevData?.total_aum ? ((totalValue - prevData.total_aum) / prevData.total_aum) * 100 : 0;
 
         // Sector rotation signal: compare top 3 sector sum vs previous
@@ -349,13 +365,19 @@ async function processInstitutional13F(client: any) {
 
         // Historical allocation (last 8 quarters including current)
         // Fetch up to 7 previous rows to build history
-        const { data: historyRows } = await client
+        const historyRes = await client
             .from('institutional_13f_holdings')
             .select('as_of_date, asset_class_allocation')
             .eq('cik', inst.cik)
             .lt('as_of_date', reportDate)
             .order('as_of_date', { ascending: false })
             .limit(7);
+
+        if (!historyRes) {
+            console.error(`[Hardening] historyRes is undefined for ${inst.name}`);
+        }
+        
+        const historyRows = historyRes?.data || [];
 
         const historicalAllocation = [];
         // Add previous allocations (older first) up to 7
@@ -417,7 +439,7 @@ async function processInstitutional13F(client: any) {
 
         // Infer recent trades from QoQ position changes
         // Fetch previous top_holdings to compare
-        const { data: prevHoldingRow } = await client
+        const prevHoldingRes = await client
             .from('institutional_13f_holdings')
             .select('top_holdings')
             .eq('cik', inst.cik)
@@ -426,6 +448,11 @@ async function processInstitutional13F(client: any) {
             .limit(1)
             .maybeSingle();
 
+        if (!prevHoldingRes) {
+            console.error(`[Hardening] prevHoldingRes is undefined for ${inst.name}`);
+        }
+        
+        const prevHoldingRow = prevHoldingRes?.data || null;
         const prevHoldingsList = (prevHoldingRow?.top_holdings as any[]) || [];
 
         // Build map: key = ticker or cusip, value = holding
