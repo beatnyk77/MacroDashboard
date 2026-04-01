@@ -27,8 +27,9 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                 <IconButton
                     onClick={onClose}
                     className="absolute -top-4 -right-4 bg-white/5 hover:bg-white/10 text-white"
+                    aria-label="Close statistics drawer"
                 >
-                    <X size={20} />
+                    <X size={20} aria-hidden="true" />
                 </IconButton>
 
                 {/* Country Profile */}

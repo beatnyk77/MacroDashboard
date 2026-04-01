@@ -105,7 +105,8 @@ export const MetricCard: React.FC<MetricCardProps> = (props) => {
 	const [isHighlighted, setIsHighlighted] = React.useState(false);
 
 	// Filter out MUI-specific sx prop to avoid passing to shadcn Card
-	const { sx: _ignoreSx, ...cardProps } = rest;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { sx: _ignoreSx, ...cardProps } = rest;
 
 	// Calculate staleness if not explicitly provided
 	const staleness = getStaleness(lastUpdated, resolvedFrequency);

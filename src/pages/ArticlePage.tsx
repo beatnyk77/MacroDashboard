@@ -191,18 +191,33 @@ export const ArticlePage: React.FC = () => {
                         <Box sx={{ flexGrow: 1 }} />
                         <Stack direction="row" spacing={0.5}>
                             <Tooltip title="Share on X/Twitter">
-                                <IconButton size="small" onClick={handleShareTwitter} sx={{ color: 'text.secondary', '&:hover': { color: '#1da1f2' } }}>
-                                    <Twitter size={16} />
+                                <IconButton
+                                    size="small"
+                                    onClick={handleShareTwitter}
+                                    sx={{ color: 'text.secondary', '&:hover': { color: '#1da1f2' } }}
+                                    aria-label="Share on X/Twitter"
+                                >
+                                    <Twitter size={16} aria-hidden="true" />
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Share on LinkedIn">
-                                <IconButton size="small" onClick={handleShareLinkedIn} sx={{ color: 'text.secondary', '&:hover': { color: '#0077b5' } }}>
-                                    <Linkedin size={16} />
+                                <IconButton
+                                    size="small"
+                                    onClick={handleShareLinkedIn}
+                                    sx={{ color: 'text.secondary', '&:hover': { color: '#0077b5' } }}
+                                    aria-label="Share on LinkedIn"
+                                >
+                                    <Linkedin size={16} aria-hidden="true" />
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Copy link">
-                                <IconButton size="small" onClick={handleCopyLink} sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
-                                    <LinkIcon size={16} />
+                                <IconButton
+                                    size="small"
+                                    onClick={handleCopyLink}
+                                    sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                                    aria-label="Copy link to clipboard"
+                                >
+                                    <LinkIcon size={16} aria-hidden="true" />
                                 </IconButton>
                             </Tooltip>
                         </Stack>

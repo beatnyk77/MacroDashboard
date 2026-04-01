@@ -11,7 +11,8 @@ import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
 import { QuickTourModal } from '@/components/QuickTourModal';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
-import { Button, Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
+import { Button } from '@/components/ui/button';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -167,22 +168,13 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
                         <Button
                             variant="contained"
-                            size="small"
+                            size="sm"
                             onClick={() => {
                                 const el = document.getElementById('weekly-narrative');
                                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                                 else window.location.href = '/#weekly-narrative';
                             }}
-                            sx={{
-                                display: { xs: 'none', sm: 'flex' },
-                                bgcolor: '#3b82f6',
-                                fontWeight: 900,
-                                fontSize: '0.875rem',
-                                borderRadius: '10px',
-                                px: 3,
-                                minHeight: 44,
-                                '&:hover': { bgcolor: '#2563eb' }
-                            }}
+                            className="hidden sm:flex bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-wider text-sm px-3 py-2 min-h-11"
                         >
                             Subscribe
                         </Button>

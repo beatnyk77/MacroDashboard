@@ -1,5 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { Box, Typography, Button, Container } from '@mui/material';
+import { Button } from '@/components/ui/button';
 import { AlertCircle, RotateCcw } from 'lucide-react';
 
 interface Props {
@@ -32,49 +32,30 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     public render() {
         if (this.state.hasError) {
             return (
-                <Box sx={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: '#020617',
-                    color: 'white',
-                    p: 2
-                }}>
-                    <Container maxWidth="sm">
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            textAlign: 'center',
-                            gap: 3,
-                            p: 4,
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            borderRadius: 3,
-                            bgcolor: 'rgba(239, 68, 68, 0.05)',
-                            backdropFilter: 'blur(10px)'
-                        }}>
-                            <AlertCircle size={48} color="#ef4444" />
-                            <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.02em', color: 'error.light' }}>
+                <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white p-2">
+                    <div className="w-full max-w-sm mx-auto">
+                        <div className="flex flex-col items-center text-center gap-3 p-6 border border-red-500/20 rounded-3xl bg-red-500/5 backdrop-blur-lg">
+                            <AlertCircle size={48} className="text-red-500" />
+                            <h2 className="text-2xl font-black tracking-tight text-red-400" style={{ letterSpacing: '-0.02em' }}>
                                 System Malfunction
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            </h2>
+                            <p className="text-sm text-slate-400">
                                 An unexpected error has occurred in the rendering pipeline.
                                 <br />
                                 {this.state.error?.message}
-                            </Typography>
+                            </p>
                             <Button
                                 onClick={this.handleReload}
-                                variant="outlined"
-                                color="error"
-                                startIcon={<RotateCcw size={16} />}
-                                sx={{ mt: 1, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}
+                                variant="outline"
+                                className="mt-1 uppercase tracking-wider font-bold border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                                aria-label="Re-initialize terminal"
                             >
+                                <RotateCcw size={16} className="mr-2" />
                                 Re-Initialize Terminal
                             </Button>
-                        </Box>
-                    </Container>
-                </Box>
+                        </div>
+                    </div>
+                </div>
             );
         }
 
