@@ -1,0 +1,1 @@
+-- Remote-only migration (applied via Supabase Dashboard). Stub for CLI sync.
