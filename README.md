@@ -8,14 +8,35 @@ In an era defined by monetary experimentation and supply-side constraints, conve
 
 ---
 
+## Live Modules: What You See Today
+
+GraphiQuestor operates as a pure data terminal. The moment you arrive, you're presented with live, automatically updating telemetry across these specialized intelligence hubs:
+
+*   **Macro Observatory** — Central navigation hub with access to all research labs and intelligence terminals
+*   **India Intelligence Hub** — Consolidated state-level macro pulse, RBI liquidity, fiscal stress, credit cycles, debt walls, FII/DII flows, and the full Corporate India Engine suite
+*   **China Macro Hub** — PBOC liquidity cycles, real-economy indicators, external sector dynamics, energy grid transition, and proprietary de-dollarization signals
+*   **US Corporate Terminal** — SEC EDGAR fundamentals, 13F whale tracking, insider conviction, and advanced screening (recently hardened and fully operational)
+*   **US Macro & Fiscal** — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve regime analysis
+*   **De-Dollarization & Gold Anchor Lab** — Debt/gold ratios, M2/gold comparison, CB gold accumulation maps, and reserve currency composition tracking
+*   **Energy Security & Commodities** — Refining capacity utilization, crude import dependency, SPR dynamics, and strategic commodity flow networks
+*   **Sovereign Stress Lab** — EM credit matrix, FX defense metrics, and systemic refinancing risk
+*   **Sustainable Finance & Climate Risk** — Energy import dependency, grid carbon intensity, and transition risk analytics
+*   **Shadow System Signals** — Capital flight indicators and illicit trade flow telemetry (restricted access)
+*   **Data Health Dashboard** — Real-time pipeline status, authenticity scores, and data provenance tracking across all modules
+
+All modules are production-ready, receiving daily automated updates, with no mock or stale data displayed on the live terminal.
+
+---
+
 ## The Proprietary Edge: See Inside the Engines of the Global South
 
-While standard platforms aggregate high-level national data, GraphiQuestor provides unprecedented granularity into the world's most critical growth engines. 
+Standard platforms offer high-level national aggregates. GraphiQuestor delivers state- and provincial-level granularity—the difference between seeing a forest and counting every tree.
 
-**Our structural advantage lies in our direct, API-level integration with the official statistical infrastructure of India and China.**
+**Our structural advantage: direct, automated integration with the official statistical infrastructure of India and China, consolidated into production-ready intelligence hubs.**
 
-*   **The India Advantage:** We bypass lagging national indicators via direct integration with India's Ministry of Statistics and Programme Implementation (MoSPI). This delivers state-level granularity on industrial output (the Annual Survey of Industries), employment efficiency, and energy dependency—a vital edge for EM positioning unavailable on Bloomberg or Refinitiv.
-*   **The China Advantage:** Real-time tracking of provincial-level industrial data and—crucially—policy divergence between Shanghai (PBOC) and Beijing (fiscal authorities), identifying when monetary accommodation conflicts with deleveraging mandates.
+*   **The India Advantage:** Live direct integration with MoSPI's eSankhyiki platform delivers state/UT-level ASI, PLFS, CPI, energy, and fiscal data in near real-time. No lagging national averages—see the actual conditions in Maharashtra, Gujarat, Tamil Nadu, and every other state as they unfold.
+*   **The China Advantage:** Automated ingestion of NBS and PBOC data at the provincial level, revealing leading indicators before national aggregates shift. Track policy divergence between Shanghai's monetary accommodation and Beijing's deleveraging edicts—the tension that defines China's macroeconomic regime.
+*   **US Equities Edge:** Recent pipeline hardening (April 2026) ensures reliable, daily ingestion of SEC EDGAR filings—13F positions, 10-K/10-Q fundamentals, and insider trades—powering the US Corporate Terminal with institutional-quality data.
 
 ---
 
@@ -89,16 +110,23 @@ Energy is the master resource. As the global economy transitions from an era of 
 
 ---
 
-## V. Industrial Telemetry: Signals Before the Statistics
+## V. India & China Intelligence Hubs: Granular Telemetry, Real-Time
 
-GDP figures are backward-looking, seasonally adjusted, and consistently revised. GraphiQuestor bypasses these lagging macro indicators by tapping directly into high-frequency industrial data—the vital signs of the real economy that precede official statistics by quarters.
+Conventional platforms offer only high-level national aggregates. GraphiQuestor delivers state- and province-level intelligence on the two most critical growth engines of the multipolar era.
 
-*   **Annual Survey of Industries (ASI) Deep Dive (India Proprietary):** Direct MoSPI integration allows us to track Gross Value Added (GVA), employment, and capital formation across 23 distinct manufacturing sectors and 35 states/UTs in India. This level of granularity is the exclusive advantage of the GraphiQuestor terminal.
-*   **Capacity Utilization Inflection Points:** Pinpointing the exact threshold where industrial slack is exhausted and structural inflation inevitably returns—the single most critical regime shift for fixed-income portfolio construction.
-*   **India & China Macro Pulses:** Unified dashboards synthesizing critical data points—from labor force surveys to industrial production and wholesale prices—into a single, coherent institutional view.
-*   **Commodity Import Dependency:** Tracking strategic metal (gold, silver, rare earths) import volumes for India and China via official customs data, revealing the real-economy demand that frequently precedes explosive price action.
+**India Intelligence Hub** (Consolidated Q1 2026)
+Through direct integration with India's Ministry of Statistics & Programme Implementation (MoSPI) via our eSankhyiki-MCP server, we provide unprecedented depth:
+* **India Macro Pulse:** Unified dashboard synthesizing RBI liquidity, state fiscal stress, credit cycles, debt maturity walls, inflation monitors, and the digitization premium—all in a single, coherent view.
+* **State-Level Granularity:** Industrial output (ASI), employment efficiency (PLFS), energy dependency, fiscal allocation tracking, and heatmaps down to the state/UT level—data unavailable on any competing platform.
+* **Market Microstructure:** FII/DII flows, promoter activity, bulk/block deals, short selling reports, IPO pipelines, and advanced screening tools for the Corporate India Engine.
 
-**Institutional Application:** Central bank research teams utilize this data for precise policy calibration. When industrial capacity utilization breaches 85% (current: ~76%), monetary accommodation ceases to be stimulative and becomes mathematically inflationary.
+**China Macro Hub** (Consolidated Q1 2026)
+Real-time tracking of policy divergence and real-economy dynamics across China's vast administrative landscape:
+* **PBOC Liquidity Monitor:** MLF operations, reverse repos, M2 growth, and regime identification—highlighting moments when Shanghai's monetary accommodation conflicts with Beijing's deleveraging mandates.
+* **Provincial Industrial Telemetry:** Tracking production, investment, and energy transition metrics across provinces to identify leading indicators before national aggregates shift.
+* **15th Five-Year Path:** Early signals on policy direction, credit impulse, and de-dollarization flows through China's official channels and bilateral mechanisms.
+
+**Institutional Application:** The India and China hubs provide sovereign wealth funds and EM-dedicated allocators with the granularity required to identify productive capital allocation versus rent-seeking, to position ahead of policy pivots, and to understand the real-economy demand that drives commodity markets and currency realignments.
 
 ---
 
@@ -116,21 +144,31 @@ GraphiQuestor is engineered to meet the exacting standards of sovereign wealth f
 
 ## Data Sources & Institutional Partnerships
 
-GraphiQuestor synthesizes intelligence from the most authoritative global institutions. All data is fetched automatically via resilient serverless pipelines. We do not claim ownership of the source data—our value lies in the aggregation, rigorous historical visualization, and derived structural insights.
+GraphiQuestor synthesizes intelligence from the world's most authoritative institutions. All data is ingested automatically via hardened, production-grade serverless pipelines with full provenance tracking and self-healing capabilities.
 
 ### India-Specific Intelligence (Proprietary Edge)
-*   **MoSPI (Ministry of Statistics, Govt. of India):** Direct integration via our eSankhyiki-MCP server for PLFS, CPI, IIP, ASI, NAS, WPI, and Energy Statistics. State-level granularity unavailable elsewhere.
-*   **RBI (Reserve Bank of India):** Official gold reserve disclosures, forex intervention data, and granular monetary policy tracking.
+*   **MoSPI (Ministry of Statistics, Govt. of India):** Direct integration via eSankhyiki-MCP for real-time access to PLFS (labor), CPI, IIP, ASI (industries), NAS, WPI, and Energy Statistics—all with state/UT granularity.
+*   **RBI (Reserve Bank of India):** Daily LAF operations, FX defense interventions, gold reserves, and monetary policy signals.
+*   **Corporate India Engine:** SEC EDGAR equivalents for Indian equities, powered by NSE/BSE data flows and institutional holding disclosures.
 
-### Monetary, Financial & Development Data
-*   **FRED (Federal Reserve Economic Data):** Core US/Global macro time series.
-*   **BIS (Bank for International Settlements):** Cross-border banking statistics and reserve data.
-*   **IMF (International Monetary Fund):** COFER reserve composition and SDR allocations.
-*   **World Bank & AIIB/NDB Disclosures:** Development project financing and institutional lending flows.
+### China Macro Data
+*   **NBS & PBOC Publications:** Industrial production, retail sales, credit impulse, M2/aggregate financing, and policy rate decisions.
+*   **Customs & Energy Administration:** Import/export flows, energy dependency metrics, and strategic commodity consumption.
+*   **Provincial Statistical Bureaus:** Sub-national data for detecting leading indicators before national aggregates shift.
 
-### Energy, Commodities & Market Pulse
-*   **EIA (U.S. Energy Information Administration):** Global refining capacity, crude imports, and SPR levels.
-*   **Trading Economics, Finnhub & Yahoo Finance:** Supplementary commodity data, economic calendars, consensus forecasts, and market volatility metrics.
+### Global Monetary & Financial Data
+*   **FRED (Federal Reserve Economic Data):** 25-year US macro series (balance sheets, yields, labor, gold).
+*   **BIS (Bank for International Settlements):** Cross-border banking, reserve metrics, and global liquidity aggregates.
+*   **IMF (International Monetary Fund):** COFER reserve composition, SDR allocations, and World Economic Outlook database.
+*   **World Bank, AIIB & NDB:** Development financing projects and institutional lending flows across the Global South.
+
+### Energy, Commodities & Geopolitics
+*   **EIA (U.S. Energy Information Administration):** Global refining capacity, crude import/export flows, SPR dynamics, and oil market balances.
+*   **Real-Time OSINT:** GDELT event feeds, vessel tracking (AIS), and flight telemetry for geopolitical risk mapping.
+*   **Market Data Feeds:** Alpha Vantage, Finnhub, and trading economics for real-time commodity and volatility metrics.
+
+### US Equities & Corporate Fundamentals
+*   **SEC EDGAR:** 13F filings, 10-K/10-Q reports, and insider transaction disclosures—ingested daily with automated parsing and signal extraction. Pipeline hardened and restored to production in April 2026.
 
 ---
 
