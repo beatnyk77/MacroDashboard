@@ -47,6 +47,25 @@ export const CurrencyWarsMonitor: React.FC = () => {
         );
     }
 
+    // Explicit empty state if backend data for Currency Wars hasn't been backfilled yet
+    if (!data || data.length === 0 || !data.some(d => d.composite_pressure !== undefined)) {
+        return (
+            <SPASection id="currency-wars-monitor" className="py-24" disableAnimation>
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-8">
+                    <SectionHeader title="Currency Wars Monitor" subtitle="Tracking the policy divergence and rupee pressure in the 'Higher for Longer' era" />
+                </div>
+                <div className="h-[350px] w-full bg-white/[0.02] border border-white/5 border-dashed rounded-3xl flex flex-col items-center justify-center text-center p-8">
+                     <AlertCircle size={48} className="text-orange-500/50 mb-4" />
+                     <h3 className="text-xl font-black uppercase tracking-widest text-white mb-2">Metrics Pending Synchronization</h3>
+                     <p className="text-base text-muted-foreground/70 max-w-lg mb-4">The new Currency Wars metrics (<span className="text-white">COMPOSITE_PRESSURE_INDEX</span>) are missing. Please execute the Deno backfill script locally.</p>
+                     <code className="px-4 py-2 bg-black/40 rounded-lg text-xs font-mono text-cyan-400 select-all border border-white/10">
+                         deno run -A scripts/backfill_currency_wars_enhancements.ts
+                     </code>
+                 </div>
+            </SPASection>
+        );
+    }
+
     return (
         <SPASection id="currency-wars-monitor" className="py-24" disableAnimation>
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
