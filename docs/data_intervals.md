@@ -100,7 +100,7 @@ GraphiQuestor uses Supabase `pg_cron` for automated data ingestion:
 | Daily Precious & Market Data  | 00:00 UTC Daily       | `ingest-precious-divergence`      |
 | Daily Fed Data                | 00:15 UTC Daily       | `ingest-fed-data`                 |
 | Weekly Liquidity              | 01:00 UTC Mon         | `ingest-global-liquidity`         |
-| Monthly US Macro              | 02:00 UTC 1st         | `ingest-us-macro`                 |
+| Daily US Macro                | 03:00 UTC Daily       | `ingest-us-macro`                 |
 | Monthly China Macro           | 02:30 UTC 1st         | `ingest-china-macro`              |
 | Monthly India Macro           | 03:00 UTC 1st         | `ingest-india-macro`              |
 | Monthly TIC Foreign Holders   | 03:30 UTC 1st         | `ingest-tic-foreign-holders`      |

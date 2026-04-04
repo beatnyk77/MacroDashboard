@@ -86,83 +86,115 @@ export const CurrencyWarsMonitor: React.FC = () => {
                         <ZoomButton active={zoom === '25Y'} onClick={() => setZoom('25Y')} label="25Y" />
                     </div>
 
-                    <div className="h-[450px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart data={filteredData} margin={{ top: 20, right: 60, left: 40, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis
-                                    dataKey="date"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-                                    minTickGap={50}
-                                    tickFormatter={(str) => new Date(str).getFullYear().toString()}
-                                />
-                                <YAxis
-                                    yAxisId="left"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-                                    unit="%"
-                                    label={{ value: 'POLICY RATES', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
-                                />
-                                <YAxis
-                                    yAxisId="right"
-                                    orientation="right"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-                                    domain={['auto', 'auto']}
-                                    label={{ value: 'USD/INR SPOT', angle: 90, position: 'insideRight', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
-                                />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Legend
-                                    verticalAlign="top"
-                                    align="left"
-                                    iconType="circle"
-                                    wrapperStyle={{ paddingBottom: '30px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-                                />
-
-                                {EVENTS.map(event => (
-                                    <ReferenceLine
-                                        key={event.date}
-                                        x={event.date}
-                                        yAxisId="left"
-                                        stroke="rgba(255,255,255,0.1)"
-                                        strokeDasharray="3 3"
-                                        label={{ value: event.label, position: 'top', fill: 'rgba(255,255,255,0.2)', fontSize: 8 }}
+                    <div className="space-y-12">
+                        {/* Chart 1: Policy Rates & Spot */}
+                        <div className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <ComposedChart data={filteredData} margin={{ top: 20, right: 60, left: 40, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                    <XAxis
+                                        dataKey="date"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        hide
                                     />
-                                ))}
+                                    <YAxis
+                                        yAxisId="left"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        unit="%"
+                                        label={{ value: 'RATES', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                    />
+                                    <YAxis
+                                        yAxisId="right"
+                                        orientation="right"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        domain={['auto', 'auto']}
+                                        label={{ value: 'USD/INR', angle: 90, position: 'insideRight', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                    />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <Legend
+                                        verticalAlign="top"
+                                        align="left"
+                                        iconType="circle"
+                                        wrapperStyle={{ paddingBottom: '20px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                    />
 
-                                <Line
-                                    yAxisId="left"
-                                    type="monotone"
-                                    dataKey="fed_rate"
-                                    name="Fed Funds"
-                                    stroke="#3b82f6"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                                <Line
-                                    yAxisId="left"
-                                    type="monotone"
-                                    dataKey="rbi_rate"
-                                    name="RBI Repo"
-                                    stroke="#f59e0b"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                                <Line
-                                    yAxisId="right"
-                                    type="monotone"
-                                    dataKey="usd_inr"
-                                    name="USD/INR"
-                                    stroke="#ffffff"
-                                    strokeWidth={3}
-                                    dot={false}
-                                />
-                            </ComposedChart>
-                        </ResponsiveContainer>
+                                    <Line yAxisId="left" type="monotone" dataKey="fed_rate" name="Fed Funds" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                                    <Line yAxisId="left" type="monotone" dataKey="rbi_rate" name="RBI Repo" stroke="#f59e0b" strokeWidth={2} dot={false} />
+                                    <Line yAxisId="right" type="monotone" dataKey="usd_inr" name="USD/INR" stroke="#ffffff" strokeWidth={2} dot={false} />
+                                </ComposedChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        {/* Chart 2: Pressure & Relative Performance */}
+                        <div className="h-[250px] w-full border-t border-white/5 pt-8">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <ComposedChart data={filteredData} margin={{ top: 0, right: 60, left: 40, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                    <XAxis
+                                        dataKey="date"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        minTickGap={50}
+                                        tickFormatter={(str) => new Date(str).getFullYear().toString()}
+                                    />
+                                    <YAxis
+                                        yAxisId="pressure"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        domain={[0, 100]}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        label={{ value: 'PRESSURE', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                    />
+                                    <YAxis
+                                        yAxisId="relative"
+                                        orientation="right"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        label={{ value: 'VS EM PEERS', angle: 90, position: 'insideRight', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                    />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <ReferenceLine y={0} yAxisId="relative" stroke="rgba(255,255,255,0.1)" />
+                                    
+                                    {EVENTS.map(event => (
+                                        <ReferenceLine
+                                            key={event.date}
+                                            x={event.date}
+                                            yAxisId="pressure"
+                                            stroke="rgba(255,255,255,0.1)"
+                                            strokeDasharray="3 3"
+                                            label={{ value: event.label, position: 'top', fill: 'rgba(255,255,255,0.2)', fontSize: 7 }}
+                                        />
+                                    ))}
+
+                                    <Line
+                                        yAxisId="pressure"
+                                        type="monotone"
+                                        dataKey="composite_pressure"
+                                        name="Composite Pressure"
+                                        stroke="#f43f5e"
+                                        strokeWidth={2}
+                                        dot={false}
+                                        strokeDasharray="5 5"
+                                    />
+                                    <Line
+                                        yAxisId="relative"
+                                        type="monotone"
+                                        dataKey="em_relative_pressure"
+                                        name="EM Relative Performance (bps)"
+                                        stroke="#10b981"
+                                        strokeWidth={2}
+                                        dot={false}
+                                    />
+                                </ComposedChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 </div>
 

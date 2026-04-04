@@ -26,7 +26,7 @@ export function useEMFlowStress() {
                 const { data: observations, error: obsError } = await supabase
                     .from('metric_observations')
                     .select('as_of_date, value')
-                    .eq('metric_id', 'RUPEE_PRESSURE_SCORE')
+                    .eq('metric_id', 'COMPOSITE_PRESSURE_INDEX')
                     .order('as_of_date', { ascending: true })
                     .limit(30);
 
