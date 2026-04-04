@@ -27,7 +27,7 @@ export function useEMFlowStress() {
                     .from('metric_observations')
                     .select('as_of_date, value')
                     .eq('metric_id', 'COMPOSITE_PRESSURE_INDEX')
-                    .order('as_of_date', { ascending: true })
+                    .order('as_of_date', { ascending: false })
                     .limit(30);
 
                 if (obsError) throw obsError;
@@ -51,7 +51,7 @@ export function useEMFlowStress() {
                 const netFlow = - (current / 5).toFixed(1);
 
                 setData({
-                    sparkline: observations.map(o => ({ date: o.as_of_date, value: o.value })),
+                    sparkline: observations.map(o => ({ date: o.as_of_date, value: o.value })).reverse(),
                     currentValue: current,
                     zScore,
                     status,

@@ -47,7 +47,8 @@ export const useCurrencyWars = () => {
                 .from('metric_observations')
                 .select('metric_id, as_of_date, value')
                 .in('metric_id', metricIds)
-                .order('as_of_date', { ascending: true });
+                .order('as_of_date', { ascending: false })
+                .limit(5000);
 
             if (error) throw error;
 
@@ -101,7 +102,7 @@ export const useCurrencyWars = () => {
                 if (last.pressure === undefined) last.pressure = latestValues['composite_pressure'] || 0;
             }
 
-            return result;
+            return result.reverse();
         }
     });
 };
