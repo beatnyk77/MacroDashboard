@@ -7,42 +7,17 @@ const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({
 const VulnerabilityScoreMatrix = lazy(() => import('../cards/VulnerabilityScoreMatrix').then(m => ({ default: m.VulnerabilityScoreMatrix })));
 const OilImportCostCard = lazy(() => import('../cards/OilImportCostCard').then(m => ({ default: m.OilImportCostCard })));
 
-// Fallback/Mock Data generator for when API returns empty
-const generateFallbackData = () => ({
-    importData: [
-        { importer_country_code: 'USA', exporter_country_code: 'CAN', import_volume_mbbl: 4500, as_of_date: '2025-01-01', frequency: 'Monthly' },
-        { importer_country_code: 'USA', exporter_country_code: 'MEX', import_volume_mbbl: 650, as_of_date: '2025-01-01', frequency: 'Monthly' },
-        { importer_country_code: 'USA', exporter_country_code: 'SAU', import_volume_mbbl: 320, as_of_date: '2025-01-01', frequency: 'Monthly' },
-        { importer_country_code: 'IN', exporter_country_code: 'RU', exporter_country_name: 'Russia', import_volume_mbbl: 1800, as_of_date: '2024-01-01', frequency: 'Annual' },
-        { importer_country_code: 'IN', exporter_country_code: 'IQ', exporter_country_name: 'Iraq', import_volume_mbbl: 900, as_of_date: '2024-01-01', frequency: 'Annual' },
-        { importer_country_code: 'CN', exporter_country_code: 'RU', exporter_country_name: 'Russia', import_volume_mbbl: 2200, as_of_date: '2024-01-01', frequency: 'Annual' },
-        { importer_country_code: 'CN', exporter_country_code: 'SA', exporter_country_name: 'Saudi Arabia', import_volume_mbbl: 1500, as_of_date: '2024-01-01', frequency: 'Annual' }
-    ] as any[],
-});
-
 export const AsiaCommodityFlowsSection: React.FC = () => {
     const { data: apiData } = useOilData();
 
-    // Merge API data with fallback if API data is empty
-    const { data } = React.useMemo(() => {
-        if (apiData?.importData && apiData.importData.length > 0) return { data: apiData };
-
-        const fallback = generateFallbackData();
-        const merged = {
-            ...apiData,
-            importData: apiData?.importData?.length ? apiData.importData : fallback.importData,
-        };
-        return { data: merged };
-    }, [apiData]);
-
-    const hasNoData = !data.importData?.length;
+    const hasNoData = !apiData?.importData?.length;
 
     if (hasNoData) {
         return (
             <div className="space-y-8">
                 <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
-                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">Flows Data Pending</span>
-                    <p className="text-xs text-muted-foreground/40 italic">System is synchronizing.</p>
+                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">Flows Data Not Available</span>
+                    <p className="text-xs text-muted-foreground/40 italic">Oil import data ingestion has not yet completed. Please check back later.</p>
                 </div>
             </div>
         );
@@ -62,7 +37,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                         </p>
                     </div>
                     <Suspense fallback={<div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />}>
-                        <OilFlowsSankey data={data.importData} isLoading={false} />
+                        <OilFlowsSankey data={apiData.importData} isLoading={false} />
                     </Suspense>
                 </MotionCard>
 
@@ -78,8 +53,8 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                     </div>
                     <Suspense fallback={<div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />}>
                         <OilImportCostCard
-                            importData={data.importData}
-                            brentPriceData={data.brentPriceData || []}
+                            importData={apiData.importData}
+                            brentPriceData={apiData.brentPriceData || []}
                             isLoading={false}
                         />
                     </Suspense>
@@ -100,8 +75,8 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                         {/* 1. Sankey Diagram */}
                         <div className="w-full">
                             <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                                {data.importData && data.importData.length > 0 ? (
-                                    <OilImportVulnerabilityCard data={data.importData} isLoading={false} />
+                                {apiData.importData && apiData.importData.length > 0 ? (
+                                    <OilImportVulnerabilityCard data={apiData.importData} isLoading={false} />
                                 ) : (
                                     <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
                                         <span className="text-xs text-muted-foreground uppercase tracking-uppercase mb-2 font-black">Data loading...</span>
@@ -113,8 +88,8 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                         {/* 2. Matrix Table - Full Width */}
                         <div className="w-full h-[500px]">
                             <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
-                                {data.importData && data.importData.length > 0 ? (
-                                    <VulnerabilityScoreMatrix data={data.importData} isLoading={false} />
+                                {apiData.importData && apiData.importData.length > 0 ? (
+                                    <VulnerabilityScoreMatrix data={apiData.importData} isLoading={false} />
                                 ) : (
                                     <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
                                         <span className="text-xs text-rose-500/50 uppercase tracking-uppercase mb-2 font-black">Analysis Pending</span>

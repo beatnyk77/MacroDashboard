@@ -1,43 +1,9 @@
-import React, { useMemo } from 'react';
-import { DataQualityBadge } from '@/components/DataQualityBadge';
+import React, { useMemo, useState } from 'react';
 import { MotionCard } from '@/components/MotionCard';
 import { ResponsiveContainer, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
-import { useFuelSecurityIndia, FuelSecurityIndia } from '../hooks/useFuelSecurityIndia';
+import { useFuelSecurityIndia } from '../hooks/useFuelSecurityIndia';
 import { cn } from '@/lib/utils';
 
-const MOCK_DATA: FuelSecurityIndia = {
-  as_of_date: new Date().toISOString().split('T')[0],
-  reserves_days_coverage: 10.5,
-  reserves_days_official: 9.8,
-  reserves_days_actual: 11.2,
-  deviation_pct: 14.3,
-  daily_consumption_mbpd: 5.12,
-  brent_price_usd: 85.34,
-  inr_per_barrel: 71500,
-  active_tankers_count: 14,
-  tanker_pipeline_json: [
-    { id: 'v1', vessel_name: 'MT DEVIKSUND', origin: 'Saudi Arabia', eta: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 2.1, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-    { id: 'v2', vessel_name: 'MT ASEEM', origin: 'Iraq', eta: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.9, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-    { id: 'v3', vessel_name: 'MT YANNA', origin: 'UAE', eta: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 2.0, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-    { id: 'v4', vessel_name: 'MT AIDA', origin: 'Nigeria', eta: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.3, risk_flag: 'standard', vessel_type: 'VLCC' },
-    { id: 'v5', vessel_name: 'MT VARUNA', origin: 'USA', eta: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.5, risk_flag: 'standard', vessel_type: 'VLCC' },
-    { id: 'v6', vessel_name: 'MT SAHARA', origin: 'Nigeria', eta: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.2, risk_flag: 'standard', vessel_type: 'VLCC' },
-    { id: 'v7', vessel_name: 'MT DARLING', origin: 'Saudi Arabia', eta: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 2.0, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-    { id: 'v8', vessel_name: 'MT GEMINI', origin: 'UAE', eta: new Date(Date.now() + 16 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.8, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-    { id: 'v9', vessel_name: 'MT OMICRON', origin: 'Kuwait', eta: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.9, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-    { id: 'v10', vessel_name: 'MT NORDIC', origin: 'Russia', eta: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], volume_mbbl: 1.6, risk_flag: 'chokepoint_exposed', vessel_type: 'VLCC' },
-  ],
-  geopolitical_risk_score: 67,
-  scenario_baseline_days: 10.5,
-  scenario_disruption_days: 7.3,
-  scenario_rationing_days: 15.2,
-  last_updated_at: new Date().toISOString(),
-  metadata: {
-    source_reliability: 'high',
-    notes: 'Mock data for development',
-    ingestion_version: 1
-  }
-};
 
 const getRiskColor = (score: number): string => {
   if (score < 30) return '#10b981'; // emerald
@@ -77,39 +43,24 @@ const LegendItem = ({ color, label }: { color: string; label: string }) => (
 export const FuelSecurityClockIndia: React.FC = () => {
   const { data: apiData, isError } = useFuelSecurityIndia();
 
-  // Merge API data with fallback if API data is empty or error
-  const { data, isFallback } = React.useMemo(() => {
-    if (isError || !apiData) {
-      if (isError) console.warn('Fuel Security API error, using fallback data');
-      return { data: MOCK_DATA, isFallback: true };
+  // Capture "now" once on mount using useState lazy initializer (allowed by lint)
+  const [now] = useState(() => Date.now());
+
+  // Compute projection data
+  const projData = useMemo(() => {
+    if (!apiData || apiData.scenario_baseline_days === null || apiData.scenario_disruption_days === null || apiData.scenario_rationing_days === null) {
+      return [];
     }
+    return projectionData(
+      apiData.scenario_baseline_days,
+      apiData.scenario_disruption_days,
+      apiData.scenario_rationing_days
+    );
+  }, [apiData]);
 
-    // Check if critical fields are populated
-    const hasCriticalData = apiData.reserves_days_coverage > 0 && apiData.daily_consumption_mbpd > 0;
-
-    if (!hasCriticalData) {
-      console.warn('Fuel Security data incomplete, using fallback');
-      return { data: MOCK_DATA, isFallback: true };
-    }
-
-    return { data: apiData, isFallback: false };
-  }, [apiData, isError]);
-
-  const projData = useMemo(() =>
-    projectionData(
-      data.scenario_baseline_days ?? MOCK_DATA.scenario_baseline_days, 
-      data.scenario_disruption_days ?? MOCK_DATA.scenario_disruption_days, 
-      data.scenario_rationing_days ?? MOCK_DATA.scenario_rationing_days
-    ),
-    [data]
-  );
-
-  // Precompute days remaining for tankers to avoid impure calls in render
   const tankersWithDays = useMemo(() => {
-    // eslint-disable-next-line react-hooks/purity
-    const now = Date.now();
-    const pipeline = Array.isArray(data.tanker_pipeline_json) ? data.tanker_pipeline_json : [];
-    
+    if (!apiData) return [];
+    const pipeline = Array.isArray(apiData.tanker_pipeline_json) ? apiData.tanker_pipeline_json : [];
     return pipeline.slice(0, 15).map(tanker => {
       const etaTime = tanker.eta ? new Date(tanker.eta).getTime() : 0;
       return {
@@ -117,21 +68,24 @@ export const FuelSecurityClockIndia: React.FC = () => {
         daysRemaining: etaTime > 0 ? Math.max(0, Math.ceil((etaTime - now) / (1000 * 60 * 60 * 24))) : 0
       };
     });
-  }, [data.tanker_pipeline_json]);
+  }, [apiData, now]);
+
+  // If no data or error, show empty state (after all hooks)
+  if (isError || !apiData) {
+    return (
+      <MotionCard className="w-full" delay={0.35}>
+        <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
+          <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">Fuel Security Data Not Available</span>
+          <p className="text-xs text-muted-foreground/40 italic">The ingestion pipeline has not yet produced data. Please check back later.</p>
+        </div>
+      </MotionCard>
+    );
+  }
+
+  const data = apiData;
 
   return (
     <MotionCard className="w-full" delay={0.35}>
-      {isFallback && (
-        <div className="mb-6 p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <DataQualityBadge type="simulated" />
-            <p className="text-xs font-black uppercase tracking-uppercase text-amber-500/90">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-              Live Feed Normalizing — Displaying Institutional Proxies
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Header */}
       <div className="mb-8 pl-4 border-l-4 border-amber-500/30">
@@ -145,51 +99,57 @@ export const FuelSecurityClockIndia: React.FC = () => {
 
       <div className="space-y-8">
         {/* Row 1: Countdown Clock + Official/Actual */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="p-8 rounded-[2rem] bg-amber-500/[0.03] border border-amber-500/10 backdrop-blur-sm">
-            <h4 className="text-xs font-black uppercase tracking-widest text-amber-400 mb-4">Reserves Coverage</h4>
-            <div className="flex items-end gap-4">
-              <div className="text-8xl font-black italic tracking-tighter text-white">
-                {Math.round(data.reserves_days_coverage)}
+        {data.reserves_days_coverage != null ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="p-8 rounded-[2rem] bg-amber-500/[0.03] border border-amber-500/10 backdrop-blur-sm">
+              <h4 className="text-xs font-black uppercase tracking-widest text-amber-400 mb-4">Reserves Coverage</h4>
+              <div className="flex items-end gap-4">
+                <div className="text-8xl font-black italic tracking-tighter text-white">
+                  {Math.round(data.reserves_days_coverage)}
+                </div>
+                <div className="text-2xl font-black text-amber-500/60 mb-2">days</div>
               </div>
-              <div className="text-2xl font-black text-amber-500/60 mb-2">days</div>
-            </div>
-            <div className="mt-4">
-              <div className={cn(
-                "px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider inline-block border",
-                getRiskLevel(data.reserves_days_coverage).colorClass
-              )}>
-                {getRiskLevel(data.reserves_days_coverage).label}
+              <div className="mt-4">
+                <div className={cn(
+                  "px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider inline-block border",
+                  getRiskLevel(data.reserves_days_coverage).colorClass
+                )}>
+                  {getRiskLevel(data.reserves_days_coverage).label}
+                </div>
               </div>
-            </div>
-            <p className="text-[10px] text-muted-foreground/40 mt-3 uppercase tracking-wide">
-              * Days of coverage = Total reserves / Daily consumption
-            </p>
-          </div>
-
-          <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
-            <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-4">Official vs Independent Estimate</h4>
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={[
-                  { name: 'Official (PPAC)', value: data.reserves_days_official },
-                  { name: 'Actual (Estimate)', value: data.reserves_days_actual }
-                ]}>
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                    <Cell fill="#3b82f6" />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            {data.deviation_pct !== null && (
-              <p className="text-xs text-muted-foreground/60 mt-4 text-center">
-                Deviation: <span className={cn("font-black", data.deviation_pct > 0 ? "text-emerald-500" : "text-rose-500")}>
-                  {data.deviation_pct > 0 ? '+' : ''}{data.deviation_pct.toFixed(1)}%
-                </span>
+              <p className="text-[10px] text-muted-foreground/40 mt-3 uppercase tracking-wide">
+                * Days of coverage = Total reserves / Daily consumption
               </p>
-            )}
+            </div>
+
+            <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
+              <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-4">Official vs Independent Estimate</h4>
+              <div className="h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={[
+                    { name: 'Official (PPAC)', value: data.reserves_days_official },
+                    { name: 'Actual (Estimate)', value: data.reserves_days_actual }
+                  ]}>
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                      <Cell fill="#3b82f6" />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              {data.deviation_pct !== null && (
+                <p className="text-xs text-muted-foreground/60 mt-4 text-center">
+                  Deviation: <span className={cn("font-black", data.deviation_pct > 0 ? "text-emerald-500" : "text-rose-500")}>
+                    {data.deviation_pct > 0 ? '+' : ''}{data.deviation_pct.toFixed(1)}%
+                  </span>
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10">
+            <p className="text-sm text-muted-foreground">Reserves coverage data not yet available. Ingestion in progress.</p>
+          </div>
+        )}
 
         {/* Row 2: Tanker Pipeline */}
         <div>

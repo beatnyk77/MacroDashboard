@@ -80,6 +80,7 @@ export const Screener: React.FC = () => {
                 company.ticker.toLowerCase().includes(searchTerm.toLowerCase());
 
             const latestSignal = company.cie_macro_signals?.[0] || {};
+            const latestFund = company.cie_fundamentals?.[0] || {};
             const mcap = latestFund.metadata?.market_cap || (latestFund.revenue * (latestFund.metadata?.last_price || 0) / 1000) / 10000000;
 
             const matchesMacroScore = (latestSignal?.macro_impact_score || 0) >= filters.minMacroScore;
