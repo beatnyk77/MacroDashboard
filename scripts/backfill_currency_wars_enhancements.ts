@@ -39,6 +39,26 @@ async function fetchObservations(metricId: string): Promise<MetricObservation[]>
 async function backfillAll() {
   console.log('🚀 Starting comprehensive backfill...');
 
+  // 0. Pre-flight check: Verify metrics exist
+  const requiredMetrics = [
+    'USD_INR_RATE', 'USD_CNY_RATE', 'USD_BRL_RATE', 'USD_MXN_RATE', 'USD_TWD_RATE',
+    'COMPOSITE_PRESSURE_INDEX', 'EM_RELATIVE_PRESSURE'
+  ];
+  
+  const { data: existingMetrics, error: metricsError } = await supabase
+    .from('metrics')
+    .select('id')
+    .in('id', requiredMetrics);
+
+  if (metricsError) throw new Error(`Failed to verify metrics: ${metricsError.message}`);
+  
+  const missing = requiredMetrics.filter(id => !existingMetrics?.some(m => m.id === id));
+  if (missing.length > 0) {
+    console.error('❌ Missing required metrics in database:', missing.join(', '));
+    console.error('👉 Please run "supabase db push" to apply the migrations first.');
+    Deno.exit(1);
+  }
+
   // 1. Fetch all base data
   const [usdInr, emCny, emBrl, emMxn, emTwd] = await Promise.all([
     fetchObservations('USD_INR_RATE'),
