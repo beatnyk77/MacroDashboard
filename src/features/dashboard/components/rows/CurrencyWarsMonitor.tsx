@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useCurrencyWars } from '@/hooks/useCurrencyWars';
+import { useCurrencyWars, CurrencyWarsData } from '@/hooks/useCurrencyWars';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
 
@@ -30,7 +30,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
     const [zoom, setZoom] = useState<'5Y' | '25Y'>('25Y');
 
     const filteredData = useMemo(() => {
-        if (!data) return [];
+        if (!data) return [] as CurrencyWarsData[];
         if (zoom === '25Y') return data;
         const fiveYearsAgo = new Date();
         fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
@@ -71,8 +71,8 @@ export const CurrencyWarsMonitor: React.FC = () => {
                     />
                     <MetricMiniCard
                         label="Pressure Score"
-                        value={latest?.pressure?.toFixed(1) || 0}
-                        sub="Flow Sentiment"
+                        value={(latest?.composite_pressure ?? latest?.pressure ?? 0).toFixed(1)}
+                        sub="Composite Index"
                         icon={<AlertCircle size={14} className="text-rose-400" />}
                     />
                 </div>
@@ -177,9 +177,9 @@ export const CurrencyWarsMonitor: React.FC = () => {
                     />
                     <InsightCard
                         title="Rupee Pressure"
-                        description="Synthetic index measuring FII net flows, reserve movement and trade stability. High scores indicate intervention risk."
-                        value={latest?.pressure}
-                        trend={(latest?.pressure ?? 0) > 70 ? 'critical' : 'stable'}
+                        description="Composite index (0-100) measuring flow intensity, volatility, and EM relative weakness. Scores >70 indicate elevated RBI intervention risk."
+                        value={latest?.composite_pressure ?? latest?.pressure ?? 0}
+                        trend={(latest?.composite_pressure ?? latest?.pressure ?? 0) > 70 ? 'critical' : 'stable'}
                     />
                 </div>
             </div>
@@ -189,7 +189,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
 };
 
 
-const MetricMiniCard = ({ label, value, sub, icon }: any) => (
+const MetricMiniCard = ({ label, value, sub, icon }: { label: string; value: string | number; sub: string; icon: React.ReactNode }) => (
     <div className="px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-4 hover:bg-white/[0.05] transition-all">
         <div className="p-2 rounded-xl bg-white/[0.03]">{icon}</div>
         <div>
@@ -200,7 +200,7 @@ const MetricMiniCard = ({ label, value, sub, icon }: any) => (
     </div>
 );
 
-const InsightCard = ({ title, description, value, unit = '', trend }: any) => (
+const InsightCard = ({ title, description, value, unit = '', trend }: { title: string; description: string; value: number | undefined; unit?: string; trend: 'critical' | 'high' | 'stable' | 'normal' }) => (
     <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-white/12 transition-all flex flex-col justify-between">
         <div>
             <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-4">{title}</div>
@@ -218,7 +218,7 @@ const InsightCard = ({ title, description, value, unit = '', trend }: any) => (
     </div>
 );
 
-const ZoomButton = ({ active, onClick, label }: any) => (
+const ZoomButton = ({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) => (
     <button
         onClick={onClick}
         className={cn(
