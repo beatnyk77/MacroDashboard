@@ -37,9 +37,9 @@ const CorporateTreasuryHedging = lazy(() => import('@/pages/CorporateTreasuryHed
 const IndiaFlowPulsePage = lazy(() => import('@/pages/IndiaFlowPulsePage').then(module => ({ default: module.IndiaFlowPulsePage })));
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
 
-// Labs
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
+const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLab').then(module => ({ default: module.EnergyCommoditiesLab })));
 
 const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').then(module => ({ default: module.SovereignStressLab })));
 const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(module => ({ default: module.ShadowSystemLab })));
@@ -102,7 +102,7 @@ function App() {
                                         <Route path="/labs/india" element={<Navigate to="/intel/india" replace />} />
                                         <Route path="/labs/china" element={<Navigate to="/intel/china" replace />} />
                                         <Route path="/labs/de-dollarization-gold" element={<DeDollarizationGoldLab />} />
-                                        <Route path="/labs/energy-commodities" element={<Navigate to="/macro-observatory" replace />} />
+                                        <Route path="/labs/energy-commodities" element={<EnergyCommoditiesLab />} />
                                         <Route path="/labs/sovereign-stress" element={<SovereignStressLab />} />
                                         <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
                                         <Route path="/labs/sustainable-finance-climate-risk" element={<SustainableFinanceLab />} />
