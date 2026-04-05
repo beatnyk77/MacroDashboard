@@ -1,10 +1,11 @@
 -- =====================================================
 -- Restoration: Energy & Commodities Lab Schema
--- Created: 2026-04-05
+-- Created: 2026-04-05 (Updated for Force Restoration)
 -- =====================================================
 
 -- 1. Oil Data Schema
-CREATE TABLE IF NOT EXISTS public.oil_refining_capacity (
+DROP TABLE IF EXISTS public.oil_refining_capacity CASCADE;
+CREATE TABLE public.oil_refining_capacity (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     country_code text NOT NULL,
     country_name text NOT NULL,
@@ -16,7 +17,8 @@ CREATE TABLE IF NOT EXISTS public.oil_refining_capacity (
     UNIQUE(country_code, as_of_year)
 );
 
-CREATE TABLE IF NOT EXISTS public.oil_imports_by_origin (
+DROP TABLE IF EXISTS public.oil_imports_by_origin CASCADE;
+CREATE TABLE public.oil_imports_by_origin (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     importer_country_code text NOT NULL,
     exporter_country_code text NOT NULL,
@@ -30,7 +32,8 @@ CREATE TABLE IF NOT EXISTS public.oil_imports_by_origin (
 );
 
 -- 2. Commodity Imports (UN Comtrade)
-CREATE TABLE IF NOT EXISTS public.commodity_imports (
+DROP TABLE IF EXISTS public.commodity_imports CASCADE;
+CREATE TABLE public.commodity_imports (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     country text NOT NULL,
     year int NOT NULL,
@@ -44,7 +47,8 @@ CREATE TABLE IF NOT EXISTS public.commodity_imports (
 );
 
 -- 3. Fuel Security - India
-CREATE TABLE IF NOT EXISTS public.fuel_security_clock_india (
+DROP TABLE IF EXISTS public.fuel_security_clock_india CASCADE;
+CREATE TABLE public.fuel_security_clock_india (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     as_of_date DATE NOT NULL,
     reserves_days_coverage NUMERIC,
@@ -66,7 +70,8 @@ CREATE TABLE IF NOT EXISTS public.fuel_security_clock_india (
 );
 
 -- 4. Geopolitical Risk Events
-CREATE TABLE IF NOT EXISTS public.geopolitical_risk_events (
+DROP TABLE IF EXISTS public.geopolitical_risk_events CASCADE;
+CREATE TABLE public.geopolitical_risk_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     as_of_date DATE NOT NULL,
     chokepoint TEXT NOT NULL,
