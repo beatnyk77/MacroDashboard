@@ -91,77 +91,42 @@ Deno.serve(async (req: Request) => {
 
         // --- A. Refining Capacity ---
         console.log('Fetching Refining Capacity...');
-        // Increased length to 50 for multi-decade history
         const capacityUrl = `${EIA_API_BASE}/petroleum/pnp/cap1/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[duoarea][]=NUS&facets[process][]=MCR&sort[0][column]=period&sort[0][direction]=desc&length=50`;
         try {
             const res = await withTimeout(fetch(capacityUrl), 15000, 'EIA Capacity Fetch');
             if (res.ok) {
-                const json = await res.json();
+                const json: any = await res.json();
+                console.log('Capacity Sample:', JSON.stringify(json.response?.data?.[0]));
                 const rows = (json.response.data || []).map((d: any) => ({
                     country_code: 'US',
                     country_name: 'United States',
-                    capacity_mbpd: Number(d.value) / 1000,
-                    as_of_year: Number(d.period),
-                    source_id: sourceId,
-                })).filter((r: any) => !isNaN(r.capacity_mbpd));
-
+                    as_of_date: `${d.period}-01-01`,
+                    capacity_kbpd: Number(d.value),
+                    last_updated_at: new Date().toISOString()
+                })).filter((r: any) => !isNaN(r.capacity_kbpd));
                 if (rows.length > 0) {
-                    await supabase.from('oil_refining_capacity').upsert(rows, { onConflict: 'country_code, as_of_year' });
+                    await supabase.from('oil_refining_capacity').upsert(rows, { onConflict: 'country_code, as_of_date' });
                     summary.capacity = rows.length;
                 }
             }
-        } catch (e: any) {
-            console.error('Capacity Error:', e.message);
-            // Log to Supabase for debugging
-            await supabase.from('ingestion_logs').insert({
-                function_name: 'ingest-oil-eia',
-                status: 'error',
-                metadata: { step: 'refining_capacity', error: e.message }
-            });
-        }
+        } catch (e: any) { console.error('Capacity Error:', e.message); }
 
-        // --- B. Crude Imports ---
-        console.log('Fetching Crude Imports...');
-        const importSeriesMap: Record<string, string> = {
-            'PET.MCRIMUSCA2.M': 'CA',
-            'PET.MCRIMUSMX2.M': 'MX',
-            'PET.MCRIMUSSA2.M': 'SA',
-            'PET.MCRIMUSIZ2.M': 'IQ',
-            'PET.MCRIMUSCO2.M': 'CO',
-            'PET.MCRIMUSVE2.M': 'VE', // Venezuela
-            'PET.MCRIMUSNG2.M': 'NG', // Nigeria
-            'PET.MCRIMUSAU2.M': 'DZ', // Algeria (OPEC)
-            'PET.MCRIMUSKU2.M': 'KW', // Kuwait
-            'PET.MCRIMUSAE2.M': 'AE', // UAE
-            'PET.MCRIMUSAG2.M': 'AO', // Angola
-        };
-        const importSeriesIds = Object.keys(importSeriesMap).join(';');
-        const importsUrl = `${EIA_API_BASE}/series/data/?api_key=${eiaApiKey}&series_id=${importSeriesIds}&frequency=monthly&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=12`;
+        // --- B. Oil Imports by Origin (India) ---
+        console.log('Fetching India Oil Imports...');
+        const importUrl = `${EIA_API_BASE}/petroleum/pnp/cap1/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[duoarea][]=IND&sort[0][column]=period&sort[0][direction]=desc&length=50`;
         try {
-            const res = await withTimeout(fetch(importsUrl), 20000, 'EIA Imports Fetch');
+            const res = await withTimeout(fetch(importUrl), 15000, 'EIA Imports Fetch');
             if (res.ok) {
-                const json = await res.json();
-                const COUNTRY_MAP: Record<string, string> = {
-                    'CA': 'Canada', 'MX': 'Mexico', 'SA': 'Saudi Arabia', 'IQ': 'Iraq',
-                    'CO': 'Colombia', 'VE': 'Venezuela', 'NG': 'Nigeria', 'DZ': 'Algeria',
-                    'KW': 'Kuwait', 'AE': 'UAE', 'AO': 'Angola'
-                };
-                const rows = (json.response.data || []).map((d: any) => {
-                    const originCode = importSeriesMap[d.series_id || d.series];
-                    if (!originCode) return null;
-                    return {
-                        importer_country_code: 'US',
-                        exporter_country_code: originCode,
-                        exporter_country_name: COUNTRY_MAP[originCode] || originCode,
-                        import_volume_mbbl: Number(d.value) / 1000,
-                        as_of_date: `${d.period}-01`,
-                        frequency: 'monthly',
-                        source_id: sourceId
-                    };
-                }).filter((r: any) => r !== null && !isNaN(r.import_volume_mbbl));
-
+                const json: any = await res.json();
+                const rows = (json.response.data || []).map((d: any) => ({
+                    importer_country_code: 'IN',
+                    exporter_country_name: d['duoarea-name'] || 'Unknown',
+                    as_of_date: `${d.period}-01-01`,
+                    import_volume_mbbl: Number(d.value),
+                    last_updated_at: new Date().toISOString()
+                })).filter((r: any) => !isNaN(r.import_volume_mbbl) && r.import_volume_mbbl > 0);
                 if (rows.length > 0) {
-                    await supabase.from('oil_imports_by_origin').upsert(rows, { onConflict: 'importer_country_code, exporter_country_code, as_of_date' });
+                    await supabase.from('oil_imports_by_origin').upsert(rows, { onConflict: 'importer_country_code, exporter_country_name, as_of_date' });
                     summary.imports = rows.length;
                 }
             }
@@ -169,15 +134,14 @@ Deno.serve(async (req: Request) => {
 
         // --- C. SPR Levels ---
         console.log('Fetching SPR Levels...');
-        // Increased length to 480 (40 years) for full history
-        const sprUrl = `${EIA_API_BASE}/petroleum/stoc/spr/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&sort[0][column]=period&sort[0][direction]=desc&length=480`;
+        const sprUrl = `${EIA_API_BASE}/petroleum/stoc/spr/data/?api_key=${eiaApiKey}&frequency=weekly&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=480`;
         try {
-            const res = await withTimeout(fetch(sprUrl), 10000, 'EIA SPR Fetch');
+            const res = await withTimeout(fetch(sprUrl), 15000, 'EIA SPR Fetch');
             if (res.ok) {
-                const json = await res.json();
+                const json: any = await res.json();
                 const obs = (json.response.data || []).map((d: any) => ({
                     metric_id: 'OIL_SPR_LEVEL_US',
-                    as_of_date: `${d.period}-01`,
+                    as_of_date: d.period,
                     value: Number(d.value),
                     last_updated_at: new Date().toISOString()
                 })).filter((r: any) => !isNaN(r.value));
@@ -190,12 +154,11 @@ Deno.serve(async (req: Request) => {
 
         // --- D. Utilization ---
         console.log('Fetching Utilization...');
-        // Increased length to 240 (20 years)
         const utilUrl = `${EIA_API_BASE}/petroleum/pnp/unc/data/?api_key=${eiaApiKey}&frequency=monthly&data[0]=value&facets[duoarea][]=NUS&facets[process][]=RPU&sort[0][column]=period&sort[0][direction]=desc&length=240`;
         try {
-            const res = await withTimeout(fetch(utilUrl), 10000, 'EIA Util Fetch');
+            const res = await withTimeout(fetch(utilUrl), 15000, 'EIA Util Fetch');
             if (res.ok) {
-                const json = await res.json();
+                const json: any = await res.json();
                 const obs = (json.response.data || []).map((d: any) => ({
                     metric_id: 'OIL_REFINERY_UTILIZATION_US',
                     as_of_date: `${d.period}-01`,
@@ -211,11 +174,13 @@ Deno.serve(async (req: Request) => {
 
         // --- E. Market Prices (Brent) ---
         console.log('Fetching Brent Prices...');
-        const brentUrl = `${EIA_API_BASE}/series/data/?api_key=${eiaApiKey}&series_id=PET.RBRTE.D&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=30`;
+        // Correcting Brent URL - EIA V2 Series Data
+        const brentUrl = `https://api.eia.gov/v2/seriesid/PET.RBRTE.D/data?api_key=${eiaApiKey}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=60`;
         try {
-            const res = await withTimeout(fetch(brentUrl), 10000, 'EIA Brent Fetch');
+            const res = await withTimeout(fetch(brentUrl), 15000, 'EIA Brent Fetch');
             if (res.ok) {
-                const json = await res.json();
+                const json: any = await res.json();
+                console.log('Brent Sample:', JSON.stringify(json.response?.data?.[0]));
                 const obs = (json.response.data || []).map((d: any) => ({
                     metric_id: 'OIL_BRENT_PRICE_USD',
                     as_of_date: d.period,
@@ -233,7 +198,8 @@ Deno.serve(async (req: Request) => {
         return new Response(JSON.stringify(summary), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     } catch (error: any) {
+        console.error('Oil EIA Function Error:', error.message);
         if (logId) await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-        return new Response(JSON.stringify({ error: error.message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 });
+        return new Response(JSON.stringify({ error: error.message }), { headers:corsHeaders, status: 500 });
     }
 });
