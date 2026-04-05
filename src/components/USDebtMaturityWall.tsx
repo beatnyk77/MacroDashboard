@@ -40,11 +40,33 @@ export const USDebtMaturityWall: React.FC = () => {
     const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
     const [loading, setLoading] = useState(true);
     const [latestDate, setLatestDate] = useState<string>('');
+    const [latestTotalDebt, setLatestTotalDebt] = useState<number | null>(null);
+    const [lastDebtDate, setLastDebtDate] = useState<string>('');
 
     useEffect(() => {
         fetchMaturityData();
         fetchHistoricalData();
+        fetchLatestTotalDebt();
     }, []);
+
+    const fetchLatestTotalDebt = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', 'US_DEBT_USD_TN')
+                .order('as_of_date', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (!error && data) {
+                setLatestTotalDebt(data.value);
+                setLastDebtDate(data.as_of_date);
+            }
+        } catch (err) {
+            console.error('Error fetching latest total debt:', err);
+        }
+    };
 
     const fetchMaturityData = async () => {
         try {
@@ -121,7 +143,7 @@ export const USDebtMaturityWall: React.FC = () => {
     }
 
     const totalDebt = maturityData[0]?.total_debt || 0;
-    const totalDebtTrillions = (totalDebt / 1_000_000).toFixed(2); // Convert millions to trillions
+    const totalDebtTrillions = latestTotalDebt !== null ? latestTotalDebt.toFixed(2) : (totalDebt / 1_000_000).toFixed(2);
 
     const shortTermBuckets = ['<1M', '1-3M', '3-6M', '6-12M'];
     const shortTermData = maturityData.filter(d => shortTermBuckets.includes(d.bucket));
@@ -222,12 +244,21 @@ export const USDebtMaturityWall: React.FC = () => {
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-cyan-500/30 transition-colors"
                 >
-                    <div className="flex items-center gap-3 mb-2">
-                        <DollarSign className="w-6 h-6 text-cyan-400" />
-                        <span className="text-slate-400 text-sm font-medium">Total Marketable Debt</span>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-3">
+                            <DollarSign className="w-6 h-6 text-cyan-400" />
+                            <span className="text-slate-400 text-sm font-medium">Total Marketable Debt</span>
+                        </div>
+                        {latestTotalDebt !== null && (
+                            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black bg-cyan-500/20 text-cyan-400 uppercase tracking-tighter border border-cyan-500/30 animate-pulse">
+                                Live
+                            </span>
+                        )}
                     </div>
                     <p className="text-3xl font-bold text-white">${totalDebtTrillions}T</p>
-                    <p className="text-slate-500 text-xs mt-1">Outstanding Securities</p>
+                    <p className="text-slate-500 text-xs mt-1">
+                        {lastDebtDate ? `As of ${new Date(lastDebtDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Outstanding Securities'}
+                    </p>
                 </motion.div>
 
                 <motion.div
