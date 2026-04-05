@@ -87,7 +87,7 @@ Deno.serve(async (req: Request) => {
         const sourceId = source?.id;
         if (!sourceId) throw new Error("EIA Data Source not found");
 
-        const summary: any = { capacity: 0, imports: 0, spr: 0, utilization: 0 };
+        const summary: any = { capacity: 0, imports: 0, spr: 0, utilization: 0, prices: 0 };
 
         // --- A. Refining Capacity ---
         console.log('Fetching Refining Capacity...');
@@ -208,6 +208,26 @@ Deno.serve(async (req: Request) => {
                 }
             }
         } catch (e: any) { console.error('Utilization Error:', e.message); }
+
+        // --- E. Market Prices (Brent) ---
+        console.log('Fetching Brent Prices...');
+        const brentUrl = `${EIA_API_BASE}/series/data/?api_key=${eiaApiKey}&series_id=PET.RBRTE.D&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=30`;
+        try {
+            const res = await withTimeout(fetch(brentUrl), 10000, 'EIA Brent Fetch');
+            if (res.ok) {
+                const json = await res.json();
+                const obs = (json.response.data || []).map((d: any) => ({
+                    metric_id: 'OIL_BRENT_PRICE_USD',
+                    as_of_date: d.period,
+                    value: Number(d.value),
+                    last_updated_at: new Date().toISOString()
+                })).filter((r: any) => !isNaN(r.value));
+                if (obs.length > 0) {
+                    await supabase.from('metric_observations').upsert(obs, { onConflict: 'metric_id, as_of_date' });
+                    summary.prices = obs.length;
+                }
+            }
+        } catch (e: any) { console.error('Brent Error:', e.message); }
 
         await logIngestionEnd(supabase, logId, 'success', { metadata: summary });
         return new Response(JSON.stringify(summary), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

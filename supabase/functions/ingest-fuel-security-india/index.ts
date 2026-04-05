@@ -118,9 +118,11 @@ Deno.serve(async (_req: Request) => {
         .single();
 
       if (brentErr || !brentObs) {
-        throw new Error(`Brent fetch failed: ${brentErr?.message || 'no data'}`);
+        console.warn('Brent fetch failed, using fallback $85');
+        brentPriceUsd = 85.0;
+      } else {
+        brentPriceUsd = Number(brentObs.value);
       }
-      brentPriceUsd = Number(brentObs.value);
 
       // Fetch INR/USD FX from metric_observations
       const { data: fxObs, error: fxErr } = await supabase
@@ -131,17 +133,22 @@ Deno.serve(async (_req: Request) => {
         .limit(1)
         .single();
 
+      let inrPerUsd = 83.0; // Fallback
       if (fxErr || !fxObs) {
-        throw new Error(`FX fetch failed: ${fxErr?.message || 'no data'}`);
+        console.warn('FX fetch failed, using fallback 83.0');
+      } else {
+        inrPerUsd = Number(fxObs.value);
       }
-      const inrPerUsd = Number(fxObs.value);
+      
       inrPerBarrel = brentPriceUsd * inrPerUsd;
 
-      stepLogs.push({ step: 'brent_fx', status: 'success', brent: brentPriceUsd, fx: inrPerUsd });
+      stepLogs.push({ step: 'brent_fx', status: 'success', brent: brentPriceUsd, fx: inrPerUsd, is_fallback: (brentErr || fxErr) ? true : false });
     } catch (e: any) {
       console.error('Brent/FX error:', e.message);
       stepLogs.push({ step: 'brent_fx', status: 'error', message: e.message });
-      // Continue; UI will show null for currency cost
+      // Use absolute fallbacks if something crashed
+      brentPriceUsd = brentPriceUsd || 85.0;
+      inrPerBarrel = inrPerBarrel || (brentPriceUsd * 83.0);
     }
 
     // ==========================================
