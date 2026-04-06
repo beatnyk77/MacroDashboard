@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Container, Typography, Box, List, ListItem, ListItemText, ListItemButton, Paper, Divider, Chip } from '@mui/material';
 import { SEOManager } from '@/components/SEOManager';
 import { Link } from 'react-router-dom';
+import { ChevronRight, Calendar } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface DigestSummary {
     id: string;
@@ -37,53 +38,65 @@ export const RegimeDigestArchivePage: React.FC = () => {
     };
 
     return (
-        <>
+        <div className="w-full max-w-4xl mx-auto py-12 px-4 sm:px-6">
             <SEOManager
                 title="Macro Regime Digest Archive"
                 description="Monthly institutional-grade macro intelligence reports on Global Liquidity, Debt/Gold, and Geopolitics."
             />
-            <Container maxWidth="md" sx={{ py: 8 }}>
-                <Box mb={6} textAlign="center">
-                    <Typography variant="h3" component="h1" gutterBottom className="font-display">
-                        Macro Regime Digest
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
-                        Monthly institutional intelligence on Global Liquidity, Sovereign Stress, and De-Dollarization.
-                    </Typography>
-                </Box>
+            
+            <div className="mb-12 text-center">
+                <h1 className="text-4xl font-black text-white tracking-heading uppercase mb-3">
+                    Macro Regime Digest
+                </h1>
+                <p className="text-sm font-bold text-muted-foreground/60 tracking-uppercase uppercase">
+                    Monthly institutional intelligence on Global Liquidity, Sovereign Stress, and De-Dollarization.
+                </p>
+            </div>
 
-                <Paper elevation={0} sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+            <Card variant="elevated" className="overflow-hidden bg-slate-950/50 backdrop-blur-md border-white/10">
+                <CardContent className="p-0">
                     {loading ? (
-                        <Box p={4} textAlign="center">Loading archives...</Box>
+                        <div className="p-12 text-center text-sm font-bold tracking-uppercase uppercase text-muted-foreground/50 animate-pulse">
+                            Loading archives...
+                        </div>
                     ) : digests.length === 0 ? (
-                        <Box p={4} textAlign="center">No digests published yet.</Box>
+                        <div className="p-12 text-center text-sm font-bold tracking-uppercase uppercase text-muted-foreground/50">
+                            No digests published yet.
+                        </div>
                     ) : (
-                        <List>
+                        <ul className="divide-y divide-white/5">
                             {digests.map((digest, index) => (
-                                <React.Fragment key={digest.id}>
-                                    {index > 0 && <Divider />}
-                                    <ListItem disablePadding>
-                                        <ListItemButton component={Link} to={`/regime-digest/${digest.year_month.replace('-', '/')}`} sx={{ py: 3 }}>
-                                            <ListItemText
-                                                primary={
-                                                    <Box display="flex" alignItems="center" gap={2} mb={0.5}>
-                                                        <Typography variant="h6" color="text.primary">
-                                                            {formatDate(digest.year_month)}
-                                                        </Typography>
-                                                        {index === 0 && <Chip label="Latest" color="primary" size="small" />}
-                                                    </Box>
-                                                }
-                                                secondary={digest.subject_line}
-                                                secondaryTypographyProps={{ color: 'text.secondary' }}
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </React.Fragment>
+                                <li key={digest.id} className="group">
+                                    <Link 
+                                        to={`/regime-digest/${digest.year_month.replace('-', '/')}`}
+                                        className="block p-6 hover:bg-white/[0.02] transition-colors"
+                                    >
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 border border-white/10 text-xs font-bold text-white tracking-uppercase uppercase">
+                                                        <Calendar size={12} className="text-blue-400" />
+                                                        {formatDate(digest.year_month)}
+                                                    </div>
+                                                    {index === 0 && (
+                                                        <span className="px-2 py-0.5 rounded bg-blue-500/20 border border-blue-500/30 text-[10px] font-black text-blue-400 tracking-uppercase uppercase">
+                                                            Latest
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors leading-snug">
+                                                    {digest.subject_line}
+                                                </h3>
+                                            </div>
+                                            <ChevronRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-blue-500 transition-colors shrink-0 mt-2" />
+                                        </div>
+                                    </Link>
+                                </li>
                             ))}
-                        </List>
+                        </ul>
                     )}
-                </Paper>
-            </Container>
-        </>
+                </CardContent>
+            </Card>
+        </div>
     );
 };

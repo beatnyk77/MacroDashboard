@@ -15,6 +15,7 @@ import { FeedbackSection } from '@/features/dashboard/components/sections/Feedba
 
 const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
 const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
+const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/sections/RegimeDigestSection').then(m => ({ default: m.RegimeDigestSection })));
 
 // 1. LIQUIDITY & FLOWS
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
@@ -80,6 +81,20 @@ export const Terminal: React.FC = () => {
                     <SectionErrorBoundary name="Today's Brief">
                         <Suspense fallback={<LoadingFallback />}>
                             <TodaysBriefPanel />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                {/* 1.5. MONTHLY STRATEGY */}
+                <section className="space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">Monthly Strategy</h2>
+                        <div className="h-px flex-1 bg-white/5" />
+                    </div>
+                    <SectionErrorBoundary name="Regime Digest Section">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <RegimeDigestSection />
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>

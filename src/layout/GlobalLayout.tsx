@@ -22,6 +22,7 @@ const terminalNavItems = [
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
     { id: 'treasury-hedging', label: 'Treasury Hedging', path: '/treasury-hedging', icon: <ShieldCheck size={18} /> },
+    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },
     { id: 'us-eq', label: 'US Corporate Terminal', path: '/us-equities', icon: <BarChart3 size={18} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={18} /> },
