@@ -10,6 +10,7 @@ import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWall';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import InstitutionalHoldingsWall from '@/components/InstitutionalHoldingsWall';
+import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 
 
 const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
@@ -309,6 +310,15 @@ export const Terminal: React.FC = () => {
                     <SectionErrorBoundary name="Currency Wars">
                         <Suspense fallback={<LoadingFallback />}>
                             <CurrencyWarsMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                {/* User Feedback Section */}
+                <section className="py-12">
+                    <SectionErrorBoundary name="User Feedback">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <FeedbackSection />
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>

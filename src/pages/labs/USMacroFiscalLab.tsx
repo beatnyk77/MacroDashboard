@@ -20,6 +20,7 @@ import { LazyRender } from '@/components/LazyRender';
 // Lazy loaded components
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasuryHoldersSection = lazy(() => import('@/features/dashboard/components/sections/TreasuryHoldersSection').then(m => ({ default: m.TreasuryHoldersSection })));
+const OffshoreDollarStressCard = lazy(() => import('@/features/dashboard/components/sections/OffshoreDollarStressCard').then(m => ({ default: m.OffshoreDollarStressCard })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
@@ -84,6 +85,21 @@ export const USMacroFiscalLab: React.FC = () => {
                         <LazyRender minHeight="300px">
                             <Suspense fallback={<LoadingFallback />}>
                                 <USTreasuryDemandGauge />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                </section>
+
+                {/* Section 2.5: Offshore Dollar Stress */}
+                <section>
+                    <div className="flex items-center gap-3 mb-8">
+                        <Zap className="text-rose-500" size={24} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Offshore Dollar Funding Stress</h2>
+                    </div>
+                    <SectionErrorBoundary name="Offshore Dollar Stress">
+                        <LazyRender minHeight="300px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <OffshoreDollarStressCard />
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>

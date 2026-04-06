@@ -21,6 +21,7 @@ const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
 const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
+const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -136,6 +137,20 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
+                </section>
+
+                {/* 5.5 Trade Gravity Shift */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Globe className="text-orange-500" size={28} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Trade Gravity: BRICS+ vs G7</h2>
+                    </div>
+                    <SectionErrorBoundary name="Trade Gravity">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TradeGravityCard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-trade-gravity" insight="The gravitational shift in global trade flows from G7 to BRICS+ represents a fundamental re-pricing of geopolitical risk and settlement currency preference." />
                 </section>
 
                 {/* 6. Gold Positioning & Manipulation Monitor */}
