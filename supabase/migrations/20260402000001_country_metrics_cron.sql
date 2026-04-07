@@ -12,7 +12,7 @@ SELECT cron.schedule(
   '0 3 * * *', -- 3:00 AM UTC daily
   $$
     SELECT net.http_post(
-      'https://ohefbbvldkoflrcjixow.functions.supabase.co/ingest-country-metrics',
+      'https://debdriyzfcwvgrhzzzre.functions.supabase.co/ingest-country-metrics',
       '{}',
       '{"Authorization": "Bearer '' || current_setting(''app.settings.service_role_key'') || ''", "Content-Type": "application/json"}'::jsonb
     )
