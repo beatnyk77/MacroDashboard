@@ -2,6 +2,9 @@ import React, { Suspense, lazy } from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Globe, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Components
 import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
@@ -61,6 +64,71 @@ export const Terminal: React.FC = () => {
             </header>
 
             <main className="space-y-24 pb-32">
+                {/* 0. SOVEREIGN COMPASS - COUNTRY INTELLIGENCE */}
+                <section>
+                    <SectionErrorBoundary name="Sovereign Compass">
+                        <Card variant="elevated" className="relative overflow-hidden">
+                            {/* Background accent */}
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+
+                            <CardHeader className="relative z-10">
+                                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <Globe className="w-6 h-6 text-blue-400" />
+                                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">
+                                                Sovereign Compass
+                                            </h2>
+                                        </div>
+                                        <CardTitle className="text-2xl md:text-3xl font-black mb-3">
+                                            Country Intelligence Terminals
+                                        </CardTitle>
+                                        <p className="text-sm text-muted-foreground/70 max-w-2xl">
+                                            Deep-dive macro profiles for 40+ sovereigns. Real-time GDP, inflation, debt ratios,
+                                            FX reserves, yield curves, and sovereign stress indicators — all updated via live APIs.
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <Button asChild size="lg" className="gap-2">
+                                            <Link to="/countries">
+                                                <MapPin className="w-4 h-4" />
+                                                Explore All Countries
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardHeader>
+
+                            <CardContent className="relative z-10 pt-6">
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                    {[
+                                        { code: 'US', name: 'United States', flag: '🇺🇸' },
+                                        { code: 'CN', name: 'China', flag: '🇨🇳' },
+                                        { code: 'IN', name: 'India', flag: '🇮🇳' },
+                                        { code: 'DE', name: 'Germany', flag: '🇩🇪' },
+                                        { code: 'JP', name: 'Japan', flag: '🇯🇵' },
+                                    ].map(country => (
+                                        <Link
+                                            key={country.code}
+                                            to={`/countries/${country.code}`}
+                                            className="group p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/30 transition-all duration-200"
+                                        >
+                                            <div className="text-2xl mb-2">{country.flag}</div>
+                                            <div className="font-bold text-sm group-hover:text-blue-400 transition-colors">
+                                                {country.name}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground/50 mt-1">
+                                                Full Profile →
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </SectionErrorBoundary>
+                </section>
+
                 {/* 0. FLAGSHIP: 13-F SMART MONEY TRACKER */}
                 <section>
                     <SectionErrorBoundary name="13-F Smart Money Tracker">

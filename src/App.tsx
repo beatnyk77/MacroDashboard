@@ -36,6 +36,7 @@ const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive
 const CorporateTreasuryHedging = lazy(() => import('@/pages/CorporateTreasuryHedging').then(module => ({ default: module.CorporateTreasuryHedging })));
 const IndiaFlowPulsePage = lazy(() => import('@/pages/IndiaFlowPulsePage').then(module => ({ default: module.IndiaFlowPulsePage })));
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
+const CountriesIndexPage = lazy(() => import('@/pages/CountriesIndexPage').then(module => ({ default: module.CountriesIndexPage })));
 
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
@@ -95,6 +96,9 @@ function App() {
                                         <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
                                         <Route path="/treasury-hedging" element={<CorporateTreasuryHedging />} />
                                         <Route path="/india-equities/fii-dii" element={<IndiaFlowPulsePage />} />
+
+                                        {/* Countries */}
+                                        <Route path="/countries" element={<CountriesIndexPage />} />
                                         <Route path="/countries/:iso" element={<CountryProfilePage />} />
 
                                         {/* Labs */}
@@ -109,7 +113,6 @@ function App() {
                                         <Route path="/labs/china-15th-fyp" element={<China15thFYPLab />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
-                                        <Route path="/countries" element={<Navigate to="/#country-pulses" replace />} />
                                         {/* Catch-all 404 to Home */}
                                         <Route path="*" element={<Navigate to="/" replace />} />
                                     </Routes>

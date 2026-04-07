@@ -71,7 +71,7 @@ export const CountryProfilePage: React.FC = () => {
           <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-12">
             <Link to="/" className="hover:text-white transition-colors">Terminal</Link>
             <span>/</span>
-            <span className="text-blue-400">Country Alpha</span>
+            <Link to="/countries" className="hover:text-blue-400 transition-colors text-blue-400">Sovereign Compass</Link>
             <span>/</span>
             <span className="text-white">{uppercaseIso}</span>
           </nav>
@@ -86,7 +86,7 @@ export const CountryProfilePage: React.FC = () => {
                 <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.8] mb-2 uppercase italic text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/20">
                   {uppercaseIso}
                 </h1>
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-400 opacity-60">Sovereign Macro Terminal</p>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-400 opacity-60">Sovereign Compass</p>
               </div>
             </div>
 
