@@ -5,7 +5,7 @@ import {
     BarChart3, GitCompare, Zap, ChevronUp, ChevronDown, Minus
 } from 'lucide-react';
 import {
-    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend, PieChart, Pie
+    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell
 } from 'recharts';
 import { useSmartMoneyHoldings } from '@/hooks/useSmartMoneyHoldings';
 import { MotionCard } from '@/components/MotionCard';
@@ -146,7 +146,7 @@ const InstitutionCard: React.FC<{ data: any; history: any[] }> = ({ data, histor
 const SectorCell: React.FC<{ allocation: number; max: number; delta?: number }> = ({ allocation, max, delta }) => {
     const intensity = Math.min(allocation / max, 1);
     const bgColor = `rgba(59, 130, 246, ${0.15 + intensity * 0.85})`;
-    const textColor = intensity > 0.5 ? '#ffffff' : '#cbd5e1';
+    const textColor = intensity > 0.6 ? '#ffffff' : '#e2e8f0';
     const showArrow = delta !== undefined && Math.abs(delta) > 0.5;
     const arrowColor = delta && delta > 0 ? '#0df259' : delta && delta < 0 ? '#f87171' : textColor;
 
@@ -155,27 +155,28 @@ const SectorCell: React.FC<{ allocation: number; max: number; delta?: number }> 
             sx={{
                 p: 1.5,
                 bgcolor: bgColor,
-                border: intensity > 0.7 ? '1px solid rgba(59,130,246,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                border: intensity > 0.7 ? '1px solid rgba(59,130,246,0.5)' : '1px solid rgba(255,255,255,0.08)',
                 borderRadius: 0.75,
                 textAlign: 'center',
-                minHeight: 52,
+                minHeight: 48,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
                 '&:hover': {
-                    bgcolor: `rgba(59, 130, 246, ${0.25 + intensity * 0.75})`,
-                    borderColor: 'rgba(59,130,246,0.5)',
-                    transform: 'scale(1.02)'
+                    bgcolor: `rgba(59, 130, 246, ${0.3 + intensity * 0.7})`,
+                    borderColor: 'rgba(59,130,246,0.6)',
+                    transform: 'scale(1.05)',
+                    zIndex: 2
                 }
             }}
         >
             {showArrow && (
-                <Typography component="span" sx={{ mr: 0.5, color: arrowColor, fontWeight: 900, fontSize: '0.875rem', lineHeight: 1 }}>
+                <Typography component="span" sx={{ mr: 0.5, color: arrowColor, fontWeight: 900, fontSize: '1rem', lineHeight: 1, filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.5))' }}>
                     {delta! > 0 ? '↑' : '↓'}
                 </Typography>
             )}
-            <Typography variant="body2" sx={{ color: textColor, fontWeight: 800, fontSize: '0.875rem', fontFamily: 'monospace', letterSpacing: '-0.01em' }}>
+            <Typography variant="body2" sx={{ color: textColor, fontWeight: 900, fontSize: '0.875rem', fontFamily: 'monospace', letterSpacing: '-0.02em' }}>
                 {allocation.toFixed(1)}%
             </Typography>
         </Box>
@@ -219,11 +220,25 @@ const InstitutionalHoldingsWall: React.FC = () => {
                 <TradeTape />
             </Box>
 
-            {/* Disclaimers */}
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* Disclaimers & Freshness */}
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                 <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600, fontStyle: 'italic' }}>
                     Inferred from latest 13-F filings (quarterly, ~45-day lag)
                 </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600 }}>
+                        AS OF: {collective ? new Date(collective.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                    </Typography>
+                    <Box sx={{ width: 120, height: 4, bgcolor: 'rgba(59,130,246,0.1)', borderRadius: 2, overflow: 'hidden' }}>
+                        <Box sx={{
+                            width: '100%',
+                            height: '100%',
+                            bgcolor: COLORS.equity,
+                            animation: 'pulse 3s infinite',
+                            boxShadow: `0 0 8px ${COLORS.equity}40`
+                        }} />
+                    </Box>
+                </Box>
             </Box>
 
             {/* Header */}
@@ -327,7 +342,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                                 {institutionCards.map(inst => {
                                     const history = institutions.find(i => i.cik === inst.cik)?.historical_allocation || [];
                                     return (
-                                        <Grid item xs={12} key={inst.cik}>
+                                        <Grid item xs={12} sm={6} md={4} key={inst.cik}>
                                             <InstitutionCard data={inst} history={history} />
                                         </Grid>
                                     );
@@ -344,41 +359,48 @@ const InstitutionalHoldingsWall: React.FC = () => {
                             <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 800, mb: 3, fontSize: '1rem', letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                 <BarChart3 size={18} className="text-amber-500" /> Top Holdings Concentration
                             </Typography>
-                            <Box sx={{ height: 380 }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={aggregatedTopHoldings.slice(0, 10)} layout="vertical" margin={{ top: 5, right: 90, left: 10, bottom: 5 }}>
-                                        <XAxis
-                                            type="number"
-                                            tick={{ fill: '#cbd5e1', fontSize: 12.5, fontFamily: 'monospace', fontWeight: 700 }}
-                                            tickFormatter={(v) => `$${(v/1e9).toFixed(1)}B`}
-                                            axisLine={false}
-                                            tickLine={false}
-                                        />
-                                        <YAxis
-                                            type="category"
-                                            dataKey="ticker"
-                                            tick={{ fill: '#cbd5e1', fontSize: 13, fontFamily: 'monospace', fontWeight: 700 }}
-                                            width={85}
-                                            axisLine={false}
-                                            tickLine={false}
-                                        />
-                                        <Tooltip
-                                            contentStyle={{ background: '#020617', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, fontFamily: 'monospace', fontSize: 12.5, padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
-                                            formatter={(value: number, _name: string, props: any) => [
-                                                <span style={{ color: '#0df259', fontWeight: 800 }}>$${(value/1e9).toFixed(2)}B</span>,
-                                                <span style={{ color: '#94a3b8', fontWeight: 500 }}>
-                                                    {props.payload.name || props.payload.ticker} ({props.payload.concentration_contribution.toFixed(1)}%)
-                                                </span>
-                                            ]}
-                                            labelStyle={{ color: '#e2e8f0', fontWeight: 700, marginBottom: 4, fontSize: '12px' }}
-                                        />
-                                        <Bar dataKey="value" radius={[0, 6, 6, 0]}>
-                                            {aggregatedTopHoldings.slice(0, 10).map((_entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={`hsl(${210 + (index * 12)}, 75%, 62%)`} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
+                            <Box sx={{ height: 500, overflowY: 'auto', overflowX: 'hidden' }}>
+                                <table className="w-full text-sm font-mono">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-2 px-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">Rank</th>
+                                            <th className="text-left py-2 px-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">Holding</th>
+                                            <th className="text-left py-2 px-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">Sector</th>
+                                            <th className="text-right py-2 px-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">Value</th>
+                                            <th className="text-right py-2 px-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">% of AUM</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {aggregatedTopHoldings.slice(0, 15).map((holding, idx) => {
+                                            const concentration = holding.concentration_contribution;
+                                            const concentrationColor = concentration > 5 ? '#f87171' : concentration > 2 ? '#fbbf24' : '#0df259';
+                                            return (
+                                                <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                                    <td className="py-2 px-2 text-slate-400 font-bold">{idx + 1}</td>
+                                                    <td className="py-2 px-2">
+                                                        <div>
+                                                            <div className="text-white font-bold text-xs">{holding.displayName}</div>
+                                                            {holding.name && holding.name !== holding.ticker && (
+                                                                <div className="text-slate-500 text-[10px] truncate max-w-[120px]">{holding.name}</div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-2 px-2">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                                            {holding.sector || 'Other'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-2 px-2 text-right font-mono text-emerald-400 font-bold text-xs">
+                                                        ${(holding.value / 1e9).toFixed(2)}B
+                                                    </td>
+                                                    <td className="py-2 px-2 text-right font-mono font-bold text-xs" style={{ color: concentrationColor }}>
+                                                        {concentration.toFixed(2)}%
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </Box>
                         </Box>
                     </MotionCard>
@@ -391,18 +413,18 @@ const InstitutionalHoldingsWall: React.FC = () => {
                             <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 800, mb: 3, fontSize: '1rem', letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                 <Globe size={18} className="text-blue-500" /> Sector Flow Heatmap
                             </Typography>
-                            <Box sx={{ overflowX: 'auto' }}>
-                                <Box sx={{ minWidth: 500, mb: 2 }}>
-                                    {/* Header row */}
-                                    <Box sx={{ display: 'grid', gridTemplateColumns: '140px repeat(auto-fit, minmax(90px, 1fr))', gap: 1, mb: 1.5 }}>
-                                        <Box sx={{ p: 1, textAlign: 'right' }}>
-                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 800, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <Box sx={{ height: 500, overflow: 'auto', position: 'relative' }}>
+                                <Box sx={{ minWidth: 700, position: 'sticky', left: 0, zIndex: 10, background: 'inherit' }}>
+                                    {/* Header row - sticky */}
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: '160px repeat(auto-fit, minmax(85px, 1fr))', gap: 1, mb: 1.5, position: 'sticky', top: 0, background: 'rgba(15, 23, 42, 0.95)', py: 1, zIndex: 10 }}>
+                                        <Box sx={{ p: 1.5, textAlign: 'right', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+                                            <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 900, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                                 INSTITUTION
                                             </Typography>
                                         </Box>
                                         {sectorsList.map(sector => (
                                             <Box key={sector} sx={{ p: 1 }}>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.8125rem', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.3, letterSpacing: '0.02em' }}>
+                                                <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '0.75rem', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.2, letterSpacing: '0.01em' }}>
                                                     {sector}
                                                 </Typography>
                                             </Box>
@@ -410,10 +432,10 @@ const InstitutionalHoldingsWall: React.FC = () => {
                                     </Box>
                                     {/* Data rows */}
                                     {heatmapData.map((row) => (
-                                        <Box key={row.fund} sx={{ display: 'flex', gap: 1, mb: 1, flexWrap: 'nowrap' }}>
-                                            <Box sx={{ width: 140, p: 1, textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', borderRight: '1px solid rgba(255,255,255,0.06)', pr: 2 }}>
-                                                <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '0.8125rem', fontFamily: 'monospace', letterSpacing: '-0.01em', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '120px' }}>
-                                                    {row.fund.length > 15 ? row.fund.slice(0, 14) + '…' : row.fund}
+                                        <Box key={row.fund} sx={{ display: 'grid', gridTemplateColumns: '160px repeat(auto-fit, minmax(85px, 1fr))', gap: 1, mb: 0.75, '&:hover': { background: 'rgba(255,255,255,0.03)' }, p: 0.5, borderRadius: 0.5 }}>
+                                            <Box sx={{ p: 1.5, textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', borderRight: '1px solid rgba(255,255,255,0.06)', pr: 2, position: 'sticky', left: 0, background: 'inherit', zIndex: 5 }}>
+                                                <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '0.75rem', fontFamily: 'monospace', letterSpacing: '-0.01em', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '140px' }}>
+                                                    {row.fund}
                                                 </Typography>
                                             </Box>
                                             {sectorsList.map(sector => {
@@ -428,14 +450,18 @@ const InstitutionalHoldingsWall: React.FC = () => {
                                     ))}
                                 </Box>
                                 {/* Legend */}
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, mt: 2, pt: 2, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600 }}>LOW</Typography>
-                                    <Box sx={{ width: 120, height: 8, bgcolor: 'rgba(59,130,246,0.15)', borderRadius: 4, overflow: 'hidden', display: 'flex' }}>
-                                        <Box sx={{ width: '30%', height: '100%', bgcolor: 'rgba(59,130,246,0.3)' }} />
-                                        <Box sx={{ width: '30%', height: '100%', bgcolor: 'rgba(59,130,246,0.6)' }} />
-                                        <Box sx={{ width: '40%', height: '100%', bgcolor: 'rgba(59,130,246,0.9)' }} />
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, mt: 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 800 }}>LOW</Typography>
+                                    <Box sx={{ width: 100, height: 6, bgcolor: 'rgba(59,130,246,0.15)', borderRadius: 3, overflow: 'hidden', display: 'flex' }}>
+                                        <Box sx={{ width: '25%', height: '100%', bgcolor: 'rgba(59,130,246,0.35)' }} />
+                                        <Box sx={{ width: '25%', height: '100%', bgcolor: 'rgba(59,130,246,0.6)' }} />
+                                        <Box sx={{ width: '25%', height: '100%', bgcolor: 'rgba(59,130,246,0.8)' }} />
+                                        <Box sx={{ width: '25%', height: '100%', bgcolor: 'rgba(59,130,246,0.95)' }} />
                                     </Box>
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600 }}>HIGH</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 800 }}>HIGH</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 600, ml: 2 }}>
+                                        ↑ Increase | ↓ Decrease
+                                    </Typography>
                                 </Box>
                             </Box>
                         </Box>
@@ -453,9 +479,9 @@ const InstitutionalHoldingsWall: React.FC = () => {
                             </Typography>
                             <Grid container spacing={2.5}>
                                 {[
-                                    { label: 'S&P 500', value: collective ? institutions.reduce((sum, i) => sum + i.spy_comparison, 0) / institutions.length : 0, color: COLORS.equity },
-                                    { label: 'TLT (Bonds)', value: collective ? institutions.reduce((sum, i) => sum + i.tlt_comparison, 0) / institutions.length : 0, color: COLORS.bond },
-                                    { label: 'Gold (GLD)', value: collective ? institutions.reduce((sum, i) => sum + i.gld_comparison, 0) / institutions.length : 0, color: COLORS.gold }
+                                    { label: 'S&P 500', value: institutions.length > 0 ? institutions.reduce((sum, i) => sum + (i.spy_comparison || 0), 0) / institutions.length : 0, color: COLORS.equity },
+                                    { label: 'TLT (Bonds)', value: institutions.length > 0 ? institutions.reduce((sum, i) => sum + (i.tlt_comparison || 0), 0) / institutions.length : 0, color: COLORS.bond },
+                                    { label: 'Gold (GLD)', value: institutions.length > 0 ? institutions.reduce((sum, i) => sum + (i.gld_comparison || 0), 0) / institutions.length : 0, color: COLORS.gold }
                                 ].map(bench => (
                                     <Grid item xs={12} sm={4} key={bench.label}>
                                         <Box sx={{
@@ -549,7 +575,7 @@ const InstitutionalHoldingsWall: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.75rem', fontWeight: 600 }}>
-                        AS OF: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} UTC
+                        AS OF: {collective ? new Date(collective.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'} UTC
                     </Typography>
                     <Box sx={{ width: 140, height: 5, bgcolor: 'rgba(59,130,246,0.1)', borderRadius: 2.5, overflow: 'hidden' }}>
                         <Box sx={{

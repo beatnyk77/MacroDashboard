@@ -108,8 +108,8 @@ export function useSmartMoneyHoldings() {
     ];
     const institutionCards = institutions
         .filter(inst => keyInstitutions.includes(inst.fund_name))
-        .sort((a, b) => keyInstitutions.indexOf(a.fund_name) - keyInstitutions.indexOf(b.fund_name))
-        .slice(0, 10); // Show top 10 key institutions
+        .sort((a, b) => keyInstitutions.indexOf(a.fund_name) - keyInstitutions.indexOf(b.fund_name));
+    // Show all 15 tracked institutions (no slice limit)
 
     // Derived: aggregate top holdings across all institutions
     // Build a map: cusip/ticker -> holding data with total value
@@ -139,9 +139,10 @@ export function useSmartMoneyHoldings() {
             cusip: h.cusip,
             ticker: h.ticker,
             name: h.name,
-            value: h.totalValue,
+            displayName: h.ticker || h.name || `CUSIP ${h.cusip.slice(-4)}`,
             sector: h.sector,
-            concentration_contribution: h.concentration_contribution
+            concentration_contribution: h.concentration_contribution,
+            value: h.totalValue
         }));
 
     // Derived: sector rotation heatmap data with direction
