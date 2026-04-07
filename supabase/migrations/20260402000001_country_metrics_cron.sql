@@ -1,9 +1,15 @@
--- Migration: Schedule weekly cron job for country metrics ingestion
--- Runs every Sunday at 02:00 UTC to minimize API load while keeping macro data fresh
+-- Migration: Schedule daily cron job for country metrics ingestion
+-- Runs every day at 03:00 UTC to keep macro data fresh
 
+-- Remove old weekly job if exists (ignore error)
+DO $$ BEGIN
+  PERFORM cron.unschedule('ingest-country-metrics-weekly');
+EXCEPTION WHEN OTHERS THEN NULL; END $$;
+
+-- Schedule daily job
 SELECT cron.schedule(
-  'ingest-country-metrics-weekly',
-  '0 2 * * 0', -- 2:00 AM UTC every Sunday
+  'ingest-country-metrics-daily',
+  '0 3 * * *', -- 3:00 AM UTC daily
   $$
     SELECT net.http_post(
       'https://ohefbbvldkoflrcjixow.functions.supabase.co/ingest-country-metrics',

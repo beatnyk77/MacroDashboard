@@ -34,6 +34,9 @@ const METRIC_CONFIG: Record<string, MetricConfig> = {
   'area_sq_km': { source: 'WB', indicator: 'AG.SRF.TOTL.K2' },
   'ext_debt_gdp_pct': { source: 'WB', indicator: 'DT.TDS.DECT.EX.ZS' },
   'energy_import_pct': { source: 'WB', indicator: 'EG.IMP.CONS.ZS' },
+  // Additional WB indicators for expanded coverage
+  'hh_debt_gdp_pct': { source: 'WB', indicator: 'FS.AST.PRVT.GD.ZS' }, // Private sector credit (% of GDP) proxy
+  'military_exp_gdp_pct': { source: 'WB', indicator: 'MS.MIL.XPND.GD.ZS' },
 };
 
 // FRED series mapping per metric and ISO
@@ -298,7 +301,103 @@ async function ingestCountryMetrics(ctx: IngestionContext) {
     }
   }
 
-  // --- 3. Derived metrics (slope) ---
+  // --- 3. Policy Rates from metric_observations ---
+// Pull latest policy rates ingested by other functions (ingest-major-economies, etc.)
+const { data: policyRateRows } = await supabase
+  .from('metric_observations')
+  .select('metric_id, value, as_of_date')
+  .like('metric_id', '%_POLICY_RATE')
+  .order('as_of_date', { ascending: false })
+  .limit(200);
+
+// Deduplicate to get latest per metric_id
+const latestPolicyByMetric: Record<string, any> = {};
+if (policyRateRows) {
+  for (const row of policyRateRows) {
+    if (!latestPolicyByMetric[row.metric_id]) {
+      latestPolicyByMetric[row.metric_id] = row;
+    }
+  }
+}
+
+for (const row of Object.values(latestPolicyByMetric)) {
+  const iso = row.metric_id.replace('_POLICY_RATE', '');
+  if (COUNTRIES.includes(iso)) {
+    batchRows.push({
+      iso,
+      metric_key: 'central_bank_rate_pct',
+      value: row.value,
+      as_of: row.as_of_date,
+      source: 'Central Bank',
+      confidence: 0.9,
+      last_cron: timestamp
+    });
+  }
+}
+
+// --- 4. Fetch Gold Reserves and FX from country_reserves ---
+// Get latest reserves for our countries
+const { data: reserveRows } = await supabase
+  .from('country_reserves')
+  .select('country_code, fx_reserves_usd, gold_tonnes, usd_share_pct, as_of_date')
+  .in('country_code', COUNTRIES)
+  .order('as_of_date', { ascending: false });
+
+// Build a map of the latest per country
+const latestReserveByCountry: Record<string, any> = {};
+if (reserveRows) {
+  for (const row of reserveRows) {
+    if (!latestReserveByCountry[row.country_code]) {
+      latestReserveByCountry[row.country_code] = row;
+    }
+  }
+}
+
+// Build a set of existing (iso, metric_key) to avoid overwriting FRED/IMF data
+const existingKeys = new Set(batchRows.map(r => `${r.iso}:${r.metric_key}`));
+
+for (const iso of COUNTRIES) {
+  const res = latestReserveByCountry[iso];
+  if (!res) continue;
+  // gold_reserves_tonnes
+  if (res.gold_tonnes != null && !existingKeys.has(`${iso}:gold_reserves_tonnes`)) {
+    batchRows.push({
+      iso,
+      metric_key: 'gold_reserves_tonnes',
+      value: res.gold_tonnes,
+      as_of: res.as_of_date,
+      source: 'WGC/IMF',
+      confidence: 0.9,
+      last_cron: timestamp
+    });
+  }
+  // fx_reserves_bn (convert from USD)
+  if (res.fx_reserves_usd != null && !existingKeys.has(`${iso}:fx_reserves_bn`)) {
+    batchRows.push({
+      iso,
+      metric_key: 'fx_reserves_bn',
+      value: res.fx_reserves_usd / 1e9,
+      as_of: res.as_of_date,
+      source: 'IMF',
+      confidence: 0.9,
+      last_cron: timestamp
+    });
+  }
+  // usd_reserve_share_pct (if available)
+  if (res.usd_share_pct != null && !existingKeys.has(`${iso}:usd_reserve_share_pct`)) {
+    batchRows.push({
+      iso,
+      metric_key: 'usd_reserve_share_pct',
+      value: res.usd_share_pct,
+      as_of: res.as_of_date,
+      source: 'IMF COFER',
+      confidence: 0.9,
+      last_cron: timestamp
+    });
+  }
+}
+
+// --- 5. Derived metrics (slope) ---
   // Group direct values by iso for slope computation
   const valuesByIso: Record<string, Record<string, number>> = {};
   for (const row of batchRows) {
