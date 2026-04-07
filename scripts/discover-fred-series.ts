@@ -34,7 +34,7 @@ const FRED_API_KEY = process.env.FRED_API_KEY;
 if (!FRED_API_KEY) {
   console.error('❌ FRED_API_KEY environment variable is required');
   console.error('   Set: export FRED_API_KEY=your_key');
-  Deno.exit(1);
+  process.exit(1);
 }
 
 // Series patterns to test
@@ -179,16 +179,18 @@ async function main() {
 
   // Save detailed results to JSON for reference
   const outFile = 'fred-discovery-results.json';
-  await Deno.writeTextFile(outFile, JSON.stringify({
-    coverage: coverageMap,
-    missing: missingMap,
-    summary: {
-      totalChecks,
-      totalFound,
-      coveragePct: totalFound / totalChecks
-    }
-  }, null, 2));
-  console.log(`\n💾 Detailed results saved to: ${outFile}`);
+  import('fs').then(fs => {
+    fs.writeFileSync(outFile, JSON.stringify({
+      coverage: coverageMap,
+      missing: missingMap,
+      summary: {
+        totalChecks,
+        totalFound,
+        coveragePct: totalFound / totalChecks
+      }
+    }, null, 2));
+    console.log(`\n💾 Detailed results saved to: ${outFile}`);
+  });
 }
 
 await main();

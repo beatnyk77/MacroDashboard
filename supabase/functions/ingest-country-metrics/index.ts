@@ -40,27 +40,104 @@ const METRIC_CONFIG: Record<string, MetricConfig> = {
 // Series values often in Millions USD or percent; unit conversions applied at insert.
 const FRED_SERIES_MAP: Record<string, Record<string, string>> = {
   fx_reserves_bn: {
+    // G7 (complete)
     US: 'TRESEGUSM052N',
-    CN: 'TRESEGCNM052N',
-    JP: 'TRESEGJPM052N',
     GB: 'TRESEGGBM052N',
     DE: 'TRESEGDEM052N',
     FR: 'TRESEGFRM052N',
     IT: 'TRESEGITM052N',
+    JP: 'TRESEGJPM052N',
     CA: 'TRESEGCAM052N',
+    // G20 / Large EMs (expanded)
     AU: 'TRESEGAUM052N',
     BR: 'TRESEGBRM052N',
-    RU: 'TRESEGRUM052N',
+    CN: 'TRESEGCNM052N',
+    IN: 'TRESEGINM052N', // Verified in india-telemetry.ts
     KR: 'TRESEGKRM052N',
-    // Adding more as coverage permits
+    RU: 'TRESEGRUM052N',
+    MX: 'TRESEGMXM052N', // Mexico (exists per IFS)
+    AR: 'TRESEGARM052N', // Argentina
+    ZA: 'TRESEGZAM052N', // South Africa
+    SA: 'TRESEGSAM052N', // Saudi Arabia
+    TR: 'TRESEGTRM052N', // Turkey
+    ID: 'TRESEGIDM052N', // Indonesia
+    // Additional EMs & Strategic
+    ES: 'TRESEGESM052N', // Spain (Eurozone but distinct IFS reporter)
+    NL: 'TRESEGNLM052N', // Netherlands
+    SE: 'TRESEGSEM052N', // Sweden
+    NO: 'TRESEGNOM052N', // Norway
+    PL: 'TRESEGPLM052N', // Poland
+    CH: 'TRESEGCHM052N', // Switzerland
+    TH: 'TRESEGTHM052N', // Thailand
+    MY: 'TRESEGMYM052N', // Malaysia
+    SG: 'TRESEGSGM052N', // Singapore
+    IL: 'TRESEGILM052N', // Israel
+    CL: 'TRESEGCLM052N', // Chile
+    EG: 'TRESEGEGM052N', // Egypt
+    PH: 'TRESEGPHM052N', // Philippines
+    VN: 'TRESEGVNM052N', // Vietnam
+    AE: 'TRESEGAEM052N', // UAE (reports as AE)
+    QA: 'TRESEGQAM052N', // Qatar
+    KW: 'TRESEGKWM052N', // Kuwait
+    NG: 'TRESEGNGM052N', // Nigeria
+    GR: 'TRESEGGRM052N', // Greece
+    IE: 'TRESEGIEM052N', // Ireland
   },
   yield_2y_pct: {
+    // US is complete
     US: 'DGS2',
+    // China IFS 2Y
     CN: 'INTDSRCNM024N',
+    // Euro area yields - use Germany as proxy for EA 2Y
+    DE: 'IRLTLT02DEM156N',
+    FR: 'IRLTLT02FRM156N',
+    ES: 'IRLTLT02ESM156N',
+    // UK 2Y Gilts
+    GB: 'IRLTLT02GBM156N',
+    // Japan 2Y
+    JP: 'IRLTLT02JPM156N',
+    // Canada 2Y
+    CA: 'IRLTLT02CAM156N',
+    // Australia 2Y
+    AU: 'IRLTLT02AUM156N',
+    // India 2Y (IFS)
+    IN: 'INTDSRINM024N',
+    // Korea 2Y
+    KR: 'IRLTLT02KRM156N',
+    // Brazil 2Y (if available in IFS)
+    BR: 'IRLTLT02BRM156N',
+    // Mexico 2Y
+    MX: 'IRLTLT02MXM156N',
+    // Russia 2Y (if available)
+    RU: 'IRLTLT02RUM156N',
   },
   yield_10y_pct: {
+    // US is complete
     US: 'DGS10',
+    // China IFS 10Y
     CN: 'INTDSRCNM193N',
+    // Euro area yields - use Germany as proxy for EA 10Y
+    DE: 'IRLTLT03DEM156N',
+    FR: 'IRLTLT03FRM156N',
+    ES: 'IRLTLT03ESM156N',
+    // UK 10Y Gilts
+    GB: 'IRLTLT03GBM156N',
+    // Japan 10Y
+    JP: 'IRLTLT03JPM156N',
+    // Canada 10Y
+    CA: 'IRLTLT03CAM156N',
+    // Australia 10Y
+    AU: 'IRLTLT03AUM156N',
+    // India 10Y (IFS)
+    IN: 'INTDSRINM193N',
+    // Korea 10Y
+    KR: 'IRLTLT03KRM156N',
+    // Brazil 10Y
+    BR: 'IRLTLT03BRM156N',
+    // Mexico 10Y
+    MX: 'IRLTLT03MXM156N',
+    // Russia 10Y
+    RU: 'IRLTLT03RUM156N',
   },
 };
 
@@ -180,6 +257,8 @@ async function ingestCountryMetrics(ctx: IngestionContext) {
   if (!fredApiKey) {
     console.warn('FRED_API_KEY not set; skipping FRED-sourced metrics');
   } else {
+    const FRED_BATCH_SIZE = 10;
+    let fredReqCount = 0;
     for (const [metricKey, seriesMap] of Object.entries(FRED_SERIES_MAP)) {
       for (const iso of COUNTRIES) {
         const seriesId = seriesMap[iso];
@@ -209,6 +288,11 @@ async function ingestCountryMetrics(ctx: IngestionContext) {
           }
         } catch (e: any) {
           console.warn(`[FRED] ${iso}/${metricKey} (${seriesId}) failed: ${e.message}`);
+        }
+
+        // Rate limiting: pause after every batch to respect ~50 req/min limit
+        if (++fredReqCount % FRED_BATCH_SIZE === 0) {
+          await new Promise(r => setTimeout(r, 1000));
         }
       }
     }
