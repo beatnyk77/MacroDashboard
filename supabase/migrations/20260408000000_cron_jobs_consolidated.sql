@@ -35,7 +35,13 @@ CREATE OR REPLACE FUNCTION public.schedule_standard_cron(
 ) RETURNS VOID AS $$
 BEGIN
     -- First unschedule any existing job with this name (idempotency)
-    PERFORM cron.unschedule(p_job_name);
+    -- Use exception handling in case job doesn't exist
+    BEGIN
+        PERFORM cron.unschedule(p_job_name);
+    EXCEPTION WHEN OTHERS THEN
+        -- Job doesn't exist or can't be unscheduled, continue
+        RAISE NOTICE 'No existing job to unschedule (or already gone): %', p_job_name;
+    END;
 
     -- Then schedule with secure vault-based auth
     PERFORM cron.schedule(
