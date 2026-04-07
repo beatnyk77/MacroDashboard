@@ -9,7 +9,12 @@ interface AssetImpact {
     direction: 'up' | 'down';
 }
 
-const MOCK_ASSET_IMPACTS: Record<string, AssetImpact[]> = {
+/**
+ * Contextual enrichment data for policy impact visualization.
+ * This is NOT live market data - it's historical analysis and correlations
+ * that provide additional context to the live policy data from the database.
+ */
+const ENRICHMENT_ASSET_IMPACTS: Record<string, AssetImpact[]> = {
     'Proposed Corporate Tax Cut 2.0': [
         { symbol: 'SPX', change: 1.8, direction: 'up' },
         { symbol: 'DXY', change: -0.5, direction: 'down' }
@@ -67,7 +72,7 @@ export const PresidentialPolicyTracker: React.FC = () => {
                 {policies.slice(0, 4).map((policy, idx) => {
                     const absScore = Math.abs(policy.policy_score);
                     const isPositive = policy.policy_score > 0;
-                    const assetImpacts = MOCK_ASSET_IMPACTS[policy.event_name] || [];
+                    const assetImpacts = ENRICHMENT_ASSET_IMPACTS[policy.event_name] || [];
                     const narrativeTag = NARRATIVE_TAGS[policy.event_name];
                     const macroAnalogue = MACRO_ANALOGUES[policy.event_name];
                     const isExpanded = expandedId === policy.id;

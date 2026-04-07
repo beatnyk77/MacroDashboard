@@ -1,5 +1,24 @@
+-- ⚠️  DEPRECATED: MIGRATION HAS SECURITY ISSUES
+-- ================================================
+-- This migration contains HARDCODED SECRETS (Bearer tokens) and should
+-- NEVER be applied to a new database. It has been superseded by:
+--   `20260408000000_cron_jobs_consolidated.sql`
+--
+-- Issues:
+--   - Hardcoded SERVICE_ROLE_KEY in Authorization header (lines 13, 32)
+--   - This is a CRITICAL security vulnerability if committed to Git
+--
+-- Action: DO NOT RUN THIS MIGRATION. Use the consolidated cron migration instead.
+-- If this migration was already applied in production, rotate all compromised keys.
+-- ================================================
+
+-- ORIGINAL CONTENT PRESERVED FOR REFERENCE (commented out):
+
 -- Schedule ingest-fred to run daily at 6:00 AM UTC (2:00 AM ET)
 -- This ensures Gold, Silver, BoJ Assets, etc. are updated.
+
+/*
+-- DEPRECATED: Hardcoded secrets - DO NOT EXECUTE
 
 SELECT cron.schedule(
     'ingest-fred',
@@ -16,13 +35,11 @@ SELECT cron.schedule(
     $$
 );
 
--- Ensure ingest-fiscaldata is scheduled (it was, but let's reinforce or update if needed)
--- We will leave it as is if it exists, or Replace it to ensure it uses the vault secret.
 SELECT cron.unschedule('ingest-fiscaldata');
 
 SELECT cron.schedule(
     'ingest-fiscaldata',
-    '30 6 * * *', -- 6:30 AM UTC
+    '30 6 * * *',
     $$
     SELECT
       net.http_post(
@@ -34,3 +51,4 @@ SELECT cron.schedule(
       ) as request_id;
     $$
 );
+*/

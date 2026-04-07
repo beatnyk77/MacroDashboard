@@ -1,15 +1,23 @@
--- =====================================================
--- Cron Schedule for COFER Ingestion
--- =====================================================
--- Adds monthly cron job for IMF COFER data ingestion
--- Runs on 1st of every month at 02:00 UTC
--- =====================================================
+-- ⚠️  DEPRECATED: MIGRATION HAS PLACEHOLDER AUTH
+-- ================================================
+-- This migration contains placeholder 'YOUR_SERVICE_ROLE_KEY' and a generic
+-- project URL 'project-ref.supabase.co'. It should NEVER be applied to a new
+-- database. It has been superseded by:
+--   `20260408000000_cron_jobs_consolidated.sql`
+--
+-- Issues:
+--   - Placeholder token that will fail in production
+--   - Generic project URL that needs to be replaced
+--
+-- Action: DO NOT RUN THIS MIGRATION. Use the consolidated cron migration instead.
+-- ==============================================
 
--- Schedule monthly COFER ingestion
--- IMF COFER data is published quarterly, but we check monthly to catch new releases
+/*
+-- ORIGINAL CONTENT (commented out):
+
 SELECT cron.schedule(
     'ingest-cofer-monthly',
-    '0 2 1 * *', -- 1st of every month at 02:00 UTC
+    '0 2 1 * *',
     $$
     SELECT
       net.http_post(
@@ -19,6 +27,7 @@ SELECT cron.schedule(
       ) as request_id;
     $$
 );
+*/
 
 COMMENT ON EXTENSION pg_cron IS 'Automated job scheduling for data ingestion';
 
