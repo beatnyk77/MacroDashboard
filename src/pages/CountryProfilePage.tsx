@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@supabase/supabase-js';
 import { Container, Typography, Box, Grid } from '@mui/material';
-import { Activity, TrendingUp, Shield, Zap, Globe, Database, Lock, AlertTriangle } from 'lucide-react';
+import { Activity, TrendingUp, Lock, AlertTriangle, Database, Globe } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { MetricCard } from '@/components/MetricCard';
@@ -16,11 +16,8 @@ const supabase = createClient(
 
 // High-level grouping for the country terminal layout
 const TERMINAL_SECTIONS = [
-  { id: 'basics', title: 'Basics & Scale', icon: Globe, metrics: COUNTRY_METRIC_GROUPS.BASICS },
   { id: 'macro', title: 'Macro Heartbeat', icon: Activity, metrics: COUNTRY_METRIC_GROUPS.MACRO_HEARTBEAT },
-  { id: 'stability', title: 'Financial Stability', icon: Shield, metrics: COUNTRY_METRIC_GROUPS.FINANCIAL_STABILITY },
   { id: 'yield', title: 'Yield Curve', icon: TrendingUp, metrics: COUNTRY_METRIC_GROUPS.YIELD_CURVE },
-  { id: 'import', title: 'Import Dependency', icon: Zap, metrics: COUNTRY_METRIC_GROUPS.IMPORT_DEPENDENCY },
   { id: 'reserves', title: 'Reserves & Alignment', icon: Lock, metrics: COUNTRY_METRIC_GROUPS.RESERVES_ALIGNMENT },
 ];
 
@@ -28,28 +25,20 @@ export const CountryProfilePage: React.FC = () => {
   const { iso } = useParams<{ iso: string }>();
   const uppercaseIso = iso?.toUpperCase();
 
-  // 1. Fetch Metrics from Supabase
-  const { data: metrics, error } = useQuery({
-    queryKey: ['country-metrics', uppercaseIso],
+  // 1. Fetch Country Terminal Data from Supabase view
+  const { data: countryData, error } = useQuery({
+    queryKey: ['country-terminal', uppercaseIso],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('country_metrics')
+        .from('vw_country_terminal')
         .select('*')
-        .eq('iso', uppercaseIso);
+        .eq('iso', uppercaseIso)
+        .single();
       if (error) throw error;
-      return data || [];
+      return data;
     },
     enabled: !!uppercaseIso,
   });
-
-  // 2. Transform into map for fast lookup
-  const metricsMap = useMemo(() => {
-    const map: Record<string, any> = {};
-    metrics?.forEach(m => {
-      map[m.metric_key] = m;
-    });
-    return map;
-  }, [metrics]);
 
   if (!uppercaseIso) return <Navigate to="/" replace />;
 
@@ -111,32 +100,42 @@ export const CountryProfilePage: React.FC = () => {
           </Box>
         )}
 
-        {TERMINAL_SECTIONS.map((section) => (
+        {TERMINAL_SECTIONS.map((section) => {
+          const Icon = section.icon;
+          return (
           <Box key={section.id} mb={12}>
             <div className="flex items-center gap-3 mb-8">
-              <section.icon size={20} className="text-blue-400" />
+              <Icon size={20} className="text-blue-400" />
               <h2 className="text-sm font-black uppercase tracking-[0.3em] text-white/40">{section.title}</h2>
               <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
             </div>
 
             <Grid container spacing={2}>
               {section.metrics.map(metric => {
-                const data = metricsMap[metric.key];
+                // Map macro-metric key to view column name
+                const viewKey = metric.key;
+                const val = countryData?.[viewKey as keyof typeof countryData];
+                const asOfDate = countryData?.[`${viewKey}_date` as keyof typeof countryData];
+                const numVal = typeof val === 'number' ? val : val != null ? Number(val) : null;
+                const displayValue = numVal != null ? `${Math.round(numVal * 100) / 100}${metric.unit === '%' ? '%' : ''}` : 'N/A';
+                const sublabel = asOfDate ? `${metric.source} • ${String(asOfDate).slice(0,10)}` : metric.source;
+
                 return (
                   <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={metric.key}>
                     <MetricCard
                       label={metric.label}
-                      value={data ? `${Math.round(data.value * 100) / 100}${metric.unit === '%' ? '%' : ''}` : 'N/A'}
-                      sublabel={`${metric.source} • ${data?.as_of || 'Pending'}`}
-                      status={data ? 'neutral' : undefined}
-                      isLoading={!data}
+                      value={displayValue}
+                      sublabel={sublabel}
+                      status={val != null ? 'neutral' : undefined}
+                      isLoading={val == null}
                     />
                   </Grid>
                 );
               })}
             </Grid>
           </Box>
-        ))}
+        );
+        })}
       </Container>
 
       <InstitutionalFooter />
