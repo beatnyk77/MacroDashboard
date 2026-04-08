@@ -7,7 +7,8 @@ import {
     ShieldCheck,
     TrendingUp,
     Zap,
-    BarChart3
+    BarChart3,
+    Activity
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -15,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 // Components
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
+import { USFiscalDominanceMeter } from '@/components/USFiscalDominanceMeter';
 import { LazyRender } from '@/components/LazyRender';
 
 // Lazy loaded components
@@ -75,7 +77,23 @@ export const USMacroFiscalLab: React.FC = () => {
                     <ChartInsightSummary id="lab-us-debt-maturity" insight="The maturity wall tracks $9.2T in rolling securities. The 2025-2027 window represents a critical refinancing regime where low-coupon pandemic-era debt is re-priced at structurally higher market yields." />
                 </section>
 
-                {/* Section 2: Treasury Demand */}
+                {/* Section 2: US Fiscal Dominance Meter */}
+                <section>
+                    <div className="flex items-center gap-3 mb-8">
+                        <Activity className="text-red-500" size={24} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">US Fiscal Dominance Meter</h2>
+                    </div>
+                    <SectionErrorBoundary name="US Fiscal Dominance Meter">
+                        <LazyRender minHeight="500px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <USFiscalDominanceMeter />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-us-fiscal-dominance" insight="Fiscal dominance occurs when mandatory spending (interest + entitlements) consumes over 100% of tax receipts, forcing the Treasury to issue additional debt for operations and structurally raising market dependency on central bank monetization. Historically unprecedented in peacetime — this signal defines the transition to a regime of monetary-fiscal fusion." />
+                </section>
+
+                {/* Section 3: Treasury Demand */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
                         <Zap className="text-amber-500" size={24} />
