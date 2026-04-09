@@ -95,7 +95,7 @@ jobs:
           deploy_func() {
             local func_name="$1"
             echo "Deploying $func_name..."
-            supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+            supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt --debug
           }
 
           # If _shared changed, redeploy all functions
