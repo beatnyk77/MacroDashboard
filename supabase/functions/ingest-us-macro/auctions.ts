@@ -45,12 +45,17 @@ export async function processAuctions(supabase: SupabaseClient) {
         json.data.forEach((auction: any) => {
             const securityType = auction.security_type;
             const securityTerm = auction.security_term;
+            const originalTerm = auction.original_security_term || securityTerm;
 
             const isTarget = TARGET_SECURITIES.some(t =>
-                securityType.includes(t.type) && securityTerm === t.term
+                securityType.includes(t.type) && (securityTerm === t.term || originalTerm === t.term)
             );
 
             if (!isTarget) return;
+
+            const termToUse = TARGET_SECURITIES.find(t => 
+                securityType.includes(t.type) && (securityTerm === t.term || originalTerm === t.term)
+            )?.term || securityTerm;
 
             const bidToCover = parseFloat(auction.bid_to_cover_ratio);
             const highYield = parseFloat(auction.high_yield);
@@ -69,7 +74,7 @@ export async function processAuctions(supabase: SupabaseClient) {
                 security_type: securityType.includes('Bill') ? 'Bill' :
                               securityType.includes('Note') ? 'Note' :
                               securityType.includes('Bond') ? 'Bond' : securityType,
-                term: securityTerm,
+                term: termToUse,
                 bid_to_cover: bidToCover,
                 high_yield: isNaN(highYield) ? null : highYield,
                 total_tendered: parseFloat(auction.total_tendered),

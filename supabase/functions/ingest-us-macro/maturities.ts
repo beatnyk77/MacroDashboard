@@ -77,23 +77,48 @@ export async function processMaturities(supabase: SupabaseClient) {
             'Floating Rate Notes'
         ];
 
+        // 3. Aggregate by CUSIP and bucket them
+        const aggregated = new Map<string, any>();
+        
         securities.forEach((s: any) => {
             const securityClass = s.security_class1_desc;
-            const securityType = s.security_type_desc || '';
             const securityDetail = s.security_class2_desc;
-            const outstandingAmt = s.outstanding_amt;
-            const maturityDateStr = s.maturity_date;
-            const interestRateStr = s.interest_rate_pct;
-
+            
             if (!TARGET_CLASSES.includes(securityClass)) return;
-
+            
             const isSummary = !securityDetail || securityDetail === 'null' || securityDetail.includes('Total');
             if (isSummary) return;
+            
+            const key = securityDetail;
+            const issuedAmt = parseFloat(s.issued_amt) || 0;
+            const redeemedAmt = parseFloat(s.redeemed_amt) || 0;
+            const currentOutstanding = parseFloat(s.outstanding_amt) || 0;
 
-            if (!outstandingAmt || outstandingAmt === 'null' || !maturityDateStr || maturityDateStr === 'null') return;
+            if (!aggregated.has(key)) {
+                aggregated.set(key, { 
+                    ...s, 
+                    total_outstanding: currentOutstanding || (issuedAmt - redeemedAmt) 
+                });
+            } else {
+                const existing = aggregated.get(key);
+                // If this record has a populated outstanding_amt, it's the total for the CUSIP
+                if (currentOutstanding > 0) {
+                    existing.total_outstanding = currentOutstanding;
+                } else {
+                    // Otherwise, accumulate the net issuance for this tranche
+                    existing.total_outstanding += (issuedAmt - redeemedAmt);
+                }
+            }
+        });
 
-            const amount = parseFloat(outstandingAmt);
-            if (isNaN(amount)) return;
+        aggregated.forEach((s: any) => {
+            const securityClass = s.security_class1_desc;
+            const securityType = s.security_type_desc || '';
+            const maturityDateStr = s.maturity_date;
+            const interestRateStr = s.interest_rate_pct;
+            const amount = s.total_outstanding;
+
+            if (!maturityDateStr || maturityDateStr === 'null' || amount <= 0) return;
 
             const maturityDate = new Date(maturityDateStr);
             totalMarketableDebt += amount;
