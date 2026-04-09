@@ -28,7 +28,8 @@ export const CountryProfilePage: React.FC = () => {
   const uppercaseIso = iso?.toUpperCase();
 
   // 1. Fetch Country Terminal Data from Supabase view
-  const { data: countryData, error } = useQuery({
+  // 1. Fetch Country Terminal Data from Supabase view
+  const { data: countryData, isLoading, error } = useQuery({
     queryKey: ['country-terminal', uppercaseIso],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -129,7 +130,7 @@ export const CountryProfilePage: React.FC = () => {
                       value={displayValue}
                       sublabel={sublabel}
                       status={val != null ? 'neutral' : undefined}
-                      isLoading={val == null}
+                      isLoading={isLoading}
                     />
                   </Grid>
                 );
