@@ -23,6 +23,7 @@ const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/component
 const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
+const ReserveSellerTracker = lazy(() => import('@/features/dashboard/components/rows/ReserveSellerTracker').then(m => ({ default: m.ReserveSellerTracker })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -98,6 +99,14 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             <GlobalReserveTracker />
                         </Suspense>
                     </SectionErrorBoundary>
+
+                    <div className="mt-8">
+                        <SectionErrorBoundary name="Reserve-Seller Tracker">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <ReserveSellerTracker />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                 </section>
 
                 {/* 3. Central Bank Gold Net Purchases */}
