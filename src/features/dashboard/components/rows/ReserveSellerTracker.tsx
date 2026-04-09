@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 const CountrySparkline: React.FC<{ data: any[], color: string, dataKey: string }> = ({ data, color, dataKey }) => {
-    const gradId = `spark-${Math.random().toString(36).substr(2, 9)}`;
+    const gradId = React.useId();
     return (
         <div className="h-12 w-32">
             <ResponsiveContainer width="100%" height="100%">
@@ -52,9 +52,12 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
     // Signal: Oil > 80 AND TIC Holdings decreasing (QoQ)
     const isSellingSignal = oilPrice > 80 && country.tic_delta_qoq < 0;
     
-    // Logic for GCC flagging
-    const isGCC = country.country_code === 'SA';
-    const countryLabel = isGCC ? "GCC / Saudi Arabia" : country.country_name;
+    const FLAG_MAP: Record<string, string> = {
+        JP: '🇯🇵', CN: '🇨🇳', IN: '🇮🇳', SA: '🇸🇦',
+        KR: '🇰🇷', TW: '🇹🇼', SG: '🇸🇬', HK: '🇭🇰',
+        GB: '🇬🇧', AE: '🇦🇪', BR: '🇧🇷', CH: '🇨🇭',
+        LU: '🇱🇺', KY: '🇰🇾'
+    };
 
     return (
         <motion.div 
@@ -66,12 +69,12 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             {/* Country Identity */}
             <div className="md:col-span-3 flex items-center gap-4">
                 <div className="text-2xl opacity-80">
-                    {{ JP: '🇯🇵', CN: '🇨🇳', IN: '🇮🇳', SA: '🇸🇦' }[country.country_code] || '🏳️'}
+                    {FLAG_MAP[country.country_code] || '🏳️'}
                 </div>
                 <div>
-                    <h4 className="text-sm font-black text-white uppercase tracking-uppercase">{countryLabel}</h4>
+                    <h4 className="text-sm font-black text-white uppercase tracking-uppercase">{country.country_label}</h4>
                     <span className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">
-                        {isGCC ? "Petrodollar Anchor" : "Major Reserve Hub"}
+                        {country.country_type}
                     </span>
                 </div>
             </div>

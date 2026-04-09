@@ -19,77 +19,71 @@ Deno.serve(async (req: Request) => {
 
         // Major Foreign Holders (MFH) Historical data in text format
         // This file is updated monthly.
-        const ticUrl = 'https://home.treasury.gov/system/files/221/mfh.txt'
+        const ticUrl = 'https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table5.txt'
         const res = await fetch(ticUrl)
         if (!res.ok) throw new Error(`Treasury HTTP ${res.status}`)
 
         const text = await res.text()
 
-        // The TIC mfh.txt format is a fixed-width or space-separated text file.
-        // It's quite legacy. Example structure:
-        // Country             Oct 2024  Sep 2024 ...
-        // Japan                 1100.5    1120.2
-        // China                  770.1     775.4
+        // The TIC slt_table5.txt format is tab-separated.
+        // Country	2026-01	2025-12	2025-11
+        // Japan	1225.3	1185.5	1202.7
 
         const lines = text.split('\n')
 
-        // Find the header line that contains months
-        let headerIndex = -1
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].includes('Grand Total') || lines[i].includes('Jan 20') || lines[i].includes('Dec 20')) {
-                // Usually the line before or the line itself contains the column headers
-                if (lines[i].toLowerCase().includes('country')) {
-                    headerIndex = i
-                    break
-                }
+        // Find the header line that contains the months
+        let headerIndex = lines.findIndex(l => l.startsWith('Country\t'))
+        
+        if (headerIndex === -1) throw new Error('Could not identify TIC data structure')
+
+        const headerTokens = lines[headerIndex].split('\t').map(s => s.trim())
+        
+        // Extract dates from the header. Format is YYYY-MM
+        const monthData: { index: number; dateStr: string }[] = []
+        for (let i = 1; i < headerTokens.length; i++) {
+            const token = headerTokens[i]
+            if (/^\d{4}-\d{2}$/.test(token)) {
+                // Approximate end of month by appending -28 (close enough for mostly monthly data)
+                // TIC data is traditionally end-of-month
+                // Let's create a date object for the 1st of next month, subtract 1 day
+                const [year, month] = token.split('-')
+                const d = new Date(Number(year), Number(month), 0)
+                monthData.push({ index: i, dateStr: d.toISOString().split('T')[0] })
             }
         }
 
-        // If we can't find a clean 'country' header, we might need a more robust parser.
-        // Many TIC files use a specific line for months.
-        let monthLineIndex = lines.findIndex(l => l.includes('2024') || l.includes('2025'))
-        if (monthLineIndex === -1) monthLineIndex = lines.findIndex(l => l.includes('2023'))
-
-        if (monthLineIndex === -1) throw new Error('Could not identify TIC data structure')
-
-        const monthLine = lines[monthLineIndex]
-        // Extract months and years. e.g. "Oct 2024  Sep 2024 ..."
-        const monthMatches = Array.from(monthLine.matchAll(/([A-Z][a-z]{2})\s(\d{4})/g))
-        const monthData = monthMatches.map(m => {
-            const monthName = m[1]
-            const year = m[2]
-            const date = new Date(`${monthName} 1, ${year}`)
-            return { dateStr: date.toISOString().split('T')[0], index: m.index }
-        })
-
         const holders: Array<{ country_name: string; as_of_date: string; holdings_usd_bn: number; }> = []
         const majorCountries = [
-            'Japan', 'China', 'United Kingdom', 'Luxembourg', 'Canada',
+            'Japan', 'China, Mainland', 'United Kingdom', 'Luxembourg', 'Canada',
             'Belgium', 'Cayman Islands', 'Ireland', 'Taiwan', 'France',
-            'Switzerland', 'India', 'Hong Kong', 'Singapore', 'Brazil'
+            'Switzerland', 'India', 'Hong Kong', 'Singapore', 'Brazil',
+            'Korea, South', 'Saudi Arabia', 'Norway', 'Israel', 'United Arab Emirates',
+            'Germany', 'Thailand', 'Qatar'
         ]
 
         // Iterate through lines to find country data
-        for (let i = monthLineIndex + 1; i < lines.length; i++) {
+        for (let i = headerIndex + 1; i < lines.length; i++) {
             const line = lines[i]
-            const country = majorCountries.find(c => line.startsWith(c))
-            if (country) {
-                // Extract values based on position or spacing
-                // TIC data usually has values aligned under the month headers
-                monthData.forEach((m, idx) => {
-                    // Use a substring near the column header
-                    // Value is usually about 10 chars wide
-                    const start = m.index! - 2
-                    const end = start + 12
-                    const valStr = line.substring(start, end).trim().replace(/,/g, '')
-                    const val = parseFloat(valStr)
+            if (!line.trim()) continue;
+            
+            const tokens = line.split('\t').map(s => s.trim())
+            const rawCountry = tokens[0]
+            
+            const country = majorCountries.find(c => rawCountry === c)
 
-                    if (!isNaN(val)) {
-                        holders.push({
-                            country_name: country,
-                            as_of_date: m.dateStr,
-                            holdings_usd_bn: val
-                        })
+            if (country) {
+                monthData.forEach(m => {
+                    if (m.index < tokens.length) {
+                        const valStr = tokens[m.index].replace(/,/g, '')
+                        const val = parseFloat(valStr)
+
+                        if (!isNaN(val)) {
+                            holders.push({
+                                country_name: country,
+                                as_of_date: m.dateStr,
+                                holdings_usd_bn: val
+                            })
+                        }
                     }
                 })
             }
