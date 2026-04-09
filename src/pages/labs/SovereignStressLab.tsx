@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/components/rows/IranConflictImpactMonitor').then(m => ({ default: m.IranConflictImpactMonitor })));
+const BoJStressMonitor = lazy(() => import('@/features/dashboard/components/rows/BoJStressMonitor').then(m => ({ default: m.BoJStressMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -76,7 +77,21 @@ export const SovereignStressLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* Section 3: Geopolitical Stress Test */}
+                {/* Section 3: BoJ Monetary Dominance */}
+                <section>
+                    <div className="flex items-center gap-3 mb-10">
+                        <Activity className="text-cyan-500" size={28} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">BoJ Monetary Dominance</h2>
+                    </div>
+                    <SectionErrorBoundary name="BoJ Stress Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <BoJStressMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-boj-stress" insight="Bank of Japan balance sheet tracking reveals divergence between Total Assets and Monetary Base. High intervention periods indicate significant policy pressure points." />
+                </section>
+
+                {/* Section 4: Geopolitical Stress Test */}
                 <section className="space-y-8">
                     <div className="flex items-center gap-3">
                         <Globe size={24} className="text-orange-500" />
