@@ -37,6 +37,7 @@ const CorporateTreasuryHedging = lazy(() => import('@/pages/CorporateTreasuryHed
 const IndiaFlowPulsePage = lazy(() => import('@/pages/IndiaFlowPulsePage').then(module => ({ default: module.IndiaFlowPulsePage })));
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
 const CountriesIndexPage = lazy(() => import('@/pages/CountriesIndexPage').then(module => ({ default: module.CountriesIndexPage })));
+const DataSourcesPage = lazy(() => import('@/pages/DataSourcesPage').then(module => ({ default: module.DataSourcesPage })));
 
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
@@ -70,6 +71,7 @@ function App() {
                                     <Routes>
                                         <Route path="/" element={<Terminal />} />
                                         <Route path="/methodology" element={<MetricsMethodologyPage />} />
+                                        <Route path="/data-sources" element={<DataSourcesPage />} />
                                         <Route path="/blog" element={<BlogPage />} />
                                         <Route path="/blog/:slug" element={<ArticlePage />} />
                                         <Route path="/regime-digest" element={<RegimeDigestArchivePage />} />
