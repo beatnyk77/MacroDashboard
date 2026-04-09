@@ -14,6 +14,7 @@ import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWal
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import InstitutionalHoldingsWall from '@/components/InstitutionalHoldingsWall';
 import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
+import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/FedMonetizationMonitor';
 
 
 const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
@@ -235,6 +236,30 @@ export const Terminal: React.FC = () => {
                                     </CardHeader>
                                     <CardContent>
                                         <USDebtMaturityWall />
+                                    </CardContent>
+                                </Card>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    {/* Divider between US Debt & Fed Monetization */}
+                    <div className="border-t border-slate-700/30 my-8" />
+                    <p className="text-center">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            Federal Reserve Policy Impact
+                        </span>
+                    </p>
+
+                    <div className="w-full">
+                        <SectionErrorBoundary name="Fed Monetization Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                        <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
+                                        <LiveStatusIndicator source="FRED" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <FedMonetizationMonitor />
                                     </CardContent>
                                 </Card>
                             </Suspense>

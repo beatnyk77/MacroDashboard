@@ -1,8 +1,8 @@
 # GraphiQuestor Component Registry
 
 ## Overview
-- **Total Components**: 210
-- **Generated**: 2026-03-29
+- **Total Components**: 211
+- **Generated**: 2026-04-09
 - **Scope**: All exported React components from `src/` directory
 
 ## Summary by Category
@@ -224,6 +224,7 @@
 | Sparkline | [`components/Sparkline.tsx`](../../components/Sparkline.tsx) | Shared UI | Global | Active |
 | TerminalSidebar | [`components/TerminalSidebar.tsx`](../../components/TerminalSidebar.tsx) | Shared UI | Global | Active |
 | USDebtMaturityWall | [`components/USDebtMaturityWall.tsx`](../../components/USDebtMaturityWall.tsx) | Shared UI | Global | Active |
+| FedMonetizationMonitor | [`features/dashboard/components/rows/FedMonetizationMonitor.tsx`](../../features/dashboard/components/rows/FedMonetizationMonitor.tsx) | Row | Terminal Main | Active |
 | USFilingsFeed | [`features/USC/USFilingsFeed.tsx`](../../features/USC/USFilingsFeed.tsx) | USC (US Corp) | Feature Lab | Active |
 | USInsiderActivity | [`features/USC/USInsiderActivity.tsx`](../../features/USC/USInsiderActivity.tsx) | USC (US Corp) | Feature Lab | Active |
 | USMacroCorrelation | [`features/USC/USMacroCorrelation.tsx`](../../features/USC/USMacroCorrelation.tsx) | USC (US Corp) | Feature Lab | Active |

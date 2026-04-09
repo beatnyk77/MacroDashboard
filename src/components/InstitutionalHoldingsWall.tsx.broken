@@ -1,0 +1,528 @@
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import {
+    Activity, Building2, GitCompare, Shield, TrendingUp, Users
+} from 'lucide-react';
+import {
+    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell
+} from 'recharts';
+import { useSmartMoneyHoldings } from '@/hooks/useSmartMoneyHoldings';
+import { MotionCard } from '@/components/MotionCard';
+import { SectionErrorBoundary } from './SectionErrorBoundary';
+import { formatNumber } from '@/utils/formatNumber';
+import TradeTape from './TradeTape';
+
+// Color palette consistent with terminal theme
+const COLORS = {
+    equity: '#0df259',
+    bond: '#fbbf24',
+    gold: '#818cf8',
+    other: '#94a3b8',
+    bull: '#0df259',
+    bear: '#f87171',
+    neutral: '#22d3ee',
+    cyan: '#22d3ee'
+};
+
+// Regime Gauge Component
+const RegimeGauge: React.FC<{ score: number; label: string }> = ({ score, label }) => {
+    const normalized = Math.min(Math.max((score + 100) / 2, 0), 100);
+    const color = score > 30 ? COLORS.bull : score < -30 ? COLORS.bear : COLORS.neutral;
+
+    return (
+        <Box sx={{ width: '100%', height: 200, position: 'relative' }}>
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                    <Pie
+                        data={[{ value: 100 }]}
+                        cx="50%"
+                        cy="70%"
+                        startAngle={180}
+                        endAngle={0}
+                        innerRadius="60%"
+                        outerRadius="85%"
+                        dataKey="value"
+                        stroke="none"
+                    >
+                        <Cell fill="rgba(255,255,255,0.05)" />
+                    </Pie>
+                    <Pie
+                        data={[{ value: normalized }, { value: 100 - normalized }]}
+                        cx="50%"
+                        cy="70%"
+                        startAngle={180}
+                        endAngle={0}
+                        innerRadius="60%"
+                        outerRadius="85%"
+                        dataKey="value"
+                        stroke="none"
+                    >
+                        <Cell fill={color} />
+                        <Cell fill="transparent" />
+                    </Pie>
+                </PieChart>
+            </ResponsiveContainer>
+            <Box sx={{
+                position: 'absolute',
+                bottom: '22%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                textAlign: 'center'
+            }}>
+                <Typography variant="h2" sx={{ fontWeight: 900, color: 'text.primary', fontFamily: 'monospace', fontSize: '2.5rem', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                    {score > 0 ? '+' : ''}{score.toFixed(0)}
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.875rem', letterSpacing: '0.1em', mt: 0.5 }}>
+                    {label}
+                </Typography>
+            </Box>
+        </Box>
+    );
+};
+
+// KPI Summary Card
+const SummaryCard: React.FC<{
+    icon: React.ReactNode;
+    title: string;
+    value: string | number;
+    subtitle?: string;
+    color: string;
+    trend?: { value: number; positive: boolean };
+}> = ({ icon, title, value, subtitle, color, trend }) => (
+    <Box sx={{
+        p: 3,
+        bgcolor: 'rgba(15, 23, 42, 0.4)',
+        border: `1px solid ${alpha(color || '#fff', 0.1)}`,
+        borderRadius: 2,
+        transition: 'all 0.2s ease',
+        '&:hover': { borderColor: alpha(color || '#fff', 0.3), bgcolor: alpha(color || '#fff', 0.05) }
+    }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {title}
+            </Typography>
+            <Box sx={{ color: color || 'text.primary', opacity: 0.8 }}>{icon}</Box>
+        </Box>
+        <Typography variant="h4" sx={{ color: 'text.primary', fontWeight: 900, fontFamily: 'monospace', fontSize: '1.75rem', letterSpacing: '-0.02em', lineHeight: 1, mb: 0.5 }}>
+            {value}
+        </Typography>
+        {trend && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <TrendingUp size={12} style={{ transform: trend.positive ? 'rotate(0deg)' : 'rotate(180deg)' }} color={trend.positive ? COLORS.bull : COLORS.bear} />
+                <Typography variant="caption" sx={{ color: trend.positive ? COLORS.bull : COLORS.bear, fontSize: '0.75rem', fontWeight: 700 }}>
+                    {trend.positive ? '+' : ''}{trend.value.toFixed(1)}%
+                </Typography>
+            </Box>
+        )}
+        {subtitle && (
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 600, display: 'block', mt: 0.5 }}>
+                {subtitle}
+            </Typography>
+        )}
+    </Box>
+);
+
+function alpha(color: string, opacity: number): string {
+    // Simple alpha helper for rgba - just a placeholder since we're using hex
+    return color;
+}
+
+const InstitutionalHoldingsWall: React.FC = () => {
+    const {
+        institutions,
+        collective,
+        aggregatedTopHoldings,
+        collectiveHistory,
+        formatAUM
+    } = useSmartMoneyHoldings();
+
+    if (!collective) return null;
+
+    const regimeScore = collective.avg_regime_z * 10;
+    const regimeLabel = collective.regime_label;
+    const riskSignal = collective.risk_signal;
+
+    const stackedData = collectiveHistory.map(point => ({
+        quarter: point.quarter.slice(0, 7),
+        equity: point.equity_pct,
+        bond: point.bond_pct,
+        gold: point.gold_pct,
+        other: point.other_pct
+    }));
+
+    const currentAllocation = collectiveHistory[collectiveHistory.length - 1] || {
+        equity_pct: 0, bond_pct: 0, gold_pct: 0, other_pct: 0
+    };
+
+    return (
+        <Box sx={{ mb: 8 }}>
+            {/* Trade Tape */}
+            <Box sx={{ mb: 4 }}>
+                <TradeTape />
+            </Box>
+
+            {/* Header */}
+            <Box sx={{ mb: 6, mt: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2 }}>
+                    <Box sx={{ p: 1.5, bgcolor: 'rgba(13, 242, 89, 0.15)', color: COLORS.equity, borderRadius: 1, display: 'flex' }}>
+                        <Building2 size={24} />
+                    </Box>
+                    <Box>
+                        <Typography variant="h3" sx={{ fontWeight: 900, color: 'text.primary', letterSpacing: '-0.02em', fontSize: '2rem', lineHeight: 1.2 }}>
+                            INSTITUTIONAL PULSE
+                        </Typography>
+                        <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '1rem', letterSpacing: '0.05em' }}>
+                            Smart Money 13-F Allocation Monitor
+                        </Typography>
+                    </Box>
+                    <Box sx={{ ml: 'auto', textAlign: 'right' }}>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', display: 'block', mb: 0.5 }}>
+                            Total AUM Tracked
+                        </Typography>
+                        <Typography variant="h4" sx={{ fontWeight: 900, color: COLORS.equity, fontFamily: 'monospace', fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
+                            {formatAUM(collective.total_aum)}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600 }}>
+                            Across {collective.institution_count} institutions
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                        Quarterly 13-F filings • 45-day lag • Data sourced from SEC EDGAR & Alpha Vantage
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.875rem', fontWeight: 800, fontFamily: 'monospace' }}>
+                        AS OF {new Date(collective.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </Typography>
+                </Box>
+            </Box>
+
+            {/* Row 1: Regime + KPI Summary */}
+            <Box sx={{ mb: 4, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '350px 1fr' }, gap: 3 }}>
+                <MotionCard className="h-full">
+                    <Box sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 800, mb: 2, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
+                            Smart Money Regime
+                        </Typography>
+                        <RegimeGauge score={regimeScore} label={regimeLabel} />
+                        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                            <Shield size={16} color={riskSignal === 'RISK_ON' ? COLORS.bull : riskSignal === 'RISK_OFF' ? COLORS.bear : COLORS.neutral} />
+                            <Typography variant="body2" sx={{ fontWeight: 900, color: riskSignal === 'RISK_ON' ? COLORS.bull : riskSignal === 'RISK_OFF' ? COLORS.bear : COLORS.neutral, textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.8rem' }}>
+                                {riskSignal}
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+                            Z-score: {regimeScore.toFixed(1)} | {collective.institution_count} institutions
+                        </Typography>
+                    </Box>
+                </MotionCard>
+
+                <MotionCard className="h-full">
+                    <Box sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 800, mb: 3, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
+                            Key Metrics
+                        </Typography>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
+                            <SummaryCard
+                                icon={<TrendingUp size={18} />}
+                                title="Equity"
+                                value={`${currentAllocation.equity_pct.toFixed(1)}%`}
+                                subtitle="Current allocation"
+                                color={COLORS.equity}
+                                trend={{ value: collective.avg_equity - currentAllocation.equity_pct, positive: collective.avg_equity > currentAllocation.equity_pct }}
+                            />
+                            <SummaryCard
+                                icon={<Shield size={18} />}
+                                title="Defensive"
+                                value={`${(currentAllocation.bond_pct + currentAllocation.gold_pct).toFixed(1)}%`}
+                                subtitle={`Bonds ${currentAllocation.bond_pct.toFixed(1)}% • Gold ${currentAllocation.gold_pct.toFixed(1)}%`}
+                                color={COLORS.bond}
+                            />
+                            <SummaryCard
+                                icon={<Users size={18} />}
+                                title="Institutions"
+                                value={collective.institution_count}
+                                subtitle="Tracked 13-F filers"
+                                color={COLORS.cyan}
+                            />
+                            <SummaryCard
+                                icon={<Activity size={18} />}
+                                title="Concentration"
+                                value={`${collective.avg_concentration?.toFixed(1) || 'N/A'}%`}
+                                subtitle="Top 5 average share"
+                                color={COLORS.gold}
+                            />
+                        </Box>
+                    </Box>
+                </MotionCard>
+            </Box>
+
+            {/* Row 2: Asset Allocation Trend */}
+            <Box sx={{ mb: 4 }}>
+                <MotionCard>
+                    <Box sx={{ p: 4 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                            <Typography variant="h5" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.01em' }}>
+                                Asset Allocation Trend (8 Quarters)
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: 3 }}>
+                                {[
+                                    { name: 'Equity', color: COLORS.equity },
+                                    { name: 'Bond', color: COLORS.bond },
+                                    { name: 'Gold', color: COLORS.gold },
+                                    { name: 'Other', color: COLORS.other }
+                                ].map(item => (
+                                    <Box key={item.name} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: item.color }} />
+                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600 }}>
+                                            {item.name}
+                                        </Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart data={stackedData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="colorEquity" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor={COLORS.equity} stopOpacity={0.85}/>
+                                        <stop offset="95%" stopColor={COLORS.equity} stopOpacity={0.15}/>
+                                    </linearGradient>
+                                    <linearGradient id="colorBond" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor={COLORS.bond} stopOpacity={0.85}/>
+                                        <stop offset="95%" stopColor={COLORS.bond} stopOpacity={0.15}/>
+                                    </linearGradient>
+                                    <linearGradient id="colorGold" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor={COLORS.gold} stopOpacity={0.85}/>
+                                        <stop offset="95%" stopColor={COLORS.gold} stopOpacity={0.15}/>
+                                    </linearGradient>
+                                    <linearGradient id="colorOther" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor={COLORS.other} stopOpacity={0.85}/>
+                                        <stop offset="95%" stopColor={COLORS.other} stopOpacity={0.15}/>
+                                    </linearGradient>
+                                </defs>
+                                <XAxis dataKey="quarter" tick={{ fill: '#cbd5e1', fontSize: 12.5, fontFamily: 'monospace', fontWeight: 700 }} axisLine={false} tickLine={false} />
+                                <YAxis tick={{ fill: '#cbd5e1', fontSize: 12, fontFamily: 'monospace', fontWeight: 700 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} domain={[0, 100]} />
+                                <Tooltip
+                                    contentStyle={{ background: '#020617', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, fontFamily: 'monospace', fontSize: 12, padding: '12px 14px' }}
+                                    formatter={(value: number, name: string) => [`${value.toFixed(1)}%`, name.toUpperCase()]}
+                                />
+                                <Area type="monotone" dataKey="equity" stackId="1" stroke={COLORS.equity} strokeWidth={2} fill="url(#colorEquity)" />
+                                <Area type="monotone" dataKey="bond" stackId="1" stroke={COLORS.bond} strokeWidth={2} fill="url(#colorBond)" />
+                                <Area type="monotone" dataKey="gold" stackId="1" stroke={COLORS.gold} strokeWidth={2} fill="url(#colorGold)" />
+                                <Area type="monotone" dataKey="other" stackId="1" stroke={COLORS.other} strokeWidth={2} fill="url(#colorOther)" />
+                                <Legend wrapperStyle={{ fontSize: '12px', fontFamily: 'monospace', fontWeight: 600, paddingTop: '12px' }} />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </Box>
+                </MotionCard>
+            </Box>
+
+            {/* Row 3: Top Institutions */}
+            <Box sx={{ mb: 4 }}>
+                <MotionCard>
+                    <Box sx={{ p: 4 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                            <Users size={22} style={{ color: COLORS.equity }} />
+                            <Typography variant="h5" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.01em' }}>
+                                Top Institutions by AUM
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 600, ml: 2 }}>
+                                {institutions.length} tracked
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }}, gap: 2 }}>
+                            {institutions.slice(0, 12).map((inst, idx) => (
+                                <MotionCard key={inst.cik} delay={idx * 0.05} className="h-full">
+                                    <Box sx={{ p: 3, borderLeft: `4px solid ${COLORS.equity}`, height: '100%' }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                #{idx + 1}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', fontWeight: 600 }}>
+                                                {inst.fund_type}
+                                            </Typography>
+                                        </Box>
+                                        <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '1rem', lineHeight: 1.3, mb: 1.5 }}>
+                                            {inst.fund_name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: 2 }}>
+                                            <Box>
+                                                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', fontWeight: 600, textTransform: 'uppercase', display: 'block' }}>
+                                                    Total AUM
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ color: 'text.primary', fontFamily: 'monospace', fontWeight: 800, fontSize: '0.9rem' }}>
+                                                    {formatNumber(inst.total_aum, { notation: 'compact', prefix: '$' })}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="caption" sx={{ color: COLORS.equity, fontSize: '0.8rem', fontWeight: 800, fontFamily: 'monospace' }}>
+                                                QoQ: {inst.qoq_delta >= 0 ? '+' : ''}{inst.qoq_delta.toFixed(1)}%
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ pt: 1.5, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0.5 }}>
+                                            {[
+                                                { label: 'EQ', value: inst.asset_class_allocation?.equity_pct || 0 },
+                                                { label: 'BD', value: inst.asset_class_allocation?.bond_pct || 0 },
+                                                { label: 'GD', value: inst.asset_class_allocation?.gold_pct || 0 },
+                                                { label: 'OT', value: inst.asset_class_allocation?.other_pct || 0 }
+                                            ].map(item => (
+                                                <Box key={item.label}>
+                                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', display: 'block' }}>
+                                                        {item.label}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ color: 'text.primary', fontFamily: 'monospace', fontWeight: 900, fontSize: '0.8rem' }}>
+                                                        {item.value.toFixed(1)}%
+                                                    </Typography>
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                </MotionCard>
+                            ))}
+                        </Box>
+                    </Box>
+                </MotionCard>
+            </Box>
+
+            {/* Row 4: Top Holdings */}
+            <Box sx={{ mb: 4 }}>
+                <MotionCard>
+                    <Box sx={{ p: 4 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                            <Activity size={22} style={{ color: COLORS.bond }} />
+                            <Typography variant="h5" sx={{ color: 'text.primary', fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.01em' }}>
+                                Top Holdings Concentration (Aggregated)
+                            </Typography>
+                        </Box>
+                        <Box sx={{ maxHeight: 500, overflowY: 'auto', overflowX: 'auto' }}>
+                            <table className="w-full text-sm font-mono border-collapse">
+                                <thead>
+                                    <tr className="border-b border-white/10 sticky top-0 bg-slate-950">
+                                        <th className="text-left py-3 px-3 text-cyan-300 font-bold text-xs uppercase tracking-wider w-12">#</th>
+                                        <th className="text-left py-3 px-3 text-cyan-300 font-bold text-xs uppercase tracking-wider w-64">Company</th>
+                                        <th className="text-left py-3 px-3 text-cyan-300 font-bold text-xs uppercase tracking-wider w-24">Ticker</th>
+                                        <th className="text-left py-3 px-3 text-cyan-300 font-bold text-xs uppercase tracking-wider w-32">Sector</th>
+                                        <th className="text-right py-3 px-3 text-cyan-300 font-bold text-xs uppercase tracking-wider w-32">Value</th>
+                                        <th className="text-right py-3 px-3 text-cyan-300 font-bold text-xs uppercase tracking-wider w-24">% of AUM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {aggregatedTopHoldings.slice(0, 20).map((holding, idx) => {
+                                        const concentration = holding.concentration_contribution;
+                                        const concentrationColor = concentration > 5 ? COLORS.bear : concentration > 2 ? COLORS.bond : COLORS.bull;
+                                        return (
+                                            <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
+                                                <td className="py-3 px-3 text-slate-400 font-bold text-sm">{idx + 1}</td>
+                                                <td className="py-3 px-3">
+                                                    <div>
+                                                        <div className="text-white font-bold text-sm">{holding.displayName}</div>
+                                                        {holding.name && holding.name !== holding.ticker && (
+                                                            <div className="text-slate-500 text-xs truncate max-w-[600px]">{holding.name}</div>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="py-3 px-3">
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                                                        {holding.ticker || 'N/A'}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3 px-3">
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                                        {holding.sector || 'Other'}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3 px-3 text-right font-mono text-emerald-400 font-bold text-sm">
+                                                    ${(holding.value / 1e9).toFixed(2)}B
+                                                </td>
+                                                <td className="py-3 px-3 text-right font-mono font-bold text-sm" style={{ color: concentrationColor }}>
+                                                    {concentration.toFixed(2)}%
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </Box>
+                    </Box>
+                </MotionCard>
+            </Box>
+
+            {/* Row 5: Collective Risk Signal */}
+            <Box sx={{ mb: 4 }}>
+                <MotionCard>
+                    <Box sx={{ p: 5, textAlign: 'center', bgcolor: 'rgba(15, 23, 42, 0.4)', border: `1px solid ${riskSignal === 'RISK_ON' ? COLORS.bull : riskSignal === 'RISK_OFF' ? COLORS.bear : COLORS.neutral}` }}>
+                        <Typography variant="h2" sx={{
+                            fontWeight: 900,
+                            color: riskSignal === 'RISK_ON' ? COLORS.bull : riskSignal === 'RISK_OFF' ? COLORS.bear : COLORS.neutral,
+                            fontFamily: 'monospace',
+                            textTransform: 'uppercase',
+                            fontSize: { xs: '1.75rem', md: '2.5rem' },
+                            letterSpacing: '-0.02em',
+                            mb: 2
+                        }}>
+                            {riskSignal}
+                        </Typography>
+                        <Typography variant="body1" sx={{
+                            color: 'text.secondary',
+                            mt: 1,
+                            maxWidth: 700,
+                            mx: 'auto',
+                            fontSize: '1rem',
+                            lineHeight: 1.6,
+                            fontWeight: 500
+                        }}>
+                            {riskSignal === 'RISK_ON' ? 'Smart Money collectively favoring risk assets. Aggregate equity allocation above 65%. Institutions are net buyers vs. historical average.' :
+                             riskSignal === 'RISK_OFF' ? 'Defensive reallocation detected. Smart Money rotating into bonds and gold. Equity allocation below 40%.' :
+                             'Balanced posture across tracked institutions. Mixed signals suggest wait-and-see approach.'}
+                        </Typography>
+                        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 4 }}>
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
+                                Z-Score: <span style={{ color: 'text.primary', fontWeight: 900 }}>{regimeScore.toFixed(1)}</span>
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
+                                Institutions: <span style={{ color: 'text.primary', fontWeight: 900 }}>{collective.institution_count}</span>
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
+                                Avg Equity: <span style={{ color: 'text.primary', fontWeight: 900 }}>{collective.avg_equity.toFixed(1)}%</span>
+                            </Typography>
+                        </Box>
+                    </Box>
+                </MotionCard>
+            </Box>
+
+            {/* Metadata Footer */}
+            <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Shield size={14} style={{ color: COLORS.equity }} />
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>
+                        DATA SOURCE: SEC 13-F EDGAR • ENRICHED VIA ALPHA VANTAGE • AUTO-UPDATE EVERY SUNDAY 03:00 UTC
+                    </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.75rem', fontWeight: 600 }}>
+                        AS OF {new Date(collective.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} UTC
+                    </Typography>
+                    <Box sx={{ width: 120, height: 3, bgcolor: 'rgba(59,130,246,0.1)', borderRadius: 1.5, overflow: 'hidden' }}>
+                        <Box sx={{
+                            width: '100%',
+                            height: '100%',
+                            bgcolor: COLORS.equity,
+                            animation: 'pulse 3s infinite',
+                            boxShadow: `0 0 8px ${COLORS.equity}40`
+                        }} />
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    );
+};
+
+const WrappedInstitutionalHoldingsWall: React.FC = () => (
+    <SectionErrorBoundary name="Institutional Pulse 13-F Tracker">
+        <InstitutionalHoldingsWall />
+    </SectionErrorBoundary>
+);
+
+// Export the unwrapped version for the main component and wrapped for default
+export { InstitutionalHoldingsWall };
+export default WrappedInstitutionalHoldingsWall;

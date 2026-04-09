@@ -16,9 +16,11 @@ const supabase = createClient(
 
 // High-level grouping for the country terminal layout
 const TERMINAL_SECTIONS = [
-  { id: 'macro', title: 'Macro Heartbeat', icon: Activity, metrics: COUNTRY_METRIC_GROUPS.MACRO_HEARTBEAT },
-  { id: 'yield', title: 'Yield Curve', icon: TrendingUp, metrics: COUNTRY_METRIC_GROUPS.YIELD_CURVE },
-  { id: 'reserves', title: 'Reserves & Alignment', icon: Lock, metrics: COUNTRY_METRIC_GROUPS.RESERVES_ALIGNMENT },
+  { id: 'size', title: 'Economic Size', icon: TrendingUp, metrics: COUNTRY_METRIC_GROUPS.ECONOMIC_SIZE },
+  { id: 'growth', title: 'Growth & Inflation', icon: Activity, metrics: COUNTRY_METRIC_GROUPS.GROWTH_INFLATION },
+  { id: 'monetary', title: 'Monetary Policy', icon: TrendingUp, metrics: COUNTRY_METRIC_GROUPS.MONETARY_POLICY },
+  { id: 'external', title: 'External Sector', icon: Globe, metrics: COUNTRY_METRIC_GROUPS.EXTERNAL_SECTOR },
+  { id: 'fiscal', title: 'Fiscal Health', icon: Lock, metrics: COUNTRY_METRIC_GROUPS.FISCAL_HEALTH },
 ];
 
 export const CountryProfilePage: React.FC = () => {

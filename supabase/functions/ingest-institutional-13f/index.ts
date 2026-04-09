@@ -1,9 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Alpha Vantage rate limit: 5 calls per minute free tier => 12 seconds between calls
 const ALPHA_VANTAGE_DELAY_MS = parseInt(Deno.env.get('ALPHA_VANTAGE_DELAY_MS') || '12000');
 
-// @ts-ignore
 Deno.serve(async (req: Request) => {
     const start = new Date().toISOString();
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
@@ -48,17 +46,14 @@ const secHeaders = {
     'Accept-Encoding': 'gzip, deflate'
 };
 
-// ETF ticker lists for asset class classification
 const GOLD_ETFS = ['GLD', 'IAU', 'BAR', 'SGOL', 'OUNZ', 'BCM', 'GLDM'];
-const BOND_ETFS = ['TLT', 'IEI', 'IEF', 'SHY', 'LQD', 'HYG', 'TIP', 'BND', 'AGG', 'EMB', 'MUB', 'SCHP', 'VTIP', 'BIL', 'XLV', 'XLF']; // note: some are sector but treat as bond? Actually not. We'll treat only known bond ETFs.
-// We'll also include common Treasury ETFs: TLT, TBF, etc. This list can be expanded later.
+const BOND_ETFS = ['TLT', 'IEI', 'IEF', 'SHY', 'LQD', 'HYG', 'TIP', 'BND', 'AGG', 'EMB', 'MUB', 'SCHP', 'VTIP', 'BIL'];
 
 function classifyAssetClass(ticker: string): 'equity' | 'bond' | 'gold' | 'other' {
     const t = ticker.toUpperCase();
     if (GOLD_ETFS.includes(t)) return 'gold';
     if (BOND_ETFS.includes(t)) return 'bond';
-    // Heuristic: If ticker starts with '^' or contains '-', treat as other
-    return 'equity'; // default to equity for stocks
+    return 'equity';
 }
 
 async function fetchBenchmarkReturns(alphaVantageKey: string): Promise<{spy: number, tlt: number, gld: number}> {
@@ -69,22 +64,15 @@ async function fetchBenchmarkReturns(alphaVantageKey: string): Promise<{spy: num
             const res = await fetch(url);
             const data = (await res.json()) as any;
             const ts = data['Monthly Time Series'];
-            if (!ts) {
-                console.warn(`No time series for ${ticker}`);
-                tickers[ticker as keyof typeof tickers] = 0;
-                continue;
-            }
+            if (!ts) continue;
             const dates = Object.keys(ts).sort().reverse();
             if (dates.length >= 3) {
                 const latest = parseFloat(ts[dates[0]]['4. close']);
-                const old = parseFloat(ts[dates[2]]['4. close']); // approx 3 months ago
+                const old = parseFloat(ts[dates[2]]['4. close']);
                 tickers[ticker as keyof typeof tickers] = ((latest - old) / old) * 100;
-            } else {
-                tickers[ticker as keyof typeof tickers] = 0;
             }
         } catch (e) {
             console.warn(`Failed to fetch ${ticker}: ${e}`);
-            tickers[ticker as keyof typeof tickers] = 0;
         }
         await sleep(200);
     }
@@ -92,25 +80,18 @@ async function fetchBenchmarkReturns(alphaVantageKey: string): Promise<{spy: num
 }
 
 const INSTITUTIONS = [
-    // Sovereign Wealth Funds (5)
     { name: 'Norges Bank', cik: '0001164748', type: 'Sovereign Wealth' },
     { name: 'GIC Private Ltd', cik: '0000930796', type: 'Sovereign Wealth' },
     { name: 'Abu Dhabi Investment Authority', cik: '0001426425', type: 'Sovereign Wealth' },
     { name: 'CPPIB', cik: '0001006540', type: 'Sovereign Wealth' },
     { name: 'Temasek Holdings', cik: '0001021944', type: 'Sovereign Wealth' },
-
-    // Asset Managers (6)
     { name: 'BlackRock Inc.', cik: '0001364762', type: 'Asset Manager' },
     { name: 'Vanguard Group Inc.', cik: '0000102905', type: 'Asset Manager' },
     { name: 'State Street Corp', cik: '0000093751', type: 'Asset Manager' },
     { name: 'FMR LLC', cik: '0000315066', type: 'Asset Manager' },
     { name: 'Capital Research and Management Co', cik: '0000702011', type: 'Asset Manager' },
     { name: 'Blackstone Inc', cik: '0001342606', type: 'Asset Manager' },
-
-    // Hedge Fund (1)
     { name: 'Bridgewater Associates, LP', cik: '0001352464', type: 'Hedge Fund' },
-
-    // Pension Funds (3)
     { name: 'CalPERS', cik: '0000919079', type: 'Pension Fund' },
     { name: 'CalSTRS', cik: '0000919844', type: 'Pension Fund' },
     { name: 'Ontario Teachers\' Pension Plan', cik: '0001563816', type: 'Pension Fund' }
@@ -125,7 +106,6 @@ async function processInstitutional13F(client: any) {
     const alphaVantageKey = Deno.env.get('ALPHA_VANTAGE_API_KEY');
     if (!alphaVantageKey) throw new Error('ALPHA_VANTAGE_API_KEY is not set');
 
-    // Fetch benchmark returns once
     const benchmarks = await fetchBenchmarkReturns(alphaVantageKey);
 
     const results = await Promise.allSettled(INSTITUTIONS.map(async (inst) => {
@@ -147,18 +127,15 @@ async function processInstitutional13F(client: any) {
             return { name: inst.name, status: 'No direct filings', cik: inst.cik };
         }
 
-        // Find the latest 13F-HR or 13F-HR/A
         const idx = filings.form.findIndex((f: string) => f === '13F-HR' || f === '13F-HR/A');
         if (idx === -1) {
-            console.warn(`[${inst.name}] No 13F-HR filing found in recent submissions. Available forms: ${filings.form.join(', ')}`);
+            console.warn(`[${inst.name}] No 13F-HR filing found. Available: ${filings.form.join(', ')}`);
             return { name: inst.name, status: 'No 13F found', cik: inst.cik };
         }
 
         const accessionNum = filings.accessionNumber[idx].replace(/-/g, '');
-        const primaryDoc = filings.primaryDocument[idx];
         const reportDate = filings.reportDate[idx];
 
-        // Fetch Information Table XML
         const filingDirUrl = `https://www.sec.gov/Archives/edgar/data/${inst.cik}/${accessionNum}/index.json`;
         const dirRes = await fetch(filingDirUrl, { headers: secHeaders });
         if (!dirRes.ok) throw new Error(`Filing index not found for ${inst.name}`);
@@ -175,27 +152,39 @@ async function processInstitutional13F(client: any) {
         const xmlRes = await fetch(xmlUrl, { headers: secHeaders });
         const xmlText = await xmlRes.text();
 
-        // Parse holdings
-        const holdings: Array<{cusip: string, value: number, ticker?: string, sector?: string, name?: string}> = [];
-        const cusipRegex = /<cusip>([^<]+)<\/cusip>[\s\S]*?<value>([^<]+)<\/value>/gi;
+        const holdings: Array<{cusip: string, value: number, issuerName?: string}> = [];
+        const entryRegex = /<nameOfIssuer>([^<]+)<\/nameOfIssuer>[\s\S]*?<cusip>([^<]+)<\/cusip>[\s\S]*?<value>([^<]+)<\/value>/gi;
         let match;
         let totalValue = 0;
 
-        while ((match = cusipRegex.exec(xmlText)) !== null) {
-            const cusip = match[1].trim();
-            const value = parseInt(match[2].trim(), 10) * 1000; // Values are in thousands
-            holdings.push({ cusip, value });
+        while ((match = entryRegex.exec(xmlText)) !== null) {
+            const issuerName = match[1].trim();
+            const cusip = match[2].trim();
+            const value = parseInt(match[3].trim(), 10) * 1000;
+            holdings.push({ cusip, value, issuerName });
             totalValue += value;
         }
 
-        // Process top holdings (up to 20) with Alpha Vantage enrichment, using cache
+        if (holdings.length === 0) {
+            console.warn(`[${inst.name}] Comprehensive parsing failed, falling back to CUSIP-only`);
+            const cusipRegex = /<cusip>([^<]+)<\/cusip>[\s\S]*?<value>([^<]+)<\/value>/gi;
+            while ((match = cusipRegex.exec(xmlText)) !== null) {
+                const cusip = match[1].trim();
+                const value = parseInt(match[2].trim(), 10) * 1000;
+                holdings.push({ cusip, value });
+                totalValue += value;
+            }
+        }
+
+        if (holdings.length === 0) throw new Error(`Failed to parse any holdings from XML for ${inst.name}`);
+
+        console.log(`[${inst.name}] Parsed ${holdings.length} holdings from XML`);
+
         const topHoldings = holdings.slice(0, 20);
         const sectorMapping: Record<string, number> = {};
-        const enrichedHoldings: typeof holdings = [];
+        const enrichedHoldings: Array<{cusip: string, value: number, ticker?: string, sector?: string, name?: string}> = [];
 
-        // Helper: Fetch ticker info from cache or Alpha Vantage
-        async function getTickerInfo(cusip: string): Promise<{ticker: string | null, name: string | null, sector: string | null}> {
-            // Check cache (valid for 90 days)
+        async function getTickerInfo(cusip: string, issuerName?: string): Promise<{ticker: string | null, name: string | null, sector: string | null}> {
             const cacheRes = await client
                 .from('cusip_ticker_cache')
                 .select('ticker, company_name, sector, fetched_at')
@@ -208,57 +197,67 @@ async function processInstitutional13F(client: any) {
             }
 
             const { data: cached, error: cacheErr } = cacheRes;
-            if (cacheErr) {
-                console.warn(`[Hardening] Cache select error for ${cusip}: ${cacheErr.message}`);
-            }
+            if (cacheErr) console.warn(`[Hardening] Cache select error for ${cusip}: ${cacheErr.message}`);
 
             const cacheValid = cached && (new Date(cached.fetched_at) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
             if (cacheValid) {
-                // Update last_used_at (fire and forget)
                 client.from('cusip_ticker_cache').update({ last_used_at: new Date().toISOString() }).eq('cusip', cusip).catch(() => {});
                 return { ticker: cached.ticker, name: cached.company_name, sector: cached.sector };
             }
 
-            // Cache miss: fetch from Alpha Vantage
             try {
-                // 1. CUSIP to Ticker via SYMBOL_SEARCH
-                const searchUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${cusip}&apikey=${alphaVantageKey}`;
-                const searchRes = await fetch(searchUrl);
-                if (!searchRes.ok) throw new Error(`Alpha Vantage search failed: ${searchRes.status}`);
-                
-                const searchData = (await searchRes.json()) as any;
-                if (!searchData) throw new Error('Alpha Vantage returned empty search data');
-                
-                if (searchData.Note || searchData['Error Message']) {
-                    console.warn(`[AV] API Limit or Error: ${JSON.stringify(searchData)}`);
-                    return { ticker: null, name: null, sector: null };
-                }
-
-                const symbol = searchData.bestMatches?.[0]?.['1. symbol'];
-                await sleep(ALPHA_VANTAGE_DELAY_MS); 
-
                 let ticker: string | null = null;
                 let name: string | null = null;
                 let sector: string | null = null;
 
-                if (symbol) {
-                    const overviewUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${alphaVantageKey}`;
-                    const overviewRes = await fetch(overviewUrl);
-                    const overviewData = (await overviewRes.json()) as any;
-                    await sleep(ALPHA_VANTAGE_DELAY_MS);
-
-                    if (overviewData && overviewData.Symbol) {
-                        sector = overviewData.Sector || 'Other';
-                        name = overviewData.Name || overviewData.description || null;
-                        ticker = symbol;
+                if (issuerName) {
+                    console.log(`[AV] Searching by issuer name: ${issuerName}`);
+                    const searchUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${encodeURIComponent(issuerName)}&apikey=${alphaVantageKey}`;
+                    const searchRes = await fetch(searchUrl);
+                    if (searchRes.ok) {
+                        const searchData = (await searchRes.json()) as any;
+                        if (searchData && !searchData.Note && !searchData['Error Message']) {
+                            const matches = searchData.bestMatches || [];
+                            if (matches.length > 0) {
+                                ticker = matches[0]['1. symbol'];
+                                console.log(`[AV] Found ticker ${ticker} for ${issuerName}`);
+                            }
+                        }
                     }
+                    await sleep(ALPHA_VANTAGE_DELAY_MS);
                 }
 
-                // Upsert into cache for future use
+                if (!ticker) {
+                    console.log(`[AV] Name search failed for ${issuerName || 'N/A'}, trying CUSIP: ${cusip}`);
+                    const searchUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${cusip}&apikey=${alphaVantageKey}`;
+                    const searchRes = await fetch(searchUrl);
+                    if (searchRes.ok) {
+                        const searchData = (await searchRes.json()) as any;
+                        if (searchData && !searchData.Note && !searchData['Error Message'] && searchData.bestMatches?.length > 0) {
+                            ticker = searchData.bestMatches[0]['1. symbol'];
+                            console.log(`[AV] Found ticker ${ticker} from CUSIP search`);
+                        }
+                    }
+                    await sleep(ALPHA_VANTAGE_DELAY_MS);
+                }
+
+                if (ticker) {
+                    const overviewUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${ticker}&apikey=${alphaVantageKey}`;
+                    const overviewRes = await fetch(overviewUrl);
+                    if (overviewRes.ok) {
+                        const overviewData = (await overviewRes.json()) as any;
+                        if (overviewData && overviewData.Symbol) {
+                            sector = overviewData.Sector || 'Other';
+                            name = overviewData.Name || overviewData.description || issuerName || null;
+                        }
+                    }
+                    await sleep(ALPHA_VANTAGE_DELAY_MS);
+                }
+
                 await client.from('cusip_ticker_cache').upsert({
                     cusip,
                     ticker,
-                    company_name: name,
+                    company_name: name || issuerName || null,
                     sector,
                     fetched_at: new Date().toISOString(),
                     last_used_at: new Date().toISOString()
@@ -271,10 +270,9 @@ async function processInstitutional13F(client: any) {
             }
         }
 
-        // Process each top holding
         for (const holding of topHoldings) {
             try {
-                const info = await getTickerInfo(holding.cusip);
+                const info = await getTickerInfo(holding.cusip, holding.issuerName);
                 const ticker = info.ticker;
                 const sector = info.sector || 'Other';
                 const name = info.name;
@@ -282,12 +280,14 @@ async function processInstitutional13F(client: any) {
                 if (ticker) {
                     sectorMapping[sector] = (sectorMapping[sector] || 0) + (holding.value / totalValue) * 100;
                     enrichedHoldings.push({
-                        ...holding,
+                        cusip: holding.cusip,
+                        value: holding.value,
                         ticker,
                         sector,
-                        name: name || undefined
+                        name
                     });
                 } else {
+                    console.log(`[${inst.name}] No ticker for ${holding.issuerName || holding.cusip} → marked as Other`);
                     sectorMapping['Other'] = (sectorMapping['Other'] || 0) + (holding.value / totalValue) * 100;
                     enrichedHoldings.push(holding);
                 }
@@ -298,7 +298,6 @@ async function processInstitutional13F(client: any) {
             }
         }
 
-        // Compute asset class allocation
         const equitySum = enrichedHoldings.reduce((acc, h) => {
             const cls = classifyAssetClass(h.ticker || '');
             return acc + (cls === 'equity' ? h.value : 0);
@@ -320,7 +319,6 @@ async function processInstitutional13F(client: any) {
             other_pct: (otherSum / totalValue) * 100
         };
 
-        // Build top 10 holdings array with concentration contribution
         const sortedForTop = [...enrichedHoldings].sort((a, b) => b.value - a.value);
         const top10 = sortedForTop.slice(0, 10).map(h => ({
             cusip: h.cusip,
@@ -331,11 +329,9 @@ async function processInstitutional13F(client: any) {
             concentration_contribution: (h.value / totalValue) * 100
         }));
 
-        // Concentration score: sum of top 5 holdings contribution
         const top5 = sortedForTop.slice(0, 5);
         const concentrationScore = top5.reduce((sum, h) => sum + (h.value / totalValue) * 100, 0);
 
-        // Fetch previous AUM for QoQ delta
         const prevAumRes = await client
             .from('institutional_13f_holdings')
             .select('total_aum, top_sectors, asset_class_allocation')
@@ -345,14 +341,9 @@ async function processInstitutional13F(client: any) {
             .limit(1)
             .maybeSingle();
 
-        if (!prevAumRes) {
-            console.warn(`[Hardening] prevAumRes is undefined for ${inst.name}`);
-        }
-        
         const prevData = prevAumRes?.data || null;
         const qoqDelta = prevData?.total_aum ? ((totalValue - prevData.total_aum) / prevData.total_aum) * 100 : 0;
 
-        // Sector rotation signal: compare top 3 sector sum vs previous
         const getTop3Sum = (sectors: Record<string, number> | null) => {
             if (!sectors) return 0;
             const values = Object.values(sectors).sort((a,b) => b - a);
@@ -363,8 +354,6 @@ async function processInstitutional13F(client: any) {
         const top3Delta = currTop3Sum - prevTop3Sum;
         const sectorRotationSignal = top3Delta > 1 ? 'ACCUMULATE' : top3Delta < -1 ? 'REDUCE' : 'NEUTRAL';
 
-        // Historical allocation (last 8 quarters including current)
-        // Fetch up to 7 previous rows to build history
         const historyRes = await client
             .from('institutional_13f_holdings')
             .select('as_of_date, asset_class_allocation')
@@ -373,16 +362,10 @@ async function processInstitutional13F(client: any) {
             .order('as_of_date', { ascending: false })
             .limit(7);
 
-        if (!historyRes) {
-            console.error(`[Hardening] historyRes is undefined for ${inst.name}`);
-        }
-        
         const historyRows = historyRes?.data || [];
-
         const historicalAllocation = [];
-        // Add previous allocations (older first) up to 7
         if (historyRows) {
-            for (const row of historyRows.reverse()) { // oldest to newest
+            for (const row of historyRows.reverse()) {
                 if (row.asset_class_allocation) {
                     historicalAllocation.push({
                         quarter: row.as_of_date,
@@ -391,29 +374,27 @@ async function processInstitutional13F(client: any) {
                 }
             }
         }
-        // Add current
         historicalAllocation.push({
             quarter: reportDate,
-            ...assetClassAllocation
+            equity_pct: assetClassAllocation.equity_pct,
+            bond_pct: assetClassAllocation.bond_pct,
+            gold_pct: assetClassAllocation.gold_pct,
+            other_pct: assetClassAllocation.other_pct
         });
-        // Keep only last 8
         if (historicalAllocation.length > 8) {
             historicalAllocation.splice(0, historicalAllocation.length - 8);
         }
 
-        // Regime Z-score: based on equity_pct over historicalAllocation
         const equityPcts = historicalAllocation.map(h => Number(h.equity_pct) || 0);
         const meanEquity = equityPcts.reduce((a,b) => a+b, 0) / equityPcts.length;
         const variance = equityPcts.reduce((sum, val) => sum + Math.pow(val - meanEquity, 2), 0) / equityPcts.length;
         const stdDev = Math.sqrt(variance);
         const regimeZScore = stdDev === 0 ? 0 : (Number(assetClassAllocation.equity_pct) - meanEquity) / stdDev;
 
-        // Benchmark comparisons
         const spyComparison = qoqDelta - benchmarks.spy;
         const tltComparison = qoqDelta - benchmarks.tlt;
         const gldComparison = qoqDelta - benchmarks.gld;
 
-        // Upsert all fields
         const upsertResult = await client.from('institutional_13f_holdings').upsert({
             fund_name: inst.name,
             fund_type: inst.type,
@@ -434,11 +415,8 @@ async function processInstitutional13F(client: any) {
             historical_allocation: historicalAllocation
         }, { onConflict: 'cik, as_of_date' });
 
-        if (!upsertResult) throw new Error(`Upsert result undefined for ${inst.name}`);
-        if (upsertResult.error) throw upsertResult.error;
+        if (!upsertResult || upsertResult.error) throw new Error(`Upsert failed for ${inst.name}`);
 
-        // Infer recent trades from QoQ position changes
-        // Fetch previous top_holdings to compare
         const prevHoldingRes = await client
             .from('institutional_13f_holdings')
             .select('top_holdings')
@@ -448,14 +426,9 @@ async function processInstitutional13F(client: any) {
             .limit(1)
             .maybeSingle();
 
-        if (!prevHoldingRes) {
-            console.error(`[Hardening] prevHoldingRes is undefined for ${inst.name}`);
-        }
-        
         const prevHoldingRow = prevHoldingRes?.data || null;
         const prevHoldingsList = (prevHoldingRow?.top_holdings as any[]) || [];
 
-        // Build map: key = ticker or cusip, value = holding
         const prevHoldingsMap = new Map<string, any>();
         prevHoldingsList.forEach(h => {
             const key = (h.ticker || h.cusip);
@@ -464,7 +437,6 @@ async function processInstitutional13F(client: any) {
 
         const tradesToInsert: any[] = [];
 
-        // Compare current enrichedHoldings with previous
         for (const cur of enrichedHoldings) {
             const curUsd = cur.value;
             const key = cur.ticker || cur.cusip;
@@ -473,15 +445,10 @@ async function processInstitutional13F(client: any) {
 
             const deltaUsd = curUsd - prevUsd;
             let deltaPct = 0;
-            if (prevUsd > 0) {
-                deltaPct = (deltaUsd / prevUsd) * 100;
-            } else if (prevUsd === 0 && curUsd > 0) {
-                deltaPct = 100; // new position
-            } else if (curUsd === 0 && prevUsd > 0) {
-                deltaPct = -100; // exit
-            }
+            if (prevUsd > 0) deltaPct = (deltaUsd / prevUsd) * 100;
+            else if (prevUsd === 0 && curUsd > 0) deltaPct = 100;
+            else if (curUsd === 0 && prevUsd > 0) deltaPct = -100;
 
-            // Determine significance
             const isNew = prevUsd === 0 && curUsd > 0;
             const isExit = curUsd === 0 && prevUsd > 0;
             const isSignificant = Math.abs(deltaPct) > 2;
@@ -490,24 +457,14 @@ async function processInstitutional13F(client: any) {
 
             let trade_type: string;
             let direction: string;
-            if (isNew) {
-                trade_type = 'INITIATE';
-                direction = 'ACCUMULATE';
-            } else if (isExit) {
-                trade_type = 'EXIT';
-                direction = 'DISTRIBUTE';
-            } else if (deltaPct > 0) {
-                trade_type = 'INCREASE';
-                direction = 'ACCUMULATE';
-            } else {
-                trade_type = 'DECREASE';
-                direction = 'DISTRIBUTE';
-            }
+            if (isNew) { trade_type = 'INITIATE'; direction = 'ACCUMULATE'; }
+            else if (isExit) { trade_type = 'EXIT'; direction = 'DISTRIBUTE'; }
+            else if (deltaPct > 0) { trade_type = 'INCREASE'; direction = 'ACCUMULATE'; }
+            else { trade_type = 'DECREASE'; direction = 'DISTRIBUTE'; }
 
-            // Base conviction: 1-10 from delta magnitude
             let conviction = Math.min(10, Math.abs(deltaPct) * 2);
 
-            const trade = {
+            tradesToInsert.push({
                 cik: inst.cik,
                 fund_name: inst.name,
                 ticker: cur.ticker || null,
@@ -522,11 +479,9 @@ async function processInstitutional13F(client: any) {
                 price_change_pct: null,
                 conviction_score: conviction,
                 as_of_date: reportDate
-            };
-            tradesToInsert.push(trade);
+            });
         }
 
-        // Optionally fetch price change for each trade to refine conviction
         if (tradesToInsert.length > 0 && alphaVantageKey) {
             for (const trade of tradesToInsert) {
                 if (!trade.ticker) continue;
@@ -543,7 +498,6 @@ async function processInstitutional13F(client: any) {
                             const old = parseFloat(ts[threeMonthsAgo]['4. close']);
                             const priceChange = ((latest - old) / old) * 100;
                             trade.price_change_pct = priceChange;
-                            // Boost conviction if strong price momentum in same direction as trade
                             if (Math.abs(priceChange) > 5) {
                                 trade.conviction_score = Math.min(10, trade.conviction_score + 2);
                             }
@@ -556,12 +510,10 @@ async function processInstitutional13F(client: any) {
             }
         }
 
-        // Insert trades after deleting any existing for this institution+date
         if (tradesToInsert.length > 0) {
             await client.from('institutional_trades_inferred').delete().eq('cik', inst.cik).eq('as_of_date', reportDate);
             const insertResult = await client.from('institutional_trades_inferred').insert(tradesToInsert);
-            if (!insertResult) throw new Error(`Trade insert result undefined for ${inst.name}`);
-            if (insertResult.error) throw insertResult.error;
+            if (!insertResult || insertResult.error) throw new Error(`Trade insert failed for ${inst.name}`);
         }
 
         processedCount++;
