@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
+import { createClient } from '@supabase/supabase-js'
 import { runIngestion, IngestionContext } from '../_shared/logging.ts'
 
 // Transit days by origin region for heuristic tanker pipeline
