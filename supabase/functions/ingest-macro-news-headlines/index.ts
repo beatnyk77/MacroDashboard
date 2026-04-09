@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { createClient } from '@supabase/supabase-js'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.3.2'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
 import { withTimeout } from '../_shared/timeout-guard.ts'

@@ -1,4 +1,4 @@
-import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]> {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=250`;

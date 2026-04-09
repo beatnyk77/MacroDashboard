@@ -1,4 +1,4 @@
-import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 interface Observation {
     metric_id: string

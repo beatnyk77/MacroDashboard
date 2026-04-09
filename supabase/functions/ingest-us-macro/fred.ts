@@ -1,4 +1,4 @@
-import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, taskName: string): Promise<T> {
   let timeoutId: any;
@@ -114,7 +114,7 @@ export async function processFred(supabase: SupabaseClient, fredApiKey: string) 
 
                 const fredUnits = (metric.metadata as any)?.fred_units;
                 const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
-                const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100${unitsParam}`;
+                const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=2000${unitsParam}`;
 
                 try {
                     const response = await withTimeout(fetchWithRetry(url), 10000, `FRED Fetch ${fredId}`);

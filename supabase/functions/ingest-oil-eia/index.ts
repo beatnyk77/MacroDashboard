@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 // --- SHARED UTILS ---
 const corsHeaders = {

@@ -22,6 +22,7 @@ const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/
 const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
 const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
+const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -131,11 +132,18 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <TrendingUp className="text-rose-500" size={28} />
                         <h2 className="text-3xl font-black uppercase tracking-heading text-white">Trade Settlement & Misinvoicing</h2>
                     </div>
-                    <SectionErrorBoundary name="Trade Flows">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TradeFlowsCard />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <div className="space-y-16">
+                        <SectionErrorBoundary name="Petrodollar vs Petroyuan">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <PetrodollarVsPetroyuan />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <SectionErrorBoundary name="Trade Flows">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <TradeFlowsCard />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
                     <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
                 </section>
 

@@ -255,8 +255,8 @@ Deno.serve(async (req: Request) => {
   // Also check body for supplement flag (helpful for CLI invocation)
   if (!supplement && req.method === 'POST') {
     try {
-      const body = await req.clone().json();
-      supplement = body.supplement;
+      const body = await req.clone().json() as { supplement?: string };
+      supplement = body.supplement || null;
     } catch {
       // Ignore if not JSON
     }

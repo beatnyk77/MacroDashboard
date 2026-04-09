@@ -2,7 +2,7 @@
  * Capital Flows Ingestion Engine
  * Sources: IMF BOP, FRED TIC, Alpha Vantage (Proxies), CoinGecko, ECB SDMX
  */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
 
