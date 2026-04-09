@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box, Paper, TextField, InputAdornment, Chip, Grid } from '@mui/material';
-import { Search, Book } from 'lucide-react';
+import { Search, Book, FlaskConical, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { glossaryData } from '@/features/glossary/glossaryData';
 import { SEOManager } from '@/components/SEOManager';
@@ -58,6 +58,20 @@ export const GlossaryIndexPage: React.FC = () => {
                     <Typography variant="subtitle1" color="text.secondary" maxWidth="sm" mx="auto">
                         A curated dictionary of institutional finance terminology focusing on global liquidity flows, monetary regimes, and sovereign stress.
                     </Typography>
+                    <Box display="flex" gap={4} justifyContent="center" mt={3}>
+                        <Box textAlign="center">
+                            <Typography variant="h5" fontWeight={800} color="primary.main">{glossaryData.length}</Typography>
+                            <Typography variant="caption" color="text.disabled">Terms Defined</Typography>
+                        </Box>
+                        <Box textAlign="center">
+                            <Typography variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.formula).length}</Typography>
+                            <Typography variant="caption" color="text.disabled">With Formulas</Typography>
+                        </Box>
+                        <Box textAlign="center">
+                            <Typography variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.methodsPage).length}</Typography>
+                            <Typography variant="caption" color="text.disabled">Deep Dives</Typography>
+                        </Box>
+                    </Box>
                 </Box>
 
                 <Paper elevation={0} sx={{ p: 4, bgcolor: 'background.paper', borderRadius: 3, border: '1px solid', borderColor: 'divider', mb: 6 }}>
@@ -126,9 +140,15 @@ export const GlossaryIndexPage: React.FC = () => {
                                     }
                                 }}
                             >
-                                <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, mb: 1, display: 'block' }}>
-                                    {term.category}
-                                </Typography>
+                                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
+                                    <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, display: 'block' }}>
+                                        {term.category}
+                                    </Typography>
+                                    <Box display="flex" gap={0.5}>
+                                        {term.formula && <Box component="span" title="Includes formula"><FlaskConical size={12} style={{ color: '#60a5fa', marginTop: 2 }} /></Box>}
+                                        {term.methodsPage && <Box component="span" title="Deep-dive article"><FileText size={12} style={{ color: '#34d399', marginTop: 2 }} /></Box>}
+                                    </Box>
+                                </Box>
                                 <Typography variant="h6" color="text.primary" fontWeight="bold" gutterBottom>
                                     {term.term}
                                 </Typography>

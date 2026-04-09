@@ -2,90 +2,283 @@ export interface GlossaryTerm {
     id: string;
     term: string;
     definition: string;
-    category: 'Liquidity' | 'Monetary Policy' | 'Geopolitics' | 'Hard Assets' | 'Sovereign Debt';
+    category: 'Liquidity' | 'Monetary Policy' | 'Geopolitics' | 'Hard Assets' | 'Sovereign Debt' | 'Macro Indicators';
     relatedMetrics?: string[];
     slug: string;
+    formula?: string;
+    methodsPage?: string;
+    whyItMatters?: string;
 }
 
 export const glossaryData: GlossaryTerm[] = [
+    // ── Liquidity ──────────────────────────────────────────────────────────────
     {
         id: '1',
         term: 'Net Liquidity Z-Score',
         slug: 'net-liquidity-z-score',
         category: 'Liquidity',
-        definition: 'A statistical measurement of global fiat liquidity availability relative to its historical mean. A highly positive Z-score indicates expansionary conditions (excess liquidity), while a negative score indicates quantitative tightening and liquidity drain. It is often calculated by analyzing Central Bank balance sheets, adjusting for the Treasury General Account (TGA), and Reverse Repo (RRP) facilities.',
-        relatedMetrics: ['Federal Reserve Balance Sheet', 'TGA', 'RRP']
-    },
-    {
-        id: '2',
-        term: 'Stealth QE',
-        slug: 'stealth-qe',
-        category: 'Monetary Policy',
-        definition: 'Quantitative Easing (QE) maneuvers executed by central banks that are not officially labeled as QE to avoid signaling panic. Examples include massive, sudden expansions of liquidity facilities (like the BTFP in 2023) or unscheduled repo market interventions, injecting capital into the system while publicly maintaining a restrictive stance.',
-        relatedMetrics: ['Bank Term Funding Program', 'Repo Market Volume']
-    },
-    {
-        id: '3',
-        term: 'Sovereign Rollover Risk',
-        slug: 'sovereign-rollover-risk',
-        category: 'Sovereign Debt',
-        definition: 'The risk that a government will be unable or unwilling to refinance its maturing debt at favorable interest rates. This risk spikes when a significant percentage of a nation\'s debt is short-term (T-Bills) and must be refinanced during a period of rising global yields, leading to a sudden, severe increase in interest expense.',
-        relatedMetrics: ['Maturity Profile', 'Interest Expense / Tax Receipts']
-    },
-    {
-        id: '4',
-        term: 'De-Dollarization',
-        slug: 'de-dollarization',
-        category: 'Geopolitics',
-        definition: 'The strategic macro trend where nations (particularly BRICS+ members) deliberately reduce their reliance on the US Dollar as a reserve currency, medium of exchange, or unit of account. This is tracked by analyzing the share of USD in global FX reserves, bilateral local currency trade agreements, and sovereign gold accumulation.',
-        relatedMetrics: ['Global FX Reserves', 'Central Bank Gold Net Purchases']
-    },
-    {
-        id: '5',
-        term: 'M2 / Gold Ratio',
-        slug: 'm2-gold-ratio',
-        category: 'Hard Assets',
-        definition: 'A valuation metric comparing the total global M2 money supply to the market capitalization of above-ground gold. It is used to determine if fiat currency has been fundamentally debased relative to hard assets. A rapidly climbing ratio suggests fiat expansion without corresponding backing, signaling physical gold is undervalued relative to the currency supply.',
-        relatedMetrics: ['M2 Money Supply', 'Gold Valuation Z-Score']
+        definition: 'A statistical normalisation of the Federal Reserve\'s effective market liquidity — defined as Fed Balance Sheet minus Treasury General Account (TGA) minus Overnight Reverse Repo (RRP) usage. The Z-score expresses current conditions relative to a 25-year rolling mean, capturing whether the system is in structural liquidity expansion or contraction regardless of the absolute dollar level.',
+        formula: 'Z = (Net Liquidity − μ₂₅ᵧ) / σ₂₅ᵧ\nwhere Net Liquidity = WALCL − WTREGEN − RRPONTSYD',
+        whyItMatters: 'Historically, S&P 500 returns correlate strongly with changes in Net Liquidity. A Z-score above +1.5 has preceded bull phases; below −1.5 has preceded corrections. Institutional PMs use this as a regime-detection overlay on all other signals.',
+        relatedMetrics: ['Federal Reserve Balance Sheet', 'TGA', 'RRP'],
+        methodsPage: '/methods/net-liquidity-z-score',
     },
     {
         id: '6',
         term: 'Treasury General Account (TGA)',
         slug: 'tga',
         category: 'Liquidity',
-        definition: 'The Treasury General Account is the US government\'s primary operating account at the Federal Reserve. When the Treasury collects taxes or issues debt, the TGA balance rises, draining liquidity from the commercial banking system. When the Treasury spends this money into the economy, the TGA balance falls, injecting liquidity back into the system.',
-        relatedMetrics: ['Net Liquidity']
+        definition: 'The US government\'s primary operating account held at the Federal Reserve Bank of New York. TGA balances rise when the Treasury collects taxes or issues debt, draining dollars from the banking system. They fall when the government spends, injecting liquidity back. The TGA is therefore a structurally important off-balance-sheet liquidity lever for the Fed.',
+        whyItMatters: 'A large TGA drawdown (as in 2021) effectively mimics QE by injecting reserves into banks without any Fed action. Conversely, TGA rebuilds post-debt ceiling resolution drain market liquidity mechanically, often triggering risk-off episodes.',
+        relatedMetrics: ['Net Liquidity', 'WALCL'],
     },
     {
         id: '7',
-        term: 'Reverse Repo Facility (RRP)',
+        term: 'Overnight Reverse Repo Facility (ON RRP)',
         slug: 'reverse-repo-facility-rrp',
         category: 'Liquidity',
-        definition: 'The Overnight Reverse Repurchase Agreement Facility allows eligible institutions (like money market funds) to lend cash to the Federal Reserve in exchange for Treasury securities as collateral. An increasing RRP balance means cash is being parked at the Fed rather than circulating in the financial system, acting as a drain on broader market liquidity.',
-        relatedMetrics: ['Net Liquidity', 'SOFR']
+        definition: 'A Federal Reserve tool allowing eligible counterparties (primarily money market funds) to park excess cash overnight with the Fed in exchange for Treasury collateral. RRP balances peaked at ~$2.55 trillion in 2022 as money funds parked excess reserves. As RRP drains toward zero, that liquidity re-enters the financial system — the structural "hidden QE" of 2023–2024.',
+        whyItMatters: 'The RRP drain from $2.55T → ~$0.1T over 2023–2024 provided approximately $2.4 trillion of effective liquidity injection into markets without any Fed balance sheet expansion. This is why financial conditions eased even as the Fed Funds rate stayed at 5.25%.',
+        relatedMetrics: ['Net Liquidity', 'SOFR', 'WALCL'],
+    },
+    {
+        id: '11',
+        term: 'Carry Trade',
+        slug: 'carry-trade',
+        category: 'Liquidity',
+        definition: 'A leveraged trading strategy of borrowing in a low-interest-rate currency (the "funding" currency) and investing in a higher-yielding currency or asset. The profit — the "carry" — is the interest rate differential minus currency risk. The unwinding of large carry trades (particularly JPY-funded) can trigger acute global risk-off episodes as positions are sold simultaneously.',
+        whyItMatters: 'The August 2024 yen carry trade unwind caused one of the fastest 10% corrections in equity markets in a decade. The size of outstanding carry positions — estimated at $4–6 trillion in JPY terms — represents systemic tail risk when yen strengthens sharply.',
+        relatedMetrics: ['USD/JPY', 'BoJ Balance Sheet', 'VIX'],
+    },
+
+    // ── Monetary Policy ───────────────────────────────────────────────────────
+    {
+        id: '2',
+        term: 'Stealth QE',
+        slug: 'stealth-qe',
+        category: 'Monetary Policy',
+        definition: 'Liquidity injection mechanisms deployed by central banks that expand money supply without being officially labelled as Quantitative Easing. Historical examples include the Fed\'s Bank Term Funding Program (BTFP, March 2023 — ~$180B), unscheduled overnight repo operations in September 2019, and the ECB\'s Pandemic Emergency Purchase Programme (PEPP) extensions. The purpose is operational: inject liquidity while maintaining a hawkish public narrative.',
+        whyItMatters: 'Understanding stealth QE requires tracking mechanism-level data (BTFP balances, repo volume, SRF usage) not just the headline Fed balance sheet. Markets that react solely to FOMC statements miss the actual liquidity signal.',
+        relatedMetrics: ['BTFP Balance', 'Repo Market Volume', 'WALCL'],
+    },
+    {
+        id: '12',
+        term: 'SOFR (Secured Overnight Financing Rate)',
+        slug: 'sofr',
+        category: 'Monetary Policy',
+        definition: 'The benchmark US dollar overnight interest rate, computed by the New York Fed as the volume-weighted median rate on overnight Treasury-collateralised repo transactions. SOFR replaced LIBOR as the global reference rate for dollar-denominated interest rate derivatives in 2023. It reflects the true cost of overnight dollar funding in the US financial system.',
+        whyItMatters: 'Stress in SOFR — a sudden spike above the Fed Funds target rate — signals dollar funding scarcity or collateral quality concerns in repo markets. This is one of the earliest indicators of plumbing-level stress before it surfaces in broader financial conditions.',
+        relatedMetrics: ['Fed Funds Rate', 'Net Liquidity', 'Reverse Repo'],
+    },
+    {
+        id: '14',
+        term: 'Yield Curve Control (YCC)',
+        slug: 'yield-curve-control',
+        category: 'Monetary Policy',
+        definition: 'A monetary policy tool where a central bank commits to capping long-term interest rates at a specific level by purchasing whatever volume of bonds is necessary to maintain that cap. Japan\'s Bank of Japan has operated YCC since 2016, targeting 10-year JGB yields near 0%. YCC is effectively a commitment to unlimited bond purchases — a form of permanent QE when markets test the ceiling.',
+        whyItMatters: 'BoJ YCC is the single largest distortion in global sovereign bond markets. When YCC breaks or the cap is widened (as in Dec 2022 and Jul 2023), Japanese institutional investors repatriate capital from US Treasuries and European bonds, causing global yield spikes.',
+        relatedMetrics: ['BoJ Balance Sheet', 'JGB 10Y Yield', 'USD/JPY'],
+    },
+    {
+        id: '15',
+        term: 'Breakeven Inflation Rate',
+        slug: 'breakeven-inflation-rate',
+        category: 'Monetary Policy',
+        definition: 'The market-implied expected inflation rate over a given period, derived from the yield differential between nominal Treasury bonds and Treasury Inflation-Protected Securities (TIPS) of the same maturity. If the 10-year nominal yield is 4.5% and the 10-year TIPS yield is 2.0%, the 10-year breakeven inflation rate is 2.5% — meaning markets expect average inflation of 2.5% per year for a decade.',
+        formula: 'Breakeven Rate = Nominal Yield − TIPS Yield',
+        whyItMatters: 'Breakeven rates are the cleanest real-time market signal for future inflation expectations. When breakevens rise faster than the Fed\'s 2% target, it signals markets are losing confidence in the Fed\'s inflation-fighting credibility, typically a leading indicator of additional rate hikes.',
+        relatedMetrics: ['T10YIE (FRED)', 'DFII10', 'CPI Inflation'],
+    },
+
+    // ── Sovereign Debt ────────────────────────────────────────────────────────
+    {
+        id: '3',
+        term: 'Sovereign Rollover Risk',
+        slug: 'sovereign-rollover-risk',
+        category: 'Sovereign Debt',
+        definition: 'The risk that a government cannot refinance its maturing debt obligations at affordable interest rates. Risk peaks when a large portion of outstanding debt is short-duration (bills), forcing frequent refinancing at prevailing market rates. The US faces a structural rollover challenge: approximately $9.2 trillion of debt matures within 12 months (as of 2024), representing ~33% of the total $34T debt stock.',
+        whyItMatters: 'Every 100bps rise in average Treasury yields adds roughly $340 billion to annual US interest expense. At above-4% yields, interest costs exceeded the entire US defence budget — a structural fiscal constraint that limits the Fed\'s freedom to maintain restrictive rates.',
+        relatedMetrics: ['Debt Maturity Wall', 'Interest/Tax Receipts', 'Bid-to-Cover Ratio'],
     },
     {
         id: '8',
         term: 'Term Premium',
         slug: 'term-premium',
         category: 'Sovereign Debt',
-        definition: 'The extra yield that investors demand to hold a longer-term bond instead of a series of shorter-term bonds. It compensates investors for the risk of tying up their capital for a longer period, primarily inflation and interest rate uncertainty. A rising term premium often coincides with increased fears of fiscal profligacy or sovereign supply indigestion.',
-        relatedMetrics: ['Yield Curve Slope', '10Y Treasury Yield']
+        definition: 'The excess yield that investors demand to hold a long-duration bond instead of rolling a series of short-term instruments. It compensates for duration risk (price sensitivity to rate changes), inflation uncertainty, and fiscal supply risk. The ACM Term Premium Model (NY Fed) estimates this component separately from the expected short rate path over the bond\'s life.',
+        formula: 'Yield = Expected Path of Short Rates + Term Premium',
+        whyItMatters: 'Rising term premium without a corresponding rise in expected short rates is a red flag — it signals deteriorating demand for long-duration Treasuries and investor concern about fiscal sustainability or inflation. 2023\'s rapid rise in 10Y yields was predominantly a term premium phenomenon, not a change in Fed rate expectations.',
+        relatedMetrics: ['Yield Curve Slope', 'ACMTP10 (NY Fed)'],
+    },
+    {
+        id: '16',
+        term: 'Fiscal Dominance',
+        slug: 'fiscal-dominance',
+        category: 'Sovereign Debt',
+        definition: 'A regime in which a government\'s debt burden is so large that monetary policy becomes subservient to fiscal needs — effectively forcing the central bank to keep rates low or monetise debt to prevent insolvency. Named by economist Thomas Sargent in 1981. Unlike normal monetary dominance (where the central bank controls inflation independently), fiscal dominance constrains the central bank\'s ability to raise rates even when inflation is elevated.',
+        whyItMatters: 'The US Fiscal Dominance Meter tracks the ratio of Federal Interest Payments to Tax Revenue. When this ratio approaches and exceeds 20%, historical precedent (1940s US, 1990s Japan) suggests the central bank is operationally constrained from meaningful tightening regardless of its stated mandate.',
+        relatedMetrics: ['Fiscal Dominance Meter', 'Interest/GDP', 'TGA'],
+        methodsPage: '/methods/fiscal-dominance-meter',
+    },
+    {
+        id: '17',
+        term: 'Fiscal Dominance Meter',
+        slug: 'fiscal-dominance-meter',
+        category: 'Sovereign Debt',
+        definition: 'A proprietary composite indicator measuring the degree to which government debt service obligations constrain monetary policy independence. Computed as Federal Interest Expense as a percentage of Tax Revenue, normalised by a 25-year rolling Z-score. Values above +1.5σ indicate the central bank is entering a fiscal dominance regime where raising rates materially worsens fiscal sustainability.',
+        formula: 'FDM = (Interest Expense / Tax Revenue) × 100\nZ-Score = (FDM − μ₂₅ᵧ) / σ₂₅ᵧ',
+        whyItMatters: 'In Q4 2023, the US Fiscal Dominance Meter hit +1.8σ — the highest reading in 40 years, comparable only to the WWII-era Treasury-Fed Accord period. This is the primary structural reason why the Fed cannot sustain 5%+ rates for a prolonged period.',
+        relatedMetrics: ['Federal Interest Payments', 'Tax Revenue (FRED)', 'Debt/GDP'],
+        methodsPage: '/methods/fiscal-dominance-meter',
+    },
+    {
+        id: '24',
+        term: 'Bid-to-Cover Ratio',
+        slug: 'bid-to-cover-ratio',
+        category: 'Sovereign Debt',
+        definition: 'A Treasury auction metric defined as total bids received divided by the amount of securities offered. A ratio above 2.5x indicates strong demand; below 2.0x signals potential demand weakness. Declining bid-to-cover ratios — particularly in 10Y and 30Y auctions — are leading indicators of sovereign supply indigestion and rising term premium.',
+        formula: 'B/C Ratio = Total Bids Received / Auction Offer Size',
+        whyItMatters: 'The Aug 2023 30-year Treasury auction registered a 2.35x bid-to-cover — the weakest since 2011 — triggering a 20bps spike in 30Y yields within hours. Tracking auction tail (high yield vs pre-auction yield) alongside B/C ratio provides early warning of sovereign demand stress.',
+        relatedMetrics: ['Treasury Auctions', 'Term Premium', 'Sovereign Rollover Risk'],
+    },
+    {
+        id: '18',
+        term: 'Federal Debt Monetisation',
+        slug: 'federal-debt-monetisation',
+        category: 'Sovereign Debt',
+        definition: 'The process by which a central bank purchases its own government\'s debt instruments, effectively financing government deficits by creating new money. While not the same as direct monetary financing (which is legally prohibited in many jurisdictions), QE programs that absorb the majority of new Treasury issuance achieve the same economic effect: government deficits are funded by money creation rather than genuine private sector saving.',
+        whyItMatters: 'At peak QE (2020–2021), the Fed absorbed approximately 57% of all new US Treasury issuance — effectively monetising the COVID fiscal stimulus. This is the mechanism connecting government deficits to inflation in a closed financial system.',
+        relatedMetrics: ['TREAST (FRED)', 'Federal Deficit', 'M2 Money Supply'],
+    },
+
+    // ── Geopolitics ───────────────────────────────────────────────────────────
+    {
+        id: '4',
+        term: 'De-Dollarization',
+        slug: 'de-dollarization',
+        category: 'Geopolitics',
+        definition: 'The structural macro trend where nations — especially BRICS+ members — deliberately reduce their reliance on the US Dollar as a reserve currency, oil pricing medium, and trade settlement currency. Tracked via IMF COFER data (USD share of allocated reserves), bilateral local currency trade agreements, central bank gold purchases, and the emergence of alternative settlement networks (mBridge, Afrexim-based systems).',
+        whyItMatters: 'USD reserve share peaked at ~73% in 2001 and has declined to ~58% by 2024 — a 15-percentage-point shift in two decades. While still dominant, the directional trend has meaningful implications for US Treasury demand and the Fed\'s ability to run sustained deficits without inflationary consequences.',
+        relatedMetrics: ['IMF COFER Data', 'Central Bank Gold Net Purchases', 'USD Reserve Share'],
     },
     {
         id: '9',
         term: 'MoSPI (Ministry of Statistics and Programme Implementation)',
         slug: 'mospi',
         category: 'Geopolitics',
-        definition: 'The official agency of the Government of India responsible for the release of macroeconomic indicators, including GDP, Index of Industrial Production (IIP), and Consumer Price Index (CPI). Direct integration with MoSPI allows for zero-lag, state-level fundamental analysis of India\'s fiscal and industrial performance, bypassing traditional delayed data aggregators.',
-        relatedMetrics: ['India Fiscal Matrix', 'Capex Velocity']
+        definition: 'India\'s apex statistical authority responsible for compiling and releasing National Accounts Statistics (GDP), Consumer Price Index (CPI), Index of Industrial Production (IIP), and National Sample Survey data. MoSPI\'s advance GDP estimate is the highest-profile Indian data release and the primary input for India macro regime classification.',
+        relatedMetrics: ['India GDP Growth', 'CPI India', 'IIP India'],
     },
     {
         id: '10',
-        term: 'mBridge (Multiple CBDC Bridge)',
+        term: 'mBridge (Multi-CBDC Bridge)',
         slug: 'mbridge',
         category: 'Geopolitics',
-        definition: 'A multi-central bank digital currency (CBDC) platform developed by the BIS Innovation Hub in collaboration with the central banks of China, Hong Kong, Thailand, and the UAE. It functions as a structural alternative to the SWIFT network, facilitating real-time, peer-to-peer cross-border payments in local currencies, thereby serving as a core mechanism for de-dollarization.',
-        relatedMetrics: ['Shadow Trade Flows', 'De-Dollarization']
+        definition: 'A multi-central bank digital currency (CBDC) platform developed by the BIS Innovation Hub in collaboration with the PBoC, HKMA, Bank of Thailand, and UAE Central Bank. Designed as a structural alternative to SWIFT for cross-border settlement in local currencies. mBridge transactions settle in real-time on a distributed ledger, bypassing dollar correspondent banking entirely.',
+        whyItMatters: 'mBridge represents the first operational, multi-jurisdiction CBDC settlement infrastructure that explicitly bypasses USD correspondent banking. Its expansion to BRICS+ members would dramatically accelerate effective de-dollarization of cross-border trade.',
+        relatedMetrics: ['De-Dollarization Score', 'BRICS+ Trade Flows', 'USD Reserve Share'],
+    },
+    {
+        id: '19',
+        term: 'Petrodollar System',
+        slug: 'petrodollar-system',
+        category: 'Geopolitics',
+        definition: 'The arrangement, formalised between the US and Saudi Arabia in 1974, whereby oil is priced and settled exclusively in US Dollars globally. This creates structural, recurring demand for USD from every oil-importing nation worldwide — effectively backing the dollar with energy rather than gold after Nixon closed the gold window in 1971. Saudi Aramco\'s first yuan-settled oil sale (2023) represents the first major crack in this arrangement.',
+        whyItMatters: 'The petrodollar system is the primary non-monetary mechanism sustaining USD reserve currency status. Every barrel of oil sold in a non-dollar currency reduces the structural bid for USD, gradually eroding the "exorbitant privilege" that allows the US to run persistent trade deficits without a currency crisis.',
+        relatedMetrics: ['Oil Settlement Currency Tracker', 'USD Reserve Share', 'SAR/USD Peg'],
+    },
+    {
+        id: '20',
+        term: 'Reserve Currency Composition',
+        slug: 'reserve-currency-composition',
+        category: 'Geopolitics',
+        definition: 'The breakdown of global foreign exchange reserves held by central banks by currency denomination, as reported quarterly by the International Monetary Fund through its Currency Composition of Official Foreign Exchange Reserves (COFER) database. The composition tracks USD, EUR, JPY, GBP, CNY, gold, and SDR allocations across ~149 reporting countries.',
+        whyItMatters: 'COFER data is the most authoritative measure of de-dollarization because it captures actual central bank behaviour rather than stated intentions. The 15pp decline in USD share since 2001 has been partially replaced by EUR, gold, and — most recently — CNY. The pace of this shift determines the timeline for meaningful USD structural vulnerability.',
+        relatedMetrics: ['IMF COFER', 'Gold Reserve Share', 'CNY Internationalisation Index'],
+    },
+    {
+        id: '21',
+        term: 'Foreign Exchange Reserves',
+        slug: 'foreign-exchange-reserves',
+        category: 'Geopolitics',
+        definition: 'Assets held by a central bank in foreign currencies, SDRs, and IMF reserve positions, used primarily to manage exchange rate stability, service external debt, and provide confidence in a nation\'s ability to meet international payment obligations. India\'s forex reserves exceeded $600B in 2024, providing approximately 11 months of import cover.',
+        whyItMatters: 'The composition (how much is gold vs USD-denominated assets) and trend (accumulation vs drawdown) of FX reserves signal both geopolitical alignment and currency vulnerability. Rapid drawdown is an early warning sign of balance of payments stress or speculative attacks on the exchange rate.',
+        relatedMetrics: ['RBI DBIE Reserves Data', 'Import Cover Ratio', 'CAD/GDP'],
+    },
+
+    // ── Hard Assets ───────────────────────────────────────────────────────────
+    {
+        id: '5',
+        term: 'M2/Gold Ratio',
+        slug: 'm2-gold-ratio',
+        category: 'Hard Assets',
+        definition: 'A valuation metric comparing total global M2 money supply to the market capitalisation of all above-ground gold (quantity × spot price). When M2 expands faster than the gold price, the ratio rises — indicating fiat currency debasement without corresponding hard asset appreciation. Historically, extreme readings in either direction have been followed by reversion.',
+        formula: 'M2/Gold = Global M2 Money Supply / (Above-Ground Gold × Spot Price)',
+        whyItMatters: 'During the 2020 stimulus cycle, global M2 expanded by ~$25 trillion in 18 months while gold rose ~25% — the M2/Gold ratio surged to its highest level in 30 years. This precedent has historically been followed by a structural gold re-rating over the subsequent 3–5 years.',
+        relatedMetrics: ['M2 Money Supply', 'Gold Spot Price', 'Gold Valuation Z-Score'],
+    },
+    {
+        id: '22',
+        term: 'Debt/Gold Z-Score',
+        slug: 'debt-gold-z-score',
+        category: 'Hard Assets',
+        definition: 'A proprietary ratio comparing total US Federal Debt to the dollar value of US officially-reported gold reserves at current spot prices, normalised as a Z-score against a 25-year rolling window. It measures how many "gold equivalents" the US government would need to redeem its entire debt — a thought experiment derived from the classical gold standard era.',
+        formula: 'Debt/Gold Ratio = Federal Debt Outstanding / (8,133.5 tonnes × Spot Gold Price)\nZ-Score = (Ratio − μ₂₅ᵧ) / σ₂₅ᵧ',
+        whyItMatters: 'The Debt/Gold Z-score has historically been an excellent long-term gold bull market indicator. When the ratio is at extreme highs (Z > +2.0), the implied gold price required to "back" the debt at a fixed ratio is dramatically higher than the spot price — a theoretical valuation floor argument used by fund managers running macro long gold positions.',
+        relatedMetrics: ['US Gold Reserves (FRED)', 'Federal Debt', 'Gold Spot Price'],
+        methodsPage: '/methods/debt-gold-z-score',
+    },
+    {
+        id: '23',
+        term: 'Gold/Silver Ratio',
+        slug: 'gold-silver-ratio',
+        category: 'Hard Assets',
+        definition: 'The number of ounces of silver required to purchase one ounce of gold at current spot prices. The long-run historical average is approximately 55–65x. Extreme readings above 90x have historically—in 1991, 2003, 2009, and 2020—preceded significant silver outperformance as the ratio mean-reverts. Industrial silver demand growth (solar panels, EVs) creates an additional structural tailwind.',
+        formula: 'G/S Ratio = Gold Spot Price / Silver Spot Price',
+        whyItMatters: 'When the Gold/Silver ratio rises above 90x, silver historically becomes deeply undervalued relative to its monetary and industrial uses. Macro hedge funds monitor this ratio as a sentiment and positioning indicator — extreme fear-driven gold buying without silver participation is often followed by sharp silver rallies.',
+        relatedMetrics: ['GC=F (Gold Futures)', 'SI=F (Silver Futures)'],
+    },
+
+    // ── Macro Indicators ──────────────────────────────────────────────────────
+    {
+        id: '25',
+        term: 'Loan-to-Job Efficiency Ratio',
+        slug: 'loan-to-job-efficiency',
+        category: 'Macro Indicators',
+        definition: 'A proprietary India-specific indicator measuring the productivity of bank credit in generating formal employment. Computed as year-on-year Scheduled Commercial Bank credit growth rate divided by net EPFO subscriber additions (new formal jobs). A rising ratio indicates credit is increasingly channelled into non-employment-generating activities (asset inflation, debt restructuring), signalling K-shaped economic divergence.',
+        formula: 'L/J Ratio = SCB Credit YoY% / ∆ EPFO Net Subscribers (thousands)',
+        whyItMatters: 'Between 2022 and 2024, SCB credit grew at 14–16% YoY while net EPFO additions plateaued at 1.5–1.7M per quarter. The resulting ratio divergence signals that India\'s credit boom may be inflating asset prices rather than funding productive employment creation — a structural vulnerability for consumption-driven growth.',
+        relatedMetrics: ['RBI DBIE Credit Data', 'EPFO Monthly Payroll', 'India GDP'],
+        methodsPage: '/methods/loan-to-job-efficiency',
+    },
+    {
+        id: '26',
+        term: 'Energy Dependency Ratio',
+        slug: 'energy-dependency-ratio',
+        category: 'Macro Indicators',
+        definition: 'A country-level indicator measuring the share of primary energy consumption sourced from net imports. Calculated as gross energy imports minus gross energy exports, divided by total gross inland energy consumption. Countries with ratios above 70% (India: ~88%) face structural external account vulnerability to energy price shocks and geopolitical supply disruptions.',
+        formula: 'EDR = (Gross Energy Imports − Gross Energy Exports) / Gross Inland Consumption\nExpressed as a percentage',
+        whyItMatters: 'India\'s Energy Dependency Ratio of ~88% means oil price spikes translate directly and rapidly into Current Account Deficit widening, INR depreciation pressure, and imported inflation — limiting RBI policy space. Every $10/bbl rise in crude adds approximately $15B to India\'s annual import bill.',
+        relatedMetrics: ['IEA Energy Balance', 'India CAD', 'INR/USD'],
+        methodsPage: '/methods/energy-dependency-ratio',
+    },
+    {
+        id: '27',
+        term: 'Current Account Balance',
+        slug: 'current-account-balance',
+        category: 'Macro Indicators',
+        definition: 'The broadest measure of a country\'s international trade and financial flows, comprising the trade balance (goods and services), primary income (investment income, worker remittances), and secondary income (transfers). A current account deficit means a country spends more on foreign resources than it earns, requiring capital inflows to fund the gap — creating currency vulnerability when those inflows reverse.',
+        formula: 'CA Balance = Trade Balance + Primary Income + Secondary Income',
+        whyItMatters: 'Countries with persistent current account deficits above 3% of GDP historically face periodic currency crises when global risk appetite reverses. India\'s CAD hit 4.5% of GDP in 2012, triggering the taper tantrum. Monitoring CAD trend versus capital account availability is a core sovereign stress early warning indicator.',
+        relatedMetrics: ['India BOP Data (RBI DBIE)', 'INR/USD', 'FX Reserves'],
+    },
+    {
+        id: '28',
+        term: 'Macro Regime Classification',
+        slug: 'macro-regime-classification',
+        category: 'Macro Indicators',
+        definition: 'A rules-based, multi-factor categorisation system that assigns the current market environment to one of four distinct regimes: Goldilocks (easing, growth), Reflation (tightening, growth), Stagflation (tightening, no growth), or Deflation (easing, contraction). Classification is determined by the direction of Net Liquidity Z-Score, yield curve slope, PMI trend, and commodity price momentum.',
+        whyItMatters: 'Different asset classes systematically outperform in different regimes. Gold and bonds outperform in Deflation; equities and credit in Goldilocks; commodities and real assets in Reflation; cash and short-duration debt in Stagflation. Regime-aware portfolio construction materially improves risk-adjusted returns.',
+        relatedMetrics: ['Net Liquidity Z-Score', 'Global PMI', 'Yield Curve Slope', 'CRB Index'],
     },
 ];

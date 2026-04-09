@@ -38,6 +38,11 @@ const IndiaFlowPulsePage = lazy(() => import('@/pages/IndiaFlowPulsePage').then(
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
 const CountriesIndexPage = lazy(() => import('@/pages/CountriesIndexPage').then(module => ({ default: module.CountriesIndexPage })));
 const DataSourcesPage = lazy(() => import('@/pages/DataSourcesPage').then(module => ({ default: module.DataSourcesPage })));
+const NetLiquidityZScorePage = lazy(() => import('@/pages/methods/NetLiquidityZScorePage').then(module => ({ default: module.NetLiquidityZScorePage })));
+const DebtGoldZScorePage = lazy(() => import('@/pages/methods/DebtGoldZScorePage').then(module => ({ default: module.DebtGoldZScorePage })));
+const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEfficiencyPage').then(module => ({ default: module.LoanToJobEfficiencyPage })));
+const EnergyDependencyRatioPage = lazy(() => import('@/pages/methods/EnergyDependencyRatioPage').then(module => ({ default: module.EnergyDependencyRatioPage })));
+const FiscalDominanceMeterPage = lazy(() => import('@/pages/methods/FiscalDominanceMeterPage').then(module => ({ default: module.FiscalDominanceMeterPage })));
 
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
@@ -85,6 +90,12 @@ function App() {
                                         <Route path="/about" element={<About />} />
                                         <Route path="/glossary" element={<GlossaryIndexPage />} />
                                         <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
+                                        {/* Methods Articles */}
+                                        <Route path="/methods/net-liquidity-z-score" element={<NetLiquidityZScorePage />} />
+                                        <Route path="/methods/debt-gold-z-score" element={<DebtGoldZScorePage />} />
+                                        <Route path="/methods/loan-to-job-efficiency" element={<LoanToJobEfficiencyPage />} />
+                                        <Route path="/methods/energy-dependency-ratio" element={<EnergyDependencyRatioPage />} />
+                                        <Route path="/methods/fiscal-dominance-meter" element={<FiscalDominanceMeterPage />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
                                         <Route path="/india-equities" element={<CorporateIndiaEngine />} />
                                         <Route path="/india-equities/:tool" element={<CorporateIndiaEngine />} />
