@@ -27,6 +27,7 @@ const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/s
 const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
+const FedMonetizationMonitor = lazy(() => import('@/components/labs/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -75,6 +76,18 @@ export const USMacroFiscalLab: React.FC = () => {
                         </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-us-debt-maturity" insight="The maturity wall tracks $9.2T in rolling securities. The 2025-2027 window represents a critical refinancing regime where low-coupon pandemic-era debt is re-priced at structurally higher market yields." />
+                </section>
+
+                {/* Section 1.5: FED Debt Monetization & Yield Control Monitor */}
+                <section>
+                    <SectionErrorBoundary name="FED Debt Monetization & Yield Control Monitor">
+                        <LazyRender minHeight="500px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <FedMonetizationMonitor />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                    <ChartInsightSummary id="lab-fed-monetization" insight="Federal Reserve debt monetization leads to direct yield suppression, historically expanding systemic vulnerabilities when Central Bank holdings reach structural extremes." />
                 </section>
 
                 {/* Section 2: US Fiscal Dominance Meter */}
