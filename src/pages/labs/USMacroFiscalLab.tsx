@@ -28,6 +28,7 @@ const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
 const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 const FedMonetizationMonitor = lazy(() => import('@/components/labs/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
+const FundingPlumbingStress = lazy(() => import('@/components/labs/FundingPlumbingStress').then(m => ({ default: m.FundingPlumbingStress })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -104,6 +105,17 @@ export const USMacroFiscalLab: React.FC = () => {
                         </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-us-fiscal-dominance" insight="Fiscal dominance occurs when mandatory spending (interest + entitlements) consumes over 100% of tax receipts, forcing the Treasury to issue additional debt for operations and structurally raising market dependency on central bank monetization. Historically unprecedented in peacetime — this signal defines the transition to a regime of monetary-fiscal fusion." />
+                </section>
+
+                {/* Section 2.1: Funding Plumbing Stress (RRP, TGA, SRF, Swaps) */}
+                <section>
+                    <SectionErrorBoundary name="Funding Plumbing Stress">
+                        <LazyRender minHeight="300px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <FundingPlumbingStress />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
                 </section>
 
                 {/* Section 3: Treasury Demand */}
