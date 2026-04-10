@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 
@@ -30,16 +31,16 @@ async function fetchYahooFinance(ticker: string) {
     throw new Error(`No recent data found for ${ticker}`)
 }
 
-// @ts-ignore: Deno is available in Supabase Edge Functions
+// @ts-expect-error: Deno globals and third-party types: Deno is available in Supabase Edge Functions
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
 
     const supabaseClient = createClient(
-        // @ts-ignore: Deno is available in Supabase Edge Functions
+        // @ts-expect-error: Deno globals and third-party types: Deno is available in Supabase Edge Functions
         Deno.env.get('SUPABASE_URL') ?? '',
-        // @ts-ignore: Deno is available in Supabase Edge Functions
+        // @ts-expect-error: Deno globals and third-party types: Deno is available in Supabase Edge Functions
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 

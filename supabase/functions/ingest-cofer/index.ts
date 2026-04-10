@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { sendSlackAlert } from '../_shared/slack.ts'
 
@@ -72,7 +73,7 @@ Deno.serve(async (req: Request) => {
             const asOfDate = quarterEndDate.toISOString().split('T')[0];
 
             for (const [metricId, field] of Object.entries(metricMapping)) {
-                // @ts-ignore
+                // @ts-expect-error: Deno globals and third-party types
                 const val = row[field];
                 if (val !== undefined) {
                     observations.push({

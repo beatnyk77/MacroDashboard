@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export interface FallbackResult<T> {
     data: T;
     provenance: 'api_live' | 'fallback_snapshot' | 'mock_baseline';

@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
-// @ts-ignore: Deno is a global in Supabase Edge Functions
+// @ts-expect-error: Deno globals and third-party types: Deno is a global in Supabase Edge Functions
 Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {

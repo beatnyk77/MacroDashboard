@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+import { createClient as _createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SupabaseClient } from '@supabase/supabase-js'
 
 export interface FetchOptions extends RequestInit {

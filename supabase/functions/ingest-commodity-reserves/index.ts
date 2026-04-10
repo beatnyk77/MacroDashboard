@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion, IngestionContext } from '../_shared/logging.ts'
 import { withTimeout } from '../_shared/timeout-guard.ts'

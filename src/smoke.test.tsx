@@ -108,7 +108,7 @@ const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             retry: false,
-            // @ts-expect-error - 'suspense' is technically deprecated in the types, but required to test Suspense components correctly without using experimental useSuspenseQuery
+            // @ts-expect-error: Deno globals and third-party types - 'suspense' is technically deprecated in the types, but required to test Suspense components correctly without using experimental useSuspenseQuery
             suspense: true
         },
     },

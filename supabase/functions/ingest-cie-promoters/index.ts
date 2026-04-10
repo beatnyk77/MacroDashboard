@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
 Deno.serve(async (req: Request) => {
@@ -23,9 +24,9 @@ Deno.serve(async (req: Request) => {
         const resp = await fetch('https://www.nseindia.com/', { headers: baseHeaders });
         const setCookie = resp.headers.get('set-cookie');
         if (setCookie) cookies = setCookie;
-        // @ts-ignore
+        // @ts-expect-error: Deno globals and third-party types
         if (!cookies && typeof resp.headers.getSetCookie === 'function') {
-            // @ts-ignore
+            // @ts-expect-error: Deno globals and third-party types
             cookies = resp.headers.getSetCookie().join('; ');
         }
     } catch (e) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { SupabaseClient } from '@supabase/supabase-js';
 
 async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]> {

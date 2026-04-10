@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { SupabaseClient } from '@supabase/supabase-js';
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, taskName: string): Promise<T> {

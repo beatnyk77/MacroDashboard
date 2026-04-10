@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 // --- SHARED UTILS ---
@@ -64,7 +65,9 @@ async function logIngestionEnd(
                 ...details
             })
             .eq('id', logId);
-    } catch { }
+    } catch { 
+        // Silently ignore log update failures
+    }
 }
 
 const EIA_API_BASE = "https://api.eia.gov/v2";

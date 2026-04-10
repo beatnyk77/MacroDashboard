@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-undef */
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import pdf from "npm:pdf-parse@1.1.1";
 
@@ -73,14 +75,14 @@ Deno.serve(async (req: Request) => {
                 // NPCI table patterns: 
                 // "Business Decline (BD) % 1.25"
                 // "Technical Decline (TD) % 0.05"
-                const bdMatch = text.match(/Business\s*Decline.*?\(\s*BD\s*\).*?([\d\.]+)\s*%/i) || 
-                                text.match(/Business\s*Decline.*?([\d\.]+)\s*%/i);
+                const bdMatch = text.match(/Business\s*Decline.*?\(\s*BD\s*\).*?([\d.]+)\s*%/i) || 
+                                text.match(/Business\s*Decline.*?([\d.]+)\s*%/i);
                 
-                const tdMatch = text.match(/Technical\s*Decline.*?\(\s*TD\s*\).*?([\d\.]+)\s*%/i) || 
-                                text.match(/Technical\s*Decline.*?([\d\.]+)\s*%/i);
+                const tdMatch = text.match(/Technical\s*Decline.*?\(\s*TD\s*\).*?([\d.]+)\s*%/i) || 
+                                text.match(/Technical\s*Decline.*?([\d.]+)\s*%/i);
 
-                const volMatch = text.match(/Total\s*Volume.*?([\d\.,]+)\s*Mn/i) || 
-                                 text.match(/Total\s*Volume.*?([\d\.,]+)/i);
+                const volMatch = text.match(/Total\s*Volume.*?([\d.,]+)\s*Mn/i) || 
+                                 text.match(/Total\s*Volume.*?([\d.,]+)/i);
 
                 let failureRatePct = 0;
                 if (bdMatch) failureRatePct = parseFloat(bdMatch[1]);
@@ -93,7 +95,7 @@ Deno.serve(async (req: Request) => {
 
                 // If BD is missing but we have text, we use a conservative estimate or look for "Returns"
                 if (failureRatePct === 0) {
-                    const returnMatch = text.match(/Return.*?([\d\.]+)\s*%/i);
+                    const returnMatch = text.match(/Return.*?([\d.]+)\s*%/i);
                     if (returnMatch) failureRatePct = parseFloat(returnMatch[1]);
                 }
 

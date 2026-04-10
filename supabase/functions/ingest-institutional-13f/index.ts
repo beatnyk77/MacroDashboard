@@ -1,8 +1,9 @@
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
 const ALPHA_VANTAGE_DELAY_MS = parseInt(Deno.env.get('ALPHA_VANTAGE_DELAY_MS') || '12000');
 
-Deno.serve(async (req: Request) => {
+Deno.serve(async (_req: Request) => {
     const start = new Date().toISOString();
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
@@ -447,7 +448,6 @@ async function processInstitutional13F(client: any) {
             let deltaPct = 0;
             if (prevUsd > 0) deltaPct = (deltaUsd / prevUsd) * 100;
             else if (prevUsd === 0 && curUsd > 0) deltaPct = 100;
-            else if (curUsd === 0 && prevUsd > 0) deltaPct = -100;
 
             const isNew = prevUsd === 0 && curUsd > 0;
             const isExit = curUsd === 0 && prevUsd > 0;

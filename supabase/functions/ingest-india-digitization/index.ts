@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import { INITIAL_DIGITIZATION_DATA } from './data.ts'
 

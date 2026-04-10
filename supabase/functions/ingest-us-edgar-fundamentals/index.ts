@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
-// @ts-ignore
+// @ts-expect-error: Deno globals and third-party types
 Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
@@ -242,7 +244,7 @@ async function syncDailyFilingsAndInsider(client: any) {
         if (formType === '8-K' || formType === '4') {
             const titleMatch = entry.match(/<title>([^<]+)<\/title>/);
             const linkMatch = entry.match(/<link rel="alternate" type="text\/html" href="([^"]+)"/);
-            const urnMatch = entry.match(/<id>urn:tag:sec\.gov,2008:accession\.([0-9\-]+)<\/id>/);
+            const urnMatch = entry.match(/<id>urn:tag:sec\.gov,2008:accession\.([0-9-]+)<\/id>/);
             const summaryMatch = entry.match(/<summary type="html">([\s\S]*?)<\/summary>/);
 
             const title = titleMatch ? titleMatch[1] : '';

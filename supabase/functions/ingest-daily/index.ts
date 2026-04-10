@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
 import { ingestFred } from './sources/fred.ts'

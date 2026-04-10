@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const corsHeaders = {
@@ -35,7 +36,9 @@ async function logIngestionEnd(supabase: SupabaseClient, logId: number | null, s
                 ...details
             })
             .eq('id', logId);
-    } catch { }
+    } catch { 
+        // Silently ignore log update failures
+    }
 }
 
 async function fetchWithRetry(url: string, maxRetries: number = 2): Promise<Response> {

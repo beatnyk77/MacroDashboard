@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-undef */
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { sendSlackAlert } from '../_shared/slack.ts'
 

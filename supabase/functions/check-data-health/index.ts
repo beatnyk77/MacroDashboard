@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -5,14 +6,14 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface StaleMetric {
+interface _StaleMetric {
     metric_id: string;
     metric_name: string;
     days_since_update: number;
     status: string;
 }
 
-interface FailedIngestion {
+interface _FailedIngestion {
     function_name: string;
     error_message: string;
     start_time: string;

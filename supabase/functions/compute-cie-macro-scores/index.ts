@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
-// @ts-ignore
+// @ts-expect-error: Deno globals and third-party types
 Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {

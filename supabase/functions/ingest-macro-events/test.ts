@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { assertEquals } from "@std/assert";
 import { mapFinnhubEvent } from "./utils.ts";
 

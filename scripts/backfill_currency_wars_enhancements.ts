@@ -1,4 +1,5 @@
 #!/usr/bin/env deno run --allow-net --allow-env --allow-read
+/* eslint-disable no-undef */
 /**
  * Backfill script for enhanced Currency Wars metrics
  */

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js';
 
 const corsHeaders = {
@@ -6,8 +7,8 @@ const corsHeaders = {
 };
 
 // --- DATA PROVIDER CONFIGS ---
-const EMBER_API_BASE = "https://api.ember-climate.org/v1/data/generation"; // Placeholder
-const EUROSTAT_API_BASE = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data";
+const _EMBER_API_BASE = "https://api.ember-climate.org/v1/data/generation"; // Placeholder
+const _EUROSTAT_API_BASE = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data";
 
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -32,7 +33,7 @@ Deno.serve(async (req) => {
             { code: 'CHN', region: 'China' }
         ];
 
-        const FETCH_VARIABLES = ['Coal', 'Solar', 'Wind', 'Hydro', 'Bioenergy', 'Nuclear', 'Gas', 'Other fossil', 'Other renewables'];
+        const _FETCH_VARIABLES = ['Coal', 'Solar', 'Wind', 'Hydro', 'Bioenergy', 'Nuclear', 'Gas', 'Other fossil', 'Other renewables'];
         const emberApiKey = Deno.env.get('EMBER_API_KEY');
 
         console.log(`Using Ember API Key: ${emberApiKey ? 'YES' : 'NO'}`);
