@@ -13,6 +13,26 @@ export const BlogPage: React.FC = () => {
                 title="Intelligence Journal | Macro Research & Analysis"
                 description="Institutional-grade macro research, de-dollarization trackers, and India real-economy analysis."
                 keywords={['Macro Research', 'India Economy', 'De-dollarization', 'Gold Ratio', 'Institutional Intelligence']}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": "GraphiQuestor Intelligence Journal",
+                    "description": "Institutional-grade macro research focusing on structural monetary shifts, sovereign risk, and emerging market credit cycles.",
+                    "url": "https://graphiquestor.com/blog",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "GraphiQuestor",
+                        "logo": "https://graphiquestor.com/logo.png"
+                    },
+                    "mainEntity": {
+                        "@type": "ItemList",
+                        "itemListElement": blogArticles.map((article, index) => ({
+                            "@type": "ListItem",
+                            "position": index + 1,
+                            "url": `https://graphiquestor.com/blog/${article.slug}`
+                        }))
+                    }
+                }}
             />
 
             <Container maxWidth="lg">

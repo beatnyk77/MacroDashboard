@@ -51,7 +51,18 @@ const LoadingFallback = () => (
 export const Terminal: React.FC = () => {
     return (
         <div className="w-full max-w-[1920px] mx-auto bg-slate-950 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-            <SEOManager title="GraphiQuestor Terminal" description="Live Institutional Macro Telemetry" isApp={true} />
+            <SEOManager
+                title="Macro Observatory | Live Institutional Telemetry"
+                description="Real-time macro intelligence terminal tracking US net liquidity, sovereign stress, yield curves, Fed balance sheet, and 13-F smart money flows. Institutional-grade data for PMs, CIOs, and macro researchers."
+                keywords={[
+                    'Institutional Macro Dashboard', 'US Net Liquidity Monitor', 'Fed Balance Sheet Tracker',
+                    'Sovereign Risk Terminal', 'Yield Curve Inversion', '13-F Smart Money Tracker',
+                    'Treasury Auction Demand', 'Macro Liquidity Analysis', 'India Macro Data',
+                    'China Economic Pulse', 'Global Capital Flows', 'Debt Maturity Wall',
+                    'Monetary Policy Tracker', 'Macro Research Terminal', 'GraphiQuestor'
+                ]}
+                isApp={true}
+            />
 
             <header className="mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
                 <div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@supabase/supabase-js';
@@ -119,8 +119,6 @@ export const CountryProfilePage: React.FC = () => {
       {/* Narrative Intelligent Analysis */}
       <Container maxWidth="xl" sx={{ mt: 8 }}>
         <CountryNarrativeBlock 
-          iso={uppercaseIso}
-          countryName={ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.name || uppercaseIso}
           data={countryData}
           narrativeData={COUNTRY_NARRATIVES[uppercaseIso] || null}
         />

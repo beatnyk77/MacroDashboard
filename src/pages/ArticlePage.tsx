@@ -60,7 +60,7 @@ export const ArticlePage: React.FC = () => {
                 canonicalUrl={`https://graphiquestor.com/blog/${article.slug}`}
                 jsonLd={{
                     "@context": "https://schema.org",
-                    "@type": "Article",
+                    "@type": "BlogPosting",
                     "headline": article.title,
                     "description": article.description,
                     "image": "https://graphiquestor.com/og-preview.png",

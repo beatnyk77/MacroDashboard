@@ -235,6 +235,10 @@ export const NetLiquidityZScorePage: React.FC = () => {
                         sx={{ borderColor: 'divider', color: 'text.secondary' }}>Methodology Hub</Button>
                     <Button component={Link} to="/data-sources" variant="outlined" startIcon={<Link2 size={14} />}
                         sx={{ borderColor: 'divider', color: 'text.secondary' }}>Data Sources</Button>
+                    <Button component={Link} to="/tools/net-liquidity-gauge" variant="outlined" startIcon={<Activity size={14} />}
+                        sx={{ borderColor: 'primary.main', color: 'primary.main', fontWeight: 700 }}>
+                        Interactive Liquidity Gauge
+                    </Button>
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
             </Container>

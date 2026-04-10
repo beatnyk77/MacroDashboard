@@ -15,8 +15,6 @@ interface CountryNarrativeBlockProps {
 }
 
 export const CountryNarrativeBlock: React.FC<CountryNarrativeBlockProps> = ({
-  iso,
-  countryName,
   data,
   narrativeData
 }) => {

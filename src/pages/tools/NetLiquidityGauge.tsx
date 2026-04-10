@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { Box, Typography, Container, Paper, useTheme, Alpha } from '@mui/material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Box, Typography, Container, Paper, useTheme, alpha, Button } from '@mui/material';
+import { motion } from 'framer-motion';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { SEOManager } from '@/components/SEOManager';
-import { Info, ExternalLink, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ExternalLink, ArrowUpRight, ArrowDownRight, Code } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
 
@@ -15,7 +15,7 @@ export const NetLiquidityGauge: React.FC = () => {
     const { data } = useNetLiquidity();
     const [searchParams] = useSearchParams();
     const isEmbedded = searchParams.get('embed') === 'true';
-    const theme = useTheme();
+    const [showEmbed, setShowEmbed] = React.useState(false);
 
     const { z_score, percentile, current_value, history, as_of_date } = data;
 
@@ -194,14 +194,37 @@ export const NetLiquidityGauge: React.FC = () => {
 
                     {/* Footer / CTA */}
                     <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center' }}>
-                         <Typography sx={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>
-                            Powered by GraphiQuestor Macro Engines
-                         </Typography>
+                         <a href="https://graphiquestor.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                             <Typography sx={{ color: '#3b82f6', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, '&:hover': { opacity: 0.8 } }}>
+                                Powered by GraphiQuestor Macro Engines
+                             </Typography>
+                         </a>
                     </Box>
                 </Paper>
 
                 {!isEmbedded && (
-                    <Box sx={{ mt: 4, textAlign: 'center' }}>
+                    <Box sx={{ mt: 4, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                         <Button 
+                            variant="outlined" 
+                            size="small" 
+                            startIcon={<Code size={14} />}
+                            onClick={() => setShowEmbed(!showEmbed)}
+                            sx={{ color: 'white/40', borderColor: 'white/10', textTransform: 'none', borderRadius: 2 }}
+                         >
+                            {showEmbed ? 'Hide Embed Code' : 'Get Embed Code'}
+                         </Button>
+
+                         {showEmbed && (
+                            <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'black', border: '1px solid white/10', width: '100%', maxWidth: '400px' }}>
+                                <Typography variant="caption" sx={{ color: 'white/40', display: 'block', mb: 1, textAlign: 'left', fontWeight: 'bold' }}>
+                                    IFRAME EMBED SNIPPET
+                                </Typography>
+                                <Box component="pre" sx={{ m: 0, p: 1, fontSize: '10px', color: '#10b981', overflowX: 'auto', textAlign: 'left' }}>
+                                    {`<iframe src="https://graphiquestor.com/tools/net-liquidity-gauge?embed=true" width="100%" height="500" frameborder="0"></iframe>`}
+                                </Box>
+                            </Box>
+                         )}
+
                          <Link to="/" style={{ textDecoration: 'none' }}>
                             <Typography sx={{ color: '#3b82f6', fontSize: '0.8rem', fontWeight: 900, '&:hover': { textDecoration: 'underline' } }}>
                                 ← RETURN TO MACRO TERMINAL
