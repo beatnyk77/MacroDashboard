@@ -13,7 +13,7 @@ const supabase = createClient(
 );
 
 // All countries we track
-const ALL_COUNTRIES = [
+export const ALL_COUNTRIES = [
   { code: 'US', name: 'United States', region: 'North America', flag: '🇺🇸' },
   { code: 'GB', name: 'United Kingdom', region: 'Europe', flag: '🇬🇧' },
   { code: 'DE', name: 'Germany', region: 'Europe', flag: '🇩🇪' },

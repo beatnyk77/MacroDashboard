@@ -8,6 +8,9 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { MetricCard } from '@/components/MetricCard';
 import { COUNTRY_METRIC_GROUPS } from '@/lib/macro-metrics';
+import { CountryNarrativeBlock } from '@/components/CountryNarrativeBlock';
+import { COUNTRY_NARRATIVES } from '@/data/countryNarratives';
+import { ALL_COUNTRIES } from './CountriesIndexPage';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -91,6 +94,16 @@ export const CountryProfilePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Narrative Intelligent Analysis */}
+      <Container maxWidth="xl" sx={{ mt: 8 }}>
+        <CountryNarrativeBlock 
+          iso={uppercaseIso}
+          countryName={ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.name || uppercaseIso}
+          data={countryData}
+          narrativeData={COUNTRY_NARRATIVES[uppercaseIso] || null}
+        />
+      </Container>
 
       {/* Main Grid Interface */}
       <Container maxWidth="xl" sx={{ py: 8 }}>
