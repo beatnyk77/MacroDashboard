@@ -44,6 +44,7 @@ const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEffi
 const EnergyDependencyRatioPage = lazy(() => import('@/pages/methods/EnergyDependencyRatioPage').then(module => ({ default: module.EnergyDependencyRatioPage })));
 const FiscalDominanceMeterPage = lazy(() => import('@/pages/methods/FiscalDominanceMeterPage').then(module => ({ default: module.FiscalDominanceMeterPage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
+const InvestmentUniverse = lazy(() => import('@/pages/tools/InvestmentUniverse').then(module => ({ default: module.default })));
 
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
@@ -113,6 +114,7 @@ function App() {
 
                                         {/* Tools & Embeds */}
                                         <Route path="/tools/net-liquidity-gauge" element={<NetLiquidityGauge />} />
+                                        <Route path="/tools/investment-universe" element={<InvestmentUniverse />} />
 
                                         {/* Countries */}
                                         <Route path="/countries" element={<CountriesIndexPage />} />

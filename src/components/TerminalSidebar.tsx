@@ -24,6 +24,7 @@ const terminalNavItems: NavItem[] = [
     { id: 'india-flow', label: 'India Flow Pulse (FII/DII)', path: '/india-equities/fii-dii', icon: <Activity size={14} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} /> },
     { id: 'india-eq', label: 'Corporate India Engine', path: '/india-equities', icon: <BarChart3 size={14} /> },
+    { id: 'biu', label: 'Bharat Investment Universe', path: '/tools/investment-universe', icon: <Activity size={14} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
     { id: 'sustainable', label: 'Sustainable Finance', path: '/labs/sustainable-finance-climate-risk', icon: <Zap size={14} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} /> },
