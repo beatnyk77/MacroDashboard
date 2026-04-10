@@ -30,7 +30,7 @@ export async function withFallback<T>(
             last_verified: new Date().toISOString()
         };
     } catch (error) {
-        console.warn(`API call failed for ${metricId}: ${error.message}. Attempting database fallback...`);
+        console.warn(`API call failed for ${metricId}: ${(error as any).message}. Attempting database fallback...`);
         
         const tableName = options.customTableName || 'metric_observations';
         const query = supabase

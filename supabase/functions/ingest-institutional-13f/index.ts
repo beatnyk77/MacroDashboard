@@ -284,7 +284,7 @@ async function processInstitutional13F(client: any) {
                         value: holding.value,
                         ticker,
                         sector,
-                        name
+                        name: name || undefined
                     });
                 } else {
                     console.log(`[${inst.name}] No ticker for ${holding.issuerName || holding.cusip} → marked as Other`);
