@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
 // @ts-expect-error: Deno globals and third-party types: Deno is a global in Supabase Edge Functions

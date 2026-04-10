@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
 // @ts-expect-error: Deno globals and third-party types

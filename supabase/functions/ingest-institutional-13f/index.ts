@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 
 const ALPHA_VANTAGE_DELAY_MS = parseInt(Deno.env.get('ALPHA_VANTAGE_DELAY_MS') || '12000');

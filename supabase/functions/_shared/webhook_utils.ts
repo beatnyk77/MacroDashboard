@@ -3,7 +3,6 @@
  * Expects the environment variable SUPABASE_DISCORD_WEBHOOK_URL to be set.
  */
 
-/* eslint-disable no-undef */
 export async function sendDiscordAlert(title: string, description: string, isError: boolean = true) {
   const webhookUrl = Deno.env.get('SUPABASE_DISCORD_WEBHOOK_URL');
   

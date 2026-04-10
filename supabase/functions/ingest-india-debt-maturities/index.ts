@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import { INITIAL_INDIA_DEBT_DATA } from './data.ts'
 

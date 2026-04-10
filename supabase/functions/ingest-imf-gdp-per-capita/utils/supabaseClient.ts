@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 export function createAdminClient() {

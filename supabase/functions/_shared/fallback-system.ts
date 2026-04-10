@@ -1,4 +1,5 @@
-/* eslint-disable no-undef */
+import { SupabaseClient } from '@supabase/supabase-js'
+
 export interface FallbackResult<T> {
     data: T;
     provenance: 'api_live' | 'fallback_snapshot' | 'mock_baseline';

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { SupabaseClient } from '@supabase/supabase-js';
 
 interface MaturityBucket {

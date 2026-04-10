@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
 

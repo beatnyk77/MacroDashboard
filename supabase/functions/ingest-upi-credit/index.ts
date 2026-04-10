@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const corsHeaders = {

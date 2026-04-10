@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
 /**
  * Capital Flows Ingestion Engine
  * Sources: IMF BOP, FRED TIC, Alpha Vantage (Proxies), CoinGecko, ECB SDMX

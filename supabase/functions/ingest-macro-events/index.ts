@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { mapFinnhubEvent } from './utils.ts'
 

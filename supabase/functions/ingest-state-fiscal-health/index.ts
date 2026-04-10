@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import { STATE_FISCAL_DATA } from './data.ts'
 

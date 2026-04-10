@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
 import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
 import { retry } from './utils/retry.ts'

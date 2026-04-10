@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-import _pino from 'npm:pino';
 import { SupabaseClient } from '@supabase/supabase-js'
 
 export interface IngestionContext {

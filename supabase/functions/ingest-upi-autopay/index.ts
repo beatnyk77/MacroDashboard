@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import pdf from "npm:pdf-parse@1.1.1";
 

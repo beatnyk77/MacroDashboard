@@ -106,6 +106,13 @@ export default [
                 Node: 'readonly',
                 NodeList: 'readonly',
                 HTMLCollection: 'readonly',
+                Deno: 'readonly',
+                RequestInit: 'readonly',
+                AbortController: 'readonly',
+                TextEncoder: 'readonly',
+                crypto: 'readonly',
+                btoa: 'readonly',
+                Buffer: 'readonly',
             }
         },
         plugins: {
