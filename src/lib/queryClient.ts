@@ -6,7 +6,7 @@ export const queryClient = new QueryClient({
             staleTime: 1000 * 60 * 30, // 30 minutes standard (reduced from 1 hour for fresher data)
             retry: 1,
             refetchOnWindowFocus: false,
-            // cacheTime: 1000 * 60 * 60 * 2, // TODO: Verify correct property name for v5; may be `gcTime`
+            gcTime: 1000 * 60 * 60 * 2, // 2 hours cache persistence for non-stale data
         },
     },
 });

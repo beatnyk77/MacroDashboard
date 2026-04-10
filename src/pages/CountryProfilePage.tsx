@@ -31,7 +31,6 @@ export const CountryProfilePage: React.FC = () => {
   const uppercaseIso = iso?.toUpperCase();
 
   // 1. Fetch Country Terminal Data from Supabase view
-  // 1. Fetch Country Terminal Data from Supabase view
   const { data: countryData, isLoading, error } = useQuery({
     queryKey: ['country-terminal', uppercaseIso],
     queryFn: async () => {
@@ -156,18 +155,23 @@ export const CountryProfilePage: React.FC = () => {
                 const viewKey = metric.key;
                 const val = countryData?.[viewKey as keyof typeof countryData];
                 const asOfDate = countryData?.[`${viewKey}_date` as keyof typeof countryData];
+                
+                // Extract number and separate currency prefix/suffix
                 const numVal = typeof val === 'number' ? val : val != null ? Number(val) : null;
-                const displayValue = numVal != null ? `${Math.round(numVal * 100) / 100}${metric.unit === '%' ? '%' : ''}` : 'N/A';
-                const sublabel = asOfDate ? `${metric.source} • ${String(asOfDate).slice(0,10)}` : metric.source;
+                const prefix = metric.unit.startsWith('$') ? '$' : '';
+                const suffix = metric.unit.replace('$', '');
+                const sublabel = asOfDate ? `${metric.source} • ${String(asOfDate).slice(0, 10)}` : metric.source;
 
                 return (
                   <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={metric.key}>
                     <MetricCard
                       label={metric.label}
-                      value={displayValue}
+                      value={numVal ?? undefined}
+                      prefix={prefix}
+                      suffix={suffix}
                       sublabel={sublabel}
-                      status={val != null ? 'neutral' : undefined}
                       isLoading={isLoading}
+                      status={numVal === null ? 'neutral' : (numVal < 0 && metric.key.includes('pct') ? 'warning' : 'safe')}
                     />
                   </Grid>
                 );

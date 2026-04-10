@@ -17,6 +17,7 @@ export const COUNTRY_METRIC_GROUPS = {
     { key: 'central_bank_rate_pct', label: 'Policy Rate', unit: '%', source: 'FRED/GMD' },
     { key: 'yield_2y_pct', label: '2Y Yield', unit: '%', source: 'FRED' },
     { key: 'yield_10y_pct', label: '10Y Yield', unit: '%', source: 'FRED' },
+    { key: 'yield_slope_2s10s', label: 'Yield Slope (2s10s)', unit: 'bps', source: 'Calculated' },
   ],
   EXTERNAL_SECTOR: [
     { key: 'ca_gdp_pct', label: 'Current Account % GDP', unit: '%', source: 'IMF' },
