@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient } from '@supabase/supabase-js'
 import pdf from "npm:pdf-parse@1.1.1";
 
 const corsHeaders = {
@@ -21,7 +21,7 @@ Deno.serve(async (req: Request) => {
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const { backfill = false, months = 1 } = await req.json().catch(() => ({}));
+        const { backfill = false, months = 1 } = await req.json().catch(() => ({})) as any;
 
         console.log(`Starting UPI Autopay ingestion (Backfill: ${backfill}, Months: ${months})...`);
 
@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
                         finalUrl = url;
                         break;
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.log(`Fetch error for ${url}: ${e.message}`);
                 }
             }

@@ -1,5 +1,4 @@
 #!/usr/bin/env deno run --allow-net --allow-env --allow-read
-/* eslint-disable no-undef */
 /**
  * Backfill script for enhanced Currency Wars metrics
  */
@@ -30,7 +29,7 @@ async function fetchObservations(metricId: string): Promise<MetricObservation[]>
     .order('as_of_date', { ascending: true });
 
   if (error) throw new Error(`Failed to fetch ${metricId}: ${error.message}`);
-  return data.map(d => ({
+  return (data || []).map((d: any) => ({
     metric_id: d.metric_id,
     as_of_date: d.as_of_date,
     value: Number(d.value)
@@ -53,7 +52,7 @@ async function backfillAll() {
 
   if (metricsError) throw new Error(`Failed to verify metrics: ${metricsError.message}`);
   
-  const missing = requiredMetrics.filter(id => !existingMetrics?.some(m => m.id === id));
+  const missing = requiredMetrics.filter(id => !existingMetrics?.some((m: any) => m.id === id));
   if (missing.length > 0) {
     console.error('❌ Missing required metrics in database:', missing.join(', '));
     console.error('👉 Please run "supabase db push" to apply the migrations first.');
@@ -114,7 +113,7 @@ async function backfillAll() {
   });
 
   // 3. Process Composite Pressure
-  const compositeData: MetricObservation[] = flowsData.map(flow => {
+  const compositeData: MetricObservation[] = flowsData.map((flow: any) => {
     const date = flow.date;
     const netFlow = (Number(flow.fii_cash_net) || 0) + (Number(flow.dii_cash_net) || 0);
     const flowScore = Math.max(0, Math.min(40, (-netFlow / 1000) * 8));

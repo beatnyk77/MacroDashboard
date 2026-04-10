@@ -87,10 +87,7 @@ Deno.serve(async (req: Request) => {
             throw new Error(`Eurostat API returned ${response.status} ${response.statusText}`);
         }
 
-        const data = await response.json();
-
-        // Parse Eurostat JSON format
-        // The structure includes dimension labels and observations by time position
+        const data = await response.json() as any;
         const observations = data.data;
         const timeLabels = data.dimension.TIME.category.label;
         const observationsArray: { time: string; value: number }[] = [];

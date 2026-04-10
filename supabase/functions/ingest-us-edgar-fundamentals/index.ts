@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@supabase/supabase-js'
 
-// @ts-expect-error: Deno globals and third-party types
 Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
@@ -14,7 +13,7 @@ Deno.serve(async (req: Request) => {
 
     let mode = 'companies'; // Default mode
     try {
-        const body = await req.json();
+        const body = await req.json() as any;
         if (body.mode) mode = body.mode;
     } catch (e) {
         // Fallback to URL params
@@ -82,7 +81,7 @@ async function syncCompanies(client: any) {
     const res = await fetch('https://www.sec.gov/files/company_tickers.json', { headers: secHeaders });
     if (!res.ok) throw new Error(`SEC API returned ${res.status}`);
 
-    const data = await res.json();
+    const data = await res.json() as any;
     const companies = Object.values(data) as any[];
 
     // We'll process in batches to avoid overwhelming the database
@@ -128,7 +127,7 @@ async function syncFundamentals(client: any) {
             }
             if (!res.ok) continue;
 
-            const facts = await res.json();
+            const facts = await res.json() as any;
             const usGaap = facts.facts['us-gaap'];
 
             if (!usGaap) continue; // No GAAP data available
@@ -145,7 +144,7 @@ async function syncFundamentals(client: any) {
             // Helper to get latest shares
             const getLatestShares = () => {
                 if (facts.facts['dei'] && facts.facts['dei']['EntityCommonStockSharesOutstanding']) {
-                    const sharesArr = facts.facts['dei']['EntityCommonStockSharesOutstanding'].units.shares;
+                    const sharesArr = (facts as any).facts['dei']['EntityCommonStockSharesOutstanding'].units.shares;
                     sharesArr.sort((a: any, b: any) => new Date(b.end).getTime() - new Date(a.end).getTime());
                     return sharesArr[0];
                 }

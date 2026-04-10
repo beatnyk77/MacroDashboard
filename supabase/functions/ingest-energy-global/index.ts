@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
                     });
 
                     if (res.ok) {
-                        const data = await res.json();
+                        const data = await res.json() as any;
                         // Get latest month's data
                         const latestDate = Array.isArray(data) ? data[0]?.date : null;
                         if (latestDate) {
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
                     });
 
                     if (res.ok) {
-                        const json = await res.json();
+                        const json = await res.json() as any;
                         const data = json.data || [];
 
                         console.log(`[EU_GAS] Year ${year}: Found ${data.length} records.`);
