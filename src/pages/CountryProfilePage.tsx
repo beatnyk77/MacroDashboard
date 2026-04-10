@@ -48,12 +48,33 @@ export const CountryProfilePage: React.FC = () => {
 
   if (!uppercaseIso) return <Navigate to="/" replace />;
 
+  const countryName = useMemo(() => ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.name || uppercaseIso, [uppercaseIso]);
+
   return (
     <div className="min-h-screen bg-[#050810] text-white">
       <SEOManager
-        title={`${uppercaseIso} Macro Intelligence Profile — Institutional Data`}
-        description={`Real-time macro-economic terminal for ${uppercaseIso}. Tracking GDP growth, inflation, sovereign debt maturity, and yield curve telemetry.`}
-        keywords={[uppercaseIso, 'Macro Data', 'Sovereign Debt', 'Yield Curve', 'Institutional Terminal']}
+        title={`${countryName} (${uppercaseIso}) Macro Data & Sovereign Risk Terminal`}
+        description={`Institutional-grade macro-economic terminal for ${countryName}. Live tracking of GDP growth, inflation, sovereign debt maturity, and ${uppercaseIso} yield curve telemetry.`}
+        keywords={[countryName, uppercaseIso, 'Macro Data', 'Sovereign Debt', 'Yield Curve', 'Institutional Terminal', 'Macro Observatory']}
+        jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": `${countryName} Macro Intelligence Profile`,
+            "description": `Comprehensive macro-economic data and sovereign risk analysis for ${countryName}.`,
+            "publisher": {
+                "@type": "Organization",
+                "name": "GraphiQuestor",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://graphiquestor.com/logo.png"
+                }
+            },
+            "about": {
+                "@type": "Country",
+                "name": countryName,
+                "identifier": uppercaseIso
+            }
+        }}
       />
 
       {/* Hero Section */}

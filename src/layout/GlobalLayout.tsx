@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Activity, Menu, X, Globe, TrendingUp, Anchor, Zap, ShieldAlert, Database, BarChart3, Radio, FileText, ShieldCheck } from 'lucide-react';
-import { useLocation, NavLink } from 'react-router-dom';
+import { useLocation, NavLink, useSearchParams } from 'react-router-dom';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
@@ -41,6 +41,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const [cmdKOpen, setCmdKOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const isEmbedded = searchParams.get('embed') === 'true';
     const isObservatory = location.pathname.includes('/macro-observatory');
 
 
@@ -105,8 +107,9 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 Skip to main content
             </a>
 
-            {isObservatory && <DataHealthBanner />}
-            <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/80 backdrop-blur-md">
+            {isObservatory && !isEmbedded && <DataHealthBanner />}
+            {!isEmbedded && (
+                <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/80 backdrop-blur-md">
                 <div className="flex h-[72px] items-center justify-between px-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-6">
                         <div className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
@@ -181,7 +184,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                         </Button>
                     </div>
                 </div>
-            </header>
+                </header>
+            )}
 
             {/* Mobile Navigation Drawer */}
             <Drawer
@@ -250,25 +254,25 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
             <div className="flex flex-1">
                 {/* Persistent Terminal Sidebar */}
-                <TerminalSidebar />
+                {!isEmbedded && <TerminalSidebar />}
 
-                <main id="main-content" tabIndex={-1} className="flex-1 py-4 md:py-8 flex flex-col w-full overflow-x-hidden min-w-0">
-                    <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+                <main id="main-content" tabIndex={-1} className={cn("flex-1 px-0 flex flex-col w-full overflow-x-hidden min-w-0", !isEmbedded && "py-4 md:py-8")}>
+                    <div className={cn("flex-1 w-full max-w-[1920px] mx-auto", !isEmbedded && "px-4 sm:px-6 lg:px-8")}>
                         {children}
                     </div>
                 </main>
 
                 {/* Intelligence Sidebar (Desktop Only) */}
-                <IntelligenceSidebar />
+                {!isEmbedded && <IntelligenceSidebar />}
             </div>
 
             {/* Dashboard Footer with Disclaimer & Data Transparency */}
-            <InstitutionalFooter />
+            {!isEmbedded && <InstitutionalFooter />}
 
             <CommandPalette open={cmdKOpen} setOpen={setCmdKOpen} />
-            <SocialShareMode />
-            <MobileNav />
-            <QuickTourModal />
+            {!isEmbedded && <SocialShareMode />}
+            {!isEmbedded && <MobileNav />}
+            {!isEmbedded && <QuickTourModal />}
         </div>
     );
 };

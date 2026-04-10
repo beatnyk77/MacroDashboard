@@ -43,6 +43,7 @@ const DebtGoldZScorePage = lazy(() => import('@/pages/methods/DebtGoldZScorePage
 const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEfficiencyPage').then(module => ({ default: module.LoanToJobEfficiencyPage })));
 const EnergyDependencyRatioPage = lazy(() => import('@/pages/methods/EnergyDependencyRatioPage').then(module => ({ default: module.EnergyDependencyRatioPage })));
 const FiscalDominanceMeterPage = lazy(() => import('@/pages/methods/FiscalDominanceMeterPage').then(module => ({ default: module.FiscalDominanceMeterPage })));
+const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
@@ -109,6 +110,9 @@ function App() {
                                         <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
                                         <Route path="/treasury-hedging" element={<CorporateTreasuryHedging />} />
                                         <Route path="/india-equities/fii-dii" element={<IndiaFlowPulsePage />} />
+
+                                        {/* Tools & Embeds */}
+                                        <Route path="/tools/net-liquidity-gauge" element={<NetLiquidityGauge />} />
 
                                         {/* Countries */}
                                         <Route path="/countries" element={<CountriesIndexPage />} />
