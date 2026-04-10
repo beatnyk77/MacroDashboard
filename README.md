@@ -12,16 +12,16 @@ In an era defined by monetary experimentation and supply-side constraints, conve
 
 GraphiQuestor operates as a pure data terminal. The moment you arrive, you're presented with live, automatically updating telemetry across these specialized intelligence hubs:
 
-*   **Macro Observatory** — Central navigation hub with access to all research labs and intelligence terminals
-*   **India Intelligence Hub** — Consolidated state-level macro pulse, RBI liquidity, fiscal stress, credit cycles, debt walls, FII/DII flows, and the full Corporate India Engine suite
-*   **China Macro Hub** — PBOC liquidity cycles, real-economy indicators, external sector dynamics, energy grid transition, and proprietary de-dollarization signals
-*   **US Corporate Terminal** — SEC EDGAR fundamentals, 13F whale tracking, insider conviction, and advanced screening (recently hardened and fully operational)
-*   **US Macro & Fiscal** — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve regime analysis
-*   **De-Dollarization & Gold Anchor Lab** — Debt/gold ratios, M2/gold comparison, CB gold accumulation maps, and reserve currency composition tracking
-*   **Energy Security & Commodities** — Refining capacity utilization, crude import dependency, SPR dynamics, and strategic commodity flow networks
-*   **Sovereign Stress Lab** — EM credit matrix, FX defense metrics, and systemic refinancing risk
-*   **Sustainable Finance & Climate Risk** — Energy import dependency, grid carbon intensity, and transition risk analytics
-*   **Shadow System Signals** — Capital flight indicators and illicit trade flow telemetry (restricted access)
+*   **Macro Observatory** — Digital entrance to the full suite of research labs and structural telemetry terminals.
+*   **India Intelligence Hub** — Consolidated state-level macro pulse, MoSPI direct ingestion, and the **Bharat Investment Universe (BIU)** for mutual fund analytics.
+*   **China Macro Hub** — PBOC liquidity cycles, provincial industrial telemetry, and the 15th Five-Year Plan transition tracker.
+*   **US Corporate Terminal** — Institutional-grade equity surveillance including **expanded 13F whale tracking** (Top 15 positions) and SEC EDGAR fundmentals.
+*   **US Macro & Fiscal** — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve monetization monitors.
+*   **De-Dollarization & Gold Anchor Lab** — Mathematical tracking of the G7 vs. BRICS+ fracture and hard-money reserve accumulation.
+*   **Energy Security & Commodities** — Crude import dependency cartography and strategic commodity flow networks.
+*   **Sovereign Stress Lab** — EM credit matrix and the **Bank of Japan (BoJ) Stress Monitor** (Total Assets vs. Monetary Base).
+*   **Sustainable Finance & Climate Risk** — Energy transition analytics and carbon intensity telemetry.
+*   **Shadow System Signals** — Capital flight indicators and illicit trade flow telemetry (restricted access).
 *   **Data Health Dashboard** — Real-time pipeline status, authenticity scores, and data provenance tracking across all modules
 
 All modules are production-ready, receiving daily automated updates, with no mock or stale data displayed on the live terminal.
@@ -60,8 +60,8 @@ Central bank liquidity is the primary driver of risk asset valuations, yet headl
 
 *   **25-Year Net Liquidity Z-Scores:** Statistical positioning enabling the early detection of stealth QE and liquidity inflection points before they manifest in equity multiples.
 *   **Liquidity Alarm System:** Rule-based triggers for structural TGA builds and RRP drainage patterns—historical precursors to acute market volatility.
-*   **Shanghai Divergence Tracker (Proprietary):** Identifying the precise moment PBOC easing efforts are constrained by Beijing’s deleveraging edicts—a leading indicator for emerging market capital flows.
-*   **Multi-Jurisdiction Pulse:** Synchronous tracking of ECB, BoJ, and PBOC balance sheet dynamics.
+*   **Bank of Japan (BoJ) Stress Monitor:** Synchronous tracking of BoJ balance sheet expansion versus monetary base growth—identifying the limits of yen defense and liquidity support.
+*   **Shanghai Divergence Tracker (Proprietary):** Identifying the precise moment PBOC easing efforts are constrained by Beijing’s deleveraging edicts.
 
 **Institutional Application:** Position sizing for risk assets must scale with Net Liquidity Z-scores. Historical analysis confirms that when Net Liquidity exceeds +1σ, equity drawdowns are statistically improbable. Conversely, readings below -1σ have preceded every major structural correction since 2008.
 
@@ -114,10 +114,11 @@ Energy is the master resource. As the global economy transitions from an era of 
 
 Conventional platforms offer only high-level national aggregates. GraphiQuestor delivers state- and province-level intelligence on the two most critical growth engines of the multipolar era.
 
-**India Intelligence Hub** (Consolidated Q1 2026)
+**India Intelligence Hub** (Consolidated 2026)
 Through direct integration with India's Ministry of Statistics & Programme Implementation (MoSPI) via our eSankhyiki-MCP server, we provide unprecedented depth:
-* **India Macro Pulse:** Unified dashboard synthesizing RBI liquidity, state fiscal stress, credit cycles, debt maturity walls, inflation monitors, and the digitization premium—all in a single, coherent view.
-* **State-Level Granularity:** Industrial output (ASI), employment efficiency (PLFS), energy dependency, fiscal allocation tracking, and heatmaps down to the state/UT level—data unavailable on any competing platform.
+* **India Macro Pulse:** Unified dashboard synthesizing RBI liquidity, state fiscal stress, credit cycles, and debt maturity walls.
+* **Bharat Investment Universe (BIU):** A high-fidelity analyzer tracking 400+ Indian Mutual Funds. Integrates proprietary Macro Impact Scores and performance telemetry directly from `mfapi.in`.
+* **State-Level Granularity:** Industrial output (ASI), employment efficiency (PLFS), energy dependency, and fiscal allocation tracking down to the state/UT level.
 * **Market Microstructure:** FII/DII flows, promoter activity, bulk/block deals, short selling reports, IPO pipelines, and advanced screening tools for the Corporate India Engine.
 
 **China Macro Hub** (Consolidated Q1 2026)

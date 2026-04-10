@@ -6,17 +6,22 @@ Allow: /methodology
 Disallow: /admin
 Disallow: /api/
 
-# Allow major AI crawlers for LLM indexing
+# AI Search Crawlers (AEO)
 User-agent: GPTBot
-Allow: /
-
+User-agent: OAI-SearchBot
 User-agent: ClaudeBot
-Allow: /
-
 User-agent: Google-Extended
-Allow: /
-
 User-agent: PerplexityBot
 Allow: /
 
+# General Crawlers
+User-agent: *
+Allow: /
+
+# Specific blocks for sensitive artifacts (if any)
+Disallow: /admin/
+Disallow: /api/fallback/
+
+# Discoverability References
 Sitemap: https://graphiquestor.com/sitemap.xml
+X-LLM-Context: https://graphiquestor.com/llm.txt
