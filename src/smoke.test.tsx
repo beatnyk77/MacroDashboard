@@ -74,10 +74,16 @@ vi.mock('@/lib/supabase', () => ({
                 if (table === 'vw_smart_money_collective') data = mockDummyCollective;
                 if (table === 'institutional_13f_holdings') data = [mockDummyInstitution];
                 if (table === 'smart_money_flow') data = mockDummyFlow;
+                if (table === 'vw_net_liquidity') data = [{ as_of_date: new Date().toISOString(), value: 4500, z_score: 1.5, percentile: 0.85, delta: 10, delta_pct: 0.2, alarm_status: 'nominal' }];
+                if (table === 'vw_latest_metrics') data = [{ value: 100 }];
                 if (table === 'monthly_regime_digests') data = { year_month: '2024-03', subject_line: 'Test Digest', plain_text: 'Test content', generated_at: new Date().toISOString() };
                 if (table === 'g20_sovereign_risk') data = [{ country: 'USA', cds_spread: 10, debt_to_gdp: 120, fiscal_balance: -5, inflation: 2, credit_rating: 'AAA', outlook: 'Stable' }];
                 if (table === 'climate_risk_metrics') data = [{ id: '1', date: '2024-01-01', country_code: 'IND', region_code: null, grid_co2_intensity: 450, transition_risk_score: 65.5, renewable_share_pct: 22.5, total_ghg_emissions_mt: 3200, temperature_alignment_c: 2.8, is_climate_emergency: true, metadata: {}, created_at: new Date().toISOString() }];
                 if (table === 'metric_observations') data = [{ as_of_date: '2024-01-01', value: 45.2 }, { as_of_date: '2023-12-01', value: 42.1 }, { as_of_date: '2023-11-01', value: 48.3 }];
+                if (table === 'vw_latest_ingestions') data = [{ function_name: 'test', status: 'success', start_time: new Date().toISOString(), duration_ms: 100 }];
+                if (table === 'vw_data_staleness_monitor_v2') data = [];
+                if (table === 'vw_cron_job_status') data = [];
+                if (table === 'regime_snapshots') data = { id: '1', regime_label: 'Expansion', pulse_score: 75, signal_breadth: 0.8, timestamp: new Date().toISOString() };
                 return Promise.resolve({ data, error: null }).then(resolve);
             }
         })),
@@ -85,10 +91,48 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 // Mock Lucide icons — spread the real module so any icon works automatically
-vi.mock(import('lucide-react'), async (importOriginal) => {
-    const actual = await importOriginal();
+vi.mock('lucide-react', async (importOriginal) => {
+    const actual: any = await importOriginal();
     return { ...actual };
 });
+
+// Mock Recharts to avoid testing SVG/Canvas rendering and sizing issues
+vi.mock('recharts', async () => {
+    const OriginalModule: any = await vi.importActual('recharts');
+    return {
+        ...OriginalModule,
+        ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div className="mock-responsive-container">{children}</div>,
+        BarChart: ({ children }: { children: React.ReactNode }) => <div className="mock-bar-chart">{children}</div>,
+        AreaChart: ({ children }: { children: React.ReactNode }) => <div className="mock-area-chart">{children}</div>,
+        LineChart: ({ children }: { children: React.ReactNode }) => <div className="mock-line-chart">{children}</div>,
+        PieChart: ({ children }: { children: React.ReactNode }) => <div className="mock-pie-chart">{children}</div>,
+        Bar: () => <div className="mock-bar" />,
+        Area: () => <div className="mock-area" />,
+        Line: () => <div className="mock-line" />,
+        Pie: () => <div className="mock-pie" />,
+        XAxis: () => <div className="mock-xaxis" />,
+        YAxis: () => <div className="mock-yaxis" />,
+        CartesianGrid: () => <div className="mock-grid" />,
+        Tooltip: () => <div className="mock-tooltip" />,
+        Cell: () => <div className="mock-cell" />,
+    };
+});
+
+// Mock ResizeObserver
+(window as any).ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+};
+
+// Mock IntersectionObserver
+(window as any).IntersectionObserver = class IntersectionObserver {
+    constructor() {}
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() { return []; }
+};
 
 // Components to test
 import Terminal from '@/pages/Terminal';
