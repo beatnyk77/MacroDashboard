@@ -15,13 +15,14 @@ interface CountryNarrativeBlockProps {
 }
 
 export const CountryNarrativeBlock: React.FC<CountryNarrativeBlockProps> = ({
+  iso,
+  countryName,
   data,
   narrativeData
 }) => {
-  if (!narrativeData) return null;
-
   // Function to interpolate variables into the narrative analysis
   const interpolatedAnalysis = useMemo(() => {
+    if (!narrativeData) return '';
     let text = narrativeData.analysis;
     
     // Simple variable replacement: {{metric_key}}
@@ -50,10 +51,11 @@ export const CountryNarrativeBlock: React.FC<CountryNarrativeBlockProps> = ({
     }
     
     return text;
-  }, [narrativeData.analysis, data]);
+  }, [narrativeData, data]);
+
+  if (!narrativeData) return null;
 
   // Function to wrap specific technical terms with links
-  // In a real app, this might be more complex (e.g., regex mapping)
   const renderWithLinks = (text: string) => {
     const linkMap: Record<string, string> = {
       'Net Liquidity Z-score': '/methods/net-liquidity-z-score',
@@ -71,10 +73,10 @@ export const CountryNarrativeBlock: React.FC<CountryNarrativeBlockProps> = ({
       'TGA': '/glossary/tga',
     };
 
-    let parts: (string | JSX.Element)[] = [text];
+    let parts: (string | React.ReactNode)[] = [text];
 
     Object.entries(linkMap).forEach(([term, path]) => {
-      const newParts: (string | JSX.Element)[] = [];
+      const newParts: (string | React.ReactNode)[] = [];
       parts.forEach(part => {
         if (typeof part !== 'string') {
           newParts.push(part);
@@ -106,7 +108,7 @@ export const CountryNarrativeBlock: React.FC<CountryNarrativeBlockProps> = ({
   };
 
   return (
-    <Box className="mb-16">
+    <Box className="mb-16" data-country-iso={iso} data-country-name={countryName}>
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Thesis Column */}
         <div className="lg:col-span-1">

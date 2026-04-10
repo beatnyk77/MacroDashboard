@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, Typography, Container, Paper, useTheme, alpha, Button } from '@mui/material';
+import { Box, Typography, Container, Paper, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { SEOManager } from '@/components/SEOManager';

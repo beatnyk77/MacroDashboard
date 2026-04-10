@@ -10,7 +10,7 @@ import { MetricCard } from '@/components/MetricCard';
 import { COUNTRY_METRIC_GROUPS } from '@/lib/macro-metrics';
 import { CountryNarrativeBlock } from '@/components/CountryNarrativeBlock';
 import { COUNTRY_NARRATIVES } from '@/data/countryNarratives';
-import { ALL_COUNTRIES } from './CountriesIndexPage';
+import { ALL_COUNTRIES } from '@/lib/countries';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -46,9 +46,12 @@ export const CountryProfilePage: React.FC = () => {
     enabled: !!uppercaseIso,
   });
 
-  if (!uppercaseIso) return <Navigate to="/" replace />;
+  const countryName = useMemo(() => {
+    if (!uppercaseIso) return '';
+    return ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.name || uppercaseIso;
+  }, [uppercaseIso]);
 
-  const countryName = useMemo(() => ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.name || uppercaseIso, [uppercaseIso]);
+  if (!uppercaseIso) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen bg-[#050810] text-white">
@@ -119,6 +122,8 @@ export const CountryProfilePage: React.FC = () => {
       {/* Narrative Intelligent Analysis */}
       <Container maxWidth="xl" sx={{ mt: 8 }}>
         <CountryNarrativeBlock 
+          iso={uppercaseIso}
+          countryName={countryName}
           data={countryData}
           narrativeData={COUNTRY_NARRATIVES[uppercaseIso] || null}
         />
