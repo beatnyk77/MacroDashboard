@@ -290,7 +290,7 @@ describe('Smoke Tests', () => {
                 <About />
             </TestWrapper>
         );
-        // MUI Typography with h1 "About GraphiQuestor"
-        expect(await screen.findByText(/About GraphiQuestor/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        // MUI Typography with h1 "The Surveillance Mandate"
+        expect(await screen.findByText(/The Surveillance Mandate/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });
