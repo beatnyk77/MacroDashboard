@@ -53,6 +53,7 @@ jobs:
             ingest-country-metrics: ['supabase/functions/ingest-country-metrics/**']
             ingest-institutional-13f: ['supabase/functions/ingest-institutional-13f/**']
             ingest-us-macro: ['supabase/functions/ingest-us-macro/**']
+            ingest-mutual-funds: ['supabase/functions/ingest-mutual-funds/**']
             llm-knowledge: ['supabase/functions/llm-knowledge/**']
             _shared: ['supabase/functions/_shared/**']
 
@@ -88,6 +89,7 @@ jobs:
           CHANGED_INGEST_COUNTRY_METRICS: ${{ steps.filter.outputs['ingest-country-metrics'] }}
           CHANGED_INGEST_INSTITUTIONAL_13F: ${{ steps.filter.outputs['ingest-institutional-13f'] }}
           CHANGED_INGEST_US_MACRO: ${{ steps.filter.outputs['ingest-us-macro'] }}
+          CHANGED_INGEST_MUTUAL_FUNDS: ${{ steps.filter.outputs['ingest-mutual-funds'] }}
           CHANGED_LLM_KNOWLEDGE: ${{ steps.filter.outputs['llm-knowledge'] }}
         run: |
           deploy_func() {
@@ -134,6 +136,7 @@ jobs:
             [ "$CHANGED_INGEST_COUNTRY_METRICS" = "true" ]     && deploy_func "ingest-country-metrics"
             [ "$CHANGED_INGEST_FUEL_SECURITY_INDIA" = "true" ] && deploy_func "ingest-fuel-security-india"
             [ "$CHANGED_INGEST_US_MACRO" = "true" ]            && deploy_func "ingest-us-macro"
+            [ "$CHANGED_INGEST_MUTUAL_FUNDS" = "true" ]       && deploy_func "ingest-mutual-funds"
             [ "$CHANGED_LLM_KNOWLEDGE" = "true" ]              && deploy_func "llm-knowledge"
             echo "Selective deployment complete."
           fi

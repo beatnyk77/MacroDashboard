@@ -40,7 +40,6 @@ Deno.serve(async (req) => {
         console.log(`Prioritized ${prioritizedSchemes.length} schemes for sync.`);
 
         const ingested = [];
-
         for (const scheme of prioritizedSchemes) {
             try {
                 // Fetch Detailed Scheme Data (Meta + NAV history)
