@@ -81,10 +81,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
     return (
         <div
-            className="min-h-screen flex flex-col bg-background transition-[background-image] duration-500 ease-in-out"
-            style={{
-                backgroundImage: `radial-gradient(circle at 50% -20%, ${bgTintStyle}, transparent 70%)`
-            }}
+            className="min-h-screen flex flex-col bg-background transition-colors duration-500 ease-in-out"
         >
             {/* Skip to main content for keyboard navigation */}
             <a
@@ -109,14 +106,13 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
             {isObservatory && !isEmbedded && <DataHealthBanner />}
             {!isEmbedded && (
-                <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/80 backdrop-blur-md">
-                <div className="flex h-[72px] items-center justify-between px-4 md:px-8">
+                <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/90 backdrop-blur-md">
+                <div className="flex h-16 items-center justify-between px-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-6">
                         <div className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
                             <Activity
                                 size={28}
                                 className={regimeColorClass}
-                                style={{ filter: `drop-shadow(0 0 8px ${regimeColorHex}40)` }}
                             />
                             <div className="hidden sm:block text-2xl font-black tracking-heading leading-none">
                                 <span className="text-foreground">Graphi</span>

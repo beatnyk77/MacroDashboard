@@ -26,8 +26,8 @@ const getTheme = (mode: 'light' | 'dark') => {
         palette: {
             mode,
             background: {
-                default: mode === 'dark' ? '#020617' : '#f8fafc', // Slate 950
-                paper: mode === 'dark' ? '#070f20' : '#ffffff',   // Deeper Slate 900
+                default: mode === 'dark' ? '#0B101A' : '#f8fafc', // Dark Slate
+                paper: mode === 'dark' ? '#131825' : '#ffffff',   // Deep Slate Paper
             },
             text: {
                 primary: mode === 'dark' ? '#f8fafc' : '#0f172a',
@@ -59,25 +59,25 @@ const getTheme = (mode: 'light' | 'dark') => {
             fontFamily: '"Inter", "system-ui", "-apple-system", sans-serif',
             h1: { 
                 fontSize: typographyScale['4xl'],
-                fontWeight: 800, 
+                fontWeight: 700, 
                 letterSpacing: '-0.025em',
                 lineHeight: 1.15
             },
             h2: {
                 fontSize: typographyScale['3xl'],
-                fontWeight: 800,
+                fontWeight: 700,
                 letterSpacing: '-0.02em',
                 lineHeight: 1.2
             },
             h3: {
                 fontSize: typographyScale['2xl'],
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '-0.02em',
                 lineHeight: 1.25
             },
             h4: { 
                 fontSize: typographyScale['xl'],
-                fontWeight: 700, 
+                fontWeight: 600, 
                 letterSpacing: '-0.02em',
                 lineHeight: 1.3
             },
@@ -119,14 +119,14 @@ const getTheme = (mode: 'light' | 'dark') => {
             MuiCard: {
                 styleOverrides: {
                     root: {
-                        borderRadius: 16,
+                        borderRadius: 12,
                         boxShadow: mode === 'dark'
-                            ? '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4)'
+                            ? '0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1)'
                             : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                         backgroundImage: 'none',
-                        backgroundColor: mode === 'dark' ? 'rgba(7, 15, 32, 0.4)' : '#ffffff',
-                        backdropFilter: 'blur(12px)',
-                        border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)',
+                        backgroundColor: mode === 'dark' ? '#131825' : '#ffffff',
+                        backdropFilter: 'blur(8px)',
+                        border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.05)',
                     },
                 },
             },

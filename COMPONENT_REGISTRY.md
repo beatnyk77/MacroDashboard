@@ -1,238 +1,265 @@
 # GraphiQuestor Component Registry
 
 ## Overview
-- **Total Components**: 211
-- **Generated**: 2026-04-09
+- **Total Components**: 238
+- **Generated**: 2026-04-13
 - **Scope**: All exported React components from `src/` directory
 
 ## Summary by Category
 - **CIE (India Corp)**: 9 components
 - **Card**: 14 components
 - **Chart**: 4 components
-- **Commodities**: 4 components
-- **Core/Other**: 8 components
+- **Commodities**: 5 components
+- **Core/Other**: 2 components
 - **Layout**: 1 components
 - **Map**: 3 components
-- **Page**: 36 components
+- **Page**: 44 components
 - **Refining**: 5 components
-- **Row**: 32 components
-- **Section**: 58 components
-- **Shared UI**: 25 components
+- **Row**: 35 components
+- **Section**: 59 components
+- **Shared UI**: 46 components
 - **USC (US Corp)**: 6 components
 - **Widget**: 5 components
 
 ## Full Component Registry
 
-| Component Name | File Path | Category | Visibility | Status |
-|----------------|-----------|----------|------------|--------|
-| AlertHistory | [`features/CIE/InstitutionalWatchlists.tsx`](../../features/CIE/InstitutionalWatchlists.tsx) | CIE (India Corp) | Feature Lab | Active |
-| BulkBlockReport | [`features/CIE/BulkBlockReport.tsx`](../../features/CIE/BulkBlockReport.tsx) | CIE (India Corp) | Feature Lab | Active |
-| InstitutionalWatchlists | [`features/CIE/InstitutionalWatchlists.tsx`](../../features/CIE/InstitutionalWatchlists.tsx) | CIE (India Corp) | Feature Lab | Active |
-| PromoterActivityHeatmap | [`features/CIE/PromoterActivityHeatmap.tsx`](../../features/CIE/PromoterActivityHeatmap.tsx) | CIE (India Corp) | Feature Lab | Active |
-| QuarterlyAggregator | [`features/CIE/QuarterlyAggregator.tsx`](../../features/CIE/QuarterlyAggregator.tsx) | CIE (India Corp) | Feature Lab | Active |
-| RiskExposureHeatmap | [`features/CIE/RiskExposureHeatmap.tsx`](../../features/CIE/RiskExposureHeatmap.tsx) | CIE (India Corp) | Feature Lab | Active |
-| Screener | [`features/CIE/Screener.tsx`](../../features/CIE/Screener.tsx) | CIE (India Corp) | Feature Lab | Active |
-| ShortSellingReport | [`features/CIE/ShortSellingReport.tsx`](../../features/CIE/ShortSellingReport.tsx) | CIE (India Corp) | Feature Lab | Active |
-| UpcomingIPOs | [`features/CIE/UpcomingIPOs.tsx`](../../features/CIE/UpcomingIPOs.tsx) | CIE (India Corp) | Feature Lab | Active |
-| CommodityHistoryCard | [`features/dashboard/components/cards/CommodityHistoryCard.tsx`](../../features/dashboard/components/cards/CommodityHistoryCard.tsx) | Card | Terminal/Lab | Active |
-| CompactChinaCard | [`features/dashboard/components/cards/CompactChinaCard.tsx`](../../features/dashboard/components/cards/CompactChinaCard.tsx) | Card | Terminal/Lab | Active |
-| CompactIndiaCard | [`features/dashboard/components/cards/CompactIndiaCard.tsx`](../../features/dashboard/components/cards/CompactIndiaCard.tsx) | Card | Terminal/Lab | Active |
-| CopperGoldRatioCard | [`features/dashboard/components/cards/CopperGoldRatioCard.tsx`](../../features/dashboard/components/cards/CopperGoldRatioCard.tsx) | Card | Terminal/Lab | Active |
-| NetLiquidityCard | [`features/dashboard/components/cards/NetLiquidityCard.tsx`](../../features/dashboard/components/cards/NetLiquidityCard.tsx) | Card | Terminal/Lab | Active |
-| OilFlowsSankey | [`features/dashboard/components/cards/OilFlowsSankey.tsx`](../../features/dashboard/components/cards/OilFlowsSankey.tsx) | Card | Terminal/Lab | Active |
-| OilImportCostCard | [`features/dashboard/components/cards/OilImportCostCard.tsx`](../../features/dashboard/components/cards/OilImportCostCard.tsx) | Card | Terminal/Lab | Active |
-| OilImportVulnerabilityCard | [`features/dashboard/components/cards/OilImportVulnerabilityCard.tsx`](../../features/dashboard/components/cards/OilImportVulnerabilityCard.tsx) | Card | Terminal/Lab | Active |
-| PowerMixDivergenceCard | [`features/dashboard/components/cards/PowerMixDivergenceCard.tsx`](../../features/dashboard/components/cards/PowerMixDivergenceCard.tsx) | Card | Terminal/Lab | Active |
-| RefiningCapacityCard | [`features/dashboard/components/cards/RefiningCapacityCard.tsx`](../../features/dashboard/components/cards/RefiningCapacityCard.tsx) | Card | Terminal/Lab | Active |
-| SPRTrackerCard | [`features/dashboard/components/cards/SPRTrackerCard.tsx`](../../features/dashboard/components/cards/SPRTrackerCard.tsx) | Card | Terminal/Lab | Active |
-| TradeFlowsCard | [`features/dashboard/components/cards/TradeFlowsCard.tsx`](../../features/dashboard/components/cards/TradeFlowsCard.tsx) | Card | Terminal/Lab | Active |
-| USDebtGoldBackingCard | [`features/dashboard/components/cards/USDebtGoldBackingCard.tsx`](../../features/dashboard/components/cards/USDebtGoldBackingCard.tsx) | Card | Terminal/Lab | Active |
-| VulnerabilityScoreMatrix | [`features/dashboard/components/cards/VulnerabilityScoreMatrix.tsx`](../../features/dashboard/components/cards/VulnerabilityScoreMatrix.tsx) | Card | Terminal/Lab | Active |
-| GlobalNetLiquidityHistoricalChart | [`features/dashboard/components/charts/GlobalNetLiquidityHistoricalChart.tsx`](../../features/dashboard/components/charts/GlobalNetLiquidityHistoricalChart.tsx) | Chart | Terminal/Lab | Active |
-| GoldReturnsChart | [`features/dashboard/components/charts/GoldReturnsChart.tsx`](../../features/dashboard/components/charts/GoldReturnsChart.tsx) | Chart | Terminal/Lab | Active |
-| ReserveShareHistoryChart | [`features/dashboard/components/charts/ReserveShareHistoryChart.tsx`](../../features/dashboard/components/charts/ReserveShareHistoryChart.tsx) | Chart | Terminal/Lab | Active |
-| TreasuryHoldersChart | [`features/dashboard/components/charts/TreasuryHoldersChart.tsx`](../../features/dashboard/components/charts/TreasuryHoldersChart.tsx) | Chart | Terminal/Lab | Active |
-| MetalImportCard | [`features/commodities/components/MetalImportCard.tsx`](../../features/commodities/components/MetalImportCard.tsx) | Commodities | Feature Lab | Active |
-| PhysicalFlowNetwork | [`features/commodities/components/PhysicalFlowNetwork.tsx`](../../features/commodities/components/PhysicalFlowNetwork.tsx) | Commodities | Feature Lab | Active |
-| PriceTerminalCard | [`features/commodities/components/PriceTerminalCard.tsx`](../../features/commodities/components/PriceTerminalCard.tsx) | Commodities | Feature Lab | Active |
-| ReserveTrackerCard | [`features/commodities/components/ReserveTrackerCard.tsx`](../../features/commodities/components/ReserveTrackerCard.tsx) | Commodities | Feature Lab | Active |
-| App | [`App.tsx`](../../App.tsx) | Core/Other | Feature/Other | Active |
-| CommandPalette | [`components/CommandPalette/CommandPalette.tsx`](../../components/CommandPalette/CommandPalette.tsx) | Core/Other | Global | Active |
-| CommodityTerminalRow | [`features/commodities/CommodityTerminalRow.tsx`](../../features/commodities/CommodityTerminalRow.tsx) | Core/Other | Feature Lab | Active |
-| RatioRow | [`components/spa/RatioRow.tsx`](../../components/spa/RatioRow.tsx) | Core/Other | Global | Active |
-| SPAAccordion | [`components/spa/SPAAccordion.tsx`](../../components/spa/SPAAccordion.tsx) | Core/Other | Global | Active |
-| SPASection | [`components/spa/SPASection.tsx`](../../components/spa/SPASection.tsx) | Core/Other | Global | Active |
-| StateMacroInsights | [`features/dashboard/components/StateMacroInsights.tsx`](../../features/dashboard/components/StateMacroInsights.tsx) | Core/Other | Terminal/Lab | Active |
-| ViewProvider | [`context/ViewContext.tsx`](../../context/ViewContext.tsx) | Core/Other | Feature/Other | Active |
-| GlobalLayout | [`layout/GlobalLayout.tsx`](../../layout/GlobalLayout.tsx) | Layout | Global | Active |
-| EventsMap | [`features/dashboard/components/maps/EventsMap.tsx`](../../features/dashboard/components/maps/EventsMap.tsx) | Map | Terminal/Lab | Active |
-| GeopoliticalRiskMap | [`features/dashboard/components/maps/GeopoliticalRiskMap.tsx`](../../features/dashboard/components/maps/GeopoliticalRiskMap.tsx) | Map | Terminal/Lab | Active |
-| IndiaLeafletMap | [`features/dashboard/components/maps/IndiaLeafletMap.tsx`](../../features/dashboard/components/maps/IndiaLeafletMap.tsx) | Map | Terminal/Lab | Active |
-| APIAccessPage | [`pages/APIAccessPage.tsx`](../../pages/APIAccessPage.tsx) | Page | Route | Active |
-| APIDocsPage | [`pages/APIDocsPage.tsx`](../../pages/APIDocsPage.tsx) | Page | Route | Active |
-| About | [`pages/About.tsx`](../../pages/About.tsx) | Page | Route | Active |
-| AdminDashboard | [`pages/AdminDashboard.tsx`](../../pages/AdminDashboard.tsx) | Page | Route | Active |
-| ArticlePage | [`pages/ArticlePage.tsx`](../../pages/ArticlePage.tsx) | Page | Route | Active |
-| BlogPage | [`pages/BlogPage.tsx`](../../pages/BlogPage.tsx) | Page | Route | Active |
-| China15thFYPLab | [`pages/labs/China15thFYP.tsx`](../../pages/labs/China15thFYP.tsx) | Page | Route | Active |
-| ChinaLab | [`pages/labs/ChinaLab.tsx`](../../pages/labs/ChinaLab.tsx) | Page | Route | Active |
-| CompanyDetail | [`pages/CompanyDetail.tsx`](../../pages/CompanyDetail.tsx) | Page | Route | Active |
-| CorporateIndiaEngine | [`pages/CorporateIndiaEngine.tsx`](../../pages/CorporateIndiaEngine.tsx) | Page | Route | Active |
-| CorporateTreasuryHedging | [`pages/CorporateTreasuryHedging.tsx`](../../pages/CorporateTreasuryHedging.tsx) | Page | Route | Active |
-| Dashboard | [`pages/Dashboard.tsx`](../../pages/Dashboard.tsx) | Page | Route | Active |
-| DataHealthDashboard | [`pages/DataHealthDashboard.tsx`](../../pages/DataHealthDashboard.tsx) | Page | Route | Active |
-| DeDollarizationGoldLab | [`pages/labs/DeDollarizationGoldLab.tsx`](../../pages/labs/DeDollarizationGoldLab.tsx) | Page | Route | Active |
-| EnergyCommoditiesLab | [`pages/labs/EnergyCommoditiesLab.tsx`](../../pages/labs/EnergyCommoditiesLab.tsx) | Page | Route | Active |
-| ForInstitutional | [`pages/ForInstitutional.tsx`](../../pages/ForInstitutional.tsx) | Page | Route | Active |
-| GlossaryIndexPage | [`pages/GlossaryIndexPage.tsx`](../../pages/GlossaryIndexPage.tsx) | Page | Route | Active |
-| GlossaryTermPage | [`pages/GlossaryTermPage.tsx`](../../pages/GlossaryTermPage.tsx) | Page | Route | Active |
-| IndiaFlowPulsePage | [`pages/IndiaFlowPulsePage.tsx`](../../pages/IndiaFlowPulsePage.tsx) | Page | Route | Active |
-| IndiaLab | [`pages/labs/IndiaLab.tsx`](../../pages/labs/IndiaLab.tsx) | Page | Route | Active |
-| IntelChinaPage | [`pages/IntelChinaPage.tsx`](../../pages/IntelChinaPage.tsx) | Page | Route | Active |
-| IntelIndiaPage | [`pages/IntelIndiaPage.tsx`](../../pages/IntelIndiaPage.tsx) | Page | Route | Active |
-| MacroObservatory | [`pages/MacroObservatory.tsx`](../../pages/MacroObservatory.tsx) | Page | Route | Active |
-| MetricsMethodologyPage | [`pages/MetricsMethodologyPage.tsx`](../../pages/MetricsMethodologyPage.tsx) | Page | Route | Active |
-| PrivacyPolicy | [`pages/PrivacyPolicy.tsx`](../../pages/PrivacyPolicy.tsx) | Page | Route | Active |
-| RegimeDigestArchivePage | [`pages/RegimeDigestArchivePage.tsx`](../../pages/RegimeDigestArchivePage.tsx) | Page | Route | Active |
-| RegimeDigestPage | [`pages/RegimeDigestPage.tsx`](../../pages/RegimeDigestPage.tsx) | Page | Route | Active |
-| ShadowSystemLab | [`pages/labs/ShadowSystemLab.tsx`](../../pages/labs/ShadowSystemLab.tsx) | Page | Route | Active |
-| SovereignStressLab | [`pages/labs/SovereignStressLab.tsx`](../../pages/labs/SovereignStressLab.tsx) | Page | Route | Active |
-| SustainableFinanceLab | [`pages/labs/SustainableFinanceLab.tsx`](../../pages/labs/SustainableFinanceLab.tsx) | Page | Route | Active |
-| Terminal | [`pages/Terminal.tsx`](../../pages/Terminal.tsx) | Page | Route | Active |
-| TermsOfService | [`pages/TermsOfService.tsx`](../../pages/TermsOfService.tsx) | Page | Route | Active |
-| USCompanyDetail | [`pages/USCompanyDetail.tsx`](../../pages/USCompanyDetail.tsx) | Page | Route | Active |
-| USEquitiesEngine | [`pages/USEquitiesEngine.tsx`](../../pages/USEquitiesEngine.tsx) | Page | Route | Active |
-| USMacroFiscalLab | [`pages/labs/USMacroFiscalLab.tsx`](../../pages/labs/USMacroFiscalLab.tsx) | Page | Route | Active |
-| WeeklyNarrativeArchive | [`pages/WeeklyNarrativeArchive.tsx`](../../pages/WeeklyNarrativeArchive.tsx) | Page | Route | Active |
-| GlobalRefiningMap | [`features/dashboard/components/refining/GlobalRefiningMap.tsx`](../../features/dashboard/components/refining/GlobalRefiningMap.tsx) | Refining | Terminal/Lab | Active |
-| GlobalRefiningMonitorSection | [`features/dashboard/components/refining/GlobalRefiningMonitorSection.tsx`](../../features/dashboard/components/refining/GlobalRefiningMonitorSection.tsx) | Refining | Terminal/Lab | Active |
-| RefiningFocusCards | [`features/dashboard/components/refining/RefiningFocusCards.tsx`](../../features/dashboard/components/refining/RefiningFocusCards.tsx) | Refining | Terminal/Lab | Active |
-| RegionalImbalanceGauge | [`features/dashboard/components/refining/RegionalImbalanceGauge.tsx`](../../features/dashboard/components/refining/RegionalImbalanceGauge.tsx) | Refining | Terminal/Lab | Active |
-| TopRefinersTable | [`features/dashboard/components/refining/TopRefinersTable.tsx`](../../features/dashboard/components/refining/TopRefinersTable.tsx) | Refining | Terminal/Lab | Active |
-| AIComputeEnergyMonitor | [`features/dashboard/components/rows/AIComputeEnergyMonitor.tsx`](../../features/dashboard/components/rows/AIComputeEnergyMonitor.tsx) | Row | Terminal Main | Active |
-| CapitalFlowsTerminal | [`features/dashboard/components/rows/CapitalFlowsTerminal.tsx`](../../features/dashboard/components/rows/CapitalFlowsTerminal.tsx) | Row | Terminal Main | Active |
-| CentralBankGoldNet | [`features/dashboard/components/rows/CentralBankGoldNet.tsx`](../../features/dashboard/components/rows/CentralBankGoldNet.tsx) | Row | Terminal Main | Active |
-| China15thFYPTeaserRow | [`features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow.tsx`](../../features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow.tsx) | Row | Terminal Main | Active |
-| ComparisonToggle14v15 | [`features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15.tsx`](../../features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15.tsx) | Row | Terminal Main | Active |
-| CurrencyWarsMonitor | [`features/dashboard/components/rows/CurrencyWarsMonitor.tsx`](../../features/dashboard/components/rows/CurrencyWarsMonitor.tsx) | Row | Terminal Main | Active |
-| DeflationDebasementMonitor | [`features/dashboard/components/rows/DeflationDebasementMonitor.tsx`](../../features/dashboard/components/rows/DeflationDebasementMonitor.tsx) | Row | Terminal Main | Active |
-| FYP_HeroTimeline | [`features/dashboard/components/rows/China15thFYP/FYP_HeroTimeline.tsx`](../../features/dashboard/components/rows/China15thFYP/FYP_HeroTimeline.tsx) | Row | Terminal Main | Active |
-| FYP_ImpactHeatmap | [`features/dashboard/components/rows/China15thFYP/FYP_ImpactHeatmap.tsx`](../../features/dashboard/components/rows/China15thFYP/FYP_ImpactHeatmap.tsx) | Row | Terminal Main | Active |
-| FYP_MissionControlRadar | [`features/dashboard/components/rows/China15thFYP/FYP_MissionControlRadar.tsx`](../../features/dashboard/components/rows/China15thFYP/FYP_MissionControlRadar.tsx) | Row | Terminal Main | Active |
-| FYP_TargetGrid | [`features/dashboard/components/rows/China15thFYP/FYP_TargetGrid.tsx`](../../features/dashboard/components/rows/China15thFYP/FYP_TargetGrid.tsx) | Row | Terminal Main | Active |
-| G20GdpPerCapitaConvergence | [`features/dashboard/components/rows/G20GdpPerCapitaConvergence.tsx`](../../features/dashboard/components/rows/G20GdpPerCapitaConvergence.tsx) | Row | Terminal Main | Active |
-| GeopoliticalEventsRow | [`features/dashboard/components/rows/GeopoliticalEventsRow.tsx`](../../features/dashboard/components/rows/GeopoliticalEventsRow.tsx) | Row | Terminal Main | Active |
-| GlobalFinancialHubsGoldGateways | [`features/dashboard/components/rows/GlobalFinancialHubsGoldGateways.tsx`](../../features/dashboard/components/rows/GlobalFinancialHubsGoldGateways.tsx) | Row | Terminal Main | Active |
-| IndiaCreditCycleClock | [`features/dashboard/components/rows/IndiaCreditCycleClock.tsx`](../../features/dashboard/components/rows/IndiaCreditCycleClock.tsx) | Row | Terminal Main | Active |
-| IndiaDebtMaturityWall | [`features/dashboard/components/rows/IndiaDebtMaturityWall.tsx`](../../features/dashboard/components/rows/IndiaDebtMaturityWall.tsx) | Row | Terminal Main | Active |
-| IndiaDigitizationPremiumMonitor | [`features/dashboard/components/rows/IndiaDigitizationPremiumMonitor.tsx`](../../features/dashboard/components/rows/IndiaDigitizationPremiumMonitor.tsx) | Row | Terminal Main | Active |
-| IndiaFiscalAllocationTracker | [`features/dashboard/components/rows/IndiaFiscalAllocationTracker.tsx`](../../features/dashboard/components/rows/IndiaFiscalAllocationTracker.tsx) | Row | Terminal Main | Active |
-| IndiaFiscalStressMonitor | [`features/dashboard/components/rows/IndiaFiscalStressMonitor.tsx`](../../features/dashboard/components/rows/IndiaFiscalStressMonitor.tsx) | Row | Terminal Main | Active |
-| IndiaInflationPulseMonitor | [`features/dashboard/components/rows/IndiaInflationPulseMonitor.tsx`](../../features/dashboard/components/rows/IndiaInflationPulseMonitor.tsx) | Row | Terminal Main | Active |
-| IndiaLiquidityStressMonitor | [`features/dashboard/components/rows/IndiaLiquidityStressMonitor.tsx`](../../features/dashboard/components/rows/IndiaLiquidityStressMonitor.tsx) | Row | Terminal Main | Active |
-| IndiaMarketPulseRow | [`features/dashboard/components/rows/IndiaMarketPulseRow.tsx`](../../features/dashboard/components/rows/IndiaMarketPulseRow.tsx) | Row | Terminal Main | Active |
-| IranConflictImpactMonitor | [`features/dashboard/components/rows/IranConflictImpactMonitor.tsx`](../../features/dashboard/components/rows/IranConflictImpactMonitor.tsx) | Row | Terminal Main | Active |
-| NetLiquidityRow | [`features/dashboard/components/rows/NetLiquidityRow.tsx`](../../features/dashboard/components/rows/NetLiquidityRow.tsx) | Row | Terminal Main | Active |
-| RBIFXDefenseMonitor | [`features/dashboard/components/rows/RBIFXDefenseMonitor.tsx`](../../features/dashboard/components/rows/RBIFXDefenseMonitor.tsx) | Row | Terminal Main | Active |
-| ShadowTradeCard | [`features/dashboard/components/rows/ShadowTradeCard.tsx`](../../features/dashboard/components/rows/ShadowTradeCard.tsx) | Row | Terminal Main | Active |
-| StateFiscalHeatmap | [`features/dashboard/components/rows/StateFiscalHeatmap.tsx`](../../features/dashboard/components/rows/StateFiscalHeatmap.tsx) | Row | Terminal Main | Active |
-| TradeGravityCard | [`features/dashboard/components/rows/TradeGravityCard.tsx`](../../features/dashboard/components/rows/TradeGravityCard.tsx) | Row | Terminal Main | Active |
-| USEquitiesTeaserRow | [`features/dashboard/components/rows/USEquitiesTeaserRow.tsx`](../../features/dashboard/components/rows/USEquitiesTeaserRow.tsx) | Row | Terminal Main | Active |
-| USFiscalComparisonChart | [`features/dashboard/components/rows/USFiscalComparisonChart.tsx`](../../features/dashboard/components/rows/USFiscalComparisonChart.tsx) | Row | Terminal Main | Active |
-| USTreasuryDemandGauge | [`features/dashboard/components/rows/USTreasuryDemandGauge.tsx`](../../features/dashboard/components/rows/USTreasuryDemandGauge.tsx) | Row | Terminal Main | Active |
-| YieldCurveMonitor | [`features/dashboard/components/rows/YieldCurveMonitor.tsx`](../../features/dashboard/components/rows/YieldCurveMonitor.tsx) | Row | Terminal Main | Active |
-| ASISection | [`features/dashboard/components/sections/ASISection.tsx`](../../features/dashboard/components/sections/ASISection.tsx) | Section | Terminal Main | Active |
-| AsiaCommodityFlowsSection | [`features/dashboard/components/sections/AsiaCommodityFlowsSection.tsx`](../../features/dashboard/components/sections/AsiaCommodityFlowsSection.tsx) | Section | Terminal Main | Active |
-| BOPPressureTable | [`features/dashboard/components/sections/BOPPressureTable.tsx`](../../features/dashboard/components/sections/BOPPressureTable.tsx) | Section | Terminal Main | Active |
-| BalanceOfPaymentsPressureCard | [`features/dashboard/components/sections/BalanceOfPaymentsPressureCard.tsx`](../../features/dashboard/components/sections/BalanceOfPaymentsPressureCard.tsx) | Section | Terminal Main | Active |
-| BoJBalanceSheetCard | [`features/dashboard/components/sections/BoJBalanceSheetCard.tsx`](../../features/dashboard/components/sections/BoJBalanceSheetCard.tsx) | Section | Terminal Main | Active |
-| ChinaEnergyGridPanel | [`features/dashboard/components/sections/ChinaEnergyGridPanel.tsx`](../../features/dashboard/components/sections/ChinaEnergyGridPanel.tsx) | Section | Terminal Main | Active |
-| ChinaExternalSectorPanel | [`features/dashboard/components/sections/ChinaExternalSectorPanel.tsx`](../../features/dashboard/components/sections/ChinaExternalSectorPanel.tsx) | Section | Terminal Main | Active |
-| ChinaMacroPulseSection | [`features/dashboard/components/sections/ChinaMacroPulseSection.tsx`](../../features/dashboard/components/sections/ChinaMacroPulseSection.tsx) | Section | Terminal Main | Active |
-| ChinaPBOCLiquidityMonitor | [`features/dashboard/components/sections/ChinaPBOCLiquidityMonitor.tsx`](../../features/dashboard/components/sections/ChinaPBOCLiquidityMonitor.tsx) | Section | Terminal Main | Active |
-| ChinaProprietarySignals | [`features/dashboard/components/sections/ChinaProprietarySignals.tsx`](../../features/dashboard/components/sections/ChinaProprietarySignals.tsx) | Section | Terminal Main | Active |
-| ChinaRealEconomyPanel | [`features/dashboard/components/sections/ChinaRealEconomyPanel.tsx`](../../features/dashboard/components/sections/ChinaRealEconomyPanel.tsx) | Section | Terminal Main | Active |
-| ClimateRiskDashboard | [`features/dashboard/components/sections/ClimateRiskDashboard.tsx`](../../features/dashboard/components/sections/ClimateRiskDashboard.tsx) | Section | Terminal Main | Active |
-| CommodityTerminal | [`features/dashboard/components/sections/CommodityTerminal.tsx`](../../features/dashboard/components/sections/CommodityTerminal.tsx) | Section | Terminal Main | Active |
-| CompositeIndexCard | [`features/dashboard/components/sections/CompositeIndexCard.tsx`](../../features/dashboard/components/sections/CompositeIndexCard.tsx) | Section | Terminal Main | Active |
-| CompositeMetricsSection | [`features/dashboard/components/sections/CompositeMetricsSection.tsx`](../../features/dashboard/components/sections/CompositeMetricsSection.tsx) | Section | Terminal Main | Active |
-| CorporateTreasuryHedgingSection | [`features/dashboard/components/sections/CorporateTreasuryHedgingSection.tsx`](../../features/dashboard/components/sections/CorporateTreasuryHedgingSection.tsx) | Section | Terminal Main | Active |
-| CreditCreationPulseCard | [`features/dashboard/components/sections/CreditCreationPulseCard.tsx`](../../features/dashboard/components/sections/CreditCreationPulseCard.tsx) | Section | Terminal Main | Active |
-| ECBBalanceSheetCard | [`features/dashboard/components/sections/ECBBalanceSheetCard.tsx`](../../features/dashboard/components/sections/ECBBalanceSheetCard.tsx) | Section | Terminal Main | Active |
-| EastWestDebtInfluence | [`features/dashboard/components/sections/EastWestDebtInfluence.tsx`](../../features/dashboard/components/sections/EastWestDebtInfluence.tsx) | Section | Terminal Main | Active |
-| EnergySection | [`features/dashboard/components/sections/EnergySection.tsx`](../../features/dashboard/components/sections/EnergySection.tsx) | Section | Terminal Main | Active |
-| EnergySecuritySection | [`features/dashboard/components/sections/EnergySecuritySection.tsx`](../../features/dashboard/components/sections/EnergySecuritySection.tsx) | Section | Terminal Main | Active |
-| FIIDIIMonitorSection | [`features/dashboard/components/sections/FIIDIIMonitorSection.tsx`](../../features/dashboard/components/sections/FIIDIIMonitorSection.tsx) | Section | Terminal Main | Active |
-| FeedbackSection | [`features/dashboard/components/sections/FeedbackSection.tsx`](../../features/dashboard/components/sections/FeedbackSection.tsx) | Section | Terminal Main | Active |
-| G20GoldDebtCoveragePanel | [`features/dashboard/components/sections/G20GoldDebtCoveragePanel.tsx`](../../features/dashboard/components/sections/G20GoldDebtCoveragePanel.tsx) | Section | Terminal Main | Active |
-| GeopoliticalRiskPulseCard | [`features/dashboard/components/sections/GeopoliticalRiskPulseCard.tsx`](../../features/dashboard/components/sections/GeopoliticalRiskPulseCard.tsx) | Section | Terminal Main | Active |
-| GlobalLiquidityMonitor | [`features/dashboard/components/sections/GlobalLiquidityMonitor.tsx`](../../features/dashboard/components/sections/GlobalLiquidityMonitor.tsx) | Section | Terminal Main | Active |
-| GlobalLiquiditySection | [`features/dashboard/components/sections/GlobalLiquiditySection.tsx`](../../features/dashboard/components/sections/GlobalLiquiditySection.tsx) | Section | Terminal Main | Active |
-| GlobalReserveTracker | [`features/dashboard/components/sections/GlobalReserveTracker.tsx`](../../features/dashboard/components/sections/GlobalReserveTracker.tsx) | Section | Terminal Main | Active |
-| GoldPositioningMonitor | [`features/dashboard/components/sections/GoldPositioningMonitor.tsx`](../../features/dashboard/components/sections/GoldPositioningMonitor.tsx) | Section | Terminal Main | Active |
-| GoldRatioRibbon | [`features/dashboard/components/sections/GoldRatioRibbon.tsx`](../../features/dashboard/components/sections/GoldRatioRibbon.tsx) | Section | Terminal Main | Active |
-| GoldReturnsSection | [`features/dashboard/components/sections/GoldReturnsSection.tsx`](../../features/dashboard/components/sections/GoldReturnsSection.tsx) | Section | Terminal Main | Active |
-| GoldValuationStrip | [`features/dashboard/components/sections/GoldValuationStrip.tsx`](../../features/dashboard/components/sections/GoldValuationStrip.tsx) | Section | Terminal Main | Active |
-| HardAssetValuationSection | [`features/dashboard/components/sections/HardAssetValuationSection.tsx`](../../features/dashboard/components/sections/HardAssetValuationSection.tsx) | Section | Terminal Main | Active |
-| IndiaMacroCard | [`features/dashboard/components/sections/IndiaMacroCard.tsx`](../../features/dashboard/components/sections/IndiaMacroCard.tsx) | Section | Terminal Main | Active |
-| IndiaMacroPulseSection | [`features/dashboard/components/sections/IndiaMacroPulseSection.tsx`](../../features/dashboard/components/sections/IndiaMacroPulseSection.tsx) | Section | Terminal Main | Active |
-| InstitutionalInfluenceSection | [`features/dashboard/components/sections/InstitutionalInfluenceSection.tsx`](../../features/dashboard/components/sections/InstitutionalInfluenceSection.tsx) | Section | Terminal Main | Active |
-| LiquidityAlarmCard | [`features/dashboard/components/sections/LiquidityAlarmCard.tsx`](../../features/dashboard/components/sections/LiquidityAlarmCard.tsx) | Section | Terminal Main | Active |
-| LiquidityHeatmapGrid | [`features/dashboard/components/sections/LiquidityHeatmapGrid.tsx`](../../features/dashboard/components/sections/LiquidityHeatmapGrid.tsx) | Section | Terminal Main | Active |
-| MacroEconomicCalendar | [`features/dashboard/components/sections/MacroEconomicCalendar.tsx`](../../features/dashboard/components/sections/MacroEconomicCalendar.tsx) | Section | Terminal Main | Active |
-| MacroOrientationSection | [`features/dashboard/components/sections/MacroOrientationSection.tsx`](../../features/dashboard/components/sections/MacroOrientationSection.tsx) | Section | Terminal Main | Active |
-| OECDLeadingIndicatorsCard | [`features/dashboard/components/sections/OECDLeadingIndicatorsCard.tsx`](../../features/dashboard/components/sections/OECDLeadingIndicatorsCard.tsx) | Section | Terminal Main | Active |
-| OffshoreDollarStressCard | [`features/dashboard/components/sections/OffshoreDollarStressCard.tsx`](../../features/dashboard/components/sections/OffshoreDollarStressCard.tsx) | Section | Terminal Main | Active |
-| PreciousDivergenceCard | [`features/dashboard/components/sections/PreciousDivergenceCard.tsx`](../../features/dashboard/components/sections/PreciousDivergenceCard.tsx) | Section | Terminal Main | Active |
-| PresidentialPolicyTracker | [`features/dashboard/components/sections/PresidentialPolicyTracker.tsx`](../../features/dashboard/components/sections/PresidentialPolicyTracker.tsx) | Section | Terminal Main | Active |
-| RBIMoneyMarketMonitor | [`features/dashboard/components/sections/RBIMoneyMarketMonitor.tsx`](../../features/dashboard/components/sections/RBIMoneyMarketMonitor.tsx) | Section | Terminal Main | Active |
-| RegimeReplayModal | [`features/dashboard/components/sections/RegimeReplayModal.tsx`](../../features/dashboard/components/sections/RegimeReplayModal.tsx) | Section | Terminal Main | Active |
-| ScenarioStudio | [`features/dashboard/components/sections/ScenarioStudio.tsx`](../../features/dashboard/components/sections/ScenarioStudio.tsx) | Section | Terminal Main | Active |
-| SmartMoneyFlowMonitor | [`features/dashboard/components/sections/SmartMoneyFlowMonitor.tsx`](../../features/dashboard/components/sections/SmartMoneyFlowMonitor.tsx) | Section | Terminal Main | Active |
-| SovereignEnergySecuritySection | [`features/dashboard/components/sections/SovereignEnergySecuritySection.tsx`](../../features/dashboard/components/sections/SovereignEnergySecuritySection.tsx) | Section | Terminal Main | Active |
-| SovereignRiskMatrix | [`features/dashboard/components/sections/SovereignRiskMatrix.tsx`](../../features/dashboard/components/sections/SovereignRiskMatrix.tsx) | Section | Terminal Main | Active |
-| TodaysBriefPanel | [`features/dashboard/components/sections/TodaysBriefPanel.tsx`](../../features/dashboard/components/sections/TodaysBriefPanel.tsx) | Section | Terminal Main | Active |
-| TradeSettlementFlows | [`features/dashboard/components/sections/TradeSettlementFlows.tsx`](../../features/dashboard/components/sections/TradeSettlementFlows.tsx) | Section | Terminal Main | Active |
-| TreasuryHoldersSection | [`features/dashboard/components/sections/TreasuryHoldersSection.tsx`](../../features/dashboard/components/sections/TreasuryHoldersSection.tsx) | Section | Terminal Main | Active |
-| TreasurySnapshotSection | [`features/dashboard/components/sections/TreasurySnapshotSection.tsx`](../../features/dashboard/components/sections/TreasurySnapshotSection.tsx) | Section | Terminal Main | Active |
-| UPIAutopayFailureCard | [`features/dashboard/components/sections/UPIAutopayFailureCard.tsx`](../../features/dashboard/components/sections/UPIAutopayFailureCard.tsx) | Section | Terminal Main | Active |
-| USMacroPulseSection | [`features/dashboard/components/sections/USMacroPulseSection.tsx`](../../features/dashboard/components/sections/USMacroPulseSection.tsx) | Section | Terminal Main | Active |
-| UpcomingEventsCard | [`features/dashboard/components/sections/UpcomingEventsCard.tsx`](../../features/dashboard/components/sections/UpcomingEventsCard.tsx) | Section | Terminal Main | Active |
-| WeeklyNarrativeSection | [`features/dashboard/components/sections/WeeklyNarrativeSection.tsx`](../../features/dashboard/components/sections/WeeklyNarrativeSection.tsx) | Section | Terminal Main | Active |
-| AlertBadge | [`components/AlertBadge.tsx`](../../components/AlertBadge.tsx) | Shared UI | Global | Active |
-| ChartInsightSummary | [`components/ChartInsightSummary.tsx`](../../components/ChartInsightSummary.tsx) | Shared UI | Global | Active |
-| CollapsibleSection | [`components/CollapsibleSection.tsx`](../../components/CollapsibleSection.tsx) | Shared UI | Global | Active |
-| DataHealthBanner | [`components/DataHealthBanner.tsx`](../../components/DataHealthBanner.tsx) | Shared UI | Global | Active |
-| DataHealthTicker | [`components/DataHealthTicker.tsx`](../../components/DataHealthTicker.tsx) | Shared UI | Global | Active |
-| DataProvenanceBadge | [`components/DataProvenanceBadge.tsx`](../../components/DataProvenanceBadge.tsx) | Shared UI | Global | Active |
-| DataQualityBadge | [`components/DataQualityBadge.tsx`](../../components/DataQualityBadge.tsx) | Shared UI | Global | Active |
-| FreshnessChip | [`components/FreshnessChip.tsx`](../../components/FreshnessChip.tsx) | Shared UI | Global | Active |
-| HoverDetail | [`components/HoverDetail.tsx`](../../components/HoverDetail.tsx) | Shared UI | Global | Active |
-| HoverTooltip | [`components/HoverTooltip.tsx`](../../components/HoverTooltip.tsx) | Shared UI | Global | Active |
-| InstitutionalFooter | [`components/InstitutionalFooter.tsx`](../../components/InstitutionalFooter.tsx) | Shared UI | Global | Active |
-| IntelligenceSidebar | [`components/IntelligenceSidebar.tsx`](../../components/IntelligenceSidebar.tsx) | Shared UI | Global | Active |
-| LazyRender | [`components/LazyRender.tsx`](../../components/LazyRender.tsx) | Shared UI | Global | Active |
-| LiveStatusIndicator | [`components/LiveStatusIndicator.tsx`](../../components/LiveStatusIndicator.tsx) | Shared UI | Global | Active |
-| MetricCard | [`components/MetricCard.tsx`](../../components/MetricCard.tsx) | Shared UI | Global | Active |
-| MobileNav | [`components/MobileNav.tsx`](../../components/MobileNav.tsx) | Shared UI | Global | Active |
-| MotionCard | [`components/MotionCard.tsx`](../../components/MotionCard.tsx) | Shared UI | Global | Active |
-| QuickTourModal | [`components/QuickTourModal.tsx`](../../components/QuickTourModal.tsx) | Shared UI | Global | Active |
-| RatioCard | [`components/RatioCard.tsx`](../../components/RatioCard.tsx) | Shared UI | Global | Active |
-| SEOManager | [`components/SEOManager.tsx`](../../components/SEOManager.tsx) | Shared UI | Global | Active |
-| SectionHeader | [`components/SectionHeader.tsx`](../../components/SectionHeader.tsx) | Shared UI | Global | Active |
-| SocialShareMode | [`components/SocialShareMode.tsx`](../../components/SocialShareMode.tsx) | Shared UI | Global | Active |
-| Sparkline | [`components/Sparkline.tsx`](../../components/Sparkline.tsx) | Shared UI | Global | Active |
-| TerminalSidebar | [`components/TerminalSidebar.tsx`](../../components/TerminalSidebar.tsx) | Shared UI | Global | Active |
-| USDebtMaturityWall | [`components/USDebtMaturityWall.tsx`](../../components/USDebtMaturityWall.tsx) | Shared UI | Global | Active |
-| FedMonetizationMonitor | [`features/dashboard/components/rows/FedMonetizationMonitor.tsx`](../../features/dashboard/components/rows/FedMonetizationMonitor.tsx) | Row | Terminal Main | Active |
-| USFilingsFeed | [`features/USC/USFilingsFeed.tsx`](../../features/USC/USFilingsFeed.tsx) | USC (US Corp) | Feature Lab | Active |
-| USInsiderActivity | [`features/USC/USInsiderActivity.tsx`](../../features/USC/USInsiderActivity.tsx) | USC (US Corp) | Feature Lab | Active |
-| USMacroCorrelation | [`features/USC/USMacroCorrelation.tsx`](../../features/USC/USMacroCorrelation.tsx) | USC (US Corp) | Feature Lab | Active |
-| USScreener | [`features/USC/USScreener.tsx`](../../features/USC/USScreener.tsx) | USC (US Corp) | Feature Lab | Active |
-| USSectorHeatmap | [`features/USC/USSectorHeatmap.tsx`](../../features/USC/USSectorHeatmap.tsx) | USC (US Corp) | Feature Lab | Active |
-| USWhaleTracker | [`features/USC/USWhaleTracker.tsx`](../../features/USC/USWhaleTracker.tsx) | USC (US Corp) | Feature Lab | Active |
-| EMFlowStressMonitor | [`features/dashboard/components/widgets/EMFlowStressMonitor.tsx`](../../features/dashboard/components/widgets/EMFlowStressMonitor.tsx) | Widget | Terminal/Lab | Active |
-| GlobalCapitalFlowRadar | [`features/dashboard/components/widgets/GlobalCapitalFlowRadar.tsx`](../../features/dashboard/components/widgets/GlobalCapitalFlowRadar.tsx) | Widget | Terminal/Lab | Active |
-| TICChoroplethMap | [`features/dashboard/components/widgets/TICChoroplethMap.tsx`](../../features/dashboard/components/widgets/TICChoroplethMap.tsx) | Widget | Terminal/Lab | Active |
-| TICStatsDrawer | [`features/dashboard/components/widgets/TICStatsDrawer.tsx`](../../features/dashboard/components/widgets/TICStatsDrawer.tsx) | Widget | Terminal/Lab | Active |
-| TICWorldMapModule | [`features/dashboard/components/widgets/TICWorldMapModule.tsx`](../../features/dashboard/components/widgets/TICWorldMapModule.tsx) | Widget | Terminal/Lab | Active |
+| Component Name | File Path | Category | Visibility | Description | Status |
+|----------------|-----------|----------|------------|-------------|--------|
+| AlertHistory | [`features/CIE/InstitutionalWatchlists.tsx`](src/features/CIE/InstitutionalWatchlists.tsx) | CIE (India Corp) | Feature Lab | Displays a chronological history of macro alerts and telemetry signals for mapped equities. | Active |
+| BulkBlockReport | [`features/CIE/BulkBlockReport.tsx`](src/features/CIE/BulkBlockReport.tsx) | CIE (India Corp) | Feature Lab | Visualizes high-volume institutional block and bulk deals with equity percentage impacts. | Active |
+| InstitutionalWatchlists | [`features/CIE/InstitutionalWatchlists.tsx`](src/features/CIE/InstitutionalWatchlists.tsx) | CIE (India Corp) | Feature Lab | Management interface for provisioning institutional-grade watchlists with real-time macro telemetry. | Active |
+| PromoterActivityHeatmap | [`features/CIE/PromoterActivityHeatmap.tsx`](src/features/CIE/PromoterActivityHeatmap.tsx) | CIE (India Corp) | Feature Lab | Heatmap analyzing promoter pledge percentages and net insider buying/selling activity by sector. | Active |
+| QuarterlyAggregator | [`features/CIE/QuarterlyAggregator.tsx`](src/features/CIE/QuarterlyAggregator.tsx) | CIE (India Corp) | Feature Lab | Aggregates corporate quarterly financial performance metrics across sectors for macro analysis. | Active |
+| RiskExposureHeatmap | [`features/CIE/RiskExposureHeatmap.tsx`](src/features/CIE/RiskExposureHeatmap.tsx) | CIE (India Corp) | Feature Lab | Interactive heatmap mapping company-specific risk exposure to macro signals like CDS spreads. | Active |
+| Screener | [`features/CIE/Screener.tsx`](src/features/CIE/Screener.tsx) | CIE (India Corp) | Feature Lab | Advanced institutional equity screener with macro signal overlays and transmission lag filters. | Active |
+| ShortSellingReport | [`features/CIE/ShortSellingReport.tsx`](src/features/CIE/ShortSellingReport.tsx) | CIE (India Corp) | Feature Lab | Analyzes short interest percentages and momentum trends across corporate sectors. | Active |
+| UpcomingIPOs | [`features/CIE/UpcomingIPOs.tsx`](src/features/CIE/UpcomingIPOs.tsx) | CIE (India Corp) | Feature Lab | Tracks and monitors upcoming Initial Public Offerings with draft prospectus links and status tracking. | Active |
+| CommodityHistoryCard | [`features/dashboard/components/cards/CommodityHistoryCard.tsx`](src/features/dashboard/components/cards/CommodityHistoryCard.tsx) | Card | Terminal/Lab | Displays historical price trends and volatility metrics for key commodities. | Active |
+| CompactChinaCard | [`features/dashboard/components/cards/CompactChinaCard.tsx`](src/features/dashboard/components/cards/CompactChinaCard.tsx) | Card | Terminal/Lab | High-density summary card for China's core macro economic and liquidity indicators. | Active |
+| CompactIndiaCard | [`features/dashboard/components/cards/CompactIndiaCard.tsx`](src/features/dashboard/components/cards/CompactIndiaCard.tsx) | Card | Terminal/Lab | High-density summary card for India's core macro economic and fiscal indicators. | Active |
+| CopperGoldRatioCard | [`features/dashboard/components/cards/CopperGoldRatioCard.tsx`](src/features/dashboard/components/cards/CopperGoldRatioCard.tsx) | Card | Terminal/Lab | Visualizes the Copper/Gold ratio as a leading indicator for global growth and inflation regimes. | Active |
+| NetLiquidityCard | [`features/dashboard/components/cards/NetLiquidityCard.tsx`](src/features/dashboard/components/cards/NetLiquidityCard.tsx) | Card | Terminal/Lab | Monitors global net liquidity levels, combining central bank balance sheets and treasury balances. | Active |
+| OilFlowsSankey | [`features/dashboard/components/cards/OilFlowsSankey.tsx`](src/features/dashboard/components/cards/OilFlowsSankey.tsx) | Card | Terminal/Lab | Sankey diagram illustrating global crude oil trade flows and energy supply chain dynamics. | Active |
+| OilImportCostCard | [`features/dashboard/components/cards/OilImportCostCard.tsx`](src/features/dashboard/components/cards/OilImportCostCard.tsx) | Card | Terminal/Lab | Estimates and tracks national oil import costs based on real-time price and volume data. | Active |
+| OilImportVulnerabilityCard | [`features/dashboard/components/cards/OilImportVulnerabilityCard.tsx`](src/features/dashboard/components/cards/OilImportVulnerabilityCard.tsx) | Card | Terminal/Lab | Assesses national vulnerability to oil price shocks based on import dependency and fiscal headroom. | Active |
+| PowerMixDivergenceCard | [`features/dashboard/components/cards/PowerMixDivergenceCard.tsx`](src/features/dashboard/components/cards/PowerMixDivergenceCard.tsx) | Card | Terminal/Lab | Analyzes the shift in national power generation mix between fossil fuels and renewables. | Active |
+| RefiningCapacityCard | [`features/dashboard/components/cards/RefiningCapacityCard.tsx`](src/features/dashboard/components/cards/RefiningCapacityCard.tsx) | Card | Terminal/Lab | Tracks global oil refining capacity and utilization rates by region. | Active |
+| SPRTrackerCard | [`features/dashboard/components/cards/SPRTrackerCard.tsx`](src/features/dashboard/components/cards/SPRTrackerCard.tsx) | Card | Terminal/Lab | Monitors Strategic Petroleum Reserve (SPR) levels and deployment status. | Active |
+| TradeFlowsCard | [`features/dashboard/components/cards/TradeFlowsCard.tsx`](src/features/dashboard/components/cards/TradeFlowsCard.tsx) | Card | Terminal/Lab | Visualizes international trade balances and bilateral commodity flow dynamics. | Active |
+| USDebtGoldBackingCard | [`features/dashboard/components/cards/USDebtGoldBackingCard.tsx`](src/features/dashboard/components/cards/USDebtGoldBackingCard.tsx) | Card | Terminal/Lab | Calculates the theoretical gold-backing ratio of the total US national debt. | Active |
+| VulnerabilityScoreMatrix | [`features/dashboard/components/cards/VulnerabilityScoreMatrix.tsx`](src/features/dashboard/components/cards/VulnerabilityScoreMatrix.tsx) | Card | Terminal/Lab | Cross-country matrix comparing sovereign vulnerability scores across multiple macro dimensions. | Active |
+| GlobalNetLiquidityHistoricalChart | [`features/dashboard/components/charts/GlobalNetLiquidityHistoricalChart.tsx`](src/features/dashboard/components/charts/GlobalNetLiquidityHistoricalChart.tsx) | Chart | Terminal/Lab | Long-term historical chart of global net liquidity vs. asset price performance. | Active |
+| GoldReturnsChart | [`features/dashboard/components/charts/GoldReturnsChart.tsx`](src/features/dashboard/components/charts/GoldReturnsChart.tsx) | Chart | Terminal/Lab | Comparative chart of gold performance across different currency regimes and inflation environments. | Active |
+| ReserveShareHistoryChart | [`features/dashboard/components/charts/ReserveShareHistoryChart.tsx`](src/features/dashboard/components/charts/ReserveShareHistoryChart.tsx) | Chart | Terminal/Lab | Tracks historical changes in the composition of global central bank foreign exchange reserves. | Active |
+| TreasuryHoldersChart | [`features/dashboard/components/charts/TreasuryHoldersChart.tsx`](src/features/dashboard/components/charts/TreasuryHoldersChart.tsx) | Chart | Terminal/Lab | Visualizes the breakdown of US Treasury ownership between foreign and domestic institutions. | Active |
+| CommodityTerminalRow | [`features/commodities/CommodityTerminalRow.tsx`](src/features/commodities/CommodityTerminalRow.tsx) | Commodities | Feature Lab | Main terminal row orchestrator for commodity and energy assets. | Active |
+| MetalImportCard | [`features/commodities/components/MetalImportCard.tsx`](src/features/commodities/components/MetalImportCard.tsx) | Commodities | Feature Lab | Tracks strategic and industrial metal import volumes and cost impacts. | Active |
+| PhysicalFlowNetwork | [`features/commodities/components/PhysicalFlowNetwork.tsx`](src/features/commodities/components/PhysicalFlowNetwork.tsx) | Commodities | Feature Lab | Network diagram visualizing the physical supply chain of critical mineral and energy flows. | Active |
+| PriceTerminalCard | [`features/commodities/components/PriceTerminalCard.tsx`](src/features/commodities/components/PriceTerminalCard.tsx) | Commodities | Feature Lab | Real-time terminal card for monitoring industrial and precious metal spot prices. | Active |
+| ReserveTrackerCard | [`features/commodities/components/ReserveTrackerCard.tsx`](src/features/commodities/components/ReserveTrackerCard.tsx) | Commodities | Feature Lab | Monitors national and global reserves of critical energy and industrial commodities. | Active |
+| App | [`App.tsx`](src/App.tsx) | Core/Other | Global | Root application component orchestrating routing, state, and global providers. | Active |
+| ViewProvider | [`context/ViewContext.tsx`](src/context/ViewContext.tsx) | Core/Other | Global | Context provider managing global terminal view states and navigation metadata. | Active |
+| GlobalLayout | [`layout/GlobalLayout.tsx`](src/layout/GlobalLayout.tsx) | Layout | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| EventsMap | [`features/dashboard/components/maps/EventsMap.tsx`](src/features/dashboard/components/maps/EventsMap.tsx) | Map | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| GeopoliticalRiskMap | [`features/dashboard/components/maps/GeopoliticalRiskMap.tsx`](src/features/dashboard/components/maps/GeopoliticalRiskMap.tsx) | Map | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| IndiaLeafletMap | [`features/dashboard/components/maps/IndiaLeafletMap.tsx`](src/features/dashboard/components/maps/IndiaLeafletMap.tsx) | Map | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| APIAccessPage | [`pages/APIAccessPage.tsx`](src/pages/APIAccessPage.tsx) | Page | Route | Interface for managing API keys and institutional data access permissions. | Active |
+| APIDocsPage | [`pages/APIDocsPage.tsx`](src/pages/APIDocsPage.tsx) | Page | Route | Interactive documentation for the GraphiQuestor REST and WebSocket APIs. | Active |
+| About | [`pages/About.tsx`](src/pages/About.tsx) | Page | Route | Vision, methodology, and institutional overview of the GraphiQuestor platform. | Active |
+| AdminDashboard | [`pages/AdminDashboard.tsx`](src/pages/AdminDashboard.tsx) | Page | Route | Internal administrative terminal for system health and data ingestion monitoring. | Active |
+| ArticlePage | [`pages/ArticlePage.tsx`](src/pages/ArticlePage.tsx) | Page | Route | Dynamic template for research articles, weekly narratives, and deep-dive reports. | Active |
+| BlogPage | [`pages/BlogPage.tsx`](src/pages/BlogPage.tsx) | Page | Route | Index of latest macro research updates and platform announcements. | Active |
+| China15thFYPLab | [`pages/labs/China15thFYP.tsx`](src/pages/labs/China15thFYP.tsx) | Page | Route | Specialized lab for analyzing China's 15th Five-Year Plan targets and trajectory. | Active |
+| CompanyDetail | [`pages/CompanyDetail.tsx`](src/pages/CompanyDetail.tsx) | Page | Route | Comprehensive analyst view of a specific Indian corporate entity with macro overlays. | Active |
+| CorporateIndiaEngine | [`pages/CorporateIndiaEngine.tsx`](src/pages/CorporateIndiaEngine.tsx) | Page | Route | Main portal for the CIE, featuring institutional equity analytics and sector heatmaps. | Active |
+| CorporateTreasuryHedging | [`pages/CorporateTreasuryHedging.tsx`](src/pages/CorporateTreasuryHedging.tsx) | Page | Route | Terminal for analyzing corporate FX and interest rate hedging strategies. | Active |
+| CountriesIndexPage | [`pages/CountriesIndexPage.tsx`](src/pages/CountriesIndexPage.tsx) | Page | Route | Directory and global overview of all sovereign entities tracked by the platform. | Active |
+| CountryProfilePage | [`pages/CountryProfilePage.tsx`](src/pages/CountryProfilePage.tsx) | Page | Route | Deep-dive sovereign analytics page for specific country macroeconomic profiles. | Active |
+| Dashboard | [`pages/Dashboard.tsx`](src/pages/Dashboard.tsx) | Page | Route | High-level executive overview of global macro regimes and institutional activity. | Active |
+| DataHealthDashboard | [`pages/DataHealthDashboard.tsx`](src/pages/DataHealthDashboard.tsx) | Page | Route | Real-time monitor for data ingestion pipelines, staleness, and provenance. | Active |
+| DataSourcesPage | [`pages/DataSourcesPage.tsx`](src/pages/DataSourcesPage.tsx) | Page | Route | Detailed transparency log of all primary and secondary data providers and methodologies. | Active |
+| DeDollarizationGoldLab | [`pages/labs/DeDollarizationGoldLab.tsx`](src/pages/labs/DeDollarizationGoldLab.tsx) | Page | Route | Specialized lab analyzing the shift in central bank reserves toward gold and away from the USD. | Active |
+| DebtGoldZScorePage | [`pages/methods/DebtGoldZScorePage.tsx`](src/pages/methods/DebtGoldZScorePage.tsx) | Page | Route | Methodology page for the Debt-to-Gold Z-Score valuation metric. | Active |
+| EnergyCommoditiesLab | [`pages/labs/EnergyCommoditiesLab.tsx`](src/pages/labs/EnergyCommoditiesLab.tsx) | Page | Route | Analytics lab focused on global energy transition, oil flows, and power mix dynamics. | Active |
+| EnergyDependencyRatioPage | [`pages/methods/EnergyDependencyRatioPage.tsx`](src/pages/methods/EnergyDependencyRatioPage.tsx) | Page | Route | Methodology page for the Energy Import Dependency Ratio calculation. | Active |
+| FiscalDominanceMeterPage | [`pages/methods/FiscalDominanceMeterPage.tsx`](src/pages/methods/FiscalDominanceMeterPage.tsx) | Page | Route | Methodology page for the Fiscal Dominance Meter measuring debt-to-GDP vs. real rates. | Active |
+| ForInstitutional | [`pages/ForInstitutional.tsx`](src/pages/ForInstitutional.tsx) | Page | Route | Portal for institutional-grade features, bespoke research, and terminal access. | Active |
+| GlossaryIndexPage | [`pages/GlossaryIndexPage.tsx`](src/pages/GlossaryIndexPage.tsx) | Page | Route | Searchable index of macro-economic, financial, and proprietary terminology. | Active |
+| GlossaryTermPage | [`pages/GlossaryTermPage.tsx`](src/pages/GlossaryTermPage.tsx) | Page | Route | Definition and use-case page for specific macro glossary terms. | Active |
+| IndiaFlowPulsePage | [`pages/IndiaFlowPulsePage.tsx`](src/pages/IndiaFlowPulsePage.tsx) | Page | Route | Real-time monitor for FII/DII flows, liquidity stress, and equity market internals in India. | Active |
+| IntelChinaPage | [`pages/IntelChinaPage.tsx`](src/pages/IntelChinaPage.tsx) | Page | Route | Specialized intelligence portal focused on China's macro-economic and geopolitical trajectory. | Active |
+| IntelIndiaPage | [`pages/IntelIndiaPage.tsx`](src/pages/IntelIndiaPage.tsx) | Page | Route | Specialized intelligence portal focused on India's fiscal, monetary, and corporate growth. | Active |
+| InvestmentUniverse | [`pages/tools/InvestmentUniverse.tsx`](src/pages/tools/InvestmentUniverse.tsx) | Page | Route | Visualizer for the global investment universe across asset classes and geographies. | Active |
+| LoanToJobEfficiencyPage | [`pages/methods/LoanToJobEfficiencyPage.tsx`](src/pages/methods/LoanToJobEfficiencyPage.tsx) | Page | Route | Methodology page for measuring the efficiency of credit creation in generating employment. | Active |
+| MacroObservatory | [`pages/MacroObservatory.tsx`](src/pages/MacroObservatory.tsx) | Page | Route | Real-time 'war room' view of global geopolitical events and macro-economic volatility. | Active |
+| MetricsMethodologyPage | [`pages/MetricsMethodologyPage.tsx`](src/pages/MetricsMethodologyPage.tsx) | Page | Route | Central hub for all proprietary metric formulas, intuition, and data sourcing logs. | Active |
+| NetLiquidityGauge | [`pages/tools/NetLiquidityGauge.tsx`](src/pages/tools/NetLiquidityGauge.tsx) | Page | Route | Real-time gauge of global G3 net liquidity conditions. | Active |
+| NetLiquidityZScorePage | [`pages/methods/NetLiquidityZScorePage.tsx`](src/pages/methods/NetLiquidityZScorePage.tsx) | Page | Route | Methodology page for the Global Net Liquidity Z-Score valuation indicator. | Active |
+| PrivacyPolicy | [`pages/PrivacyPolicy.tsx`](src/pages/PrivacyPolicy.tsx) | Page | Route | Legal document outlining data handling and privacy protections. | Active |
+| RegimeDigestArchivePage | [`pages/RegimeDigestArchivePage.tsx`](src/pages/RegimeDigestArchivePage.tsx) | Page | Route | Historical archive of previous Macro Regime Digest reports. | Active |
+| RegimeDigestPage | [`pages/RegimeDigestPage.tsx`](src/pages/RegimeDigestPage.tsx) | Page | Route | Latest deep-dive report on current global macro-economic regimes and asset allocation. | Active |
+| ShadowSystemLab | [`pages/labs/ShadowSystemLab.tsx`](src/pages/labs/ShadowSystemLab.tsx) | Page | Route | Analytics lab focused on shadow banking, offshore dollar liquidity, and non-bank lending. | Active |
+| SovereignStressLab | [`pages/labs/SovereignStressLab.tsx`](src/pages/labs/SovereignStressLab.tsx) | Page | Route | Specialized lab for monitoring sovereign debt levels, CDS spreads, and default probabilities. | Active |
+| SustainableFinanceLab | [`pages/labs/SustainableFinanceLab.tsx`](src/pages/labs/SustainableFinanceLab.tsx) | Page | Route | Lab for tracking ESG capital flows, green bond issuance, and carbon pricing regimes. | Active |
+| Terminal | [`pages/Terminal.tsx`](src/pages/Terminal.tsx) | Page | Route | Main sovereign intelligence terminal interface, featuring modular monitors and grids. | Active |
+| TermsOfService | [`pages/TermsOfService.tsx`](src/pages/TermsOfService.tsx) | Page | Route | Legal agreement governing the use of the GraphiQuestor terminal. | Active |
+| USCompanyDetail | [`pages/USCompanyDetail.tsx`](src/pages/USCompanyDetail.tsx) | Page | Route | Comprehensive analyst view of a specific US corporate entity with macro signal overlays. | Active |
+| USEquitiesEngine | [`pages/USEquitiesEngine.tsx`](src/pages/USEquitiesEngine.tsx) | Page | Route | Portal for US equity market analytics, insider activity, and whale tracking. | Active |
+| USMacroFiscalLab | [`pages/labs/USMacroFiscalLab.tsx`](src/pages/labs/USMacroFiscalLab.tsx) | Page | Route | Specialized lab for US-specific macro-economic and fiscal analytics, including debt maturity walls. | Active |
+| WeeklyNarrativeArchive | [`pages/WeeklyNarrativeArchive.tsx`](src/pages/WeeklyNarrativeArchive.tsx) | Page | Route | Archive of weekly macro narrative reports and institutional memos. | Active |
+| GlobalRefiningMap | [`features/dashboard/components/refining/GlobalRefiningMap.tsx`](src/features/dashboard/components/refining/GlobalRefiningMap.tsx) | Refining | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| GlobalRefiningMonitorSection | [`features/dashboard/components/refining/GlobalRefiningMonitorSection.tsx`](src/features/dashboard/components/refining/GlobalRefiningMonitorSection.tsx) | Refining | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| RefiningFocusCards | [`features/dashboard/components/refining/RefiningFocusCards.tsx`](src/features/dashboard/components/refining/RefiningFocusCards.tsx) | Refining | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| RegionalImbalanceGauge | [`features/dashboard/components/refining/RegionalImbalanceGauge.tsx`](src/features/dashboard/components/refining/RegionalImbalanceGauge.tsx) | Refining | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| TopRefinersTable | [`features/dashboard/components/refining/TopRefinersTable.tsx`](src/features/dashboard/components/refining/TopRefinersTable.tsx) | Refining | Terminal/Lab | Institutional component for macro-economic analysis and visualization. | Active |
+| AIComputeEnergyMonitor | [`features/dashboard/components/rows/AIComputeEnergyMonitor.tsx`](src/features/dashboard/components/rows/AIComputeEnergyMonitor.tsx) | Row | Terminal Main | Tracks the energy consumption and infrastructure requirements of global AI build-outs. | Active |
+| BoJStressMonitor | [`features/dashboard/components/rows/BoJStressMonitor.tsx`](src/features/dashboard/components/rows/BoJStressMonitor.tsx) | Row | Terminal Main | Monitors Bank of Japan monetary policy shifts and their impact on global carries. | Active |
+| CapitalFlowsTerminal | [`features/dashboard/components/rows/CapitalFlowsTerminal.tsx`](src/features/dashboard/components/rows/CapitalFlowsTerminal.tsx) | Row | Terminal Main | Real-time monitor for cross-border capital flows and foreign direct investment. | Active |
+| CentralBankGoldNet | [`features/dashboard/components/rows/CentralBankGoldNet.tsx`](src/features/dashboard/components/rows/CentralBankGoldNet.tsx) | Row | Terminal Main | Specialized monitor for central bank net gold purchases and reserve diversification. | Active |
+| China15thFYPTeaserRow | [`features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow.tsx`](src/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow.tsx) | Row | Terminal Main | Summary overview row for the China 15th Five-Year Plan Analytics suite. | Active |
+| ComparisonToggle14v15 | [`features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15.tsx`](src/features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15.tsx) | Row | Terminal Main | Interactive toggle for comparing targets between China's 14th and 15th Five-Year Plans. | Active |
+| CurrencyWarsMonitor | [`features/dashboard/components/rows/CurrencyWarsMonitor.tsx`](src/features/dashboard/components/rows/CurrencyWarsMonitor.tsx) | Row | Terminal Main | Monitors relative currency debasement and competitive devaluations across G20 nations. | Active |
+| DeflationDebasementMonitor | [`features/dashboard/components/rows/DeflationDebasementMonitor.tsx`](src/features/dashboard/components/rows/DeflationDebasementMonitor.tsx) | Row | Terminal Main | Cross-asset monitor comparing deflationary shocks vs. monetary debasement regimes. | Active |
+| FYP_HeroTimeline | [`features/dashboard/components/rows/China15thFYP/FYP_HeroTimeline.tsx`](src/features/dashboard/components/rows/China15thFYP/FYP_HeroTimeline.tsx) | Row | Terminal Main | Visual timeline of key policy milestones and target deadlines in China's FYP. | Active |
+| FYP_ImpactHeatmap | [`features/dashboard/components/rows/China15thFYP/FYP_ImpactHeatmap.tsx`](src/features/dashboard/components/rows/China15thFYP/FYP_ImpactHeatmap.tsx) | Row | Terminal Main | Heatmap analyzing the sector-specific impacts of FYP policy directives. | Active |
+| FYP_MissionControlRadar | [`features/dashboard/components/rows/China15thFYP/FYP_MissionControlRadar.tsx`](src/features/dashboard/components/rows/China15thFYP/FYP_MissionControlRadar.tsx) | Row | Terminal Main | Strategic radar chart visualizing progress toward key FYP targets. | Active |
+| FYP_TargetGrid | [`features/dashboard/components/rows/China15thFYP/FYP_TargetGrid.tsx`](src/features/dashboard/components/rows/China15thFYP/FYP_TargetGrid.tsx) | Row | Terminal Main | Detailed grid view of specific quantitative targets in the 15th Five-Year Plan. | Active |
+| FedMonetizationMonitor | [`features/dashboard/components/rows/FedMonetizationMonitor.tsx`](src/features/dashboard/components/rows/FedMonetizationMonitor.tsx) | Row | Terminal Main | Tracks the extent of US debt monetization by the Federal Reserve balance sheet. | Active |
+| G20GdpPerCapitaConvergence | [`features/dashboard/components/rows/G20GdpPerCapitaConvergence.tsx`](src/features/dashboard/components/rows/G20GdpPerCapitaConvergence.tsx) | Row | Terminal Main | Tracks the long-term convergence of GDP per capita across G20 nations vs. the US. | Active |
+| GeopoliticalEventsRow | [`features/dashboard/components/rows/GeopoliticalEventsRow.tsx`](src/features/dashboard/components/rows/GeopoliticalEventsRow.tsx) | Row | Terminal Main | Chronological row displaying major geopolitical events and their immediate market impacts. | Active |
+| GlobalFinancialHubsGoldGateways | [`features/dashboard/components/rows/GlobalFinancialHubsGoldGateways.tsx`](src/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways.tsx) | Row | Terminal Main | Monitors gold flows through major global financial hubs like London, NY, and Dubai. | Active |
+| IndiaCreditCycleClock | [`features/dashboard/components/rows/IndiaCreditCycleClock.tsx`](src/features/dashboard/components/rows/IndiaCreditCycleClock.tsx) | Row | Terminal Main | Visual clock reflecting India's current position in the corporate and household credit cycle. | Active |
+| IndiaDebtMaturityWall | [`features/dashboard/components/rows/IndiaDebtMaturityWall.tsx`](src/features/dashboard/components/rows/IndiaDebtMaturityWall.tsx) | Row | Terminal Main | Visualizes the upcoming debt maturity profile for Indian sovereign and corporate debt. | Active |
+| IndiaDigitizationPremiumMonitor | [`features/dashboard/components/rows/IndiaDigitizationPremiumMonitor.tsx`](src/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor.tsx) | Row | Terminal Main | Measures the economic value-add and efficiency gains from India's digitization drive. | Active |
+| IndiaFiscalAllocationTracker | [`features/dashboard/components/rows/IndiaFiscalAllocationTracker.tsx`](src/features/dashboard/components/rows/IndiaFiscalAllocationTracker.tsx) | Row | Terminal Main | Tracks government fiscal spending and budget allocations across key sectors in real-time. | Active |
+| IndiaFiscalStressMonitor | [`features/dashboard/components/rows/IndiaFiscalStressMonitor.tsx`](src/features/dashboard/components/rows/IndiaFiscalStressMonitor.tsx) | Row | Terminal Main | Monitors India's fiscal health focusing on deficit levels, tax collections, and interest ratios. | Active |
+| IndiaInflationPulseMonitor | [`features/dashboard/components/rows/IndiaInflationPulseMonitor.tsx`](src/features/dashboard/components/rows/IndiaInflationPulseMonitor.tsx) | Row | Terminal Main | High-frequency monitor for CPI, WPI, and core inflation trends in India. | Active |
+| IndiaLiquidityStressMonitor | [`features/dashboard/components/rows/IndiaLiquidityStressMonitor.tsx`](src/features/dashboard/components/rows/IndiaLiquidityStressMonitor.tsx) | Row | Terminal Main | Monitors RBI liquidity conditions, interbank rates, and systemic liquidity buffers. | Active |
+| IndiaMarketPulseRow | [`features/dashboard/components/rows/IndiaMarketPulseRow.tsx`](src/features/dashboard/components/rows/IndiaMarketPulseRow.tsx) | Row | Terminal Main | Composite row summarizing Indian equity market breadth, valuation, and flow sentiment. | Active |
+| IranConflictImpactMonitor | [`features/dashboard/components/rows/IranConflictImpactMonitor.tsx`](src/features/dashboard/components/rows/IranConflictImpactMonitor.tsx) | Row | Terminal Main | Specialized monitor for energy prices and trade flow risks arising from Middle East conflicts. | Active |
+| NetLiquidityRow | [`features/dashboard/components/rows/NetLiquidityRow.tsx`](src/features/dashboard/components/rows/NetLiquidityRow.tsx) | Row | Terminal Main | Real-time row component monitoring global G3 net liquidity levels. | Active |
+| RBIFXDefenseMonitor | [`features/dashboard/components/rows/RBIFXDefenseMonitor.tsx`](src/features/dashboard/components/rows/RBIFXDefenseMonitor.tsx) | Row | Terminal Main | Monitors RBI's FX intervention activity and foreign exchange reserve adequacy. | Active |
+| ReserveSellerTracker | [`features/dashboard/components/rows/ReserveSellerTracker.tsx`](src/features/dashboard/components/rows/ReserveSellerTracker.tsx) | Row | Terminal Main | Identifies and tracks large sovereign sellers of US Treasuries and USD-denominated assets. | Active |
+| ShadowTradeCard | [`features/dashboard/components/rows/ShadowTradeCard.tsx`](src/features/dashboard/components/rows/ShadowTradeCard.tsx) | Row | Terminal Main | Visualizes 'dark' or indirect trade flows that bypass traditional sanctions or reporting. | Active |
+| StateFiscalHeatmap | [`features/dashboard/components/rows/StateFiscalHeatmap.tsx`](src/features/dashboard/components/rows/StateFiscalHeatmap.tsx) | Row | Terminal Main | Heatmap comparing the fiscal health and debt levels of individual Indian states. | Active |
+| TradeGravityCard | [`features/dashboard/components/rows/TradeGravityCard.tsx`](src/features/dashboard/components/rows/TradeGravityCard.tsx) | Row | Terminal Main | Models bilateral trade potential based on geographic proximity and GDP size. | Active |
+| USEquitiesTeaserRow | [`features/dashboard/components/rows/USEquitiesTeaserRow.tsx`](src/features/dashboard/components/rows/USEquitiesTeaserRow.tsx) | Row | Terminal Main | Summary row previewing US equity market internals and sentiment indicators. | Active |
+| USFiscalComparisonChart | [`features/dashboard/components/rows/USFiscalComparisonChart.tsx`](src/features/dashboard/components/rows/USFiscalComparisonChart.tsx) | Row | Terminal Main | Chart comparing US fiscal deficit and entitlement spending trends vs. historical norms. | Active |
+| USTreasuryDemandGauge | [`features/dashboard/components/rows/USTreasuryDemandGauge.tsx`](src/features/dashboard/components/rows/USTreasuryDemandGauge.tsx) | Row | Terminal Main | Measures relative demand for US Treasury auctions across different tenors. | Active |
+| YieldCurveMonitor | [`features/dashboard/components/rows/YieldCurveMonitor.tsx`](src/features/dashboard/components/rows/YieldCurveMonitor.tsx) | Row | Terminal Main | Interactive monitor for G10 and EM sovereign yield curves highlighting inversions. | Active |
+| ASISection | [`features/dashboard/components/sections/ASISection.tsx`](src/features/dashboard/components/sections/ASISection.tsx) | Section | Terminal Main | Analytics section dedicated to the Annual Survey of Industries (ASI) data for India. | Active |
+| AsiaCommodityFlowsSection | [`features/dashboard/components/sections/AsiaCommodityFlowsSection.tsx`](src/features/dashboard/components/sections/AsiaCommodityFlowsSection.tsx) | Section | Terminal Main | Deep-dive section for bilateral commodity trade flows between Asian nations. | Active |
+| BOPPressureTable | [`features/dashboard/components/sections/BOPPressureTable.tsx`](src/features/dashboard/components/sections/BOPPressureTable.tsx) | Section | Terminal Main | Detailed table analyzing Balance of Payments (BOP) pressure across EM sovereigns. | Active |
+| BalanceOfPaymentsPressureCard | [`features/dashboard/components/sections/BalanceOfPaymentsPressureCard.tsx`](src/features/dashboard/components/sections/BalanceOfPaymentsPressureCard.tsx) | Section | Terminal Main | Summary card indicating immediate BOP and currency crisis risks. | Active |
+| BoJBalanceSheetCard | [`features/dashboard/components/sections/BoJBalanceSheetCard.tsx`](src/features/dashboard/components/sections/BoJBalanceSheetCard.tsx) | Section | Terminal Main | Specialized card monitoring the size and composition of the Bank of Japan's balance sheet. | Active |
+| ChinaEnergyGridPanel | [`features/dashboard/components/sections/ChinaEnergyGridPanel.tsx`](src/features/dashboard/components/sections/ChinaEnergyGridPanel.tsx) | Section | Terminal Main | Monitor for China's power grid stability, renewable integration, and fossil fuel consumption. | Active |
+| ChinaExternalSectorPanel | [`features/dashboard/components/sections/ChinaExternalSectorPanel.tsx`](src/features/dashboard/components/sections/ChinaExternalSectorPanel.tsx) | Section | Terminal Main | Analyzes China's trade balance, current account, and foreign exchange reserves. | Active |
+| ChinaMacroPulseSection | [`features/dashboard/components/sections/ChinaMacroPulseSection.tsx`](src/features/dashboard/components/sections/ChinaMacroPulseSection.tsx) | Section | Terminal Main | Composite section for real-time tracking of China's core macro-economic pulse. | Active |
+| ChinaPBOCLiquidityMonitor | [`features/dashboard/components/sections/ChinaPBOCLiquidityMonitor.tsx`](src/features/dashboard/components/sections/ChinaPBOCLiquidityMonitor.tsx) | Section | Terminal Main | Monitors People's Bank of China (PBOC) open market operations and injections. | Active |
+| ChinaProprietarySignals | [`features/dashboard/components/sections/ChinaProprietarySignals.tsx`](src/features/dashboard/components/sections/ChinaProprietarySignals.tsx) | Section | Terminal Main | Specialized section for non-consensus proprietary macro indicators for China. | Active |
+| ChinaRealEconomyPanel | [`features/dashboard/components/sections/ChinaRealEconomyPanel.tsx`](src/features/dashboard/components/sections/ChinaRealEconomyPanel.tsx) | Section | Terminal Main | Tracks industrial production, retail sales, and real-world activity in China. | Active |
+| ClimateRiskDashboard | [`features/dashboard/components/sections/ClimateRiskDashboard.tsx`](src/features/dashboard/components/sections/ClimateRiskDashboard.tsx) | Section | Terminal Main | Interactive dashboard assessing physical and transition climate risks for sovereigns. | Active |
+| CommodityTerminal | [`features/dashboard/components/sections/CommodityTerminal.tsx`](src/features/dashboard/components/sections/CommodityTerminal.tsx) | Section | Terminal Main | Main analytical terminal section for monitoring global commodities and energy assets. | Active |
+| CompositeIndexCard | [`features/dashboard/components/sections/CompositeIndexCard.tsx`](src/features/dashboard/components/sections/CompositeIndexCard.tsx) | Section | Terminal Main | Displays the latest value and trajectory of proprietary composite macro indices. | Active |
+| CompositeMetricsSection | [`features/dashboard/components/sections/CompositeMetricsSection.tsx`](src/features/dashboard/components/sections/CompositeMetricsSection.tsx) | Section | Terminal Main | Detail section explaining the components and weightings of composite macro indicators. | Active |
+| CorporateTreasuryHedgingSection | [`features/dashboard/components/sections/CorporateTreasuryHedgingSection.tsx`](src/features/dashboard/components/sections/CorporateTreasuryHedgingSection.tsx) | Section | Terminal Main | Analyzes corporate exposure to currency and interest rate volatility. | Active |
+| CreditCreationPulseCard | [`features/dashboard/components/sections/CreditCreationPulseCard.tsx`](src/features/dashboard/components/sections/CreditCreationPulseCard.tsx) | Section | Terminal Main | Monitors the rate and quality of credit creation in the commercial banking system. | Active |
+| ECBBalanceSheetCard | [`features/dashboard/components/sections/ECBBalanceSheetCard.tsx`](src/features/dashboard/components/sections/ECBBalanceSheetCard.tsx) | Section | Terminal Main | Specialized card monitoring the European Central Bank's balance sheet. | Active |
+| EastWestDebtInfluence | [`features/dashboard/components/sections/EastWestDebtInfluence.tsx`](src/features/dashboard/components/sections/EastWestDebtInfluence.tsx) | Section | Terminal Main | Analyzes the shift in global debt holdings and influence from G7 to BRICS+ nations. | Active |
+| EnergySection | [`features/dashboard/components/sections/EnergySection.tsx`](src/features/dashboard/components/sections/EnergySection.tsx) | Section | Terminal Main | Main analytics section for global energy markets, power generation, and transition flows. | Active |
+| FIIDIIMonitorSection | [`features/dashboard/components/sections/FIIDIIMonitorSection.tsx`](src/features/dashboard/components/sections/FIIDIIMonitorSection.tsx) | Section | Terminal Main | Real-time monitor for Foreign and Domestic Institutional Investor flows. | Active |
+| FeedbackSection | [`features/dashboard/components/sections/FeedbackSection.tsx`](src/features/dashboard/components/sections/FeedbackSection.tsx) | Section | Terminal Main | User interface for submitting platform feedback and research requests. | Active |
+| G20GoldDebtCoveragePanel | [`features/dashboard/components/sections/G20GoldDebtCoveragePanel.tsx`](src/features/dashboard/components/sections/G20GoldDebtCoveragePanel.tsx) | Section | Terminal Main | Comparative panel showing gold reserve coverage of national debt across G20 nations. | Active |
+| GeopoliticalRiskPulseCard | [`features/dashboard/components/sections/GeopoliticalRiskPulseCard.tsx`](src/features/dashboard/components/sections/GeopoliticalRiskPulseCard.tsx) | Section | Terminal Main | Summary indicator of current global geopolitical tension and risk levels. | Active |
+| GlobalLiquidityMonitor | [`features/dashboard/components/sections/GlobalLiquidityMonitor.tsx`](src/features/dashboard/components/sections/GlobalLiquidityMonitor.tsx) | Section | Terminal Main | Comprehensive monitor for global monetary conditions and cross-border liquidity. | Active |
+| GlobalLiquiditySection | [`features/dashboard/components/sections/GlobalLiquiditySection.tsx`](src/features/dashboard/components/sections/GlobalLiquiditySection.tsx) | Section | Terminal Main | Detail section for analyzing central bank balance sheets and financial indices. | Active |
+| GlobalReserveTracker | [`features/dashboard/components/sections/GlobalReserveTracker.tsx`](src/features/dashboard/components/sections/GlobalReserveTracker.tsx) | Section | Terminal Main | Tracks the composition and value of global central bank foreign exchange reserves. | Active |
+| GoldPositioningMonitor | [`features/dashboard/components/sections/GoldPositioningMonitor.tsx`](src/features/dashboard/components/sections/GoldPositioningMonitor.tsx) | Section | Terminal Main | Monitors net speculative and commercial positioning in gold futures and ETFs. | Active |
+| GoldRatioRibbon | [`features/dashboard/components/sections/GoldRatioRibbon.tsx`](src/features/dashboard/components/sections/GoldRatioRibbon.tsx) | Section | Terminal Main | Visualizes multiple gold-to-asset ratios to determine relative valuation regimes. | Active |
+| GoldReturnsSection | [`features/dashboard/components/sections/GoldReturnsSection.tsx`](src/features/dashboard/components/sections/GoldReturnsSection.tsx) | Section | Terminal Main | Historical and regime-based analysis of gold performance in varied macro environments. | Active |
+| GoldValuationStrip | [`features/dashboard/components/sections/GoldValuationStrip.tsx`](src/features/dashboard/components/sections/GoldValuationStrip.tsx) | Section | Terminal Main | Compact strip displaying theoretical valuations for gold based on monetary metrics. | Active |
+| HardAssetValuationSection | [`features/dashboard/components/sections/HardAssetValuationSection.tsx`](src/features/dashboard/components/sections/HardAssetValuationSection.tsx) | Section | Terminal Main | Analytics section focused on relative valuation of tangible vs. financial assets. | Active |
+| IndiaMacroCard | [`features/dashboard/components/sections/IndiaMacroCard.tsx`](src/features/dashboard/components/sections/IndiaMacroCard.tsx) | Section | Terminal Main | High-level summary card for India's core macroeconomic trajectory and fiscal health. | Active |
+| IndiaMacroPulseSection | [`features/dashboard/components/sections/IndiaMacroPulseSection.tsx`](src/features/dashboard/components/sections/IndiaMacroPulseSection.tsx) | Section | Terminal Main | Main portal for monitoring India's real-time macro-economic pulse and policy shifts. | Active |
+| InstitutionalInfluenceSection | [`features/dashboard/components/sections/InstitutionalInfluenceSection.tsx`](src/features/dashboard/components/sections/InstitutionalInfluenceSection.tsx) | Section | Terminal Main | Analyzes the impact of institutional capital flows on asset price discovery. | Active |
+| LiquidityAlarmCard | [`features/dashboard/components/sections/LiquidityAlarmCard.tsx`](src/features/dashboard/components/sections/LiquidityAlarmCard.tsx) | Section | Terminal Main | Alerts users to sudden contractions or expansions in systemic global liquidity. | Active |
+| LiquidityHeatmapGrid | [`features/dashboard/components/sections/LiquidityHeatmapGrid.tsx`](src/features/dashboard/components/sections/LiquidityHeatmapGrid.tsx) | Section | Terminal Main | Grid of liquidity indicators across multiple currencies and central bank regimes. | Active |
+| MacroEconomicCalendar | [`features/dashboard/components/sections/MacroEconomicCalendar.tsx`](src/features/dashboard/components/sections/MacroEconomicCalendar.tsx) | Section | Terminal Main | Curated calendar of macro-economic data releases and central bank meetings. | Active |
+| MacroOrientationSection | [`features/dashboard/components/sections/MacroOrientationSection.tsx`](src/features/dashboard/components/sections/MacroOrientationSection.tsx) | Section | Terminal Main | Educational section explaining high-level macro-economic frameworks and regimes. | Active |
+| OECDLeadingIndicatorsCard | [`features/dashboard/components/sections/OECDLeadingIndicatorsCard.tsx`](src/features/dashboard/components/sections/OECDLeadingIndicatorsCard.tsx) | Section | Terminal Main | Tracks leading economic indicators for G20 nations as published by the OECD. | Active |
+| OffshoreDollarStressCard | [`features/dashboard/components/sections/OffshoreDollarStressCard.tsx`](src/features/dashboard/components/sections/OffshoreDollarStressCard.tsx) | Section | Terminal Main | Measures stress in the 'Eurodollar' or offshore USD funding markets. | Active |
+| PetrodollarVsPetroyuan | [`features/dashboard/components/sections/PetrodollarVsPetroyuan.tsx`](src/features/dashboard/components/sections/PetrodollarVsPetroyuan.tsx) | Section | Terminal Main | Analyzes the shifting dominance in global energy settlement from USD to CNY. | Active |
+| PreciousDivergenceCard | [`features/dashboard/components/sections/PreciousDivergenceCard.tsx`](src/features/dashboard/components/sections/PreciousDivergenceCard.tsx) | Section | Terminal Main | Analyzes the price divergence between precious metals and industrial metals. | Active |
+| PresidentialPolicyTracker | [`features/dashboard/components/sections/PresidentialPolicyTracker.tsx`](src/features/dashboard/components/sections/PresidentialPolicyTracker.tsx) | Section | Terminal Main | Tracks and analyzes the economic impact of US presidential policy directives. | Active |
+| RBIMoneyMarketMonitor | [`features/dashboard/components/sections/RBIMoneyMarketMonitor.tsx`](src/features/dashboard/components/sections/RBIMoneyMarketMonitor.tsx) | Section | Terminal Main | Monitors RBI's repo, reverse repo, and marginal standing facility (MSF) usage. | Active |
+| RegimeDigestSection | [`features/dashboard/components/sections/RegimeDigestSection.tsx`](src/features/dashboard/components/sections/RegimeDigestSection.tsx) | Section | Terminal Main | Summary overview of the latest Macro Regime Digest for the terminal dashboard. | Active |
+| RegimeReplayModal | [`features/dashboard/components/sections/RegimeReplayModal.tsx`](src/features/dashboard/components/sections/RegimeReplayModal.tsx) | Section | Terminal Main | Interactive modal for backtesting asset performance across historical macro regimes. | Active |
+| ScenarioStudio | [`features/dashboard/components/sections/ScenarioStudio.tsx`](src/features/dashboard/components/sections/ScenarioStudio.tsx) | Section | Terminal Main | Strategic 'what-if' simulator for modeling macro-economic shocks. | Active |
+| SmartMoneyFlowMonitor | [`features/dashboard/components/sections/SmartMoneyFlowMonitor.tsx`](src/features/dashboard/components/sections/SmartMoneyFlowMonitor.tsx) | Section | Terminal Main | Monitors institutional capital flows and positioning in major asset classes. | Active |
+| SovereignEnergySecuritySection | [`features/dashboard/components/sections/SovereignEnergySecuritySection.tsx`](src/features/dashboard/components/sections/SovereignEnergySecuritySection.tsx) | Section | Terminal Main | Specialized section assessing sovereign risk via energy dependency metrics. | Active |
+| SovereignRiskMatrix | [`features/dashboard/components/sections/SovereignRiskMatrix.tsx`](src/features/dashboard/components/sections/SovereignRiskMatrix.tsx) | Section | Terminal Main | Multidimensional matrix comparing sovereign default risks and CDS spreads. | Active |
+| TodaysBriefPanel | [`features/dashboard/components/sections/TodaysBriefPanel.tsx`](src/features/dashboard/components/sections/TodaysBriefPanel.tsx) | Section | Terminal Main | Daily briefing panel summarizing overnight macro developments and signals. | Active |
+| TradeSettlementFlows | [`features/dashboard/components/sections/TradeSettlementFlows.tsx`](src/features/dashboard/components/sections/TradeSettlementFlows.tsx) | Section | Terminal Main | Monitors the shift in international trade settlement from USD to local currencies. | Active |
+| TreasuryHoldersSection | [`features/dashboard/components/sections/TreasuryHoldersSection.tsx`](src/features/dashboard/components/sections/TreasuryHoldersSection.tsx) | Section | Terminal Main | Detailed breakdown of US Treasury ownership by country and institution type. | Active |
+| TreasurySnapshotSection | [`features/dashboard/components/sections/TreasurySnapshotSection.tsx`](src/features/dashboard/components/sections/TreasurySnapshotSection.tsx) | Section | Terminal Main | Real-time snapshot of the US Treasury yield curve and auction performance. | Active |
+| UPIAutopayFailureCard | [`features/dashboard/components/sections/UPIAutopayFailureCard.tsx`](src/features/dashboard/components/sections/UPIAutopayFailureCard.tsx) | Section | Terminal Main | Indicator for Indian consumer credit health based on UPI autopay failure rates. | Active |
+| USMacroPulseSection | [`features/dashboard/components/sections/USMacroPulseSection.tsx`](src/features/dashboard/components/sections/USMacroPulseSection.tsx) | Section | Terminal Main | Main portal for monitoring the US macro-economic cycle and fiscal trajectory. | Active |
+| UpcomingEventsCard | [`features/dashboard/components/sections/UpcomingEventsCard.tsx`](src/features/dashboard/components/sections/UpcomingEventsCard.tsx) | Section | Terminal Main | Curated list of upcoming geopolitical and macro-economic events with high impact. | Active |
+| WeeklyNarrativeSection | [`features/dashboard/components/sections/WeeklyNarrativeSection.tsx`](src/features/dashboard/components/sections/WeeklyNarrativeSection.tsx) | Section | Terminal Main | Summary of the weekly macro narrative report and institutional memos. | Active |
+| AlertBadge | [`components/AlertBadge.tsx`](src/components/AlertBadge.tsx) | Shared UI | Global | Multi-size badge indicating the Z-Score or intensity of a macro signal alert. | Active |
+| CardSkeleton | [`components/ui/skeleton.tsx`](src/components/ui/skeleton.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| ChartInsightSummary | [`components/ChartInsightSummary.tsx`](src/components/ChartInsightSummary.tsx) | Shared UI | Global | Compact summary of a specific chart's key takeaway or predictive insight. | Active |
+| ChartSkeleton | [`components/ui/skeleton.tsx`](src/components/ui/skeleton.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| CollapsibleSection | [`components/CollapsibleSection.tsx`](src/components/CollapsibleSection.tsx) | Shared UI | Global | Reusable UI shell for creating organized, collapsible analytical blocks. | Active |
+| CommandPalette | [`components/CommandPalette/CommandPalette.tsx`](src/components/CommandPalette/CommandPalette.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| CorporateDebtMaturityWall | [`components/CorporateDebtMaturityWall.tsx`](src/components/CorporateDebtMaturityWall.tsx) | Shared UI | Global | Visualizes the weighted-average debt maturity profile for corporate sectors. | Active |
+| CountryNarrativeBlock | [`components/CountryNarrativeBlock.tsx`](src/components/CountryNarrativeBlock.tsx) | Shared UI | Global | Narrative component for displaying qualitative analyst summaries of sovereign risk. | Active |
+| DataHealthBanner | [`components/DataHealthBanner.tsx`](src/components/DataHealthBanner.tsx) | Shared UI | Global | Global status banner reflecting the overall integrity and freshness of platform data. | Active |
+| DataHealthTicker | [`components/DataHealthTicker.tsx`](src/components/DataHealthTicker.tsx) | Shared UI | Global | High-density ticker showing real-time ingestion status of key data series. | Active |
+| DataProvenanceBadge | [`components/DataProvenanceBadge.tsx`](src/components/DataProvenanceBadge.tsx) | Shared UI | Global | Badge indicating the primary source and methodology for a specific data point. | Active |
+| DataQualityBadge | [`components/DataQualityBadge.tsx`](src/components/DataQualityBadge.tsx) | Shared UI | Global | Badge reflecting the statistical confidence and reliability of a data series. | Active |
+| ErrorBoundary | [`components/ErrorBoundary.tsx`](src/components/ErrorBoundary.tsx) | Shared UI | Global | Standard error boundary for gracefully handling component-level failures. | Active |
+| FedMonetizationMonitor | [`components/labs/FedMonetizationMonitor.tsx`](src/components/labs/FedMonetizationMonitor.tsx) | Shared UI | Global | Tracks the extent of US debt monetization by the Federal Reserve balance sheet. | Active |
+| FreshnessChip | [`components/FreshnessChip.tsx`](src/components/FreshnessChip.tsx) | Shared UI | Global | UI chip indicating how recently a specific data point was updated. | Active |
+| FuelSecurityClockIndia | [`features/energy/components/FuelSecurityClockIndia.tsx`](src/features/energy/components/FuelSecurityClockIndia.tsx) | Shared UI | Global | Specialized clock visualizing India's tactical fuel reserves and supply runway. | Active |
+| FundingPlumbingStress | [`components/labs/FundingPlumbingStress.tsx`](src/components/labs/FundingPlumbingStress.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| GlobalErrorBoundary | [`components/GlobalErrorBoundary.tsx`](src/components/GlobalErrorBoundary.tsx) | Shared UI | Global | Robust error boundary for capturing fatal UI crashes at the application root. | Active |
+| HoverDetail | [`components/HoverDetail.tsx`](src/components/HoverDetail.tsx) | Shared UI | Global | Specialized hover component for displaying granular technical details on metrics. | Active |
+| HoverTooltip | [`components/HoverTooltip.tsx`](src/components/HoverTooltip.tsx) | Shared UI | Global | Versatile tooltip for providing contextual definitions and methodology notes. | Active |
+| InstitutionalFooter | [`components/InstitutionalFooter.tsx`](src/components/InstitutionalFooter.tsx) | Shared UI | Global | Branded footer containing platform links, institutional resources, and legal notices. | Active |
+| IntelligenceSidebar | [`components/IntelligenceSidebar.tsx`](src/components/IntelligenceSidebar.tsx) | Shared UI | Global | Interactive sidebar for navigating terminal intelligence modules. | Active |
+| LazyRender | [`components/LazyRender.tsx`](src/components/LazyRender.tsx) | Shared UI | Global | Performance-optimizing wrapper for deferred rendering of heavy components. | Active |
+| LiveStatusIndicator | [`components/LiveStatusIndicator.tsx`](src/components/LiveStatusIndicator.tsx) | Shared UI | Global | Animated indicator showing real-time connectivity or data stream status. | Active |
+| MetricCard | [`components/MetricCard.tsx`](src/components/MetricCard.tsx) | Shared UI | Global | Standardized card for displaying a macro metric with delta and provenance metadata. | Active |
+| MetricCardSkeleton | [`components/ui/skeleton.tsx`](src/components/ui/skeleton.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| MobileNav | [`components/MobileNav.tsx`](src/components/MobileNav.tsx) | Shared UI | Global | Responsive navigation menu optimized for mobile terminal access. | Active |
+| MotionCard | [`components/MotionCard.tsx`](src/components/MotionCard.tsx) | Shared UI | Global | Decorative wrapper that adds entrance and hover animations to UI cards. | Active |
+| QuickTourModal | [`components/QuickTourModal.tsx`](src/components/QuickTourModal.tsx) | Shared UI | Global | Interactive onboarding tour guiding new users through terminal features. | Active |
+| RatioCard | [`components/RatioCard.tsx`](src/components/RatioCard.tsx) | Shared UI | Global | Specialized card for comparing two macro metrics as a ratio (e.g., Debt/GDP). | Active |
+| RatioRow | [`components/spa/RatioRow.tsx`](src/components/spa/RatioRow.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| SEOManager | [`components/SEOManager.tsx`](src/components/SEOManager.tsx) | Shared UI | Global | Global component for managing page titles, meta descriptions, and structured data. | Active |
+| SPAAccordion | [`components/spa/SPAAccordion.tsx`](src/components/spa/SPAAccordion.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| SPASection | [`components/spa/SPASection.tsx`](src/components/spa/SPASection.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| SectionErrorBoundary | [`components/SectionErrorBoundary.tsx`](src/components/SectionErrorBoundary.tsx) | Shared UI | Global | Targeted error boundary for isolating failures within specific sections. | Active |
+| SectionHeader | [`components/SectionHeader.tsx`](src/components/SectionHeader.tsx) | Shared UI | Global | Consistent header component with title, icon, and contextual action buttons. | Active |
+| Skeleton | [`components/ui/skeleton.tsx`](src/components/ui/skeleton.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| SocialShareMode | [`components/SocialShareMode.tsx`](src/components/SocialShareMode.tsx) | Shared UI | Global | Interface for generating high-fidelity screenshots of terminal views. | Active |
+| Sparkline | [`components/Sparkline.tsx`](src/components/Sparkline.tsx) | Shared UI | Global | Compact, lightweight line chart for displaying historical trends within cards. | Active |
+| StateMacroInsights | [`features/dashboard/components/StateMacroInsights.tsx`](src/features/dashboard/components/StateMacroInsights.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| TerminalSidebar | [`components/TerminalSidebar.tsx`](src/components/TerminalSidebar.tsx) | Shared UI | Global | Collapsible sidebar for rapid navigation between terminal rooms and labs. | Active |
+| Toaster | [`components/ui/toaster.tsx`](src/components/ui/toaster.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| TradeTape | [`components/TradeTape.tsx`](src/components/TradeTape.tsx) | Shared UI | Global | Real-time ticker tape of global commodity trade deals and asset transfers. | Active |
+| USDebtMaturityWall | [`components/USDebtMaturityWall.tsx`](src/components/USDebtMaturityWall.tsx) | Shared UI | Global | Visualizes the upcoming US National Debt maturity profile by tenor and year. | Active |
+| USFiscalDominanceMeter | [`components/USFiscalDominanceMeter.tsx`](src/components/USFiscalDominanceMeter.tsx) | Shared UI | Global | Real-time gauge measuring the fiscal dominance regime in the US economy. | Active |
+| WrappedInstitutionalHoldingsWall | [`components/InstitutionalHoldingsWall.tsx`](src/components/InstitutionalHoldingsWall.tsx) | Shared UI | Global | Institutional component for macro-economic analysis and visualization. | Active |
+| USFilingsFeed | [`features/USC/USFilingsFeed.tsx`](src/features/USC/USFilingsFeed.tsx) | USC (US Corp) | Feature Lab | Real-time feed of SEC Edgar filings (10-K, 10-Q, 8-K) for tracked US corporates. | Active |
+| USInsiderActivity | [`features/USC/USInsiderActivity.tsx`](src/features/USC/USInsiderActivity.tsx) | USC (US Corp) | Feature Lab | Monitors insider buying and selling activity across US equity markets. | Active |
+| USMacroCorrelation | [`features/USC/USMacroCorrelation.tsx`](src/features/USC/USMacroCorrelation.tsx) | USC (US Corp) | Feature Lab | Analyzes the correlation between individual stocks and macro-economic factors. | Active |
+| USScreener | [`features/USC/USScreener.tsx`](src/features/USC/USScreener.tsx) | USC (US Corp) | Feature Lab | Advanced US equity screener with fiscal policy and liquidity signal filters. | Active |
+| USSectorHeatmap | [`features/USC/USSectorHeatmap.tsx`](src/features/USC/USSectorHeatmap.tsx) | USC (US Corp) | Feature Lab | Interactive heatmap of US equity sectors colored by performance or macro sensitivity. | Active |
+| USWhaleTracker | [`features/USC/USWhaleTracker.tsx`](src/features/USC/USWhaleTracker.tsx) | USC (US Corp) | Feature Lab | Tracks institutional 'whale' movements and 13-F filings for major US hedge funds. | Active |
+| EMFlowStressMonitor | [`features/dashboard/components/widgets/EMFlowStressMonitor.tsx`](src/features/dashboard/components/widgets/EMFlowStressMonitor.tsx) | Widget | Terminal/Lab | Specialized widget for monitoring capital flight and currency stress in Emerging Markets. | Active |
+| GlobalCapitalFlowRadar | [`features/dashboard/components/widgets/GlobalCapitalFlowRadar.tsx`](src/features/dashboard/components/widgets/GlobalCapitalFlowRadar.tsx) | Widget | Terminal/Lab | Radar chart visualizing the magnitude and direction of global capital flows. | Active |
+| TICChoroplethMap | [`features/dashboard/components/widgets/TICChoroplethMap.tsx`](src/features/dashboard/components/widgets/TICChoroplethMap.tsx) | Widget | Terminal/Lab | Choropleth map illustrating foreign holdings of US Treasuries based on TIC data. | Active |
+| TICStatsDrawer | [`features/dashboard/components/widgets/TICStatsDrawer.tsx`](src/features/dashboard/components/widgets/TICStatsDrawer.tsx) | Widget | Terminal/Lab | Slide-out drawer containing detailed country-level TIC statistics and trends. | Active |
+| TICWorldMapModule | [`features/dashboard/components/widgets/TICWorldMapModule.tsx`](src/features/dashboard/components/widgets/TICWorldMapModule.tsx) | Widget | Terminal/Lab | Integrated world map module for global Treasury demand and TIC flow analytics. | Active |
