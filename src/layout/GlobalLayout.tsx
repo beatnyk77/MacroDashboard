@@ -61,23 +61,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
         return 'text-blue-500';
     }, [regime]);
 
-    // Hex colors for drop-shadow style which needs exact color
-    const regimeColorHex = useMemo(() => {
-        if (!regime) return '#3b82f6';
-        const label = regime.regimeLabel.toLowerCase();
-        if (label.includes('expansion') || label.includes('recovery')) return '#10b981';
-        if (label.includes('tightening') || label.includes('slowdown')) return '#f43f5e';
-        return '#3b82f6';
-    }, [regime]);
-
-    const bgTintStyle = useMemo(() => {
-        if (!regime) return 'transparent';
-        const label = regime.regimeLabel.toLowerCase();
-        // Very subtle tints
-        if (label.includes('expansion') || label.includes('recovery')) return `rgba(16, 185, 129, 0.03)`;
-        if (label.includes('tightening') || label.includes('slowdown')) return `rgba(244, 63, 94, 0.03)`;
-        return 'transparent';
-    }, [regime]);
 
     return (
         <div
