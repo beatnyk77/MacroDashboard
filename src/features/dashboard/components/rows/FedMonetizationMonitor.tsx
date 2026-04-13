@@ -182,8 +182,8 @@ const MonetizationGauge: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center">
-        Federal Reserve Treasury holdings as % of total marketable debt
+      <p className="text-slate-500 text-xs italic text-center mt-2">
+        <span className="font-semibold text-slate-400">Formula:</span> Fed Assets (FRED: WALCL) ÷ Total Marketable Debt (FRED: GFDEBTN)
       </p>
     </div>
   );
@@ -253,8 +253,8 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center">
-        Fed balance sheet expansion correlates with yield suppression (inverse relationship)
+      <p className="text-slate-500 text-xs italic text-center mt-2">
+        <span className="font-semibold text-slate-400">Data:</span> Fed Assets (FRED: WALCL) vs 10Y Yield (FRED: DGS10)
       </p>
     </div>
   );
@@ -310,8 +310,8 @@ const InflationTransmission: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center">
-        M2 money growth typically leads CPI by 12–18 months
+      <p className="text-slate-500 text-xs italic text-center mt-2">
+        <span className="font-semibold text-slate-400">Data:</span> M2 YoY (FRED: WM2NS or M2SL) vs Headline CPI YoY (FRED: CPIAUCSL)
       </p>
     </div>
   );
@@ -396,8 +396,8 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
         )}
       </div>
 
-      <p className="text-slate-500 text-xs italic text-center">
-        10Y real yield ≈ nominal yield − CPI; green/red shading = QE/QT periods (SOMA cumulative)
+      <p className="text-slate-500 text-xs italic text-center mt-2">
+        <span className="font-semibold text-slate-400">Formula:</span> Real Yield = 10Y Yield (DGS10) − CPI YoY. QE/QT shading: SOMA cumulative changes.
       </p>
     </div>
   );
@@ -450,7 +450,8 @@ export const FedMonetizationMonitor: React.FC = () => {
         .order('as_of_date', { ascending: false })
         .limit(104); // 2 years weekly
       if (error || !data) return [];
-      return data.map(d => ({ date: d.as_of_date, fedBalanceT: d.value / 1000 })); // convert bn → T
+      // FRED WALCL is normally reported in millions. Convert to Trillions.
+      return data.map(d => ({ date: d.as_of_date, fedBalanceT: d.value > 1000000 ? d.value / 1000000 : d.value / 1000 }));
     },
     staleTime: 1000 * 60 * 60, // 1h
   });
@@ -550,44 +551,69 @@ export const FedMonetizationMonitor: React.FC = () => {
 
   // Build unified chart data by inner-joining on date
   const chartData: DataPoint[] = useMemo(() => {
+    // Helper to compute YoY robustly using chronological offsets
+    const computeYoY = (dateStr: string, map: Map<string, number>, dates: string[]) => {
+      const t = new Date(dateStr).getTime();
+      const tPrev = t - 365.25 * 24 * 60 * 60 * 1000;
+      let closestDate = '';
+      let minDiff = Infinity;
+      for (const d of dates) {
+        const diff = Math.abs(new Date(d).getTime() - tPrev);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestDate = d;
+        }
+      }
+      if (minDiff <= 45 * 24 * 60 * 60 * 1000) {
+        const curVal = map.get(dateStr);
+        const prevVal = map.get(closestDate);
+        if (curVal !== undefined && prevVal && prevVal !== 0) {
+          return ((curVal - prevVal) / prevVal) * 100;
+        }
+      }
+      return undefined;
+    };
+
     // Build index by date for each dataset
     const debtMap = new Map(debtData.map(d => [d.date, d.debtT]));
     const yieldMap = new Map(yieldData.map(d => [d.date, d.yield10Y]));
     const somaMap = new Map(somaData.map(d => [d.date, d.somaChange]));
 
-    // For M2, store level first; compute growth later
     const m2LevelMap = new Map(m2Data.map(d => [d.date, d.m2Level]));
-    const sortedM2Dates = m2Data.map(d => d.date).sort();
-    const m2GrowthMap = new Map<string, number>();
+    const m2Dates = Array.from(m2LevelMap.keys());
+    
+    // CPI could be an index instead of YoY %
+    const cpiLevelMap = new Map(cpiData.map(d => [d.date, d.cpiYoY]));
+    const cpiDates = Array.from(cpiLevelMap.keys());
 
-    // Compute YoY growth = (level[t] - level[t-52wk]) / level[t-52wk]
-    for (let i = 0; i < sortedM2Dates.length; i++) {
-      const curDate = sortedM2Dates[i];
-      const curVal = m2LevelMap.get(curDate);
-      const yearAgoDate = sortedM2Dates[i + 52]; // data sorted desc, so +52 is older
-      if (curVal && yearAgoDate !== undefined) {
-        const prevVal = m2LevelMap.get(yearAgoDate);
-        if (prevVal && prevVal > 0) {
-          m2GrowthMap.set(curDate, ((curVal - prevVal) / prevVal) * 100);
-        }
-      }
-    }
-
-    // TIPS real yield
     const tipsMap = new Map(tipsData.map(d => [d.date, d.realYield]));
 
     // Build output array, anchored on fedAssets dates (the longest common)
     const result: DataPoint[] = [];
+
     for (const row of fedAssets) {
       const debtT = debtMap.get(row.date);
-      const debtTotal = debtT ?? debtData[0]?.debtT; // fallback to latest
+      const debtTotal = debtT ?? debtData[0]?.debtT; 
 
       const fedBal = row.fedBalanceT;
       const ratio = debtTotal ? (fedBal! / debtTotal) * 100 : undefined;
 
       const y10 = yieldMap.get(row.date) ?? yieldData[0]?.yield10Y;
-      const cpi = cpiData.find(d => d.date <= row.date)?.cpiYoY ?? cpiData[0]?.cpiYoY;
-      const m2Growth = m2GrowthMap.get(row.date);
+
+      // Handle M2 YoY safely
+      let m2Growth = m2LevelMap.get(row.date);
+      if (m2Growth !== undefined && Math.abs(m2Growth) > 500) {
+        m2Growth = computeYoY(row.date, m2LevelMap, m2Dates);
+      }
+
+      // Handle CPI: if > 50, it's an index, compute YoY
+      let cpiRaw = cpiData.find(d => d.date <= row.date)?.cpiYoY ?? cpiData[0]?.cpiYoY;
+      let cpi = cpiRaw;
+      if (cpiRaw !== undefined && cpiRaw > 50) {
+        const nearestCpiDate = cpiData.find(d => d.date <= row.date)?.date ?? cpiDates[0];
+        cpi = computeYoY(nearestCpiDate, cpiLevelMap, cpiDates);
+      }
+
       const realYield = y10 !== undefined && cpi !== undefined ? y10 - cpi : (tipsMap.get(row.date) ?? undefined);
       const soma = somaMap.get(row.date) ?? somaData[0]?.somaChange;
 
