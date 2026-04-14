@@ -79,30 +79,7 @@ const DATA_SOURCES: DataSourceEntry[] = [
         rollover risk analysis in the US Macro & Fiscal Lab.`,
         tier: 'Primary',
     },
-    {
-        id: 'sec-edgar',
-        name: 'SEC EDGAR',
-        acronym: 'SEC EDGAR',
-        category: 'United States – Securities & Exchange Commission',
-        description: `The Electronic Data Gathering, Analysis, and Retrieval system operated by 
-        the US Securities and Exchange Commission. The world's most comprehensive repository 
-        of public company filings, including quarterly earnings (10-Q), annual reports (10-K), 
-        and institutional mega-fund position disclosures (13-F).`,
-        url: 'https://www.sec.gov/cgi-bin/browse-edgar',
-        frequency: 'Quarterly',
-        coverage: 'All SEC-registered US public companies and institutions',
-        keyMetrics: [
-            '13-F filings – Institutional equity holdings (>$100M AUM)',
-            '10-K/10-Q – Corporate earnings, balance sheets, cash flows',
-            'Form 4 – Insider trading disclosures',
-            'N-PORT – Mutual fund portfolio holdings',
-        ],
-        howWeUseIt: `Primary source for the 13-F Smart Money Tracker. Quarterly 13-F disclosures 
-        from >1,200 institutional managers are parsed and aggregated to derive net sector flows, 
-        position changes, and smart money divergence signals. Supplemented by Form 4 insider 
-        trading data for high-conviction individual position monitoring.`,
-        tier: 'Primary',
-    },
+
     {
         id: 'eia',
         name: 'US Energy Information Administration',
@@ -368,31 +345,7 @@ const DATA_SOURCES: DataSourceEntry[] = [
         DXY tracks dollar strength trends in the De-Dollarisation Lab.`,
         tier: 'Market',
     },
-    {
-        id: 'nse-bse',
-        name: 'NSE & BSE India',
-        acronym: 'NSE / BSE',
-        category: 'India – Market Data',
-        description: `National Stock Exchange of India and Bombay Stock Exchange, the two primary 
-        Indian equity exchanges. Publicly available data includes equity prices, indices, and 
-        FII/DII institutional flow data. The FII/DII daily data is India's highest-frequency 
-        institutional flow signal and forms the basis of the India Flow Pulse monitor.`,
-        url: 'https://www.nseindia.com/',
-        frequency: 'Daily',
-        coverage: 'India – all listed equities, derivatives, and institutional flows',
-        keyMetrics: [
-            'FII Net Flows (cash equity, daily ₹Cr/USD)',
-            'DII Net Flows (LIC, domestic MFs, daily ₹Cr)',
-            'Nifty 50 and Sensex index levels',
-            'India VIX (India Fear Index)',
-            'F&O OI (Open Interest by expiry)',
-        ],
-        howWeUseIt: `FII/DII daily flow data is the primary input for the India Flow Pulse page, 
-        tracking foreign institutional flow trends, DII absorption of FII selling, and 
-        structural equity ownership shifts. Nifty and SectorNifty indices track Indian equity 
-        market performance relative to macro signals. India VIX tracks local volatility.`,
-        tier: 'Market',
-    },
+
 ];
 
 // ── Category Metadata ─────────────────────────────────────────────────────────
@@ -526,7 +479,7 @@ const DATA_SOURCES_JSON_LD = {
     '@type': 'TechArticle',
     name: 'GraphiQuestor Data Sources',
     headline: 'Transparent Data Source Disclosure — GraphiQuestor',
-    description: 'Full list of primary institutional data sources used by GraphiQuestor, including FRED, MoSPI, RBI DBIE, BIS, IMF COFER, EIA, UN Comtrade, World Gold Council, and SEC EDGAR.',
+    description: 'Full list of primary institutional data sources used by GraphiQuestor, including FRED, MoSPI, RBI DBIE, BIS, IMF COFER, EIA, UN Comtrade, and World Gold Council.',
     url: 'https://graphiquestor.com/data-sources',
     author: {
         '@type': 'Person',
@@ -556,10 +509,10 @@ export const DataSourcesPage: React.FC = () => {
         <div className="min-h-screen bg-background">
             <SEOManager
                 title="Data Sources — Authoritative Macro Intelligence Inputs"
-                description="Full transparency on every data source powering GraphiQuestor: FRED, US Treasury FiscalData, IMF COFER, BIS Statistics, RBI DBIE, MoSPI, EIA, UN Comtrade, SEC EDGAR, World Gold Council, and more. Update frequencies, key metrics, and institutional use cases documented."
+                description="Full transparency on every data source powering GraphiQuestor: FRED, US Treasury FiscalData, IMF COFER, BIS Statistics, RBI DBIE, MoSPI, EIA, UN Comtrade, World Gold Council, and more. Update frequencies, key metrics, and institutional use cases documented."
                 keywords={[
                     'FRED data source', 'IMF COFER data', 'BIS statistics', 'RBI DBIE India data',
-                    'MoSPI India GDP', 'EIA energy data', 'UN Comtrade trade data', 'SEC EDGAR 13F',
+                    'MoSPI India GDP', 'EIA energy data', 'UN Comtrade trade data',
                     'macro data sources', 'institutional data transparency',
                 ]}
                 canonicalUrl="https://graphiquestor.com/data-sources"

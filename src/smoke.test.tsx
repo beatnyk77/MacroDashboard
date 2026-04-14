@@ -136,7 +136,6 @@ vi.mock('recharts', async () => {
 
 // Components to test
 import Terminal from '@/pages/Terminal';
-import { IndiaFlowPulsePage } from '@/pages/IndiaFlowPulsePage';
 import DataHealthDashboard from '@/pages/DataHealthDashboard';
 import MacroObservatory from '@/pages/MacroObservatory';
 import { AdminDashboard } from '@/pages/AdminDashboard';
@@ -195,16 +194,7 @@ describe('Smoke Tests', () => {
                 <Terminal />
             </TestWrapper>
         );
-        expect(await screen.findByText(/INSTITUTIONAL PULSE/i, {}, { timeout: 10000 })).toBeInTheDocument();
-    }, 20000);
-
-    it('renders IndiaFlowPulsePage without crashing', async () => {
-        render(
-            <TestWrapper route="/india-flow-pulse">
-                <IndiaFlowPulsePage />
-            </TestWrapper>
-        );
-        expect(await screen.findByText(/Flow Pulse/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByText(/Sovereign Compass/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
     it('renders DataHealthDashboard (authenticated) without crashing', async () => {

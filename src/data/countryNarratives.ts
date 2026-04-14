@@ -17,8 +17,7 @@ export const COUNTRY_NARRATIVES: Record<string, CountryNarrative> = {
     thesis: "The Multi-Decade Structural Bull Run",
     analysis: "India is currently in a late expansion liquidity regime, characterized by robust real GDP growth of {{gdp_yoy_pct}} and a healthy Debt/Gold Z-score of approximately +1.8σ. The nation's energy dependency ratio remains a key risk, as imports account for a significant portion of GDP. However, the MOSPI reported data shows a consistent trend in capital expenditure that is now translating into higher productivity. The current account deficit is being managed via strong FX reserves of {{fx_reserves_bn}}, providing a buffer against external shocks. Integration into global supply chains and the potential for a central bank rate pivot from {{central_bank_rate_pct}} could further accelerate domestic credit cycles. Watch for updates in the flow pulse for FII/DII positioning.",
     relatedLabs: [
-      { name: "Intel: India", path: "/intel/india" },
-      { name: "India Flow Pulse", path: "/india-equities/fii-dii" }
+      { name: "Intel: India", path: "/intel/india" }
     ]
   },
   CN: {

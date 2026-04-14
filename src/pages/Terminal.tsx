@@ -12,7 +12,6 @@ import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidi
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWall';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
-import InstitutionalHoldingsWall from '@/components/InstitutionalHoldingsWall';
 import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/FedMonetizationMonitor';
 
@@ -23,8 +22,6 @@ const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/s
 
 // 1. LIQUIDITY & FLOWS
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
-const SmartMoneyFlowMonitor = lazy(() => import('@/features/dashboard/components/sections/SmartMoneyFlowMonitor').then(m => ({ default: m.SmartMoneyFlowMonitor })));
-const CapitalFlowsTerminal = lazy(() => import('@/features/dashboard/components/rows/CapitalFlowsTerminal').then(m => ({ default: m.CapitalFlowsTerminal })));
 
 // 2. SOVEREIGN STRESS
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -36,7 +33,6 @@ const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/componen
 // 3. REGIONAL & MACRO
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
-const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
 const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
@@ -53,12 +49,12 @@ export const Terminal: React.FC = () => {
         <div className="w-full max-w-[1920px] mx-auto bg-slate-950 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <SEOManager
                 title="Macro Observatory | Live Institutional Telemetry"
-                description="Real-time macro intelligence terminal tracking US net liquidity, sovereign stress, yield curves, Fed balance sheet, and 13-F smart money flows. Institutional-grade data for PMs, CIOs, and macro researchers."
+                description="Real-time macro intelligence terminal tracking US net liquidity, sovereign stress, yield curves, and Fed balance sheet. Institutional-grade data for PMs, CIOs, and macro researchers."
                 keywords={[
                     'Institutional Macro Dashboard', 'US Net Liquidity Monitor', 'Fed Balance Sheet Tracker',
-                    'Sovereign Risk Terminal', 'Yield Curve Inversion', '13-F Smart Money Tracker',
+                    'Sovereign Risk Terminal', 'Yield Curve Inversion',
                     'Treasury Auction Demand', 'Macro Liquidity Analysis', 'India Macro Data',
-                    'China Economic Pulse', 'Global Capital Flows', 'Debt Maturity Wall',
+                    'China Economic Pulse', 'Debt Maturity Wall',
                     'Monetary Policy Tracker', 'Macro Research Terminal', 'GraphiQuestor'
                 ]}
                 isApp={true}
@@ -141,14 +137,6 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </section>
 
-                {/* 0. FLAGSHIP: 13-F SMART MONEY TRACKER */}
-                <section>
-                    <SectionErrorBoundary name="13-F Smart Money Tracker">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <InstitutionalHoldingsWall />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
 
                 {/* 1. STRATEGIC CONTEXT */}
                 <section className="space-y-12">
@@ -316,35 +304,7 @@ export const Terminal: React.FC = () => {
                     </div>
                 </section>
 
-                {/* 4. INSTITUTIONAL POSITIONING */}
-                <section className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500/80">Capital Positioning</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-                    <SectionErrorBoundary name="Smart Money Flow Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <SmartMoneyFlowMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    
-                    <SectionErrorBoundary name="Capital Flows">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <Card variant="elevated">
-                                <CardHeader className="flex flex-row justify-between items-center mb-8 border-b border-white/5 pb-4">
-                                    <CardTitle className="text-lg uppercase">Global Capital Flows</CardTitle>
-                                    <LiveStatusIndicator source="BIS / SWIFT" />
-                                </CardHeader>
-                                <CardContent>
-                                    <CapitalFlowsTerminal hideHeader />
-                                </CardContent>
-                            </Card>
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 5. REGIONAL INTELLIGENCE */}
+                {/* 4. REGIONAL INTELLIGENCE */}
                 <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
@@ -370,33 +330,22 @@ export const Terminal: React.FC = () => {
                     </div>
                 </section>
 
+                {/* 5. INSTITUTIONAL STRATEGY */}
                 <section className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/80">Institutional Strategy</h2>
                         <div className="h-px flex-1 bg-white/5" />
                     </div>
-                    <div className="space-y-8">
-                        <SectionErrorBoundary name="Treasury Snapshot">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardContent>
-                                        <TreasurySnapshotSection />
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="Hedging Monitor">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardContent>
-                                        <CorporateTreasuryHedgingSection />
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
+                    <SectionErrorBoundary name="Treasury Snapshot">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <Card variant="elevated">
+                                <CardContent>
+                                    <TreasurySnapshotSection />
+                                </CardContent>
+                            </Card>
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </section>
 
                 {/* 6. SYSTEMIC RISK & MONITORING */}

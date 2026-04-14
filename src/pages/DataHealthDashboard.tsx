@@ -63,17 +63,6 @@ export const DataHealthDashboard: React.FC = () => {
         }
     });
 
-    // 4. NEW: India Market Pulse Tracking
-    const { data: indiaPulseStatus } = useQuery({
-        queryKey: ['india-pulse-status'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('market_pulse_stats').select('date').order('date', { ascending: false }).limit(1).single();
-            if (error && error.code !== 'PGRST116') throw error;
-            return data;
-        },
-        refetchInterval: 60000 // 1 min
-    });
-
     // 5. NEW: Energy Terminal Tracking
     const { data: energyStatus } = useQuery({
         queryKey: ['energy-terminal-status'],
@@ -256,16 +245,7 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000
     });
 
-    // 20. NEW: FPI Sector Flows Tracking
-    const { data: fpiSectorStatus } = useQuery({
-        queryKey: ['fpi-sector-status'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('fpi_sector_flows').select('fortnight_end_date').order('fortnight_end_date', { ascending: false }).limit(1).single();
-            if (error && error.code !== 'PGRST116') throw error;
-            return data;
-        },
-        refetchInterval: 300000
-    });
+
 
     // 10. Data Authenticity Score
     const { data: authenticity } = useQuery({
@@ -409,32 +389,7 @@ export const DataHealthDashboard: React.FC = () => {
                             </IconButton>
                         </Paper>
                     </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>FPI Sector Flows (NSDL)</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {fpiSectorStatus ? new Date(fpiSectorStatus.fortnight_end_date).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="success" onClick={() => handleForceRefresh('ingest-nse-flows')} disabled={refreshing === 'ingest-nse-flows'}>
-                                {refreshing === 'ingest-nse-flows' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>NSE India Flows</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {indiaPulseStatus ? new Date(indiaPulseStatus.date).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'Unknown'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="success" onClick={() => handleForceRefresh('ingest-nse-flows')} disabled={refreshing === 'ingest-nse-flows'}>
-                                {refreshing === 'ingest-nse-flows' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
+
                     <Grid item>
                         <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
@@ -591,19 +546,7 @@ export const DataHealthDashboard: React.FC = () => {
                             </IconButton>
                         </Paper>
                     </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>US EDGAR Fundamentals</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {ingestions?.find(i => i.function_name === 'ingest-us-edgar-fundamentals') ? new Date(ingestions.find(i => i.function_name === 'ingest-us-edgar-fundamentals').start_time).toLocaleDateString() : 'Pending'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="primary" onClick={() => handleForceRefresh('ingest-us-edgar-fundamentals')} disabled={refreshing === 'ingest-us-edgar-fundamentals'}>
-                                {refreshing === 'ingest-us-edgar-fundamentals' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
+
                 </Grid>
             </Box>
 

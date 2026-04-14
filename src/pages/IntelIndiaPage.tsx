@@ -4,15 +4,13 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, Building2, BarChart3, MapPin, Landmark, ArrowRightLeft } from 'lucide-react';
+import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, BarChart3, MapPin, Landmark } from 'lucide-react';
 
 // Lazy-load heavy sub-sections
 const IndiaMacroPulseSection = lazy(() =>
     import('@/features/dashboard/components/sections/IndiaMacroPulseSection').then(m => ({ default: m.IndiaMacroPulseSection }))
 );
-const IndiaMarketPulseRow = lazy(() =>
-    import('@/features/dashboard/components/rows/IndiaMarketPulseRow').then(m => ({ default: m.IndiaMarketPulseRow }))
-);
+
 const IndiaInflationPulseMonitor = lazy(() =>
     import('@/features/dashboard/components/rows/IndiaInflationPulseMonitor').then(m => ({ default: m.IndiaInflationPulseMonitor }))
 );
@@ -29,9 +27,7 @@ const IndiaDebtMaturityWall = lazy(() =>
     import('@/features/dashboard/components/rows/IndiaDebtMaturityWall').then(m => ({ default: m.IndiaDebtMaturityWall }))
 );
 // Migrated from IndiaLab
-const FIIDIIMonitorSection = lazy(() =>
-    import('@/features/dashboard/components/sections/FIIDIIMonitorSection').then(m => ({ default: m.FIIDIIMonitorSection }))
-);
+
 const RBIFXDefenseMonitor = lazy(() =>
     import('@/features/dashboard/components/rows/RBIFXDefenseMonitor').then(m => ({ default: m.RBIFXDefenseMonitor }))
 );
@@ -189,7 +185,7 @@ export const IntelIndiaPage: React.FC = () => {
                     <div className="flex flex-wrap gap-3 mt-6">
                         {[
                             { href: '#macro',        label: 'Macro Pulse',    active: true },
-                            { href: '#market',       label: 'FII/DII Flows' },
+
                             { href: '#fiscal',       label: 'Fiscal Stress' },
                             { href: '#credit',       label: 'Credit Cycle' },
                             { href: '#monetary',     label: 'RBI & FX' },
@@ -244,25 +240,7 @@ export const IntelIndiaPage: React.FC = () => {
 
                 <div className="border-t border-white/5" />
 
-                {/* India Market Pulse + FII/DII (from Lab) */}
-                <section id="market">
-                    <SectionErrorBoundary name="India Market Pulse">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <div className="space-y-16">
-                                <IndiaMarketPulseRow />
-                                <div className="pt-12 border-t border-white/5">
-                                    <div className="flex items-center gap-3 mb-10">
-                                        <ArrowRightLeft className="text-blue-400" size={24} />
-                                        <h2 className="text-xl font-black uppercase tracking-heading text-white">FII / DII Flow Monitor</h2>
-                                    </div>
-                                    <FIIDIIMonitorSection />
-                                </div>
-                            </div>
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
 
-                <div className="border-t border-white/5" />
 
                 {/* India Inflation */}
                 <section id="inflation">

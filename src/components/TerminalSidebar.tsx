@@ -19,7 +19,6 @@ const terminalNavItems: NavItem[] = [
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={14} /> },
-    { id: 'india-flow', label: 'India Flow Pulse (FII/DII)', path: '/india-equities/fii-dii', icon: <Activity size={14} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} /> },

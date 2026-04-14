@@ -29,7 +29,6 @@ const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module =
 const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
 const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
 const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
-const IndiaFlowPulsePage = lazy(() => import('@/pages/IndiaFlowPulsePage').then(module => ({ default: module.IndiaFlowPulsePage })));
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
 const CountriesIndexPage = lazy(() => import('@/pages/CountriesIndexPage').then(module => ({ default: module.CountriesIndexPage })));
 const DataSourcesPage = lazy(() => import('@/pages/DataSourcesPage').then(module => ({ default: module.DataSourcesPage })));
@@ -96,7 +95,6 @@ function App() {
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
                                         <Route path="/institutional" element={<ForInstitutional />} />
                                         <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
-                                        <Route path="/india-equities/fii-dii" element={<IndiaFlowPulsePage />} />
 
                                         {/* Tools & Embeds */}
                                         <Route path="/tools/net-liquidity-gauge" element={<NetLiquidityGauge />} />

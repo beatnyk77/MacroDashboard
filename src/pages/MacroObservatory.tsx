@@ -9,8 +9,7 @@ import {
     Building2,
     EyeOff,
     ChevronRight,
-    Search,
-    Leaf
+    Search
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
