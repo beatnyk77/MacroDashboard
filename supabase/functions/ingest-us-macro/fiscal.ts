@@ -7,7 +7,7 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
         const response = await fetch(url);
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`FRED API error for ${seriesId}: ${response.status}`);
+            throw new Error(`FRED API error for ${seriesId}: ${response.status} — ${errorText.slice(0, 100)}`);
         }
         const data = await response.json();
         return data.observations || [];
@@ -16,14 +16,29 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
     }
 }
 
+/**
+ * Fetches and stores US fiscal stress data from FRED.
+ *
+ * FRED Series used:
+ *   A091RC1Q027SBEA  — Federal government interest payments (quarterly, billions USD, NIPA)
+ *   FGRECPT           — Federal government current tax receipts (quarterly, billions USD)
+ *   W068RC1Q027SBEA  — Social Security + Medicare benefits (quarterly, billions USD, NIPA)
+ *   A074RC1Q027SBEA  — Personal taxes (quarterly, billions USD)
+ *   W780RC1Q027SBEA  — Payroll taxes (quarterly, billions USD)
+ *   GDP               — Nominal GDP (quarterly, billions USD)
+ *
+ * All FRED NIPA series are in BILLIONS of current dollars. NO unit conversion needed —
+ * the component will display by dividing by 1000 to show Trillions.
+ */
 export async function processFiscal(supabase: SupabaseClient, fredApiKey: string) {
     try {
-        const [interest, receipts, personal, payroll, gdp] = await Promise.all([
-            fetchFredSeries('A091RC1Q027SBEA', fredApiKey),
-            fetchFredSeries('FGRECPT', fredApiKey),
-            fetchFredSeries('A074RC1Q027SBEA', fredApiKey),
-            fetchFredSeries('W780RC1Q027SBEA', fredApiKey),
-            fetchFredSeries('GDP', fredApiKey)
+        const [interest, receipts, entitlements, personal, payroll, gdp] = await Promise.all([
+            fetchFredSeries('A091RC1Q027SBEA', fredApiKey),  // Interest expense, quarterly B$
+            fetchFredSeries('FGRECPT', fredApiKey),           // Tax receipts, quarterly B$
+            fetchFredSeries('W068RC1Q027SBEA', fredApiKey),   // SocSec + Medicare, quarterly B$
+            fetchFredSeries('A074RC1Q027SBEA', fredApiKey),   // Personal taxes, quarterly B$
+            fetchFredSeries('W780RC1Q027SBEA', fredApiKey),   // Payroll taxes, quarterly B$
+            fetchFredSeries('GDP', fredApiKey)                 // Nominal GDP, quarterly B$
         ]);
 
         const dateMap = new Map<string, any>();
@@ -42,28 +57,56 @@ export async function processFiscal(supabase: SupabaseClient, fredApiKey: string
 
         processObservations(interest, 'interest_expense');
         processObservations(receipts, 'total_receipts');
+        processObservations(entitlements, 'entitlements');
         processObservations(personal, 'personal_taxes');
         processObservations(payroll, 'payroll_taxes');
         processObservations(gdp, 'gdp');
 
         const upsertData = Array.from(dateMap.values())
             .map(d => {
-                const insolvency_ratio = (d.interest_expense && d.total_receipts) ? (d.interest_expense / d.total_receipts) : null;
-                const employment_tax_share = (d.personal_taxes && d.payroll_taxes && d.total_receipts) ? ((d.personal_taxes + d.payroll_taxes) / d.total_receipts) : null;
-                const receipts_gdp = (d.total_receipts && d.gdp) ? (d.total_receipts / d.gdp) : null;
+                // All values from FRED are in billions USD. Ratios are dimensionless.
+                const interestExp: number = d.interest_expense ?? 0;
+                const receiptsVal: number = d.total_receipts ?? 0;
+                const entitlementsVal: number | undefined = d.entitlements;
+
+                // (Interest + Entitlements) / Receipts × 100 — fiscal dominance ratio
+                const numerator = entitlementsVal !== undefined
+                    ? interestExp + entitlementsVal
+                    : interestExp;
+                const fiscal_dominance_ratio = receiptsVal > 0
+                    ? (numerator / receiptsVal) * 100
+                    : null;
+
+                // Interest-only insolvency ratio (legacy)
+                const insolvency_ratio = (interestExp && receiptsVal) ? (interestExp / receiptsVal) : null;
+
+                const employment_tax_share = (d.personal_taxes && d.payroll_taxes && receiptsVal)
+                    ? ((d.personal_taxes + d.payroll_taxes) / receiptsVal)
+                    : null;
+
+                const receipts_gdp = (receiptsVal && d.gdp) ? (receiptsVal / d.gdp) : null;
 
                 return {
-                    ...d,
+                    date: d.date,
+                    interest_expense: interestExp || null,
+                    total_receipts: receiptsVal || null,
+                    entitlements: entitlementsVal ?? null,
+                    personal_taxes: d.personal_taxes ?? null,
+                    payroll_taxes: d.payroll_taxes ?? null,
+                    gdp: d.gdp ?? null,
                     insolvency_ratio,
+                    fiscal_dominance_ratio,
                     employment_tax_share,
                     receipts_gdp,
                     updated_at: new Date().toISOString()
                 };
             })
-            .filter(d => d.insolvency_ratio !== null || d.employment_tax_share !== null || d.receipts_gdp !== null);
+            .filter(d => d.fiscal_dominance_ratio !== null || d.insolvency_ratio !== null);
 
         if (upsertData.length > 0) {
-            const { error } = await supabase.from('us_fiscal_stress').upsert(upsertData, { onConflict: 'date' });
+            const { error } = await supabase
+                .from('us_fiscal_stress')
+                .upsert(upsertData, { onConflict: 'date' });
             if (error) throw error;
         }
 
