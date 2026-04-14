@@ -16,7 +16,7 @@ export const ForInstitutional: React.FC = () => {
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-24 mb-32">
             <SEOManager
                 title="Institutional API Access"
-                description="GraphiQuestor's $28/mo Institutional API provides direct telemetry for global liquidity, sovereign debt stress, and the Corporate India Engine."
+                description="GraphiQuestor's $28/mo Institutional API provides direct telemetry for global liquidity and sovereign debt stress."
                 keywords={[
                     'Institutional Macro API', 'Macro Telemetry', 'Quantitative Macro Analysis',
                     'Sovereign Debt Monitoring', 'Liquidity Tracker'
@@ -74,7 +74,6 @@ export const ForInstitutional: React.FC = () => {
                     <ul className="space-y-6 mb-12 flex-1">
                         {[
                             'Full Quantum API Access',
-                            'India Corporate Engine Pro',
                             'Sovereign Debt Maturity Wall',
                             'Real-time Macro Sentiment',
                             'Private Institutional Archives'
@@ -122,8 +121,8 @@ export const ForInstitutional: React.FC = () => {
                     {
                         icon: <Building2 size={28} />,
                         color: 'bg-orange-500/10 text-orange-500',
-                        title: 'CI Engine Pro',
-                        desc: "Full unlocked access to the Corporate India Engine. Deep fundamental analysis on 500+ Indian large caps with an integrated Macro Overlay for regime-based filtering."
+                        title: 'Macro Fundamentals',
+                        desc: "Analyze structural shifts using our proprietary fundamental models. Filter regimes using deep data sets."
                     },
                     {
                         icon: <Shield size={28} />,

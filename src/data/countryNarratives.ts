@@ -69,7 +69,7 @@ export const COUNTRY_NARRATIVES: Record<string, CountryNarrative> = {
   FR: {
     thesis: "The Resilience of the European Welfare State",
     analysis: "France maintains a relatively stable growth trajectory despite Eurozone-wide headwinds. Its nuclear energy independence lowers its Energy Dependency Ratio compared to Germany, providing a competitive advantage in the current regime. However, with gov debt at {{gov_debt_gdp_pct}}, fiscal sustainability is a growing concern for bond markets. The shadow system in France is heavily integrated with the broader ECB liquidity framework.",
-    relatedLabs: [{ name: "Sustainable Finance Lab", path: "/labs/sustainable-finance-climate-risk" }]
+    relatedLabs: []
   },
   IT: {
     thesis: "Navigating the Spread & Debt Sustainability",

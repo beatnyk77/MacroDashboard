@@ -144,7 +144,7 @@ import USMacroFiscalLab from '@/pages/labs/USMacroFiscalLab';
 import EnergyCommoditiesLab from '@/pages/labs/EnergyCommoditiesLab';
 import { China15thFYPLab } from '@/pages/labs/China15thFYP';
 import SovereignStressLab from '@/pages/labs/SovereignStressLab';
-import SustainableFinanceLab from '@/pages/labs/SustainableFinanceLab';
+
 import { About } from '@/pages/About';
 
 const theme = createTheme();
@@ -274,15 +274,7 @@ describe('Smoke Tests', () => {
         expect(await screen.findByText(/Fiscal Sustainability Monitor/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
-    it('renders SustainableFinanceLab page without crashing', async () => {
-        render(
-            <TestWrapper route="/labs/sustainable-finance">
-                <SustainableFinanceLab />
-            </TestWrapper>
-        );
-        // 'Sustainable Finance' is in the h1: "Sustainable Finance & Climate Risk"
-        expect(await screen.findByText(/ESG Transition/i, {}, { timeout: 10000 })).toBeInTheDocument();
-    }, 20000);
+
 
     it('renders About page without crashing', async () => {
         render(

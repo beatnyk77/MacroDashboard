@@ -4,15 +4,13 @@ import {
     ChevronRight,
     ArrowLeft,
     ShieldAlert,
-    ShieldCheck,
     TrendingUp,
     Zap,
-    BarChart3,
     Activity
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
-import { Card, CardContent } from '@/components/ui/card';
+
 
 // Components
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
@@ -24,9 +22,7 @@ const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components
 const TreasuryHoldersSection = lazy(() => import('@/features/dashboard/components/sections/TreasuryHoldersSection').then(m => ({ default: m.TreasuryHoldersSection })));
 const OffshoreDollarStressCard = lazy(() => import('@/features/dashboard/components/sections/OffshoreDollarStressCard').then(m => ({ default: m.OffshoreDollarStressCard })));
 const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
-const CorporateTreasuryHedgingSection = lazy(() => import('@/features/dashboard/components/sections/CorporateTreasuryHedgingSection').then(m => ({ default: m.CorporateTreasuryHedgingSection })));
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
-const PresidentialPolicyTracker = lazy(() => import('@/features/dashboard/components/sections/PresidentialPolicyTracker').then(m => ({ default: m.PresidentialPolicyTracker })));
 const FedMonetizationMonitor = lazy(() => import('@/components/labs/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 const FundingPlumbingStress = lazy(() => import('@/components/labs/FundingPlumbingStress').then(m => ({ default: m.FundingPlumbingStress })));
 
@@ -194,74 +190,6 @@ export const USMacroFiscalLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
-                </section>
-
-                {/* Section 6: Corporate Treasury Hedging */}
-                <section>
-                    <div className="flex items-center gap-3 mb-8">
-                        <ShieldCheck className="text-emerald-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Hedging Opportunities</h2>
-                    </div>
-                    <SectionErrorBoundary name="Corporate Hedging monitor">
-                        <LazyRender minHeight="400px">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CorporateTreasuryHedgingSection />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* Section 7: Policy Tracker */}
-                <section className="pt-12 border-t border-white/5">
-                    <div className="flex items-center gap-3 mb-8">
-                        <ShieldAlert className="text-rose-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Trump Action Monitor</h2>
-                    </div>
-                    <SectionErrorBoundary name="Policy Tracker">
-                        <LazyRender minHeight="300px">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <PresidentialPolicyTracker />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* Section 8: Equity Fundamental Pulse Card */}
-                <section>
-                    <Card variant="elevated" className="border-blue-500/10 bg-gradient-to-br from-blue-500/[0.05] to-transparent p-1">
-                        <CardContent className="flex flex-col md:flex-row items-center justify-between gap-12 p-8 md:p-12">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <BarChart3 className="text-blue-400" size={32} />
-                                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-heading text-white">US Equity Fundamental Pulse</h2>
-                                </div>
-                                <p className="text-muted-foreground/60 text-base md:text-lg font-medium leading-relaxed mb-8 uppercase tracking-wide max-w-2xl">
-                                    Deep macro-to-corporate correlation engine. Analyze how sovereign debt dynamics and policy shifts impact US corporate margins, valuation tiers, and institutional positioning through official SEC EDGAR telemetry.
-                                </p>
-                                <Button
-                                    asChild
-                                    size="lg"
-                                    className="bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest rounded-xl px-6 py-2 shadow-[0_0_30px_rgba(37,99,235,0.2)]"
-                                >
-                                    <a href="/us-equities">Launch Equities Terminal</a>
-                                </Button>
-                            </div>
-                            
-                            <div className="w-full md:flex-1 grid grid-cols-2 gap-4">
-                                {[
-                                    { label: 'Valuation Tiers', sub: 'P/E Heatmaps' },
-                                    { label: 'Insider Ops', sub: 'Conviction Feed' },
-                                    { label: 'Leverage Pulse', sub: 'Debt/Equity' },
-                                    { label: 'Whale Tracking', sub: '13F Holdings' }
-                                ].map((item, i) => (
-                                    <Card key={i} variant="metric" className="p-4 bg-white/[0.02] border-white/5 group hover:border-blue-500/20 transition-colors">
-                                        <span className="block text-[10px] font-black text-blue-400 uppercase tracking-uppercase mb-1">{item.label}</span>
-                                        <span className="block text-xs font-bold text-white/40 group-hover:text-white/60 transition-colors uppercase">{item.sub}</span>
-                                    </Card>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
                 </section>
             </div>
 

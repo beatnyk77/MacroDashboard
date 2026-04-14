@@ -43,7 +43,7 @@ export const APIAccessPage: React.FC = () => {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": "GraphiQuestor Quantum Intelligence API Access",
-        "description": "Institutional-grade macro telemetry via REST API. Real-time access to liquidity signals, treasury demand, and Corporate India Engine data.",
+        "description": "Institutional-grade macro telemetry via REST API. Real-time access to liquidity signals and treasury demand.",
         "offers": {
             "@type": "Offer",
             "url": "https://graphiquestor.com/api-access",
@@ -125,7 +125,6 @@ export const APIAccessPage: React.FC = () => {
                                     {[
                                         '10,000 requests per day',
                                         'Full historical data access',
-                                        'Corporate India Engine API',
                                         'Institutional Research Archive',
                                         'Priority support desk'
                                     ].map(f => (

@@ -5,7 +5,6 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { useRegime } from '@/hooks/useRegime';
 import { LiquidityAlarmCard } from './LiquidityAlarmCard';
 import { UpcomingEventsCard } from './UpcomingEventsCard';
-import { PresidentialPolicyTracker } from './PresidentialPolicyTracker';
 import { RegimeReplayModal } from './RegimeReplayModal';
 import { GeopoliticalRiskPulseCard } from './GeopoliticalRiskPulseCard';
 import { BalanceOfPaymentsPressureCard } from './BalanceOfPaymentsPressureCard';
@@ -56,9 +55,7 @@ export const MacroOrientationSection: React.FC = () => {
                 <Grid item xs={12} md={8}>
                     <UpcomingEventsCard />
                 </Grid>
-                <Grid item xs={12} md={4}>
-                    <PresidentialPolicyTracker />
-                </Grid>
+
                 <Grid item xs={12}>
                     <GeopoliticalRiskPulseCard />
                 </Grid>

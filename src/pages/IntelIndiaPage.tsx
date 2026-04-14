@@ -184,35 +184,6 @@ export const IntelIndiaPage: React.FC = () => {
                         </div>
                     </motion.div>
 
-                    {/* CIE Integration Card */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.3, duration: 0.5 }}
-                        className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500/10 via-transparent to-orange-500/5 border border-white/12 overflow-hidden hover:border-blue-500/30 transition-all mb-16"
-                    >
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Building2 size={120} className="text-blue-500" />
-                        </div>
-
-                        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 justify-between">
-                            <div className="max-w-xl">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-4">
-                                    <Zap size={10} /> New Institutional Module
-                                </div>
-                                <h3 className="text-2xl md:text-3xl font-black tracking-heading text-white mb-3">Corporate India Engine v1.0</h3>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Deep fundamental research integrated with macro telemetry. Filter Nifty 500 stocks by **State-wise Capex Exposure**, **Formalization Premium**, and **Oil Sensitivity**.
-                                </p>
-                            </div>
-                            <Link
-                                to="/india-equities"
-                                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black text-xs font-black uppercase tracking-uppercase hover:bg-blue-400 hover:text-white transition-all shadow-xl shadow-white/5 group/btn whitespace-nowrap"
-                            >
-                                Explore Corporate India Engine <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                            </Link>
-                        </div>
-                    </motion.div>
 
                     {/* Fast Signal Bar */}
                     <div className="flex flex-wrap gap-3 mt-6">

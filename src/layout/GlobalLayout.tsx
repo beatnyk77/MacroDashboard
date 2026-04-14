@@ -21,16 +21,12 @@ interface GlobalLayoutProps {
 const terminalNavItems = [
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
-    { id: 'treasury-hedging', label: 'Treasury Hedging', path: '/treasury-hedging', icon: <ShieldCheck size={18} /> },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },
-    { id: 'us-eq', label: 'US Corporate Terminal', path: '/us-equities', icon: <BarChart3 size={18} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={18} /> },
     { id: 'india-flow', label: 'India Flow Pulse (FII/DII)', path: '/india-equities/fii-dii', icon: <Activity size={18} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
-    { id: 'india-eq', label: 'Corporate India Engine', path: '/india-equities', icon: <BarChart3 size={18} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
-    { id: 'sustainable', label: 'Sustainable Finance', path: '/labs/sustainable-finance-climate-risk', icon: <Zap size={18} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
     { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={18} /> },
 ];

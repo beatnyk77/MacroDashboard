@@ -16,7 +16,6 @@ import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 
 const labs = [
-    { title: 'US Corporate Terminal', path: '/us-equities', icon: <Building2 size={24} />, color: 'blue', desc: 'SEC EDGAR fundamentals, whale tracking & insider conviction' },
     { title: 'US Macro & Fiscal', path: '/labs/us-macro-fiscal', icon: <ShieldAlert size={24} />, color: 'blue', desc: 'Sovereign maturity walls & auction demand dynamics' },
     { title: 'India Intelligence Hub', path: '/intel/india', icon: <Activity size={24} />, color: 'emerald', desc: 'RBI credit impulse & state-side fiscal telemetry' },
     { title: 'China Macro Hub', path: '/intel/china', icon: <Globe size={24} />, color: 'rose', desc: 'PBoC liquidity cycles & de-dollarization flows' },
@@ -24,7 +23,6 @@ const labs = [
     { title: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Fuel size={24} />, color: 'orange', desc: 'Strategic supply chains & oil-rupee settlement pulse' },
     { title: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <Building2 size={24} />, color: 'purple', desc: 'EM credit matrix & systemic refinance risk analytics' },
     { title: 'Shadow System', path: '/labs/shadow-system', icon: <EyeOff size={24} />, color: 'zinc', desc: 'Capital flight indices & illicit trade flow telemetry' },
-    { title: 'Sustainable Finance & Climate Risk', path: '/labs/sustainable-finance-climate-risk', icon: <Leaf size={24} />, color: 'emerald', desc: 'Climate transition alpha & institutional ESG risk telemetry' },
 ];
 
 const colorMap: Record<string, string> = {
