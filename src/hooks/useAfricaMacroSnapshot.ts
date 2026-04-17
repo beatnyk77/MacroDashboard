@@ -26,11 +26,15 @@ export function useAfricaMacroSnapshot() {
                 .select('*')
                 .order('snapshot_date', { ascending: false })
                 .limit(1)
-                .single();
+                .maybeSingle();
 
-            if (error) throw error;
-            return data as AfricaMacroSnapshot;
+            if (error) {
+                console.warn('[useAfricaMacroSnapshot] fetch error:', error.message);
+                return null;
+            }
+            return data as AfricaMacroSnapshot | null;
         },
         staleTime: 1000 * 60 * 60, // 1 hour
+        retry: 1,
     });
 }

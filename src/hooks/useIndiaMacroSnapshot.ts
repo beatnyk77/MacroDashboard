@@ -26,11 +26,15 @@ export function useIndiaMacroSnapshot() {
                 .select('*')
                 .order('snapshot_date', { ascending: false })
                 .limit(1)
-                .single();
+                .maybeSingle();
 
-            if (error) throw error;
-            return data as MacroSnapshot;
+            if (error) {
+                console.warn('[useIndiaMacroSnapshot] fetch error:', error.message);
+                return null;
+            }
+            return data as MacroSnapshot | null;
         },
         staleTime: 1000 * 60 * 60, // 1 hour
+        retry: 1,
     });
 }
