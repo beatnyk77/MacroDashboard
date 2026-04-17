@@ -47,6 +47,7 @@ const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLa
 const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').then(module => ({ default: module.SovereignStressLab })));
 const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(module => ({ default: module.ShadowSystemLab })));
 const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(module => ({ default: module.China15thFYPLab })));
+const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -113,6 +114,7 @@ function App() {
                                         <Route path="/labs/sovereign-stress" element={<SovereignStressLab />} />
                                         <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
                                         <Route path="/labs/china-15th-fyp" element={<China15thFYPLab />} />
+                                        <Route path="/labs/africa-macro" element={<AfricaMacroPulseLab />} />
                                         {/* Legacy route redirects */}
                                         <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
                                         {/* Catch-all 404 */}
