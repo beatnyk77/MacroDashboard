@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Activity, TrendingUp, TrendingDown, Minus, Calendar, BarChart3, ShieldAlert } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useIndiaMacroSnapshot } from '@/hooks/useIndiaMacroSnapshot';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const IndiaMacroDashboard: React.FC = () => {
     const { data: snapshot, isLoading } = useIndiaMacroSnapshot();
