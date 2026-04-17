@@ -3,7 +3,6 @@ import {
     ChevronRight,
     ArrowLeft,
     Globe,
-    TrendingUp,
     ShieldAlert,
     BarChart3
 } from 'lucide-react';

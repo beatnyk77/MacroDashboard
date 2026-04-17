@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, TrendingDown, Minus, Calendar, Globe, ShieldAlert } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, Minus, Calendar, ShieldAlert } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useAfricaMacroSnapshot } from '@/hooks/useAfricaMacroSnapshot';
 
@@ -61,7 +61,7 @@ export const AfricaMacroSnapshot: React.FC = () => {
 
                 {/* Key Metrics Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-                    {snapshot.metrics_summary.map((metric, idx) => (
+                    {snapshot.metrics_summary.map((metric) => (
                         <div key={metric.name} className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all">
                             <div className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-2">{metric.name}</div>
                             <div className="flex items-end gap-2">
