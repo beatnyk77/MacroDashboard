@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Activity, TrendingUp, TrendingDown, Minus, Calendar, BarChart3, ShieldAlert } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, Minus, Calendar, ShieldAlert } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useIndiaMacroSnapshot } from '@/hooks/useIndiaMacroSnapshot';
 
