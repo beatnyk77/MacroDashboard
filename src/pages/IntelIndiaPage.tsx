@@ -44,6 +44,10 @@ const StateFiscalHeatmap = lazy(() =>
     import('@/features/dashboard/components/rows/StateFiscalHeatmap').then(m => ({ default: m.StateFiscalHeatmap }))
 );
 
+const IndiaMacroDashboard = lazy(() =>
+    import('@/features/dashboard/components/sections/IndiaMacroDashboard').then(m => ({ default: m.IndiaMacroDashboard }))
+);
+
 const SectionSkeleton = () => (
     <div className="h-[300px] w-full rounded-3xl bg-white/[0.02] animate-pulse" />
 );
@@ -229,6 +233,17 @@ export const IntelIndiaPage: React.FC = () => {
 
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
+                {/* Monthly Snapshot Dashboard */}
+                <section id="snapshot">
+                    <SectionErrorBoundary name="India Macro Dashboard">
+                        <Suspense fallback={<SectionSkeleton />}>
+                            <IndiaMacroDashboard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </section>
+
+                <div className="border-t border-white/5" />
+
                 {/* India Macro Pulse */}
                 <section id="macro">
                     <SectionErrorBoundary name="India Macro Pulse">
