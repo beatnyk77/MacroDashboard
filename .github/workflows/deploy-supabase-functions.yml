@@ -53,6 +53,7 @@ jobs:
             ingest-country-metrics: ['supabase/functions/ingest-country-metrics/**']
 
             ingest-us-macro: ['supabase/functions/ingest-us-macro/**']
+            ingest-india-macro-snapshot: ['supabase/functions/ingest-india-macro-snapshot/**']
 
             llm-knowledge: ['supabase/functions/llm-knowledge/**']
             _shared: ['supabase/functions/_shared/**']
@@ -89,6 +90,7 @@ jobs:
           CHANGED_INGEST_COUNTRY_METRICS: ${{ steps.filter.outputs['ingest-country-metrics'] }}
 
           CHANGED_INGEST_US_MACRO: ${{ steps.filter.outputs['ingest-us-macro'] }}
+          CHANGED_INGEST_INDIA_MACRO_SNAPSHOT: ${{ steps.filter.outputs['ingest-india-macro-snapshot'] }}
 
           CHANGED_LLM_KNOWLEDGE: ${{ steps.filter.outputs['llm-knowledge'] }}
         run: |
@@ -138,5 +140,6 @@ jobs:
             [ "$CHANGED_INGEST_US_MACRO" = "true" ]            && deploy_func "ingest-us-macro"
 
             [ "$CHANGED_LLM_KNOWLEDGE" = "true" ]              && deploy_func "llm-knowledge"
+            [ "$CHANGED_INGEST_INDIA_MACRO_SNAPSHOT" = "true" ] && deploy_func "ingest-india-macro-snapshot"
             echo "Selective deployment complete."
           fi
