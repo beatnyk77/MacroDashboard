@@ -19,7 +19,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     title,
     description,
     keywords,
-    ogImage = 'https://graphiquestor.com/og-preview.png',
+    ogImage = 'https://graphiquestor.com/hero-preview.png',
     ogType = 'website',
     canonicalUrl,
     publishedTime,
@@ -72,7 +72,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta property="og:image" content={ogImage} />
             <meta property="og:url" content={resolvedCanonical} />
             <meta property="og:site_name" content="GraphiQuestor" />
-            <meta property="og:locale" content="en_IN" />
+            <meta property="og:locale" content="en_US" />
             <link rel="canonical" href={resolvedCanonical} />
 
             {/* Twitter */}
@@ -87,14 +87,8 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             {ogType === 'article' && publishedTime && (
                 <meta property="article:published_time" content={publishedTime} />
             )}
-            <meta name="geo.region" content="IN" />
-            <meta name="target_country" content="IN" />
-
-            {/* Optimized Hreflang for Core Institutional Focus */}
-            <link rel="alternate" href={resolvedCanonical} hrefLang="en-IN" />
-            <link rel="alternate" href={resolvedCanonical} hrefLang="en-US" />
-            <link rel="alternate" href={resolvedCanonical} hrefLang="en-GB" />
-            <link rel="alternate" href={resolvedCanonical} hrefLang="x-default" />
+            <meta name="geo.region" content="US" />
+            <meta name="target_country" content="US" />
         </Helmet>
     );
 };

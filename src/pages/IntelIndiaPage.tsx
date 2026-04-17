@@ -167,12 +167,12 @@ export const IntelIndiaPage: React.FC = () => {
                     >
                         <span className="text-6xl md:text-8xl select-none">🇮🇳</span>
                         <div className="flex-1">
-                            <h2 className="text-4xl md:text-7xl font-black tracking-heading text-white leading-[0.9] mb-4">
+                            <h1 className="text-4xl md:text-7xl font-black tracking-heading text-white leading-[0.9] mb-4">
                                 India <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-orange-400">
                                     Intelligence
                                 </span>
-                            </h2>
+                            </h1>
                             <p className="max-w-xl text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
                                 Institutional-grade telemetry for the world's fastest-growing major economy.
                                 Monitoring the RBI credit cycle, fiscal stress, and sovereign debt maturity walls in real-time.

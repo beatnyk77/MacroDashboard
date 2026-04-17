@@ -48,6 +48,7 @@ export const About: React.FC = () => {
                         <Avatar
                             src="/avatar.png"
                             alt="Kartikay Sharma"
+                            imgProps={{ loading: 'lazy' }}
                             sx={{ width: 140, height: 140, mx: 'auto', mb: 3, border: '4px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
                         >
                             KS
