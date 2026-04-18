@@ -111,10 +111,16 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
-                manualChunks: {
-                    vendor: ['react', 'react-dom'],
-                    ui: ['@mui/material', '@emotion/react', '@emotion/styled', 'lucide-react'],
-                    charts: ['recharts'],
+                manualChunks: (id: string) => {
+                    if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+                        return 'vendor';
+                    }
+                    if (id.includes('@mui/material') || id.includes('@emotion/') || id.includes('lucide-react')) {
+                        return 'ui';
+                    }
+                    if (id.includes('recharts')) {
+                        return 'charts';
+                    }
                 },
             },
         },

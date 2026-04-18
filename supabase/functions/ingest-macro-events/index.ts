@@ -227,7 +227,7 @@ async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: numbe
                     successCount++;
                 }
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(`Alpha Vantage fetch failed for ${indicator.name}:`, e);
         }
     }

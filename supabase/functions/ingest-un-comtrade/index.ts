@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
         }));
 
         if (tradeData.length > 0) {
-            const bilateralData = tradeData.filter(r => r.partner_code !== '0');
+            const bilateralData = tradeData.filter((r: any) => r.partner_code !== '0');
 
             const { error } = await supabase
                 .from('trade_chokepoints')

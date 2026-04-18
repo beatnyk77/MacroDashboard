@@ -58,7 +58,7 @@ export async function ingestFred(
                     .filter((o: any) => o.value !== null)
 
                 if (cleanData.length === 0) {
-                    await logger.log(metric.metric_key, 'info', 0, 'No new valid data')
+                    await logger.log(metric.id, 'info', 0, 'No new valid data')
                     return
                 }
 
@@ -76,11 +76,11 @@ export async function ingestFred(
                     .eq('id', metric.id)
 
                 const duration = Math.round(performance.now() - fetchStart)
-                await logger.log(metric.metric_key, 'success', cleanData.length, undefined, duration)
+                await logger.log(metric.id, 'success', cleanData.length, undefined, duration)
             })
         } catch (err: any) {
             const duration = Math.round(performance.now() - fetchStart)
-            await logger.log(metric.metric_key, 'error', 0, err.message, duration)
+            await logger.log(metric.id, 'error', 0, err.message, duration)
         }
 
         // Rate limiting precaution

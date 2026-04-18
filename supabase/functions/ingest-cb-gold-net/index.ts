@@ -235,7 +235,7 @@ Deno.serve(async (req: Request) => {
                 console.error('IMF API returned status:', resp.status);
             }
 
-        } catch (e) {
+        } catch (e: any) {
             console.error('IMF API Error:', e);
         }
 

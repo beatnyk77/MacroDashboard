@@ -21,7 +21,7 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    return await runIngestion(supabase, 'ingest-market-pulse', async (ctx) => {
+    return await runIngestion(supabase as any, 'ingest-market-pulse', async (ctx) => {
         console.log('Starting Market Pulse ingestion...')
 
         // 1. Resolve Active Yahoo Metrics

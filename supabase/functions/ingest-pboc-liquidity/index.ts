@@ -53,7 +53,7 @@ Deno.serve(async (req: Request) => {
                             }
                         }
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error(`[PBOC] FRED fetch error for ${s.fredId}:`, e);
                 }
             }

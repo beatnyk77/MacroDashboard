@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
                     if (upsertError) throw upsertError;
                     results.push({ state: st.n, status: 'success' });
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error(`Failed to fetch ASI for ${st.n}:`, e.message);
             }
         }

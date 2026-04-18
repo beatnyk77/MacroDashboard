@@ -29,7 +29,7 @@ export async function withFallback<T>(
             is_stale: false,
             last_verified: new Date().toISOString()
         };
-    } catch (error) {
+    } catch (error: any) {
         console.warn(`API call failed for ${metricId}: ${(error as any).message}. Attempting database fallback...`);
         
         const tableName = options.customTableName || 'metric_observations';

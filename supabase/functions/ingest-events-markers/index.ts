@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
         if (!logError && logData) {
             logId = logData.id;
         }
-    } catch (e) {
+    } catch (e: any) {
         console.warn('Failed to create start log:', e);
     }
 

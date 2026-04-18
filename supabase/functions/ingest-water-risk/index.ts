@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         })
-    } catch (error) {
+    } catch (error: any) {
         console.error(error)
         await logIngestion(supabase, 'ingest-water-risk', 'error', { error: error.message });
         return new Response(JSON.stringify({ error: error.message }), {

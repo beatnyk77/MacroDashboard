@@ -32,7 +32,7 @@ export class IndiaTelemetry {
                 }));
             }
             return [];
-        } catch (e) {
+        } catch (e: any) {
             console.error('IndiaTelemetry: MoSPI CPI failed', e);
             throw e;
         }
@@ -55,7 +55,7 @@ export class IndiaTelemetry {
                 }));
             }
             return [];
-        } catch (e) {
+        } catch (e: any) {
             console.error('IndiaTelemetry: MoSPI Energy failed', e);
             throw e;
         }
@@ -79,7 +79,7 @@ export class IndiaTelemetry {
                 }));
             }
             return [];
-        } catch (e) {
+        } catch (e: any) {
             console.error('IndiaTelemetry: FRED Credit failed', e);
             throw e;
         }
@@ -103,7 +103,7 @@ export class IndiaTelemetry {
                 }));
             }
             return [];
-        } catch (e) {
+        } catch (e: any) {
             console.error('IndiaTelemetry: FRED Liquidity failed', e);
             throw e;
         }
@@ -127,7 +127,7 @@ export class IndiaTelemetry {
                 }));
             }
             return [];
-        } catch (e) {
+        } catch (e: any) {
             console.error('IndiaTelemetry: FRED Call Rate failed', e);
             throw e;
         }
@@ -150,7 +150,7 @@ export class IndiaTelemetry {
                 }));
             }
             return [];
-        } catch (e) {
+        } catch (e: any) {
             console.error('IndiaTelemetry: MoSPI ASI failed', e);
             throw e;
         }

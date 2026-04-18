@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@supabase/supabase-js'
 
-// @ts-expect-error: Deno globals and third-party types: Deno is a global in Supabase Edge Functions
 Deno.serve(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
@@ -20,7 +19,7 @@ Deno.serve(async (req: Request) => {
     try {
         const body = await req.json()
         if (body.date) targetDate = new Date(body.date)
-    } catch (e) {
+    } catch (e: any) {
         // Fallback to today
     }
 

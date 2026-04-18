@@ -74,7 +74,7 @@ Deno.serve(async (req: Request) => {
                         }
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.warn(`Yahoo fetch failed for ${metal.id}:`, e)
             }
 
@@ -91,7 +91,7 @@ Deno.serve(async (req: Request) => {
                         price = json.price
                         asOfDate = new Date().toISOString().split('T')[0]
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error(`GoldAPI fetch failed for ${metal.id}:`, e)
                 }
             }

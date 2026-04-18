@@ -39,7 +39,7 @@ export class MoSPIClient {
 
             const data = await response.json();
             return data;
-        } catch (error) {
+        } catch (error: any) {
             console.error("MoSPI API Error:", error);
             throw error;
         }

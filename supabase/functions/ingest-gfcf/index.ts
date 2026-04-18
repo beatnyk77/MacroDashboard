@@ -105,7 +105,7 @@ Deno.serve(async (req: Request) => {
                         try {
                             den = await fetchFredSeries(fredApiKey, cand);
                             if (den) break;
-                        } catch (e) {
+                        } catch (e: any) {
                             console.log(`Candidate ${cand} failed: ${e.message}`);
                         }
                     }

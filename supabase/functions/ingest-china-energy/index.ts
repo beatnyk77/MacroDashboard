@@ -68,7 +68,7 @@ Deno.serve(async (req: Request) => {
                         upserts.push(rec);
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error('[ChinaEnergy] Ember API error:', e);
             }
         }

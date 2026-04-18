@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
             // Sigmoid-like growth for penetration (%)
             const penetrationPct = 0.05 * Math.pow(1.25, monthsSinceLaunch); 
             const creditValueTrillion = (row.upi_value_inr_trillion * (penetrationPct / 100));
-            const yoyGrowth = idx > 0 ? ((creditValueTrillion / results[results.length-1].value) - 1) * 100 : 0;
+            const yoyGrowth: number = idx > 0 ? ((creditValueTrillion / results[results.length-1].value) - 1) * 100 : 0;
 
             results.push({
                 metric_id: 'IN_UPI_CREDIT_VALUE',

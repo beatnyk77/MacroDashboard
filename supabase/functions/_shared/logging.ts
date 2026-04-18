@@ -28,7 +28,7 @@ export async function logIngestionStart(
             return null
         }
         return data.id
-    } catch (err) {
+    } catch (err: any) {
         console.error('Error creating ingestion log:', err)
         return null
     }
@@ -64,7 +64,7 @@ export async function logIngestionEnd(
         if (error) {
             console.error('Failed to update ingestion log:', error)
         }
-    } catch (err) {
+    } catch (err: any) {
         console.error('Error updating ingestion log:', err)
     }
 }
@@ -94,7 +94,7 @@ async function logPayloadHash(
             status_code: details.status_code,
             api_latency_ms: details.api_latency_ms
         });
-    } catch (err) {
+    } catch (err: any) {
         console.error('Failed to log payload hash:', err);
     }
 }

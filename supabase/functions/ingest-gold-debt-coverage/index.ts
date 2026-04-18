@@ -104,7 +104,7 @@ Deno.serve(async (req: Request) => {
                             fxRate = country.invert ? 1 / val : val;
                         }
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.log(`FX fetch failed for ${country.fx}`);
                 }
             }
@@ -144,6 +144,6 @@ Deno.serve(async (req: Request) => {
             if (error) throw error;
         }
 
-        return { success: true, processed: results.length };
+        return { rows_inserted: results.length };
     });
 });

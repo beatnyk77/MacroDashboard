@@ -23,12 +23,10 @@ Deno.serve(async (req: Request) => {
         const resp = await fetch('https://www.nseindia.com/', { headers: baseHeaders });
         const setCookie = resp.headers.get('set-cookie');
         if (setCookie) cookies = setCookie;
-        // @ts-expect-error: Deno globals and third-party types
-        if (!cookies && typeof resp.headers.getSetCookie === 'function') {
-            // @ts-expect-error: Deno globals and third-party types
-            cookies = resp.headers.getSetCookie().join('; ');
+                if (!cookies && typeof resp.headers.getSetCookie === 'function') {
+                        cookies = resp.headers.getSetCookie().join('; ');
         }
-    } catch (e) {
+    } catch (e: any) {
         console.warn('Failed to get NSE cookies:', e)
     }
 
@@ -104,7 +102,7 @@ Deno.serve(async (req: Request) => {
                 }
             }
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error('Failed to fetch NSE deals', e);
     }
 

@@ -76,7 +76,7 @@ export async function processUST(supabase: SupabaseClient) {
                 }
                 results.push({ endpoint: 'debt_to_penny', status: 'success' })
             }
-        } catch (e) { results.push({ endpoint: 'debt_to_penny', status: 'error', error: String(e) }) }
+        } catch (e: any) { results.push({ endpoint: 'debt_to_penny', status: 'error', error: String(e) }) }
 
         // B. MSPD Table 1
         const mspd1Url = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/debt/mspd/mspd_table_1?filter=security_type_desc:eq:Marketable&sort=-record_date&page[size]=100'
@@ -98,7 +98,7 @@ export async function processUST(supabase: SupabaseClient) {
                 })
                 results.push({ endpoint: 'mspd_table_1', status: 'success' })
             }
-        } catch (e) { results.push({ endpoint: 'mspd_table_1', status: 'error', error: String(e) }) }
+        } catch (e: any) { results.push({ endpoint: 'mspd_table_1', status: 'error', error: String(e) }) }
 
         if (observations.length > 0) {
             const uniqueObs = Array.from(new Map(observations.map(o => [`${o.metric_id}-${o.as_of_date}`, o])).values())

@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from '@supabase/supabase-js';
 
 const corsHeaders = {
@@ -6,7 +5,7 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
@@ -40,7 +39,7 @@ serve(async (req) => {
 
         // Process Metrics (Calculate MoM Change)
         const processedMetrics = metricIds.map(id => {
-            const metricObs = observations.filter(o => o.metric_id === id);
+            const metricObs = (observations || []).filter(o => o.metric_id === id);
             if (!metricObs.length) return null;
 
             const latest = metricObs[0];
@@ -70,7 +69,7 @@ serve(async (req) => {
                 insight,
                 isStale
             };
-        }).filter(Boolean);
+        }).filter((m): m is NonNullable<typeof m> => m !== null);
 
         // 3. Fetch Upcoming Events (Next 30 Days)
         const today = new Date().toISOString().split('T')[0];
@@ -78,12 +77,10 @@ serve(async (req) => {
         nextMonth.setDate(nextMonth.getDate() + 30);
         const nextMonthStr = nextMonth.toISOString().split('T')[0];
 
-        // Note: adjusting table name if needed based on check, assuming 'economic_events' or similar
-        // If table doesn't exist, we'll return an empty array for now to avoid breaking.
         let upcomingEvents = [];
         try {
             const { data: events, error: eventError } = await supabase
-                .from('upcoming_events') // derived from previous knowledge of calendar
+                .from('upcoming_events')
                 .select('*')
                 .gte('date', today)
                 .lte('date', nextMonthStr)
@@ -91,24 +88,27 @@ serve(async (req) => {
                 .limit(1000);
 
             if (!eventError && events) upcomingEvents = events;
-        } catch (e) {
+        } catch (e: any) {
             console.log("Events table not found or error", e);
         }
 
         // 4. Construct Payload
+        const m2Metric = processedMetrics.find(m => m?.id === 'US_M2_MONEY_SUPPLY');
+        const goldMetric = processedMetrics.find(m => m?.id === 'GOLD_PRICE_USD');
+
         const payload = {
             title: `GraphiQuestor Monthly Macro Observer – ${new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}`,
             generated_at: new Date().toISOString(),
             metrics: processedMetrics,
             events: upcomingEvents,
-            summary: `Global liquidity conditions are ${processedMetrics.find(m => m.id === 'US_M2_MONEY_SUPPLY')?.pctChange > 0 ? 'expanding' : 'tightening'}. Gold is ${processedMetrics.find(m => m.id === 'GOLD_PRICE_USD')?.insight.toLowerCase()}.`
+            summary: `Global liquidity conditions are ${Number(m2Metric?.pctChange ?? 0) > 0 ? 'expanding' : 'tightening'}. Gold is ${goldMetric?.insight.toLowerCase() ?? 'stable'}.`
         };
 
         return new Response(JSON.stringify(payload), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (error) {
+    } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },

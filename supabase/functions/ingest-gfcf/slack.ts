@@ -15,7 +15,7 @@ export async function sendSlackAlert(text: string) {
     if (!response.ok) {
       throw new Error(`Slack API returned ${response.status}`);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to send Slack alert:', error);
   }
 }

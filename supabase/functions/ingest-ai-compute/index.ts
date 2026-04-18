@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
                         }, { onConflict: 'metric_id, as_of_date' });
                         if (!error) results.push(meta.id);
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("FRED failed", seriesId, e);
                 }
             }

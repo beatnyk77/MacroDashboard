@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
                             }
                         }
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error(`[ChinaRealEcon] FRED error for ${s.fredId}:`, e);
                 }
             }

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Box, Typography, Grid, Paper, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, CircularProgress, Button } from '@mui/material';
 import { SEOManager } from '@/components/SEOManager';
 import { useQuery } from '@tanstack/react-query';
@@ -258,7 +259,7 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000 // 5 mins
     });
 
-    const [refreshing, setRefreshing] = React.useState<string | null>(null);
+    const [refreshing, setRefreshing] = useState<string | null>(null);
 
     const handleForceRefresh = async (functionName: string) => {
         setRefreshing(functionName);
@@ -291,6 +292,7 @@ export const DataHealthDashboard: React.FC = () => {
     };
 
     return (
+        <>
         <Box sx={{ maxWidth: 1600, mx: 'auto', p: 4 }}>
             <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
@@ -549,8 +551,9 @@ export const DataHealthDashboard: React.FC = () => {
 
                 </Grid>
             </Box>
+        </Box>
 
-            <Box sx={{ p: { xs: 2, md: 6 }, bgcolor: '#020617', minHeight: '100vh' }}>
+        <Box sx={{ p: { xs: 2, md: 6 }, bgcolor: '#020617', minHeight: '100vh' }}>
             <SEOManager 
                 title="System Health & Ingestion Telemetry — GraphiQuestor"
                 description="Live monitoring of macro data ingestion pipelines, cron jobs, and database integrity."
@@ -733,6 +736,7 @@ export const DataHealthDashboard: React.FC = () => {
                 </Grid>
             </Grid>
         </Box>
+        </>
     );
 };
 

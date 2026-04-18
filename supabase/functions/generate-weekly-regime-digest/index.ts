@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
         const fiscalDominance = debtGold[0]?.value > 10 ? "deepening" : "nascent";
 
         // Executive Summary
-        const executiveSummary = `This week, global macro conditions are defined by ${fiscalDominance} US fiscal dominance and ${liqStatus} liquidity. The ${dxyTrend} Dollar is clashing with ${goldTrend} gold prices, signaling a structural bid for physical-claim assets as a hedge against G7 sovereign debt rollover risks. This shift is recalibrating capital flows across the Global South, particularly impacting India's FX defense and Africa's commodity-led fiscal recovery.`;
+        const executive_summary = `This week, global macro conditions are defined by ${fiscalDominance} US fiscal dominance and ${liqStatus} liquidity. The ${dxyTrend} Dollar is clashing with ${goldTrend} gold prices, signaling a structural bid for physical-claim assets as a hedge against G7 sovereign debt rollover risks. This shift is recalibrating capital flows across the Global South, particularly impacting India's FX defense and Africa's commodity-led fiscal recovery.`;
 
         // Key Regime Shifts
         const regimeShifts = [
@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
             "China: Credit impulse data for signs of a more aggressive stimulus to counter the housing-led deflationary drag."
         ];
 
-        const holisticNarrative = `The macro regime is shifting from 'Liquidity Abundance' to 'Fiscal Gravity'. The US fiscal dominance is acting as the primary solar mass, drawing in capital but forcing de-dollarization as a survival mechanism for the Global South. India and Africa are the key beneficiaries of this multi-polar flow, provided they can manage the energy inflation feedback loop.`;
+        const holistic_narrative = `The macro regime is shifting from 'Liquidity Abundance' to 'Fiscal Gravity'. The US fiscal dominance is acting as the primary solar mass, drawing in capital but forcing de-dollarization as a survival mechanism for the Global South. India and Africa are the key beneficiaries of this multi-polar flow, provided they can manage the energy inflation feedback loop.`;
 
         // 3. Save to Database
         const { error: dbError } = await supabaseClient
@@ -140,7 +140,7 @@ Deno.serve(async (req) => {
 
         if (dbError) throw dbError;
 
-        return new Response(JSON.stringify({ success: true, digest: { weekEndingDate, executiveSummary, regimeShifts, whatChanged, whatToWatch, holisticNarrative } }), {
+        return new Response(JSON.stringify({ success: true, digest: { weekEndingDate, executive_summary, regimeShifts, whatChanged, whatToWatch, holistic_narrative } }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 

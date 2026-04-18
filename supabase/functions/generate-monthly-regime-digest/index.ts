@@ -152,7 +152,7 @@ Generate the Monthly Regime Digest.`;
         let parsedResult;
         try {
             parsedResult = JSON.parse(resultText);
-        } catch (e) {
+        } catch (e: any) {
             throw new Error(`Failed to parse LLM JSON output: ${resultText}`);
         }
 

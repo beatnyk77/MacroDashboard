@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
                     }
                 });
             }
-        } catch (e) {
+        } catch (e: any) {
             console.warn('Failed to fetch EIA International data, using high-fidelity estimates:', e);
         }
 
@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         })
-    } catch (error) {
+    } catch (error: any) {
         console.error(error)
         await logIngestion(supabase, 'ingest-global-refining', 'error', { error: error.message });
         return new Response(JSON.stringify({ error: error.message }), {

@@ -8,7 +8,7 @@ export async function retry<T>(
     while (attempt < retries) {
         try {
             return await fn()
-        } catch (error) {
+        } catch (error: any) {
             attempt++
             if (attempt >= retries) {
                 throw error

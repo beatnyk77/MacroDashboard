@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
                 if (error) throw error;
                 results.india = { status: 'success', rows: indiaResults.length };
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("India Ingest Error:", e);
             results.india = { status: 'failed', error: e.message };
         }
@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
                 if (error) throw error;
                 results.us = { status: 'success', rows: usResults.length };
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("US Ingest Error:", e);
             results.us = { status: 'failed', error: e.message };
         }
@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
                 if (error) throw error;
                 results.eu = { status: 'success', rows: euResults.length };
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("EU Ingest Error:", e);
             results.eu = { status: 'failed', error: e.message };
         }
@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
                 if (error) throw error;
                 results.china = { status: 'success', rows: chinaResults.length };
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("China Ingest Error:", e);
             results.china = { status: 'failed', error: e.message };
         }

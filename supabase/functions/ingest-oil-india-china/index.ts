@@ -189,7 +189,7 @@ Deno.serve(async (req) => {
                         }
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error(`Failed to process ${reporter.id}:`, e);
                 lastError = e.message;
             }

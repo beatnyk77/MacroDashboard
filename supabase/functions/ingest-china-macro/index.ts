@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
                             as_of_date: data.observations[0].date
                         });
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error(`Failed to fetch FRED ${m.fredId}:`, e);
                 }
             }

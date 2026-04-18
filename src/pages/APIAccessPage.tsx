@@ -1,3 +1,6 @@
+import React, { useEffect } from 'react';
+import { Container, Typography, Box, Button, Grid } from '@mui/material';
+import { Zap, ShieldCheck, Database, ArrowRight, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SEOManager } from '@/components/SEOManager';
 

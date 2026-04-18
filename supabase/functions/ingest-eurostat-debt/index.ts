@@ -97,7 +97,7 @@ Deno.serve(async (req: Request) => {
                 const year = timeLabels[timePos];
                 observationsArray.push({
                     time: year,
-                    value: parseFloat(value)
+                    value: parseFloat(String(value))
                 });
             }
         }

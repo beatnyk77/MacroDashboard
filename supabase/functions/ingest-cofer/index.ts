@@ -72,8 +72,7 @@ Deno.serve(async (req: Request) => {
             const asOfDate = quarterEndDate.toISOString().split('T')[0];
 
             for (const [metricId, field] of Object.entries(metricMapping)) {
-                // @ts-expect-error: Deno globals and third-party types
-                const val = row[field];
+                                const val = row[field as keyof typeof row];
                 if (val !== undefined) {
                     observations.push({
                         metric_id: metricId,

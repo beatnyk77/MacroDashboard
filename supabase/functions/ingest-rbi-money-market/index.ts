@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@supabase/supabase-js';
 import { runIngestion } from '../_shared/logging.ts'
-import pdf from "npm:pdf-parse@1.1.1";
+import { extractText } from "https://esm.sh/unpdf@0.12.1";
 import * as cheerio from "https://esm.sh/cheerio@1.0.0-rc.12";
 
 const RBI_URL = "https://www.rbi.org.in/Scripts/BS_viewMMO.aspx";
@@ -161,8 +160,9 @@ Deno.serve(async (req: Request) => {
         console.log(`Fetching PDF for detailed segment data: ${pdfUrl}`);
         const pdfResp = await fetch(pdfUrl);
         if (pdfResp.ok) {
-          const pdfBuffer = await pdfResp.arrayBuffer();
-          const pdfData = await pdf(pdfBuffer);
+          const pdfArrayBuffer = await pdfResp.arrayBuffer();
+          const pdfBuffer = new Uint8Array(pdfArrayBuffer);
+          const pdfData = await extractText(pdfBuffer, { mergePages: true });
           const text = pdfData.text;
 
           const patterns = [

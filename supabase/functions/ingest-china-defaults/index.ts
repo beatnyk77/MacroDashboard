@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
                     // If debt > 200%, increase stress factor
                     stressFactor *= (debtPct / 200); 
                 }
-            } catch (e) { console.warn('FRED weight skip:', e); }
+            } catch (e: any) { console.warn('FRED weight skip:', e); }
         }
 
         // B. Get Sentiment Pulse from Alpha Vantage for real-time news frequency
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
                 
                 // Increase stress by 0.1% for every 5 mentions of 'default' in top news
                 baselineRate += (defaultNewsCount / 50); 
-            } catch (e) { console.warn('AV sentiment skip:', e); }
+            } catch (e: any) { console.warn('AV sentiment skip:', e); }
         }
 
         const calculatedRate = (baselineRate * stressFactor).toFixed(4);

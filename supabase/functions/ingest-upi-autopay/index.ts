@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@supabase/supabase-js'
-import pdf from "npm:pdf-parse@1.1.1";
+import { extractText } from "https://esm.sh/unpdf@0.12.1";
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -65,8 +64,8 @@ Deno.serve(async (req: Request) => {
 
             if (pdfBuffer) {
                 console.log(`Processing PDF for ${monthShort} ${tmYear}`);
-                const nodeBuffer = Buffer.from(pdfBuffer);
-                const pdfData = await pdf(nodeBuffer);
+                const nodeBuffer = new Uint8Array(pdfBuffer);
+                const pdfData = await extractText(nodeBuffer, { mergePages: true });
                 const text = pdfData.text;
 
                 // Robust Parsing

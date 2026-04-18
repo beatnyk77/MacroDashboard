@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
                         }
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Ember Fetch failed:", e);
             }
         } else {
@@ -147,7 +147,7 @@ Deno.serve(async (req) => {
                 // await new Promise(r => setTimeout(r, 200));
             }
 
-        } catch (e) {
+        } catch (e: any) {
             console.error("GIE Fetch failed:", e);
         }
 

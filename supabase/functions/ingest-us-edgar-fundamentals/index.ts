@@ -15,7 +15,7 @@ Deno.serve(async (req: Request) => {
     try {
         const body = await req.json() as any;
         if (body.mode) mode = body.mode;
-    } catch (e) {
+    } catch (e: any) {
         // Fallback to URL params
         const url = new URL(req.url);
         mode = url.searchParams.get('mode') || mode;
@@ -208,7 +208,7 @@ async function syncFundamentals(client: any) {
             processed++;
             await sleep(200); // Protect rate limits (10 req/s max)
 
-        } catch (e) {
+        } catch (e: any) {
             console.error(`Failed fundamentals for ${company.ticker}`, e);
         }
     }

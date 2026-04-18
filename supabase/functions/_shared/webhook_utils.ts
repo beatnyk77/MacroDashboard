@@ -33,7 +33,7 @@ export async function sendDiscordAlert(title: string, description: string, isErr
     if (!response.ok) {
       console.error(`Failed to send Discord alert, status: ${response.status}`);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Exception sending Discord alert', err);
   }
 }
