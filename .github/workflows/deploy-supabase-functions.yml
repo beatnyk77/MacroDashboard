@@ -35,7 +35,7 @@ jobs:
             ingest-shadow-trade: ['supabase/functions/ingest-shadow-trade/**']
             ingest-trade-gravity: ['supabase/functions/ingest-trade-gravity/**']
             check-data-health: ['supabase/functions/check-data-health/**']
-            generate-newsletter: ['supabase/functions/generate-newsletter/**']
+            generate-weekly-regime-digest: ['supabase/functions/generate-weekly-regime-digest/**']
 
             compute-cie-macro-scores: ['supabase/functions/compute-cie-macro-scores/**']
             ingest-cie-ipos: ['supabase/functions/ingest-cie-ipos/**']
@@ -58,6 +58,21 @@ jobs:
             llm-knowledge: ['supabase/functions/llm-knowledge/**']
             _shared: ['supabase/functions/_shared/**']
 
+      - name: Verify Secrets
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN is missing"
+            exit 1
+          fi
+          if [ -z "$SUPABASE_PROJECT_ID" ]; then
+            echo "::error::SUPABASE_PROJECT_ID is missing"
+            exit 1
+          fi
+          echo "SUPABASE_PROJECT_ID length: ${#SUPABASE_PROJECT_ID}"
+
       - name: Deploy Changed Functions
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -72,7 +87,7 @@ jobs:
           CHANGED_INGEST_SHADOW_TRADE: ${{ steps.filter.outputs['ingest-shadow-trade'] }}
           CHANGED_INGEST_TRADE_GRAVITY: ${{ steps.filter.outputs['ingest-trade-gravity'] }}
           CHANGED_CHECK_DATA_HEALTH: ${{ steps.filter.outputs['check-data-health'] }}
-          CHANGED_GENERATE_NEWSLETTER: ${{ steps.filter.outputs['generate-newsletter'] }}
+          CHANGED_GENERATE_WEEKLY_REGIME_DIGEST: ${{ steps.filter.outputs['generate-weekly-regime-digest'] }}
 
           CHANGED_COMPUTE_CIE_MACRO_SCORES: ${{ steps.filter.outputs['compute-cie-macro-scores'] }}
           CHANGED_INGEST_CIE_SHORT_SELLING: ${{ steps.filter.outputs['ingest-cie-short-selling'] }}
@@ -120,7 +135,7 @@ jobs:
             [ "$CHANGED_INGEST_SHADOW_TRADE" = "true" ]        && deploy_func "ingest-shadow-trade"
             [ "$CHANGED_INGEST_TRADE_GRAVITY" = "true" ]       && deploy_func "ingest-trade-gravity"
             [ "$CHANGED_CHECK_DATA_HEALTH" = "true" ]          && deploy_func "check-data-health"
-            [ "$CHANGED_GENERATE_NEWSLETTER" = "true" ]        && deploy_func "generate-newsletter"
+            [ "$CHANGED_GENERATE_WEEKLY_REGIME_DIGEST" = "true" ] && deploy_func "generate-weekly-regime-digest"
 
             [ "$CHANGED_COMPUTE_CIE_MACRO_SCORES" = "true" ]   && deploy_func "compute-cie-macro-scores"
             [ "$CHANGED_INGEST_CIE_SHORT_SELLING" = "true" ]   && deploy_func "ingest-cie-short-selling"
