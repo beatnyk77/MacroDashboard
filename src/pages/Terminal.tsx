@@ -33,6 +33,8 @@ const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/componen
 // 3. REGIONAL & MACRO
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
+const IndiaMacroDashboard = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroDashboard').then(m => ({ default: m.IndiaMacroDashboard })));
+const AfricaMacroSnapshot = lazy(() => import('@/features/dashboard/components/sections/AfricaMacroSnapshot').then(m => ({ default: m.AfricaMacroSnapshot })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
 const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
@@ -311,7 +313,19 @@ export const Terminal: React.FC = () => {
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/80">Regional Intelligence</h2>
                         <div className="h-px flex-1 bg-white/5" />
                     </div>
-                    <div className="space-y-8">
+                    <div className="space-y-12">
+                        <SectionErrorBoundary name="India Macro Snapshot">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <IndiaMacroDashboard />
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        <SectionErrorBoundary name="Africa Macro Snapshot">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <AfricaMacroSnapshot />
+                            </Suspense>
+                        </SectionErrorBoundary>
+
                         <SectionErrorBoundary name="China Macro Pulse">
                             <Suspense fallback={<LoadingFallback />}>
                                 <Card variant="elevated">

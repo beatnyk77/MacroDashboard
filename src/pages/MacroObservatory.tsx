@@ -18,6 +18,7 @@ const labs = [
     { title: 'US Macro & Fiscal', path: '/labs/us-macro-fiscal', icon: <ShieldAlert size={24} />, color: 'blue', desc: 'Sovereign maturity walls & auction demand dynamics' },
     { title: 'India Intelligence Hub', path: '/intel/india', icon: <Activity size={24} />, color: 'emerald', desc: 'RBI credit impulse & state-side fiscal telemetry' },
     { title: 'China Macro Hub', path: '/intel/china', icon: <Globe size={24} />, color: 'rose', desc: 'PBoC liquidity cycles & de-dollarization flows' },
+    { title: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={24} />, color: 'blue', desc: 'Sovereign debt restructuring & commodity gravity flows' },
     { title: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Coins size={24} />, color: 'amber', desc: 'Hard money regimes & reserve asset multi-polarity' },
     { title: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Fuel size={24} />, color: 'orange', desc: 'Strategic supply chains & oil-rupee settlement pulse' },
     { title: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <Building2 size={24} />, color: 'purple', desc: 'EM credit matrix & systemic refinance risk analytics' },
