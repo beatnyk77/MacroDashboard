@@ -16,8 +16,7 @@ import { FeedbackSection } from '@/features/dashboard/components/sections/Feedba
 import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/FedMonetizationMonitor';
 
 
-const TodaysBriefPanel = lazy(() => import('@/features/dashboard/components/sections/TodaysBriefPanel').then(m => ({ default: m.TodaysBriefPanel })));
-const WeeklyNarrativeSection = lazy(() => import('@/features/dashboard/components/sections/WeeklyNarrativeSection').then(m => ({ default: m.WeeklyNarrativeSection })));
+const WeeklyRegimeDigest = lazy(() => import('@/features/dashboard/components/sections/WeeklyRegimeDigest').then(m => ({ default: m.WeeklyRegimeDigest })));
 const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/sections/RegimeDigestSection').then(m => ({ default: m.RegimeDigestSection })));
 
 // 1. LIQUIDITY & FLOWS
@@ -140,17 +139,11 @@ export const Terminal: React.FC = () => {
                 </section>
 
 
-                {/* 1. STRATEGIC CONTEXT */}
-                <section className="space-y-12">
-                    <SectionErrorBoundary name="Weekly Narrative">
+                {/* 1. STRATEGIC CONTEXT - UNIFIED WEEKLY DIGEST */}
+                <section>
+                    <SectionErrorBoundary name="Weekly Regime Digest">
                         <Suspense fallback={<LoadingFallback />}>
-                            <WeeklyNarrativeSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-
-                    <SectionErrorBoundary name="Today's Brief">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TodaysBriefPanel />
+                            <WeeklyRegimeDigest />
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
