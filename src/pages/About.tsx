@@ -33,7 +33,7 @@ export const About: React.FC = () => {
 
             <Container maxWidth="md">
                 <Box sx={{ mb: 6, textAlign: 'center' }}>
-                    <Typography variant="h1" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' }, tracking: '-0.02em' }}>
+                    <Typography variant="h1" component="h1" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' }, tracking: '-0.02em' }}>
                         The Surveillance Mandate
                     </Typography>
                     <Typography variant="h2" sx={{ fontSize: '1.25rem', color: 'text.secondary', fontWeight: 400, maxWidth: '600px', mx: 'auto' }}>

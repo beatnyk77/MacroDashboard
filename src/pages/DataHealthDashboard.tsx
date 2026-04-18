@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, Typography, Grid, Paper, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, CircularProgress, Button } from '@mui/material';
+import { SEOManager } from '@/components/SEOManager';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle, AlertCircle, Clock, RefreshCcw, Send, Settings, RefreshCw, Download } from 'lucide-react';
@@ -294,7 +294,7 @@ export const DataHealthDashboard: React.FC = () => {
         <Box sx={{ maxWidth: 1600, mx: 'auto', p: 4 }}>
             <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 900, mb: 1, textTransform: 'uppercase', color: 'white' }}>
+                    <Typography variant="h4" component="h1" sx={{ fontWeight: 900, mb: 1, textTransform: 'uppercase', color: 'white' }}>
                         Macro Data Operations
                     </Typography>
                     <Typography sx={{ color: 'text.secondary' }}>
@@ -550,6 +550,12 @@ export const DataHealthDashboard: React.FC = () => {
                 </Grid>
             </Box>
 
+            <Box sx={{ p: { xs: 2, md: 6 }, bgcolor: '#020617', minHeight: '100vh' }}>
+            <SEOManager 
+                title="System Health & Ingestion Telemetry — GraphiQuestor"
+                description="Live monitoring of macro data ingestion pipelines, cron jobs, and database integrity."
+                robots="noindex, nofollow"
+            />
             <Grid container spacing={4}>
                 {/* 1. CRON SCHEDULER MONITOR */}
                 <Grid item xs={12}>

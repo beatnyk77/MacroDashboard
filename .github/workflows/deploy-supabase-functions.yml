@@ -36,6 +36,7 @@ jobs:
             ingest-trade-gravity: ['supabase/functions/ingest-trade-gravity/**']
             check-data-health: ['supabase/functions/check-data-health/**']
             generate-weekly-regime-digest: ['supabase/functions/generate-weekly-regime-digest/**']
+            generate-monthly-regime-digest: ['supabase/functions/generate-monthly-regime-digest/**']
 
             compute-cie-macro-scores: ['supabase/functions/compute-cie-macro-scores/**']
             ingest-cie-ipos: ['supabase/functions/ingest-cie-ipos/**']
@@ -88,6 +89,7 @@ jobs:
           CHANGED_INGEST_TRADE_GRAVITY: ${{ steps.filter.outputs['ingest-trade-gravity'] }}
           CHANGED_CHECK_DATA_HEALTH: ${{ steps.filter.outputs['check-data-health'] }}
           CHANGED_GENERATE_WEEKLY_REGIME_DIGEST: ${{ steps.filter.outputs['generate-weekly-regime-digest'] }}
+          CHANGED_GENERATE_MONTHLY_REGIME_DIGEST: ${{ steps.filter.outputs['generate-monthly-regime-digest'] }}
 
           CHANGED_COMPUTE_CIE_MACRO_SCORES: ${{ steps.filter.outputs['compute-cie-macro-scores'] }}
           CHANGED_INGEST_CIE_SHORT_SELLING: ${{ steps.filter.outputs['ingest-cie-short-selling'] }}
@@ -136,6 +138,7 @@ jobs:
             [ "$CHANGED_INGEST_TRADE_GRAVITY" = "true" ]       && deploy_func "ingest-trade-gravity"
             [ "$CHANGED_CHECK_DATA_HEALTH" = "true" ]          && deploy_func "check-data-health"
             [ "$CHANGED_GENERATE_WEEKLY_REGIME_DIGEST" = "true" ] && deploy_func "generate-weekly-regime-digest"
+            [ "$CHANGED_GENERATE_MONTHLY_REGIME_DIGEST" = "true" ] && deploy_func "generate-monthly-regime-digest"
 
             [ "$CHANGED_COMPUTE_CIE_MACRO_SCORES" = "true" ]   && deploy_func "compute-cie-macro-scores"
             [ "$CHANGED_INGEST_CIE_SHORT_SELLING" = "true" ]   && deploy_func "ingest-cie-short-selling"

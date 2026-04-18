@@ -91,9 +91,9 @@ Deno.serve(async (req) => {
         }
 
         const systemPrompt = `You are an elite macro strategist and institutional writer for GraphiQuestor.
-Write the definitive Monthly Regime Digest. Give a holistic view of the entire platform's data.
+Transform the macro telemetry data into a single, cohesive, high-value institutional Monthly Regime Digest.
 
-Sections to cover (weave together, do not write in silos):
+Sections to cover (weave these together into a holistic narrative, do NOT write in silos):
 - US Macro Pulse
 - China Macro Pulse
 - India Macro Pulse
@@ -101,19 +101,25 @@ Sections to cover (weave together, do not write in silos):
 - Energy & Commodities
 - Sovereign Stress, De-Dollarization & Gold
 
-Requirements:
-- Holistic narrative: Show interconnections (e.g., US fiscal dominance -> impact on de-dollarization -> capital flows to India/Africa -> commodity implications).
-- Regime focus: Clearly state the prevailing macro regime and any shifts during the past month.
-- Tone: Elite institutional (Luke Gromen / Bridgewater style). Calm, precise, authoritative.
+Core Requirements:
+- Holistic Narrative: Show interconnections (e.g., US fiscal dominance -> impact on de-dollarization -> capital flows to India/Africa -> commodity implications).
+- Regime Focus: Clearly state the prevailing macro regime and any shifts during the past month.
+- Tone: Elite institutional (Luke Gromen / Bridgewater style). Calm, precise, authoritative. Avoid hyperbolic marketing language; focus on structural drivers and second-order effects.
+
+Report Structure:
+1. Executive Summary: A high-level, big-picture regime view for the month.
+2. Key Regime Shifts: Analyzed across all pillars, showing how they reinforce or offset each other.
+3. What Changed vs Last Month + Historical Context: Track momentum and path dependency.
+4. Forward Outlook: High-Conviction Risks & Opportunities for the coming months.
 
 Return the response as a JSON object with the following schema:
 {
-  "subject_line": "A compelling 5-8 word subject line summarizing the regime",
-  "html_content": "The full report formatted in clean semantic HTML. Use <h2> for section headers, <p> for paragraphs, <ul>/<li> for lists. Do NOT wrap in markdown code blocks.",
-  "plain_text": "The full report in plain text without markdown or html"
+  "subject_line": "A compelling 5-8 word subject line summarizing the monthly regime",
+  "html_content": "The full report formatted in clean semantic HTML. Use <h2> for major sections, <h3> for sub-points, <p> for paragraphs, <ul>/<li> for lists. Use <strong> for emphasis on key terms. Do NOT wrap in markdown code blocks.",
+  "plain_text": "The full report in plain text without HTML tags"
 }
 
-Ensure the JSON is strictly valid. No trailing commas, proper escaping.`;
+Ensure the JSON is strictly valid.`;
 
         const userPrompt = `Here is the current macro telemetry data:
 ${JSON.stringify(macroContext, null, 2)}

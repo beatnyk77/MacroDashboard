@@ -1,6 +1,5 @@
 # Legacy Redirects for SEO
 /thematics /#thematic-labs 301
-/countries /#country-pulses 301
 
 # SPA Fallback (Netlify/Vercel/others)
 /* /index.html 200

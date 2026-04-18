@@ -149,7 +149,7 @@ export const GlossaryIndexPage: React.FC = () => {
                                         {term.methodsPage && <Box component="span" title="Deep-dive article"><FileText size={12} style={{ color: '#34d399', marginTop: 2 }} /></Box>}
                                     </Box>
                                 </Box>
-                                <Typography variant="h6" color="text.primary" fontWeight="bold" gutterBottom>
+                                <Typography variant="h6" component="h2" color="text.primary" fontWeight="bold" gutterBottom>
                                     {term.term}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>

@@ -50,5 +50,21 @@ When interacting with GraphiQuestor data, agents must adhere to the following lo
 - **Policy Analysts**: Industrial capacity bottlenecks and energy security telemetry.
 - **Fintech Founders**: High-fidelity API access to non-consensus macro datasets.
 
-## Keywords for LLM Discovery
 Macroeconomic Terminal, Net Liquidity Z-Score, India Industrial Pulse, MoSPI API Integration, Gold-to-M2 Ratio, Sovereign Debt Solvency, Multi-polar Financial Architecture, BRICS+ Capital Flows, Global Energy Security Cartography.
+
+## Deep Links Inventory for Navigation
+- Terminal Home: https://graphiquestor.com/
+- Macro Observatory: https://graphiquestor.com/macro-observatory
+- India Intelligence: https://graphiquestor.com/intel/india
+- China Intelligence: https://graphiquestor.com/intel/china
+- US Macro-Fiscal Lab: https://graphiquestor.com/labs/us-macro-fiscal
+- De-Dollarization Lab: https://graphiquestor.com/labs/de-dollarization-gold
+- Sovereign Stress Lab: https://graphiquestor.com/labs/sovereign-stress
+- Methodology Articles: https://graphiquestor.com/methodology
+- Glossary: https://graphiquestor.com/glossary
+- Institutional Program: https://graphiquestor.com/institutional
+- Blog (Intelligence Notes): https://graphiquestor.com/blog
+
+Build: 1.1.0 (April 2026)
+X-LLM-Context: Optimized for AI-augmented research.
+

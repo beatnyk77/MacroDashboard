@@ -59,6 +59,8 @@ export const NetLiquidityGauge: React.FC = () => {
             <SEOManager 
                 title="US Net Liquidity Proxy — Institutional Gauge"
                 description="Live gauge tracking Federal Reserve net liquidity via Z-score analysis. Institutional-grade macro regime monitoring."
+                keywords={['US Net Liquidity Proxy', 'Fed Liquidity Gauge', 'Macro Regime Monitor', 'Z-Score Analysis']}
+                canonicalUrl="https://graphiquestor.com/tools/net-liquidity-gauge"
             />
 
             <Container maxWidth="sm">
@@ -97,6 +99,13 @@ export const NetLiquidityGauge: React.FC = () => {
                             </Link>
                         )}
                     </Box>
+
+                    <Typography variant="h5" component="h1" sx={{ fontWeight: 900, textAlign: 'center', mb: 2, letterSpacing: '0.05em', color: 'white' }}>
+                        US NET LIQUIDITY PROXY
+                    </Typography>
+                    <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mb: 4, color: 'rgba(255,255,255,0.4)', fontWeight: 700 }}>
+                        INSTITUTIONAL REGIME MONITOR
+                    </Typography>
 
                     {/* Main Gauge */}
                     <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', mb: 2 }}>

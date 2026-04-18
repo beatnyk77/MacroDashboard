@@ -48,7 +48,7 @@ export const NotFound: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                    <Typography variant="h1" sx={{ fontWeight: 900, mb: 2, color: 'white' }}>
+                    <Typography variant="h1" component="h1" sx={{ fontWeight: 900, mb: 2, color: 'white' }}>
                         404
                     </Typography>
                     <Typography variant="h5" sx={{ color: 'text.secondary', mb: 4, maxWidth: 500 }}>

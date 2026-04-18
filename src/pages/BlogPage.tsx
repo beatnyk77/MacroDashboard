@@ -37,7 +37,7 @@ export const BlogPage: React.FC = () => {
 
             <Container maxWidth="lg">
                 <div className="mb-12 text-center">
-                    <Typography variant="h3" className="font-black tracking-heading mb-2">
+                    <Typography variant="h3" component="h1" className="font-black tracking-heading mb-2">
                         Intelligence <span style={{ color: '#3b82f6' }}>Journal</span>
                     </Typography>
                     <Typography variant="body1" className="text-muted-foreground mx-auto mb-4" style={{ maxWidth: 600 }}>
@@ -58,7 +58,7 @@ export const BlogPage: React.FC = () => {
                                         />
                                     </div>
 
-                                    <Typography variant="h5" className="font-extrabold mb-2 leading-tight">
+                                    <Typography variant="h6" component="h2" className="font-extrabold mb-2 leading-tight">
                                         {article.title}
                                     </Typography>
 

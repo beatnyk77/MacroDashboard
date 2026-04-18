@@ -153,7 +153,11 @@ export const RegimeDigestPage: React.FC = () => {
                     </Link>
                 </Button>
             </div>
-
+            
+            <h1 className="text-2xl sm:text-4xl font-black text-white mb-8 tracking-heading leading-tight uppercase">
+                {digest.subject_line}
+            </h1>
+            
             {/* Render the Email Content */}
             <Card variant="elevated" className="overflow-hidden border-white/10 bg-slate-950 shadow-2xl">
                 <CardContent className="p-0 sm:p-2">

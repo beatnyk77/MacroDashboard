@@ -60,7 +60,7 @@ export const AfricaMacroSnapshot: React.FC = () => {
 
                 {/* Key Metrics Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-                    {snapshot.metrics_summary.map((metric) => (
+                    {snapshot.metrics_summary?.map((metric) => (
                         <div key={metric.name} className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all">
                             <div className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-2">{metric.name}</div>
                             <div className="flex items-end gap-2">
@@ -87,7 +87,7 @@ export const AfricaMacroSnapshot: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-uppercase text-emerald-500">Growth Drivers</h4>
                         </div>
                         <ul className="space-y-4">
-                            {snapshot.insights_positive.map((insight, i) => (
+                            {snapshot.insights_positive?.map((insight, i) => (
                                 <li key={i} className="text-xs text-white/50 leading-relaxed font-medium flex gap-3">
                                     <div className="w-1 h-1 rounded-full bg-emerald-500/40 mt-1.5 flex-shrink-0" />
                                     {insight}
@@ -105,7 +105,7 @@ export const AfricaMacroSnapshot: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-uppercase text-amber-500">Structural Neutral</h4>
                         </div>
                         <ul className="space-y-4">
-                            {snapshot.insights_neutral.map((insight, i) => (
+                            {snapshot.insights_neutral?.map((insight, i) => (
                                 <li key={i} className="text-xs text-white/50 leading-relaxed font-medium flex gap-3">
                                     <div className="w-1 h-1 rounded-full bg-amber-500/40 mt-1.5 flex-shrink-0" />
                                     {insight}
@@ -123,7 +123,7 @@ export const AfricaMacroSnapshot: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-uppercase text-rose-500">Fiscal Fragilities</h4>
                         </div>
                         <ul className="space-y-4">
-                            {snapshot.insights_negative.map((insight, i) => (
+                            {snapshot.insights_negative?.map((insight, i) => (
                                 <li key={i} className="text-xs text-white/50 leading-relaxed font-medium flex gap-3">
                                     <div className="w-1 h-1 rounded-full bg-rose-500/40 mt-1.5 flex-shrink-0" />
                                     {insight}

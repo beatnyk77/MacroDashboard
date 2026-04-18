@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import { Container, Typography, Box, Button, Grid } from '@mui/material';
-import { Zap, ShieldCheck, Database, ArrowRight, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { SEOManager } from '@/components/SEOManager';
 
 declare global {
     interface Window {
@@ -66,13 +64,17 @@ export const APIAccessPage: React.FC = () => {
             <script type="application/ld+json">
                 {JSON.stringify(pricingSchema)}
             </script>
-
-            <Container maxWidth="lg">
-                <Box sx={{ textAlign: 'center', mb: 12 }}>
+            <Container maxWidth="lg" sx={{ py: { xs: 8, md: 15 } }}>
+                <SEOManager 
+                    title="Institutional API Access — GraphiQuestor"
+                    description="Connect your quantitative models to our proprietary macro data streams. Real-time access to 270+ institutional macro metrics."
+                    keywords={['Macro API', 'Institutional Data', 'Quant Finance API', 'Market Intelligence']}
+                />
+                <Box sx={{ mb: 10, textAlign: 'center', position: 'relative' }}>
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8">
                         <Lock size={14} /> Secure API Terminal
                     </div>
-                    <Typography variant="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
+                    <Typography variant="h1" component="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
                         Quantum <span className="text-blue-500">Access</span>
                     </Typography>
                     <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '700px', mx: 'auto', fontWeight: 500, lineHeight: 1.5, fontSize: '1.2rem', textTransform: 'uppercase' }}>

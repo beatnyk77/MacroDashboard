@@ -8,11 +8,14 @@ interface SEOManagerProps {
     keywords?: string[];
     ogImage?: string;
     ogType?: 'website' | 'article';
+    ogLocale?: string;
     canonicalUrl?: string;
     publishedTime?: string;
     jsonLd?: Record<string, any> | any[];
     robots?: string;
     isApp?: boolean;
+    geoRegion?: string;
+    targetCountry?: string;
 }
 
 export const SEOManager: React.FC<SEOManagerProps> = ({
@@ -21,11 +24,14 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     keywords,
     ogImage = 'https://graphiquestor.com/hero-preview.png',
     ogType = 'website',
+    ogLocale = 'en_US',
     canonicalUrl,
     publishedTime,
     jsonLd,
     robots = 'index, follow',
     isApp = false,
+    geoRegion = 'GLOBAL',
+    targetCountry = 'GLOBAL',
 }) => {
     const location = useLocation();
     const fullTitle = `${title} | GraphiQuestor`;
@@ -47,15 +53,27 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "SoftwareApplication",
-                        "name": "GraphiQuestor Macro Terminal",
+                        "@id": "https://graphiquestor.com/#software",
+                        "name": "GraphiQuestor Macro Intelligence Terminal",
                         "operatingSystem": "All",
                         "applicationCategory": "FinanceApplication",
                         "description": description,
+                        "url": "https://graphiquestor.com/",
+                        "author": {
+                            "@id": "https://graphiquestor.com/#organization"
+                        },
                         "offers": {
                             "@type": "Offer",
-                            "price": "28.00",
-                            "priceCurrency": "USD"
-                        }
+                            "price": "0",
+                            "priceCurrency": "USD",
+                            "availability": "https://schema.org/InStock"
+                        },
+                        "featureList": [
+                            "Real-time Global Liquidity Tracking",
+                            "Sovereign Stress Monitoring",
+                            "India/China Macro Intelligence",
+                            "Institutional Data Visualization"
+                        ]
                     })}
                 </script>
             )}
@@ -72,7 +90,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta property="og:image" content={ogImage} />
             <meta property="og:url" content={resolvedCanonical} />
             <meta property="og:site_name" content="GraphiQuestor" />
-            <meta property="og:locale" content="en_US" />
+            <meta property="og:locale" content={ogLocale} />
             <link rel="canonical" href={resolvedCanonical} />
 
             {/* Twitter */}
@@ -87,8 +105,9 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             {ogType === 'article' && publishedTime && (
                 <meta property="article:published_time" content={publishedTime} />
             )}
-            <meta name="geo.region" content="US" />
-            <meta name="target_country" content="US" />
+            
+            <meta name="geo.region" content={geoRegion} />
+            <meta name="target_country" content={targetCountry} />
         </Helmet>
     );
 };

@@ -9,7 +9,7 @@ export const TermsOfService = () => {
                 description="Terms and conditions for using the GraphiQuestor platform and its institutional intelligence tools."
                 keywords={['Terms of Service', 'User Agreement', 'GraphiQuestor Terms']}
             />
-            <Typography variant="h1" gutterBottom>Terms of Service</Typography>
+            <Typography variant="h1" component="h1" gutterBottom>Terms of Service</Typography>
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">1. API Usage</Typography>
                 <Typography paragraph>

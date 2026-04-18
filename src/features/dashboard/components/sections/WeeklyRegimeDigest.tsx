@@ -61,10 +61,10 @@ export const WeeklyRegimeDigest: React.FC = () => {
                         {/* Executive Summary */}
                         <div className="lg:col-span-2 space-y-6">
                             <h2 className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight">
-                                {latestDigest.executive_summary.split('.')[0]}.
+                                {latestDigest.executive_summary?.split('.')[0] || 'Executive Summary'}.
                             </h2>
                             <p className="text-lg text-muted-foreground/90 leading-relaxed font-medium">
-                                {latestDigest.executive_summary.split('.').slice(1).join('.')}
+                                {latestDigest.executive_summary?.split('.').slice(1).join('.') || ''}
                             </p>
                             
                             <div className="pt-6 border-t border-white/5">
@@ -84,7 +84,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
                                     <Zap size={16} className="text-amber-400" /> Key Regime Shifts
                                 </h3>
                                 <div className="space-y-6">
-                                    {latestDigest.regime_shifts.map((shift, idx) => (
+                                    {latestDigest.regime_shifts?.map((shift, idx) => (
                                         <div key={idx} className="space-y-2">
                                             <p className="text-xs font-black text-white/90 uppercase tracking-wide">{shift.title}</p>
                                             <p className="text-[13px] text-muted-foreground/60 leading-snug">{shift.description}</p>
@@ -105,7 +105,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
                             <TrendingUp size={14} /> What Changed vs Last Week
                         </h3>
                         <div className="space-y-4">
-                            {latestDigest.what_changed.map((item, idx) => (
+                            {latestDigest.what_changed?.map((item, idx) => (
                                 <div key={idx} className="flex gap-4 items-start pb-4 border-b border-white/5 last:border-0">
                                     <span className="text-[10px] font-black bg-white/5 border border-white/10 px-2 py-1 rounded text-muted-foreground uppercase">{item.pillar}</span>
                                     <p className="text-sm text-muted-foreground/80 leading-snug">{item.change}</p>
@@ -121,7 +121,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
                             <Eye size={14} /> Tactical Watch: Next 7-14 Days
                         </h3>
                         <div className="space-y-4">
-                            {latestDigest.what_to_watch.map((watch, idx) => (
+                            {latestDigest.what_to_watch?.map((watch, idx) => (
                                 <div key={idx} className="flex gap-3 items-start">
                                     <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] shrink-0" />
                                     <p className="text-sm text-muted-foreground/80 leading-snug">{watch}</p>

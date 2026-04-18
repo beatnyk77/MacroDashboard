@@ -1,9 +1,14 @@
 import { Container, Typography, Box, Paper } from '@mui/material';
+import { SEOManager } from '@/components/SEOManager';
 
 export const APIDocsPage = () => {
     return (
         <Container maxWidth="md" sx={{ py: 8 }}>
-            <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>API Documentation</Typography>
+            <SEOManager 
+                title="API Documentation — GraphiQuestor"
+                description="Technical documentation for the GraphiQuestor REST API. Integration guides for institutional data streams."
+            />
+            <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>API Documentation</Typography>
             <Typography variant="h6" color="text.secondary" paragraph>
                 Official REST API documentation for GraphiQuestor. Note: Institutional keys required.
             </Typography>

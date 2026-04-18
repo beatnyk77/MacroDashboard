@@ -17,6 +17,7 @@ import {
     LinearProgress,
     Tooltip
 } from '@mui/material';
+import { SEOManager } from '@/components/SEOManager';
 import {
     Activity,
     RefreshCcw,
@@ -164,12 +165,17 @@ export const AdminDashboard = () => {
 
     return (
         <Box sx={{ p: 4, bgcolor: TERMINAL_BG, minHeight: '100vh', color: '#fff' }}>
+            <SEOManager 
+                title="Terminal Health Monitor | Admin"
+                description="Internal system health and ingestion monitoring."
+                robots="noindex, nofollow"
+            />
             {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Terminal color={BLOOMBERG_ORANGE} size={32} />
                     <Box>
-                        <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                        <Typography variant="h4" component="h1" sx={{ fontWeight: 800, lineHeight: 1 }}>
                             TERMINAL HEALTH
                         </Typography>
                         <Typography variant="caption" sx={{ color: BLOOMBERG_ORANGE, letterSpacing: '0.1em' }}>
