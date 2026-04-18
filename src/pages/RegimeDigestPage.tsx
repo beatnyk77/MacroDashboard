@@ -12,7 +12,7 @@ interface Digest {
     html_content: string;
     plain_text: string;
     subject_line: string;
-    generated_at: string;
+    created_at: string;
 }
 
 export const RegimeDigestPage: React.FC = () => {
@@ -91,7 +91,7 @@ export const RegimeDigestPage: React.FC = () => {
                     "headline": digest.subject_line,
                     "dateline": digest.year_month,
                     "description": digest.plain_text.substring(0, 160) + "...",
-                    "datePublished": digest.generated_at,
+                    "datePublished": digest.created_at,
                     "author": {
                         "@type": "Organization",
                         "name": "GraphiQuestor Macro Team"

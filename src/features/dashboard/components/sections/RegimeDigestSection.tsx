@@ -12,7 +12,7 @@ export const RegimeDigestSection: React.FC = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('monthly_regime_digests')
-                .select('year_month, subject_line, plain_text, generated_at')
+                .select('year_month, subject_line, plain_text, created_at')
                 .order('year_month', { ascending: false })
                 .limit(1)
                 .single();
