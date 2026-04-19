@@ -46,7 +46,7 @@ export const About: React.FC = () => {
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={6} alignItems="flex-start">
                     <Box sx={{ flexShrink: 0, textAlign: 'center', width: { xs: '100%', md: 'auto' } }}>
                         <Avatar
-                            src="/avatar.png"
+                            src="/avatar.jpg"
                             alt="Kartikay Sharma"
                             imgProps={{ loading: 'lazy' }}
                             sx={{ width: 140, height: 140, mx: 'auto', mb: 3, border: '4px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}

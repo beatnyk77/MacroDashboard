@@ -61,14 +61,34 @@ export const AfricaMacroPulseLab: React.FC = () => {
                     'Nigeria Macro', 'South Africa Economy', 'Egypt Debt Stress',
                     'Kenya Fiscal Health', 'Commodity Exposure Africa', 'IMF Africa', 'AfDB'
                 ]}
+                jsonLd={[{
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [{
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://graphiquestor.com"
+                    }, {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Observatory",
+                        "item": "https://graphiquestor.com/macro-observatory"
+                    }, {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Africa Macro Pulse",
+                        "item": "https://graphiquestor.com/labs/africa-macro"
+                    }]
+                }]}
             />
             {/* Breadcrumbs */}
             <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40" aria-label="Breadcrumb">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
-                    <ChevronRight size={10} />
+                    <ChevronRight size={10} aria-hidden="true" />
                     <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
-                    <ChevronRight size={10} />
+                    <ChevronRight size={10} aria-hidden="true" />
                     <span className="text-blue-500">Africa Macro Pulse</span>
                 </nav>
             </div>
@@ -124,6 +144,22 @@ export const AfricaMacroPulseLab: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
+
+                {/* SEO Structural Analysis Text Block */}
+                <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of African Macro Realities">
+                    <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: Resource Nationalism & Frontier Market Debt</h2>
+                    <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                        <p>
+                            The <strong>Africa Macro Pulse</strong> provides frontier market surveillance for the next decade of growth and volatility. As the G7 and BRICS+ compete for strategic influence across the continent, Africa's structural macro reality is defined by a unique convergence of <strong>Resource Nationalism</strong>, demographic expansion, and sovereign debt restructuring cycles.
+                        </p>
+                        <p>
+                            A key focus of our telemetry is the <strong>Sovereign Debt Maturity Wall</strong> for major African economies like Egypt, Nigeria, and Kenya. By tracking interest-to-revenue ratios and FX reserve coverage natively through GraphiQuestor, analysts can isolate the precise threshold of fiscal stress. In the current high-rate environment, the divergence between economies with strong commodity exports and those with structural trade deficits is widening.
+                        </p>
+                        <p>
+                            Furthermore, the lab tracks the <strong>Population Dividend Velocity</strong>. Beyond simple census data, we monitor the rate of urbanization and the expansion of digital banking (FinTech) as leading indicators of internal market depth. Africa's role in the global supply chain is shifting from raw material exporter to a critical node in the green energy transition (Cobalt, Lithium, Platinum). The Africa Macro Pulse synthesizes these long-term structural shifts to reveal the true alpha in frontier market institutional allocation.
+                        </p>
+                    </div>
+                </article>
             </div>
 
             <div className="mt-24 pt-12 border-t border-white/5 text-center">

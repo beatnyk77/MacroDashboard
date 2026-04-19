@@ -22,7 +22,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     title,
     description,
     keywords,
-    ogImage = 'https://graphiquestor.com/hero-preview.png',
+    ogImage = 'https://graphiquestor.com/hero-preview.jpg',
     ogType = 'website',
     ogLocale = 'en_US',
     canonicalUrl,

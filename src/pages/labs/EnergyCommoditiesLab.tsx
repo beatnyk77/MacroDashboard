@@ -75,7 +75,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 </p>
 
                 <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 max-w-4xl">
-                    <h3 className="text-xs font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4 inline-block">How to use this Lab</h3>
+                    <h2 className="text-xs font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4 inline-block">How to use this Lab</h2>
                     <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium uppercase tracking-wide">
                         This environment translates physical commodity constraints into sovereign vulnerability metrics.
                         <strong className="text-white"> Start by assessing the US strategic stockpile (SPR) and refining limits.</strong> Then, trace the molecular shift of Russian and Middle Eastern crude eastward to Asia to understand inflation divergence. Finally, monitor the physical bottlenecks of the AI revolution via power demand.
@@ -224,6 +224,22 @@ export const EnergyCommoditiesLab: React.FC = () => {
 
 
             </div>
+
+            {/* SEO Structural Analysis Text Block */}
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of Global Energy Security">
+                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: Global Energy Security & Physical Molecular Flows</h2>
+                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                    <p>
+                        The <strong>Energy & Commodities Lab</strong> tracks the re-materialization of the global economy. In a multipolar era, the control over physical molecular flows—crude oil, natural gas, and critical minerals—becomes the primary lever of sovereign power. Our telemetry focuses on the divergence between "paper markets" (futures/options) and "physical reality" (tanker tracking, refining utilization, and strategic stockpiles).
+                    </p>
+                    <p>
+                        One of the most critical metrics we track is <strong>Refining Capacity Elasticity</strong>. Since 2020, the global refining complex has operated at peak utilization, leaving no margin for geopolitical shocks. For a net-importer like India, this manifests as a structural inflation floor. By monitoring the <a href="/glossary/hormuz-velocity" className="text-blue-400 hover:underline">Hormuz Tanker Velocity</a> natively through GraphiQuestor, analysts can anticipate supply-side shocks before they manifest in regional CPI data.
+                    </p>
+                    <p>
+                        Furthermore, the transition to clean-tech manufacturing (semiconductors and EVs) is fundamentally a transformation of energy demand into mineral demand. The Energy Lab synthesizes these shifts, tracking the inventory levels of Copper and Rare Earth Elements (REMs) relative to 10-year structural averages. This <em>Physical Flows Terminal</em> bypasses financial noise to reveal the underlying resource security of major manufacturing hubs like India and the BRICS+ network.
+                    </p>
+                </div>
+            </article>
 
             <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button

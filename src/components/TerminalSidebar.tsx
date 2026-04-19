@@ -30,14 +30,17 @@ export const TerminalSidebar: React.FC = () => {
     const location = useLocation();
 
     return (
-        <aside className="hidden md:flex w-[220px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/5 bg-slate-950/90 backdrop-blur-2xl py-6 z-[1200] overflow-y-auto">
+        <aside 
+            className="hidden md:flex w-[220px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/5 bg-slate-950/90 backdrop-blur-2xl py-6 z-[1200] overflow-y-auto"
+            aria-label="Terminal Navigation Sidebar"
+        >
             <div className="px-4 mb-6">
                 <span className="text-xs font-black tracking-uppercase text-blue-500 uppercase flex items-center gap-2">
                     <Activity size={10} /> Terminal Active
                 </span>
             </div>
 
-            <nav className="flex-1 px-3">
+            <nav className="flex-1 px-3" aria-label="Main terminal navigation">
                 <ul className="space-y-1">
                     {terminalNavItems.map((item) => {
                         const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
@@ -46,6 +49,8 @@ export const TerminalSidebar: React.FC = () => {
                             <li key={item.id}>
                                 <NavLink
                                     to={item.path}
+                                    title={`Navigate to ${item.label}`}
+                                    aria-label={`View ${item.label}`}
                                     className={cn(
                                         "group flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold transition-all duration-200 border border-transparent tracking-heading min-h-[44px]",
                                         isActive

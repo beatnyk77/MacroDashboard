@@ -65,7 +65,10 @@ export const IntelligenceSidebar: React.FC = () => {
     }
 
     return (
-        <aside className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100]">
+        <aside 
+            className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100]"
+            aria-label="Intelligence News Sidebar"
+        >
             <div className="p-4 border-b border-white/12 flex items-center justify-between bg-white/5">
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
@@ -105,6 +108,7 @@ export const IntelligenceSidebar: React.FC = () => {
                                 href={item.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                title={`Read headline: ${item.title}`}
                                 className="block group"
                             >
                                 <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/12 transition-all duration-300">
@@ -117,9 +121,9 @@ export const IntelligenceSidebar: React.FC = () => {
                                             {new Date(item.published_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
-                                    <h4 className="text-xs font-semibold leading-relaxed group-hover:text-primary transition-colors line-clamp-3 mb-3">
+                                    <div className="text-xs font-semibold leading-relaxed group-hover:text-primary transition-colors line-clamp-3 mb-3">
                                         {item.title}
-                                    </h4>
+                                    </div>
                                     <div className="flex items-center justify-between">
                                         <div className="flex gap-1 overflow-hidden">
                                             {item.keywords?.slice(0, 2).map((k: string) => (

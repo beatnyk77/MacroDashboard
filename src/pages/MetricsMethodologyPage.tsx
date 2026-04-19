@@ -482,6 +482,45 @@ const METHODOLOGY_JSON_LD = {
     dateModified: new Date().toISOString().split('T')[0],
 };
 
+const FAQ_JSON_LD = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is the Net Liquidity Index?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Net Liquidity is calculated as Fed Balance Sheet (WALCL) minus the Treasury General Account (TGA) minus the Overnight Reverse Repo (ONRRP). It represents the actual reserves circulating in the financial system."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Why does GraphiQuestor use a 25-year Z-Score?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A 25-year window is used to capture full debt and monetary cycles post-1971. Shorter windows are too sensitive to recent history, while longer windows include structurally different monetary regimes (like Bretton Woods)."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What is the Fiscal Dominance Meter?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Fiscal dominance occurs when debt service obligations constrain monetary policy. The Meter tracks the ratio of net interest payments to federal revenue, signaling when independent monetary policy is compromised."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How is Sovereign Stress calculated?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Sovereign Stress Index (SSI) is a composite score based on CDS spreads, yield curve slopes, FX volatility, and Debt/GDP ratios, all normalized using rolling Z-scores."
+            }
+        }
+    ]
+};
+
 export const MetricsMethodologyPage: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState('all');
 
@@ -500,7 +539,7 @@ export const MetricsMethodologyPage: React.FC = () => {
                     'institutional macro analysis', 'Z-score financial methodology',
                 ]}
                 canonicalUrl="https://graphiquestor.com/methodology"
-                jsonLd={METHODOLOGY_JSON_LD}
+                jsonLd={[METHODOLOGY_JSON_LD, FAQ_JSON_LD]}
             />
 
             {/* Hero */}

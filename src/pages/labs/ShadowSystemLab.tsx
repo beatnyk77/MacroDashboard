@@ -84,6 +84,22 @@ export const ShadowSystemLab: React.FC = () => {
 
             </div>
 
+            {/* SEO Structural Analysis Text Block */}
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of the Shadow Economy">
+                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: The Shadow Economy & Off-Grid Capital Flows</h2>
+                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                    <p>
+                        The <strong>Shadow System Lab</strong> is dedicated to the unobserved telemetry of the global economy. As G7 sanctions and financial surveillance expand, an increasing volume of global trade and capital flow has moved "off-grid" into the shadow system. This lab tracks the divergence between official customs data and physical flow observations to identify <strong>Capital Flight</strong> and <strong>Trade Misinvoicing</strong> trends.
+                    </p>
+                    <p>
+                        A critical indicator within our surveillance is the <strong>Trade Misinvoicing Index</strong>. By synthesizing bilateral trade data from over 40 countries, GraphiQuestor identifies discrepancies that typically signal illicit financial flows or elite wealth hedging. In the multipolar era, these "dark flows" often precede sovereign currency crises or regime shifts. Our <a href="/glossary/shadow-trade-ratio" className="text-blue-400 hover:underline">Shadow Trade Ratio</a> isolates the volume of trade settlement occurring outside the SWIFT architecture.
+                    </p>
+                    <p>
+                        Furthermore, the lab monitors the gravitational shift of trade toward non-G7 networks (BRICS+). This pivot is not just about volume, but about the <strong>Settlement Architecture</strong>. By tracking the adoption of local currency settlement and central bank digital currencies (CBDCs) in cross-border trade, the Shadow System Lab provides a leading-edge view of the erosion of the dollar's transactional hegemony.
+                    </p>
+                </div>
+            </article>
+
             <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
                     variant="ghost"

@@ -128,6 +128,22 @@ export const SovereignStressLab: React.FC = () => {
                 </section>
             </div>
 
+            {/* SEO Structural Analysis Text Block */}
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of G20 Debt Sustainability">
+                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: Sovereign Debt Sustainability & The Multipolar Yield Shift</h2>
+                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                    <p>
+                        The <strong>Sovereign Stress Lab</strong> provides institutional-grade risk monitoring for G20 debt sustainability. As the global monetary architecture fractures, the traditional risk-free rate is being re-evaluated through the lens of <strong>Monetary Dominance</strong> and <strong>Fiscal Dominance</strong>. This lab isolates the precise velocity of yield curve shifts and credit default swap (CDS) spreads to identify the next major sovereign stress event.
+                    </p>
+                    <p>
+                        A primary focus of our surveillance is the <strong>BoJ Monetary Dominance</strong> monitor. As the last anchor of negative rates and Yield Curve Control (YCC) shifts toward normalization, the global carry trade faces an unprecedented unwinding risk. Our Z-score analysis tracks the BoJ's balance sheet relative to total Japanese government debt (JGBs), revealing the extent of central bank absorption and the potential for a liquidity vacuum in G7 treasuries.
+                    </p>
+                    <p>
+                        In the multipolar era, sovereign risk is no longer just about debt-to-GDP; it is about the <strong>Interest-to-Revenue Ratio</strong>. When a government spends more on servicing past debt than on future growth (infrastructure or R&D), the regime enters a structural decline. GraphiQuestor's <a href="/glossary/sovereign-risk-matrix" className="text-blue-400 hover:underline">Sovereign Risk Matrix</a> synthesizes these metrics into a real-time stress coordinate, enabling capital allocators to navigate the final stages of the global debt supercycle.
+                    </p>
+                </div>
+            </article>
+
             <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
                     variant="ghost"
