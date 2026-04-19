@@ -10,6 +10,7 @@ import { FYP_ImpactHeatmap } from '@/features/dashboard/components/rows/China15t
 import { ComparisonToggle14v15 } from '@/features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { SEOManager } from '@/components/SEOManager';
 
 export const China15thFYPLab: React.FC = () => {
     useEffect(() => {
@@ -17,6 +18,27 @@ export const China15thFYPLab: React.FC = () => {
     }, []);
 
     return (
+        <>
+        <SEOManager
+            title="China 15th Five-Year Plan Lab — 2026–2030 Strategic Roadmap Intelligence"
+            description="Institutional-grade telemetry tracking China's 15th Five-Year Plan (2026–2030): high-quality development targets, technological self-reliance, R&D growth, and supply chain independence metrics."
+            keywords={['China five-year plan', '15th FYP', 'China 2026-2030', 'technological self-reliance', 'China macro', 'CPC policy', 'semiconductor independence']}
+            jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'WebPage',
+                'name': 'China 15th Five-Year Plan Lab',
+                'url': 'https://graphiquestor.com/labs/china-15th-fyp',
+                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                'breadcrumb': {
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'China 15th Five-Year Plan Lab' }
+                    ]
+                }
+            }}
+        />
         <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-red-500/30">
             {/* Background Effects */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -134,5 +156,6 @@ export const China15thFYPLab: React.FC = () => {
                 </div>
             </main>
         </div>
+        </>
     );
 };

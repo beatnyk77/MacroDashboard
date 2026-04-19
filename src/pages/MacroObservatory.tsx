@@ -1,4 +1,5 @@
 import React from 'react';
+import { SEOManager } from '@/components/SEOManager';
 import { useNavigate } from 'react-router-dom';
 import {
     Activity,
@@ -39,6 +40,20 @@ export const MacroObservatory: React.FC = () => {
     const navigate = useNavigate();
 
     return (
+        <>
+        <SEOManager
+            title="Macro Observatory — Research Labs & Intelligence Hubs"
+            description="Access specialized macro research labs covering US fiscal policy, de-dollarization, gold reserves, energy commodities, sovereign stress, and shadow trade flows. Institutional-grade telemetry for the multipolar era."
+            keywords={['macro observatory', 'research labs', 'sovereign stress', 'de-dollarization', 'gold reserves', 'energy commodities', 'institutional macro']}
+            jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'CollectionPage',
+                'name': 'GraphiQuestor Macro Observatory',
+                'description': 'Hub page for institutional macro research labs.',
+                'url': 'https://graphiquestor.com/macro-observatory',
+                'isPartOf': { '@id': 'https://graphiquestor.com/#website' }
+            }}
+        />
         <div className="min-h-screen pt-24 pb-32">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
                 <div className="mb-16 text-center">
@@ -107,6 +122,7 @@ export const MacroObservatory: React.FC = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

@@ -8,6 +8,7 @@ import {
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
+import { SEOManager } from '@/components/SEOManager';
 
 // Lazy loaded components
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
@@ -21,6 +22,27 @@ const LoadingFallback = () => (
 
 export const ShadowSystemLab: React.FC = () => {
     return (
+        <>
+        <SEOManager
+            title="Shadow System Lab — Capital Flight, Trade Misinvoicing & Off-Grid Flows"
+            description="Track the unobserved economy: elite wealth flight, trade misinvoicing indices, and non-G7 trade network gravitational shifts. Institutional dark-flow telemetry."
+            keywords={['shadow trade', 'capital flight', 'trade misinvoicing', 'illicit financial flows', 'off-grid economy', 'shadow banking']}
+            jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'WebPage',
+                'name': 'Shadow System Lab',
+                'url': 'https://graphiquestor.com/labs/shadow-system',
+                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                'breadcrumb': {
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Shadow System Lab' }
+                    ]
+                }
+            }}
+        />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
             <div className="mb-8">
@@ -74,6 +96,7 @@ export const ShadowSystemLab: React.FC = () => {
                 </Button>
             </div>
         </div>
+        </>
     );
 };
 

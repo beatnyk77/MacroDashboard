@@ -165,7 +165,10 @@
   <url><loc>https://graphiquestor.com/api-docs</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
   <!-- Corporate -->
-  <url><loc>https://graphiquestor.com/about</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://graphiquestor.com/terms</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://graphiquestor.com/privacy</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://graphiquestor.com/about</loc><lastmod>2026-04-20</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://graphiquestor.com/terms</loc><lastmod>2026-04-20</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://graphiquestor.com/privacy</loc><lastmod>2026-04-20</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+
+  <!-- Regime Digest Archive -->
+  <url><loc>https://graphiquestor.com/regime-digest/archive</loc><lastmod>2026-04-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>

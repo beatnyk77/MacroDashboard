@@ -10,6 +10,7 @@ import {
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
+import { SEOManager } from '@/components/SEOManager';
 
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -25,6 +26,27 @@ const LoadingFallback = () => (
 
 export const SovereignStressLab: React.FC = () => {
     return (
+        <>
+        <SEOManager
+            title="Sovereign Stress Lab — G20 Debt Sustainability & Yield Curve Dynamics"
+            description="Monitor G20 sovereign debt sustainability, interest-to-revenue ratios, yield curve inversions, BoJ monetary dominance, and geopolitical stress tests. Institutional credit risk analytics."
+            keywords={['sovereign stress', 'G20 debt sustainability', 'yield curve', 'credit default swaps', 'BoJ balance sheet', 'sovereign risk matrix']}
+            jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'WebPage',
+                'name': 'Sovereign Stress Lab',
+                'url': 'https://graphiquestor.com/labs/sovereign-stress',
+                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                'breadcrumb': {
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Sovereign Stress Lab' }
+                    ]
+                }
+            }}
+        />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
             <div className="mb-8">
@@ -118,6 +140,7 @@ export const SovereignStressLab: React.FC = () => {
                 </Button>
             </div>
         </div>
+        </>
     );
 };
 

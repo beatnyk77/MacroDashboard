@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
+import { SEOManager } from '@/components/SEOManager';
 
 
 // Components
@@ -34,6 +35,28 @@ const LoadingFallback = () => (
 
 export const USMacroFiscalLab: React.FC = () => {
     return (
+        <>
+        <SEOManager
+            title="US Macro & Fiscal Lab \u2014 Debt Maturity, Auction Demand & Fiscal Dominance"
+            description="Real-time telemetry on US sovereign debt dynamics, Treasury auction demand, fiscal dominance metrics, and offshore dollar funding stress. Institutional-grade analysis of the world's reserve currency issuer."
+            keywords={['US macro', 'fiscal dominance', 'Treasury auction demand', 'US debt maturity wall', 'offshore dollar stress', 'sovereign debt', 'Federal Reserve']}
+            jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'WebPage',
+                'name': 'US Macro & Fiscal Lab',
+                'description': 'Institutional telemetry on US sovereign debt, Treasury demand, and fiscal dominance.',
+                'url': 'https://graphiquestor.com/labs/us-macro-fiscal',
+                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                'breadcrumb': {
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'US Macro & Fiscal Lab' }
+                    ]
+                }
+            }}
+        />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
             <div className="mb-8">
@@ -221,6 +244,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 </Button>
             </div>
         </div>
+        </>
     );
 };
 

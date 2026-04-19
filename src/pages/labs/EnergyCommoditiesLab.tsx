@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Button } from '@/components/ui/button';
+import { SEOManager } from '@/components/SEOManager';
 
 // Lazy loaded components
 const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/SovereignEnergySecuritySection').then(m => ({ default: m.SovereignEnergySecuritySection })));
@@ -28,6 +29,27 @@ const LoadingFallback = () => (
 
 export const EnergyCommoditiesLab: React.FC = () => {
     return (
+        <>
+        <SEOManager
+            title="Energy & Commodities Lab — Supply Chains, Refining Capacity & Resource Security"
+            description="Analyze global physical flow dynamics, refining capacity elasticity, strategic oil reserves, tanker tracking, and fuel security metrics. Institutional resource security intelligence."
+            keywords={['energy commodities', 'oil reserves', 'refining capacity', 'tanker tracking', 'commodity flows', 'fuel security', 'India energy']}
+            jsonLd={{
+                '@context': 'https://schema.org',
+                '@type': 'WebPage',
+                'name': 'Energy & Commodities Lab',
+                'url': 'https://graphiquestor.com/labs/energy-commodities',
+                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                'breadcrumb': {
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Energy & Commodities Lab' }
+                    ]
+                }
+            }}
+        />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
             <div className="mb-8">
@@ -215,6 +237,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 </Button>
             </div>
         </div>
+        </>
     );
 };
 
