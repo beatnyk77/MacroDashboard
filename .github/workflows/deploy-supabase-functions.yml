@@ -58,6 +58,7 @@ jobs:
 
             llm-knowledge: ['supabase/functions/llm-knowledge/**']
             _shared: ['supabase/functions/_shared/**']
+            deno_json: ['supabase/functions/deno.json', 'deno.json']
 
       - name: Verify Secrets
         env:

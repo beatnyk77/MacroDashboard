@@ -1,8 +1,0 @@
-{
-    "tasks": {
-        "test": "deno test --allow-env --allow-net --allow-read"
-    },
-    "imports": {
-        "std/": "https://deno.land/std@0.208.0/"
-    }
-}
