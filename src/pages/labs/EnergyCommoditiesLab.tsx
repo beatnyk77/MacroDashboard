@@ -3,7 +3,6 @@ import {
     ChevronRight,
     ArrowLeft,
     Fuel,
-    Zap,
     Activity,
     Globe,
     Ship,
