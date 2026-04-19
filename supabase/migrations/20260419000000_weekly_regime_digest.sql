@@ -30,8 +30,13 @@ SELECT
     $$
     SELECT
       net.http_post(
-        url:='https://graphiquestor.com/functions/v1/generate-weekly-regime-digest',
-        headers:='{"Content-Type": "application/json", "Authorization": "Bearer ' || current_setting('vault.service_role_key') || '"}'::jsonb
+        url:='https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/generate-weekly-regime-digest',
+        headers:=(
+          '{"Content-Type": "application/json", "Authorization": "Bearer ' || 
+          (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY' LIMIT 1) || 
+          '"}'
+        )::jsonb,
+        body:='{}'::jsonb
       ) as request_id;
     $$
   );

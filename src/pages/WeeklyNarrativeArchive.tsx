@@ -17,17 +17,15 @@ export const WeeklyNarrativeArchive: React.FC = () => {
     useEffect(() => {
         const fetchArchives = async () => {
             try {
-                // Fetch unique week_ending_dates and a teaser (Regime Shift Summary snippet)
                 const { data, error } = await supabase
-                    .from('weekly_macro_snapshot')
-                    .select('week_ending_date, narrative_snippet')
-                    .eq('section_name', 'Regime Shift Summary')
+                    .from('weekly_regime_digests')
+                    .select('week_ending_date, executive_summary')
                     .order('week_ending_date', { ascending: false });
 
                 if (!error && data) {
                     const formatted = data.map(item => ({
                         week_ending_date: item.week_ending_date,
-                        description: item.narrative_snippet
+                        description: item.executive_summary
                     }));
                     setNarratives(formatted);
                 }

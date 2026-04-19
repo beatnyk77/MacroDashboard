@@ -23,10 +23,11 @@ USING (true);
 SELECT cron.schedule('generate-monthly-regime-digest-job', '30 0 1 * *', $$
   SELECT net.http_post(
       url := 'https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/generate-monthly-regime-digest',
-      headers := jsonb_build_object(
-          'Content-Type', 'application/json',
-          'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key')
-      ),
+      headers := (
+        '{"Content-Type": "application/json", "Authorization": "Bearer ' || 
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY' LIMIT 1) || 
+        '"}'
+      )::jsonb,
       body := '{}'::jsonb
   ) as request_id;
 $$);
