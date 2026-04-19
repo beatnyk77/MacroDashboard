@@ -74,7 +74,7 @@ export const IndiaMacroDashboard: React.FC = () => {
 
                         {/* Table Rows */}
                         <div className="mt-4 space-y-1">
-                            {snapshot.metrics_data.map((metric, idx) => (
+                            {snapshot.metrics_data?.map((metric, idx) => (
                                 <motion.div
                                     key={metric.name}
                                     initial={{ opacity: 0, x: -20 }}
@@ -96,14 +96,14 @@ export const IndiaMacroDashboard: React.FC = () => {
                                         )}
                                     </div>
                                     {months.map(m => {
-                                        const val = metric.values[m];
+                                        const val = metric.values?.[m];
                                         return (
                                             <div key={m} className={cn(
                                                 "text-sm font-mono text-center tabular-nums",
-                                                val === null ? "text-white/5" : "text-white/70",
-                                                m === "Apr-26" && val !== null ? "font-black text-white" : ""
+                                                val === undefined || val === null ? "text-white/5" : "text-white/70",
+                                                m === "Apr-26" && val !== undefined && val !== null ? "font-black text-white" : ""
                                             )}>
-                                                {val === null ? '--' : val.toLocaleString(undefined, {
+                                                {val === undefined || val === null ? '--' : val.toLocaleString(undefined, {
                                                     minimumFractionDigits: typeof val === 'number' && val < 10 && val % 1 !== 0 ? 2 : 0,
                                                     maximumFractionDigits: 2
                                                 })}
@@ -141,7 +141,7 @@ export const IndiaMacroDashboard: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-uppercase text-emerald-500">Positive Signals</h4>
                         </div>
                         <ul className="space-y-4">
-                            {snapshot.insights_positive.map((insight, i) => (
+                            {snapshot.insights_positive?.map((insight, i) => (
                                 <li key={i} className="text-xs text-white/50 leading-relaxed font-medium flex gap-3">
                                     <div className="w-1 h-1 rounded-full bg-emerald-500/40 mt-1.5 flex-shrink-0" />
                                     {insight}
@@ -159,7 +159,7 @@ export const IndiaMacroDashboard: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-uppercase text-amber-500">Structural Neutral</h4>
                         </div>
                         <ul className="space-y-4">
-                            {snapshot.insights_neutral.map((insight, i) => (
+                            {snapshot.insights_neutral?.map((insight, i) => (
                                 <li key={i} className="text-xs text-white/50 leading-relaxed font-medium flex gap-3">
                                     <div className="w-1 h-1 rounded-full bg-amber-500/40 mt-1.5 flex-shrink-0" />
                                     {insight}
@@ -177,7 +177,7 @@ export const IndiaMacroDashboard: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-uppercase text-rose-500">Macro Fragilities</h4>
                         </div>
                         <ul className="space-y-4">
-                            {snapshot.insights_negative.map((insight, i) => (
+                            {snapshot.insights_negative?.map((insight, i) => (
                                 <li key={i} className="text-xs text-white/50 leading-relaxed font-medium flex gap-3">
                                     <div className="w-1 h-1 rounded-full bg-rose-500/40 mt-1.5 flex-shrink-0" />
                                     {insight}

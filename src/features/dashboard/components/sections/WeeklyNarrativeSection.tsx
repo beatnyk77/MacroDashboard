@@ -3,10 +3,9 @@ import { Box, Typography, CardContent, Skeleton, Button, Stack } from '@mui/mate
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { SectionHeader } from '@/components/SectionHeader';
-import { TrendingUp, TrendingDown, History, Info, ChevronRight, Activity } from 'lucide-react';
+import { History, Info, ChevronRight, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
-import { cn } from '@/lib/utils';
 
 interface WeeklyRegimeDigest {
     id: string;
@@ -119,7 +118,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                 Sectional Divergence
                             </h5>
                             <div className="space-y-12">
-                                {digest.what_changed.map((section, idx) => (
+                                {digest.what_changed?.map((section, idx) => (
                                     <div key={idx} className="group/item relative">
                                         <div className="flex justify-between items-start mb-4">
                                             <h6 className="text-sm font-black text-foreground group-hover/item:text-primary transition-colors uppercase tracking-uppercase">
@@ -129,7 +128,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                         <p className="text-base leading-relaxed text-muted-foreground group-hover/item:text-foreground/90 transition-colors font-medium">
                                             {section.change}
                                         </p>
-                                        {idx < digest.what_changed.length - 1 && (
+                                        {idx < (digest.what_changed?.length || 0) - 1 && (
                                             <div className="h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent mt-10" />
                                         )}
                                     </div>
