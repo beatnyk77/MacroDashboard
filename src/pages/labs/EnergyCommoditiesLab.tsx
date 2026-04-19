@@ -17,7 +17,7 @@ const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/c
 const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/components/sections/AsiaCommodityFlowsSection').then(m => ({ default: m.AsiaCommodityFlowsSection })));
 const GlobalRefiningMonitorSection = lazy(() => import('@/features/dashboard/components/refining/GlobalRefiningMonitorSection').then(m => ({ default: m.GlobalRefiningMonitorSection })));
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
-const AIComputeEnergyMonitor = lazy(() => import('@/features/dashboard/components/rows/AIComputeEnergyMonitor').then(m => ({ default: m.AIComputeEnergyMonitor })));
+
 const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
 const FuelSecurityClockIndia = lazy(() => import('@/features/energy/components/FuelSecurityClockIndia'));
 
@@ -201,28 +201,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
                 </section>
 
-                {/* 4. AI Compute & Energy CAPEX */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Zap className="text-indigo-400" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">AI Compute & Energy CAPEX</h2>
-                    </div>
 
-                    <div className="w-full">
-                        <SectionErrorBoundary name="AI Energy Monitor">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <AIComputeEnergyMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <div className="mt-8 p-8 bg-indigo-500/5 border-l-4 border-indigo-500 rounded-r-[2rem] max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-widest text-indigo-400 block mb-4">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                            The Shale Analogy is playing out in real-time. Unprecedented hyperscaler CAPEX is colliding with the physical realities of grid capacity and transformer backlogs. Tracking server energy intensity vs hardware rental costs reveals exactly when oversupply hits the inference layer, while base-load power remains the ultimate bottleneck.
-                        </p>
-                    </div>
-                </section>
             </div>
 
             <div className="mt-24 pt-12 border-t border-white/5 text-center">
