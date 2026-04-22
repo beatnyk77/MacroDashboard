@@ -41,7 +41,9 @@ export const GlossaryTermPage: React.FC = () => {
         'excess-reserves': 'WRESBAL',
         'gold-oil-ratio': 'GOLD_OIL_RATIO',
         'copper-gold-ratio': 'HG1_GC1_RATIO',
-        'real-interest-rates': 'REAINTRATREARAT10Y'
+        'real-interest-rates': 'REAINTRATREARAT10Y',
+        'public-debt-to-gdp': 'GFDEGDQ188S',
+        'central-bank-gold-purchases': 'CB_GOLD_RESERVES'
     }), []);
 
     const metricId = slug ? LATEST_METRIC_MAP[slug] : '';
@@ -78,7 +80,7 @@ export const GlossaryTermPage: React.FC = () => {
         } else if (slug === 'macro-regime-classification') {
             rawData = regime;
             lastUpdated = regime?.timestamp || '';
-        } else if (slug === 'fiscal-dominance' || slug === 'fiscal-dominance-meter') {
+        } else if (slug === 'fiscal-dominance' || slug === 'fiscal-dominance-meter' || slug === 'interest-expense-to-tax-revenue') {
             rawData = fiscalStress?.[fiscalStress.length - 1];
             lastUpdated = rawData?.date || '';
         } else if (slug === 'bid-to-cover-ratio') {

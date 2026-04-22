@@ -217,5 +217,44 @@ export const GLOSSARY_LIVE_CONFIG: Record<string, GlossaryLiveConfig> = {
             else { label = 'Moderate'; color = 'blue'; text = "Real rates are in a neutral range, balancing inflation control with economic growth needs."; }
             return { label, color, text, displayValue: val.toFixed(2) };
         }
+    },
+    'interest-expense-to-tax-revenue': {
+        faqQuestion: 'What is the current US Interest Expense to Tax Revenue ratio?',
+        linkTo: '/',
+        unit: '%',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 20) { label = 'Fiscal Dominance Risk'; color = 'rose'; text = "Interest costs are consuming over 20% of tax receipts, severely restricting monetary policy independence."; }
+            else if (val > 15) { label = 'Elevated'; color = 'amber'; text = "Interest burden is historically high, limiting fiscal flexibility."; }
+            else { label = 'Sustainable'; color = 'emerald'; text = "Interest coverage remains at manageable historical levels."; }
+            return { label, color, text, displayValue: val.toFixed(1) };
+        }
+    },
+    'public-debt-to-gdp': {
+        faqQuestion: 'What is the current US Public Debt to GDP ratio?',
+        linkTo: '/',
+        unit: '%',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 120) { label = 'Critical'; color = 'rose'; text = "Debt levels are structurally high. Requires either significant growth, austerity, or financial repression to stabilize."; }
+            else if (val > 100) { label = 'Elevated'; color = 'amber'; text = "Debt exceeds annual economic output, a potential long-term drag on growth."; }
+            else { label = 'Manageable'; color = 'blue'; text = "Debt relative to economic output is within historical norms for advanced economies."; }
+            return { label, color, text, displayValue: val.toFixed(1) };
+        }
+    },
+    'central-bank-gold-purchases': {
+        faqQuestion: 'What is the recent trend in Central Bank Gold Purchases?',
+        linkTo: '/',
+        unit: ' Tonnes',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 1000) { label = 'Aggressive Accumulation'; color = 'emerald'; text = "Central banks are buying gold at record levels, providing a strong structural floor to prices."; }
+            else if (val > 400) { label = 'Steady Accumulation'; color = 'blue'; text = "Central banks continue to steadily increase gold reserves for diversification."; }
+            else { label = 'Normalizing'; color = 'amber'; text = "Official sector gold purchases have slowed compared to recent historical peaks."; }
+            return { label, color, text, displayValue: val.toFixed(0) };
+        }
     }
 };
