@@ -28,8 +28,11 @@ interface Props {
 
 export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
     const c = COLORS[result.color];
-    const dateStr = result.lastUpdated
-        ? new Date(result.lastUpdated).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })
+    const dateObj = result.lastUpdated ? new Date(result.lastUpdated) : null;
+    const isStale = dateObj ? (Date.now() - dateObj.getTime() > 7 * 24 * 60 * 60 * 1000) : false;
+
+    const dateStr = dateObj
+        ? dateObj.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })
         : 'Live';
 
     return (
@@ -74,6 +77,11 @@ export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
                         </Box>
                         <Typography variant="caption" sx={{ color: 'text.disabled', display: 'flex', alignItems: 'center', gap: 0.5, mt: 1.5 }}>
                             <Info size={11} /> As of {dateStr}
+                            {isStale && (
+                                <Box component="span" sx={{ ml: 1, color: 'amber.main', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.6rem', bgcolor: 'rgba(245,158,11,0.1)', px: 0.5, borderRadius: 0.5 }}>
+                                    Elevated Staleness
+                                </Box>
+                            )}
                         </Typography>
                     </Box>
 
