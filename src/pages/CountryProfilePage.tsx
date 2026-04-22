@@ -50,33 +50,106 @@ export const CountryProfilePage: React.FC = () => {
     return ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.name || uppercaseIso;
   }, [uppercaseIso]);
 
+  const seoData = useMemo(() => {
+    const title = `${countryName} (${uppercaseIso}) Macro Data & Sovereign Risk Terminal`;
+    const description = `Institutional-grade macro-economic terminal for ${countryName}. Live tracking of GDP growth, inflation, sovereign debt maturity, and ${uppercaseIso} yield curve telemetry.`;
+    const keywords = [countryName, uppercaseIso || '', 'Macro Data', 'Sovereign Debt', 'Yield Curve', 'Institutional Terminal', 'Macro Observatory'];
+
+    const schemas: any[] = [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": `${countryName} Macro Intelligence Profile`,
+        "description": `Comprehensive macro-economic data and sovereign risk analysis for ${countryName}.`,
+        "publisher": {
+            "@type": "Organization",
+            "name": "GraphiQuestor",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://graphiquestor.com/logo.png"
+            }
+        },
+        "about": {
+            "@type": "Country",
+            "name": countryName,
+            "identifier": uppercaseIso
+        }
+      }
+    ];
+
+    if (countryData) {
+      const gdpGrowth = countryData.gdp_yoy_pct;
+      const inflation = countryData.cpi_yoy_pct;
+      const debtToGdp = countryData.gov_debt_gdp_pct;
+      const policyRate = countryData.central_bank_rate_pct;
+
+      const faqItems = [];
+
+      if (typeof gdpGrowth === 'number') {
+        faqItems.push({
+          "@type": "Question",
+          "name": `What is the current GDP growth of ${countryName}?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `As of the latest data, the real GDP growth (YoY) for ${countryName} is ${gdpGrowth.toFixed(2)}%.`
+          }
+        });
+      }
+
+      if (typeof inflation === 'number') {
+        faqItems.push({
+          "@type": "Question",
+          "name": `What is the inflation rate in ${countryName}?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `The current inflation rate (CPI YoY) in ${countryName} stands at ${inflation.toFixed(2)}%.`
+          }
+        });
+      }
+
+      if (typeof debtToGdp === 'number') {
+        faqItems.push({
+          "@type": "Question",
+          "name": `What is the government debt-to-GDP ratio for ${countryName}?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `The government debt-to-GDP ratio for ${countryName} is currently reported at ${debtToGdp.toFixed(2)}%.`
+          }
+        });
+      }
+
+      if (typeof policyRate === 'number') {
+        faqItems.push({
+          "@type": "Question",
+          "name": `What is the central bank policy rate for ${countryName}?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `The current central bank policy rate for ${countryName} is ${policyRate.toFixed(2)}%.`
+          }
+        });
+      }
+
+      if (faqItems.length > 0) {
+        schemas.push({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqItems
+        });
+      }
+    }
+
+    return { title, description, keywords, schemas };
+  }, [countryName, uppercaseIso, countryData]);
+
   if (!uppercaseIso) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen bg-[#050810] text-white">
       <SEOManager
-        title={`${countryName} (${uppercaseIso}) Macro Data & Sovereign Risk Terminal`}
-        description={`Institutional-grade macro-economic terminal for ${countryName}. Live tracking of GDP growth, inflation, sovereign debt maturity, and ${uppercaseIso} yield curve telemetry.`}
-        keywords={[countryName, uppercaseIso, 'Macro Data', 'Sovereign Debt', 'Yield Curve', 'Institutional Terminal', 'Macro Observatory']}
-        jsonLd={{
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": `${countryName} Macro Intelligence Profile`,
-            "description": `Comprehensive macro-economic data and sovereign risk analysis for ${countryName}.`,
-            "publisher": {
-                "@type": "Organization",
-                "name": "GraphiQuestor",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://graphiquestor.com/logo.png"
-                }
-            },
-            "about": {
-                "@type": "Country",
-                "name": countryName,
-                "identifier": uppercaseIso
-            }
-        }}
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        jsonLd={seoData.schemas}
       />
 
       {/* Hero Section */}
