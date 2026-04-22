@@ -1,7 +1,7 @@
 # GraphiQuestor SEO Strategy
 
-**Last Updated**: April 2026  
-**Status**: Foundation phase - zero SEO work currently deployed  
+**Last Updated**: April 23, 2026  
+**Status**: Foundation phase - Institutional Glossary Intelligence & Triple-Schema SEO Deployed  
 **Business Model**: B2B SaaS - Institutional Macro Intelligence Terminal  
 **Target Audience**: Macro hedge funds, family offices, sovereign wealth funds, corporate treasuries
 
@@ -37,7 +37,8 @@ GraphiQuestor requires a **dual-pronged SEO strategy**:
 - ✅ Basic schema.org Organization markup
 - ✅ Canonical tags, hreflang for EN/EN-IN
 - ✅ OG tags and Twitter cards
-- ❌ No structured data for DataFeed/FinancialDataset types
+- ✅ Triple-Schema injection for Glossary (DefinedTerm, FAQPage, Dataset)
+- ✅ Structured data for FinancialDataset/DefinedTerm types
 - ❌ No sitemap.xml detected
 - ❌ No robots.txt
 - ❌ No keyword-optimized title tag
