@@ -14,6 +14,7 @@ import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWal
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/FedMonetizationMonitor';
+import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPanel';
 
 
 const WeeklyRegimeDigest = lazy(() => import('@/features/dashboard/components/sections/WeeklyRegimeDigest').then(m => ({ default: m.WeeklyRegimeDigest })));
@@ -73,6 +74,13 @@ export const Terminal: React.FC = () => {
             </header>
 
             <main className="space-y-24 pb-32">
+                {/* DAILY MACRO LAYER — pinned to top */}
+                <section id="daily-macro-layer">
+                    <SectionErrorBoundary name="Daily Macro Layer">
+                        <DailyMacroPanel />
+                    </SectionErrorBoundary>
+                </section>
+
                 {/* 0. SOVEREIGN COMPASS - COUNTRY INTELLIGENCE */}
                 <section>
                     <SectionErrorBoundary name="Sovereign Compass">
