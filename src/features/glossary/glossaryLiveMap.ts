@@ -178,5 +178,44 @@ export const GLOSSARY_LIVE_CONFIG: Record<string, GlossaryLiveConfig> = {
             else { label = 'Adequate'; color = 'blue'; text = "Reserves are within the Fed's target 'ample' range. Sufficient for system stability."; }
             return { label, color, text, displayValue: val.toFixed(0) };
         }
+    },
+    'gold-oil-ratio': {
+        faqQuestion: 'What is the current Gold/Oil ratio?',
+        linkTo: '/',
+        unit: ':1',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 25) { label = 'Cheap Energy'; color = 'emerald'; text = "Gold is highly valued relative to oil. Historically, this suggests oil is undervalued or economic growth is stalling."; }
+            else if (val < 15) { label = 'Expensive Energy'; color = 'rose'; text = "Energy costs are high relative to gold, potentially creating a drag on global growth and consumer spending."; }
+            else { label = 'Fair Value'; color = 'blue'; text = "The gold/oil ratio is near its long-term historical mean of 16-20x."; }
+            return { label, color, text, displayValue: val.toFixed(1) };
+        }
+    },
+    'copper-gold-ratio': {
+        faqQuestion: 'What is the current Copper/Gold ratio signaling?',
+        linkTo: '/',
+        unit: 'x',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 0.005) { label = 'Growth/Reflation'; color = 'emerald'; text = "Copper is outperforming gold, signaling strong global industrial demand and reflationary momentum."; }
+            else if (val < 0.0035) { label = 'Deflationary Risk'; color = 'rose'; text = "Gold is outperforming copper. Investors are fleeing to defensive assets as growth expectations cool."; }
+            else { label = 'Neutral Growth'; color = 'blue'; text = "Economic momentum is stable, with no clear preference between industrial growth and defensive hedging."; }
+            return { label, color, text, displayValue: val.toFixed(4) };
+        }
+    },
+    'real-interest-rates': {
+        faqQuestion: 'What are the current US 10-Year Real Interest Rates?',
+        linkTo: '/',
+        unit: '%',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 2.0) { label = 'Restrictive'; color = 'rose'; text = "Positive real rates above 2% create significant headwinds for gold and high-multiple growth stocks."; }
+            else if (val < 0) { label = 'Deeply Accommodative'; color = 'emerald'; text = "Negative real rates signal a highly supportive environment for hard assets like gold and silver."; }
+            else { label = 'Moderate'; color = 'blue'; text = "Real rates are in a neutral range, balancing inflation control with economic growth needs."; }
+            return { label, color, text, displayValue: val.toFixed(2) };
+        }
     }
 };

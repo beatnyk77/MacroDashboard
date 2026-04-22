@@ -38,7 +38,10 @@ export const GlossaryTermPage: React.FC = () => {
         'yield-curve-control': 'BOJ_TOTAL_ASSETS_TRJPY',
         'standing-repo-facility-srf': 'FED_SRF_USAGE',
         'bank-term-funding-program-btfp': 'FED_BTFP_TOTAL',
-        'excess-reserves': 'WRESBAL'
+        'excess-reserves': 'WRESBAL',
+        'gold-oil-ratio': 'GOLD_OIL_RATIO',
+        'copper-gold-ratio': 'HG1_GC1_RATIO',
+        'real-interest-rates': 'REAINTRATREARAT10Y'
     }), []);
 
     const metricId = slug ? LATEST_METRIC_MAP[slug] : '';
