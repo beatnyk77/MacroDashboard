@@ -32,10 +32,17 @@ export const GlossaryTermPage: React.FC = () => {
     const { data: fiscalStress } = useUSFiscalStress();
     const { data: auctions } = useUSTreasuryAuctions();
     
-    // Some terms might need useLatestMetric fallback
-    const isBreakeven = slug === 'breakeven-inflation-rate';
-    const isYCC = slug === 'yield-curve-control';
-    const { data: latestMetric } = useLatestMetric(isBreakeven ? 'T10YIE' : isYCC ? 'BOJ_TOTAL_ASSETS_TRJPY' : '');
+    // Map slugs to generic metric IDs
+    const LATEST_METRIC_MAP: Record<string, string> = useMemo(() => ({
+        'breakeven-inflation-rate': 'T10YIE',
+        'yield-curve-control': 'BOJ_TOTAL_ASSETS_TRJPY',
+        'standing-repo-facility-srf': 'FED_SRF_USAGE',
+        'bank-term-funding-program-btfp': 'FED_BTFP_TOTAL',
+        'excess-reserves': 'WRESBAL'
+    }), []);
+
+    const metricId = slug ? LATEST_METRIC_MAP[slug] : '';
+    const { data: latestMetric } = useLatestMetric(metricId || '');
 
     if (!termData) {
         return <Navigate to="/glossary" replace />;
@@ -74,7 +81,7 @@ export const GlossaryTermPage: React.FC = () => {
         } else if (slug === 'bid-to-cover-ratio') {
             rawData = auctions?.[0]; // latest auction
             lastUpdated = rawData?.auction_date || '';
-        } else if (isBreakeven || isYCC) {
+        } else if (metricId) {
             rawData = latestMetric;
             lastUpdated = latestMetric?.lastUpdated || '';
         }
@@ -96,7 +103,7 @@ export const GlossaryTermPage: React.FC = () => {
             console.error('Error interpreting live data for slug:', slug, e);
             return null;
         }
-    }, [slug, netLiquidity, goldRatios, debtGold, deDollarization, regime, fiscalStress, auctions, latestMetric, isBreakeven, isYCC]);
+    }, [slug, netLiquidity, goldRatios, debtGold, deDollarization, regime, fiscalStress, auctions, latestMetric, metricId]);
 
     // Metadata enhancements
     const dynamicTitle = useMemo(() => {

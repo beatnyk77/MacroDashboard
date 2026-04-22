@@ -141,5 +141,42 @@ export const GLOSSARY_LIVE_CONFIG: Record<string, GlossaryLiveConfig> = {
             else color = 'blue';
             return { label, color, text: `Current Market Regime: ${label}. Positioning should favor ${color === 'emerald' ? 'risk-on assets' : color === 'rose' ? 'defensive assets' : 'selective alpha'}.`, displayValue: label };
         }
+    },
+    'standing-repo-facility-srf': {
+        faqQuestion: 'What is the current usage of the Fed\'s Standing Repo Facility (SRF)?',
+        linkTo: '/',
+        unit: '$Mn',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 1000) { label = 'Stress'; color = 'rose'; text = "SRF usage has spiked. Signals that repo market participants are unable to find private funding and are resorting to the Fed's backstop."; }
+            else { label = 'Dormant'; color = 'blue'; text = "SRF usage is minimal. Private repo markets are functioning normally with sufficient interbank liquidity."; }
+            return { label, color, text, displayValue: val.toLocaleString() };
+        }
+    },
+    'bank-term-funding-program-btfp': {
+        faqQuestion: 'What is the current outstanding balance of the BTFP facility?',
+        linkTo: '/',
+        unit: '$Bn',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 100) { label = 'Supportive'; color = 'amber'; text = "Large outstanding BTFP balance indicates banks are still reliant on emergency par-value collateral support."; }
+            else { label = 'Normalizing'; color = 'blue'; text = "BTFP balance is low or zero. The regional banking stress of 2023 has likely been absorbed or refinanced."; }
+            return { label, color, text, displayValue: val.toFixed(1) };
+        }
+    },
+    'excess-reserves': {
+        faqQuestion: 'What are the current Reserve Balances with Federal Reserve Banks?',
+        linkTo: '/',
+        unit: '$Bn',
+        interpret: (data) => {
+            const val = (data?.value || 0) / 1000; // Convert to $Bn if data is in $Mn
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 3500) { label = 'Abundant'; color = 'emerald'; text = "Reserve levels are high. The banking system has significant liquidity to facilitate lending and settlement."; }
+            else if (val < 3000) { label = 'Scarcity Risk'; color = 'rose'; text = "Reserves are approaching levels where repo market volatility typically increases. Liquidity conditions are tightening."; }
+            else { label = 'Adequate'; color = 'blue'; text = "Reserves are within the Fed's target 'ample' range. Sufficient for system stability."; }
+            return { label, color, text, displayValue: val.toFixed(0) };
+        }
     }
 };
