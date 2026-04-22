@@ -129,13 +129,28 @@ Real-time tracking of policy divergence and real-economy dynamics across China's
 
 **Institutional Application:** The India and China hubs provide sovereign wealth funds and EM-dedicated allocators with the granularity required to identify productive capital allocation versus rent-seeking, to position ahead of policy pivots, and to understand the real-economy demand that drives commodity markets and currency realignments.
 
+
+---
+
+## VI. Glossary Intelligence: The Distributed Dashboard
+
+GraphiQuestor transforms the traditional financial glossary into a **distributed real-time intelligence dashboard**. We bridge static terminology to live macroeconomic telemetry, ensuring that every definition is grounded in current reality.
+
+*   **Cross-Pollination Engine:** 24+ institutional terms (SRF, BTFP, Excess Reserves, Debt/GDP) are dynamically wired to live database hooks.
+*   **Institutional Interpretation:** Every live metric includes an interpretation engine that applies Z-scores and macro thresholds to provide regime-based labeling (e.g., *Fiscal Dominance Risk*, *Monetary Easing*, *Liquidity Stress*).
+*   **Semantic SEO Infrastructure:** Every glossary page injects triple-schema JSON-LD (**DefinedTerm**, **FAQPage**, **Dataset**), ensuring that live macro readings are extractable and citable by AI search systems (ChatGPT, Perplexity, Gemini).
+*   **Staleness Guard:** Automated real-time monitoring of data freshness. High-frequency metrics trigger **"Elevated Staleness"** warnings if the ingestion pipeline exceeds a 7-day latency threshold.
+
+**Institutional Application:** Risk managers use the glossary as a "First Responder" terminal. Instead of searching for data, they search for the *concept* and receive a live reading of the systemic signal, its historical z-score, and its immediate macro implication.
+
 ---
 
 ## Technical Architecture: Institutional Rigor Guaranteed
 
 GraphiQuestor is engineered to meet the exacting standards of sovereign wealth funds and tier-one research teams.
 
-*   **Autonomous 25-Year Ingestion Pipelines:** Serverless Edge Functions (Supabase/Deno) autonomously harvest data from official sources (BIS, NDB, MoSPI, FRED, EIA, RBI) daily. Our time-series metrics span from 2000 to the present, capturing the dot-com crash, the GFC, the QE era, and COVID-19 stimulus perfectly for reliable Z-score calculation.
+*   **Autonomous 25-Year Ingestion Pipelines:** Serverless Edge Functions (Supabase/Deno) autonomously harvest data from official sources (BIS, NDB, MoSPI, FRED, EIA, RBI) daily. Our time-series metrics span from 2000 to the present, capturing the dot-com crash, the GFC, the QE era, and COVID-1 stimulus perfectly for reliable Z-score calculation.
+*   **Data Hub Orchestration Pattern:** A centralized telemetry orchestrator (`useGlossaryDataHub`) consolidates 20+ specialized hooks into a single, memoized data resolver, ensuring sub-millisecond dashboard performance across the entire intelligence suite.
 *   **Institutional-Grade Data Health & Provenance:** Every data point is tagged with a `provenance` certificate (`api_live`, `fallback_snapshot`), providing full transparency on data origin. Our **Authenticity Score** provides a real-time "trust percentage" for all active dashboards.
 *   **Materialized Performance Layer:** High-frequency metrics are served via a **trigger-synchronized materialization layer**, ensuring sub-millisecond dashboard responsiveness even during massive volatility spikes.
 *   **Resilient, Self-Healing Operations:** Automatic schema drift detection and API rate limit management. If source structures change, the system gracefully logs discrepancies and maintains operational continuity via granular telemetry (`status_code`, `api_latency_ms`).

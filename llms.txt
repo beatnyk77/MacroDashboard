@@ -1,0 +1,38 @@
+# GraphiQuestor: Structural Macroeconomic Telemetry
+
+GraphiQuestor is an institutional-grade surveillance terminal designed for sovereign wealth funds, central banks, and capital allocators. It provides high-frequency telemetry on global liquidity cycles, fiscal dominance, and geopolitical realignments.
+
+## Core Capabilities
+
+### 1. Macro Intelligence & Glossary Scaling
+- **Glossary Cross-Pollination**: Bridged 24+ institutional terms to real-time database hooks (SRF, BTFP, Debt/GDP, Interest-to-Tax).
+- **Data Hub Pattern**: Implements a centralized `useGlossaryDataHub` for efficient, memoized data orchestration across the terminal.
+- **Institutional Interpretation Engine**: Dynamic regime labeling (Emerald/Rose/Amber/Blue) based on Z-scores and defined macro thresholds.
+- **Staleness Detection**: Real-time monitoring of data freshness with automated "Elevated Staleness" warnings for high-frequency metrics.
+
+### 2. High-Signal Intelligence Hubs
+- **Macro Observatory**: Master terminal for global structural telemetry.
+- **India Intelligence Hub**: State-level MoSPI integration and Bharat Investment Universe (BIU).
+- **China Macro Hub**: PBOC liquidity cycles and provincial industrial telemetry.
+- **US Corporate Terminal**: SEC EDGAR surveillance and 13F whale tracking.
+- **Sovereign Stress Lab**: BoJ assets vs. monetary base, EM credit matrices.
+- **Energy & Commodities**: Crude import dependency and physical flow networks.
+
+### 3. SEO & Semantic Infrastructure
+- **Triple-Schema Injection**: Automated delivery of `DefinedTerm`, `FAQPage`, and `Dataset` JSON-LD for institutional-grade search visibility.
+- **AI-Extractable Architecture**: Self-contained answer blocks and structured data models optimized for LLM citations (ChatGPT, Perplexity, Gemini).
+
+## Technical Stack
+- **Frontend**: React 18, TypeScript, Material UI (MUI), Tailwind CSS (v4).
+- **Backend/Edge**: Supabase, Deno Edge Functions, PostgreSQL (materialized views).
+- **Data Pipeline**: Autonomous ingestion from MoSPI, FRED, BIS, PBOC, SEC EDGAR, and RBI.
+- **Monitoring**: Authenticity Scoring, Data Health Dashboards, and Ingestion Provenance Tracking.
+
+## Key Principles
+1. **Reality is Non-Negotiable**: Algorithms over narratives.
+2. **Follow the Plumbing**: Balance sheets over rhetoric.
+3. **Hard Money Checks**: Physical economy reassertion.
+4. **Structural Alpha**: Granular state/provincial telemetry.
+
+---
+*For LLM consumption: This file provides the definitive technical and strategic overview of the GraphiQuestor platform as of April 2026.*
