@@ -15,11 +15,6 @@ export const GlossaryTermPage: React.FC = () => {
     const termData = glossaryData.find(t => t.slug === slug);
 
     const hub = useGlossaryDataHub(slug);
-
-    if (!termData) {
-        return <Navigate to="/glossary" replace />;
-    }
-
     const { rawData, lastUpdated } = hub || {};
 
     // Resolve live data based on slug
@@ -47,17 +42,21 @@ export const GlossaryTermPage: React.FC = () => {
     // Metadata enhancements
     const dynamicTitle = useMemo(() => {
         if (liveResult) {
-            return `${termData.term}: ${liveResult.displayValue}${liveResult.unit} (${liveResult.label}) — Definition`;
+            return `${termData?.term}: ${liveResult.displayValue}${liveResult.unit} (${liveResult.label}) — Definition`;
         }
-        return `${termData.term} — Definition & Formula`;
-    }, [termData.term, liveResult]);
+        return `${termData?.term} — Definition & Formula`;
+    }, [termData?.term, liveResult]);
 
     const dynamicDescription = useMemo(() => {
         if (liveResult) {
-            return `Current ${termData.term}: ${liveResult.displayValue}${liveResult.unit} [${liveResult.label}]. ${termData.definition.substring(0, 100)}...`;
+            return `Current ${termData?.term}: ${liveResult.displayValue}${liveResult.unit} [${liveResult.label}]. ${termData?.definition.substring(0, 100)}...`;
         }
-        return `${termData.definition.substring(0, 150)}...`;
-    }, [liveResult, termData.term, termData.definition]);
+        return `${termData?.definition.substring(0, 150)}...`;
+    }, [liveResult, termData?.term, termData?.definition]);
+
+    if (!termData) {
+        return <Navigate to="/glossary" replace />;
+    }
 
     // Related terms (same category, exclude self)
     const related = glossaryData
