@@ -18,7 +18,20 @@ export const OilStressSignal: React.FC = () => {
     }
 
     if (error || !spreadData) {
-        return null;
+        return (
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 opacity-50">
+                <div className="flex items-center gap-3">
+                    <Droplet className="w-5 h-5 text-muted-foreground/30" />
+                    <div className="space-y-0.5">
+                        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">WTI Spread</span>
+                        <p className="text-[10px] font-bold text-muted-foreground/20 uppercase tracking-widest">Awaiting data sync...</p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <span className="text-sm font-black text-white/10 font-mono tracking-tighter">--.--</span>
+                </div>
+            </div>
+        );
     }
 
     const { spread, regime, change_1d } = spreadData;
