@@ -15,7 +15,8 @@ import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
 import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/FedMonetizationMonitor';
 import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPanel';
-
+import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
+import { EnergySection } from '@/features/dashboard/components/sections/EnergySection';
 
 const WeeklyRegimeDigest = lazy(() => import('@/features/dashboard/components/sections/WeeklyRegimeDigest').then(m => ({ default: m.WeeklyRegimeDigest })));
 const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/sections/RegimeDigestSection').then(m => ({ default: m.RegimeDigestSection })));
@@ -75,9 +76,12 @@ export const Terminal: React.FC = () => {
 
             <main className="space-y-24 pb-32">
                 {/* DAILY MACRO LAYER — pinned to top */}
-                <section id="daily-macro-layer">
+                <section id="daily-macro-layer" className="space-y-8">
                     <SectionErrorBoundary name="Daily Macro Layer">
                         <DailyMacroPanel />
+                        <div className="mt-8">
+                            <TodaysBriefPanel />
+                        </div>
                     </SectionErrorBoundary>
                 </section>
 
@@ -343,6 +347,20 @@ export const Terminal: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                </section>
+
+                {/* 4.5 ENERGY & COMMODITIES */}
+                <section className="space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500/80">Energy & Commodities</h2>
+                        <div className="h-px flex-1 bg-white/5" />
+                    </div>
+                    <SectionErrorBoundary name="Energy & Commodities">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <EnergySection />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </section>
 
                 {/* 5. INSTITUTIONAL STRATEGY */}
