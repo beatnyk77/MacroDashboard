@@ -7,6 +7,8 @@ import { formatBillions } from '@/utils/formatNumber';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from "@/components/ui/card";
 
+import { OilStressSignal } from '../energy/OilStressSignal';
+
 interface TodaysBriefPanelProps {
     className?: string;
     sx?: any; // Deprecated, kept for compatibility
@@ -177,6 +179,11 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             <span className="text-xs font-semibold text-muted-foreground">
                                 {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${formatBillions(liquidityDelta / 1e9, { decimals: 1 })} net change (7D)` : 'Awaiting fresh feed'}
                             </span>
+                        </div>
+
+                        {/* Oil Market Stress Signal Widget */}
+                        <div className="p-0 rounded-lg bg-white/5 border border-white/12 overflow-hidden">
+                            <OilStressSignal />
                         </div>
                     </div>
 

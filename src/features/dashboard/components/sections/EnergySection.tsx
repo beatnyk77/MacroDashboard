@@ -4,6 +4,7 @@ import { useIndiaEnergy, StateEnergyStats } from '@/hooks/useIndiaEnergy';
 import { Activity, Zap, Flame, Lightbulb, ChevronRight } from 'lucide-react';
 import { scaleQuantile } from 'd3-scale';
 import { StateMacroInsights } from '../StateMacroInsights';
+import { OilSpreadChart } from '../energy/OilSpreadChart';
 import React, { Suspense } from 'react';
 
 const IndiaLeafletMap = React.lazy(() => import('../maps/IndiaLeafletMap').then(m => ({ default: m.IndiaLeafletMap })));
@@ -110,6 +111,11 @@ export const EnergySection: React.FC = () => {
                         </span>
                     </div>
                 </div>
+            </div>
+
+            {/* Global Energy Macro Signal */}
+            <div className="w-full">
+                <OilSpreadChart />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
