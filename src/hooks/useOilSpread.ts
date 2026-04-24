@@ -18,7 +18,7 @@ export const useOilSpread = () => {
     return useQuery({
         queryKey: ['oil_market_spread'],
         queryFn: async (): Promise<OilSpreadRecord[]> => {
-            const { data, error } = await supabase
+            let { data, error } = await supabase
                 .from('oil_market_spread')
                 .select('*')
                 .order('date', { ascending: false })
@@ -27,6 +27,36 @@ export const useOilSpread = () => {
             if (error) {
                 console.error('Error fetching oil market spread:', error);
                 throw error;
+            }
+
+            if (!data || data.length === 0) {
+                console.log('No oil spread data found. Triggering ingestion edge function...');
+                try {
+                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+                    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+                    
+                    await fetch(`${supabaseUrl}/functions/v1/ingest-oil-spread`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${supabaseKey}`,
+                            'apikey': supabaseKey,
+                        }
+                    });
+                    
+                    await new Promise(r => setTimeout(r, 2000));
+                    
+                    const { data: retryData } = await supabase
+                        .from('oil_market_spread')
+                        .select('*')
+                        .order('date', { ascending: false })
+                        .limit(100);
+                        
+                    if (retryData && retryData.length > 0) {
+                        data = retryData;
+                    }
+                } catch (err) {
+                    console.error('Auto-trigger failed:', err);
+                }
             }
 
             return (data || []).map((d: any) => ({
@@ -46,7 +76,7 @@ export const useLatestOilSpread = () => {
     return useQuery({
         queryKey: ['oil_market_spread_latest'],
         queryFn: async (): Promise<OilSpreadRecord | null> => {
-            const { data, error } = await supabase
+            let { data, error } = await supabase
                 .from('oil_market_spread')
                 .select('*')
                 .order('date', { ascending: false })
@@ -58,7 +88,39 @@ export const useLatestOilSpread = () => {
                 throw error;
             }
 
-            if (!data) return null;
+            if (!data) {
+                // Auto-trigger ingestion if table is empty
+                console.log('No oil spread data found. Triggering ingestion edge function...');
+                try {
+                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+                    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+                    
+                    await fetch(`${supabaseUrl}/functions/v1/ingest-oil-spread`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${supabaseKey}`,
+                            'apikey': supabaseKey,
+                        }
+                    });
+                    
+                    // Wait a moment for DB upsert
+                    await new Promise(r => setTimeout(r, 2000));
+                    
+                    // Retry fetch
+                    const { data: retryData } = await supabase
+                        .from('oil_market_spread')
+                        .select('*')
+                        .order('date', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
+                        
+                    if (!retryData) return null;
+                    data = retryData;
+                } catch (err) {
+                    console.error('Auto-trigger failed:', err);
+                    return null;
+                }
+            }
 
             return {
                 ...data,
