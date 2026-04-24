@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const comtradeKey = Deno.env.get('COMTRADE_API_KEY') || Deno.env.get('contrade_api_key') || ''
+    const comtradeKey = Deno.env.get('COMTRADE_API_KEY') || Deno.env.get('comtrade_api_key') || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const url = new URL(req.url)
@@ -80,15 +80,16 @@ Deno.serve(async (req) => {
         for (const year of years) {
             // ── Step 1: Fetch import totals per reporter (partnerCode=0 = World aggregate) ──
             const totalsUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
-                `?reporterCode=0&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=0` +
+                `?reporterCode=ALL&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=0` +
                 (comtradeKey ? `&subscription-key=${comtradeKey}` : '')
 
             console.log(`[fetch-hs-demand] Fetching totals for year ${year}...`)
             const totalsRes = await fetch(totalsUrl)
 
             if (!totalsRes.ok) {
-                console.warn(`[fetch-hs-demand] Totals fetch failed for ${year}: ${totalsRes.status}`)
-                if (year === years[years.length - 1]) throw new Error(`Comtrade API error: ${totalsRes.status}`)
+                const errText = await totalsRes.text().catch(() => '')
+                console.warn(`[fetch-hs-demand] Totals fetch failed for ${year}: ${totalsRes.status} - ${errText}`)
+                if (year === years[years.length - 1]) throw new Error(`Comtrade API error: ${totalsRes.status} ${totalsRes.statusText}`)
                 continue
             }
 
@@ -128,7 +129,7 @@ Deno.serve(async (req) => {
             // ── Step 2: Fetch bilateral breakdown (who supplies each importer) ──
             // We limit to partnerCode=ALL to get full bilateral matrix
             const bilateralUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
-                `?reporterCode=0&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=ALL` +
+                `?reporterCode=ALL&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=ALL` +
                 (comtradeKey ? `&subscription-key=${comtradeKey}` : '')
 
             console.log(`[fetch-hs-demand] Fetching bilateral breakdown for year ${year}...`)
