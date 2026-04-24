@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
     const hsCode = url.searchParams.get('hsCode') || '620342'
     // Try 2024 first (latest available), fallback to 2023
     const yearParam = url.searchParams.get('year')
-    const years = yearParam ? [parseInt(yearParam)] : [2024, 2023, 2022]
+    const years = yearParam ? [parseInt(yearParam)] : [2024, 2023, 2022, 2021]
 
     try {
         console.log(`[fetch-hs-demand] Starting for HS ${hsCode}`)
@@ -180,6 +180,13 @@ Deno.serve(async (req) => {
 
             // Successfully fetched — no need to try earlier years
             break
+        }
+        
+        if (totalRecords === 0) {
+            return new Response(JSON.stringify({ ok: false, error: `No market data found for HS ${hsCode} in recent years (2021-2024).` }), {
+                status: 404,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            })
         }
 
         // ── Step 3: Trigger opportunity score computation ──
