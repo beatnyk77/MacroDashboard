@@ -47,7 +47,16 @@ async function logIngestion(supabase: SupabaseClient, fnName: string, status: st
     } catch (_) { /* non-blocking */ }
 }
 
-
+/**
+ * Chunk helper to prevent payload size errors
+ */
+async function chunkedUpsert(supabase: SupabaseClient, table: string, rows: any[], conflict: string, chunkSize = 100) {
+    for (let i = 0; i < rows.length; i += chunkSize) {
+        const chunk = rows.slice(i, i + chunkSize)
+        const { error } = await supabase.from(table).upsert(chunk, { onConflict: conflict })
+        if (error) throw error
+    }
+}
 
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -59,7 +68,6 @@ Deno.serve(async (req) => {
 
     const url = new URL(req.url)
     const hsCode = url.searchParams.get('hsCode') || '620342'
-    // Try 2024 first (latest available), fallback to 2023
     const yearParam = url.searchParams.get('year')
     const years = yearParam ? [parseInt(yearParam)] : [2024, 2023, 2022, 2021]
 
@@ -70,7 +78,6 @@ Deno.serve(async (req) => {
         let bilateralRecords = 0
 
         for (const year of years) {
-            // ── Step 1: Fetch import totals per reporter (partnerCode=0 = World aggregate) ──
             const totalsUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
                 `?reporterCode=ALL&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=0` +
                 (comtradeKey ? `&subscription-key=${comtradeKey}` : '')
@@ -95,9 +102,8 @@ Deno.serve(async (req) => {
 
             console.log(`[fetch-hs-demand] Got ${totalRows.length} total rows for year ${year}`)
 
-            // Upsert import totals into trade_demand_cache
             const demandRows = totalRows
-                .filter(r => r.reporterISO && r.reporterISO !== 'W00') // exclude World aggregate reporter
+                .filter(r => r.reporterISO && r.reporterISO !== 'W00')
                 .map(r => ({
                     hs_code: hsCode,
                     reporter_iso3: r.reporterISO,
@@ -111,15 +117,10 @@ Deno.serve(async (req) => {
                 }))
 
             if (demandRows.length > 0) {
-                const { error: demandErr } = await supabase
-                    .from('trade_demand_cache')
-                    .upsert(demandRows, { onConflict: 'hs_code,reporter_iso3,year' })
-                if (demandErr) throw demandErr
+                await chunkedUpsert(supabase, 'trade_demand_cache', demandRows, 'hs_code,reporter_iso3,year')
                 totalRecords += demandRows.length
             }
 
-            // ── Step 2: Fetch bilateral breakdown (who supplies each importer) ──
-            // We limit to partnerCode=ALL to get full bilateral matrix
             const bilateralUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
                 `?reporterCode=ALL&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=ALL` +
                 (comtradeKey ? `&subscription-key=${comtradeKey}` : '')
@@ -131,7 +132,6 @@ Deno.serve(async (req) => {
                 const bilateralData = await bilateralRes.json()
                 const bilRows: ComtradeRecord[] = bilateralData?.data || []
 
-                // Build total per reporter for market share computation
                 const reporterTotals: Record<string, number> = {}
                 demandRows.forEach(r => {
                     reporterTotals[r.reporter_iso3] = r.import_value_usd || 0
@@ -141,7 +141,7 @@ Deno.serve(async (req) => {
                     .filter(r =>
                         r.reporterISO &&
                         r.partnerISO &&
-                        r.partnerISO !== 'W00' && // exclude World
+                        r.partnerISO !== 'W00' &&
                         r.reporterISO !== 'W00'
                     )
                     .map(r => {
@@ -160,30 +160,31 @@ Deno.serve(async (req) => {
                     })
 
                 if (supplierRows.length > 0) {
-                    const { error: suppErr } = await supabase
-                        .from('trade_supplier_breakdown')
-                        .upsert(supplierRows, { onConflict: 'hs_code,reporter_iso3,partner_iso3,year' })
-                    if (suppErr) console.warn('[fetch-hs-demand] Supplier upsert warn:', suppErr.message)
-                    else bilateralRecords += supplierRows.length
+                    try {
+                        await chunkedUpsert(supabase, 'trade_supplier_breakdown', supplierRows, 'hs_code,reporter_iso3,partner_iso3,year')
+                        bilateralRecords += supplierRows.length
+                    } catch (suppErr) {
+                        console.warn('[fetch-hs-demand] Supplier upsert error:', suppErr)
+                    }
                 }
             } else {
                 console.warn(`[fetch-hs-demand] Bilateral fetch failed: ${bilateralRes.status}`)
             }
 
-            // Successfully fetched — no need to try earlier years
             break
         }
         
         if (totalRecords === 0) {
-            return new Response(JSON.stringify({ ok: false, error: `No market data found for HS ${hsCode} in recent years (2021-2024).` }), {
-                status: 404,
+            return new Response(JSON.stringify({ 
+                ok: false, 
+                error: `No market data found for HS ${hsCode} in recent years (2021-2024).` 
+            }), {
+                status: 200, // Fail soft: return 200 with error object
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             })
         }
 
-        // ── Step 3: Trigger opportunity score computation ──
         const scoreUrl = `${supabaseUrl}/functions/v1/compute-hs-opportunity-scores?hsCode=${hsCode}`
-        // Fire and don't wait — scores compute asynchronously
         fetch(scoreUrl, {
             method: 'POST',
             headers: {
@@ -209,8 +210,12 @@ Deno.serve(async (req) => {
     } catch (err) {
         console.error('[fetch-hs-demand] Error:', err)
         await logIngestion(supabase, 'fetch-hs-demand', 'failed', { hsCode, error: String(err) })
-        return new Response(JSON.stringify({ ok: false, error: String(err) }), {
-            status: 500,
+        return new Response(JSON.stringify({ 
+            ok: false, 
+            error: String(err),
+            details: "Critical failure in fetch-hs-demand pipeline."
+        }), {
+            status: 200, // Fail soft: return 200 with error object
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
     }

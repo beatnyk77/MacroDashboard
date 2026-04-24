@@ -35,7 +35,6 @@ Deno.serve(async (req) => {
         );
 
         const now = new Date();
-        // Determine the year_month format like "2026-04"
         const year_month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
         // 1. Fetch Core Data Pillars
@@ -172,10 +171,14 @@ Generate the Monthly Regime Digest.`;
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 
-    } catch (error: unknown) {
+    } catch (error: any) {
         console.error("Error generating digest:", error);
-        return new Response(JSON.stringify({ error: (error as Error).message }), {
-            status: 500,
+        return new Response(JSON.stringify({ 
+            success: false, 
+            error: error.message,
+            timestamp: new Date().toISOString()
+        }), {
+            status: 200, // Fail soft: return 200 with error object
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
     }
