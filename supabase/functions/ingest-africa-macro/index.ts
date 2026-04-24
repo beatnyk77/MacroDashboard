@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
 
     // 3. Upsert Latest Country Metrics (Pulse)
     // In a real scenario, these would be fetched from IMF/World Bank APIs
-    const countries = ['ZA', 'NG', 'EG', 'KE', 'AO', 'GH', 'ET', 'MA', 'DZ', 'ZM']
+    const _countries = ['ZA', 'NG', 'EG', 'KE', 'AO', 'GH', 'ET', 'MA', 'DZ', 'ZM']
     const pulseMetrics = [
       { iso: 'ZA', metric_key: 'debt_gdp', value: 72.3, source: 'IMF' },
       { iso: 'NG', metric_key: 'inflation_yoy', value: 31.7, source: 'NBS' },
@@ -94,8 +94,8 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -6,7 +6,7 @@ const corsHeaders = {
         "authorization, x-client-info, apikey, content-type",
 };
 
-async function fetchLatestMetric(supabase: any, metricId: string) {
+async function fetchLatestMetric(supabase: SupabaseClient, metricId: string) {
     const { data } = await supabase
         .from("metric_observations")
         .select("value, as_of_date")
@@ -16,7 +16,7 @@ async function fetchLatestMetric(supabase: any, metricId: string) {
     return data || [];
 }
 
-async function fetchRegionalPulse(supabase: any, table: string) {
+async function fetchRegionalPulse(supabase: SupabaseClient, table: string) {
     const { data } = await supabase
         .from(table)
         .select("*")
@@ -152,7 +152,7 @@ Generate the Monthly Regime Digest.`;
         let parsedResult;
         try {
             parsedResult = JSON.parse(resultText);
-        } catch (e: any) {
+        } catch (_e) {
             throw new Error(`Failed to parse LLM JSON output: ${resultText}`);
         }
 
@@ -172,9 +172,9 @@ Generate the Monthly Regime Digest.`;
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error generating digest:", error);
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: (error as Error).message }), {
             status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });

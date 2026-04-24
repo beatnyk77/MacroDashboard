@@ -13,7 +13,7 @@ function classifyRegime(spread: number): 'OVERSUPPLY' | 'NORMAL' | 'TIGHTENING' 
     return 'NORMAL';
 }
 
-async function logIngestion(supabase: SupabaseClient, status: string, metadata: any) {
+async function logIngestion(supabase: SupabaseClient, status: string, metadata: unknown) {
     await supabase.from('ingestion_logs').insert({
         function_name: 'ingest-oil-spread',
         status,
@@ -22,15 +22,15 @@ async function logIngestion(supabase: SupabaseClient, status: string, metadata: 
     });
 }
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(async (_req) => {
+    if (_req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const eiaApiKey = Deno.env.get('EIA_API_KEY'); // Use EIA for the reliable spread
-    const avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY'); // Backup/Spot price
+    const _avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY'); // Backup/Spot price
 
     try {
         console.log("Starting Oil Spread Ingestion...");
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
         const cl1Price = Number(cl1Data[0].value);
         
         // Find matching date in CL2
-        const cl2Match = cl2Data.find((d: any) => d.period === latestDate);
+        const cl2Match = cl2Data.find((d: { period: string }) => d.period === latestDate);
         if (!cl2Match) throw new Error(`No matching date for CL2 on ${latestDate}`);
         const cl2Price = Number(cl2Match.value);
 
@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
         // 2. Change Detection (vs previous day common to both)
         const prevDate = cl1Data[1].period;
         const cl1Prev = Number(cl1Data[1].value);
-        const cl2PrevMatch = cl2Data.find((d: any) => d.period === prevDate);
+        const cl2PrevMatch = cl2Data.find((d: { period: string }) => d.period === prevDate);
         const cl2Prev = cl2PrevMatch ? Number(cl2PrevMatch.value) : cl1Prev - 1.0; // Fallback
         const spreadPrev = cl1Prev - cl2Prev;
         
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
         // 3. 3-Day Change
         const threeDaysAgoDate = cl1Data[3]?.period;
         const cl1Three = Number(cl1Data[3]?.value || cl1Data[1].value);
-        const cl2ThreeMatch = cl2Data.find((d: any) => d.period === threeDaysAgoDate);
+        const cl2ThreeMatch = cl2Data.find((d: { period: string }) => d.period === threeDaysAgoDate);
         const cl2Three = cl2ThreeMatch ? Number(cl2ThreeMatch.value) : cl1Three - 1.0;
         const spreadThree = cl1Three - cl2Three;
         const change_3d = spread - spreadThree;
@@ -106,21 +106,14 @@ Deno.serve(async (req) => {
 
         await logIngestion(supabase, 'success', { spread, regime, date: latestDate });
 
-        return new Response(JSON.stringify({
-            ok: true,
-            date: latestDate,
-            spread,
-            regime,
-            cl1: cl1Price,
-            cl2: cl2Price
-        }), {
+        return new Response(JSON.stringify({ success: true, date: latestDate, spread }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (err) {
-        console.error('[ingest-oil-spread]', err);
-        await logIngestion(supabase, 'failed', { error: String(err) });
-        return new Response(JSON.stringify({ ok: false, error: String(err) }), {
+    } catch (error: unknown) {
+        console.error("Ingestion error:", error);
+        await logIngestion(supabase, 'FAILED', { error: (error as Error).message });
+        return new Response(JSON.stringify({ error: (error as Error).message }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });

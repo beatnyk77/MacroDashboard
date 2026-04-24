@@ -16,7 +16,7 @@ const ISO3_TO_ISO2: Record<string, string> = {
     'NOR': 'NO', 'DNK': 'DK', 'FIN': 'FI', 'CHE': 'CH', 'AUT': 'AT',
     'BEL': 'BE', 'PRT': 'PT', 'ESP': 'ES', 'GRC': 'GR', 'ROU': 'RO',
     'CZE': 'CZ', 'HUN': 'HU', 'SGP': 'SG', 'HKG': 'HK', 'TWN': 'TW',
-    'NZL': 'NZ', 'ISR': 'IL', 'QAT': 'QA', 'KWT': 'KW', 'ARE': 'AE',
+    'NZL': 'NZ', 'ISR': 'IL', 'QAT': 'QA', 'KWT': 'KW',
     'RUS': 'RU', 'ARG': 'AR', 'COL': 'CO', 'CHL': 'CL', 'PER': 'PE',
 }
 
@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
                     yearlyValues: [],
                 }
             }
-            byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, import_value_usd: row.import_value_usd || 0 })
+            byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, usd: row.import_value_usd || 0 })
         }
 
         // ── 2. Get supplier breakdown for HHI + top supplier ──

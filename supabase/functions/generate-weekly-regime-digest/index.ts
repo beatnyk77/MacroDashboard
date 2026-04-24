@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -26,7 +26,7 @@ const fmt = {
         }).format(val),
 };
 
-async function fetchLatestMetric(supabase: any, metricId: string) {
+async function fetchLatestMetric(supabase: SupabaseClient, metricId: string) {
     const { data } = await supabase
         .from("metric_observations")
         .select("value, as_of_date")
@@ -36,7 +36,7 @@ async function fetchLatestMetric(supabase: any, metricId: string) {
     return data || [];
 }
 
-async function fetchRegionalPulse(supabase: any, table: string) {
+async function fetchRegionalPulse(supabase: SupabaseClient, table: string) {
     const { data } = await supabase
         .from(table)
         .select("*")
@@ -45,8 +45,8 @@ async function fetchRegionalPulse(supabase: any, table: string) {
     return data?.[0] || null;
 }
 
-Deno.serve(async (req) => {
-    if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+Deno.serve(async (_req) => {
+    if (_req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
     try {
         const supabaseClient = createClient(
@@ -59,8 +59,8 @@ Deno.serve(async (req) => {
         // 1. Fetch Core Data Pillars
         const [
             liq, vix, dxy, gold, brent, 
-            debtGold, usCpi, inGdp, inCpi, 
-            africaPulse, indiaPulse, chinaPulse
+            debtGold, usCpi, inGdp, _inCpi, 
+            africaPulse, _indiaPulse, _chinaPulse
         ] = await Promise.all([
             fetchLatestMetric(supabaseClient, "BIS_GLOBAL_LIQUIDITY_USD_BN"),
             fetchLatestMetric(supabaseClient, "VIX_INDEX"),
@@ -144,8 +144,8 @@ Deno.serve(async (req) => {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 
-    } catch (error: any) {
-        return new Response(JSON.stringify({ error: error.message }), {
+    } catch (error: unknown) {
+        return new Response(JSON.stringify({ error: (error as Error).message }), {
             status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
