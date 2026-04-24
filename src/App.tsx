@@ -49,6 +49,10 @@ const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(m
 const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(module => ({ default: module.China15thFYPLab })));
 const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
 
+const TradeIntelligencePage = lazy(() => import('@/pages/TradeIntelligencePage').then(module => ({ default: module.default })));
+const HSCodeOverviewPage = lazy(() => import('@/pages/HSCodeOverviewPage').then(module => ({ default: module.default })));
+const MarketDeepDivePage = lazy(() => import('@/pages/MarketDeepDivePage').then(module => ({ default: module.default })));
+
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
         <CircularProgress color="primary" size={24} />
@@ -97,6 +101,11 @@ function App() {
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
                                         <Route path="/institutional" element={<ForInstitutional />} />
                                         <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
+
+                                        {/* Trade Intelligence */}
+                                        <Route path="/trade" element={<TradeIntelligencePage />} />
+                                        <Route path="/trade/hs/:code" element={<HSCodeOverviewPage />} />
+                                        <Route path="/trade/hs/:code/market/:iso" element={<MarketDeepDivePage />} />
 
                                         {/* Tools & Embeds */}
                                         <Route path="/tools/net-liquidity-gauge" element={<NetLiquidityGauge />} />

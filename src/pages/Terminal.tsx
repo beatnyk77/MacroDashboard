@@ -17,6 +17,7 @@ import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/Fed
 import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPanel';
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
 import { EnergySection } from '@/features/dashboard/components/sections/EnergySection';
+import { TradeEntryBanner } from '@/features/trade/components/TradeEntryBanner';
 
 const WeeklyRegimeDigest = lazy(() => import('@/features/dashboard/components/sections/WeeklyRegimeDigest').then(m => ({ default: m.WeeklyRegimeDigest })));
 const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/sections/RegimeDigestSection').then(m => ({ default: m.RegimeDigestSection })));
@@ -309,6 +310,20 @@ export const Terminal: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                </section>
+
+                {/* 3.5 TRADE INTELLIGENCE */}
+                <section className="space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500/80">Trade Intelligence</h2>
+                        <div className="h-px flex-1 bg-white/5" />
+                    </div>
+                    <SectionErrorBoundary name="Trade Intelligence">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TradeEntryBanner />
+                        </Suspense>
+                    </SectionErrorBoundary>
                 </section>
 
                 {/* 4. REGIONAL INTELLIGENCE */}
