@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -47,15 +47,7 @@ async function logIngestion(supabase: SupabaseClient, fnName: string, status: st
     } catch (_) { /* non-blocking */ }
 }
 
-/**
- * Computes HHI for a set of (value, total) pairs.
- * HHI = sum of squared market shares (0–1 scale).
- */
-function computeHHI(supplierValues: number[], total: number): number {
-    if (total === 0) return 0
-    const shares = supplierValues.map(v => v / total)
-    return shares.reduce((acc, s) => acc + s * s, 0)
-}
+
 
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
