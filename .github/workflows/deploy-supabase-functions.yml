@@ -55,6 +55,8 @@ jobs:
 
             ingest-us-macro: ['supabase/functions/ingest-us-macro/**']
             ingest-india-macro-snapshot: ['supabase/functions/ingest-india-macro-snapshot/**']
+            fetch-hs-demand: ['supabase/functions/fetch-hs-demand/**']
+            compute-hs-opportunity-scores: ['supabase/functions/compute-hs-opportunity-scores/**']
 
             llm-knowledge: ['supabase/functions/llm-knowledge/**']
             _shared: ['supabase/functions/_shared/**']
@@ -109,6 +111,8 @@ jobs:
 
           CHANGED_INGEST_US_MACRO: ${{ steps.filter.outputs['ingest-us-macro'] }}
           CHANGED_INGEST_INDIA_MACRO_SNAPSHOT: ${{ steps.filter.outputs['ingest-india-macro-snapshot'] }}
+          CHANGED_FETCH_HS_DEMAND: ${{ steps.filter.outputs['fetch-hs-demand'] }}
+          CHANGED_COMPUTE_HS_OPPORTUNITY_SCORES_V2: ${{ steps.filter.outputs['compute-hs-opportunity-scores'] }}
 
           CHANGED_LLM_KNOWLEDGE: ${{ steps.filter.outputs['llm-knowledge'] }}
         run: |
@@ -160,5 +164,7 @@ jobs:
 
             [ "$CHANGED_LLM_KNOWLEDGE" = "true" ]              && deploy_func "llm-knowledge"
             [ "$CHANGED_INGEST_INDIA_MACRO_SNAPSHOT" = "true" ] && deploy_func "ingest-india-macro-snapshot"
+            [ "$CHANGED_FETCH_HS_DEMAND" = "true" ]            && deploy_func "fetch-hs-demand"
+            [ "$CHANGED_COMPUTE_HS_OPPORTUNITY_SCORES_V2" = "true" ] && deploy_func "compute-hs-opportunity-scores"
             echo "Selective deployment complete."
           fi
