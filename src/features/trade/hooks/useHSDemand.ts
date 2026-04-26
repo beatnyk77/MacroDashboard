@@ -87,9 +87,25 @@ export function useHSDemand(hsCode: string | null) {
                     return
                 }
 
+                // Parse response to check for "soft" errors
+                const resData = await res.json().catch(() => ({ ok: false, error: 'Invalid response from server' }))
+                if (!resData.ok && !cancelled) {
+                    if (cached && cached.length > 0) {
+                        setState({
+                            status: 'success',
+                            markets: cached.map(enrich),
+                            hsCode,
+                            cachedAt: cached[0]?.computed_at ?? new Date().toISOString(),
+                        })
+                    } else {
+                        setState({ status: 'error', message: resData.error || 'Failed to fetch live trade data' })
+                    }
+                    return
+                }
+
                 // ── 3. Poll for scores (edge function is async — scores arrive shortly) ──
                 let attempts = 0
-                const maxAttempts = 10
+                const maxAttempts = 30 // Increased from 10 (60s total) to handle heavy data like HS 85
                 let success = false
                 const poll = async (): Promise<void> => {
                     if (cancelled || attempts >= maxAttempts) return

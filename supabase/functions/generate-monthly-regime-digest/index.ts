@@ -171,11 +171,12 @@ Generate the Monthly Regime Digest.`;
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
         console.error("Error generating digest:", error);
         return new Response(JSON.stringify({ 
             success: false, 
-            error: error.message,
+            error: message,
             timestamp: new Date().toISOString()
         }), {
             status: 200, // Fail soft: return 200 with error object

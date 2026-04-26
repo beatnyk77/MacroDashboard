@@ -48,7 +48,6 @@ export const MarketOpportunityCard: React.FC<MarketOpportunityCardProps> = ({ sc
                     {[
                         { label: 'Market Size', value: score.market_size_score, icon: Trophy },
                         { label: 'Growth Trend', value: score.growth_score, icon: TrendingUp },
-                        { label: 'Open Competition', value: score.competition_score, icon: ShieldAlert },
                         { label: 'Macro Stability', value: score.macro_score, icon: AlertTriangle },
                     ].map(item => (
                         <div key={item.label} className="space-y-1.5">

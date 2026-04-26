@@ -38,10 +38,7 @@ function scoreGrowth(cagr: number | null): number {
     return Math.round(((cagr + 5) / 20) * 100)
 }
 
-/** Competition: inverse HHI. HHI=0 → 100 (fragmented, easy entry). HHI=1 → 0 (monopoly). */
-function scoreCompetition(hhi: number): number {
-    return Math.round((1 - Math.min(1, Math.max(0, hhi))) * 100)
-}
+
 
 /** Macro: GDP growth + FX stability composite from country_metrics */
 function scoreMacro(gdpGrowth: number | null, fxVolatility: number | null): number {
@@ -74,10 +71,7 @@ function computeCAGR(values: number[]): number | null {
     return (Math.pow(last / first, 1 / years) - 1) * 100
 }
 
-/** Herfindahl-Hirschman Index from market shares (0–100 scale) */
-function computeHHI(shares: number[]): number {
-    return shares.reduce((acc, s) => acc + Math.pow(s / 100, 2), 0)
-}
+
 
 async function logIngestion(supabase: SupabaseClient, status: string, meta: object) {
     try {
@@ -93,14 +87,18 @@ async function logIngestion(supabase: SupabaseClient, status: string, meta: obje
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    const url = new URL(req.url)
-    const hsCode = url.searchParams.get('hsCode') || '620342'
-
     try {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')
+        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+        
+        if (!supabaseUrl || !supabaseKey) {
+            throw new Error("Missing Supabase configuration (URL/Key)")
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        const url = new URL(req.url)
+        const hsCode = url.searchParams.get('hsCode') || '620342'
+
         console.log(`[compute-hs-opportunity-scores] Computing for HS ${hsCode}`)
 
         // ── 1. Get all reporters and years from trade_demand_cache ──
@@ -113,11 +111,14 @@ Deno.serve(async (req) => {
 
         if (demandErr) throw demandErr
         if (!demandRows || demandRows.length === 0) {
+            console.warn(`[compute-hs-opportunity-scores] No demand data found for HS ${hsCode}`)
             return new Response(JSON.stringify({ ok: false, message: 'No demand data found. Run fetch-hs-demand first.' }), {
-                status: 404,
+                status: 200,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             })
         }
+
+        console.log(`[compute-hs-opportunity-scores] Found ${demandRows.length} demand rows`)
 
         // Group demand rows by reporter
         const byReporter: Record<string, { iso2: string | null; name: string | null; yearlyValues: { year: number; usd: number }[] }> = {}
@@ -132,28 +133,7 @@ Deno.serve(async (req) => {
             byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, usd: row.import_value_usd || 0 })
         }
 
-        // ── 2. Get supplier breakdown for HHI + top supplier ──
-        const latestYear = Math.max(...demandRows.map(r => r.year))
-        const { data: supplierRows, error: suppErr } = await supabase
-            .from('trade_supplier_breakdown')
-            .select('reporter_iso3, partner_iso3, import_value_usd, market_share_pct')
-            .eq('hs_code', hsCode)
-            .eq('year', latestYear)
 
-        if (suppErr) console.warn('[compute-hs-opportunity-scores] Supplier fetch warn:', suppErr.message)
-
-        // Group suppliers by reporter
-        const suppliersByReporter: Record<string, { partner: string; usd: number; share: number }[]> = {}
-        for (const row of (supplierRows || [])) {
-            if (!suppliersByReporter[row.reporter_iso3]) {
-                suppliersByReporter[row.reporter_iso3] = []
-            }
-            suppliersByReporter[row.reporter_iso3].push({
-                partner: row.partner_iso3,
-                usd: row.import_value_usd || 0,
-                share: row.market_share_pct || 0,
-            })
-        }
 
         // ── 3. Get macro data from country_metrics ──
         const isoList = Object.values(byReporter)
@@ -193,14 +173,7 @@ Deno.serve(async (req) => {
             // Volatility
             const volatilityScore = scoreVolatility(values)
 
-            // Supplier competition (HHI)
-            const suppliers = suppliersByReporter[iso3] || []
-            const shares = suppliers.map(s => s.share)
-            const hhi = shares.length > 0 ? computeHHI(shares) : 0.5 // unknown = moderate
-            const competitionScore = scoreCompetition(hhi)
-
-            // Top supplier
-            const topSupplier = suppliers.sort((a, b) => b.share - a.share)[0] || null
+            const latestYear = Math.max(...demandRows.map(r => r.year))
 
             // Macro overlay
             const iso2 = data.iso2
@@ -209,11 +182,10 @@ Deno.serve(async (req) => {
 
             // Weighted overall
             const overall = Math.round(
-                marketSizeScore * 0.25 +
-                growthScore * 0.25 +
-                competitionScore * 0.20 +
-                macroScoreVal * 0.20 +
-                volatilityScore * 0.10
+                marketSizeScore * 0.30 +
+                growthScore * 0.30 +
+                macroScoreVal * 0.25 +
+                volatilityScore * 0.15
             )
 
             scoreRows.push({
@@ -223,13 +195,13 @@ Deno.serve(async (req) => {
                 reporter_name: data.name,
                 market_size_score: marketSizeScore,
                 growth_score: growthScore,
-                competition_score: competitionScore,
                 macro_score: macroScoreVal,
                 volatility_score: volatilityScore,
                 overall_score: overall,
-                hhi: parseFloat(hhi.toFixed(4)),
-                top_supplier_iso3: topSupplier?.partner || null,
-                top_supplier_share: topSupplier ? parseFloat(topSupplier.share.toFixed(3)) : null,
+                competition_score: null, // Removed in Phase 1
+                hhi: null,
+                top_supplier_iso3: null,
+                top_supplier_share: null,
                 latest_import_usd: latestValue,
                 cagr_5yr_pct: cagr !== null ? parseFloat(cagr.toFixed(3)) : null,
                 data_year: latestYear,
@@ -238,11 +210,14 @@ Deno.serve(async (req) => {
         }
 
         if (scoreRows.length === 0) {
+            console.warn(`[compute-hs-opportunity-scores] No scorable markets for HS ${hsCode}`)
             return new Response(JSON.stringify({ ok: false, message: 'No scorable markets found.' }), {
                 status: 200,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             })
         }
+
+        console.log(`[compute-hs-opportunity-scores] Upserting ${scoreRows.length} scores`)
 
         // ── 5. Upsert scores ──
         const { error: upsertErr } = await supabase
@@ -266,10 +241,30 @@ Deno.serve(async (req) => {
         })
 
     } catch (err) {
-        console.error('[compute-hs-opportunity-scores] Error:', err)
-        await logIngestion(supabase, 'failed', { hsCode, error: String(err) })
-        return new Response(JSON.stringify({ ok: false, error: String(err) }), {
-            status: 500,
+        console.error('[compute-hs-opportunity-scores] Global catch:', err)
+        
+        // Try to log failure
+        try {
+            const supabaseUrl = Deno.env.get('SUPABASE_URL')
+            const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+            if (supabaseUrl && supabaseKey) {
+                const supabase = createClient(supabaseUrl, supabaseKey)
+                const hsCode = new URL(req.url).searchParams.get('hsCode') || 'unknown'
+                await supabase.from('ingestion_logs').insert({
+                    function_name: 'compute-hs-opportunity-scores',
+                    status: 'failed',
+                    metadata: { hsCode, error: String(err) },
+                    start_time: new Date().toISOString()
+                })
+            }
+        } catch (_) { /* ignore */ }
+
+        return new Response(JSON.stringify({ 
+            ok: false, 
+            error: String(err),
+            details: "Critical failure in compute-hs-opportunity-scores."
+        }), {
+            status: 200, // Fail soft
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
     }

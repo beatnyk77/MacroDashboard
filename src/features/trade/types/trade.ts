@@ -39,12 +39,12 @@ export interface OpportunityScore {
     // Score components (0–100)
     market_size_score: number
     growth_score: number
-    competition_score: number
+    competition_score: number | null
     macro_score: number
     volatility_score: number
     overall_score: number
 
-    // Competition detail
+    // Competition detail (Nullified in Phase 1)
     hhi: number | null                  // 0–1 Herfindahl-Hirschman Index
     top_supplier_iso3: string | null
     top_supplier_share: number | null   // %
@@ -113,14 +113,8 @@ export function buildOpportunityTags(market: OpportunityScore): string[] {
         tags.push('💰 Large Market')
     if (market.cagr_5yr_pct && market.cagr_5yr_pct >= 8)
         tags.push('🔥 Fast Growth')
-    if (market.hhi !== null && market.hhi < 0.25)
-        tags.push('🎯 Low Competition')
     if (market.macro_score >= 70)
         tags.push('📈 Strong Macro')
-    if (market.top_supplier_iso3 === 'CHN' && market.top_supplier_share && market.top_supplier_share > 30)
-        tags.push('🔄 China Dominant')
-    if (market.competition_score >= 75)
-        tags.push('🚪 Open Market')
     return tags.slice(0, 4)
 }
 
@@ -130,8 +124,5 @@ export function buildInsightText(market: OpportunityScore): string {
     const growth = market.cagr_5yr_pct !== null
         ? `growing at ${market.cagr_5yr_pct > 0 ? '+' : ''}${market.cagr_5yr_pct.toFixed(1)}%/yr`
         : 'trend data limited'
-    const comp = market.hhi !== null
-        ? market.hhi < 0.2 ? 'fragmented supply base' : market.hhi < 0.4 ? 'moderate competition' : 'concentrated market'
-        : 'competition unknown'
-    return `${val} import market, ${growth}. ${comp[0].toUpperCase() + comp.slice(1)}.`
+    return `${val} import market, ${growth}.`
 }
