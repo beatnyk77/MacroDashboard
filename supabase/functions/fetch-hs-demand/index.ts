@@ -45,6 +45,11 @@ const ISO3_TO_ISO2: Record<string, string> = {
     'MMR': 'MM', 'KHM': 'KH', 'NPL': 'NP',
 }
 
+const REPORTER_CODE_TO_ISO3: Record<string, string> = {
+    "840": "USA", "156": "CHN", "276": "DEU", "392": "JPN", "826": "GBR",
+    "356": "IND", "250": "FRA", "380": "ITA", "124": "CAN", "410": "KOR"
+};
+
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 async function logIngestion(supabase: SupabaseClient, fnName: string, status: string, meta: object) {
@@ -120,6 +125,14 @@ Deno.serve(async (req) => {
                     console.log(`[fetch-hs-demand] Got ${yearRecords.length} records for year ${year}`);
                     
                     if (yearRecords.length > 0) {
+                        // Set debug info for the first successful batch
+                        if (!firstBatchDebug) {
+                            firstBatchDebug = {
+                                status: yearRes.status,
+                                dataCount: yearRecords.length,
+                                url: yearUrl
+                            };
+                        }
                         // We found data for this year! 
                         // Map them and add to our collection
                         yearTotalRows.push(...yearRecords);
@@ -205,7 +218,10 @@ Deno.serve(async (req) => {
 
         const demandRows = yearTotalRows
             .map(r => {
-                const iso3 = r.reporterISO || r.reporterIso || r.reporteriso;
+                const iso3Candidate = r.reporterISO || r.reporterIso || r.reporteriso;
+                const reporterCode = String(r.reporterCode || "");
+                const iso3 = iso3Candidate || REPORTER_CODE_TO_ISO3[reporterCode];
+                
                 const name = r.reporterDesc || r.reporterName || r.reporterdesc;
                 const value = r.primaryValue || r.value || r.tradeValue;
                 const refYear = r.refYear || r.period;

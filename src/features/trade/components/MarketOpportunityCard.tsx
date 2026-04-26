@@ -1,5 +1,5 @@
 import React from 'react'
-import { ShieldAlert, Trophy, TrendingUp, AlertTriangle } from 'lucide-react'
+import { Trophy, TrendingUp, AlertTriangle } from 'lucide-react'
 import { OpportunityScoreBadge } from './OpportunityScoreBadge'
 import type { OpportunityScore } from '../types/trade'
 import { buildOpportunityTags, buildInsightText } from '../types/trade'

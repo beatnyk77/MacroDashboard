@@ -90,6 +90,7 @@ export function useHSDemand(hsCode: string | null) {
                 // Parse response to check for "soft" errors
                 const resData = await res.json().catch(() => ({ ok: false, error: 'Invalid response from server' }))
                 if (!resData.ok && !cancelled) {
+                    console.warn('[useHSDemand] Edge function returned soft error:', resData.error, resData.debug);
                     if (cached && cached.length > 0) {
                         setState({
                             status: 'success',

@@ -36,12 +36,18 @@ Deno.serve(async (_req) => {
         console.log("Starting Oil Spread Ingestion...");
 
         // 1. Fetch Front Month (CL1) and Next Month (CL2) from EIA
-        // Series IDs: PET.RWTC1.D, PET.RWTC2.D
+        // Series IDs: PET.RWTC1.D (WTI Spot Next Month), PET.RWTC2.D (WTI Spot 2nd Month)
         const fetchSeries = async (seriesId: string) => {
-            const url = `https://api.eia.gov/v2/seriesid/${seriesId}/data?api_key=${eiaApiKey}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=5`;
+            const url = `https://api.eia.gov/v2/seriesid/${seriesId}/data?api_key=${eiaApiKey}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=10`;
             const res = await fetch(url);
-            if (!res.ok) throw new Error(`EIA Fetch failed for ${seriesId}`);
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`EIA Fetch failed for ${seriesId}: ${res.status} ${errorText}`);
+            }
             const json = await res.json();
+            if (!json.response?.data || json.response.data.length === 0) {
+                throw new Error(`No data returned from EIA for ${seriesId}`);
+            }
             return json.response.data;
         };
 
@@ -50,37 +56,39 @@ Deno.serve(async (_req) => {
             fetchSeries('PET.RWTC2.D')
         ]);
 
-        if (!cl1Data || !cl2Data || cl1Data.length === 0 || cl2Data.length === 0) {
-            throw new Error("Empty data returned from EIA");
+        // 2. Align data points - find the most recent dates present in BOTH series
+        const commonData: { date: string, cl1: number, cl2: number }[] = [];
+        
+        for (const r1 of cl1Data) {
+            const r2 = cl2Data.find((d: any) => d.period === r1.period);
+            if (r2) {
+                commonData.push({
+                    date: r1.period,
+                    cl1: Number(r1.value),
+                    cl2: Number(r2.value)
+                });
+            }
+            if (commonData.length >= 5) break;
         }
 
-        // Align dates (most recent common date)
-        const latestDate = cl1Data[0].period;
-        const cl1Price = Number(cl1Data[0].value);
-        
-        // Find matching date in CL2
-        const cl2Match = cl2Data.find((d: { period: string }) => d.period === latestDate);
-        if (!cl2Match) throw new Error(`No matching date for CL2 on ${latestDate}`);
-        const cl2Price = Number(cl2Match.value);
+        if (commonData.length === 0) {
+            throw new Error("Could not find any overlapping dates between CL1 and CL2 series in the last 10 days.");
+        }
 
+        const latest = commonData[0];
+        const latestDate = latest.date;
+        const cl1Price = latest.cl1;
+        const cl2Price = latest.cl2;
         const spread = cl1Price - cl2Price;
         const regime = classifyRegime(spread);
 
-        // 2. Change Detection (vs previous day common to both)
-        const prevDate = cl1Data[1].period;
-        const cl1Prev = Number(cl1Data[1].value);
-        const cl2PrevMatch = cl2Data.find((d: { period: string }) => d.period === prevDate);
-        const cl2Prev = cl2PrevMatch ? Number(cl2PrevMatch.value) : cl1Prev - 1.0; // Fallback
-        const spreadPrev = cl1Prev - cl2Prev;
-        
+        // 3. Change Detection
+        const prev = commonData[1] || latest;
+        const spreadPrev = prev.cl1 - prev.cl2;
         const change_1d = spread - spreadPrev;
 
-        // 3. 3-Day Change
-        const threeDaysAgoDate = cl1Data[3]?.period;
-        const cl1Three = Number(cl1Data[3]?.value || cl1Data[1].value);
-        const cl2ThreeMatch = cl2Data.find((d: { period: string }) => d.period === threeDaysAgoDate);
-        const cl2Three = cl2ThreeMatch ? Number(cl2ThreeMatch.value) : cl1Three - 1.0;
-        const spreadThree = cl1Three - cl2Three;
+        const threeDaysAgo = commonData[3] || prev;
+        const spreadThree = threeDaysAgo.cl1 - threeDaysAgo.cl2;
         const change_3d = spread - spreadThree;
 
         // 4. Upsert to DB
