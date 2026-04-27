@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Search, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useHSCodeSearch } from '../hooks/useHSCodeSearch'
+import { HS2_CHAPTER_NAMES } from '../types/hsCodes'
 import type { HSCodeMaster } from '../types/trade'
 
 interface HSCodeSearchProps {
@@ -109,7 +110,7 @@ export const HSCodeSearch: React.FC<HSCodeSearchProps> = ({
                                 </span>
                                 <div className="flex flex-col gap-1 min-w-0">
                                     <span className="text-xs font-semibold text-white/70 leading-snug line-clamp-2">
-                                        {item.description}
+                                        {item.level === 2 ? (HS2_CHAPTER_NAMES[item.code] || item.description) : item.description}
                                     </span>
                                     {levelBadge(item.level)}
                                 </div>

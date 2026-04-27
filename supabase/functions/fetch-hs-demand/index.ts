@@ -57,8 +57,8 @@ const ISO3_TO_ISO2: Record<string, string> = {
 }
 
 const REPORTER_CODE_TO_ISO3: Record<string, string> = {
-    "840": "USA", "156": "CHN", "276": "DEU", "392": "JPN", "826": "GBR",
-    "356": "IND", "250": "FRA", "380": "ITA", "124": "CAN", "410": "KOR"
+    "842": "USA", "156": "CHN", "276": "DEU", "392": "JPN", "826": "GBR",
+    "699": "IND", "251": "FRA", "380": "ITA", "124": "CAN", "410": "KOR"
 };
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
@@ -109,7 +109,7 @@ Deno.serve(async (req: Request) => {
         const bilateralRecords = 0
         let firstBatchDebug: Record<string, unknown> | null = null;
         
-        const topReportersList = ["840", "156", "276", "392", "826", "356", "250", "380", "124", "410"]; // USA, China, Germany, Japan, UK, India, France, Italy, Canada, Korea
+        const topReportersList = ["842", "156", "276", "392", "826", "699", "251", "380", "124", "410"]; // USA, China, Germany, Japan, UK, India, France, Italy, Canada, Korea
         const reporterString = topReportersList.join(',');
         const yearString = years.join(',');
         
@@ -123,7 +123,7 @@ Deno.serve(async (req: Request) => {
         for (const year of years) {
             console.log(`[fetch-hs-demand] Attempting fetch for year ${year}...`);
             const yearUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
-                `?reporterCode=${reporterString}&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=0`;
+                `?reporterCode=${reporterString}&period=${year}&cmdCode=${hsCode}&flowCode=X&partnerCode=0`;
 
             try {
                 const yearRes = await fetch(yearUrl, {
@@ -132,79 +132,67 @@ Deno.serve(async (req: Request) => {
 
                 if (yearRes.ok) {
                     const yearData = await yearRes.json() as { data?: ComtradeRecord[] };
-                    const yearRecords: ComtradeRecord[] = yearData?.data || [];
+                    let yearRecords: any[] = yearData?.data || [];
                     console.log(`[fetch-hs-demand] Got ${yearRecords.length} records for year ${year}`);
                     
-                    if (yearRecords.length > 0) {
-                        // Set debug info for the first successful batch
-                        if (!firstBatchDebug) {
-                            firstBatchDebug = {
-                                status: yearRes.status,
-                                dataCount: yearRecords.length,
-                                url: yearUrl
-                            };
-                        }
-                        // We found data for this year! 
-                        // Map them and add to our collection
-                        yearTotalRows.push(...yearRecords);
-                    }
-                } else if (yearRes.status === 500 || yearRes.status === 429) {
-                    // Comtrade 500 usually means the query was too complex (common for 2-digit HS codes)
-                    // Degrading to individual reporter fetches for this year
-                    console.warn(`[fetch-hs-demand] Year batch ${year} failed (${yearRes.status}). Degrading to individual reporter fetches...`);
-                    
-                    for (const reporterCode of topReportersList) {
-                        const individualUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
-                            `?reporterCode=${reporterCode}&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=0`;
-                        
-                        try {
-                            const indRes = await fetch(individualUrl, {
-                                headers: { 'Ocp-Apim-Subscription-Key': comtradeKey }
-                            });
-                            
-                            if (indRes.ok) {
-                                const indData = await indRes.json() as { data?: ComtradeRecord[] };
-                                if (indData?.data && indData.data.length > 0) {
-                                    yearTotalRows.push(indData.data[0]);
-                                }
-                            } else {
-                                // Last-ditch fallback: Try 'all' partners if 'World (0)' fails
-                                const fallbackUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
-                                    `?reporterCode=${reporterCode}&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=all`;
-                                
-                                const fallbackRes = await fetch(fallbackUrl, {
-                                    headers: { 'Ocp-Apim-Subscription-Key': comtradeKey }
+                    // Fallback: try partnerCode=all if World is missing
+                    if (yearRecords.length === 0) {
+                        console.log(`[fetch-hs-demand] No 'World' data for ${year}. Trying partners=all...`);
+                        const allUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterString}&period=${year}&cmdCode=${hsCode}&flowCode=X&partnerCode=all`;
+                        const allRes = await fetch(allUrl, { headers: { 'Ocp-Apim-Subscription-Key': comtradeKey } });
+                        if (allRes.ok) {
+                            const allJson = await allRes.json() as { data: any[] };
+                            const rawPartnerRows = allJson.data || [];
+                            if (rawPartnerRows.length > 0) {
+                                const aggMap = new Map();
+                                rawPartnerRows.forEach((r: any) => {
+                                    const repCode = r.ReporterCode || r.reporterCode;
+                                    const key = `${repCode}`;
+                                    const existing = aggMap.get(key) || { ...r, PrimaryValue: 0, primaryValue: 0 };
+                                    existing.PrimaryValue += (r.PrimaryValue || r.primaryValue || 0);
+                                    aggMap.set(key, existing);
                                 });
-                                
-                                if (fallbackRes.ok) {
-                                    const fallbackData = await fallbackRes.json() as { data?: ComtradeRecord[] };
-                                    const partners: ComtradeRecord[] = fallbackData?.data || [];
-                                    if (partners.length > 0) {
-                                        const totalValue = partners.reduce((sum: number, r: ComtradeRecord) => sum + (r.primaryValue || r.value || r.tradeValue || 0), 0);
-                                        yearTotalRows.push({
-                                            ...partners[0],
-                                            partnerCode: 0,
-                                            primaryValue: totalValue,
-                                            period: String(year)
-                                        });
-                                    }
-                                }
+                                yearRecords = Array.from(aggMap.values());
                             }
-                        } catch (e) {
-                            console.warn(`[fetch-hs-demand] Failed individual fetch for reporter ${reporterCode} in ${year}: ${e}`);
                         }
-                        await delay(200); // Breathe between individual requests
+                    }
+
+                    if (yearRecords.length > 0) {
+                        if (!firstBatchDebug) {
+                            firstBatchDebug = { status: yearRes.status, dataCount: yearRecords.length, url: yearUrl };
+                        }
+                        yearRecords.forEach(rec => {
+                            const repCode = rec.ReporterCode || rec.reporterCode || rec.rtCode || rec.reporter_code;
+                            if (repCode) yearTotalRows.push(rec);
+                        });
                     }
                 }
             } catch (err) {
                 console.error(`[fetch-hs-demand] Error fetching year ${year}: ${err}`);
-                firstBatchDebug = { year, exception: String(err) };
             }
 
-            // If we found significant data for this year, we can stop (most recent year snapshot)
-            if (yearTotalRows.length > 5) {
-                console.log(`[fetch-hs-demand] Sufficient data found for ${year}. Skipping older years.`);
-                break;
+            // If we have any data, we stop (prioritize latest year)
+            if (yearTotalRows.length > 0) break;
+        }
+
+        if (yearTotalRows.length === 0 && hsCode.length > 4) {
+            const fallbackHs = hsCode.substring(0, 4);
+            console.log(`[fetch-hs-demand] No data for ${hsCode}. Falling back to 4-digit: ${fallbackHs}`);
+            
+            for (const year of years) {
+                const yearUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterString}&period=${year}&cmdCode=${fallbackHs}&flowCode=X&partnerCode=0`;
+                const yearRes = await fetch(yearUrl, { headers: { 'Ocp-Apim-Subscription-Key': comtradeKey } });
+                if (yearRes.ok) {
+                    const yearData = await yearRes.json() as { data?: ComtradeRecord[] };
+                    const yearRecords = yearData?.data || [];
+                    if (yearRecords.length > 0) {
+                        yearRecords.forEach(rec => {
+                            const repCode = rec.ReporterCode || rec.reporterCode || rec.rtCode;
+                            if (repCode) yearTotalRows.push(rec);
+                        });
+                        break; // Stop at first successful year
+                    }
+                }
             }
         }
 
@@ -217,6 +205,7 @@ Deno.serve(async (req: Request) => {
                     yearsQueryed: years,
                     hasApiKey: !!comtradeKey,
                     firstBatch: firstBatchDebug,
+                    sampleRecord: yearTotalRows.length > 0 ? yearTotalRows[0] : null,
                     message: "The function finished all attempts but found 0 records."
                 }
             }), {
@@ -226,33 +215,37 @@ Deno.serve(async (req: Request) => {
         }
 
         console.log(`[fetch-hs-demand] Processing ${yearTotalRows.length} aggregated rows`);
+        if (yearTotalRows.length > 0) {
+            console.log(`[fetch-hs-demand] Sample record structure: ${JSON.stringify(yearTotalRows[0]).substring(0, 500)}`);
+        }
 
         const demandRows = yearTotalRows
             .map(r => {
-                const iso3Candidate = r.reporterISO || r.reporterIso || r.reporteriso || r.rt3ISO;
-                const repCode = r.reporterCode || r.rtCode || r.reporter_code;
+                const repCode = r.ReporterCode || r.reporterCode || r.rtCode || r.reporter_code;
                 const reporterCode = String(repCode || "");
+                const iso3Candidate = r.ReporterISO || r.reporterISO || r.reporterIso || r.reporteriso || r.rt3ISO;
                 const iso3 = iso3Candidate || REPORTER_CODE_TO_ISO3[reporterCode];
                 
-                const name = r.reporterDesc || r.reporterName || r.reporterdesc || r.rtTitle || r.reporter_desc;
-                const value = r.primaryValue || r.value || r.tradeValue || r.TradeValue;
-                const refYear = r.refYear || r.period || r.yr || r.year;
+                const cmd = r.CmdCode || r.cmdCode || hsCode;
+                const val = r.PrimaryValue || r.primaryValue || 0;
+                const qty = r.Qty || r.qty || null;
+                const unit = r.QtyUnitAbbr || r.qtyUnitAbbr || null;
 
                 if (!iso3 || iso3 === 'W00') return null;
 
                 return {
-                    hs_code: String(r.cmdCode || hsCode),
+                    hs_code: hsCode, // Always store as the requested code for UI consistency
                     reporter_iso3: iso3,
                     reporter_iso2: ISO3_TO_ISO2[iso3] || null,
-                    reporter_name: name,
-                    year: typeof refYear === 'string' ? parseInt(refYear.substring(0, 4)) : Number(refYear),
-                    import_value_usd: Math.round(value || 0),
-                    qty_value: r.qty ? Math.round(r.qty) : null,
-                    qty_unit: r.qtyUnitAbbr || null,
-                    fetched_at: new Date().toISOString(),
+                    reporter_name: r.ReporterName || r.reporterName || r.rtTitle || iso3,
+                    year: parseInt(String(r.Period || r.period || r.yr || 0).substring(0, 4)),
+                    export_value_usd: Math.round(parseFloat(String(val))),
+                    qty_value: qty ? Math.round(parseFloat(String(qty))) : null,
+                    qty_unit: unit,
+                    fetched_at: new Date().toISOString()
                 };
             })
-            .filter((r): r is NonNullable<typeof r> => r !== null && String(r.hs_code) === hsCode);
+            .filter((r): r is NonNullable<typeof r> => r !== null && (String(r.hs_code) === hsCode || String(r.hs_code) === hsCode.substring(0, 4)));
 
         if (demandRows.length > 0) {
             // Deduplicate to avoid Supabase ON CONFLICT multiple update errors
@@ -260,7 +253,7 @@ Deno.serve(async (req: Request) => {
             for (const row of demandRows) {
                 const key = `${row.hs_code}-${row.reporter_iso3}-${row.year}`;
                 if (uniqueMap.has(key)) {
-                    if (row.import_value_usd > uniqueMap.get(key).import_value_usd) {
+                    if (row.export_value_usd > uniqueMap.get(key).export_value_usd) {
                         uniqueMap.set(key, row);
                     }
                 } else {
@@ -274,6 +267,10 @@ Deno.serve(async (req: Request) => {
             console.log(`[fetch-hs-demand] Upserted ${uniqueDemandRows.length} unique demand rows`);
         }
 
+        await logIngestion(supabase, 'fetch-hs-demand', 'success', {
+            hsCode, totalRecords, bilateralRecords
+        })
+
         if (totalRecords === 0) {
             return new Response(JSON.stringify({ 
                 ok: false, 
@@ -284,7 +281,7 @@ Deno.serve(async (req: Request) => {
                     hasApiKey: !!comtradeKey,
                     numReportersAttempted: topReportersList.length,
                     firstBatch: firstBatchDebug,
-                    sampleRecord: yearTotalRows.length > 0 ? yearTotalRows[0] : null
+                    message: "The function finished all attempts but found 0 records."
                 }
             }), {
                 status: 200,
@@ -314,6 +311,7 @@ Deno.serve(async (req: Request) => {
 
         await logIngestion(supabase, 'fetch-hs-demand', 'success', {
             hsCode, totalRecords, bilateralRecords,
+            sample: yearTotalRows.length > 0 ? yearTotalRows[0] : null
         })
 
         return new Response(JSON.stringify({

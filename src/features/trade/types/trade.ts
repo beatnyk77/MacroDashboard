@@ -14,7 +14,7 @@ export interface TradeDemandRow {
     reporter_iso2: string | null
     reporter_name: string | null
     year: number
-    import_value_usd: number | null
+    export_value_usd: number | null
     qty_value: number | null
     qty_unit: string | null
     fetched_at: string
@@ -26,7 +26,7 @@ export interface SupplierBreakdown {
     partner_iso3: string
     partner_name: string | null
     year: number
-    import_value_usd: number | null
+    export_value_usd: number | null
     market_share_pct: number | null
 }
 
@@ -50,7 +50,7 @@ export interface OpportunityScore {
     top_supplier_share: number | null   // %
 
     // Raw metrics
-    latest_import_usd: number | null
+    latest_export_usd: number | null
     cagr_5yr_pct: number | null         // %
     data_year: number | null
     computed_at: string
@@ -66,7 +66,7 @@ export interface TradeMarket extends OpportunityScore {
 /** Trend data point for ImportTrendChart */
 export interface TrendPoint {
     year: number
-    import_value_usd: number
+    export_value_usd: number
 }
 
 /** State for the demand hook */
@@ -109,7 +109,7 @@ export function scoreToBg(score: number): string {
 /** Generate opportunity tags for a market */
 export function buildOpportunityTags(market: OpportunityScore): string[] {
     const tags: string[] = []
-    if (market.latest_import_usd && market.latest_import_usd >= 1_000_000_000)
+    if (market.latest_export_usd && market.latest_export_usd >= 1_000_000_000)
         tags.push('💰 Large Market')
     if (market.cagr_5yr_pct && market.cagr_5yr_pct >= 8)
         tags.push('🔥 Fast Growth')
@@ -120,11 +120,11 @@ export function buildOpportunityTags(market: OpportunityScore): string[] {
 
 /** Generate one-line insight for a market */
 export function buildInsightText(market: OpportunityScore): string {
-    const val = formatTradeValue(market.latest_import_usd)
+    const val = formatTradeValue(market.latest_export_usd)
     const growth = market.cagr_5yr_pct !== null
         ? `growing at ${market.cagr_5yr_pct > 0 ? '+' : ''}${market.cagr_5yr_pct.toFixed(1)}%/yr`
         : 'trend data limited'
-    return `${val} import market, ${growth}.`
+    return `${val} export market, ${growth}.`
 }
 
 export interface GlobalAggregate {

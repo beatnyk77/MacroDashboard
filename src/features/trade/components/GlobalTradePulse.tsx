@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Globe2, ArrowUpRight, ArrowDownRight, Info } from 'lucide-react'
 import { useGlobalTrade } from '../hooks/useGlobalTrade'
 import { formatTradeValue, isoToFlag } from '../types/trade'
+import { HS2_CHAPTER_NAMES } from '../types/hsCodes'
 import { cn } from '@/lib/utils'
 
 const MAJOR_REPORTERS = [
@@ -89,8 +90,7 @@ export const GlobalTradePulse: React.FC = () => {
                                         <td className="px-4 py-4 font-mono text-white/40">{row.hs_code}</td>
                                         <td className="px-4 py-4">
                                             <p className="font-bold text-white/80 group-hover:text-white transition-colors">
-                                                {/* In real app, we'd join with hs_code_master to get descriptions */}
-                                                Chapter {row.hs_code} Category
+                                                {HS2_CHAPTER_NAMES[row.hs_code] || `Chapter ${row.hs_code} Category`}
                                             </p>
                                         </td>
                                         <td className="px-4 py-4 text-right font-mono font-black text-white/70">

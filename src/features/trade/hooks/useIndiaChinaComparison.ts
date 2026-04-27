@@ -5,9 +5,9 @@ export interface IndiaChinaCompRecord {
     hs_code: string
     hs_description: string | null
     year: number
-    india_import_usd: number | null
+    india_export_usd: number | null
     india_qty: number | null
-    china_import_usd: number | null
+    china_export_usd: number | null
     china_qty: number | null
 }
 

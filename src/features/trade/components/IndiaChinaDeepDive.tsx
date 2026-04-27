@@ -91,12 +91,14 @@ export const IndiaChinaDeepDive: React.FC = () => {
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Export Value</p>
                                 <p className="text-2xl font-black text-white font-mono">
-                                    {formatTradeValue(latest?.india_import_usd ?? 0)}
+                                    {formatTradeValue(latest?.india_export_usd ?? 0)}
                                 </p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Global Rank</p>
-                                <p className="text-2xl font-black text-emerald-400 font-mono">#12</p>
+                                <p className="text-2xl font-black text-emerald-400 font-mono">
+                                    #{latest?.india_rank ?? '-'}
+                                </p>
                             </div>
                         </div>
 
@@ -131,12 +133,14 @@ export const IndiaChinaDeepDive: React.FC = () => {
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Export Value</p>
                                 <p className="text-2xl font-black text-white font-mono">
-                                    {formatTradeValue(latest?.china_import_usd ?? 0)}
+                                    {formatTradeValue(latest?.china_export_usd ?? 0)}
                                 </p>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Global Rank</p>
-                                <p className="text-2xl font-black text-blue-400 font-mono">#01</p>
+                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Market Share</p>
+                                <p className="text-2xl font-black text-blue-400 font-mono">
+                                    {latest?.china_export_usd && latest?.india_export_usd ? Math.round((latest.china_export_usd / (latest.china_export_usd + latest.india_export_usd)) * 100) : 0}%
+                                </p>
                             </div>
                         </div>
 

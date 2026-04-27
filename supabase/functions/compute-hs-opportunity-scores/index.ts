@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
         // ── 1. Get all reporters and years from trade_demand_cache ──
         const { data: demandRows, error: demandErr } = await supabase
             .from('trade_demand_cache')
-            .select('reporter_iso3, reporter_iso2, reporter_name, year, import_value_usd')
+            .select('reporter_iso3, reporter_iso2, reporter_name, year, export_value_usd')
             .eq('hs_code', hsCode)
             .order('reporter_iso3')
             .order('year')
@@ -130,7 +130,7 @@ Deno.serve(async (req) => {
                     yearlyValues: [],
                 }
             }
-            byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, usd: row.import_value_usd || 0 })
+            byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, usd: row.export_value_usd || 0 })
         }
 
 
@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
                 hhi: null,
                 top_supplier_iso3: null,
                 top_supplier_share: null,
-                latest_import_usd: latestValue,
+                latest_export_usd: latestValue,
                 cagr_5yr_pct: cagr !== null ? parseFloat(cagr.toFixed(3)) : null,
                 data_year: latestYear,
                 computed_at: new Date().toISOString(),
@@ -235,7 +235,7 @@ Deno.serve(async (req) => {
             topMarkets: scoreRows
                 .sort((a, b) => b.overall_score - a.overall_score)
                 .slice(0, 5)
-                .map(r => ({ country: r.reporter_iso3, score: r.overall_score, usd: r.latest_import_usd })),
+                .map(r => ({ country: r.reporter_iso3, score: r.overall_score, usd: r.latest_export_usd })),
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
