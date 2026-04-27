@@ -110,10 +110,19 @@ Deno.serve(async (req: Request) => {
                 }
             })
 
-            if (rows.length > 0) {
-                await chunkedUpsert(supabase, 'trade_global_aggregates', rows, 'reporter_iso3,hs_code,year')
-                totalUpserted += rows.length
-                console.log(`[ingest-trade-global-pulse] Upserted ${rows.length} rows for ${reporter.iso3}`)
+            // Deduplicate rows to prevent "ON CONFLICT DO UPDATE command cannot affect row a second time"
+            const uniqueRows = Array.from(
+                rows.reduce((map, row) => {
+                    const key = `${row.reporter_iso3}-${row.hs_code}-${row.year}`;
+                    map.set(key, row);
+                    return map;
+                }, new Map()).values()
+            );
+
+            if (uniqueRows.length > 0) {
+                await chunkedUpsert(supabase, 'trade_global_aggregates', uniqueRows, 'reporter_iso3,hs_code,year')
+                totalUpserted += uniqueRows.length
+                console.log(`[ingest-trade-global-pulse] Upserted ${uniqueRows.length} rows for ${reporter.iso3}`)
             }
 
             await delay(500); // Respect API limits
