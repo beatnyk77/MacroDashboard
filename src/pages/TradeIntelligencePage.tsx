@@ -33,10 +33,9 @@ const TradeIntelligencePage: React.FC = () => {
                 <GlobalTradePulse />
             </section>
 
-            {/* Section 2: Main Search & Comparison */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 pt-8 border-t border-white/5">
-                {/* Search Terminal */}
-                <div className="xl:col-span-1 space-y-8">
+            {/* Section 2: Main Search Terminal */}
+            <div className="flex justify-center pt-8 border-t border-white/5">
+                <div className="w-full max-w-2xl space-y-8">
                     <div className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl backdrop-blur-xl shadow-2xl relative">
                         <div className="absolute inset-0 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
                         
@@ -57,8 +56,8 @@ const TradeIntelligencePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Features Grid - Vertical in Sidebar */}
-                    <div className="space-y-4">
+                    {/* Features Grid - Horizontal in own row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {[
                             {
                                 icon: PackageSearch,
@@ -83,11 +82,11 @@ const TradeIntelligencePage: React.FC = () => {
                         ))}
                     </div>
                 </div>
+            </div>
 
-                {/* Section 3: India vs China (6-Digit HS) */}
-                <div className="xl:col-span-2">
-                    <IndiaChinaDeepDive />
-                </div>
+            {/* Section 3: India vs China (6-Digit HS) */}
+            <div className="w-full pt-8 border-t border-white/5">
+                <IndiaChinaDeepDive />
             </div>
         </div>
     )

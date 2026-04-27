@@ -137,12 +137,31 @@ Deno.serve(async (req: Request) => {
 
             // Fetch previous year for growth calc (relative to effectiveYear)
             const growthPrevYear = String(parseInt(effectiveYear) - 1)
-            const prevRecords = await tryFetch(growthPrevYear, '0');
+            let prevRecords = await tryFetch(growthPrevYear, '0');
             
-            let prevMap = new Map();
-            prevRecords.forEach((r: any) => prevMap.set(r.cmdCode, r.primaryValue));
+            // Fallback: if no '0' partner for prev year, try 'all'
+            if (prevRecords.length === 0) {
+                const allPartnersPrev = await tryFetch(growthPrevYear, 'all');
+                if (allPartnersPrev.length > 0) {
+                    const agg = new Map();
+                    allPartnersPrev.forEach((r: any) => {
+                        const cmd = r.CmdCode || r.cmdCode;
+                        const val = r.PrimaryValue || r.primaryValue || 0;
+                        agg.set(cmd, (agg.get(cmd) || 0) + val);
+                    });
+                    prevRecords = Array.from(agg.entries()).map(([code, val]) => ({
+                        CmdCode: code,
+                        PrimaryValue: val,
+                        ReporterCode: reporter.code,
+                        Period: growthPrevYear
+                    }));
+                }
+            }
 
-            const totalExportValue = targetRecords.reduce((sum: number, r: any) => sum + (r.primaryValue || 0), 0);
+            let prevMap = new Map();
+            prevRecords.forEach((r: any) => prevMap.set(r.CmdCode || r.cmdCode, r.PrimaryValue || r.primaryValue || 0));
+
+            const totalExportValue = targetRecords.reduce((sum: number, r: any) => sum + (r.PrimaryValue || r.primaryValue || 0), 0);
 
             const rows = targetRecords.map((r: any, idx: number) => {
                 const reporterCode = r.ReporterCode || r.reporterCode;
