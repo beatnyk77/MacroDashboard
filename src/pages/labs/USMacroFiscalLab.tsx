@@ -22,7 +22,6 @@ import { LazyRender } from '@/components/LazyRender';
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasuryHoldersSection = lazy(() => import('@/features/dashboard/components/sections/TreasuryHoldersSection').then(m => ({ default: m.TreasuryHoldersSection })));
 const OffshoreDollarStressCard = lazy(() => import('@/features/dashboard/components/sections/OffshoreDollarStressCard').then(m => ({ default: m.OffshoreDollarStressCard })));
-const USMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/USMacroPulseSection').then(m => ({ default: m.USMacroPulseSection })));
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
 const FedMonetizationMonitor = lazy(() => import('@/components/labs/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 const FundingPlumbingStress = lazy(() => import('@/components/labs/FundingPlumbingStress').then(m => ({ default: m.FundingPlumbingStress })));
@@ -198,22 +197,6 @@ export const USMacroFiscalLab: React.FC = () => {
                     <ChartInsightSummary id="lab-us-fiscal-comp" insight="Net interest payments on US federal debt have risen from $250B to over $1T annually, now rivaling the total national defense budget – a structural shift with profound implications for fiscal policy flexibilty." />
                 </section>
 
-                {/* Section 5: US Macro Pulse (Sankey) */}
-                <section>
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-3">
-                            <TrendingUp className="text-blue-500" size={24} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Capital & Energy Liquidity Flows</h2>
-                        </div>
-                    </div>
-                    <SectionErrorBoundary name="US Macro Pulse">
-                        <LazyRender minHeight="500px">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <USMacroPulseSection />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                </section>
             </div>
 
             {/* SEO Structural Analysis Text Block */}

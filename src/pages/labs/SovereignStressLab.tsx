@@ -4,8 +4,7 @@ import {
     ArrowLeft,
     ShieldAlert,
     TrendingUp,
-    Activity,
-    Globe
+    Activity
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
@@ -14,8 +13,6 @@ import { SEOManager } from '@/components/SEOManager';
 
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
-const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
-const IranConflictImpactMonitor = lazy(() => import('@/features/dashboard/components/rows/IranConflictImpactMonitor').then(m => ({ default: m.IranConflictImpactMonitor })));
 const BoJStressMonitor = lazy(() => import('@/features/dashboard/components/rows/BoJStressMonitor').then(m => ({ default: m.BoJStressMonitor })));
 
 const LoadingFallback = () => (
@@ -86,18 +83,6 @@ export const SovereignStressLab: React.FC = () => {
                     <ChartInsightSummary id="lab-sovereign-risk" insight="The G20 Risk Matrix scores nations on debt/GDP, CDS spreads, and refinancing pressure. Current readings highlight Japan and Italy as structural outliers in the developed market universe." />
                 </section>
 
-                {/* Section 2: Yield Curve Monitor */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Activity className="text-blue-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Yield Curve Dynamics</h2>
-                    </div>
-                    <SectionErrorBoundary name="Yield Curve">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <YieldCurveMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
 
                 {/* Section 3: BoJ Monetary Dominance */}
                 <section>
@@ -113,19 +98,6 @@ export const SovereignStressLab: React.FC = () => {
                     <ChartInsightSummary id="lab-boj-stress" insight="Bank of Japan balance sheet tracking reveals divergence between Total Assets and Monetary Base. High intervention periods indicate significant policy pressure points." />
                 </section>
 
-                {/* Section 4: Geopolitical Stress Test */}
-                <section className="space-y-8">
-                    <div className="flex items-center gap-3">
-                        <Globe size={24} className="text-orange-500" />
-                        <h2 className="text-xl font-black uppercase tracking-heading text-white">Geopolitical Stress Test: Iran Conflict</h2>
-                    </div>
-                    <SectionErrorBoundary name="Iran Conflict Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <IranConflictImpactMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-iran-conflict" insight="Visualization of India's second-order exposure to Middle East conflict. Unlike 1990, India's $680bn FX reserves and $125bn remittance flywheel provide a structural floor despite higher oil sensitivity." />
-                </section>
             </div>
 
             {/* SEO Structural Analysis Text Block */}

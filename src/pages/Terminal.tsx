@@ -28,7 +28,6 @@ const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/component
 // 2. SOVEREIGN STRESS
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
-const YieldCurveMonitor = lazy(() => import('@/features/dashboard/components/rows/YieldCurveMonitor').then(m => ({ default: m.YieldCurveMonitor })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/components/sections/TreasurySnapshotSection').then(m => ({ default: m.TreasurySnapshotSection })));
 
@@ -39,7 +38,6 @@ const IndiaMacroDashboard = lazy(() => import('@/features/dashboard/components/s
 const AfricaMacroSnapshot = lazy(() => import('@/features/dashboard/components/sections/AfricaMacroSnapshot').then(m => ({ default: m.AfricaMacroSnapshot })));
 const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
 const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
-const CurrencyWarsMonitor = lazy(() => import('@/features/dashboard/components/rows/CurrencyWarsMonitor').then(m => ({ default: m.CurrencyWarsMonitor })));
 
 
 const LoadingFallback = () => (
@@ -282,11 +280,6 @@ export const Terminal: React.FC = () => {
                     </div>
 
                     <div className="space-y-8">
-                        <SectionErrorBoundary name="Yield Curve Monitor">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <YieldCurveMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
 
                         <SectionErrorBoundary name="Auction Demand Gauge">
                             <Suspense fallback={<LoadingFallback />}>
@@ -402,7 +395,7 @@ export const Terminal: React.FC = () => {
                         <CardHeader className="flex flex-row justify-between items-center mb-8 border-b border-white/5 pb-4">
                             <div>
                                 <CardTitle className="text-lg uppercase">Geopolitical Risk Matrix</CardTitle>
-                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Hormuz Tanker Tracking & ADS-B Conflict Telemetry</p>
+                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">ADS-B Conflict Telemetry & GDELT Event Stream</p>
                             </div>
                             <LiveStatusIndicator source="GDELT / OpenSky" />
                         </CardHeader>
@@ -423,11 +416,6 @@ export const Terminal: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
 
-                    <SectionErrorBoundary name="Currency Wars">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CurrencyWarsMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
                 </section>
 
                 {/* User Feedback Section */}

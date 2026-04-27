@@ -18,7 +18,6 @@ const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/compon
 const GlobalRefiningMonitorSection = lazy(() => import('@/features/dashboard/components/refining/GlobalRefiningMonitorSection').then(m => ({ default: m.GlobalRefiningMonitorSection })));
 const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
 
-const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
 const FuelSecurityClockIndia = lazy(() => import('@/features/energy/components/FuelSecurityClockIndia'));
 const WTICalendarSpread = lazy(() => import('@/features/energy/components/WTICalendarSpread').then(m => ({ default: m.WTICalendarSpread })));
 
@@ -163,28 +162,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </div>
                 </section>
 
-                {/* 2.5 Geopolitical Risk: Hormuz Tanker Tracking */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Ship className="text-blue-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Hormuz Tanker Tracking</h2>
-                    </div>
-
-                    <div className="w-full">
-                        <SectionErrorBoundary name="Hormuz Tracking">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GeopoliticalRiskMap />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
-                        <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
-                        <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                            Monitoring the Strait of Hormuz in real-time allows for the detection of "grey zone" maritime activity. Significant deviations in tanker frequency or insurance risk premiums directly impact the Energy Intensity metrics of the global industrial base.
-                        </p>
-                    </div>
-                </section>
 
                 {/* 2.75 Fuel Security Clock – India */}
                 <section>
