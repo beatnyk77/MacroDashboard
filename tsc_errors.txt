@@ -1,0 +1,10 @@
+src/features/trade/components/GlobalDemandRanker.tsx(176,65): error TS2551: Property 'latest_import_usd' does not exist on type 'TradeMarket'. Did you mean 'latest_export_usd'?
+src/features/trade/components/ImportTrendChart.tsx(38,18): error TS2551: Property 'import_value_usd' does not exist on type 'TrendPoint'. Did you mean 'export_value_usd'?
+src/features/trade/components/ImportTrendChart.tsx(41,36): error TS2551: Property 'import_value_usd' does not exist on type 'TrendPoint'. Did you mean 'export_value_usd'?
+src/features/trade/components/IndiaChinaDeepDive.tsx(100,47): error TS2339: Property 'india_rank' does not exist on type 'IndiaChinaCompRecord'.
+src/features/trade/components/SupplierShareChart.tsx(46,64): error TS2551: Property 'import_value_usd' does not exist on type 'SupplierBreakdown'. Did you mean 'export_value_usd'?
+src/features/trade/components/SupplierShareChart.tsx(55,20): error TS2551: Property 'import_value_usd' does not exist on type 'SupplierBreakdown'. Did you mean 'export_value_usd'?
+src/features/trade/hooks/useMarketDrilldown.ts(69,23): error TS2322: Type '{ year: any; import_value_usd: any; }[]' is not assignable to type 'TrendPoint[]'.
+  Property 'export_value_usd' is missing in type '{ year: any; import_value_usd: any; }' but required in type 'TrendPoint'.
+src/features/trade/hooks/useMarketDrilldown.ts(74,23): error TS2322: Type '{ hs_code: any; reporter_iso3: any; partner_iso3: any; partner_name: any; year: any; import_value_usd: any; market_share_pct: any; }[]' is not assignable to type 'SupplierBreakdown[]'.
+  Property 'export_value_usd' is missing in type '{ hs_code: any; reporter_iso3: any; partner_iso3: any; partner_name: any; year: any; import_value_usd: any; market_share_pct: any; }' but required in type 'SupplierBreakdown'.

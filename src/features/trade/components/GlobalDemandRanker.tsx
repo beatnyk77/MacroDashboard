@@ -173,7 +173,7 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
                                     {/* Import value */}
                                     <td className="px-4 py-3 text-right">
                                         <span className="font-black text-white/70 font-mono">
-                                            {formatTradeValue(m.latest_import_usd)}
+                                            {formatTradeValue(m.latest_export_usd)}
                                         </span>
                                     </td>
 

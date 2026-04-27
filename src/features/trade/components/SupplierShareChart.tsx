@@ -43,7 +43,7 @@ export const SupplierShareChart: React.FC<SupplierShareChartProps> = ({ data }) 
     const top5 = data.slice(0, 5)
     const others = data.slice(5)
 
-    const othersUsd = others.reduce((acc, curr) => acc + (curr.import_value_usd || 0), 0)
+    const othersUsd = others.reduce((acc, curr) => acc + (curr.export_value_usd || 0), 0)
     const othersShare = others.reduce((acc, curr) => acc + (curr.market_share_pct || 0), 0)
 
     const chartData = [
@@ -52,7 +52,7 @@ export const SupplierShareChart: React.FC<SupplierShareChartProps> = ({ data }) 
             fullName: d.partner_name,
             flag: isoToFlag(d.partner_iso3.substring(0, 2)), // Approximation for flag
             share: d.market_share_pct || 0,
-            usd: d.import_value_usd || 0,
+            usd: d.export_value_usd || 0,
         })),
     ]
 

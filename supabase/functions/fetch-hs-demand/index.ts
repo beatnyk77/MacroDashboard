@@ -35,6 +35,15 @@ interface ComtradeRecord {
   yr?: number | string;
   year?: number | string;
   cmdCode?: string | number;
+  // UpperCamelCase variants from v1 API
+  ReporterCode?: number;
+  ReporterISO?: string;
+  CmdCode?: string | number;
+  PrimaryValue?: number;
+  Period?: string | number;
+  Qty?: number;
+  QtyUnitAbbr?: string;
+  ReporterName?: string;
 }
 
 const ISO3_TO_ISO2: Record<string, string> = {

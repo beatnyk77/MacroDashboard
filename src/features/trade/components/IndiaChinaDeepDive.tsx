@@ -95,9 +95,9 @@ export const IndiaChinaDeepDive: React.FC = () => {
                                 </p>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Global Rank</p>
+                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Quantity</p>
                                 <p className="text-2xl font-black text-emerald-400 font-mono">
-                                    #{latest?.india_rank ?? '-'}
+                                    {latest?.india_qty ? latest.india_qty.toLocaleString() : '-'}
                                 </p>
                             </div>
                         </div>

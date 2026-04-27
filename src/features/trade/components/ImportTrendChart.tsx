@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             <p className="text-base font-black text-emerald-400 font-mono">
                 {formatTradeValue(payload[0]?.value)}
             </p>
-            <p className="text-[9px] text-white/20 font-bold uppercase tracking-widest">Import Value</p>
+            <p className="text-[9px] text-white/20 font-bold uppercase tracking-widest">Export Value</p>
         </div>
     )
 }
@@ -35,10 +35,10 @@ export const ImportTrendChart: React.FC<ImportTrendChartProps> = ({ data, countr
 
     const chartData = data.map(d => ({
         year: d.year.toString(),
-        value: d.import_value_usd,
+        value: d.export_value_usd,
     }))
 
-    const values = data.map(d => d.import_value_usd)
+    const values = data.map(d => d.export_value_usd)
     const min = Math.min(...values) * 0.8
     const max = Math.max(...values) * 1.1
     const trend = values[values.length - 1] > values[0] ? 'up' : 'down'
@@ -48,7 +48,7 @@ export const ImportTrendChart: React.FC<ImportTrendChartProps> = ({ data, countr
             <div className="flex items-center justify-between px-1">
                 <div className="space-y-0.5">
                     <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white/50">
-                        Import Trend {countryName ? `· ${countryName}` : ''}
+                        Export Trend {countryName ? `· ${countryName}` : ''}
                     </h4>
                     <p className="text-[10px] font-bold text-white/25">Annual, USD · UN Comtrade</p>
                 </div>
