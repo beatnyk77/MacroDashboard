@@ -18,7 +18,8 @@ GraphiQuestor operates as a pure data terminal. The moment you arrive, you're pr
 *   **US Corporate Terminal** — Institutional-grade equity surveillance including **expanded 13F whale tracking** (Top 15 positions) and SEC EDGAR fundmentals.
 *   **US Macro & Fiscal** — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve monetization monitors.
 *   **De-Dollarization & Gold Anchor Lab** — Mathematical tracking of the G7 vs. BRICS+ fracture and hard-money reserve accumulation.
-*   **Energy Security & Commodities** — Crude import dependency cartography and strategic commodity flow networks.
+*   **Energy Security & Commodities** — Crude import dependency cartography and the **WTI Calendar Spread Monitor (Industry First)** for physical market tightness.
+*   **Global Trade Intelligence** — Real-time tracking of 2-digit HS export flows across 20+ major economies, mapping the manufacturing shifts of the multipolar era.
 *   **Sovereign Stress Lab** — EM credit matrix and the **Bank of Japan (BoJ) Stress Monitor** (Total Assets vs. Monetary Base).
 *   **Sustainable Finance & Climate Risk** — Energy transition analytics and carbon intensity telemetry.
 *   **Shadow System Signals** — Capital flight indicators and illicit trade flow telemetry (restricted access).
@@ -37,6 +38,7 @@ Standard platforms offer high-level national aggregates. GraphiQuestor delivers 
 *   **The India Advantage:** Live direct integration with MoSPI's eSankhyiki platform delivers state/UT-level ASI, PLFS, CPI, energy, and fiscal data in near real-time. No lagging national averages—see the actual conditions in Maharashtra, Gujarat, Tamil Nadu, and every other state as they unfold.
 *   **The China Advantage:** Automated ingestion of NBS and PBOC data at the provincial level, revealing leading indicators before national aggregates shift. Track policy divergence between Shanghai's monetary accommodation and Beijing's deleveraging edicts—the tension that defines China's macroeconomic regime.
 *   **US Equities Edge:** Recent pipeline hardening (April 2026) ensures reliable, daily ingestion of SEC EDGAR filings—13F positions, 10-K/10-Q fundamentals, and insider trades—powering the US Corporate Terminal with institutional-quality data.
+*   **Energy Arbitrage Edge:** The **WTI Calendar Spread Monitor** provides a "physical market filter"—an industry-first telemetry layer that identifies structural supply shortages (Backwardation) versus storage gluts (Contango) with mathematical precision.
 
 ---
 
@@ -103,6 +105,7 @@ Energy is the master resource. As the global economy transitions from an era of 
 
 *   **Energy Dependency Ratio (Proprietary):** The percentage of total energy consumption sourced from imports, calculated at the granular state level for India (via MoSPI). This separates states acutely vulnerable to external supply shocks (>80% import-dependent) from those enjoying domestic energy sovereignty.
 *   **Crude Import Dependency Mapping:** Sankey diagrams charting oil flows from the Persian Gulf and Urals to major consuming hubs (India, China, EU), immediately revealing critical chokepoint vulnerabilities.
+*   **WTI Calendar Spread Monitor (Industry First):** The primary signal for physical oil market regimes. By tracking the spread between front-month and next-month contracts, we identify the transition from Backwardation (physical scarcity) to Contango (storage surplus), providing a lead indicator for spot price volatility.
 *   **Strategic Reserve Dynamics:** Tracking US SPR drawdowns against simultaneous China/India accumulation—the ultimate leading indicator of medium-term supply-demand imbalances.
 *   **Refining Capacity Utilization:** Identifying the global refining bottlenecks that act as a hidden, structural tax on economic growth when capacity constraints begin to bite.
 
@@ -116,7 +119,9 @@ Conventional platforms offer only high-level national aggregates. GraphiQuestor 
 
 **India Intelligence Hub** (Consolidated 2026)
 Through direct integration with India's Ministry of Statistics & Programme Implementation (MoSPI) via our eSankhyiki-MCP server, we provide unprecedented depth:
-* **India Macro Pulse:** Unified dashboard synthesizing RBI liquidity, state fiscal stress, credit cycles, and debt maturity walls.
+*   **Global Trade Intelligence:** A high-velocity telemetry layer tracking 2nd-digit HS chapter exports across 20+ major economies. Reveals the real-time ebb and flow of global manufacturing and identifies emerging "manufacturing hubs" before national GDP prints.
+*   **Manufacturing Shift Tracker (India vs China):** Side-by-side comparative analysis of 6-digit HS codes for strategic sectors (EVs, Smartphones, Solar, Semiconductors). Tracks the "China+1" narrative with ruthless, data-driven precision.
+*   **India Macro Pulse:** Unified dashboard synthesizing RBI liquidity, state fiscal stress, credit cycles, and debt maturity walls.
 * **Bharat Investment Universe (BIU):** A high-fidelity analyzer tracking 400+ Indian Mutual Funds. Integrates proprietary Macro Impact Scores and performance telemetry directly from `mfapi.in`.
 * **State-Level Granularity:** Industrial output (ASI), employment efficiency (PLFS), energy dependency, and fiscal allocation tracking down to the state/UT level.
 * **Market Microstructure:** FII/DII flows, promoter activity, bulk/block deals, short selling reports, IPO pipelines, and advanced screening tools for the Corporate India Engine.
