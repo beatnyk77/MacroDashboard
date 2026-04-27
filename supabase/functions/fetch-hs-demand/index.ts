@@ -1,5 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
+declare const Deno: any;
+
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -24,6 +26,15 @@ interface ComtradeRecord {
   period: string;
   qtyUnitAbbr?: string;
   qty?: number;
+  rt3ISO?: string;
+  rtCode?: number | string;
+  reporter_code?: number | string;
+  rtTitle?: string;
+  reporter_desc?: string;
+  TradeValue?: number;
+  yr?: number | string;
+  year?: number | string;
+  cmdCode?: string | number;
 }
 
 const ISO3_TO_ISO2: Record<string, string> = {
@@ -74,7 +85,7 @@ async function chunkedUpsert(supabase: SupabaseClient, table: string, rows: Reco
     }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
     try {
@@ -120,7 +131,7 @@ Deno.serve(async (req) => {
                 });
 
                 if (yearRes.ok) {
-                    const yearData = await yearRes.json();
+                    const yearData = await yearRes.json() as { data?: ComtradeRecord[] };
                     const yearRecords: ComtradeRecord[] = yearData?.data || [];
                     console.log(`[fetch-hs-demand] Got ${yearRecords.length} records for year ${year}`);
                     
@@ -152,8 +163,8 @@ Deno.serve(async (req) => {
                             });
                             
                             if (indRes.ok) {
-                                const indData = await indRes.json();
-                                if (indData?.data?.length > 0) {
+                                const indData = await indRes.json() as { data?: ComtradeRecord[] };
+                                if (indData?.data && indData.data.length > 0) {
                                     yearTotalRows.push(indData.data[0]);
                                 }
                             } else {
@@ -166,7 +177,7 @@ Deno.serve(async (req) => {
                                 });
                                 
                                 if (fallbackRes.ok) {
-                                    const fallbackData = await fallbackRes.json();
+                                    const fallbackData = await fallbackRes.json() as { data?: ComtradeRecord[] };
                                     const partners: ComtradeRecord[] = fallbackData?.data || [];
                                     if (partners.length > 0) {
                                         const totalValue = partners.reduce((sum: number, r: ComtradeRecord) => sum + (r.primaryValue || r.value || r.tradeValue || 0), 0);
@@ -218,18 +229,19 @@ Deno.serve(async (req) => {
 
         const demandRows = yearTotalRows
             .map(r => {
-                const iso3Candidate = r.reporterISO || r.reporterIso || r.reporteriso;
-                const reporterCode = String(r.reporterCode || "");
+                const iso3Candidate = r.reporterISO || r.reporterIso || r.reporteriso || r.rt3ISO;
+                const repCode = r.reporterCode || r.rtCode || r.reporter_code;
+                const reporterCode = String(repCode || "");
                 const iso3 = iso3Candidate || REPORTER_CODE_TO_ISO3[reporterCode];
                 
-                const name = r.reporterDesc || r.reporterName || r.reporterdesc;
-                const value = r.primaryValue || r.value || r.tradeValue;
-                const refYear = r.refYear || r.period;
+                const name = r.reporterDesc || r.reporterName || r.reporterdesc || r.rtTitle || r.reporter_desc;
+                const value = r.primaryValue || r.value || r.tradeValue || r.TradeValue;
+                const refYear = r.refYear || r.period || r.yr || r.year;
 
                 if (!iso3 || iso3 === 'W00') return null;
 
                 return {
-                    hs_code: hsCode,
+                    hs_code: String(r.cmdCode || hsCode),
                     reporter_iso3: iso3,
                     reporter_iso2: ISO3_TO_ISO2[iso3] || null,
                     reporter_name: name,
@@ -240,12 +252,26 @@ Deno.serve(async (req) => {
                     fetched_at: new Date().toISOString(),
                 };
             })
-            .filter((r): r is NonNullable<typeof r> => r !== null);
+            .filter((r): r is NonNullable<typeof r> => r !== null && String(r.hs_code) === hsCode);
 
         if (demandRows.length > 0) {
-            await chunkedUpsert(supabase, 'trade_demand_cache', demandRows, 'hs_code,reporter_iso3,year', 200);
-            totalRecords = demandRows.length;
-            console.log(`[fetch-hs-demand] Upserted ${demandRows.length} demand rows`);
+            // Deduplicate to avoid Supabase ON CONFLICT multiple update errors
+            const uniqueMap = new Map();
+            for (const row of demandRows) {
+                const key = `${row.hs_code}-${row.reporter_iso3}-${row.year}`;
+                if (uniqueMap.has(key)) {
+                    if (row.import_value_usd > uniqueMap.get(key).import_value_usd) {
+                        uniqueMap.set(key, row);
+                    }
+                } else {
+                    uniqueMap.set(key, row);
+                }
+            }
+            const uniqueDemandRows = Array.from(uniqueMap.values());
+
+            await chunkedUpsert(supabase, 'trade_demand_cache', uniqueDemandRows, 'hs_code,reporter_iso3,year', 200);
+            totalRecords = uniqueDemandRows.length;
+            console.log(`[fetch-hs-demand] Upserted ${uniqueDemandRows.length} unique demand rows`);
         }
 
         if (totalRecords === 0) {
@@ -258,6 +284,7 @@ Deno.serve(async (req) => {
                     hasApiKey: !!comtradeKey,
                     numReportersAttempted: topReportersList.length,
                     firstBatch: firstBatchDebug,
+                    sampleRecord: yearTotalRows.length > 0 ? yearTotalRows[0] : null
                 }
             }), {
                 status: 200,
@@ -299,12 +326,14 @@ Deno.serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
 
-    } catch (err) {
+    } catch (err: any) {
         console.error('[fetch-hs-demand] Global catch:', err)
         
+        const errorMessage = err instanceof Error ? err.message : (err?.message || JSON.stringify(err));
+
         return new Response(JSON.stringify({ 
             ok: false, 
-            error: String(err),
+            error: errorMessage,
             details: "Processing failure. Check logs for payload issues."
         }), {
             status: 200, 

@@ -22,7 +22,9 @@ async function logIngestion(supabase: SupabaseClient, status: string, metadata: 
     });
 }
 
-Deno.serve(async (_req) => {
+declare const Deno: any;
+
+Deno.serve(async (_req: Request) => {
     if (_req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -36,15 +38,15 @@ Deno.serve(async (_req) => {
         console.log("Starting Oil Spread Ingestion...");
 
         // 1. Fetch Front Month (CL1) and Next Month (CL2) from EIA
-        // Series IDs: PET.RWTC1.D (WTI Spot Next Month), PET.RWTC2.D (WTI Spot 2nd Month)
+        // Series IDs: RCLC1 (WTI Future Contract 1), RCLC2 (WTI Future Contract 2)
         const fetchSeries = async (seriesId: string) => {
-            const url = `https://api.eia.gov/v2/seriesid/${seriesId}/data?api_key=${eiaApiKey}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=10`;
+            const url = `https://api.eia.gov/v2/petroleum/pri/fut/data/?api_key=${eiaApiKey}&facets[series][]=${seriesId}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=10`;
             const res = await fetch(url);
             if (!res.ok) {
                 const errorText = await res.text();
                 throw new Error(`EIA Fetch failed for ${seriesId}: ${res.status} ${errorText}`);
             }
-            const json = await res.json();
+            const json = (await res.json()) as any;
             if (!json.response?.data || json.response.data.length === 0) {
                 throw new Error(`No data returned from EIA for ${seriesId}`);
             }
@@ -52,8 +54,8 @@ Deno.serve(async (_req) => {
         };
 
         const [cl1Data, cl2Data] = await Promise.all([
-            fetchSeries('PET.RWTC1.D'),
-            fetchSeries('PET.RWTC2.D')
+            fetchSeries('RCLC1'),
+            fetchSeries('RCLC2')
         ]);
 
         // 2. Align data points - find the most recent dates present in BOTH series
@@ -104,8 +106,8 @@ Deno.serve(async (_req) => {
                 change_3d: change_3d,
                 metadata: {
                     source: 'EIA',
-                    cl1_series: 'PET.RWTC1.D',
-                    cl2_series: 'PET.RWTC2.D',
+                    cl1_series: 'RCLC1',
+                    cl2_series: 'RCLC2',
                     computed_at: new Date().toISOString()
                 }
             }, { onConflict: 'date' });

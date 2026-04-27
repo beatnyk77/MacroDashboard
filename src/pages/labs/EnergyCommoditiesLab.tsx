@@ -20,6 +20,7 @@ const CommodityTerminalRow = lazy(() => import('@/features/commodities/Commodity
 
 const GeopoliticalRiskMap = lazy(() => import('@/features/dashboard/components/maps/GeopoliticalRiskMap').then(m => ({ default: m.GeopoliticalRiskMap })));
 const FuelSecurityClockIndia = lazy(() => import('@/features/energy/components/FuelSecurityClockIndia'));
+const WTICalendarSpread = lazy(() => import('@/features/energy/components/WTICalendarSpread').then(m => ({ default: m.WTICalendarSpread })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -81,6 +82,15 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         <strong className="text-white"> Start by assessing the US strategic stockpile (SPR) and refining limits.</strong> Then, trace the molecular shift of Russian and Middle Eastern crude eastward to Asia to understand inflation divergence. Finally, monitor the physical bottlenecks of the AI revolution via power demand.
                     </p>
                 </div>
+            </div>
+
+            {/* WTI CALENDAR SPREAD - FULL WIDTH SIGNAL */}
+            <div className="mb-32">
+                <SectionErrorBoundary name="WTI Calendar Spread">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <WTICalendarSpread />
+                    </Suspense>
+                </SectionErrorBoundary>
             </div>
 
             <div className="space-y-32">

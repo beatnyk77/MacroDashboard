@@ -126,3 +126,15 @@ export function buildInsightText(market: OpportunityScore): string {
         : 'trend data limited'
     return `${val} import market, ${growth}.`
 }
+
+export interface GlobalAggregate {
+    reporter_iso3: string
+    hs_code: string
+    year: number
+    export_value_usd: number | null
+    import_value_usd: number | null
+    yoy_growth_pct: number | null
+    share_of_total_pct: number | null
+    untapped_score: number
+    fetched_at: string
+}
