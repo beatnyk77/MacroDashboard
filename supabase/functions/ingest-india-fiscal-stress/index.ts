@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import { runIngestion } from '../_shared/logging.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -55,86 +57,87 @@ Deno.serve(async (req: Request) => {
     const fredApiKey = Deno.env.get('FRED_API_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    try {
-        console.log('Starting India fiscal stress data ingestion...');
-
-        // Fetch India GDP from FRED (annual data in current USD)
-        const gdpData = await fetchFredSeries('MKTGDPINA646NWDB', fredApiKey);
-        console.log(`Fetched ${gdpData.length} GDP observations`);
-
-        // Create GDP map by year
-        const gdpMap = new Map<string, number>();
-        gdpData.forEach((obs: any) => {
-            const year = obs.date.substring(0, 4);
-            const gdpUSD = parseFloat(obs.value);
-            if (!isNaN(gdpUSD)) {
-                // Convert USD to INR Crores (approximate exchange rate: 1 USD = 75 INR, 1 Crore = 10M)
-                const gdpINRCrores = (gdpUSD * 1000000000 * 75) / 10000000;
-                gdpMap.set(year, gdpINRCrores);
-            }
-        });
-
-        // Process fiscal data and calculate ratios
-        const upsertData = INDIA_FISCAL_DATA.map(d => {
-            const year = d.date.substring(0, 4);
-            const gdp = gdpMap.get(year) || d.general_govt_debt * 0.6; // Fallback estimate
-
-            // Calculate all ratios
-            const interest_revenue_pct = (d.interest_payments / d.revenue_receipts) * 100;
-            const interest_expenditure_pct = (d.interest_payments / d.total_expenditure) * 100;
-            const interest_gtr_pct = (d.interest_payments / d.gross_tax_revenue) * 100;
-            const interest_gdp_pct = (d.interest_payments / gdp) * 100;
-            const revenue_deficit_gdp_pct = (d.revenue_deficit / gdp) * 100;
-            const fiscal_deficit_gdp_pct = (d.fiscal_deficit / gdp) * 100;
-            const debt_gdp_pct = (d.general_govt_debt / gdp) * 100;
-
-            return {
-                date: d.date,
-                interest_payments: d.interest_payments,
-                revenue_receipts: d.revenue_receipts,
-                total_expenditure: d.total_expenditure,
-                gross_tax_revenue: d.gross_tax_revenue,
-                gdp: gdp,
-                revenue_deficit: d.revenue_deficit,
-                fiscal_deficit: d.fiscal_deficit,
-                general_govt_debt: d.general_govt_debt,
-                interest_revenue_pct,
-                interest_expenditure_pct,
-                interest_gtr_pct,
-                interest_gdp_pct,
-                revenue_deficit_gdp_pct,
-                fiscal_deficit_gdp_pct,
-                debt_gdp_pct,
-                updated_at: new Date().toISOString()
-            };
-        });
-
-        console.log(`Prepared ${upsertData.length} rows for upsert.`);
-
-        if (upsertData.length > 0) {
-            const { error } = await supabase
-                .from('india_fiscal_stress')
-                .upsert(upsertData, { onConflict: 'date' });
-
-            if (error) {
-                console.error('Supabase upsert error:', error);
-                throw error;
-            }
-        }
-
-        return new Response(JSON.stringify({
-            success: true,
-            count: upsertData.length,
-            latest: upsertData[0]
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-
-    } catch (error: any) {
-        console.error('Global Error in Edge Function:', error.message);
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
-    }
+    return runIngestion(supabase, 'ingest-india-fiscal-stress', async (ctx) => {
+        const result = await runWithRetry(
+            'ingest-india-fiscal-stress',
+            () => doIngestIndiaFiscalStress(supabase, fredApiKey),
+            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
+        )
+        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
+        return result.value!
+    })
 })
+
+// ─── Core ingest logic ────────────────────────────────────────────────────────
+async function doIngestIndiaFiscalStress(supabase: any, fredApiKey: string) {
+    console.log('Starting India fiscal stress data ingestion...');
+
+    // Fetch India GDP from FRED (annual data in current USD)
+    const gdpData = await fetchFredSeries('MKTGDPINA646NWDB', fredApiKey);
+    console.log(`Fetched ${gdpData.length} GDP observations`);
+
+    // Create GDP map by year
+    const gdpMap = new Map<string, number>();
+    gdpData.forEach((obs: any) => {
+        const year = obs.date.substring(0, 4);
+        const gdpUSD = parseFloat(obs.value);
+        if (!isNaN(gdpUSD)) {
+            // Convert USD to INR Crores (approximate exchange rate: 1 USD = 75 INR, 1 Crore = 10M)
+            const gdpINRCrores = (gdpUSD * 1000000000 * 75) / 10000000;
+            gdpMap.set(year, gdpINRCrores);
+        }
+    });
+
+    // Process fiscal data and calculate ratios
+    const upsertData = INDIA_FISCAL_DATA.map(d => {
+        const year = d.date.substring(0, 4);
+        const gdp = gdpMap.get(year) || d.general_govt_debt * 0.6; // Fallback estimate
+
+        // Calculate all ratios
+        const interest_revenue_pct = (d.interest_payments / d.revenue_receipts) * 100;
+        const interest_expenditure_pct = (d.interest_payments / d.total_expenditure) * 100;
+        const interest_gtr_pct = (d.interest_payments / d.gross_tax_revenue) * 100;
+        const interest_gdp_pct = (d.interest_payments / gdp) * 100;
+        const revenue_deficit_gdp_pct = (d.revenue_deficit / gdp) * 100;
+        const fiscal_deficit_gdp_pct = (d.fiscal_deficit / gdp) * 100;
+        const debt_gdp_pct = (d.general_govt_debt / gdp) * 100;
+
+        return {
+            date: d.date,
+            interest_payments: d.interest_payments,
+            revenue_receipts: d.revenue_receipts,
+            total_expenditure: d.total_expenditure,
+            gross_tax_revenue: d.gross_tax_revenue,
+            gdp: gdp,
+            revenue_deficit: d.revenue_deficit,
+            fiscal_deficit: d.fiscal_deficit,
+            general_govt_debt: d.general_govt_debt,
+            interest_revenue_pct,
+            interest_expenditure_pct,
+            interest_gtr_pct,
+            interest_gdp_pct,
+            revenue_deficit_gdp_pct,
+            fiscal_deficit_gdp_pct,
+            debt_gdp_pct,
+            updated_at: new Date().toISOString()
+        };
+    });
+
+    console.log(`Prepared ${upsertData.length} rows for upsert.`);
+
+    if (upsertData.length > 0) {
+        const { error } = await supabase
+            .from('india_fiscal_stress')
+            .upsert(upsertData, { onConflict: 'date' });
+
+        if (error) {
+            console.error('Supabase upsert error:', error);
+            throw error;
+        }
+    }
+
+    return {
+        rows_inserted: upsertData.length,
+        metadata: { latest: upsertData[0] }
+    };
+}

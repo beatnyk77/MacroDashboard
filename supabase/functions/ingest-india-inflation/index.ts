@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
 
 const corsHeaders = {
@@ -19,39 +20,49 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     return runIngestion(supabase, 'ingest-india-inflation', async (ctx) => {
-        const telemetry = new IndiaTelemetry(fredApiKey);
-        
-        // Fetch last 2 months to ensure we have recent data
-        const now = new Date();
-        const year = String(now.getFullYear());
-        const month = String(now.getMonth() + 1);
-        
-        console.log(`Fetching inflation for ${year}-${month}`);
-        const liveData = await telemetry.getInflationCPI(year, month);
-        
-        if (liveData.length === 0) {
-            throw new Error(`No live inflation data found for ${year}-${month}`);
-        }
-
-        // Map telemetry format to india_inflation_pulse table format
-        const results = liveData.map(d => ({
-            date: d.as_of_date,
-            cpi_headline_yoy: d.value, // Simplifying for now: headline is primary
-            cpi_sticky_yoy: d.value,   // Proxy until granular MoSPI fetchers added
-            cpi_flexible_yoy: d.value,
-            wpi_core_yoy: 0,
-            provenance: 'api_live'
-        }));
-
-        const { error: upsertError } = await supabase
-            .from('india_inflation_pulse')
-            .upsert(results, { onConflict: 'date' });
-
-        if (upsertError) throw upsertError;
-
-        return {
-            rows_inserted: results.length,
-            metadata: { latest_date: results[0].date }
-        };
-    });
+        const result = await runWithRetry(
+            'ingest-india-inflation',
+            () => doIngestIndiaInflation(supabase, fredApiKey),
+            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
+        )
+        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
+        return result.value!
+    })
 })
+
+async function doIngestIndiaInflation(supabase: any, fredApiKey: string) {
+    const telemetry = new IndiaTelemetry(fredApiKey);
+    
+    // Fetch last 2 months to ensure we have recent data
+    const now = new Date();
+    const year = String(now.getFullYear());
+    const month = String(now.getMonth() + 1);
+    
+    console.log(`Fetching inflation for ${year}-${month}`);
+    const liveData = await telemetry.getInflationCPI(year, month);
+    
+    if (liveData.length === 0) {
+        throw new Error(`No live inflation data found for ${year}-${month}`);
+    }
+
+    // Map telemetry format to india_inflation_pulse table format
+    const results = liveData.map((d: any) => ({
+        date: d.as_of_date,
+        cpi_headline_yoy: d.value, // Simplifying for now: headline is primary
+        cpi_sticky_yoy: d.value,   // Proxy until granular MoSPI fetchers added
+        cpi_flexible_yoy: d.value,
+        wpi_core_yoy: 0,
+        provenance: 'api_live'
+    }));
+
+    const { error: upsertError } = await supabase
+        .from('india_inflation_pulse')
+        .upsert(results, { onConflict: 'date' });
+
+    if (upsertError) throw upsertError;
+
+    return {
+        rows_inserted: results.length,
+        metadata: { latest_date: results[0].date }
+    };
+}

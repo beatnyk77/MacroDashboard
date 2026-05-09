@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
 
 const corsHeaders = {
@@ -19,33 +20,43 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     return runIngestion(supabase, 'ingest-india-credit-cycle', async (ctx) => {
-        const telemetry = new IndiaTelemetry(fredApiKey);
-        
-        console.log('Fetching live Bank Credit Growth from FRED...');
-        const liveData = await telemetry.getBankCredit();
-        
-        if (liveData.length === 0) {
-            throw new Error('No live credit data found from FRED');
-        }
-
-        // Map telemetry format to india_credit_cycle table format
-        const results = liveData.map(d => ({
-            date: d.as_of_date,
-            credit_growth_yoy: d.value,
-            npa_ratio: 3.9,            // Proxy from RBI FSR report
-            credit_to_gdp_gap: d.value - 12, // Proxy: Growth - Nominal GDP Target
-            provenance: 'api_live'
-        }));
-
-        const { error: upsertError } = await supabase
-            .from('india_credit_cycle')
-            .upsert(results, { onConflict: 'date' });
-
-        if (upsertError) throw upsertError;
-
-        return {
-            rows_inserted: results.length,
-            metadata: { latest_date: results[0].date, latest_growth: results[0].credit_growth_yoy }
-        };
-    });
+        const result = await runWithRetry(
+            'ingest-india-credit-cycle',
+            () => doIngestIndiaCreditCycle(supabase, fredApiKey),
+            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
+        )
+        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
+        return result.value!
+    })
 })
+
+async function doIngestIndiaCreditCycle(supabase: any, fredApiKey: string) {
+    const telemetry = new IndiaTelemetry(fredApiKey);
+    
+    console.log('Fetching live Bank Credit Growth from FRED...');
+    const liveData = await telemetry.getBankCredit();
+    
+    if (liveData.length === 0) {
+        throw new Error('No live credit data found from FRED');
+    }
+
+    // Map telemetry format to india_credit_cycle table format
+    const results = liveData.map((d: any) => ({
+        date: d.as_of_date,
+        credit_growth_yoy: d.value,
+        npa_ratio: 3.9,            // Proxy from RBI FSR report
+        credit_to_gdp_gap: d.value - 12, // Proxy: Growth - Nominal GDP Target
+        provenance: 'api_live'
+    }));
+
+    const { error: upsertError } = await supabase
+        .from('india_credit_cycle')
+        .upsert(results, { onConflict: 'date' });
+
+    if (upsertError) throw upsertError;
+
+    return {
+        rows_inserted: results.length,
+        metadata: { latest_date: results[0].date, latest_growth: results[0].credit_growth_yoy }
+    };
+}
