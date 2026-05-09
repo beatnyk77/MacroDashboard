@@ -2,7 +2,6 @@ import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
 import { ingestFred } from './sources/fred.ts'
 import { ingestFiscalData } from './sources/fiscalData.ts'
-import { ingestYahoo } from './sources/yahoo.ts'
 
 Deno.serve(async (req) => {
     // 1. Basic Auth or Secret Check (Optional but recommended for Cron)
@@ -32,9 +31,6 @@ Deno.serve(async (req) => {
 
         // 2. Fiscal Data
         await ingestFiscalData(client, logger)
-
-        // 3. Yahoo
-        await ingestYahoo(client, logger)
 
         const totalDuration = Math.round(performance.now() - start)
         await logger.log('orchestrator', 'success', 0, 'Ingestion run complete', totalDuration)

@@ -1,88 +1,82 @@
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
+import { fetchAlphaVantageCommodity, upsertObservations } from '../_shared/ingest_utils.ts'
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-async function fetchYahooFinance(ticker: string) {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`
-    const resp = await fetch(url)
-    if (!resp.ok) throw new Error(`Yahoo HTTP ${resp.status} for ${ticker}`)
-    const json = await resp.json()
-    const result = json.chart?.result?.[0]
-    if (!result) throw new Error(`Invalid Yahoo structure for ${ticker}`)
-
-    const timestamps = result.timestamp
-    const quotes = result.indicators?.quote?.[0]?.close
-
-    if (timestamps && quotes) {
-        for (let i = timestamps.length - 1; i >= 0; i--) {
-            if (quotes[i]) {
-                return {
-                    price: quotes[i],
-                    date: new Date(timestamps[i] * 1000).toISOString().split('T')[0]
-                }
-            }
-        }
-    }
-    throw new Error(`No recent data found for ${ticker}`)
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  const supabaseClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  )
+
+  const avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY')
+  if (!avApiKey) {
+    return new Response(JSON.stringify({ error: 'ALPHAVANTAGE_API_KEY not found' }), { status: 500 })
+  }
+
+  return runIngestion(supabaseClient, 'ingest-copper-gold-ratio', async (ctx) => {
+    console.log('Fetching Copper and Gold prices from AlphaVantage...')
+
+    // Fetch Copper and Gold (using monthly as it's more reliable in AV Commodities API, 
+    // but the script can be updated to daily if AV supports it for these)
+    // Actually, for a ratio, we want the latest available.
+    const [copperData, goldData] = await Promise.all([
+      fetchAlphaVantageCommodity('COPPER', avApiKey, 'monthly'),
+      fetchAlphaVantageCommodity('GOLD', avApiKey, 'monthly')
+    ])
+
+    if (copperData.length === 0 || goldData.length === 0) {
+      throw new Error('Could not fetch data for Copper or Gold')
     }
 
-    const supabaseClient = createClient(
-                Deno.env.get('SUPABASE_URL') ?? '',
-                Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const latestCopper = copperData[0]
+    const latestGold = goldData[0]
+    
+    // We want to align them. AV usually returns same dates for these.
+    const ratio = latestCopper.value / latestGold.value
+    const asOfDate = latestCopper.date
 
-    return runIngestion(supabaseClient, 'ingest-copper-gold-ratio', async (ctx) => {
-        console.log('Fetching Copper (HG=F) and Gold (GC=F) prices...')
+    console.log(`Copper: ${latestCopper.value}, Gold: ${latestGold.value}, Ratio: ${ratio} on ${asOfDate}`)
 
-        const [copper, gold] = await Promise.all([
-            fetchYahooFinance('HG=F'),
-            fetchYahooFinance('GC=F')
-        ])
-
-        const ratio = copper.price / gold.price
-        const asOfDate = copper.date // Use copper date as primary
-
-        console.log(`Copper: ${copper.price}, Gold: ${gold.price}, Ratio: ${ratio} on ${asOfDate}`)
-
-        const observations = [
-            {
-                metric_id: 'COPPER_PRICE_USD',
-                as_of_date: copper.date,
-                value: copper.price,
-                last_updated_at: new Date().toISOString()
-            },
-            {
-                metric_id: 'COPPER_GOLD_RATIO',
-                as_of_date: asOfDate,
-                value: ratio,
-                last_updated_at: new Date().toISOString(),
-                metadata: { copper_price: copper.price, gold_price: gold.price }
-            }
-        ]
-
-        const { error } = await ctx.supabase
-            .from('metric_observations')
-            .upsert(observations, { onConflict: 'metric_id, as_of_date' })
-
-        if (error) throw error
-
-        return {
-            rows_inserted: observations.length,
-            metadata: {
-                copper: copper.price,
-                gold: gold.price,
-                ratio: ratio,
-                date: asOfDate
-            }
+    const observations = [
+      {
+        metric_id: 'COPPER_PRICE_USD',
+        as_of_date: latestCopper.date,
+        value: latestCopper.value,
+        metadata: { source: 'AlphaVantage', unit: 'USD' }
+      },
+      {
+        metric_id: 'COPPER_GOLD_RATIO',
+        as_of_date: asOfDate,
+        value: ratio,
+        metadata: { 
+          source: 'AlphaVantage', 
+          copper_price: latestCopper.value, 
+          gold_price: latestGold.value,
+          copper_date: latestCopper.date,
+          gold_date: latestGold.date
         }
-    })
+      }
+    ]
+
+    const { count } = await upsertObservations(ctx.supabase, observations)
+
+    return {
+      rows_inserted: count,
+      metadata: {
+        copper: latestCopper.value,
+        gold: latestGold.value,
+        ratio: ratio,
+        date: asOfDate
+      }
+    }
+  })
 })

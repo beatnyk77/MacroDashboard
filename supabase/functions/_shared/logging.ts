@@ -1,4 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js'
+import { withTimeout } from './timeout-guard.ts'
 
 export interface IngestionContext {
     supabase: SupabaseClient;
@@ -120,7 +121,12 @@ export async function runIngestion(
     const ctx: IngestionContext = { supabase, functionName, logId };
 
     try {
-        const result = await ingestFn(ctx);
+        // Use withTimeout to prevent hanging forever. Default 140s.
+        const result = await withTimeout(
+            ingestFn(ctx), 
+            140000, 
+            functionName
+        );
         const total_latency = Date.now() - start;
         
         await logIngestionEnd(supabase, logId, 'success', {
@@ -142,9 +148,13 @@ export async function runIngestion(
         );
     } catch (error: any) {
         console.error(`Ingestion failed [${functionName}]:`, error);
-        await logIngestionEnd(supabase, logId, 'failed', {
+        
+        const isTimeout = error.message.includes('timed out');
+        const status = isTimeout ? 'timeout' : 'failed';
+
+        await logIngestionEnd(supabase, logId, status, {
             error_message: error.message,
-            metadata: { stack: error.stack }
+            metadata: { stack: error.stack, is_timeout: isTimeout }
         });
 
         return new Response(

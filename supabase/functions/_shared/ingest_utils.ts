@@ -21,7 +21,8 @@ export async function fetchWithRetry(
 
     try {
       if (i > 0) {
-        const delay = Math.pow(2, i) * 1000;
+        // Exponential backoff with jitter
+        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
 
@@ -113,4 +114,118 @@ export async function getActiveMetricsBySource(
 
   if (error) throw error;
   return metrics || [];
+}
+
+/**
+ * Specialized fetcher for AlphaVantage Commodities API
+ */
+export async function fetchAlphaVantageCommodity(
+  functionName: string,
+  apiKey: string,
+  interval: 'daily' | 'weekly' | 'monthly' = 'daily'
+) {
+  const url = `https://www.alphavantage.co/query?function=${functionName}&interval=${interval}&apikey=${apiKey}`;
+  const resp = await fetchWithRetry(url);
+  const json = await resp.json();
+
+  if (json.Note || json.Information) {
+    throw new Error(`AlphaVantage Rate Limit or Info: ${json.Note || json.Information}`);
+  }
+
+  if (json.Error_Message) {
+    throw new Error(`AlphaVantage Error: ${json.Error_Message}`);
+  }
+
+  const data = json.data;
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return [];
+  }
+
+  // AlphaVantage returns data in descending order usually, but we want to be sure
+  return data.map((item: any) => ({
+    date: item.date,
+    value: parseFloat(item.value)
+  })).filter(item => !isNaN(item.value));
+}
+
+/**
+ * Specialized fetcher for AlphaVantage FX API
+ */
+export async function fetchAlphaVantageFX(
+  fromSymbol: string,
+  toSymbol: string,
+  apiKey: string
+) {
+  const url = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=${fromSymbol}&to_symbol=${toSymbol}&apikey=${apiKey}`;
+  const resp = await fetchWithRetry(url);
+  const json = await resp.json();
+
+  if (json.Note || json.Information) {
+    throw new Error(`AlphaVantage Rate Limit or Info: ${json.Note || json.Information}`);
+  }
+
+  const timeSeries = json['Time Series FX (Daily)'];
+  if (!timeSeries) {
+    throw new Error(`AlphaVantage FX Error: ${json['Error Message'] || 'No time series found'}`);
+  }
+
+  // Convert map to array of { date, value }
+  return Object.entries(timeSeries).map(([date, values]: [string, any]) => ({
+    date,
+    value: parseFloat(values['4. close'])
+  })).sort((a, b) => b.date.localeCompare(a.date)); // Latest first
+}
+
+/**
+ * Specialized fetcher for AlphaVantage Stock Time Series API
+ */
+export async function fetchAlphaVantageTimeSeries(
+  symbol: string,
+  apiKey: string,
+  outputsize: 'compact' | 'full' = 'compact'
+) {
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=${outputsize}&apikey=${apiKey}`;
+  const resp = await fetchWithRetry(url);
+  const json = await resp.json();
+
+  if (json.Note || json.Information) {
+    throw new Error(`AlphaVantage Rate Limit or Info: ${json.Note || json.Information}`);
+  }
+
+  const timeSeries = json['Time Series (Daily)'];
+  if (!timeSeries) {
+    throw new Error(`AlphaVantage Time Series Error: ${json['Error Message'] || 'No time series found'}`);
+  }
+
+  return Object.entries(timeSeries).map(([date, values]: [string, any]) => ({
+    date,
+    value: parseFloat(values['5. adjusted close'] || values['4. close'])
+  })).sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/**
+ * Specialized fetcher for AlphaVantage Crypto API
+ */
+export async function fetchAlphaVantageCrypto(
+  symbol: string,
+  apiKey: string,
+  market: string = 'USD'
+) {
+  const url = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${symbol}&market=${market}&apikey=${apiKey}`;
+  const resp = await fetchWithRetry(url);
+  const json = await resp.json();
+
+  if (json.Note || json.Information) {
+    throw new Error(`AlphaVantage Rate Limit or Info: ${json.Note || json.Information}`);
+  }
+
+  const timeSeries = json[`Time Series (Digital Currency Daily)`];
+  if (!timeSeries) {
+    throw new Error(`AlphaVantage Crypto Error: ${json['Error Message'] || 'No time series found'}`);
+  }
+
+  return Object.entries(timeSeries).map(([date, values]: [string, any]) => ({
+    date,
+    value: parseFloat(values[`4a. close (${market})`] || values[`4b. close (${market})`])
+  })).sort((a, b) => b.date.localeCompare(a.date));
 }

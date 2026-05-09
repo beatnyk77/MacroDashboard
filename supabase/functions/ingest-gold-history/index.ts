@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import { runIngestion } from '../_shared/logging.ts'
+import { fetchAlphaVantageCommodity, upsertObservations } from '../_shared/ingest_utils.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -10,93 +12,72 @@ Deno.serve(async (req: Request) => {
         return new Response('ok', { headers: corsHeaders })
     }
 
-    try {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-        console.log('Starting Recent Gold Sync...')
-
-        // 1. Fetch recent monthly data from Yahoo Finance (GC=F) - 5 years for overlap
-        const ticker = 'GC=F'
-        const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1mo&range=max`
-        const res = await fetch(yahooUrl)
-        if (!res.ok) throw new Error(`Yahoo HTTP ${res.status}`)
-
-        const json = await res.json()
-        const result = json.chart?.result?.[0]
-        if (!result) throw new Error('Invalid Yahoo structure')
-
-        const timestamps = result.timestamp
-        const prices = result.indicators?.quote?.[0]?.close
-
-        const dataMap = new Map()
-        timestamps.forEach((ts: number, i: number) => {
-            const date = new Date(ts * 1000)
-            date.setUTCDate(1)
-            date.setUTCHours(0, 0, 0, 0)
-            const dateStr = date.toISOString().split('T')[0]
-            if (prices[i] !== null && prices[i] > 0) {
-                dataMap.set(dateStr, prices[i])
-            }
+    const avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY')
+    if (!avApiKey) {
+        return new Response(JSON.stringify({ error: 'ALPHAVANTAGE_API_KEY not found' }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
+    }
 
-        const data = Array.from(dataMap.entries())
-            .map(([date, price]) => ({ date, price }))
-            .sort((a, b) => a.date.localeCompare(b.date))
+    return runIngestion(supabase, 'ingest-gold-history', async (ctx) => {
+        console.log('Starting Gold History Sync from AlphaVantage...')
+
+        // 1. Fetch monthly gold data from AlphaVantage
+        const goldData = await fetchAlphaVantageCommodity('GOLD', avApiKey, 'monthly')
+        
+        if (goldData.length === 0) {
+            throw new Error('No gold data returned from AlphaVantage')
+        }
+
+        // AV returns data latest first (usually), sort it ascending to calculate returns
+        const sortedData = [...goldData].sort((a, b) => a.date.localeCompare(b.date))
 
         // 2. Prepare observations
         const observations = []
 
-        for (let i = 0; i < data.length; i++) {
-            const current = data[i]
+        for (let i = 0; i < sortedData.length; i++) {
+            const current = sortedData[i]
 
             // Price point
             observations.push({
                 metric_id: 'GOLD_PRICE_USD',
                 as_of_date: current.date,
-                value: current.price,
-                last_updated_at: new Date().toISOString()
+                value: current.value,
+                metadata: { source: 'AlphaVantage', unit: 'USD/oz' }
             })
 
             // Monthly return
             if (i > 0) {
-                const prev = data[i - 1]
-                const monthlyReturn = ((current.price - prev.price) / prev.price) * 100
-
-                observations.push({
-                    metric_id: 'GOLD_MONTHLY_RETURN',
-                    as_of_date: current.date,
-                    value: monthlyReturn,
-                    last_updated_at: new Date().toISOString()
-                })
+                const prev = sortedData[i - 1]
+                if (prev.value > 0) {
+                    const monthlyReturn = ((current.value - prev.value) / prev.value) * 100
+                    observations.push({
+                        metric_id: 'GOLD_MONTHLY_RETURN',
+                        as_of_date: current.date,
+                        value: monthlyReturn,
+                        metadata: { source: 'AlphaVantage', unit: '%' }
+                    })
+                }
             }
         }
 
         console.log(`Upserting ${observations.length} observations...`)
 
-        // Chunked upsert
-        const chunkSize = 500
-        for (let i = 0; i < observations.length; i += chunkSize) {
-            const chunk = observations.slice(i, i + chunkSize)
-            const { error } = await supabase.from('metric_observations').upsert(chunk, { onConflict: 'metric_id, as_of_date' })
-            if (error) throw error
+        // upsertObservations handles the updated_at logic for the metric
+        const { count } = await upsertObservations(ctx.supabase, observations)
+
+        return {
+            rows_inserted: count,
+            metadata: {
+                range: `${sortedData[0].date} to ${sortedData[sortedData.length - 1].date}`,
+                points: sortedData.length
+            }
         }
-
-        return new Response(JSON.stringify({
-            message: 'Success',
-            syncedPoints: observations.length,
-            range: `${data[0].date} to ${data[data.length - 1].date}`
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-
-    } catch (error: any) {
-        console.error('Error:', error.message)
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-    }
+    })
 })
 
