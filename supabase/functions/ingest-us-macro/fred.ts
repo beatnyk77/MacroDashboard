@@ -41,7 +41,9 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
 export async function processFred(supabase: SupabaseClient, fredApiKey: string) {
     try {
         const startTime = Date.now();
-        const runtimeBudget = 50000;
+        // 25 minute budget — stays under the 28 minute global safety timeout in runIngestion.
+        // The old 50s budget was cutting off after ~10 batches, leaving most metrics unprocessed.
+        const runtimeBudget = 25 * 60 * 1000;
 
         const { data: source } = await supabase.from('data_sources').select('id').eq('name', 'FRED').single();
         if (!source) throw new Error('FRED source not found');

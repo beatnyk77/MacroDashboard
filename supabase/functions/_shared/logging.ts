@@ -121,10 +121,12 @@ export async function runIngestion(
     const ctx: IngestionContext = { supabase, functionName, logId };
 
     try {
-        // Use withTimeout to prevent hanging forever. Default 140s.
+        // 28 minute global safety cap — ensures the DB log is always finalized even if the
+        // platform kills the execution, preventing permanent "started" status leaks.
+        // Individual ingest functions should use a shorter internal runtimeBudget (e.g. 25 min).
         const result = await withTimeout(
             ingestFn(ctx), 
-            140000, 
+            28 * 60 * 1000, 
             functionName
         );
         const total_latency = Date.now() - start;
