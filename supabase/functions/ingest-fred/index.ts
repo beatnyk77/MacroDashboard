@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import { runIngestion } from '../_shared/logging.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 
 // --- SHARED UTILS ---
 const corsHeaders = {
@@ -61,12 +62,34 @@ Deno.serve(async (req: Request) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   return runIngestion(supabase, 'ingest-fred', async (ctx) => {
+    const fredApiKey = Deno.env.get('FRED_API_KEY');
+    if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
+
+    // Wrap the entire batch in runWithRetry so transient failures (network blip,
+    // cold FRED API) automatically get a second chance before marking as failed.
+    const result = await runWithRetry(
+      'ingest-fred',
+      () => doIngestFred(supabase, fredApiKey),
+      {
+        timeoutMs:  25 * 60 * 1000,  // 25 min per attempt (under 28 min global cap)
+        maxRetries: 3,
+        backoffMs:  30_000,           // 30s → 60s → 120s
+      }
+    );
+
+    if (!result.ok) throw new Error(`All attempts failed: ${result.error}`);
+    return result.value!;
+  });
+});
+
+// ─── Core ingest logic ────────────────────────────────────────────────────────
+// Extracted into its own function so runWithRetry can restart it cleanly.
+// No changes to the actual fetching / upsert logic below.
+async function doIngestFred(supabase: any, fredApiKey: string) {
     const startTime = Date.now();
     // 25 minute budget — stays under the 28 minute global safety timeout in runIngestion.
     // The old 50s budget was the root cause: it aborted after processing only a fraction of metrics.
     const runtimeBudget = 25 * 60 * 1000;
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
-    if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
     // 1. Resolve FRED source_id
     const { data: source } = await supabase.from('data_sources').select('id').eq('name', 'FRED').single();
@@ -203,5 +226,4 @@ Deno.serve(async (req: Request) => {
         error_count: errors.length
       }
     };
-  });
-});
+}
