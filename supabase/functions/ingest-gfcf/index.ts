@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -67,6 +68,83 @@ async function fetchFredSeries(apiKey: string, seriesId: string) {
     };
 }
 
+async function doIngestGfcf(supabase: any, fredApiKey: string) {
+    const updates = [];
+    const errors = [];
+
+    for (const metric of METRICS) {
+        try {
+            let value: number | null = null;
+            let date: string | null = null;
+
+            if (metric.type === 'direct' && metric.series_id) {
+                const obs = await fetchFredSeries(fredApiKey, metric.series_id);
+                if (obs) {
+                    value = obs.value;
+                    date = obs.date;
+                }
+            } else if (metric.type === 'calculated' && metric.numerator) {
+                const num = await fetchFredSeries(fredApiKey, metric.numerator);
+
+                let den = null;
+                const candidates = metric.denominator_candidates || (metric.denominator ? [metric.denominator] : []);
+
+                for (const cand of candidates) {
+                    try {
+                        den = await fetchFredSeries(fredApiKey, cand);
+                        if (den) break;
+                    } catch (e: any) {
+                        console.log(`Candidate ${cand} failed: ${e.message}`);
+                    }
+                }
+
+                if (num && den) {
+                    const scale = metric.numerator_scale ?? 1;
+                    const scaledNum = num.value * scale;
+                    value = (scaledNum / den.value) * 100;
+                    date = num.date > den.date ? num.date : den.date;
+
+                    console.log(`Processed ${metric.id}: num=${num.value}, den=${den.value}, scale=${scale}, result=${value.toFixed(2)}%`);
+                }
+            }
+
+            if (value !== null && date) {
+                updates.push({
+                    metric_id: metric.id,
+                    as_of_date: date,
+                    value: Number(value.toFixed(2)),
+                    last_updated_at: new Date().toISOString()
+                });
+            } else {
+                errors.push(`No data for ${metric.id}`);
+            }
+        } catch (e: any) {
+            console.error(`Error processing ${metric.id}:`, e);
+            errors.push(`Error processing ${metric.id}: ${e.message}`);
+        }
+    }
+
+    // Process China Fallback
+    updates.push({
+        metric_id: 'CN_GFCF_GDP_PCT',
+        as_of_date: new Date().toISOString().split('T')[0],
+        value: CHINA_GFCF_FIXED,
+        last_updated_at: new Date().toISOString()
+    });
+
+    if (updates.length > 0) {
+        const { error } = await supabase
+            .from('metric_observations')
+            .upsert(updates, { onConflict: 'metric_id, as_of_date' });
+        if (error) throw error;
+    }
+
+    return {
+        rows_inserted: updates.length,
+        metadata: { errors, update_ids: updates.map(u => u.metric_id) }
+    };
+}
+
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
@@ -81,79 +159,10 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     return runIngestion(supabase, 'ingest-gfcf', async (ctx) => {
-        const updates = [];
-        const errors = [];
-
-        for (const metric of METRICS) {
-            try {
-                let value: number | null = null;
-                let date: string | null = null;
-
-                if (metric.type === 'direct' && metric.series_id) {
-                    const obs = await fetchFredSeries(fredApiKey, metric.series_id);
-                    if (obs) {
-                        value = obs.value;
-                        date = obs.date;
-                    }
-                } else if (metric.type === 'calculated' && metric.numerator) {
-                    const num = await fetchFredSeries(fredApiKey, metric.numerator);
-
-                    let den = null;
-                    const candidates = metric.denominator_candidates || (metric.denominator ? [metric.denominator] : []);
-
-                    for (const cand of candidates) {
-                        try {
-                            den = await fetchFredSeries(fredApiKey, cand);
-                            if (den) break;
-                        } catch (e: any) {
-                            console.log(`Candidate ${cand} failed: ${e.message}`);
-                        }
-                    }
-
-                    if (num && den) {
-                        const scale = metric.numerator_scale ?? 1;
-                        const scaledNum = num.value * scale;
-                        value = (scaledNum / den.value) * 100;
-                        date = num.date > den.date ? num.date : den.date;
-
-                        console.log(`Processed ${metric.id}: num=${num.value}, den=${den.value}, scale=${scale}, result=${value.toFixed(2)}%`);
-                    }
-                }
-
-                if (value !== null && date) {
-                    updates.push({
-                        metric_id: metric.id,
-                        as_of_date: date,
-                        value: Number(value.toFixed(2)),
-                        last_updated_at: new Date().toISOString()
-                    });
-                } else {
-                    errors.push(`No data for ${metric.id}`);
-                }
-            } catch (e: any) {
-                console.error(`Error processing ${metric.id}:`, e);
-                errors.push(`Error processing ${metric.id}: ${e.message}`);
-            }
-        }
-
-        // Process China Fallback
-        updates.push({
-            metric_id: 'CN_GFCF_GDP_PCT',
-            as_of_date: new Date().toISOString().split('T')[0],
-            value: CHINA_GFCF_FIXED,
-            last_updated_at: new Date().toISOString()
-        });
-
-        if (updates.length > 0) {
-            const { error } = await ctx.supabase
-                .from('metric_observations')
-                .upsert(updates, { onConflict: 'metric_id, as_of_date' });
-            if (error) throw error;
-        }
-
-        return {
-            rows_inserted: updates.length,
-            metadata: { errors, update_ids: updates.map(u => u.metric_id) }
-        };
+        return runWithRetry(
+            'ingest-gfcf',
+            () => doIngestGfcf(ctx.supabase, fredApiKey),
+            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
+        );
     });
 });

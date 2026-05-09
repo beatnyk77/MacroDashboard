@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 import { sendDiscordAlert } from '../_shared/webhook_utils.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 
 import { processFiscal } from './fiscal.ts'
 import { processUST } from './ust.ts'
@@ -14,22 +15,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  const fredApiKey = Deno.env.get('FRED_API_KEY');
-  
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  return runIngestion(supabase, 'ingest-us-macro', async (ctx) => {
-    if (!fredApiKey) {
-      const errorMsg = 'FRED_API_KEY is not set';
-      await sendDiscordAlert('US Macro Ingestion Failed 🚨', errorMsg, true);
-      throw new Error(errorMsg);
-    }
-
+async function doIngestUSMacro(supabase: any, fredApiKey: string) {
     // Run all US macro ingestions concurrently 
     const results = await Promise.allSettled([
       processFiscal(supabase, fredApiKey),
@@ -63,6 +49,8 @@ Deno.serve(async (req: Request) => {
       const errorMsg = `US Macro Ingestion encountered errors:\n${errors.join('\n')}`;
       console.error(errorMsg);
       await sendDiscordAlert('US Macro Ingestion Failed 🚨', errorMsg, true);
+      // Throw error to trigger retry if any of the sub-processes fail
+      throw new Error(errorMsg);
     } else {
       await sendDiscordAlert('US Macro Ingestion Success ✅', `Successfully ingested ${totalRowsInserted} records.`, false);
     }
@@ -75,5 +63,28 @@ Deno.serve(async (req: Request) => {
         total_rows: totalRowsInserted
       }
     };
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const fredApiKey = Deno.env.get('FRED_API_KEY');
+  
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  return runIngestion(supabase, 'ingest-us-macro', async (ctx) => {
+    if (!fredApiKey) {
+      const errorMsg = 'FRED_API_KEY is not set';
+      await sendDiscordAlert('US Macro Ingestion Failed 🚨', errorMsg, true);
+      throw new Error(errorMsg);
+    }
+
+    return runWithRetry(
+        'ingest-us-macro',
+        () => doIngestUSMacro(supabase, fredApiKey),
+        { timeoutMs: 25 * 60 * 1000, maxRetries: 3 } // 25 mins timeout since it's heavy
+    );
   });
 });

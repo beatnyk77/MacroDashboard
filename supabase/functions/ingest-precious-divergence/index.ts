@@ -1,6 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 import { fetchAlphaVantageCommodity, fetchAlphaVantageFX, upsertObservations } from '../_shared/ingest_utils.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -60,6 +61,68 @@ async function fetchSGEPrice(contract: string, retries = 3): Promise<number> {
     return 0;
 }
 
+async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: string) {
+    // 1. Fetch benchmark data from AlphaVantage
+    const [goldData, silverData, fxData] = await Promise.all([
+        fetchAlphaVantageCommodity('GOLD', avApiKey, 'daily'),
+        fetchAlphaVantageCommodity('SILVER', avApiKey, 'daily'),
+        fetchAlphaVantageFX('USD', 'CNY', avApiKey)
+    ])
+
+    if (goldData.length === 0 || silverData.length === 0 || fxData.length === 0) {
+        throw new Error('Missing benchmark data from AlphaVantage')
+    }
+
+    const gold_bench = goldData[0].value
+    const silver_bench = silverData[0].value
+    const usdcny = fxData[0].value
+    const asOfDate = goldData[0].date
+
+    // 2. Shanghai Prices (SGE)
+    let gold_sge_rmb_g = await fetchSGEPrice('SHAU').catch(() => 0);
+    let silver_sge_rmb_kg = await fetchSGEPrice('SHAG').catch(() => 0);
+
+    // Fallback for Silver SGE (using internal estimate if scrape fails)
+    // Note: Removing Yahoo XAGCNY fallback as requested to remove Yahoo references
+    if (silver_sge_rmb_kg === 0) {
+        console.warn('Silver SGE scrape failed, no fallback available (Yahoo disabled)');
+    }
+
+    // 3. Compute Spreads
+    const TROY_OZ_TO_GRAMS = 31.1035
+    const gold_shanghai_usd = gold_sge_rmb_g > 0 ? (gold_sge_rmb_g * TROY_OZ_TO_GRAMS) / usdcny : 0;
+    const gold_spread_pct = gold_shanghai_usd > 0 ? ((gold_shanghai_usd - gold_bench) / gold_bench) * 100 : 0;
+
+    const silver_shanghai_usd = silver_sge_rmb_kg > 0 ? ((silver_sge_rmb_kg / 1000) * TROY_OZ_TO_GRAMS) / usdcny : 0;
+    const silver_spread_pct = silver_shanghai_usd > 0 ? ((silver_shanghai_usd - silver_bench) / silver_bench) * 100 : 0;
+
+    const observations = [
+        { metric_id: 'GOLD_COMEX_USD', value: gold_bench, as_of_date: asOfDate, metadata: { source: 'AlphaVantage' } },
+        { metric_id: 'GOLD_SHANGHAI_USD', value: gold_shanghai_usd, as_of_date: asOfDate, metadata: { source: 'SGE/AlphaVantage' } },
+        { metric_id: 'GOLD_COMEX_SHANGHAI_SPREAD_PCT', value: gold_spread_pct, as_of_date: asOfDate, metadata: { source: 'Calculated' } },
+        { metric_id: 'SILVER_COMEX_USD', value: silver_bench, as_of_date: asOfDate, metadata: { source: 'AlphaVantage' } },
+        { metric_id: 'SILVER_SHANGHAI_USD', value: silver_shanghai_usd, as_of_date: asOfDate, metadata: { source: 'SGE/AlphaVantage' } },
+        { metric_id: 'SILVER_COMEX_SHANGHAI_SPREAD_PCT', value: silver_spread_pct, as_of_date: asOfDate, metadata: { source: 'Calculated' } }
+    ].filter(o => o.value > 0);
+
+    if (observations.length === 0) {
+        throw new Error('No valid observations computed')
+    }
+
+    console.log(`Upserting ${observations.length} observations...`)
+    const { count } = await upsertObservations(supabase, observations);
+
+    return {
+        rows_inserted: count,
+        metadata: {
+            gold_spread: gold_spread_pct,
+            silver_spread: silver_spread_pct,
+            date: asOfDate,
+            usdcny
+        }
+    };
+}
+
 /**
  * Precious Metals Divergence Ingestion
  * Source: AlphaVantage (Benchmark) + SGE (Shanghai)
@@ -78,66 +141,14 @@ Deno.serve(async (req: Request) => {
 
     return runIngestion(supabase, 'ingest-precious-divergence', async (ctx) => {
         console.log('Starting Precious Metals Divergence ingestion...')
-
-        // 1. Fetch benchmark data from AlphaVantage
-        const [goldData, silverData, fxData] = await Promise.all([
-            fetchAlphaVantageCommodity('GOLD', avApiKey, 'daily'),
-            fetchAlphaVantageCommodity('SILVER', avApiKey, 'daily'),
-            fetchAlphaVantageFX('USD', 'CNY', avApiKey)
-        ])
-
-        if (goldData.length === 0 || silverData.length === 0 || fxData.length === 0) {
-            throw new Error('Missing benchmark data from AlphaVantage')
-        }
-
-        const gold_bench = goldData[0].value
-        const silver_bench = silverData[0].value
-        const usdcny = fxData[0].value
-        const asOfDate = goldData[0].date
-
-        // 2. Shanghai Prices (SGE)
-        let gold_sge_rmb_g = await fetchSGEPrice('SHAU').catch(() => 0);
-        let silver_sge_rmb_kg = await fetchSGEPrice('SHAG').catch(() => 0);
-
-        // Fallback for Silver SGE (using internal estimate if scrape fails)
-        // Note: Removing Yahoo XAGCNY fallback as requested to remove Yahoo references
-        if (silver_sge_rmb_kg === 0) {
-            console.warn('Silver SGE scrape failed, no fallback available (Yahoo disabled)');
-        }
-
-        // 3. Compute Spreads
-        const TROY_OZ_TO_GRAMS = 31.1035
-        const gold_shanghai_usd = gold_sge_rmb_g > 0 ? (gold_sge_rmb_g * TROY_OZ_TO_GRAMS) / usdcny : 0;
-        const gold_spread_pct = gold_shanghai_usd > 0 ? ((gold_shanghai_usd - gold_bench) / gold_bench) * 100 : 0;
-
-        const silver_shanghai_usd = silver_sge_rmb_kg > 0 ? ((silver_sge_rmb_kg / 1000) * TROY_OZ_TO_GRAMS) / usdcny : 0;
-        const silver_spread_pct = silver_shanghai_usd > 0 ? ((silver_shanghai_usd - silver_bench) / silver_bench) * 100 : 0;
-
-        const observations = [
-            { metric_id: 'GOLD_COMEX_USD', value: gold_bench, as_of_date: asOfDate, metadata: { source: 'AlphaVantage' } },
-            { metric_id: 'GOLD_SHANGHAI_USD', value: gold_shanghai_usd, as_of_date: asOfDate, metadata: { source: 'SGE/AlphaVantage' } },
-            { metric_id: 'GOLD_COMEX_SHANGHAI_SPREAD_PCT', value: gold_spread_pct, as_of_date: asOfDate, metadata: { source: 'Calculated' } },
-            { metric_id: 'SILVER_COMEX_USD', value: silver_bench, as_of_date: asOfDate, metadata: { source: 'AlphaVantage' } },
-            { metric_id: 'SILVER_SHANGHAI_USD', value: silver_shanghai_usd, as_of_date: asOfDate, metadata: { source: 'SGE/AlphaVantage' } },
-            { metric_id: 'SILVER_COMEX_SHANGHAI_SPREAD_PCT', value: silver_spread_pct, as_of_date: asOfDate, metadata: { source: 'Calculated' } }
-        ].filter(o => o.value > 0);
-
-        if (observations.length === 0) {
-            throw new Error('No valid observations computed')
-        }
-
-        console.log(`Upserting ${observations.length} observations...`)
-        const { count } = await upsertObservations(ctx.supabase, observations);
-
-        return {
-            rows_inserted: count,
-            metadata: {
-                gold_spread: gold_spread_pct,
-                silver_spread: silver_spread_pct,
-                date: asOfDate,
-                usdcny
+        return runWithRetry(
+            'ingest-precious-divergence',
+            () => doIngestPreciousDivergence(ctx.supabase, avApiKey),
+            {
+                maxRetries: 3,
+                baseDelayMs: 2000,
+                timeoutMs: 15 * 60 * 1000 // 15 minutes
             }
-        };
+        )
     })
 });
-;

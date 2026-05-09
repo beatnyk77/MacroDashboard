@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
+import { runWithRetry } from '../_shared/job-runner.ts'
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -29,6 +30,63 @@ const INDIAN_STATES = [
     { c: '35', n: 'A&N Islands' }, { c: '36', n: 'Telangana' }
 ];
 
+async function doIngestAsi(supabase: any) {
+    const telemetry = new IndiaTelemetry();
+    const year = '2023';
+    const results: any[] = [];
+
+    console.log(`Fetching live ASI data for ${year}...`);
+
+    for (const st of INDIAN_STATES) {
+        try {
+            const liveData = await telemetry.getASIStatistics(year, st.c);
+            if (liveData.length > 0) {
+                const mapped = liveData.map(d => ({
+                    state_code: st.c,
+                    state_name: st.n,
+                    year: parseInt(year),
+                    sector: 'all_industries',
+                    gva_crores: d.value,
+                    as_of_date: d.as_of_date,
+                    provenance: 'api_live'
+                }));
+
+                const { error: upsertError } = await supabase
+                    .from('india_asi')
+                    .upsert(mapped, { onConflict: 'state_code, year, sector' });
+
+                if (upsertError) throw upsertError;
+                results.push({ state: st.n, status: 'success' });
+            }
+        } catch (e: any) {
+            console.error(`Failed to fetch ASI for ${st.n}:`, e.message);
+        }
+    }
+
+    // Aggregate All-India
+    const { data: aggs } = await supabase
+        .from('india_asi')
+        .select('gva_crores')
+        .eq('sector', 'all_industries')
+        .eq('year', parseInt(year));
+
+    if (aggs && aggs.length > 0) {
+        const totGva = aggs.reduce((acc: any, r: any) => acc + (r.gva_crores || 0), 0);
+        await supabase.from('metric_observations').upsert({
+            metric_id: 'IN_ASI_GVA_TOTAL',
+            as_of_date: `${year}-12-31`,
+            value: totGva,
+            provenance: 'api_live',
+            last_updated_at: new Date().toISOString()
+        }, { onConflict: 'metric_id, as_of_date' });
+    }
+
+    return {
+        rows_inserted: results.length,
+        metadata: { year, states_processed: results.length }
+    };
+}
+
 Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
@@ -39,59 +97,10 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     return runIngestion(supabase, 'ingest-asi', async (ctx) => {
-        const telemetry = new IndiaTelemetry();
-        const year = '2023';
-        const results: any[] = [];
-
-        console.log(`Fetching live ASI data for ${year}...`);
-
-        for (const st of INDIAN_STATES) {
-            try {
-                const liveData = await telemetry.getASIStatistics(year, st.c);
-                if (liveData.length > 0) {
-                    const mapped = liveData.map(d => ({
-                        state_code: st.c,
-                        state_name: st.n,
-                        year: parseInt(year),
-                        sector: 'all_industries',
-                        gva_crores: d.value,
-                        as_of_date: d.as_of_date,
-                        provenance: 'api_live'
-                    }));
-
-                    const { error: upsertError } = await supabase
-                        .from('india_asi')
-                        .upsert(mapped, { onConflict: 'state_code, year, sector' });
-
-                    if (upsertError) throw upsertError;
-                    results.push({ state: st.n, status: 'success' });
-                }
-            } catch (e: any) {
-                console.error(`Failed to fetch ASI for ${st.n}:`, e.message);
-            }
-        }
-
-        // Aggregate All-India
-        const { data: aggs } = await supabase
-            .from('india_asi')
-            .select('gva_crores')
-            .eq('sector', 'all_industries')
-            .eq('year', parseInt(year));
-
-        if (aggs && aggs.length > 0) {
-            const totGva = aggs.reduce((acc, r) => acc + (r.gva_crores || 0), 0);
-            await supabase.from('metric_observations').upsert({
-                metric_id: 'IN_ASI_GVA_TOTAL',
-                as_of_date: `${year}-12-31`,
-                value: totGva,
-                provenance: 'api_live',
-                last_updated_at: new Date().toISOString()
-            }, { onConflict: 'metric_id, as_of_date' });
-        }
-
-        return {
-            rows_inserted: results.length,
-            metadata: { year, states_processed: results.length }
-        };
+        return runWithRetry(
+            'ingest-asi',
+            () => doIngestAsi(ctx.supabase),
+            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
+        );
     });
 })
