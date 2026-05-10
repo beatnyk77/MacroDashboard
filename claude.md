@@ -1,74 +1,133 @@
-# GraphiQuestor.com — Project Brief for AI Agents
+# CLAUDE.md
 
-**Last Updated**: March 2026  
-**Status**: Live production macro intelligence terminal (pure data focus)
-
-## 1. Project Overview
-GraphiQuestor is an **institutional-grade macro intelligence terminal** designed for professional capital allocators. It provides real-time, high-density telemetry on global liquidity, sovereign risk, de-dollarization, energy security, and India/China macro dynamics.
-
-The website is intentionally built as a **pure data terminal** — no marketing collateral, no brochure elements, no pricing teasers on the main experience. The moment a user lands, they see live data and signals.
-
-**Core Philosophy**:  
-"Observe structural reality. Do not forecast — provide the raw intelligence required for informed decision-making."
-
-## 2. Target Audience
-- Macro hedge funds and family offices
-- Sovereign wealth funds and central bank research desks
-- Corporate treasury professionals (hedging, liquidity, FX risk)
-- Institutional allocators focused on multipolar transition (debt/gold, de-dollarization, energy realignment)
-
-## 3. Key Sections & Features (Current Live)
-- **Global Macro Overview** — Liquidity Direction, GRIT Index, Capital Flows
-- **Gold Anchor Lab** — Debt/Gold ratios, local currency coverage, positioning
-- **Energy Security & Commodities** — Refining imbalance, oil flows, chokepoints
-- **India Macro Pulse + Corporate India Engine** — FII/DII flows, state fiscal heatmaps, promoter activity, shorts, deals, screener
-- **China Macro Pulse** — PBOC liquidity, trade, energy transition
-- **Geopolitical Live Risk Map** — Real-time OSINT (flights, vessels, conflict)
-- **Sovereign Stress Lab** — Debt maturity walls, labor distress, FX defence
-- **Sustainable Finance & Climate Risk Lab** — Energy import risk, grid carbon intensity
-- **Daily Money Market / RBI Liquidity Terminal**
-
-## 4. Data Sources & Integrations (All Automated)
-- **FRED** (Federal Reserve Economic Data) — liquidity, yields, gold, labor
-- **RBI DBIE + Daily Press Releases** — LAF operations, FX defence, remittances
-- **MoSPI via esankhyiki-mcp** — State-level industrial, energy, fiscal data
-- **EIA** — Oil refining, imports, SPR
-- **UN Comtrade** — Trade flows, energy imports
-- **Alpha Vantage / Finnhub** — Stock prices, FII/DII, ETF flows
-- **SEC EDGAR** — US corporate fundamentals (in progress)
-- **DomeAPI** — Prediction markets (Kalshi, Polymarket)
-- **Global-Macro-Database** — Long-horizon cross-country macro panel
-- **GDELT + OSINT feeds** — Geopolitical risk and live tracking
-
-All ingestion runs via **Supabase Edge Functions + pg_cron** (fully automated, no manual intervention).
-
-## 5. Tech Stack
-- **Frontend**: Next.js / React + Tailwind + shadcn/ui + Stitch MCP (for consistent dark terminal UI)
-- **Backend**: Supabase (Postgres, Edge Functions, pg_cron, Vault for secrets)
-- **Skills System**: `.agent/skills/` with macro-specific reusable patterns (ingestion, UI cards, data health, narrative logic)
-- **Deployment**: Vercel / similar (CI/CD via GitHub)
-
-## 6. Design Principles
-- Pure data terminal — no marketing on main experience
-- High information density (Bloomberg-style on desktop)
-- Dark glassmorphic aesthetic
-- One major card/widget per row where possible
-- Persistent sidebar navigation for Labs
-- Every chart must have clear macro context and correlations
-
-## 7. Current Priorities
-- Make all recently built features visible and fully functional
-- Clean up orphaned components and lingering references from removed features
-- Ensure every section shows real, automatically updating data (no mock/stale values)
-- Maintain institutional tone and high credibility
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 
-You can save this as `claude.md` (or `PROJECT-BRIEF.md`) in your project root.
+## Project Overview
 
-Would you like me to:
-- Add a section about the skill library?
-- Include specific component placement guidelines?
-- Make it shorter or more detailed?
+**GraphiQuestor** (graphiquestor.com) is an institutional-grade macro intelligence terminal for professional capital allocators. It surfaces real-time telemetry on global liquidity, sovereign risk, de-dollarization, energy security, and India/China macro dynamics. It is a **pure data terminal** — no marketing on the main experience, no mock/stale values.
 
-Just let me know and I’ll refine it instantly. This file will be very useful for any future AI agent working on the project.
+**Core philosophy**: "Observe structural reality. Do not forecast — provide the raw intelligence required for informed decision-making."
+
+---
+
+## Commands
+
+```bash
+npm run dev        # Vite dev server (hot reload)
+npm run build      # tsc + vite build → dist/
+npm run lint       # ESLint with --max-warnings 0 (must be clean)
+npm run test       # vitest run (jsdom environment)
+npm run preview    # Serve the built dist/
+```
+
+Run a single test file:
+```bash
+npx vitest run src/path/to/file.test.tsx
+```
+
+Supabase Edge Function development:
+```bash
+supabase start                        # Start local Supabase stack
+supabase functions serve <name>       # Serve a single edge function locally
+supabase db diff                      # Diff migrations
+```
+
+---
+
+## Environment Variables
+
+Create `.env.local`:
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+The app degrades gracefully with console warnings if these are missing.
+
+---
+
+## Architecture
+
+### Stack
+- **Frontend**: Vite + React 18 + TypeScript (SPA, deployed to Netlify via `dist/`). Despite the brief mentioning Next.js, the actual stack is Vite.
+- **UI**: MUI v5 (dark theme, layout/structure) + Tailwind CSS (utility classes) + shadcn/ui (Radix primitives in `src/components/ui/`).
+- **Routing**: React Router v7. All routes are lazy-loaded, defined in `src/App.tsx`.
+- **Data fetching**: TanStack Query v5. Default: 30 min `staleTime`, 2h `gcTime`, no refetch on window focus.
+- **Backend**: Supabase (Postgres + Deno Edge Functions + pg_cron). All ingestion is fully automated.
+- **Charts**: Recharts (primary), `@nivo/sankey` for flow charts, `react-simple-maps`/Leaflet for maps.
+
+### Path Alias
+`@/` resolves to `src/`. Always use `@/` imports.
+
+### Directory Layout
+
+```
+src/
+  App.tsx                  # All routes (lazy-loaded, named exports pattern)
+  layout/
+    GlobalLayout.tsx       # Shell: sidebar nav, regime ticker, cmd+k palette, mobile nav, footer
+  pages/
+    Terminal.tsx           # Home (/) — main macro overview
+    labs/                  # Thematic deep-dive lab pages
+    methods/               # Methodology explainer articles
+    tools/                 # Embeddable tools (iframe-safe via ?embed=true)
+  features/                # Domain feature slices (blog, trade, CIE, energy, regime-digest, etc.)
+    dashboard/components/  # Reusable dashboard cards, charts, widgets, sections
+  components/              # Shared primitives (MetricCard, Sparkline, DataHealthBanner, etc.)
+  hooks/                   # 100+ domain-specific data hooks
+  lib/
+    supabase.ts            # Supabase client singleton
+    queryClient.ts         # TanStack Query client config
+    utils.ts               # cn() and general helpers
+  context/
+    ViewContext.tsx         # Global view state
+
+supabase/
+  functions/               # Deno Edge Functions (one directory per function)
+    _shared/               # Shared utilities across functions
+    ingest-*/              # Data ingestion workers (FRED, RBI, EIA, Comtrade, etc.)
+    compute-*/             # Derived metric computation (signals, scores, composites)
+    generate-*/            # Report/digest generation (weekly regime, monthly)
+  migrations/              # Postgres schema migrations
+```
+
+### Data Flow
+
+```
+External APIs (FRED, RBI DBIE, EIA, UN Comtrade, Alpha Vantage, GDELT, etc.)
+  → Supabase Edge Functions (scheduled via pg_cron)
+    → metric_observations table (raw time-series)
+      → vw_latest_metrics view (staleness flags + latest values)
+        → useLatestMetric(metricId) hook (TanStack Query)
+          → React component
+```
+
+**The canonical data hook** is `src/hooks/useLatestMetric.ts`. It reads from `vw_latest_metrics` (current state + staleness_flag) and `metric_observations` (history for sparklines). All domain hooks follow the same pattern but may query different tables or views.
+
+Staleness is surfaced via `staleness_flag`: `'fresh'` → safe (green), `'lagged'` → warning (amber), `'very_lagged'` → danger (red). Display this via the `FreshnessChip` and `DataHealthBanner` components.
+
+### Adding a New Lab or Feature
+
+1. Create the page in `src/pages/labs/MyLab.tsx` (named export).
+2. Add a lazy import + `<Route>` in `src/App.tsx`.
+3. Add to `terminalNavItems` in `src/layout/GlobalLayout.tsx` to appear in the sidebar.
+4. Create domain hooks in `src/hooks/` using `useQuery` from TanStack Query.
+5. If new data is needed, add a Supabase Edge Function in `supabase/functions/ingest-<source>/`.
+
+### Coding Conventions
+
+- Pages use **named exports** (`export const MyLab = ...`). A few newer pages (TradeIntelligencePage, HSCodeOverviewPage, MarketDeepDivePage) use default exports — match the existing pattern of the file you're editing.
+- TanStack Query `queryKey` arrays must be specific enough to isolate cache entries (e.g., `['metric', metricId]`).
+- The `GlobalLayout` renders without chrome when `?embed=true` is in the URL — keep all iframe-embedded tools compatible with this.
+- Vite generates `public/rss.xml` at build time via `rssGeneratorPlugin` in `vite.config.ts` — don't break the `blogArticles` named export from `src/features/blog/blogData.ts`.
+
+---
+
+## Design Rules
+
+- **Terminal aesthetic**: dark glassmorphic, high information density. No hero sections, no pricing, no marketing copy on the main experience.
+- **Data credibility**: every metric must show source, freshness, and methodology. Use `DataProvenanceBadge`, `FreshnessChip`, and `DataHealthBanner`.
+- **No fabricated data**: if real data isn't available, show a skeleton or explicit "unavailable" state — never placeholder numbers.
+- **Institutional tone**: all labels, tooltips, and narrative copy must match the precision expected by macro hedge funds and central bank research desks.
