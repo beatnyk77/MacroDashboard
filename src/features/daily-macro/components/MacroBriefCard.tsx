@@ -41,38 +41,39 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal }) => {
 
   return (
     <div
-      className="flex-1 rounded-2xl p-5"
+      className="flex-1 rounded-2xl p-6"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(255,255,255,0.02)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.02)',
       }}
     >
       <div className="flex items-center gap-2 mb-4">
         <span
-          className="text-[9px] font-black uppercase tracking-[0.35em]"
-          style={{ color: 'rgba(148,163,184,0.6)' }}
+          className="text-[10px] font-black uppercase tracking-[0.2em]"
+          style={{ color: 'rgba(255,255,255,0.4)' }}
         >
-          Morning Macro Brief
+          Institutional Briefing
         </span>
-        <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.05)' }} />
-        <span className="text-[9px] text-white/30 font-mono">
-          {new Date().toLocaleDateString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-          })}
-        </span>
+        <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.04)' }} />
+        <div className="flex items-center gap-1.5 opacity-40">
+          <div className="w-1 h-1 rounded-full bg-emerald-400" />
+          <span className="text-[9px] text-white font-mono uppercase tracking-tighter">
+            System Normal
+          </span>
+        </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {lines.map((line, i) => (
           <div
             key={i}
-            className="text-[13px] font-medium leading-relaxed"
+            className="text-[14px] font-medium leading-[1.6]"
             style={{
-              color: i === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
-              paddingLeft: i > 0 ? '0.5rem' : 0,
-              borderLeft: i > 0 ? '2px solid rgba(255,255,255,0.08)' : 'none',
+              color: i === 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.6)',
+              paddingLeft: i > 0 ? '0.75rem' : 0,
+              borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none',
+              letterSpacing: '-0.01em',
             }}
           >
             {line}

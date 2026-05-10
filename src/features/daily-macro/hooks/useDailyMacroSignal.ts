@@ -32,6 +32,7 @@ export interface DailySignalRow {
     metals: number;
   };
   computed_at: string;
+  is_stale?: boolean; // New: UI flag
   // From joined macro_brief via view
   regime_line?: string;
   driver_line?: string;
@@ -62,7 +63,13 @@ export function useDailyMacroSignal() {
         console.warn('[useDailyMacroSignal] view fetch failed:', error.message);
       }
 
-      if (data) return data as DailySignalRow;
+      if (data) {
+        const row = data as DailySignalRow;
+        return {
+          ...row,
+          is_stale: row.signal_date !== today,
+        };
+      }
 
       // ── Fallback: client-side compute ────────────────────────────────────
       // Pull from vw_latest_metrics what we need for scoring
@@ -143,6 +150,7 @@ export function useDailyMacroSignal() {
         watch_item: computed.watch_item,
         component_scores: computed.component_scores,
         computed_at: new Date().toISOString(),
+        is_stale: false, // Just computed
       };
     },
     staleTime: 1000 * 60 * 60 * 4, // 4 hours — data is daily

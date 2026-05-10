@@ -60,14 +60,31 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center p-5 rounded-2xl"
+      className="relative flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-500 overflow-hidden"
       style={{
-        background: cfg.bg,
+        background: `radial-gradient(circle at 50% 50%, ${cfg.glow} 0%, transparent 80%)`,
         border: `1px solid ${cfg.border}`,
-        boxShadow: `0 0 32px ${cfg.glow}`,
-        minWidth: 180,
+        boxShadow: `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 1px ${cfg.border}`,
+        minWidth: 200,
       }}
     >
+      <style>
+        {`
+          @keyframes breathe {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+          }
+          .animate-breathe {
+            animation: breathe 4s ease-in-out infinite;
+          }
+        `}
+      </style>
+
+      {/* Background glow animation */}
+      <div 
+        className="absolute inset-0 animate-breathe pointer-events-none"
+        style={{ background: `radial-gradient(circle at 50% 50%, ${cfg.glow} 0%, transparent 70%)` }}
+      />
       {/* Regime changed badge */}
       {regime_changed && (
         <div
@@ -137,10 +154,10 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
       {/* Delta */}
       {deltaAbs > 0.5 && (
         <div
-          className="mt-2 text-[11px] font-bold tabular-nums"
+          className="mt-3 text-[11px] font-black tabular-nums px-2 py-0.5 rounded bg-white/5 border border-white/5"
           style={{ color: deltaPositive ? '#10b981' : '#f43f5e' }}
         >
-          {deltaPositive ? '▲' : '▼'} {deltaAbs.toFixed(1)} vs yesterday
+          {deltaPositive ? '▲' : '▼'} {deltaAbs.toFixed(1)}
         </div>
       )}
 
