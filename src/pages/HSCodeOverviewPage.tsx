@@ -1,10 +1,10 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Info, Calendar, MapPin, ExternalLink } from 'lucide-react'
+import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
 import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRanker'
-import { FreshnessChip, FreshnessStatus } from '../components/FreshnessChip'
+import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
 
 const HSCodeOverviewPage: React.FC = () => {
@@ -18,13 +18,14 @@ const HSCodeOverviewPage: React.FC = () => {
     const hsDescription = results.find(r => r.code === code)?.description
 
     const freshnessStatus = React.useMemo(() => {
-        if (!state.cachedAt) return 'no_data'
-        const diff = Date.now() - new Date(state.cachedAt).getTime()
+        const cachedAt = state.status === 'success' ? state.cachedAt : null
+        if (!cachedAt) return 'no_data'
+        const diff = Date.now() - new Date(cachedAt).getTime()
         const days = diff / (1000 * 60 * 60 * 24)
         if (days < 7) return 'fresh'
         if (days < 30) return 'lagged'
         return 'stale'
-    }, [state.cachedAt])
+    }, [state.status === 'success' ? state.cachedAt : null])
 
     const isLoading = state.status === 'loading' || state.status === 'fetching_live' || state.status === 'refreshing'
 

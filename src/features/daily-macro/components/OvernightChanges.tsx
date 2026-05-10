@@ -10,16 +10,18 @@ import type { DailyChange } from '../hooks/useDailyChanges';
 interface OvernightChangesProps {
   changes: DailyChange[];
   isLoading?: boolean;
+  refreshing?: boolean;
 }
 
 export const OvernightChanges: React.FC<OvernightChangesProps> = ({
   changes,
   isLoading,
+  refreshing,
 }) => {
   if (isLoading) {
     return (
       <div
-        className="rounded-xl p-4 animate-pulse"
+        className={`rounded-xl p-4 animate-pulse ${refreshing ? 'opacity-40' : ''}`}
         style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
       >
         <div className="h-3 w-40 rounded bg-white/10 mb-3" />

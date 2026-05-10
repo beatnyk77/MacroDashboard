@@ -87,7 +87,7 @@ export const RegimeDigestSection: React.FC = () => {
                             </Link>
                         </Button>
                         <Button 
-                            onClick={() => regenerate()} 
+                            onClick={() => regenerate(undefined)} 
                             disabled={isRegenerating}
                             variant="outline" 
                             className="border-white/10 hover:bg-white/5 text-white font-bold text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg"

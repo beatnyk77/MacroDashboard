@@ -4,7 +4,7 @@ import { useIndiaChinaComparison } from '../hooks/useIndiaChinaComparison'
 import { formatTradeValue } from '../types/trade'
 import { cn } from '@/lib/utils'
 import { ComparisonSkeleton } from './ComparisonSkeleton'
-import { FreshnessChip } from '@/components/FreshnessChip'
+import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip'
 
 const COMPARISON_CATEGORIES = [
     { label: 'Smartphones', code: '851713' },

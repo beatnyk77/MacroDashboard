@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, ChevronsUpDown, Loader2, Globe2, Target, Award, Banknote, LayoutDashboard } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, ChevronsUpDown, Globe2, Target, Award, Banknote } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { OpportunityScoreBadge } from './OpportunityScoreBadge'
 import type { TradeMarket } from '../types/trade'

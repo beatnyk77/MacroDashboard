@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import { useOilSpread } from '@/hooks/useOilSpread';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Fuel, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, RefreshCw, Activity, Clock, CheckCircle } from 'lucide-react';
+import { Fuel, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, RefreshCw, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';

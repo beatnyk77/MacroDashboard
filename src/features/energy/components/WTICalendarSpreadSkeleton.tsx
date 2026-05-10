@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fuel, Activity, Clock, CheckCircle } from 'lucide-react';
+import { Fuel, Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export const WTICalendarSpreadSkeleton: React.FC = () => {

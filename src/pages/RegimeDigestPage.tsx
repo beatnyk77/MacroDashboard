@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
-import { ArrowLeft, ChevronRight, Home, Newspaper, RefreshCw, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ChevronRight, RefreshCw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
