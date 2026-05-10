@@ -148,6 +148,20 @@ export const AdminDashboard = () => {
         enabled: isAuthenticated
     });
 
+    const { data: recentRuns, refetch: refetchRecentRuns } = useQuery({
+        queryKey: ['admin', 'recent_runs'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('ingestion_runs')
+                .select('*')
+                .order('started_at', { ascending: false })
+                .limit(50);
+            if (error) throw error;
+            return data;
+        },
+        enabled: isAuthenticated
+    });
+
     const triggerJob = useMutation({
         mutationFn: async (functionName: string) => {
             const { data, error } = await supabase.functions.invoke(functionName);
@@ -156,6 +170,7 @@ export const AdminDashboard = () => {
         },
         onSuccess: () => {
             refetchIngestions();
+            refetchRecentRuns();
         }
     });
 
@@ -191,7 +206,7 @@ export const AdminDashboard = () => {
                     />
                     <Button
                         startIcon={<RefreshCcw size={18} />}
-                        onClick={() => refetchIngestions()}
+                        onClick={() => { refetchIngestions(); refetchRecentRuns(); }}
                         sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { color: '#fff' } }}
                     >
                         REFRESH SYSTEM
@@ -334,6 +349,69 @@ export const AdminDashboard = () => {
                     </MuiCard>
                 </Grid>
             </Grid>
+
+            {/* Recent Run History Table */}
+            <Box sx={{ mt: 4 }}>
+                <MuiCard sx={{ bgcolor: CARD_BG, border: GLASS_BORDER }}>
+                    <Box sx={{ p: 3, borderBottom: GLASS_BORDER, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Clock size={20} color={BLOOMBERG_ORANGE} />
+                            <Typography variant="h6" fontWeight={800}>RECENT RUN HISTORY</Typography>
+                        </Box>
+                        <Chip label={`${recentRuns?.length || 0} RUNS LOGGED`} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: '#fff' }} />
+                    </Box>
+                    <TableContainer sx={{ maxHeight: 600 }}>
+                        <Table stickyHeader size="small">
+                            <TableHead>
+                                <TableRow sx={{ '& th': { bgcolor: '#0f172a', color: 'rgba(255,255,255,0.5)', py: 2, borderBottom: GLASS_BORDER } }}>
+                                    <TableCell>JOB NAME</TableCell>
+                                    <TableCell>STARTED AT</TableCell>
+                                    <TableCell>DURATION</TableCell>
+                                    <TableCell>ATTEMPTS</TableCell>
+                                    <TableCell>STATUS</TableCell>
+                                    <TableCell>ERROR</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody sx={{ '& .MuiTableCell-root': { color: 'rgba(255,255,255,0.8)', borderBottom: '1px solid rgba(255,255,255,0.03)' } }}>
+                                {recentRuns?.map((run: any) => (
+                                    <TableRow key={run.id} hover sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' } }}>
+                                        <TableCell sx={{ fontWeight: 600 }}>{run.job_name}</TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2">{new Date(run.started_at).toLocaleString()}</Typography>
+                                        </TableCell>
+                                        <TableCell>{run.duration_ms ? `${(run.duration_ms / 1000).toFixed(1)}s` : '---'}</TableCell>
+                                        <TableCell>{run.attempts}</TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                size="small"
+                                                label={run.status.toUpperCase()}
+                                                sx={{
+                                                    bgcolor: run.status === 'success' ? 'rgba(16, 185, 129, 0.1)' : (run.status === 'timeout' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(244, 63, 94, 0.1)'),
+                                                    color: run.status === 'success' ? '#10b981' : (run.status === 'timeout' ? '#f59e0b' : '#f43f5e'),
+                                                    fontWeight: 800,
+                                                    fontSize: '0.65rem'
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell sx={{ color: '#f43f5e', fontSize: '0.8rem', maxWidth: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            <Tooltip title={run.error_message || ''}>
+                                                <span>{run.error_message || '---'}</span>
+                                            </Tooltip>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                                {(!recentRuns || recentRuns.length === 0) && (
+                                    <TableRow>
+                                        <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'rgba(255,255,255,0.3)' }}>
+                                            No run history available
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </MuiCard>
+            </Box>
         </Box>
     );
 };

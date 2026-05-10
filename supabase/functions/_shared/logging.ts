@@ -107,37 +107,46 @@ async function logPayloadHash(
 export async function runIngestion(
     supabase: SupabaseClient,
     functionName: string,
-    ingestFn: (ctx: IngestionContext) => Promise<{ 
-        rows_inserted?: number, 
-        rows_updated?: number, 
-        status_code?: number, 
-        api_latency_ms?: number, 
-        raw_payload?: string | any,
-        metadata?: any 
-    }>
+    ingestFn: (ctx: IngestionContext) => Promise<any>
 ): Promise<Response> {
     const start = Date.now();
     const logId = await logIngestionStart(supabase, functionName);
     const ctx: IngestionContext = { supabase, functionName, logId };
 
+    let attemptsCount = 1;
+    let finalStatus: 'success' | 'failed' | 'timeout' = 'success';
+    let finalErrorMessage: string | null = null;
+    let finalMetadata: any = {};
+
     try {
         // 28 minute global safety cap — ensures the DB log is always finalized even if the
         // platform kills the execution, preventing permanent "started" status leaks.
         // Individual ingest functions should use a shorter internal runtimeBudget (e.g. 25 min).
-        const result = await withTimeout(
+        const rawResult: any = await withTimeout(
             ingestFn(ctx), 
             28 * 60 * 1000, 
             functionName
         );
         const total_latency = Date.now() - start;
+
+        const isJobResult = rawResult && typeof rawResult.ok === 'boolean' && typeof rawResult.attempts === 'number';
+        if (isJobResult) {
+            attemptsCount = rawResult.attempts;
+            if (!rawResult.ok) {
+                throw new Error(rawResult.error || 'Job failed after all retries');
+            }
+        }
+        
+        const result = isJobResult ? rawResult.value : rawResult;
+        finalMetadata = result?.metadata || {};
         
         await logIngestionEnd(supabase, logId, 'success', {
             ...result,
-            api_latency_ms: result.api_latency_ms || total_latency
+            api_latency_ms: result?.api_latency_ms || total_latency
         });
 
         // 2.0 Feature: Log Cryptographic Proof if payload provided
-        if (result.raw_payload) {
+        if (result?.raw_payload) {
             await logPayloadHash(supabase, functionName, result.raw_payload, {
                 status_code: result.status_code || 200,
                 api_latency_ms: result.api_latency_ms || total_latency
@@ -152,9 +161,10 @@ export async function runIngestion(
         console.error(`Ingestion failed [${functionName}]:`, error);
         
         const isTimeout = error.message.includes('timed out');
-        const status = isTimeout ? 'timeout' : 'failed';
+        finalStatus = isTimeout ? 'timeout' : 'failed';
+        finalErrorMessage = error.message;
 
-        await logIngestionEnd(supabase, logId, status, {
+        await logIngestionEnd(supabase, logId, finalStatus, {
             error_message: error.message,
             metadata: { stack: error.stack, is_timeout: isTimeout }
         });
@@ -163,5 +173,18 @@ export async function runIngestion(
             JSON.stringify({ success: false, error: error.message }),
             { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
+    } finally {
+        const total_latency = Date.now() - start;
+        // Log to ingestion_runs table for historical record
+        await supabase.from('ingestion_runs').insert({
+            job_name: functionName,
+            status: finalStatus,
+            attempts: attemptsCount,
+            error_message: finalErrorMessage,
+            started_at: new Date(start).toISOString(),
+            finished_at: new Date().toISOString(),
+            duration_ms: total_latency,
+            metadata: finalMetadata
+        });
     }
 }
