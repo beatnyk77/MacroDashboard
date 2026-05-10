@@ -22,10 +22,10 @@ const RegimeDigestContent: React.FC = () => {
     // Determine freshness status
     const status = React.useMemo<FreshnessStatus>(() => {
         if (!jobHealth) return 'no_data';
-        
+
         const lastRun = new Date(jobHealth.finished_at);
         const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
-        
+
         if (jobHealth.status === 'success') {
             return hoursSinceLastRun > 720 ? 'stale' : 'fresh'; // Monthly, so 30 days is "fresh"
         }

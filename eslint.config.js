@@ -124,6 +124,9 @@ export default [
             ...js.configs.recommended.rules,
             ...tseslint.configs.recommended.rules,
             ...reactHooks.configs.recommended.rules,
+            // Date.now() in render is intentional for staleness/freshness indicators.
+            // The React Compiler's impure-function check is too strict for this pattern.
+            'react-hooks/purity': ['error', { environment: { validateNoImpureFunctionsInRender: false } }],
             'react-refresh/only-export-components': [
                 'warn',
                 { allowConstantExport: true },
