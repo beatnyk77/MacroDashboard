@@ -369,7 +369,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   const phase1Display = fmtM(phase1TotalM);
 
   // ── Build HTML ──────────────────────────────────────────────────────────────
-  const pageTitle = `Powerlux Export Scout — HS ${hsn} ${hsnDescription}`;
+  const pageTitle = `GraphiQuestor Export Scout — HS ${hsn} ${hsnDescription}`;
   const headerSubtitle = `HS ${hsn} ${esc(hsnDescription)} &nbsp;|&nbsp; Based on 2025 UN Comtrade Data`;
 
   // Phase 1 table rows
@@ -1174,8 +1174,8 @@ function buildHtml(p: {
 
 <div class="header">
   <div class="header-left">
-    <div class="badge">Authorized Distributor</div>
-    <h1>Powerlux <span>Export Scout</span></h1>
+    <div class="badge">Export Intelligence Platform</div>
+    <h1>GraphiQuestor <span>Export Scout</span></h1>
     <p>${headerSubtitle}</p>
   </div>
   <div class="header-right">
@@ -1244,7 +1244,7 @@ function buildHtml(p: {
           <div style="background:var(--green-bg);border-left:3px solid var(--green);padding:10px 14px;border-radius:3px;margin-bottom:12px;font-size:12px;">
             <strong>First Principle:</strong> Find markets where Indian suppliers are ALREADY trusted. You are not selling a new concept — you are replacing or supplementing an existing supplier.
           </div>
-          <div class="info-row"><strong>Your role:</strong> Authorized Distributor for Powerlux.in</div>
+          <div class="info-row"><strong>Your role:</strong> GraphiQuestor Platform</div>
           <div class="info-row"><strong>Product:</strong> <span class="hs-code">HS ${hsn}</span> ${esc(hsnDescription)}</div>
           <div class="info-row"><strong>Channel priority:</strong> B2B Importer/Distributor first, End-buyer second</div>
           <div class="info-row"><strong>Value prop:</strong> 30–60% lower landed cost vs EU/US brands, OEM available</div>
@@ -1273,7 +1273,7 @@ function buildHtml(p: {
         <div style="padding:14px;background:var(--paper);border-radius:5px;">
           <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;margin-bottom:6px;">WEEK 5–8</div>
           <div style="font-weight:700;font-size:13px;margin-bottom:6px;">Qualify & Propose</div>
-          <div style="font-size:12px;color:var(--muted);">Discovery calls, send Powerlux product decks + pricing. Identify 2–3 serious distributors per market. Request sample orders.</div>
+          <div style="font-size:12px;color:var(--muted);">Discovery calls, send product decks + pricing. Identify 2–3 serious distributors per market. Request sample orders.</div>
         </div>
         <div style="padding:14px;background:var(--paper);border-radius:5px;">
           <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;margin-bottom:6px;">WEEK 9–12</div>
@@ -1389,7 +1389,7 @@ function buildHtml(p: {
           <div class="template-subject">Subject: Indian ${esc(productShort)} supplier — exclusive territory opportunity for <span class="placeholder">[Country]</span></div>
           <div class="template-text" id="tpl-dist-email">Dear <span class="placeholder">[First Name]</span>,
 
-I represent Powerlux (powerlux.in), one of India's leading manufacturers of ${esc(hsnDescription)} (HS ${hsn}). We are establishing our authorized distribution network across <span class="placeholder">[Region]</span> and I believe <span class="placeholder">[Company Name]</span> could be an excellent partner.
+I represent GraphiQuestor (graphiquestor.com), a premier export intelligence platform. We are mapping export opportunities for ${esc(hsnDescription)} (HS ${hsn}) and I believe <span class="placeholder">[Company Name]</span> could be an excellent partner for Indian supply.
 
 Why this is relevant to you:
 → You're already importing ${esc(industry)} from India — we can plug directly into your existing logistics and buyer relationships
@@ -1403,7 +1403,7 @@ I can share our product catalogue, pricing schedule and sample availability on r
 
 Warm regards,
 <span class="placeholder">[Your Name]</span>
-Authorized Export Representative — Powerlux India
+GraphiQuestor Intelligence Representative
 <span class="placeholder">[Phone / LinkedIn]</span></div>
           <button class="copy-btn" onclick="copyTemplate('tpl-dist-email', this)">Copy Template</button>
         </div>
@@ -1415,12 +1415,12 @@ Authorized Export Representative — Powerlux India
           <span class="type-badge">LINKEDIN</span>
         </div>
         <div class="template-body">
-          <div class="template-text" id="tpl-li-dist">Hi <span class="placeholder">[First Name]</span>, I see <span class="placeholder">[Company]</span> imports ${esc(industry)} including ${esc(productShort)}. I represent Powerlux, a leading Indian manufacturer — we're appointing exclusive distributors in <span class="placeholder">[Country]</span>. Happy to share pricing + catalogue if there's potential fit. Worth a quick connect?</div>
+          <div class="template-text" id="tpl-li-dist">Hi <span class="placeholder">[First Name]</span>, I see <span class="placeholder">[Company]</span> imports ${esc(industry)} including ${esc(productShort)}. I represent GraphiQuestor — we're facilitating exclusive export partnerships in <span class="placeholder">[Country]</span> for Indian supply. Happy to share pricing + catalogue if there's potential fit. Worth a quick connect?</div>
           <hr class="divider">
           <div class="template-subject" style="margin-top:12px;">Follow-up message (after connection)</div>
           <div class="template-text" id="tpl-li-followup">Thanks for connecting, <span class="placeholder">[First Name]</span>.
 
-Powerlux manufactures ${esc(hsnDescription)} (HS ${hsn}) — our products are already being imported by distributors in South Africa, Indonesia, Chile and Brazil.
+GraphiQuestor facilitates trade for ${esc(hsnDescription)} (HS ${hsn}) — these products are already being imported by distributors in South Africa, Indonesia, Chile and Brazil.
 
 We're looking to appoint an exclusive partner in <span class="placeholder">[Country]</span>. Key facts: pricing 35–50% below European alternatives, OEM available, 45-day lead time.
 
@@ -1440,7 +1440,7 @@ Would a 20-minute call this week make sense?</div>
 
 I'm reaching out regarding your equipment procurement for <span class="placeholder">[project type: ${esc(endUserSectors.split(",").slice(0,3).join(" / "))}]</span> projects.
 
-Powerlux (powerlux.in) is one of India's top manufacturers of:
+GraphiQuestor (graphiquestor.com) facilitates supply for top manufacturers of:
 • ${esc(hsnDescription)} (HS ${hsn}) — ${esc(productApplications)}
 
 We supply projects across South Africa, Indonesia, Brazil and Chile. Our authorized representative in <span class="placeholder">[Country]</span> can provide:
@@ -1453,7 +1453,7 @@ If you have an upcoming requirement or tender, I'd welcome the chance to provide
 
 Best regards,
 <span class="placeholder">[Your Name]</span>
-<span class="placeholder">[Company Name]</span> | Authorized Distributor — Powerlux India</div>
+<span class="placeholder">[Company Name]</span> | GraphiQuestor Export Partner</div></div>
           <button class="copy-btn" onclick="copyTemplate('tpl-buyer-email', this)">Copy Template</button>
         </div>
       </div>
@@ -1466,12 +1466,11 @@ Best regards,
         <div class="template-body">
           <div class="template-text" id="tpl-wa">Hi <span class="placeholder">[Name]</span>, this is <span class="placeholder">[Your Name]</span> from <span class="placeholder">[Your Firm]</span>. We met at <span class="placeholder">[Event/Reference]</span>.
 
-I represent Powerlux India — manufacturers of ${esc(productShort)} (HS ${hsn}). We're appointing a distributor in <span class="placeholder">[Country]</span> and your firm came up as a strong fit.
+I represent GraphiQuestor — facilitating supply for ${esc(productShort)} (HS ${hsn}). We're appointing a partner in <span class="placeholder">[Country]</span> and your firm came up as a strong fit.
 
 Can I send you our product catalogue and pricing? Takes 2 minutes to review. If relevant, happy to jump on a quick call.</div>
           <hr class="divider">
-          <div class="template-subject" style="margin-top:12px;">Follow-up if no response (Day 5)</div>
-          <div class="template-text" id="tpl-wa-fu">Hi <span class="placeholder">[Name]</span>, following up on my earlier message about Powerlux ${esc(productShort)}. We have a container slot available for <span class="placeholder">[Country]</span> in the next 6 weeks. Happy to share pricing. Let me know if worth a quick chat.</div>
+          <div class="template-text" id="tpl-wa-fu">Hi <span class="placeholder">[Name]</span>, following up on my earlier message about ${esc(productShort)} supply. We have a container slot available for <span class="placeholder">[Country]</span> in the next 6 weeks. Happy to share pricing. Let me know if worth a quick chat.</div>
           <button class="copy-btn" onclick="copyTemplate('tpl-wa-fu', this)">Copy Template</button>
         </div>
       </div>
@@ -1519,7 +1518,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
         <div class="tool-name">FIEO / EEPC India</div>
         <div class="tool-desc">Government export promotion councils. Free trade missions, buyer-seller meets, market intelligence reports.</div>
         <ul class="tool-steps">
-          <li>Register as Powerlux's authorized rep on both portals</li>
+          <li>Register on both portals as an exporter/intelligence rep</li>
           <li>Access buyer databases for target countries</li>
           <li>Apply for EEPC engineering fairs in South Africa, Indonesia</li>
           <li>Use FIEO's matchmaking service (free for members)</li>
@@ -1531,9 +1530,9 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
       <div class="tool-card">
         <div class="tool-icon">🌐</div>
         <div class="tool-name">IndiaMART / TradeIndia</div>
-        <div class="tool-desc">B2B portals where international buyers already search for Indian suppliers. Set up Powerlux listing, field inbound inquiries.</div>
+        <div class="tool-desc">B2B portals where international buyers already search for Indian suppliers. Set up your listing, field inbound inquiries.</div>
         <ul class="tool-steps">
-          <li>Create/verify Powerlux's supplier profile with export tag</li>
+          <li>Create/verify your supplier profile with export tag</li>
           <li>List all products with export pricing + MOQ</li>
           <li>Respond to ALL inquiries within 2 hours (ranking benefit)</li>
           <li>Filter inquiries by target country to prioritize</li>
@@ -1558,7 +1557,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
       <div class="tool-card">
         <div class="tool-icon">🎪</div>
         <div class="tool-name">Trade Shows — Priority List</div>
-        <div class="tool-desc">The fastest way to meet 50+ qualified buyers in 3 days. Target these events for Powerlux.</div>
+        <div class="tool-desc">The fastest way to meet 50+ qualified buyers in 3 days. Target these events for export supply.</div>
         <ul class="tool-steps">
           <li><strong>Big 5 Dubai</strong> — Nov, Middle East + Africa buyers</li>
           <li><strong>EXCON Bangalore</strong> — Dec, Indian infra buyers + export leads</li>
@@ -1601,7 +1600,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
   ══════════════════════════════════════ -->
   <div class="section" id="sec-playbook">
     <div class="section-title">90-Day Export Sales Playbook</div>
-    <div class="section-sub">Week-by-week execution guide. Authorized Distributor mandate assumed active.</div>
+    <div class="section-sub">Week-by-week execution guide. GraphiQuestor mandate assumed active.</div>
 
     <div class="phase-block">
       <div class="phase-label">Phase 1 &nbsp;·&nbsp; Days 1–30</div>
@@ -1611,7 +1610,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
           <div class="week-row">
             <div class="week-label">Week 1</div>
             <div class="week-tasks">
-              <strong>Set up infrastructure:</strong> Get Powerlux authorized distributor letter on letterhead. Create export email identity. Subscribe to Volza or get trial access to Panjiva.<br>
+              <strong>Set up infrastructure:</strong> Get mandate letter on letterhead. Create export email identity. Subscribe to Volza or get trial access to Panjiva.<br>
               <strong>Run trade data pull:</strong> Extract all India→South Africa, Indonesia, Brazil, Chile, Portugal importers for HS ${hsn}. Target: 100+ company names.
             </div>
           </div>
@@ -1628,13 +1627,13 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
             <div class="week-label">Week 3</div>
             <div class="week-tasks">
               <strong>First outreach batch:</strong> Send 10 LinkedIn requests + 10 emails per country (50 total). Use templates from this playbook. Goal: 5 positive responses.<br>
-              <strong>Register on portals:</strong> Update Powerlux on IndiaMART, TradeIndia with export-specific content. Register with FIEO as authorized rep.
+              <strong>Register on portals:</strong> Update IndiaMART, TradeIndia with export-specific content. Register with FIEO as authorized rep.
             </div>
           </div>
           <div class="week-row" style="margin-top:12px;">
             <div class="week-label">Week 4</div>
             <div class="week-tasks">
-              <strong>Follow up all Week 3 outreach.</strong> Book first discovery calls. Prepare Powerlux capability deck (ask management for export-ready version or create one).<br>
+              <strong>Follow up all Week 3 outreach.</strong> Book first discovery calls. Prepare capability deck (ask management for export-ready version or create one).<br>
               <strong>WhatsApp follow-ups</strong> to anyone who opened email but didn't respond (use read receipts). First CRM entries in this pipeline.
             </div>
           </div>
@@ -1659,8 +1658,8 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
           <div class="week-row">
             <div class="week-label" style="background:var(--gold);">Week 7–8</div>
             <div class="week-tasks">
-              <strong>Identify 2–3 serious distributors per market.</strong> Submit formal distributor application / distribution agreement framework from Powerlux.<br>
-              <strong>For end-buyers:</strong> Request tender documents / BOQ. Prepare technical + commercial proposal with Powerlux specs and your distribution margin.
+              <strong>Identify 2–3 serious distributors per market.</strong> Submit formal distributor application / distribution agreement framework.<br>
+              <strong>For end-buyers:</strong> Request tender documents / BOQ. Prepare technical + commercial proposal with manufacturing specs and your distribution margin.
             </div>
           </div>
         </div>
@@ -1676,7 +1675,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
             <div class="week-label" style="background:var(--accent2);">Week 9–10</div>
             <div class="week-tasks">
               <strong>Push for sample/pilot orders.</strong> Suggest 1–2 unit sample to any serious distributor. Remove friction: handle freight quote, arrange inspection if needed.<br>
-              <strong>Get Letters of Intent</strong> from at least 2 partners. Even LOI without commitment has negotiating value with Powerlux management.
+              <strong>Get Letters of Intent</strong> from at least 2 partners. Even LOI without commitment has negotiating value with management.
             </div>
           </div>
         </div>
@@ -1684,7 +1683,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
           <div class="week-row">
             <div class="week-label" style="background:var(--accent2);">Week 11–12</div>
             <div class="week-tasks">
-              <strong>Attend Big 5 Dubai (Nov) or EXCON Bangalore (Dec)</strong> with Powerlux branding. Target: 30 business cards from relevant importers.<br>
+              <strong>Attend Big 5 Dubai (Nov) or EXCON Bangalore (Dec)</strong> with GraphiQuestor branding. Target: 30 business cards from relevant importers.<br>
               <strong>Report card for Day 90:</strong> 5 markets activated, 2+ LOIs, 1+ sample order in progress, 100+ leads in CRM, 3 trade show contacts per market.
             </div>
           </div>
@@ -1693,12 +1692,12 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="dot" style="background:var(--green)"></span> Your Distributor Negotiation Checklist with Powerlux</div>
+      <div class="card-title"><span class="dot" style="background:var(--green)"></span> Your Distributor Negotiation Checklist with Manufacturers</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:12px;">
         <div style="padding:12px;background:var(--green-bg);border-radius:4px;">
-          <strong>Must Get from Powerlux:</strong>
+          <strong>Must Get from Manufacturer:</strong>
           <ul style="margin-top:8px;padding-left:16px;line-height:2;">
-            <li>Authorized Distributor Certificate</li>
+            <li>Export Authorization Certificate</li>
             <li>Exclusive territory per country</li>
             <li>Export price list (USD/EUR)</li>
             <li>Product datasheets in English</li>
@@ -1737,7 +1736,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
   ══════════════════════════════════════ -->
   <div class="section" id="sec-certs">
     <div class="section-title">Certifications &amp; Compliance</div>
-    <div class="section-sub">What's needed to enter each market. Verify current Powerlux certifications before quoting.</div>
+    <div class="section-sub">What's needed to enter each market. Verify current manufacturer certifications before quoting.</div>
 
     <div class="two-col">
       <div class="card">
@@ -1754,7 +1753,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
         <div class="cert-row"><div class="cert-icon">🇦🇺</div><div class="cert-body"><h4>Australia — RCM / Safety Mark</h4><p>${esc(certAUS)}</p></div></div>
         <div class="cert-row"><div class="cert-icon">🇺🇸</div><div class="cert-body"><h4>USA — UL / OSHA / EPA</h4><p>${esc(certUSA)}</p></div></div>
         <div class="cert-row"><div class="cert-icon">🇨🇦</div><div class="cert-body"><h4>Canada — CSA Mark</h4><p>Canadian Standards Association certification required. Similar timeline and lab as USA certification. Bundle both to reduce per-market cost.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🌍</div><div class="cert-body"><h4>All Markets — ISO 9001</h4><p>Baseline quality credibility signal for all B2B export deals. Verify Powerlux holds this. If not, flag as urgent — most serious B2B buyers will ask for it upfront.</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🌍</div><div class="cert-body"><h4>All Markets — ISO 9001</h4><p>Baseline quality credibility signal for all B2B export deals. Verify manufacturer holds this. If not, flag as urgent — most serious B2B buyers will ask for it upfront.</p></div></div>
         <hr class="divider">
         <div style="font-size:12px;color:var(--muted);background:var(--amber-bg);padding:10px;border-radius:4px;">
           <strong>Tactical tip for HS ${hsn}:</strong> ${esc(certPhase2Tip)} In Phase 1 markets, let your distributor partner carry the certification risk — their existing local certifications become your market entry with zero upfront investment.

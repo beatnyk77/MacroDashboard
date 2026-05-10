@@ -13,15 +13,17 @@ export const RegimeDigestSection: React.FC = () => {
 
     const jobHealth = health?.find(h => h.job_name === 'generate-monthly-regime-digest');
     
+    const [now] = React.useState(() => Date.now());
+    
     const status = React.useMemo<FreshnessStatus>(() => {
         if (!jobHealth) return 'no_data';
         const lastRun = new Date(jobHealth.finished_at);
-        const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
+        const hoursSinceLastRun = (now - lastRun.getTime()) / (1000 * 60 * 60);
         if (jobHealth.status === 'success') {
             return hoursSinceLastRun > 720 ? 'stale' : 'fresh';
         }
         return 'lagged';
-    }, [jobHealth]);
+    }, [jobHealth, now]);
 
     if (isLoading) {
         return (

@@ -19,18 +19,20 @@ const RegimeDigestContent: React.FC = () => {
     // Find health for this specific job
     const jobHealth = health?.find(h => h.job_name === 'generate-monthly-regime-digest');
     
+    const [now] = React.useState(() => Date.now());
+
     // Determine freshness status
     const status = React.useMemo<FreshnessStatus>(() => {
         if (!jobHealth) return 'no_data';
 
         const lastRun = new Date(jobHealth.finished_at);
-        const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
+        const hoursSinceLastRun = (now - lastRun.getTime()) / (1000 * 60 * 60);
 
         if (jobHealth.status === 'success') {
             return hoursSinceLastRun > 720 ? 'stale' : 'fresh'; // Monthly, so 30 days is "fresh"
         }
         return 'lagged';
-    }, [jobHealth]);
+    }, [jobHealth, now]);
 
     const handleRefresh = () => {
         const ym = year && month ? `${year}-${month}` : undefined;

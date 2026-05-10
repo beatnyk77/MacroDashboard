@@ -20,9 +20,11 @@ export const IndiaChinaDeepDive: React.FC = () => {
     const { data, loading, refreshing, error, refresh, lastFetchedAt } = useIndiaChinaComparison(selectedCode)
     const latest = data[0]
 
+    const [now] = React.useState(() => Date.now())
+
     const getFreshnessStatus = (date: string | null | undefined): FreshnessStatus => {
         if (!date) return 'no_data'
-        const diff = Date.now() - new Date(date).getTime()
+        const diff = now - new Date(date).getTime()
         const days = diff / (1000 * 60 * 60 * 24)
         if (days < 7) return 'fresh'
         if (days < 30) return 'lagged'

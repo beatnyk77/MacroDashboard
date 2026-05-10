@@ -24,16 +24,17 @@ export const GlobalTradePulse: React.FC = () => {
 
     const selectedCountry = MAJOR_REPORTERS.find(r => r.iso3 === selectedISO)
 
+    const [now] = React.useState(() => Date.now())
+    const isLoading = loading || refreshing
+
     const getFreshnessStatus = (date: string | null | undefined): FreshnessStatus => {
         if (!date) return 'no_data'
-        const diff = Date.now() - new Date(date).getTime()
+        const diff = now - new Date(date).getTime()
         const days = diff / (1000 * 60 * 60 * 24)
         if (days < 7) return 'fresh'
         if (days < 30) return 'lagged'
         return 'stale'
     }
-
-    const isLoading = loading || refreshing
 
     return (
         <div className="w-full space-y-6">

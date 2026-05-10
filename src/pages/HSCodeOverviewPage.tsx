@@ -51,15 +51,17 @@ const HSCodeOverviewPage: React.FC = () => {
     const { results } = useHSCodeSearch(code || '')
     const hsDescription = results.find(r => r.code === code)?.description
 
+    const [now] = React.useState(() => Date.now())
     const cachedAt = state.status === 'success' ? state.cachedAt : null
+
     const freshnessStatus = React.useMemo(() => {
         if (!cachedAt) return 'no_data'
-        const diff = Date.now() - new Date(cachedAt).getTime()
+        const diff = now - new Date(cachedAt).getTime()
         const days = diff / (1000 * 60 * 60 * 24)
         if (days < 7) return 'fresh'
         if (days < 30) return 'lagged'
         return 'stale'
-    }, [cachedAt])
+    }, [cachedAt, now])
 
     const isLoading = state.status === 'loading' || state.status === 'fetching_live' || state.status === 'refreshing'
 
