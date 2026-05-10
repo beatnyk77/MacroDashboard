@@ -68,13 +68,18 @@ async function doIngestUSMacro(supabase: any, fredApiKey: string) {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  const url = new URL(req.url);
+  const task = url.searchParams.get('task');
+
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   const fredApiKey = Deno.env.get('FRED_API_KEY');
   
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  return runIngestion(supabase, 'ingest-us-macro', async (ctx) => {
+  const jobId = task ? `ingest-us-macro-${task}` : 'ingest-us-macro';
+
+  return runIngestion(supabase, jobId, async (ctx) => {
     if (!fredApiKey) {
       const errorMsg = 'FRED_API_KEY is not set';
       await sendDiscordAlert('US Macro Ingestion Failed 🚨', errorMsg, true);
@@ -82,8 +87,14 @@ Deno.serve(async (req: Request) => {
     }
 
     return runWithRetry(
-        'ingest-us-macro',
-        () => doIngestUSMacro(supabase, fredApiKey),
+        jobId,
+        async () => {
+          if (task === 'auctions') {
+            return processAuctions(supabase);
+          }
+          // Default: Run all
+          return doIngestUSMacro(supabase, fredApiKey);
+        },
         { timeoutMs: 25 * 60 * 1000, maxRetries: 3 } // 25 mins timeout since it's heavy
     );
   });

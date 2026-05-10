@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import { useUSTreasuryAuctions, USTreasuryAuction } from '@/hooks/useUSTreasuryAuctions';
+import { useUSTreasuryAuctions, USTreasuryAuction, useAuctionHealth, useAuctionSync } from '@/hooks/useUSTreasuryAuctions';
 import { AreaChart, Area, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
-import { format } from 'date-fns';
-import { Info, TrendingUp, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import { Info, TrendingUp, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/utils/formatNumber';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 // ── Constants & Helpers ─────────────────────────────────────────────
 
@@ -33,6 +36,29 @@ const isTailAlert = (auction: USTreasuryAuction | undefined) => {
 };
 
 // ── Components ──────────────────────────────────────────────────────
+
+const InstitutionalSkeleton: React.FC = () => (
+  <div className="w-full bg-slate-900 rounded-3xl border border-slate-800 p-8 space-y-8 animate-in fade-in duration-500">
+    <div className="flex justify-between items-start">
+      <div className="space-y-3">
+        <Skeleton className="h-10 w-64 bg-white/5" />
+        <Skeleton className="h-4 w-48 bg-white/5" />
+      </div>
+      <div className="flex gap-2">
+        <Skeleton className="h-8 w-24 rounded-full bg-white/5" />
+        <Skeleton className="h-8 w-32 rounded-full bg-white/5" />
+      </div>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+      <div className="lg:col-span-6 h-80 rounded-3xl bg-white/[0.02] border border-white/5 p-8">
+        <Skeleton className="h-full w-full bg-white/5" />
+      </div>
+      <div className="lg:col-span-4 h-80 rounded-3xl bg-white/[0.02] border border-white/5 p-8">
+        <Skeleton className="h-full w-full bg-white/5" />
+      </div>
+    </div>
+  </div>
+);
 
 const MicroSparkline: React.FC<{ data: number[]; color: string }> = ({ data, color }) => {
   if (data.length < 2) return null;
@@ -89,7 +115,7 @@ const TailStatusInfo: React.FC = () => (
           <Info size={10} className="text-white/20" />
         </div>
       </TooltipTrigger>
-      <TooltipContent className="max-w-[200px] text-[11px] leading-relaxed bg-slate-900 border-white/10 p-3">
+      <TooltipContent className="max-w-[200px] text-[11px] leading-relaxed bg-slate-900 border-white/10 p-3 shadow-2xl">
         Primary dealer absorption &gt;12.5% of auction size flags weak private demand, indicating dealers were forced to "tail" the auction.
       </TooltipContent>
     </UITooltip>
@@ -99,7 +125,9 @@ const TailStatusInfo: React.FC = () => (
 // ── Main Component ──────────────────────────────────────────────────
 
 export const USTreasuryDemandGauge: React.FC = () => {
-  const { data: auctions, isLoading, refetch } = useUSTreasuryAuctions();
+  const { data: auctions, isLoading: isDataLoading } = useUSTreasuryAuctions();
+  const { data: health, isLoading: isHealthLoading } = useAuctionHealth();
+  const { mutate: sync, isPending: isSyncing } = useAuctionSync();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const processedData = useMemo(() => {
@@ -139,7 +167,14 @@ export const USTreasuryDemandGauge: React.FC = () => {
     return { current: tenYearLatest, history, others };
   }, [auctions]);
 
-  if (isLoading) return <div className="animate-pulse h-96 w-full bg-white/5 rounded-3xl" />;
+  const isStale = useMemo(() => {
+    if (!health?.completed_at) return false;
+    const lastRun = new Date(health.completed_at);
+    const now = new Date();
+    return (now.getTime() - lastRun.getTime()) > 1000 * 60 * 60 * 24; // 24h
+  }, [health]);
+
+  if (isDataLoading || isHealthLoading) return <InstitutionalSkeleton />;
 
   const current = processedData.current;
   const currentScore = current?.demand_strength_score || 0;
@@ -148,25 +183,53 @@ export const USTreasuryDemandGauge: React.FC = () => {
   const hasTailAlert = isTailAlert(current);
 
   return (
-    <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
+    <section className="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-2xl shadow-2xl overflow-hidden border border-slate-800/50">
       <div className="p-6 md:p-8 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Institutional Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <TrendingUp className="w-7 h-7 text-emerald-400" />
-              US Treasury Auction Demand Gauge
-            </h2>
-            <p className="text-slate-400 text-sm md:text-base">
-              Score vs last 5 years of 10Y auctions (Bid-to-Cover × Indirect share)
+              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                Treasury Auction Demand
+              </h2>
+              {isSyncing ? (
+                <Badge variant="outline" className="animate-pulse bg-blue-500/10 text-blue-400 border-blue-500/20 gap-1.5 py-1">
+                  <Activity size={10} /> Syncing
+                </Badge>
+              ) : isStale ? (
+                <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 gap-1.5 py-1">
+                  <Clock size={10} /> Data Stale
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1.5 py-1">
+                  <ShieldCheck size={10} /> Live Intelligence
+                </Badge>
+              )}
+            </div>
+            <p className="text-slate-400 text-sm font-medium">
+              Institutional demand score vs 5-year benchmark baseline
             </p>
           </div>
-          {current && (
-            <div className="flex items-center gap-2 text-slate-500 text-xs">
-              <RefreshCw size={12} className={cn("cursor-pointer hover:text-white transition-all", isLoading && "animate-spin")} onClick={() => refetch()} />
-              <span>Updated: {format(new Date(current.auction_date), 'MMM d, yyyy')}</span>
+
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden md:block">
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Last Intelligence Sync</div>
+              <div className="text-xs font-bold text-slate-300 tabular-nums">
+                {health?.completed_at ? formatDistanceToNow(new Date(health.completed_at), { addSuffix: true }) : 'Unknown'}
+              </div>
             </div>
-          )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => sync()}
+              disabled={isSyncing}
+              className="rounded-full bg-white/5 border-white/10 hover:bg-white/10 transition-all gap-2 h-9 px-4"
+            >
+              <RefreshCw size={14} className={cn(isSyncing && "animate-spin")} />
+              <span className="text-xs font-bold uppercase tracking-wider">{isSyncing ? 'Syncing...' : 'Force Sync'}</span>
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
@@ -177,7 +240,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
           )}>
             <div className="relative z-10 space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-white/40 uppercase tracking-widest">10-Year Benchmark Demand</span>
+                <span className="text-xs font-black text-white/40 uppercase tracking-widest">10-Year Benchmark Score</span>
                 <div className={cn("px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/5 border border-white/10", regime.color)}>
                   {regime.label}
                 </div>
@@ -242,7 +305,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="grid grid-cols-2 gap-x-12 gap-y-4 pt-6 pb-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4 pt-6 pb-2">
                         <div className="space-y-4">
                           <DetailRow label="Total Tendered" value={`$${formatNumber(current.total_tendered / 1e3, { decimals: 1 })}B`} />
                           <DetailRow label="Total Accepted" value={`$${formatNumber(current.total_accepted / 1e3, { decimals: 1 })}B`} />
@@ -255,7 +318,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                             <TailStatusInfo />
                             <span className={cn("text-xs font-bold tabular-nums", hasTailAlert ? "text-rose-500" : "text-emerald-500")}>
                               {current.primary_dealer_pct.toFixed(1)}% {hasTailAlert ? (
-                                <AlertTriangle size={10} className="inline ml-1 mb-0.5" />
+                                <AlertTriangle size={10} className="inline ml-1 mb-0.5 animate-pulse" />
                               ) : "— Clean"}
                             </span>
                           </div>
@@ -375,14 +438,4 @@ const DetailRow: React.FC<{ label: string; value: string }> = ({ label, value })
     <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">{label}</span>
     <span className="text-xs font-bold text-white tabular-nums">{value}</span>
   </div>
-);
-
-const RefreshCw: React.FC<{ size?: number; className?: string; onClick?: () => void }> = ({ size = 16, className, onClick }) => (
-  <svg 
-    onClick={onClick}
-    width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-    className={cn("lucide lucide-refresh-cw", className)}
-  >
-    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M3 21v-5h5" />
-  </svg>
 );

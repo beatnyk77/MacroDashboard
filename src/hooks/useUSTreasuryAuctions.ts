@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 export interface USTreasuryAuction {
     id: string;
@@ -32,4 +33,45 @@ export const useUSTreasuryAuctions = () => {
         },
         staleTime: 1000 * 60 * 60, // 1 hour
     });
+};
+
+export const useAuctionHealth = () => {
+  return useQuery({
+    queryKey: ['auction-ingestion-health'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ingestion_runs')
+        .select('*')
+        .eq('job_id', 'ingest-us-macro-auctions')
+        .order('started_at', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+      return data[0];
+    },
+    refetchInterval: 1000 * 30, // Poll every 30s during sync
+  });
+};
+
+export const useAuctionSync = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('ingest-us-macro?task=auctions', {
+        method: 'POST',
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Treasury auction data synchronized');
+      queryClient.invalidateQueries({ queryKey: ['us-treasury-auctions'] });
+      queryClient.invalidateQueries({ queryKey: ['auction-ingestion-health'] });
+    },
+    onError: (error) => {
+      console.error('Auction sync failed:', error);
+      toast.error('Failed to sync auction data');
+    }
+  });
 };
