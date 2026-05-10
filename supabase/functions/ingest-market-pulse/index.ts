@@ -1,4 +1,4 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 import { runWithRetry } from '../_shared/job-runner.ts'
 import { 
@@ -107,7 +107,7 @@ Deno.serve(async (req: Request) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    return await runIngestion(supabase as any, 'ingest-market-pulse', async (ctx) => {
+    return await runIngestion(supabase, 'ingest-market-pulse', async (ctx) => {
         if (!avApiKey) throw new Error('ALPHAVANTAGE_API_KEY not found in environment')
 
         const result = await runWithRetry(

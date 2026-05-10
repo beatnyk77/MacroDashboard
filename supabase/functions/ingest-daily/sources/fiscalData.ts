@@ -1,4 +1,4 @@
-import { SupabaseClient } from 'jsr:@supabase/supabase-js@2'
+import { SupabaseClient } from '@supabase/supabase-js'
 import { Logger } from '../utils/logger.ts'
 import { retry } from '../utils/retry.ts'
 
