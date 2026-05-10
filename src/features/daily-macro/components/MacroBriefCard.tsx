@@ -1,17 +1,13 @@
-/**
- * MacroBriefCard
- * 3–4 line morning brief. Displays regime_line, driver_line, watch_line, context_line.
- */
-
 import React from 'react';
 import { generateMacroBrief } from '../services/macroSignalEngine';
 import type { DailySignalRow } from '../hooks/useDailyMacroSignal';
 
 interface MacroBriefCardProps {
   signal: DailySignalRow;
+  refreshing?: boolean;
 }
 
-export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal }) => {
+export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal, refreshing }) => {
   // Use pre-computed brief from DB, fall back to client-side generation
   const brief = (signal.regime_line && signal.driver_line && signal.watch_line)
     ? {
@@ -41,14 +37,14 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal }) => {
 
   return (
     <div
-      className="flex-1 rounded-2xl p-6"
+      className={`flex-1 rounded-2xl p-6 transition-all duration-500 ${refreshing ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
       style={{
         background: 'rgba(255,255,255,0.02)',
         border: '1px solid rgba(255,255,255,0.06)',
         boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.02)',
       }}
     >
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-6">
         <span
           className="text-[10px] font-black uppercase tracking-[0.2em]"
           style={{ color: 'rgba(255,255,255,0.4)' }}
@@ -64,16 +60,14 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal }) => {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {lines.map((line, i) => (
           <div
             key={i}
-            className="text-[14px] font-medium leading-[1.6]"
+            className={`text-[15px] font-medium leading-relaxed tracking-tight ${i === 0 ? 'text-white/95' : 'text-white/60'}`}
             style={{
-              color: i === 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.6)',
-              paddingLeft: i > 0 ? '0.75rem' : 0,
+              paddingLeft: i > 0 ? '1rem' : 0,
               borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none',
-              letterSpacing: '-0.01em',
             }}
           >
             {line}
@@ -82,26 +76,26 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal }) => {
       </div>
 
       {/* Component score mini-bars */}
-      <div className="mt-5 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="text-[9px] font-black uppercase tracking-[0.3em] text-white/25 mb-3">
+      <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="text-[9px] font-black uppercase tracking-[0.3em] text-white/25 mb-4">
           Signal Components
         </div>
-        <div className="space-y-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
           {(Object.entries(signal.component_scores) as [string, number][]).map(([key, val]) => {
             const color =
               val >= 60 ? '#10b981' : val <= 40 ? '#f43f5e' : '#f59e0b';
             return (
               <div key={key} className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-white/40 w-16 uppercase tracking-wide">
+                <span className="text-[9px] font-black text-white/30 w-16 uppercase tracking-wider">
                   {key}
                 </span>
                 <div
-                  className="flex-1 h-1 rounded-full overflow-hidden"
-                  style={{ background: 'rgba(255,255,255,0.06)' }}
+                  className="flex-1 h-1.5 rounded-full overflow-hidden relative"
+                  style={{ background: 'rgba(255,255,255,0.04)' }}
                 >
                   <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{ width: `${val}%`, background: color }}
+                    className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
+                    style={{ width: `${val}%`, background: color, boxShadow: `0 0 8px ${color}44` }}
                   />
                 </div>
                 <span
@@ -118,3 +112,4 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal }) => {
     </div>
   );
 };
+

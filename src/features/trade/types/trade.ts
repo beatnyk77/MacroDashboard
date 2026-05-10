@@ -74,7 +74,8 @@ export type DemandState =
     | { status: 'idle' }
     | { status: 'loading' }
     | { status: 'fetching_live' }   // cache miss, invoking edge function
-    | { status: 'success'; markets: TradeMarket[]; hsCode: string; cachedAt: string }
+    | { status: 'refreshing' }      // manual refresh in progress
+    | { status: 'success'; markets: TradeMarket[]; hsCode: string; cachedAt: string; isFallback?: boolean; softError?: string }
     | { status: 'error'; message: string }
 
 /** Country flag emoji from ISO-2 code */

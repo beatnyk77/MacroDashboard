@@ -104,11 +104,11 @@ Deno.serve(async (_req: Request) => {
                 regime: regime,
                 change_1d: change_1d,
                 change_3d: change_3d,
+                computed_at: new Date().toISOString(),
                 metadata: {
                     source: 'EIA',
                     cl1_series: 'RCLC1',
                     cl2_series: 'RCLC2',
-                    computed_at: new Date().toISOString()
                 }
             }, { onConflict: 'date' });
 

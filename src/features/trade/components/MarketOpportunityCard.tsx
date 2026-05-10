@@ -31,6 +31,9 @@ export const MarketOpportunityCard: React.FC<MarketOpportunityCardProps> = ({ sc
                 </p>
 
                 <div className="flex flex-wrap gap-2">
+                    <span className="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
+                        ⚡ UN Comtrade Source
+                    </span>
                     {tags.map(tag => (
                         <span key={tag} className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-lg bg-white/10 text-white border border-white/5">
                             {tag}
@@ -60,12 +63,23 @@ export const MarketOpportunityCard: React.FC<MarketOpportunityCardProps> = ({ sc
                             </div>
                             <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
                                 <div 
-                                    className="h-full bg-emerald-500 rounded-full" 
+                                    className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" 
                                     style={{ width: `${item.value}%` }} 
                                 />
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Footnote */}
+                <div className="pt-2 flex justify-between items-center">
+                    <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">
+                        Refreshed {new Date(score.computed_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                    <div className="flex items-center gap-1 text-[9px] font-bold text-white/20 uppercase tracking-widest">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live Sync Active
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,9 +1,3 @@
-/**
- * RegimeOrb
- * Animated regime badge + score gauge.
- * Purely presentational — receives data as props.
- */
-
 import React from 'react';
 import type { MacroRegime } from '../services/macroSignalEngine';
 
@@ -13,6 +7,7 @@ interface RegimeOrbProps {
   confidence_pct: number;
   score_delta: number;
   regime_changed: boolean;
+  refreshing?: boolean;
 }
 
 const REGIME_CONFIG = {
@@ -48,6 +43,7 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
   confidence_pct,
   score_delta,
   regime_changed,
+  refreshing,
 }) => {
   const cfg = REGIME_CONFIG[regime];
   const deltaPositive = score_delta > 0;
@@ -60,7 +56,7 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-500 overflow-hidden"
+      className={`relative flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-700 overflow-hidden ${refreshing ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
       style={{
         background: `radial-gradient(circle at 50% 50%, ${cfg.glow} 0%, transparent 80%)`,
         border: `1px solid ${cfg.border}`,
@@ -120,7 +116,7 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
             strokeDasharray={`${circumference * arcFraction} ${circumference * (1 - arcFraction)}`}
             strokeDashoffset={circumference * 0.25}
             strokeLinecap="round"
-            style={{ transition: 'stroke-dasharray 1s cubic-bezier(0.4, 0, 0.2, 1)' }}
+            style={{ transition: 'stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
           />
         </svg>
 
@@ -162,20 +158,23 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
       )}
 
       {/* Animated pulse dot */}
-      <div className="absolute top-3 left-3">
-        <span
-          className="relative flex h-2.5 w-2.5"
-        >
+      {!refreshing && (
+        <div className="absolute top-3 left-3">
           <span
-            className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-            style={{ background: cfg.pulse }}
-          />
-          <span
-            className="relative inline-flex rounded-full h-2.5 w-2.5"
-            style={{ background: cfg.pulse }}
-          />
-        </span>
-      </div>
+            className="relative flex h-2.5 w-2.5"
+          >
+            <span
+              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+              style={{ background: cfg.pulse }}
+            />
+            <span
+              className="relative inline-flex rounded-full h-2.5 w-2.5"
+              style={{ background: cfg.pulse }}
+            />
+          </span>
+        </div>
+      )}
     </div>
   );
 };
+

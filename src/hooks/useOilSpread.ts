@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { getStaleness } from './useStaleness';
 
 export interface OilSpreadRecord {
     id: string;
@@ -12,6 +13,7 @@ export interface OilSpreadRecord {
     change_3d: number;
     metadata: any;
     created_at: string;
+    computed_at: string;
     is_stale?: boolean;
 }
 
@@ -33,16 +35,7 @@ export const useOilSpread = () => {
             if (!data || data.length === 0) {
                 console.log('No oil spread data found. Triggering ingestion edge function...');
                 try {
-                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-                    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-                    
-                    await fetch(`${supabaseUrl}/functions/v1/ingest-oil-spread`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${supabaseKey}`,
-                            'apikey': supabaseKey,
-                        }
-                    });
+                    await supabase.functions.invoke('ingest-oil-spread');
                     
                     await new Promise(r => setTimeout(r, 2000));
                     
@@ -60,18 +53,20 @@ export const useOilSpread = () => {
                 }
             }
 
-            const today = new Date().toISOString().slice(0, 10);
-            return (data || []).map((d: any, idx: number) => ({
-                ...d,
-                front_price: Number(d.front_price),
-                next_price: Number(d.next_price),
-                spread: Number(d.spread),
-                change_1d: Number(d.change_1d),
-                change_3d: Number(d.change_3d),
-                is_stale: idx === 0 ? d.date !== today : false
-            }));
+            return (data || []).map((d: any) => {
+                const staleness = getStaleness(d.computed_at, 'daily');
+                return {
+                    ...d,
+                    front_price: Number(d.front_price),
+                    next_price: Number(d.next_price),
+                    spread: Number(d.spread),
+                    change_1d: Number(d.change_1d),
+                    change_3d: Number(d.change_3d),
+                    is_stale: staleness.state !== 'fresh'
+                };
+            });
         },
-        staleTime: 1000 * 60 * 60, // 1 hour
+        staleTime: 1000 * 60 * 15, // 15 mins (institutional grade needs tighter cache)
     });
 };
 
@@ -92,24 +87,10 @@ export const useLatestOilSpread = () => {
             }
 
             if (!data) {
-                // Auto-trigger ingestion if table is empty
                 console.log('No oil spread data found. Triggering ingestion edge function...');
                 try {
-                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-                    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-                    
-                    await fetch(`${supabaseUrl}/functions/v1/ingest-oil-spread`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${supabaseKey}`,
-                            'apikey': supabaseKey,
-                        }
-                    });
-                    
-                    // Wait a moment for DB upsert
+                    await supabase.functions.invoke('ingest-oil-spread');
                     await new Promise(r => setTimeout(r, 2000));
-                    
-                    // Retry fetch
                     const { data: retryData } = await supabase
                         .from('oil_market_spread')
                         .select('*')
@@ -125,7 +106,7 @@ export const useLatestOilSpread = () => {
                 }
             }
 
-            const today = new Date().toISOString().slice(0, 10);
+            const staleness = getStaleness(data.computed_at, 'daily');
             return {
                 ...data,
                 front_price: Number(data.front_price),
@@ -133,9 +114,9 @@ export const useLatestOilSpread = () => {
                 spread: Number(data.spread),
                 change_1d: Number(data.change_1d),
                 change_3d: Number(data.change_3d),
-                is_stale: data.date !== today
+                is_stale: staleness.state !== 'fresh'
             };
         },
-        staleTime: 1000 * 60 * 30, // 30 mins
+        staleTime: 1000 * 60 * 5, // 5 mins
     });
 };

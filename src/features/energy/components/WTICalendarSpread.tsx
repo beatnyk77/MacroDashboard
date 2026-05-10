@@ -19,6 +19,9 @@ import { format } from 'date-fns';
 import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
 import { supabase } from '@/lib/supabase';
 import { SectionErrorBoundary } from '@/features/daily-macro/components/SectionErrorBoundary';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { useStaleness } from '@/hooks/useStaleness';
+import { WTICalendarSpreadSkeleton } from './WTICalendarSpreadSkeleton';
 
 const WTICalendarSpreadInner: React.FC = () => {
     const { data: spreadData, isLoading, error, refetch } = useOilSpread();
@@ -48,8 +51,9 @@ const WTICalendarSpreadInner: React.FC = () => {
     }, [spreadData]);
 
     const latest = spreadData?.[0];
+    const staleness = useStaleness(latest?.computed_at, 'daily');
+    const isStale = staleness.state !== 'fresh';
     const signalHealth = health.find(h => h.job_name === 'ingest-oil-spread');
-    const isStale = latest?.is_stale;
     
     const getRegimeDetails = (spread: number) => {
         if (spread > 2.0) return { label: 'CRITICAL BACKWARDATION', color: 'text-rose-500 bg-rose-500/10', icon: AlertTriangle, desc: 'Extreme Physical Shortage' };
@@ -60,16 +64,11 @@ const WTICalendarSpreadInner: React.FC = () => {
 
     const regime = latest ? getRegimeDetails(latest.spread) : null;
 
-    if (isLoading) {
-        return (
-            <div className="w-full h-[500px] bg-white/[0.02] border border-white/5 rounded-[2rem] animate-pulse flex flex-col items-center justify-center gap-4">
-                <Fuel className="w-8 h-8 text-white/10" />
-                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Synchronizing WTI Futures...</span>
-            </div>
-        );
+    if (isLoading && !spreadData) {
+        return <WTICalendarSpreadSkeleton />;
     }
 
-    if (error || !latest) {
+    if (error && !spreadData) {
         return (
             <div className="w-full h-[500px] bg-rose-500/5 border border-rose-500/10 rounded-[2rem] flex items-center justify-center text-center p-8">
                 <div className="max-w-md space-y-4">
@@ -89,6 +88,9 @@ const WTICalendarSpreadInner: React.FC = () => {
         );
     }
 
+    // Graceful degradation: If no data at all (rare)
+    if (!latest) return <WTICalendarSpreadSkeleton />;
+
     return (
         <Card className="bg-black/40 border-white/10 backdrop-blur-xl overflow-hidden rounded-[2rem]">
             {/* Header / Meta Bar */}
@@ -99,12 +101,10 @@ const WTICalendarSpreadInner: React.FC = () => {
                         <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30">Energy Market Structure</span>
                     </div>
                     
-                    <div className={cn(
-                        "text-[9px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1.5",
-                        isStale ? "bg-amber-500/10 text-amber-500/80 border border-amber-500/20" : "bg-emerald-500/10 text-emerald-500/80 border border-emerald-500/20"
-                    )}>
-                        {isStale ? <><Clock size={10} /> Historical Fallback</> : <><CheckCircle size={10} /> Real-Time Fresh</>}
-                    </div>
+                    <FreshnessChip 
+                        status={staleness.state} 
+                        lastUpdated={latest.computed_at}
+                    />
 
                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/5">
                         <div className={cn("w-1 h-1 rounded-full", signalHealth ? "bg-emerald-400" : "bg-white/20")} />
@@ -116,8 +116,12 @@ const WTICalendarSpreadInner: React.FC = () => {
 
                 <div className="flex items-center gap-6">
                     <div className="flex flex-col items-end">
-                        <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Data As Of</span>
-                        <span className="text-[10px] font-mono font-bold text-white/60">{format(new Date(latest.date), 'MMM dd, yyyy')}</span>
+                        <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Last Computed</span>
+                        <span className="text-[10px] font-mono font-bold text-white/60">
+                            {format(new Date(latest.computed_at || latest.created_at), 'HH:mm')}
+                            <span className="mx-1 opacity-20">|</span>
+                            {format(new Date(latest.date), 'MMM dd')}
+                        </span>
                     </div>
                     
                     <button
@@ -134,188 +138,211 @@ const WTICalendarSpreadInner: React.FC = () => {
                 </div>
             </div>
 
-            <CardHeader className="p-8 pb-0 border-b border-white/5">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-xl bg-amber-500/10">
-                                <Fuel className="w-5 h-5 text-amber-500" />
-                            </div>
-                            <CardTitle className="text-2xl font-black uppercase tracking-heading text-white italic">
-                                WTI Calendar Spread <span className="text-muted-foreground/40 not-italic">(CL1 - CL2)</span>
-                            </CardTitle>
-                        </div>
-                        <CardDescription className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest pl-11">
-                            Physical Oil Stress Indicator • NYMEX Futures Terminal
-                        </CardDescription>
+            {/* Stale Warning Banner */}
+            {isStale && (
+                <div className="px-8 py-3 bg-amber-500/10 border-b border-amber-500/10 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <AlertTriangle size={14} className="text-amber-500" />
+                        <span className="text-[11px] font-bold text-amber-500/80 uppercase tracking-tight">
+                            Market data may be delayed. Showing last known physical structure.
+                        </span>
                     </div>
+                    <button 
+                        onClick={handleRefresh}
+                        className="text-[9px] font-black uppercase tracking-widest px-2 py-1 bg-amber-500 text-black rounded hover:bg-amber-400 transition-colors"
+                    >
+                        Force Update
+                    </button>
+                </div>
+            )}
 
-                    {regime && (
-                        <div className="flex items-center gap-4">
-                            <div className="text-right">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-1">Current Spread</p>
-                                <p className={cn("text-3xl font-black tracking-heading italic", latest.spread >= 0 ? "text-emerald-500" : "text-rose-500")}>
-                                    {latest.spread >= 0 ? '+' : ''}{latest.spread.toFixed(2)} <span className="text-xs not-italic">USD</span>
+            <div className={cn(
+                "transition-all duration-500",
+                isRefreshing ? "opacity-40 grayscale-[0.5] blur-[1px]" : "opacity-100"
+            )}>
+                <CardHeader className="p-8 pb-0 border-b border-white/5">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-xl bg-amber-500/10">
+                                    <Fuel className="w-5 h-5 text-amber-500" />
+                                </div>
+                                <CardTitle className="text-2xl font-black uppercase tracking-heading text-white italic">
+                                    WTI Calendar Spread <span className="text-muted-foreground/40 not-italic">(CL1 - CL2)</span>
+                                </CardTitle>
+                            </div>
+                            <CardDescription className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest pl-11">
+                                Physical Oil Stress Indicator • NYMEX Futures Terminal
+                            </CardDescription>
+                        </div>
+
+                        {regime && (
+                            <div className="flex items-center gap-4">
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-1">Current Spread</p>
+                                    <p className={cn("text-3xl font-black tracking-heading italic", latest.spread >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                        {latest.spread >= 0 ? '+' : ''}{latest.spread.toFixed(2)} <span className="text-xs not-italic">USD</span>
+                                    </p>
+                                </div>
+                                <div className={cn("px-6 py-4 rounded-2xl border border-white/5 flex flex-col items-center gap-2", regime.color)}>
+                                    <regime.icon className="w-5 h-5" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.1em]">{regime.label}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </CardHeader>
+
+                <CardContent className="p-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        {/* Insights Panel */}
+                        <div className="lg:col-span-1 space-y-6">
+                            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                                <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Institutional Summary</h4>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-end border-b border-white/5 pb-2">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase">Front Month (CL1)</span>
+                                        <span className="text-sm font-black text-white italic">${latest.front_price.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-end border-b border-white/5 pb-2">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase">Next Month (CL2)</span>
+                                        <span className="text-sm font-black text-white italic">${latest.next_price.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-end border-b border-white/5 pb-2">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase">1D Change</span>
+                                        <span className={cn("text-sm font-black italic", latest.change_1d >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            {latest.change_1d >= 0 ? '+' : ''}{latest.change_1d.toFixed(2)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/10">
+                                <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-3">So What?</h4>
+                                <p className="text-[11px] leading-relaxed text-amber-500/70 font-bold uppercase tracking-wide">
+                                    {regime?.desc}. {latest.spread > 1 ? 
+                                        "Physical buyers are front-loading deliveries, signaling immediate supply shortages." : 
+                                        latest.spread < -1 ? 
+                                        "Excess supply is hitting storage limits, forcing front-month prices below next-month." : 
+                                        "The physical market remains in equilibrium with no immediate stress signals."
+                                    }
                                 </p>
                             </div>
-                            <div className={cn("px-6 py-4 rounded-2xl border border-white/5 flex flex-col items-center gap-2", regime.color)}>
-                                <regime.icon className="w-5 h-5" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.1em]">{regime.label}</span>
+                        </div>
+
+                        {/* Chart Area */}
+                        <div className="lg:col-span-3 h-[400px] relative">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                                    <defs>
+                                        <linearGradient id="spreadGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor={latest.spread >= 0 ? "#10b981" : "#f43f5e"} stopOpacity={0.3}/>
+                                            <stop offset="95%" stopColor={latest.spread >= 0 ? "#10b981" : "#f43f5e"} stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                                    <XAxis 
+                                        dataKey="formattedDate" 
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
+                                        dy={10}
+                                    />
+                                    <YAxis 
+                                        yAxisId="price"
+                                        orientation="left"
+                                        domain={['auto', 'auto']}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
+                                        tickFormatter={(val) => `$${val}`}
+                                    />
+                                    <YAxis 
+                                        yAxisId="spread"
+                                        orientation="right"
+                                        domain={[-4, 4]}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ 
+                                            backgroundColor: '#000000e0', 
+                                            borderColor: '#ffffff10', 
+                                            borderRadius: '12px',
+                                            fontSize: '10px',
+                                            fontWeight: 900,
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '1px'
+                                        }}
+                                        itemStyle={{ padding: '2px 0' }}
+                                    />
+                                    
+                                    <ReferenceArea 
+                                        yAxisId="spread"
+                                        y1={-1} 
+                                        y2={1} 
+                                        fill="#ffffff05" 
+                                        strokeOpacity={0}
+                                    />
+                                    <ReferenceLine yAxisId="spread" y={0} stroke="#ffffff10" strokeWidth={1} />
+                                    <ReferenceLine yAxisId="spread" y={1} stroke="#ffffff05" strokeDasharray="3 3" />
+                                    <ReferenceLine yAxisId="spread" y={-1} stroke="#ffffff05" strokeDasharray="3 3" />
+
+                                    <Area 
+                                        yAxisId="spread"
+                                        type="monotone" 
+                                        dataKey="spread" 
+                                        name="Calendar Spread (CL1-CL2)"
+                                        fill="url(#spreadGradient)" 
+                                        stroke={latest.spread >= 0 ? "#10b981" : "#f43f5e"}
+                                        strokeWidth={2}
+                                        dot={false}
+                                    />
+                                    <Line 
+                                        yAxisId="price"
+                                        type="monotone" 
+                                        dataKey="front_price" 
+                                        name="Front Month (CL1)"
+                                        stroke="#ffffff60" 
+                                        strokeWidth={3}
+                                        dot={false}
+                                    />
+                                    <Line 
+                                        yAxisId="price"
+                                        type="monotone" 
+                                        dataKey="next_price" 
+                                        name="Next Month (CL2)"
+                                        stroke="#3b82f660" 
+                                        strokeWidth={3}
+                                        dot={false}
+                                    />
+                                </ComposedChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        {/* Custom Legend */}
+                        <div className="flex flex-wrap justify-center gap-6 mt-4 pt-4 border-t border-white/5">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-sm bg-[#10b981]" />
+                                <span className="text-[10px] font-black uppercase tracking-wider text-white/40">Spread (Backwardation)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-sm bg-[#f43f5e]" />
+                                <span className="text-[10px] font-black uppercase tracking-wider text-white/40">Spread (Contango)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-0.5 bg-white/60" />
+                                <span className="text-[10px] font-black uppercase tracking-wider text-white/40">CL1 Price</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-0.5 bg-[#3b82f660]" />
+                                <span className="text-[10px] font-black uppercase tracking-wider text-white/40">CL2 Price</span>
                             </div>
                         </div>
-                    )}
-                </div>
-            </CardHeader>
-
-            <CardContent className="p-8">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    {/* Insights Panel */}
-                    <div className="lg:col-span-1 space-y-6">
-                        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
-                            <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Institutional Summary</h4>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-end border-b border-white/5 pb-2">
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Front Month (CL1)</span>
-                                    <span className="text-sm font-black text-white italic">${latest.front_price.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between items-end border-b border-white/5 pb-2">
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Next Month (CL2)</span>
-                                    <span className="text-sm font-black text-white italic">${latest.next_price.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between items-end border-b border-white/5 pb-2">
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase">1D Change</span>
-                                    <span className={cn("text-sm font-black italic", latest.change_1d >= 0 ? "text-emerald-500" : "text-rose-500")}>
-                                        {latest.change_1d >= 0 ? '+' : ''}{latest.change_1d.toFixed(2)}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/10">
-                            <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-3">So What?</h4>
-                            <p className="text-[11px] leading-relaxed text-amber-500/70 font-bold uppercase tracking-wide">
-                                {regime?.desc}. {latest.spread > 1 ? 
-                                    "Physical buyers are front-loading deliveries, signaling immediate supply shortages." : 
-                                    latest.spread < -1 ? 
-                                    "Excess supply is hitting storage limits, forcing front-month prices below next-month." : 
-                                    "The physical market remains in equilibrium with no immediate stress signals."
-                                }
-                            </p>
-                        </div>
                     </div>
-
-                    {/* Chart Area */}
-                    <div className="lg:col-span-3 h-[400px] relative">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                                <defs>
-                                    <linearGradient id="spreadGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor={latest.spread >= 0 ? "#10b981" : "#f43f5e"} stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor={latest.spread >= 0 ? "#10b981" : "#f43f5e"} stopOpacity={0}/>
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                                <XAxis 
-                                    dataKey="formattedDate" 
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
-                                    dy={10}
-                                />
-                                <YAxis 
-                                    yAxisId="price"
-                                    orientation="left"
-                                    domain={['auto', 'auto']}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
-                                    tickFormatter={(val) => `$${val}`}
-                                />
-                                <YAxis 
-                                    yAxisId="spread"
-                                    orientation="right"
-                                    domain={[-4, 4]}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
-                                />
-                                <Tooltip
-                                    contentStyle={{ 
-                                        backgroundColor: '#000000e0', 
-                                        borderColor: '#ffffff10', 
-                                        borderRadius: '12px',
-                                        fontSize: '10px',
-                                        fontWeight: 900,
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '1px'
-                                    }}
-                                    itemStyle={{ padding: '2px 0' }}
-                                />
-                                
-                                <ReferenceArea 
-                                    yAxisId="spread"
-                                    y1={-1} 
-                                    y2={1} 
-                                    fill="#ffffff05" 
-                                    strokeOpacity={0}
-                                />
-                                <ReferenceLine yAxisId="spread" y={0} stroke="#ffffff10" strokeWidth={1} />
-                                <ReferenceLine yAxisId="spread" y={1} stroke="#ffffff05" strokeDasharray="3 3" />
-                                <ReferenceLine yAxisId="spread" y={-1} stroke="#ffffff05" strokeDasharray="3 3" />
-
-                                <Area 
-                                    yAxisId="spread"
-                                    type="monotone" 
-                                    dataKey="spread" 
-                                    name="Calendar Spread (CL1-CL2)"
-                                    fill="url(#spreadGradient)" 
-                                    stroke={latest.spread >= 0 ? "#10b981" : "#f43f5e"}
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                                <Line 
-                                    yAxisId="price"
-                                    type="monotone" 
-                                    dataKey="front_price" 
-                                    name="Front Month (CL1)"
-                                    stroke="#ffffff60" 
-                                    strokeWidth={3}
-                                    dot={false}
-                                />
-                                <Line 
-                                    yAxisId="price"
-                                    type="monotone" 
-                                    dataKey="next_price" 
-                                    name="Next Month (CL2)"
-                                    stroke="#3b82f660" 
-                                    strokeWidth={3}
-                                    dot={false}
-                                />
-                            </ComposedChart>
-                        </ResponsiveContainer>
-                    </div>
-
-                    {/* Custom Legend */}
-                    <div className="flex flex-wrap justify-center gap-6 mt-4 pt-4 border-t border-white/5">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-sm bg-[#10b981]" />
-                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">Spread (Backwardation)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-sm bg-[#f43f5e]" />
-                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">Spread (Contango)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-0.5 bg-white/60" />
-                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">CL1 Price</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-0.5 bg-[#3b82f660]" />
-                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">CL2 Price</span>
-                        </div>
-                    </div>
-                </div>
-            </CardContent>
+                </CardContent>
+            </div>
         </Card>
     );
 };
@@ -327,3 +354,4 @@ export const WTICalendarSpread: React.FC = () => {
         </SectionErrorBoundary>
     );
 };
+

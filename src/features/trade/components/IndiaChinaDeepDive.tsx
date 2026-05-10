@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { Target, TrendingUp, BarChart3, AlertCircle } from 'lucide-react'
+import { Target, TrendingUp, BarChart3, AlertCircle, RefreshCw } from 'lucide-react'
 import { useIndiaChinaComparison } from '../hooks/useIndiaChinaComparison'
 import { formatTradeValue } from '../types/trade'
 import { cn } from '@/lib/utils'
+import { ComparisonSkeleton } from './ComparisonSkeleton'
+import { FreshnessChip } from '@/components/FreshnessChip'
 
 const COMPARISON_CATEGORIES = [
     { label: 'Smartphones', code: '851713' },
@@ -15,9 +17,17 @@ const COMPARISON_CATEGORIES = [
 
 export const IndiaChinaDeepDive: React.FC = () => {
     const [selectedCode, setSelectedCode] = useState(COMPARISON_CATEGORIES[0].code)
-    const { data, loading, error } = useIndiaChinaComparison(selectedCode)
+    const { data, loading, refreshing, error, refresh, lastFetchedAt } = useIndiaChinaComparison(selectedCode)
+    const latest = data[0]
 
-    const latest = data[0] // Assuming sorted by year desc
+    const getFreshnessStatus = (date: string | null | undefined): FreshnessStatus => {
+        if (!date) return 'no_data'
+        const diff = Date.now() - new Date(date).getTime()
+        const days = diff / (1000 * 60 * 60 * 24)
+        if (days < 7) return 'fresh'
+        if (days < 30) return 'lagged'
+        return 'stale'
+    }
 
     return (
         <div className="w-full space-y-8 p-8 rounded-3xl bg-white/[0.02] border border-white/5 relative overflow-hidden">
@@ -33,36 +43,62 @@ export const IndiaChinaDeepDive: React.FC = () => {
                             Manufacturing Shift: India vs China
                         </h2>
                     </div>
-                    <p className="text-xs text-white/40 font-bold uppercase tracking-[0.2em]">
-                        6-Digit Granularity Deep Dive
-                    </p>
+                    <div className="flex items-center gap-4">
+                        <p className="text-xs text-white/40 font-bold uppercase tracking-[0.2em]">
+                            6-Digit Granularity Deep Dive
+                        </p>
+                        {lastFetchedAt && (
+                            <FreshnessChip 
+                                status={getFreshnessStatus(lastFetchedAt)} 
+                                lastUpdated={lastFetchedAt} 
+                            />
+                        )}
+                    </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                    {COMPARISON_CATEGORIES.map(c => (
-                        <button
-                            key={c.code}
-                            onClick={() => setSelectedCode(c.code)}
-                            className={cn(
-                                "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                                selectedCode === c.code
-                                    ? "bg-white/10 text-white border border-white/20 shadow-lg shadow-black/20"
-                                    : "bg-white/[0.02] text-white/30 border border-white/5 hover:border-white/20 hover:text-white/60"
-                            )}
-                        >
-                            {c.label}
-                        </button>
-                    ))}
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-wrap gap-2">
+                        {COMPARISON_CATEGORIES.map(c => (
+                            <button
+                                key={c.code}
+                                onClick={() => setSelectedCode(c.code)}
+                                className={cn(
+                                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                                    selectedCode === c.code
+                                        ? "bg-white/10 text-white border border-white/20 shadow-lg shadow-black/20"
+                                        : "bg-white/[0.02] text-white/30 border border-white/5 hover:border-white/20 hover:text-white/60"
+                                )}
+                            >
+                                {c.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button
+                        onClick={refresh}
+                        disabled={refreshing || loading}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                            "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 disabled:opacity-50"
+                        )}
+                    >
+                        <RefreshCw className={cn("w-3 h-3", refreshing && "animate-spin")} />
+                        {refreshing ? 'Syncing...' : 'Refresh Intelligence'}
+                    </button>
                 </div>
             </div>
 
-            {loading ? (
-                <div className="h-[300px] flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-8 h-8 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-                        <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Crunching bilateral flows...</p>
-                    </div>
+            {lastFetchedAt && new Date().getTime() - new Date(lastFetchedAt).getTime() > 24 * 60 * 60 * 1000 && (
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3">
+                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                        Bilateral flow data might be stale. Click refresh to trigger live Comtrade ingestion for HS {selectedCode}.
+                    </p>
                 </div>
+            )}
+
+            {loading ? (
+                <ComparisonSkeleton />
             ) : error ? (
                 <div className="h-[300px] flex items-center justify-center rounded-2xl bg-rose-500/5 border border-rose-500/10 p-8 text-center">
                     <div className="space-y-2">

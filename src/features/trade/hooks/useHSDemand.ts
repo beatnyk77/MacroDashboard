@@ -16,7 +16,10 @@ function enrich(score: OpportunityScore): TradeMarket {
 
 export function useHSDemand(hsCode: string | null) {
     const [state, setState] = useState<DemandState>({ status: 'idle' })
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
     const inflightRef = useRef<string | null>(null)
+
+    const refresh = () => setRefreshTrigger(prev => prev + 1)
 
     useEffect(() => {
         if (!hsCode) {
@@ -28,24 +31,35 @@ export function useHSDemand(hsCode: string | null) {
         inflightRef.current = hsCode
 
         const run = async () => {
-            setState({ status: 'loading' })
+            const isManualRefresh = refreshTrigger > 0
+            
+            if (isManualRefresh) {
+                setState({ status: 'refreshing' })
+            } else {
+                setState({ status: 'loading' })
+            }
 
             try {
-                // ── 1. Check opportunity scores cache ──
-                const { data: cached, error: cacheErr } = await supabase
-                    .from('hs_opportunity_scores')
-                    .select('*')
-                    .eq('hs_code', hsCode)
-                    .order('overall_score', { ascending: false })
-                    .limit(100)
+                // ── 1. Check opportunity scores cache (skip if manual refresh) ──
+                let cached: any[] = []
+                if (!isManualRefresh) {
+                    const { data, error: cacheErr } = await supabase
+                        .from('hs_opportunity_scores')
+                        .select('*')
+                        .eq('hs_code', hsCode)
+                        .order('overall_score', { ascending: false })
+                        .limit(100)
 
-                if (cacheErr) throw cacheErr
+                    if (cacheErr) throw cacheErr
+                    cached = data || []
+                }
 
                 const now = new Date()
                 const isStale = !cached || cached.length === 0 ||
                     (cached[0]?.computed_at && (now.getTime() - new Date(cached[0].computed_at).getTime()) > CACHE_STALE_DAYS * 86400000)
 
-                if (!isStale && cached && cached.length > 0 && !cancelled) {
+                // If not stale and not manual refresh, use cache
+                if (!isManualRefresh && !isStale && cached.length > 0 && !cancelled) {
                     setState({
                         status: 'success',
                         markets: cached.map(enrich),
@@ -55,8 +69,8 @@ export function useHSDemand(hsCode: string | null) {
                     return
                 }
 
-                // ── 2. Cache miss → invoke edge function ──
-                if (!cancelled) setState({ status: 'fetching_live' })
+                // ── 2. Cache miss or Manual Refresh → invoke edge function ──
+                if (!cancelled) setState({ status: isManualRefresh ? 'refreshing' : 'fetching_live' })
 
                 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -74,15 +88,18 @@ export function useHSDemand(hsCode: string | null) {
 
                 if (!res.ok && !cancelled) {
                     // Edge function failed — show cached stale data if any
+                    const errorMsg = `Edge function failed: ${res.statusText}`
                     if (cached && cached.length > 0) {
                         setState({
                             status: 'success',
                             markets: cached.map(enrich),
                             hsCode,
                             cachedAt: cached[0]?.computed_at ?? new Date().toISOString(),
+                            isFallback: true,
+                            softError: errorMsg
                         })
                     } else {
-                        setState({ status: 'error', message: `Failed to fetch trade data: ${res.statusText}` })
+                        setState({ status: 'error', message: errorMsg })
                     }
                     return
                 }
@@ -90,16 +107,19 @@ export function useHSDemand(hsCode: string | null) {
                 // Parse response to check for "soft" errors
                 const resData = await res.json().catch(() => ({ ok: false, error: 'Invalid response from server' }))
                 if (!resData.ok && !cancelled) {
-                    console.warn('[useHSDemand] Edge function returned soft error:', resData.error, resData.debug);
+                    const softError = resData.error || 'Failed to fetch live trade data'
+                    console.warn('[useHSDemand] Edge function returned soft error:', softError, resData.debug);
                     if (cached && cached.length > 0) {
                         setState({
                             status: 'success',
                             markets: cached.map(enrich),
                             hsCode,
                             cachedAt: cached[0]?.computed_at ?? new Date().toISOString(),
+                            isFallback: true,
+                            softError
                         })
                     } else {
-                        setState({ status: 'error', message: resData.error || 'Failed to fetch live trade data' })
+                        setState({ status: 'error', message: softError })
                     }
                     return
                 }
@@ -121,7 +141,10 @@ export function useHSDemand(hsCode: string | null) {
                         .order('overall_score', { ascending: false })
                         .limit(100)
 
-                    if (fresh && fresh.length > 0 && !cancelled) {
+                    // For manual refresh, we want to make sure computed_at is NEWER than when we started
+                    const isNewEnough = !isManualRefresh || (fresh && fresh.length > 0 && new Date(fresh[0].computed_at) > now)
+
+                    if (fresh && fresh.length > 0 && isNewEnough && !cancelled) {
                         success = true
                         setState({
                             status: 'success',
@@ -137,7 +160,20 @@ export function useHSDemand(hsCode: string | null) {
                 await poll()
 
                 if (!cancelled && !success) {
-                    setState({ status: 'error', message: 'Data processing timed out. Please try again.' })
+                    // If we timed out but have cached data, show it as a fallback
+                    const timeoutMsg = 'Data processing timed out. UN Comtrade data may still be processing.'
+                    if (cached && cached.length > 0) {
+                        setState({
+                            status: 'success',
+                            markets: cached.map(enrich),
+                            hsCode,
+                            cachedAt: cached[0].computed_at,
+                            isFallback: true,
+                            softError: timeoutMsg
+                        })
+                    } else {
+                        setState({ status: 'error', message: timeoutMsg })
+                    }
                 }
 
             } catch (err: any) {
@@ -149,7 +185,7 @@ export function useHSDemand(hsCode: string | null) {
 
         run()
         return () => { cancelled = true }
-    }, [hsCode])
+    }, [hsCode, refreshTrigger])
 
-    return state
+    return { ...state, refresh }
 }

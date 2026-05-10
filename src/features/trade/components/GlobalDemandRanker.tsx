@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, ChevronsUpDown, Loader2 } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, ChevronsUpDown, Loader2, Globe2, Target, Award, Banknote, LayoutDashboard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { OpportunityScoreBadge } from './OpportunityScoreBadge'
 import type { TradeMarket } from '../types/trade'
 import { formatTradeValue } from '../types/trade'
+import { TradeRankerSkeleton } from './TradeRankerSkeleton'
 
 interface GlobalDemandRankerProps {
     markets: TradeMarket[]
     hsCode: string
     loading?: boolean
+    refreshing?: boolean
 }
 
 type SortKey = 'overall_score' | 'latest_import_usd' | 'cagr_5yr_pct' | 'hhi' | 'macro_score'
@@ -36,6 +38,7 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
     markets,
     hsCode,
     loading = false,
+    refreshing = false,
 }) => {
     const navigate = useNavigate()
     const [sortKey, setSortKey] = useState<SortKey>('overall_score')
@@ -63,14 +66,7 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
     const totalPages = Math.ceil(sorted.length / perPage)
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
-                <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">
-                    Computing market intelligence…
-                </p>
-            </div>
-        )
+        return <TradeRankerSkeleton />
     }
 
     if (markets.length === 0) {
@@ -85,13 +81,17 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
     return (
         <div className="space-y-4">
             {/* Summary stat row */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Markets Ranked', value: markets.length },
-                    { label: 'Top Opportunity', value: sorted[0]?.reporter_name || '—' },
-                    { label: 'Top Score', value: sorted[0]?.overall_score ?? '—' },
+                    { label: 'Markets Ranked', value: markets.length, icon: Globe2 },
+                    { label: 'Top Opportunity', value: sorted[0]?.reporter_name || '—', icon: Target },
+                    { label: 'Avg Opportunity Score', value: Math.round(markets.reduce((acc, m) => acc + m.overall_score, 0) / markets.length), icon: Award },
+                    { label: 'Total Mkt Value', value: formatTradeValue(markets.reduce((acc, m) => acc + (m.latest_export_usd || 0), 0)), icon: Banknote },
                 ].map(s => (
-                    <div key={s.label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div key={s.label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-3 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                            <s.icon className="w-12 h-12 text-white" />
+                        </div>
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-1">{s.label}</p>
                         <p className="text-xl font-black text-white font-mono">{s.value}</p>
                     </div>
@@ -124,7 +124,7 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
                             <th className="px-3 py-3 w-8" />
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className={cn(refreshing && "opacity-50 pointer-events-none transition-opacity")}>
                         {paginated.map((m, i) => {
                             const rank = page * perPage + i + 1
                             const isTop3 = rank <= 3
