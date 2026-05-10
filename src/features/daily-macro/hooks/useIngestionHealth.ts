@@ -11,7 +11,13 @@ export function useIngestionHealth() {
   return useQuery({
     queryKey: ['ingestion-health'],
     queryFn: async () => {
-      const jobs = ['compute-daily-macro-signal', 'ingest-market-pulse', 'ingest-fred', 'ingest-oil-spread'];
+      const jobs = [
+        'compute-daily-macro-signal', 
+        'ingest-market-pulse', 
+        'ingest-fred', 
+        'ingest-oil-spread',
+        'generate-monthly-regime-digest'
+      ];
       
       const { data, error } = await supabase
         .from('ingestion_runs')

@@ -1,4 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { runIngestion, IngestionContext } from "../_shared/logging.ts";
+import { runWithRetry } from "../_shared/job-runner.ts";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -25,71 +27,65 @@ async function fetchRegionalPulse(supabase: SupabaseClient, table: string) {
     return data?.[0] || null;
 }
 
-Deno.serve(async (req) => {
-    if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+async function doGenerateDigest(supabaseClient: SupabaseClient, targetYearMonth?: string) {
+    const now = new Date();
+    const year_month = targetYearMonth || `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
-    try {
-        const supabaseClient = createClient(
-            Deno.env.get("SUPABASE_URL") ?? "",
-            Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-        );
+    console.log(`Generating Monthly Regime Digest for ${year_month}...`);
 
-        const now = new Date();
-        const year_month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+    // 1. Fetch Core Data Pillars
+    const [
+        liq, vix, dxy, gold, brent, 
+        debtGold, usCpi, inGdp, inCpi, cnGdp,
+        africaPulse, indiaPulse, chinaPulse
+    ] = await Promise.all([
+        fetchLatestMetric(supabaseClient, "BIS_GLOBAL_LIQUIDITY_USD_BN"),
+        fetchLatestMetric(supabaseClient, "VIX_INDEX"),
+        fetchLatestMetric(supabaseClient, "DXY_INDEX"),
+        fetchLatestMetric(supabaseClient, "GOLD_PRICE_USD"),
+        fetchLatestMetric(supabaseClient, "BRENT_CRUDE_PRICE"),
+        fetchLatestMetric(supabaseClient, "RATIO_DEBT_GOLD"),
+        fetchLatestMetric(supabaseClient, "US_CPI_YOY"),
+        fetchLatestMetric(supabaseClient, "IN_GDP_GROWTH_YOY"),
+        fetchLatestMetric(supabaseClient, "IN_CPI_YOY"),
+        fetchLatestMetric(supabaseClient, "CN_GDP_GROWTH_YOY"),
+        fetchRegionalPulse(supabaseClient, "africa_macro_snapshots"),
+        fetchRegionalPulse(supabaseClient, "india_macro_snapshots"),
+        fetchRegionalPulse(supabaseClient, "china_macro_pulse")
+    ]);
 
-        // 1. Fetch Core Data Pillars
-        const [
-            liq, vix, dxy, gold, brent, 
-            debtGold, usCpi, inGdp, inCpi, cnGdp,
-            africaPulse, indiaPulse, chinaPulse
-        ] = await Promise.all([
-            fetchLatestMetric(supabaseClient, "BIS_GLOBAL_LIQUIDITY_USD_BN"),
-            fetchLatestMetric(supabaseClient, "VIX_INDEX"),
-            fetchLatestMetric(supabaseClient, "DXY_INDEX"),
-            fetchLatestMetric(supabaseClient, "GOLD_PRICE_USD"),
-            fetchLatestMetric(supabaseClient, "BRENT_CRUDE_PRICE"),
-            fetchLatestMetric(supabaseClient, "RATIO_DEBT_GOLD"),
-            fetchLatestMetric(supabaseClient, "US_CPI_YOY"),
-            fetchLatestMetric(supabaseClient, "IN_GDP_GROWTH_YOY"),
-            fetchLatestMetric(supabaseClient, "IN_CPI_YOY"),
-            fetchLatestMetric(supabaseClient, "CN_GDP_GROWTH_YOY"),
-            fetchRegionalPulse(supabaseClient, "africa_macro_snapshots"),
-            fetchRegionalPulse(supabaseClient, "india_macro_snapshots"),
-            fetchRegionalPulse(supabaseClient, "china_macro_pulse")
-        ]);
-
-        const macroContext = {
-            us: {
-                cpi_yoy: usCpi[0]?.value,
-                dxy: dxy[0]?.value,
-                debt_gold_ratio: debtGold[0]?.value,
-                vix: vix[0]?.value,
-                global_liquidity: liq[0]?.value
-            },
-            india: {
-                gdp_yoy: inGdp[0]?.value,
-                cpi_yoy: inCpi[0]?.value,
-                pulse_summary: indiaPulse?.holistic_summary
-            },
-            china: {
-                gdp_yoy: cnGdp[0]?.value,
-                pulse_summary: chinaPulse?.growth_momentum
-            },
-            africa: {
-                pulse_summary: africaPulse?.continent_summary
-            },
-            commodities: {
-                gold_usd: gold[0]?.value,
-                brent_crude: brent[0]?.value
-            }
-        };
-
-        const aimlapiKey = Deno.env.get("AIMLAPI_KEY");
-        if (!aimlapiKey) {
-            throw new Error("Missing AIMLAPI_KEY in environment variables");
+    const macroContext = {
+        us: {
+            cpi_yoy: usCpi[0]?.value,
+            dxy: dxy[0]?.value,
+            debt_gold_ratio: debtGold[0]?.value,
+            vix: vix[0]?.value,
+            global_liquidity: liq[0]?.value
+        },
+        india: {
+            gdp_yoy: inGdp[0]?.value,
+            cpi_yoy: inCpi[0]?.value,
+            pulse_summary: indiaPulse?.holistic_summary
+        },
+        china: {
+            gdp_yoy: cnGdp[0]?.value,
+            pulse_summary: chinaPulse?.growth_momentum
+        },
+        africa: {
+            pulse_summary: africaPulse?.continent_summary
+        },
+        commodities: {
+            gold_usd: gold[0]?.value,
+            brent_crude: brent[0]?.value
         }
+    };
 
-        const systemPrompt = `You are an elite macro strategist and institutional writer for GraphiQuestor.
+    const aimlapiKey = Deno.env.get("AIMLAPI_KEY");
+    if (!aimlapiKey) {
+        throw new Error("Missing AIMLAPI_KEY in environment variables");
+    }
+
+    const systemPrompt = `You are an elite macro strategist and institutional writer for GraphiQuestor.
 Transform the macro telemetry data into a single, cohesive, high-value institutional Monthly Regime Digest.
 
 Sections to cover (weave these together into a holistic narrative, do NOT write in silos):
@@ -120,67 +116,84 @@ Return the response as a JSON object with the following schema:
 
 Ensure the JSON is strictly valid.`;
 
-        const userPrompt = `Here is the current macro telemetry data:
+    const userPrompt = `Here is the current macro telemetry data:
 ${JSON.stringify(macroContext, null, 2)}
 
-Generate the Monthly Regime Digest.`;
+Generate the Monthly Regime Digest for ${year_month}.`;
 
-        const response = await fetch("https://api.aimlapi.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${aimlapiKey}`
-            },
-            body: JSON.stringify({
-                model: "gpt-4o",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt }
-                ],
-                response_format: { type: "json_object" }
-            })
-        });
+    const response = await fetch("https://api.aimlapi.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${aimlapiKey}`
+        },
+        body: JSON.stringify({
+            model: "gpt-4o",
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt }
+            ],
+            response_format: { type: "json_object" }
+        })
+    });
 
-        if (!response.ok) {
-            const errBody = await response.text();
-            throw new Error(`AIMLAPI error: ${response.status} ${response.statusText} - ${errBody}`);
-        }
-
-        const completion = await response.json();
-        const resultText = completion.choices[0].message.content;
-        let parsedResult;
-        try {
-            parsedResult = JSON.parse(resultText);
-        } catch (_e) {
-            throw new Error(`Failed to parse LLM JSON output: ${resultText}`);
-        }
-
-        // 3. Save to Database
-        const { error: dbError } = await supabaseClient
-            .from("monthly_regime_digests")
-            .upsert({
-                year_month,
-                subject_line: parsedResult.subject_line,
-                html_content: parsedResult.html_content,
-                plain_text: parsedResult.plain_text
-            }, { onConflict: "year_month" });
-
-        if (dbError) throw dbError;
-
-        return new Response(JSON.stringify({ success: true, digest: parsedResult }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-
-    } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error);
-        console.error("Error generating digest:", error);
-        return new Response(JSON.stringify({ 
-            success: false, 
-            error: message,
-            timestamp: new Date().toISOString()
-        }), {
-            status: 200, // Fail soft: return 200 with error object
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+    if (!response.ok) {
+        const errBody = await response.text();
+        throw new Error(`AIMLAPI error: ${response.status} ${response.statusText} - ${errBody}`);
     }
+
+    const completion = await response.json();
+    const resultText = completion.choices[0].message.content;
+    let parsedResult;
+    try {
+        parsedResult = JSON.parse(resultText);
+    } catch (_e) {
+        throw new Error(`Failed to parse LLM JSON output: ${resultText}`);
+    }
+
+    // 3. Save to Database
+    const { error: dbError } = await supabaseClient
+        .from("monthly_regime_digests")
+        .upsert({
+            year_month,
+            subject_line: parsedResult.subject_line,
+            html_content: parsedResult.html_content,
+            plain_text: parsedResult.plain_text
+        }, { onConflict: "year_month" });
+
+    if (dbError) throw dbError;
+
+    return { digest: parsedResult, year_month };
+}
+
+Deno.serve(async (req) => {
+    if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+    const supabaseClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    return await runIngestion(supabaseClient, "generate-monthly-regime-digest", async (ctx: IngestionContext) => {
+        let targetYearMonth: string | undefined;
+        try {
+            const body = await req.json();
+            targetYearMonth = body.year_month;
+        } catch (_e) {
+            // body is optional or malformed, use current
+        }
+
+        const result = await runWithRetry(
+            "generate-monthly-regime-digest",
+            () => doGenerateDigest(ctx.supabase, targetYearMonth),
+            { timeoutMs: 10 * 60 * 1000, maxRetries: 2 } // AI generation can be slow but shouldn't take 45 mins
+        );
+
+        if (!result.ok) {
+            throw new Error(`Digest generation failed: ${result.error}`);
+        }
+
+        return result.value!;
+    });
 });
+

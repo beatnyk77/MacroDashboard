@@ -1,31 +1,36 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { Newspaper, ChevronRight, Calendar } from 'lucide-react';
+import { Newspaper, ChevronRight, Calendar, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useRegimeDigest } from '@/features/regime-digest/hooks/useRegimeDigest';
+import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
+import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip';
 
 export const RegimeDigestSection: React.FC = () => {
-    const { data: latestDigest, isLoading } = useQuery({
-        queryKey: ['latest-regime-digest'],
-        queryFn: async () => {
-            const { data, error } = await supabase
-                .from('monthly_regime_digests')
-                .select('year_month, subject_line, plain_text, created_at')
-                .order('year_month', { ascending: false })
-                .limit(1)
-                .single();
-            if (error) throw error;
-            return data;
+    const { data: latestDigest, isLoading, regenerate, isRegenerating } = useRegimeDigest();
+    const { data: health } = useIngestionHealth();
+
+    const jobHealth = health?.find(h => h.job_name === 'generate-monthly-regime-digest');
+    
+    const status = React.useMemo<FreshnessStatus>(() => {
+        if (!jobHealth) return 'no_data';
+        const lastRun = new Date(jobHealth.finished_at);
+        const hoursSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60);
+        if (jobHealth.status === 'success') {
+            return hoursSinceLastRun > 720 ? 'stale' : 'fresh';
         }
-    });
+        return 'lagged';
+    }, [jobHealth]);
 
     if (isLoading) {
         return (
-            <Card variant="elevated">
-                <CardContent className="h-[200px] flex items-center justify-center">
-                    <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase animate-pulse">Loading Digest...</span>
+            <Card variant="elevated" className="overflow-hidden border-white/5 bg-slate-950/40">
+                <CardContent className="h-[220px] flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <RefreshCw className="h-6 w-6 text-blue-500 animate-spin" />
+                        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-[0.3em] animate-pulse">Synchronizing Intelligence...</span>
+                    </div>
                 </CardContent>
             </Card>
         );
@@ -37,41 +42,63 @@ export const RegimeDigestSection: React.FC = () => {
     const dateFormatted = new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     return (
-        <Card variant="elevated" className="overflow-hidden border-blue-500/20 bg-slate-950">
+        <Card variant="elevated" className="overflow-hidden border-blue-500/10 bg-slate-950 group relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none" />
+            
             <CardContent className="p-0">
-                <div className="relative">
-                    {/* Subtle background glow */}
-                    <div className="absolute inset-0 bg-blue-500/5 pointer-events-none" />
-                    
-                    <div className="relative p-6 md:p-8 flex-1 flex flex-col justify-center">
-                        <div className="flex items-center gap-2 mb-4">
-                            <Newspaper className="text-blue-500 h-5 w-5" />
-                            <span className="text-xs font-black tracking-[0.2em] uppercase text-blue-500">Macro Regime Digest</span>
+                <div className="relative p-6 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <Newspaper className="text-blue-500 h-4 w-4" />
+                                <span className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500">Monthly Regime Digest</span>
+                            </div>
+                            <div className="h-px w-12 bg-white/5" />
+                            <FreshnessChip 
+                                status={status} 
+                                lastUpdated={latestDigest.created_at} 
+                                label={status === 'fresh' ? 'VERIFIED' : 'HISTORICAL'}
+                            />
                         </div>
-                        <h3 className="text-2xl font-black text-white mb-2 leading-tight">
-                            {latestDigest.subject_line}
-                        </h3>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground mb-6">
-                            <div className="flex items-center gap-1.5 border border-white/10 bg-white/5 rounded-full px-3 py-1">
-                                <Calendar size={14} className="text-blue-400" />
-                                <span className="font-bold">{dateFormatted}</span>
+
+                        <div>
+                            <h3 className="text-2xl md:text-3xl font-black text-white mb-3 tracking-tighter leading-none group-hover:text-blue-400 transition-colors">
+                                {latestDigest.subject_line}
+                            </h3>
+                            <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
+                                <div className="flex items-center gap-1.5">
+                                    <Calendar size={12} className="text-blue-500/50" />
+                                    <span>{dateFormatted} Edition</span>
+                                </div>
+                                <span className="w-1 h-1 rounded-full bg-white/10" />
+                                <span>Institutional Analysis</span>
                             </div>
                         </div>
-                        <p className="text-muted-foreground/80 mb-8 line-clamp-2 max-w-2xl">
-                            {latestDigest.plain_text.substring(0, 200)}...
+
+                        <p className="text-slate-400 text-sm leading-relaxed line-clamp-2 max-w-2xl">
+                            {latestDigest.plain_text}
                         </p>
-                        <div className="flex gap-4 items-center">
-                            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-10 px-6 rounded-md">
-                                <Link to={`/regime-digest/${year}/${month}`}>
-                                    Read Full Digest <ChevronRight size={16} className="ml-2" />
-                                </Link>
-                            </Button>
-                            <Button asChild variant="outline" className="border-white/10 hover:bg-white/5 font-bold h-10 px-6 rounded-md text-white">
-                                <Link to="/regime-digest">
-                                    View Archive
-                                </Link>
-                            </Button>
-                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row md:flex-col gap-3 min-w-[180px]">
+                        <Button asChild className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg shadow-lg shadow-blue-500/10 transition-all hover:scale-[1.02]">
+                            <Link to={`/regime-digest/${year}/${month}`}>
+                                Read Full Digest <ChevronRight size={14} className="ml-2" />
+                            </Link>
+                        </Button>
+                        <Button 
+                            onClick={() => regenerate()} 
+                            disabled={isRegenerating}
+                            variant="outline" 
+                            className="border-white/10 hover:bg-white/5 text-white font-bold text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg"
+                        >
+                            {isRegenerating ? (
+                                <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                            ) : (
+                                <RefreshCw className="mr-2 h-3 w-3" />
+                            )}
+                            {isRegenerating ? 'Syncing...' : 'Force Sync'}
+                        </Button>
                     </div>
                 </div>
             </CardContent>
