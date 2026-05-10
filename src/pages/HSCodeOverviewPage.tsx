@@ -6,7 +6,6 @@ import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
 import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRanker'
 import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
-import { supabase } from '../lib/supabase'
 
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
@@ -19,21 +18,12 @@ const HSCodeOverviewPage: React.FC = () => {
         setGenerating(true)
         setGenError(null)
         try {
-            const { data: { session } } = await supabase.auth.getSession()
             const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-            const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-            const headers: Record<string, string> = {
-                'Content-Type': 'application/json',
-                'apikey': supabaseKey,
-            }
-            if (session?.access_token) {
-                headers['Authorization'] = `Bearer ${session.access_token}`
-            }
             const res = await fetch(
                 `${supabaseUrl}/functions/v1/generate-export-scout`,
                 {
                     method: 'POST',
-                    headers,
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         hsn: code,
                         hsn_description: hsDescription ?? '',
