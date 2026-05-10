@@ -401,6 +401,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     phase1Rows,
     marketsJson,
     hsn,
+    hsnDescription,
   });
 
   return new Response(html, {
@@ -413,6 +414,165 @@ Deno.serve(async (req: Request): Promise<Response> => {
   });
 });
 
+// ── Product context helper ────────────────────────────────────────────────────
+function getProductContext(hsn: string, hsnDesc: string) {
+  const code = parseInt(hsn.substring(0, 4)) || 0;
+
+  let productShort = hsnDesc;
+  let industry = "industrial";
+  let endUserSectors = "construction, manufacturing, infrastructure";
+  let productApplications = "industrial and commercial applications";
+  let linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "industrial equipment" OR "import manager"`;
+  let googleQuery1 = `"${hsnDesc.split(" ")[0].toLowerCase()} importer [country]"`;
+  let googleQuery2 = `"${hsnDesc.split(" ")[0].toLowerCase()} distributor [country] India"`;
+  let googleQuery3 = `"HS ${hsn} importer [country]"`;
+  let volzaProductDesc = `"${hsnDesc.split(" ")[0].toLowerCase()}" | Origin: India`;
+
+  if (code === 8512) {
+    productShort = "Light Tower Equipment";
+    industry = "electrical equipment";
+    endUserSectors = "construction, mining, events, infrastructure";
+    productApplications = "night-time construction, mining, events — high-output mobile lighting";
+    linkedInKeywords = `"light tower" OR "DG set" OR "generator" OR "portable lighting"`;
+    googleQuery1 = `"light tower importer [country]"`;
+    googleQuery2 = `"portable lighting distributor [country] India"`;
+    googleQuery3 = `"HS 8512 importer [country]"`;
+    volzaProductDesc = `"light tower" OR "lighting tower" | Origin: India`;
+  } else if (code === 8502) {
+    productShort = "Generating Sets / DG Sets";
+    industry = "electrical equipment";
+    endUserSectors = "construction, data centres, hospitals, manufacturing";
+    productApplications = "10kVA to 500kVA diesel/gas generating sets for commercial and industrial use";
+    linkedInKeywords = `"generator" OR "generating set" OR "DG set" OR "genset"`;
+    googleQuery1 = `"generator importer [country]"`;
+    googleQuery2 = `"generating set distributor [country] India"`;
+    googleQuery3 = `"HS 8502 importer [country]"`;
+    volzaProductDesc = `"generating set" OR "DG set" OR "genset" | Origin: India`;
+  } else if (code === 8501) {
+    productShort = "Electric Motors";
+    industry = "electrical equipment";
+    endUserSectors = "manufacturing, pumping stations, HVAC, industrial plants";
+    productApplications = "AC/DC electric motors for industrial machinery, pumps, compressors";
+    linkedInKeywords = `"electric motor" OR "motor importer" OR "industrial motor"`;
+    googleQuery1 = `"electric motor importer [country]"`;
+    googleQuery2 = `"motor distributor [country] India"`;
+    googleQuery3 = `"HS 8501 importer [country]"`;
+    volzaProductDesc = `"electric motor" OR "AC motor" | Origin: India`;
+  } else if (code >= 8500 && code < 8600) {
+    industry = "electrical equipment";
+    endUserSectors = "manufacturing, construction, industrial plants";
+    productApplications = "electrical and industrial applications";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "electrical equipment" OR "electronics importer"`;
+    googleQuery2 = `"electrical equipment distributor [country] India"`;
+  } else if (code >= 8400 && code < 8500) {
+    industry = "industrial machinery";
+    endUserSectors = "manufacturing, construction, agriculture, processing industry";
+    productApplications = "industrial and manufacturing applications";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "machinery importer" OR "industrial equipment"`;
+    googleQuery2 = `"machinery distributor [country] India"`;
+    volzaProductDesc = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "machinery" | Origin: India`;
+  } else if (code >= 2700 && code < 3000) {
+    industry = "chemicals / petroleum";
+    endUserSectors = "petrochemical, manufacturing, energy sector";
+    productApplications = "chemical and industrial processing applications";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "chemical importer" OR "chemical distributor"`;
+    googleQuery2 = `"chemical distributor [country] India"`;
+  } else if (code >= 3000 && code < 3100) {
+    industry = "pharmaceutical";
+    endUserSectors = "healthcare, hospitals, pharma distributors";
+    productApplications = "pharmaceutical and healthcare applications";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "pharma importer" OR "healthcare distributor"`;
+    googleQuery2 = `"pharma distributor [country] India"`;
+  } else if (code >= 5000 && code < 6400) {
+    industry = "textile";
+    endUserSectors = "garment industry, retail, fashion brands";
+    productApplications = "textile and garment manufacturing";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "textile importer" OR "fabric distributor"`;
+    googleQuery2 = `"textile distributor [country] India"`;
+  } else if (code >= 7200 && code < 7400) {
+    industry = "steel / metal";
+    endUserSectors = "construction, manufacturing, fabrication";
+    productApplications = "construction and industrial fabrication applications";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "steel importer" OR "metal distributor"`;
+    googleQuery2 = `"steel distributor [country] India"`;
+    volzaProductDesc = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "steel" | Origin: India`;
+  } else if (code >= 8700 && code < 8800) {
+    industry = "automotive";
+    endUserSectors = "automotive OEMs, dealerships, repair workshops";
+    productApplications = "automotive and transportation applications";
+    linkedInKeywords = `"${hsnDesc.split(" ")[0].toLowerCase()}" OR "auto parts importer" OR "automotive distributor"`;
+    googleQuery2 = `"auto parts distributor [country] India"`;
+  }
+
+  const isElectrical = code >= 8500 && code < 8600;
+  const isMachinery = code >= 8400 && code < 8500;
+  const isChemical = code >= 2700 && code < 3100;
+
+  // Phase 1 certification notes per country — category-aware
+  const certZAF = isChemical
+    ? `Chemical products require SABS/NCC approval. Verify distributor holds chemical import licence. Relatively accessible via local agent.`
+    : isElectrical
+    ? `Electrical equipment needs NRCS Letter of Authority. HS ${hsn} may need RoHS compliance. Relatively easier to navigate via local certified agent.`
+    : isMachinery
+    ? `Machinery may need SABS type-approval. Navigate via local certified agent. Generally accessible for Indian exporters.`
+    : `Products need SABS approval in the relevant category. Navigate via a locally certified import agent.`;
+
+  const certIDN = isElectrical
+    ? `Standar Nasional Indonesia (SNI) required for electrical equipment. Enter via distributor who holds SNI. Critical: partner must have SNI for HS ${hsn}.`
+    : isChemical
+    ? `Chemical products require BPOM registration. Partner with a licensed local chemical importer who holds existing approvals.`
+    : isMachinery
+    ? `SNI certification applies to regulated machinery categories. Local distributor typically holds this — verify before proceeding.`
+    : `SNI certification may be required depending on sub-category. Confirm with local distributor before quoting.`;
+
+  const certBRA = isElectrical
+    ? `INMETRO compulsory certification for electrical equipment. Distributor typically holds this. Verify partner has INMETRO for HS ${hsn} before proceeding.`
+    : isChemical
+    ? `ANVISA registration required for chemicals. Complex process — partner with a licensed importer who has existing ANVISA approvals.`
+    : isMachinery
+    ? `INMETRO or sector-specific certification may apply. Verify with local legal counsel or established distributor.`
+    : `Brazil has mandatory INMETRO or ANVISA certification depending on product. Verify applicable regime with local distributor.`;
+
+  const certCHL = isElectrical || isMachinery
+    ? `Servicio Eléctrico Certificación required for powered equipment. Mining sector adds SERNAGEOMIN compliance. Local partner usually manages both.`
+    : isChemical
+    ? `Chemical imports regulated by SEREMI. Partner with a licensed local chemical importer. Mining sector use adds additional SAG compliance layer.`
+    : `Import regulations administered by customs authority (SII). Local distributor handles certification. Straightforward for most industrial products.`;
+
+  const certPRT = `Portugal (EU) — CE marking mandatory for all ${isElectrical ? "electrical" : isMachinery ? "machinery" : "regulated"} equipment sold in the EU. This is the critical unlock for all of Europe (Spain, Romania, etc.). Priority investment for any serious EU market entry.`;
+
+  const certAUS = isElectrical
+    ? `Regulatory Compliance Mark (RCM) required. Australia–India ECTA FTA gives tariff advantage. Obtain via accredited testing body. Approx. 3–4 months.`
+    : isMachinery
+    ? `Machinery must meet Australian safety standards (AS/NZS). RCM or Safety Mark required for electrical components. ECTA FTA gives tariff advantage.`
+    : isChemical
+    ? `NICNAS/AICIS registration required for industrial chemicals. Partner with a registered Australian importer for Phase 1.`
+    : `Australian Border Force and relevant sector regulator standards apply. Engage local compliance specialist for product-specific requirements.`;
+
+  const certUSA = isElectrical
+    ? `UL listing for electrical safety is de facto mandatory for B2B sales. Long process (6–12 months). Only pursue once Phase 1 revenue justifies the investment.`
+    : isMachinery
+    ? `OSHA-compliant safety documentation required. CE Mark (if already obtained for EU) accelerates USA market credibility. Long B2B sales cycle — Phase 2 only.`
+    : isChemical
+    ? `EPA TSCA registration required for chemical imports. Complex and expensive. Phase 2 only — once Phase 1 cash flow is established.`
+    : `USA market entry requires product-specific federal or state compliance. Engage a USA-based import compliance specialist. Phase 2 only.`;
+
+  const certPhase2Tip = isElectrical
+    ? `For electrical equipment, UL (USA) takes 6–12 months and RCM (Australia) takes 3–4 months. Only pursue once Phase 1 revenue is established. CE Mark (Portugal/EU) is your highest-ROI first certification.`
+    : isMachinery
+    ? `Machinery exports to USA require OSHA-compliant documentation. Australia needs Safety Mark. CE Mark for EU is the broadest unlock. Bundle testing across markets to reduce per-country cost.`
+    : isChemical
+    ? `Chemical products require EPA (USA), REACH (EU), and country-specific chemical registration. These are long processes — engage a specialist export compliance firm before committing.`
+    : `Certification requirements vary significantly by product and destination. Engage a specialist export compliance firm to map the Phase 2 certification roadmap for HS ${hsn} before investing.`;
+
+  return {
+    productShort, industry, endUserSectors, productApplications,
+    linkedInKeywords, googleQuery1, googleQuery2, googleQuery3, volzaProductDesc,
+    certZAF, certIDN, certBRA, certCHL, certPRT, certAUS, certUSA, certPhase2Tip,
+    isElectrical, isMachinery,
+  };
+}
+
 // ── HTML builder ──────────────────────────────────────────────────────────────
 function buildHtml(p: {
   pageTitle: string;
@@ -424,9 +584,17 @@ function buildHtml(p: {
   phase1Rows: string;
   marketsJson: string;
   hsn: string;
+  hsnDescription: string;
 }): string {
   const { pageTitle, headerSubtitle, tamDisplay, countryCount, indiaShareGlobal,
-          phase1Display, phase1Rows, marketsJson, hsn } = p;
+          phase1Display, phase1Rows, marketsJson, hsn, hsnDescription } = p;
+
+  const ctx = getProductContext(hsn, hsnDescription);
+  const {
+    productShort, industry, endUserSectors, productApplications,
+    linkedInKeywords, googleQuery1, googleQuery2, googleQuery3, volzaProductDesc,
+    certZAF, certIDN, certBRA, certCHL, certPRT, certAUS, certUSA, certPhase2Tip,
+  } = ctx;
 
   return /* html */ `<!DOCTYPE html>
 <html lang="en">
@@ -1206,13 +1374,13 @@ function buildHtml(p: {
           <span class="type-badge">EMAIL</span>
         </div>
         <div class="template-body">
-          <div class="template-subject">Subject: Indian Light Tower / DG Set supplier — exclusive territory opportunity for <span class="placeholder">[Country]</span></div>
+          <div class="template-subject">Subject: Indian ${esc(productShort)} supplier — exclusive territory opportunity for <span class="placeholder">[Country]</span></div>
           <div class="template-text" id="tpl-dist-email">Dear <span class="placeholder">[First Name]</span>,
 
-I represent Powerlux (powerlux.in), one of India's leading manufacturers of Light Tower Equipment (HS 8512) and DG Sets (HS 8502). We are establishing our authorized distribution network across <span class="placeholder">[Region]</span> and I believe <span class="placeholder">[Company Name]</span> could be an excellent partner.
+I represent Powerlux (powerlux.in), one of India's leading manufacturers of ${esc(hsnDescription)} (HS ${hsn}). We are establishing our authorized distribution network across <span class="placeholder">[Region]</span> and I believe <span class="placeholder">[Company Name]</span> could be an excellent partner.
 
 Why this is relevant to you:
-→ You're already importing industrial equipment from India — we can plug directly into your existing logistics and buyer relationships
+→ You're already importing ${esc(industry)} from India — we can plug directly into your existing logistics and buyer relationships
 → Our pricing is 35–50% below comparable European brands with equivalent quality
 → We offer OEM/white-label options for distributors requiring branded product
 → 12-month warranty, spare parts available ex-India within 7 days
@@ -1235,12 +1403,12 @@ Authorized Export Representative — Powerlux India
           <span class="type-badge">LINKEDIN</span>
         </div>
         <div class="template-body">
-          <div class="template-text" id="tpl-li-dist">Hi <span class="placeholder">[First Name]</span>, I see <span class="placeholder">[Company]</span> imports industrial equipment including generators and lighting equipment. I represent Powerlux, a leading Indian manufacturer — we're appointing exclusive distributors in <span class="placeholder">[Country]</span>. Happy to share pricing + catalogue if there's potential fit. Worth a quick connect?</div>
+          <div class="template-text" id="tpl-li-dist">Hi <span class="placeholder">[First Name]</span>, I see <span class="placeholder">[Company]</span> imports ${esc(industry)} including ${esc(productShort)}. I represent Powerlux, a leading Indian manufacturer — we're appointing exclusive distributors in <span class="placeholder">[Country]</span>. Happy to share pricing + catalogue if there's potential fit. Worth a quick connect?</div>
           <hr class="divider">
           <div class="template-subject" style="margin-top:12px;">Follow-up message (after connection)</div>
           <div class="template-text" id="tpl-li-followup">Thanks for connecting, <span class="placeholder">[First Name]</span>.
 
-Powerlux manufactures Light Towers (HS 8512) and DG Sets (HS 8502) — our products are already being imported by distributors in South Africa, Indonesia, Chile and Brazil.
+Powerlux manufactures ${esc(hsnDescription)} (HS ${hsn}) — our products are already being imported by distributors in South Africa, Indonesia, Chile and Brazil.
 
 We're looking to appoint an exclusive partner in <span class="placeholder">[Country]</span>. Key facts: pricing 35–50% below European alternatives, OEM available, 45-day lead time.
 
@@ -1251,18 +1419,17 @@ Would a 20-minute call this week make sense?</div>
 
       <div class="template-card">
         <div class="template-header">
-          <h3>End-Buyer Cold Email — Construction / Mining / Infra</h3>
+          <h3>End-Buyer Cold Email — ${esc(endUserSectors.split(",").slice(0,2).join(" / ").replace(/\b\w/g, c => c.toUpperCase()))}</h3>
           <span class="type-badge">EMAIL</span>
         </div>
         <div class="template-body">
-          <div class="template-subject">Subject: Reliable light tower + generator supply for your projects in <span class="placeholder">[Country]</span></div>
+          <div class="template-subject">Subject: Reliable ${esc(productShort)} supply for your projects in <span class="placeholder">[Country]</span></div>
           <div class="template-text" id="tpl-buyer-email">Dear <span class="placeholder">[First Name / Procurement Manager]</span>,
 
-I'm reaching out regarding your equipment procurement for <span class="placeholder">[project type: road/mining/construction]</span> projects.
+I'm reaching out regarding your equipment procurement for <span class="placeholder">[project type: ${esc(endUserSectors.split(",").slice(0,3).join(" / "))}]</span> projects.
 
 Powerlux (powerlux.in) is one of India's top manufacturers of:
-• Light Tower Equipment — suitable for night-time construction, mining, events
-• DG Sets — 10kVA to 500kVA range, diesel/gas options
+• ${esc(hsnDescription)} (HS ${hsn}) — ${esc(productApplications)}
 
 We supply projects across South Africa, Indonesia, Brazil and Chile. Our authorized representative in <span class="placeholder">[Country]</span> can provide:
 ✓ Competitive pricing — 30–50% savings vs European brands
@@ -1287,12 +1454,12 @@ Best regards,
         <div class="template-body">
           <div class="template-text" id="tpl-wa">Hi <span class="placeholder">[Name]</span>, this is <span class="placeholder">[Your Name]</span> from <span class="placeholder">[Your Firm]</span>. We met at <span class="placeholder">[Event/Reference]</span>.
 
-I represent Powerlux India — manufacturers of Light Towers &amp; DG Sets. We're appointing a distributor in <span class="placeholder">[Country]</span> and your firm came up as a strong fit.
+I represent Powerlux India — manufacturers of ${esc(productShort)} (HS ${hsn}). We're appointing a distributor in <span class="placeholder">[Country]</span> and your firm came up as a strong fit.
 
 Can I send you our product catalogue and pricing? Takes 2 minutes to review. If relevant, happy to jump on a quick call.</div>
           <hr class="divider">
           <div class="template-subject" style="margin-top:12px;">Follow-up if no response (Day 5)</div>
-          <div class="template-text" id="tpl-wa-fu">Hi <span class="placeholder">[Name]</span>, following up on my earlier message about Powerlux Light Towers and DG Sets. We have a container slot available for <span class="placeholder">[Country]</span> in the next 6 weeks. Happy to share pricing. Let me know if worth a quick chat.</div>
+          <div class="template-text" id="tpl-wa-fu">Hi <span class="placeholder">[Name]</span>, following up on my earlier message about Powerlux ${esc(productShort)}. We have a container slot available for <span class="placeholder">[Country]</span> in the next 6 weeks. Happy to share pricing. Let me know if worth a quick chat.</div>
           <button class="copy-btn" onclick="copyTemplate('tpl-wa-fu', this)">Copy Template</button>
         </div>
       </div>
@@ -1304,7 +1471,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
   ══════════════════════════════════════ -->
   <div class="section" id="sec-intel">
     <div class="section-title">Intelligence &amp; Lead Sourcing Tools</div>
-    <div class="section-sub">Exact tools, search queries, and workflows to find companies already importing HS 8502/8512 from India.</div>
+    <div class="section-sub">Exact tools, search queries, and workflows to find companies already importing HS ${hsn} (${esc(hsnDescription)}) from India.</div>
 
     <div class="tools-grid">
       <div class="tool-card">
@@ -1315,7 +1482,7 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
           <li>Search: HS code <strong>${hsn}</strong> + importer country = South Africa</li>
           <li>Filter: Origin country = India</li>
           <li>Export list of company names, import volumes, frequency</li>
-          <li>Repeat for HS 8502 in each Phase 1 country</li>
+          <li>Repeat for all Phase 1 countries (Indonesia, Brazil, Chile, Portugal)</li>
           <li>Target companies with 2+ India shipments = warm buyers</li>
         </ul>
         <a class="tool-link" href="https://www.volza.com" target="_blank">volza.com ↗</a>
@@ -1326,10 +1493,10 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
         <div class="tool-name">LinkedIn Sales Navigator</div>
         <div class="tool-desc">Find decision-makers at companies identified via trade data. Also for prospecting importers/distributors directly.</div>
         <ul class="tool-steps">
-          <li>Search: "import" + "generator" + country in title/company</li>
-          <li>Filter: company size 10–500, Industry: Industrial Machinery</li>
+          <li>Search: "import" + "${esc(productShort.split(" ")[0].toLowerCase())}" + country in title/company</li>
+          <li>Filter: company size 10–500, Industry: ${esc(industry.split("/")[0].trim().replace(/\b\w/g, c => c.toUpperCase()))}</li>
           <li>Target titles: Procurement Manager, Import Manager, MD, Director</li>
-          <li>Use Boolean: "light tower" OR "DG set" OR "generator" in keyword</li>
+          <li>Use Boolean: ${esc(linkedInKeywords)} in keyword</li>
           <li>Save leads to CRM immediately</li>
         </ul>
         <a class="tool-link" href="https://business.linkedin.com/sales-solutions" target="_blank">linkedin.com/sales ↗</a>
@@ -1368,11 +1535,11 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
         <div class="tool-name">Google Research Workflow</div>
         <div class="tool-desc">Manual but effective for finding distributors in any country without paid tools.</div>
         <ul class="tool-steps">
-          <li>"light tower importer [country]"</li>
-          <li>"generator distributor [country] India"</li>
-          <li>"HS 8502 importer [country]"</li>
+          <li>${esc(googleQuery1)}</li>
+          <li>${esc(googleQuery2)}</li>
+          <li>${esc(googleQuery3)}</li>
           <li>Check local trade directories (e.g., yellow pages equivalent)</li>
-          <li>Find exhibitor lists from local electrical/construction expos</li>
+          <li>Find exhibitor lists from local ${esc(industry)} expos and trade shows</li>
         </ul>
       </div>
 
@@ -1394,23 +1561,23 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
       <div class="card-title"><span class="dot"></span> Exact Search Queries for Volza / Panjiva</div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px;">
         <div>
-          <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:10px;color:var(--accent);">LIGHT TOWERS — HS 8512</div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:10px;color:var(--accent);">${esc(hsnDescription.toUpperCase())} — HS ${hsn} | PHASE 1 TARGETS</div>
           <div style="font-size:12px;line-height:2;">
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8512 | Origin: India | Dest: South Africa</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8512 | Origin: India | Dest: Indonesia</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8512 | Origin: India | Dest: Chile</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8512 | Origin: India | Dest: Portugal</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;">Product desc: "light tower" OR "lighting tower" | Origin: India</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: South Africa</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: Indonesia</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: Brazil</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: Chile</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;">HS Code: ${hsn} | Origin: India | Dest: Portugal</div>
           </div>
         </div>
         <div>
-          <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:10px;color:var(--accent2);">DG SETS — HS 8502</div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:10px;color:var(--accent2);">${esc(hsnDescription.toUpperCase())} — KEYWORD SEARCHES</div>
           <div style="font-size:12px;line-height:2;">
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8502 | Origin: India | Dest: Brazil</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8502 | Origin: India | Dest: South Africa</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8502 | Origin: India | Dest: Indonesia</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: 8502 | Origin: India | Dest: Mexico</div>
-            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;">Product desc: "generating set" OR "DG set" | Origin: India</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: USA</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: Australia</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: Germany</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;margin-bottom:6px;">HS Code: ${hsn} | Origin: India | Dest: UAE</div>
+            <div style="font-family:'DM Mono',monospace;background:var(--paper);padding:6px 10px;border-radius:3px;">Product desc: ${esc(volzaProductDesc)}</div>
           </div>
         </div>
       </div>
@@ -1562,23 +1729,23 @@ Can I send you our product catalogue and pricing? Takes 2 minutes to review. If 
 
     <div class="two-col">
       <div class="card">
-        <div class="card-title"><span class="dot"></span> Phase 1 Markets — Minimum Certification Needs</div>
-        <div class="cert-row"><div class="cert-icon">🇿🇦</div><div class="cert-body"><h4>South Africa — SABS / NRCS</h4><p>Electrical equipment needs NRCS Letter of Authority. HS 8512 lighting equipment may need RoHS compliance. Relatively easier to navigate via local agent.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🇮🇩</div><div class="cert-body"><h4>Indonesia — SNI Mark</h4><p>Standar Nasional Indonesia required for generators. Can enter via distributor who holds SNI certification. Critical: partner must have SNI for HS 8502.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🇧🇷</div><div class="cert-body"><h4>Brazil — INMETRO</h4><p>INMETRO compulsory certification for electrical equipment. Distributor typically holds this. Verify partner has INMETRO before proceeding.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🇨🇱</div><div class="cert-body"><h4>Chile — SEC / INN</h4><p>Servicio Eléctrico Certificación required. Mining sector has additional SAG compliance. Local partner usually manages this.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🇵🇹</div><div class="cert-body"><h4>Portugal (EU) — CE Mark</h4><p>CE marking mandatory for all electrical equipment in EU. This is the critical unlock for all of Europe (Spain, Romania, etc.). Priority investment.</p></div></div>
+        <div class="card-title"><span class="dot"></span> Phase 1 Markets — Minimum Certification Needs for HS ${hsn}</div>
+        <div class="cert-row"><div class="cert-icon">🇿🇦</div><div class="cert-body"><h4>South Africa — SABS / NRCS</h4><p>${esc(certZAF)}</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇮🇩</div><div class="cert-body"><h4>Indonesia — SNI Mark</h4><p>${esc(certIDN)}</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇧🇷</div><div class="cert-body"><h4>Brazil — INMETRO / ANVISA</h4><p>${esc(certBRA)}</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇨🇱</div><div class="cert-body"><h4>Chile — SEC / INN / SII</h4><p>${esc(certCHL)}</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇵🇹</div><div class="cert-body"><h4>Portugal (EU) — CE Mark</h4><p>${esc(certPRT)}</p></div></div>
       </div>
 
       <div class="card">
         <div class="card-title"><span class="dot" style="background:var(--gold)"></span> Phase 2 Markets — Certification Investment Needed</div>
-        <div class="cert-row"><div class="cert-icon">🇦🇺</div><div class="cert-body"><h4>Australia — RCM Mark</h4><p>Regulatory Compliance Mark required. Australia-India ECTA FTA gives tariff advantage. RCM certification via accredited testing body. Approx. 3–4 months to obtain.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🇺🇸</div><div class="cert-body"><h4>USA — UL Listing / FCC</h4><p>UL listing for electrical safety is de facto mandatory for B2B sales. Long process (6–12 months). Only pursue once Phase 1 revenue justifies investment.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🇨🇦</div><div class="cert-body"><h4>Canada — CSA Mark</h4><p>Canadian Standards Association certification required. Similar timeline to UL. Bundle with USA UL process via same lab.</p></div></div>
-        <div class="cert-row"><div class="cert-icon">🌍</div><div class="cert-body"><h4>All Markets — ISO 9001</h4><p>Baseline quality credibility signal for all B2B export deals. Verify Powerlux holds this. If not, flag as urgent — most serious B2B buyers will ask.</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇦🇺</div><div class="cert-body"><h4>Australia — RCM / Safety Mark</h4><p>${esc(certAUS)}</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇺🇸</div><div class="cert-body"><h4>USA — UL / OSHA / EPA</h4><p>${esc(certUSA)}</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🇨🇦</div><div class="cert-body"><h4>Canada — CSA Mark</h4><p>Canadian Standards Association certification required. Similar timeline and lab as USA certification. Bundle both to reduce per-market cost.</p></div></div>
+        <div class="cert-row"><div class="cert-icon">🌍</div><div class="cert-body"><h4>All Markets — ISO 9001</h4><p>Baseline quality credibility signal for all B2B export deals. Verify Powerlux holds this. If not, flag as urgent — most serious B2B buyers will ask for it upfront.</p></div></div>
         <hr class="divider">
         <div style="font-size:12px;color:var(--muted);background:var(--amber-bg);padding:10px;border-radius:4px;">
-          <strong>Tactical tip:</strong> In Phase 1 markets, let your distributor partner carry certification risk. Their existing local certifications become your market entry — no upfront investment needed. Only invest in certifications for markets you plan to enter directly or where no certified partner exists.
+          <strong>Tactical tip for HS ${hsn}:</strong> ${esc(certPhase2Tip)} In Phase 1 markets, let your distributor partner carry the certification risk — their existing local certifications become your market entry with zero upfront investment.
         </div>
       </div>
     </div>
