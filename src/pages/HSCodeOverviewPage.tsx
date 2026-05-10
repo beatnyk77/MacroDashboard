@@ -1,15 +1,59 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar } from 'lucide-react'
+import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown, Loader2 } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
 import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRanker'
 import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
+import { supabase } from '../lib/supabase'
 
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
     const navigate = useNavigate()
+    const [generating, setGenerating] = useState(false)
+    const [genError, setGenError] = useState<string | null>(null)
+
+    const handleGeneratePlaybook = async () => {
+        if (!code) return
+        setGenerating(true)
+        setGenError(null)
+        try {
+            const { data: { session } } = await supabase.auth.getSession()
+            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+            const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json',
+                'apikey': supabaseKey,
+            }
+            if (session?.access_token) {
+                headers['Authorization'] = `Bearer ${session.access_token}`
+            }
+            const res = await fetch(
+                `${supabaseUrl}/functions/v1/generate-export-scout`,
+                {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        hsn: code,
+                        hsn_description: hsDescription ?? '',
+                    }),
+                }
+            )
+            if (!res.ok) {
+                const msg = await res.text()
+                throw new Error(msg || `HTTP ${res.status}`)
+            }
+            const html = await res.text()
+            const blob = new Blob([html], { type: 'text/html' })
+            const url = URL.createObjectURL(blob)
+            window.open(url, '_blank')
+        } catch (err) {
+            setGenError(err instanceof Error ? err.message : 'Generation failed')
+        } finally {
+            setGenerating(false)
+        }
+    }
 
     const { refresh, ...state } = useHSDemand(code || null)
     
@@ -59,20 +103,34 @@ const HSCodeOverviewPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                    <button
+                        onClick={handleGeneratePlaybook}
+                        disabled={generating}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {generating ? (
+                            <><Loader2 className="w-3 h-3 animate-spin" /> Generating…</>
+                        ) : (
+                            <><FileDown className="w-3 h-3" /> Export Scout Playbook</>
+                        )}
+                    </button>
                     <button
                         onClick={() => refresh()}
                         disabled={isLoading}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                            isLoading 
-                                ? 'bg-white/5 text-white/20 cursor-not-allowed' 
-                                : 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20'
+                            isLoading
+                                ? 'bg-white/5 text-white/20 cursor-not-allowed'
+                                : 'bg-white/5 text-white/50 hover:bg-white/10 border border-white/10'
                         }`}
                     >
                         <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                         {state.status === 'refreshing' ? 'Regenerating...' : 'Refresh Intelligence'}
                     </button>
                 </div>
+                {genError && (
+                    <p className="text-[10px] text-red-400/80 font-semibold mt-1 text-right">{genError}</p>
+                )}
             </div>
             
             {state.status === 'success' && state.isFallback && (

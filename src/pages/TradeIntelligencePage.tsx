@@ -1,63 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Globe2, PackageSearch, Target, FileDown, Loader2 } from 'lucide-react'
+import { Globe2, PackageSearch, Target } from 'lucide-react'
 import { HSCodeSearch } from '../features/trade/components/HSCodeSearch'
 import { GlobalTradePulse } from '../features/trade/components/GlobalTradePulse'
 import { IndiaChinaDeepDive } from '../features/trade/components/IndiaChinaDeepDive'
-import { supabase } from '../lib/supabase'
 import type { HSCodeMaster } from '../features/trade/types/trade'
 
 const TradeIntelligencePage: React.FC = () => {
     const navigate = useNavigate()
-    const [selectedCode, setSelectedCode] = useState<HSCodeMaster | null>(null)
-    const [generating, setGenerating] = useState(false)
-    const [genError, setGenError] = useState<string | null>(null)
 
     const handleSelect = (code: HSCodeMaster) => {
-        setSelectedCode(code)
-        setGenError(null)
         navigate(`/trade/hs/${code.code}`)
-    }
-
-    const handleGeneratePlaybook = async () => {
-        if (!selectedCode) return
-        setGenerating(true)
-        setGenError(null)
-        try {
-            const { data: { session } } = await supabase.auth.getSession()
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-            const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-            const headers: Record<string, string> = {
-                'Content-Type': 'application/json',
-                'apikey': supabaseKey,
-            }
-            if (session?.access_token) {
-                headers['Authorization'] = `Bearer ${session.access_token}`
-            }
-            const res = await fetch(
-                `${supabaseUrl}/functions/v1/generate-export-scout`,
-                {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({
-                        hsn: selectedCode.code,
-                        hsn_description: selectedCode.description,
-                    }),
-                }
-            )
-            if (!res.ok) {
-                const msg = await res.text()
-                throw new Error(msg || `HTTP ${res.status}`)
-            }
-            const html = await res.text()
-            const blob = new Blob([html], { type: 'text/html' })
-            const url = URL.createObjectURL(blob)
-            window.open(url, '_blank')
-        } catch (err) {
-            setGenError(err instanceof Error ? err.message : 'Generation failed')
-        } finally {
-            setGenerating(false)
-        }
     }
 
     return (
@@ -100,25 +53,6 @@ const TradeIntelligencePage: React.FC = () => {
                                 onSelect={handleSelect}
                                 className="scale-105 transform origin-top shadow-xl shadow-black/50"
                             />
-
-                            {selectedCode && (
-                                <div className="pt-2 space-y-2">
-                                    <button
-                                        onClick={handleGeneratePlaybook}
-                                        disabled={generating}
-                                        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/60 text-emerald-400 text-xs font-black uppercase tracking-widest transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {generating ? (
-                                            <><Loader2 className="w-4 h-4 animate-spin" /> Generating Playbook…</>
-                                        ) : (
-                                            <><FileDown className="w-4 h-4" /> Generate Export Scout Playbook — HS {selectedCode.code}</>
-                                        )}
-                                    </button>
-                                    {genError && (
-                                        <p className="text-[10px] text-red-400/80 text-center font-semibold">{genError}</p>
-                                    )}
-                                </div>
-                            )}
                         </div>
                     </div>
 
