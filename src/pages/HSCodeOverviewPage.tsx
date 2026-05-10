@@ -13,36 +13,9 @@ const HSCodeOverviewPage: React.FC = () => {
     const [generating, setGenerating] = useState(false)
     const [genError, setGenError] = useState<string | null>(null)
 
-    const handleGeneratePlaybook = async () => {
+    const handleGeneratePlaybook = () => {
         if (!code) return
-        setGenerating(true)
-        setGenError(null)
-        try {
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-            const res = await fetch(
-                `${supabaseUrl}/functions/v1/generate-export-scout`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        hsn: code,
-                        hsn_description: hsDescription ?? '',
-                    }),
-                }
-            )
-            if (!res.ok) {
-                const msg = await res.text()
-                throw new Error(msg || `HTTP ${res.status}`)
-            }
-            const html = await res.text()
-            const blob = new Blob([html], { type: 'text/html' })
-            const url = URL.createObjectURL(blob)
-            window.open(url, '_blank')
-        } catch (err) {
-            setGenError(err instanceof Error ? err.message : 'Generation failed')
-        } finally {
-            setGenerating(false)
-        }
+        navigate(`/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`)
     }
 
     const { refresh, ...state } = useHSDemand(code || null)
