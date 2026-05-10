@@ -13,12 +13,30 @@ import {
 } from 'recharts';
 import { useOilSpread } from '@/hooks/useOilSpread';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Fuel, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Fuel, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, RefreshCw, Activity, Clock, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
+import { supabase } from '@/lib/supabase';
+import { SectionErrorBoundary } from '@/features/daily-macro/components/SectionErrorBoundary';
 
-export const WTICalendarSpread: React.FC = () => {
-    const { data: spreadData, isLoading, error } = useOilSpread();
+const WTICalendarSpreadInner: React.FC = () => {
+    const { data: spreadData, isLoading, error, refetch } = useOilSpread();
+    const { data: health = [] } = useIngestionHealth();
+    const [isRefreshing, setIsRefreshing] = React.useState(false);
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        try {
+            const { error: invokeError } = await supabase.functions.invoke('ingest-oil-spread');
+            if (invokeError) throw invokeError;
+            await refetch();
+        } catch (err) {
+            console.error('[WTICalendarSpread] Refresh failed:', err);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     const chartData = React.useMemo(() => {
         if (!spreadData) return [];
@@ -30,6 +48,8 @@ export const WTICalendarSpread: React.FC = () => {
     }, [spreadData]);
 
     const latest = spreadData?.[0];
+    const signalHealth = health.find(h => h.job_name === 'ingest-oil-spread');
+    const isStale = latest?.is_stale;
     
     const getRegimeDetails = (spread: number) => {
         if (spread > 2.0) return { label: 'CRITICAL BACKWARDATION', color: 'text-rose-500 bg-rose-500/10', icon: AlertTriangle, desc: 'Extreme Physical Shortage' };
@@ -42,21 +62,28 @@ export const WTICalendarSpread: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="w-full h-[500px] bg-white/[0.02] border border-white/5 rounded-3xl animate-pulse flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.2em]">Synchronizing WTI Futures...</span>
+            <div className="w-full h-[500px] bg-white/[0.02] border border-white/5 rounded-[2rem] animate-pulse flex flex-col items-center justify-center gap-4">
+                <Fuel className="w-8 h-8 text-white/10" />
+                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Synchronizing WTI Futures...</span>
             </div>
         );
     }
 
     if (error || !latest) {
         return (
-            <div className="w-full h-[500px] bg-rose-500/5 border border-rose-500/10 rounded-3xl flex items-center justify-center text-center p-8">
+            <div className="w-full h-[500px] bg-rose-500/5 border border-rose-500/10 rounded-[2rem] flex items-center justify-center text-center p-8">
                 <div className="max-w-md space-y-4">
                     <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto" />
                     <h3 className="text-lg font-black text-white uppercase tracking-heading">Data Ingestion Failure</h3>
                     <p className="text-sm text-muted-foreground font-medium uppercase tracking-wide">
                         Unable to synchronize WTI CL1/CL2 series. Ensure EIA API connectivity is active.
                     </p>
+                    <button 
+                        onClick={handleRefresh}
+                        className="px-6 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all"
+                    >
+                        Retry Connection
+                    </button>
                 </div>
             </div>
         );
@@ -64,7 +91,50 @@ export const WTICalendarSpread: React.FC = () => {
 
     return (
         <Card className="bg-black/40 border-white/10 backdrop-blur-xl overflow-hidden rounded-[2rem]">
-            <CardHeader className="p-8 pb-0 border-b border-white/5 bg-white/[0.02]">
+            {/* Header / Meta Bar */}
+            <div className="flex flex-wrap items-center justify-between px-8 py-3 bg-white/[0.02] border-b border-white/5 gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <Activity size={10} className="text-amber-500/50" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30">Energy Market Structure</span>
+                    </div>
+                    
+                    <div className={cn(
+                        "text-[9px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1.5",
+                        isStale ? "bg-amber-500/10 text-amber-500/80 border border-amber-500/20" : "bg-emerald-500/10 text-emerald-500/80 border border-emerald-500/20"
+                    )}>
+                        {isStale ? <><Clock size={10} /> Historical Fallback</> : <><CheckCircle size={10} /> Real-Time Fresh</>}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/5">
+                        <div className={cn("w-1 h-1 rounded-full", signalHealth ? "bg-emerald-400" : "bg-white/20")} />
+                        <span className="text-[8px] font-bold text-white/40 uppercase tracking-tighter">
+                            Pipeline: {signalHealth ? 'Active' : 'Offline'}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                    <div className="flex flex-col items-end">
+                        <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Data As Of</span>
+                        <span className="text-[10px] font-mono font-bold text-white/60">{format(new Date(latest.date), 'MMM dd, yyyy')}</span>
+                    </div>
+                    
+                    <button
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className={cn(
+                            "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all",
+                            isRefreshing ? "opacity-50 cursor-not-allowed" : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 active:scale-95"
+                        )}
+                    >
+                        <RefreshCw size={12} className={isRefreshing ? "animate-spin" : ""} />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+                    </button>
+                </div>
+            </div>
+
+            <CardHeader className="p-8 pb-0 border-b border-white/5">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div className="space-y-1">
                         <div className="flex items-center gap-3">
@@ -182,7 +252,6 @@ export const WTICalendarSpread: React.FC = () => {
                                     itemStyle={{ padding: '2px 0' }}
                                 />
                                 
-                                {/* Normal Band ±1.0 */}
                                 <ReferenceArea 
                                     yAxisId="spread"
                                     y1={-1} 
@@ -198,6 +267,7 @@ export const WTICalendarSpread: React.FC = () => {
                                     yAxisId="spread"
                                     type="monotone" 
                                     dataKey="spread" 
+                                    name="Calendar Spread (CL1-CL2)"
                                     fill="url(#spreadGradient)" 
                                     stroke={latest.spread >= 0 ? "#10b981" : "#f43f5e"}
                                     strokeWidth={2}
@@ -207,25 +277,53 @@ export const WTICalendarSpread: React.FC = () => {
                                     yAxisId="price"
                                     type="monotone" 
                                     dataKey="front_price" 
+                                    name="Front Month (CL1)"
                                     stroke="#ffffff60" 
                                     strokeWidth={3}
                                     dot={false}
-                                    name="Front Month (CL1)"
                                 />
                                 <Line 
                                     yAxisId="price"
                                     type="monotone" 
                                     dataKey="next_price" 
+                                    name="Next Month (CL2)"
                                     stroke="#3b82f660" 
                                     strokeWidth={3}
                                     dot={false}
-                                    name="Next Month (CL2)"
                                 />
                             </ComposedChart>
                         </ResponsiveContainer>
                     </div>
+
+                    {/* Custom Legend */}
+                    <div className="flex flex-wrap justify-center gap-6 mt-4 pt-4 border-t border-white/5">
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-sm bg-[#10b981]" />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">Spread (Backwardation)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-sm bg-[#f43f5e]" />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">Spread (Contango)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-0.5 bg-white/60" />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">CL1 Price</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-0.5 bg-[#3b82f660]" />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white/40">CL2 Price</span>
+                        </div>
+                    </div>
                 </div>
             </CardContent>
         </Card>
+    );
+};
+
+export const WTICalendarSpread: React.FC = () => {
+    return (
+        <SectionErrorBoundary title="WTI Calendar Spread">
+            <WTICalendarSpreadInner />
+        </SectionErrorBoundary>
     );
 };

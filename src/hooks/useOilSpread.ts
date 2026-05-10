@@ -12,6 +12,7 @@ export interface OilSpreadRecord {
     change_3d: number;
     metadata: any;
     created_at: string;
+    is_stale?: boolean;
 }
 
 export const useOilSpread = () => {
@@ -59,13 +60,15 @@ export const useOilSpread = () => {
                 }
             }
 
-            return (data || []).map((d: any) => ({
+            const today = new Date().toISOString().slice(0, 10);
+            return (data || []).map((d: any, idx: number) => ({
                 ...d,
                 front_price: Number(d.front_price),
                 next_price: Number(d.next_price),
                 spread: Number(d.spread),
                 change_1d: Number(d.change_1d),
-                change_3d: Number(d.change_3d)
+                change_3d: Number(d.change_3d),
+                is_stale: idx === 0 ? d.date !== today : false
             }));
         },
         staleTime: 1000 * 60 * 60, // 1 hour
@@ -122,13 +125,15 @@ export const useLatestOilSpread = () => {
                 }
             }
 
+            const today = new Date().toISOString().slice(0, 10);
             return {
                 ...data,
                 front_price: Number(data.front_price),
                 next_price: Number(data.next_price),
                 spread: Number(data.spread),
                 change_1d: Number(data.change_1d),
-                change_3d: Number(data.change_3d)
+                change_3d: Number(data.change_3d),
+                is_stale: data.date !== today
             };
         },
         staleTime: 1000 * 60 * 30, // 30 mins
