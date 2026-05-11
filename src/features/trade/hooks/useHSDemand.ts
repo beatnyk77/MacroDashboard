@@ -72,23 +72,13 @@ export function useHSDemand(hsCode: string | null) {
                 // ── 2. Cache miss or Manual Refresh → invoke edge function ──
                 if (!cancelled) setState({ status: isManualRefresh ? 'refreshing' : 'fetching_live' })
 
-                const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-                const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+                const { data: resData, error: invokeErr } = await supabase.functions.invoke('fetch-hs-demand', {
+                    method: 'GET',
+                    queryParams: { hsCode }
+                })
 
-                const res = await fetch(
-                    `${supabaseUrl}/functions/v1/fetch-hs-demand?hsCode=${encodeURIComponent(hsCode)}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${supabaseKey}`,
-                            'apikey': supabaseKey,
-                        },
-                    }
-                )
-
-                if (!res.ok && !cancelled) {
-                    // Edge function failed — show cached stale data if any
-                    const errorMsg = `Edge function failed: ${res.statusText}`
+                if (invokeErr && !cancelled) {
+                    const errorMsg = `Edge function failed: ${invokeErr.message}`
                     if (cached && cached.length > 0) {
                         setState({
                             status: 'success',
@@ -104,11 +94,9 @@ export function useHSDemand(hsCode: string | null) {
                     return
                 }
 
-                // Parse response to check for "soft" errors
-                const resData = await res.json().catch(() => ({ ok: false, error: 'Invalid response from server' }))
-                if (!resData.ok && !cancelled) {
-                    const softError = resData.error || 'Failed to fetch live trade data'
-                    console.warn('[useHSDemand] Edge function returned soft error:', softError, resData.debug);
+                if (!resData?.ok && !cancelled) {
+                    const softError = resData?.error || 'Failed to fetch live trade data'
+                    console.warn('[useHSDemand] Edge function returned soft error:', softError, resData?.debug);
                     if (cached && cached.length > 0) {
                         setState({
                             status: 'success',

@@ -107,7 +107,11 @@ async function logPayloadHash(
 export async function runIngestion(
     supabase: SupabaseClient,
     functionName: string,
-    ingestFn: (ctx: IngestionContext) => Promise<any>
+    ingestFn: (ctx: IngestionContext) => Promise<any>,
+    corsHeaders: Record<string, string> = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    }
 ): Promise<Response> {
     const start = Date.now();
     const logId = await logIngestionStart(supabase, functionName);
@@ -154,8 +158,8 @@ export async function runIngestion(
         }
 
         return new Response(
-            JSON.stringify({ success: true, ...result, total_latency_ms: total_latency }),
-            { headers: { 'Content-Type': 'application/json' } }
+            JSON.stringify({ success: true, ok: true, ...result, total_latency_ms: total_latency }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
     } catch (error: any) {
         console.error(`Ingestion failed [${functionName}]:`, error);
@@ -171,7 +175,7 @@ export async function runIngestion(
 
         return new Response(
             JSON.stringify({ success: false, error: error.message }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
     } finally {
         const total_latency = Date.now() - start;

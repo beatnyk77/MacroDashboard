@@ -8,6 +8,7 @@ import OpenAI from "openai";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -37,19 +38,32 @@ interface MarketEntry {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Pick latest year per (hs_code, reporter_iso3) */
-function dedup<T extends { reporter_iso3: string; year: number; import_value_usd: number | null }>(
+/** Aggregate values by (reporter, year) and then pick latest year */
+function aggregateAndDedup<T extends { reporter_iso3: string; year: number; import_value_usd: number | null }>(
   rows: T[]
 ): T[] {
-  const map = new Map<string, T>();
+  // First, aggregate values for the same reporter and year
+  const aggMap = new Map<string, T>();
   for (const row of rows) {
-    const key = row.reporter_iso3;
-    const ex = map.get(key);
-    if (!ex || row.year > ex.year || (row.year === ex.year && (row.import_value_usd ?? 0) > (ex.import_value_usd ?? 0))) {
-      map.set(key, row);
+    const key = `${row.reporter_iso3}-${row.year}`;
+    const ex = aggMap.get(key);
+    if (!ex) {
+      aggMap.set(key, { ...row });
+    } else {
+      ex.import_value_usd = (ex.import_value_usd || 0) + (row.import_value_usd || 0);
     }
   }
-  return [...map.values()];
+
+  // Then, pick the latest year for each reporter
+  const finalMap = new Map<string, T>();
+  for (const row of aggMap.values()) {
+    const key = row.reporter_iso3;
+    const ex = finalMap.get(key);
+    if (!ex || row.year > ex.year) {
+      finalMap.set(key, row);
+    }
+  }
+  return [...finalMap.values()];
 }
 
 /** Calculate YoY growth between two latest years */
@@ -65,9 +79,6 @@ function calculateGrowth(rows: DemandRow[], iso3: string): number {
 /** Compute India share % */
 function getIndiaShare(supplierRow: SupplierRow | undefined, demandRow: DemandRow | undefined): number {
   if (!supplierRow) return 0;
-  if (supplierRow.market_share_pct != null && supplierRow.market_share_pct > 0) {
-    return Number(supplierRow.market_share_pct);
-  }
   const india = supplierRow.import_value_usd ?? 0;
   const total = demandRow?.import_value_usd ?? 0;
   if (total > 0 && india > 0) return parseFloat(((india / total) * 100).toFixed(1));
@@ -130,8 +141,8 @@ Deno.serve(async (req: Request): Promise<Response> => {
     ]);
 
     const allDemandRows = (demandRes.data ?? []) as DemandRow[];
-    const primaryDemand = dedup(allDemandRows);
-    const primaryIndia = dedup((supplierRes.data ?? []) as SupplierRow[]);
+    const primaryDemand = aggregateAndDedup(allDemandRows);
+    const primaryIndia = aggregateAndDedup((supplierRes.data ?? []) as SupplierRow[]);
 
     const primaryDemandMap = new Map(primaryDemand.map(r => [r.reporter_iso3, r]));
     const primaryIndiaMap = new Map(primaryIndia.map(r => [r.reporter_iso3, r]));

@@ -7,6 +7,7 @@ declare const Deno: any;
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
 }
 
 // ── ISO3 → ISO2 mapping for cross-linking with country_metrics (alpha-2) ──
@@ -113,7 +114,7 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
     for (const year of years) {
         console.log(`[fetch-hs-demand] Attempting fetch for year ${year}...`);
         const yearUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS` +
-            `?reporterCode=${reporterString}&period=${year}&cmdCode=${hsCode}&flowCode=X&partnerCode=0`;
+            `?reporterCode=${reporterString}&period=${year}&cmdCode=${hsCode}&flowCode=M&partnerCode=0,699`;
 
         try {
             const yearRes = await fetch(yearUrl, {
@@ -122,35 +123,10 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
 
             if (yearRes.ok) {
                 const yearData = await yearRes.json() as { data?: ComtradeRecord[] };
-                let yearRecords: any[] = yearData?.data || [];
+                const yearRecords = yearData?.data || [];
                 console.log(`[fetch-hs-demand] Got ${yearRecords.length} records for year ${year}`);
                 
-                // Fallback: try partnerCode=all if World is missing
-                if (yearRecords.length === 0) {
-                    console.log(`[fetch-hs-demand] No 'World' data for ${year}. Trying partners=all...`);
-                    const allUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterString}&period=${year}&cmdCode=${hsCode}&flowCode=X&partnerCode=all`;
-                    const allRes = await fetch(allUrl, { headers: { 'Ocp-Apim-Subscription-Key': comtradeKey } });
-                    if (allRes.ok) {
-                        const allJson = await allRes.json() as { data: any[] };
-                        const rawPartnerRows = allJson.data || [];
-                        if (rawPartnerRows.length > 0) {
-                            const aggMap = new Map();
-                            rawPartnerRows.forEach((r: any) => {
-                                const repCode = r.ReporterCode || r.reporterCode;
-                                const key = `${repCode}`;
-                                const existing = aggMap.get(key) || { ...r, PrimaryValue: 0, primaryValue: 0 };
-                                existing.PrimaryValue += (r.PrimaryValue || r.primaryValue || 0);
-                                aggMap.set(key, existing);
-                            });
-                            yearRecords = Array.from(aggMap.values());
-                        }
-                    }
-                }
-
                 if (yearRecords.length > 0) {
-                    if (!firstBatchDebug) {
-                        firstBatchDebug = { status: yearRes.status, dataCount: yearRecords.length, url: yearUrl };
-                    }
                     yearRecords.forEach(rec => {
                         const repCode = rec.ReporterCode || rec.reporterCode || rec.rtCode || rec.reporter_code;
                         if (repCode) yearTotalRows.push(rec);
@@ -161,7 +137,6 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
             console.error(`[fetch-hs-demand] Error fetching year ${year}: ${err}`);
         }
 
-        // If we have any data, we stop (prioritize latest year)
         if (yearTotalRows.length > 0) break;
     }
 
@@ -170,7 +145,7 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
         console.log(`[fetch-hs-demand] No data for ${hsCode}. Falling back to 4-digit: ${fallbackHs}`);
         
         for (const year of years) {
-            const yearUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterString}&period=${year}&cmdCode=${fallbackHs}&flowCode=X&partnerCode=0`;
+            const yearUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterString}&period=${year}&cmdCode=${fallbackHs}&flowCode=M&partnerCode=0,699`;
             const yearRes = await fetch(yearUrl, { headers: { 'Ocp-Apim-Subscription-Key': comtradeKey } });
             if (yearRes.ok) {
                 const yearData = await yearRes.json() as { data?: ComtradeRecord[] };
@@ -180,7 +155,7 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
                         const repCode = rec.ReporterCode || rec.reporterCode || rec.rtCode;
                         if (repCode) yearTotalRows.push(rec);
                     });
-                    break; // Stop at first successful year
+                    break; 
                 }
             }
         }
@@ -190,49 +165,83 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
         throw new Error(`No market data found for HS ${hsCode} in recent years.`);
     }
 
-    const demandRows = yearTotalRows
-        .map(r => {
-            const repCode = r.ReporterCode || r.reporterCode || r.rtCode || r.reporter_code;
-            const reporterCode = String(repCode || "");
-            const iso3Candidate = r.ReporterISO || r.reporterISO || r.reporterIso || r.reporteriso || r.rt3ISO;
-            const iso3 = iso3Candidate || REPORTER_CODE_TO_ISO3[reporterCode];
-            
-            const cmd = r.CmdCode || r.cmdCode || hsCode;
-            const val = r.PrimaryValue || r.primaryValue || 0;
-            const qty = r.Qty || r.qty || null;
-            const unit = r.QtyUnitAbbr || r.qtyUnitAbbr || null;
+    const demandRows: any[] = [];
+    const supplierRows: any[] = [];
 
-            if (!iso3 || iso3 === 'W00') return null;
+    yearTotalRows.forEach(r => {
+        const repCode = r.ReporterCode || r.reporterCode || r.rtCode || r.reporter_code;
+        const reporterCode = String(repCode || "");
+        const iso3Candidate = r.ReporterISO || r.reporterISO || r.reporterIso || r.reporteriso || r.rt3ISO;
+        const iso3 = iso3Candidate || REPORTER_CODE_TO_ISO3[reporterCode];
+        
+        const partnerCode = String(r.PartnerCode || r.partnerCode || "");
+        const pIso3Candidate = r.PartnerISO || r.partnerISO || r.partnerIso || r.pt3ISO;
+        
+        const val = r.PrimaryValue || r.primaryValue || 0;
+        const qty = r.Qty || r.qty || null;
+        const unit = r.QtyUnitAbbr || r.qtyUnitAbbr || null;
 
-            return {
+        if (!iso3 || iso3 === 'W00') return;
+
+        if (partnerCode === '0' || pIso3Candidate === 'W00') {
+            demandRows.push({
                 hs_code: hsCode, 
                 reporter_iso3: iso3,
                 reporter_iso2: ISO3_TO_ISO2[iso3] || null,
                 reporter_name: r.ReporterName || r.reporterName || r.rtTitle || iso3,
                 year: parseInt(String(r.Period || r.period || r.yr || 0).substring(0, 4)),
-                export_value_usd: Math.round(parseFloat(String(val))),
+                import_value_usd: Math.round(parseFloat(String(val))),
                 qty_value: qty ? Math.round(parseFloat(String(qty))) : null,
                 qty_unit: unit,
                 fetched_at: new Date().toISOString()
-            };
-        })
-        .filter((r): r is NonNullable<typeof r> => r !== null && (String(r.hs_code) === hsCode || String(r.hs_code) === hsCode.substring(0, 4)));
-
-    if (demandRows.length > 0) {
-        const uniqueMap = new Map();
-        for (const row of demandRows) {
-            const key = `${row.hs_code}-${row.reporter_iso3}-${row.year}`;
-            if (uniqueMap.has(key)) {
-                if (row.export_value_usd > uniqueMap.get(key).export_value_usd) {
-                    uniqueMap.set(key, row);
-                }
-            } else {
-                uniqueMap.set(key, row);
-            }
+            });
+        } else if (partnerCode === '699' || pIso3Candidate === 'IND') {
+            supplierRows.push({
+                hs_code: hsCode,
+                reporter_iso3: iso3,
+                partner_iso3: 'IND',
+                partner_name: 'India',
+                year: parseInt(String(r.Period || r.period || r.yr || 0).substring(0, 4)),
+                import_value_usd: Math.round(parseFloat(String(val))),
+                fetched_at: new Date().toISOString()
+            });
         }
-        const uniqueDemandRows = Array.from(uniqueMap.values());
-        await chunkedUpsert(supabase, 'trade_demand_cache', uniqueDemandRows, 'hs_code,reporter_iso3,year', 200);
-        totalRecords = uniqueDemandRows.length;
+    });
+
+    // Dedup and Upsert Demand
+    const uniqueDemandMap = new Map();
+    demandRows.forEach(row => {
+        const key = `${row.hs_code}-${row.reporter_iso3}-${row.year}`;
+        if (!uniqueDemandMap.has(key) || row.import_value_usd > uniqueDemandMap.get(key).import_value_usd) {
+            uniqueDemandMap.set(key, row);
+        }
+    });
+    const finalDemandRows = Array.from(uniqueDemandMap.values());
+    if (finalDemandRows.length > 0) {
+        await chunkedUpsert(supabase, 'trade_demand_cache', finalDemandRows, 'hs_code,reporter_iso3,year', 200);
+        totalRecords = finalDemandRows.length;
+    }
+
+    // Dedup and Upsert Suppliers with share calculation
+    const uniqueSupplierMap = new Map();
+    supplierRows.forEach(row => {
+        const key = `${row.hs_code}-${row.reporter_iso3}-${row.year}`;
+        if (!uniqueSupplierMap.has(key) || row.import_value_usd > uniqueSupplierMap.get(key).import_value_usd) {
+            uniqueSupplierMap.set(key, row);
+        }
+    });
+
+    const finalSupplierRows = Array.from(uniqueSupplierMap.values()).map(s => {
+        const matchingDemand = finalDemandRows.find(d => d.reporter_iso3 === s.reporter_iso3 && d.year === s.year);
+        const share = matchingDemand && matchingDemand.import_value_usd > 0
+            ? (s.import_value_usd / matchingDemand.import_value_usd) * 100
+            : 0;
+        return { ...s, market_share_pct: Math.min(100, parseFloat(share.toFixed(3))) };
+    });
+
+    if (finalSupplierRows.length > 0) {
+        await chunkedUpsert(supabase, 'trade_supplier_breakdown', finalSupplierRows, 'hs_code,reporter_iso3,partner_iso3,year', 200);
+        bilateralRecords = finalSupplierRows.length;
     }
 
     // Trigger scoring
@@ -290,7 +299,7 @@ Deno.serve(async (req: Request) => {
                     supabaseKey
                 });
             }, { maxRetries: 2, backoffMs: 5000 });
-        });
+        }, corsHeaders);
 
     } catch (err: any) {
         console.error('[fetch-hs-demand] Global catch:', err)
