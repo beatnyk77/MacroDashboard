@@ -63,56 +63,75 @@ export const ExportScoutPlaybookPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 pb-20 selection:bg-blue-100">
+    <div className="min-h-screen bg-[#020617] text-white pb-20 selection:bg-emerald-500/30">
       {/* Action Bar (Hidden on Print) */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-3 flex justify-between items-center print:hidden">
+      <div className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center print:hidden">
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={() => navigate(-1)}
-          className="text-slate-500 hover:text-slate-900 font-bold"
+          className="text-white/40 hover:text-white font-black uppercase tracking-widest text-[10px] transition-colors"
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
-          Back
+          Back to Analysis
         </Button>
         
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="font-bold border-slate-200" onClick={() => window.print()}>
-            <Printer className="w-4 h-4 mr-2" />
-            Print to PDF
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="font-black uppercase tracking-widest text-[10px] border-white/10 hover:bg-white/5 bg-transparent text-white/70" 
+            onClick={() => window.print()}
+          >
+            <Printer className="w-3.5 h-3.5 mr-2 text-blue-400" />
+            Print Intelligence
           </Button>
-          <Button variant="outline" size="sm" className="font-bold border-slate-200">
-            <Download className="w-4 h-4 mr-2" />
-            Export Data
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="font-black uppercase tracking-widest text-[10px] border-white/10 hover:bg-white/5 bg-transparent text-white/70"
+          >
+            <Download className="w-3.5 h-3.5 mr-2 text-emerald-400" />
+            Raw Data
           </Button>
-          <Button variant="default" size="sm" className="font-bold bg-blue-600 hover:bg-blue-700">
-            <Share2 className="w-4 h-4 mr-2" />
-            Share Playbook
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="font-black uppercase tracking-widest text-[10px] bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20"
+          >
+            <Share2 className="w-3.5 h-3.5 mr-2" />
+            Distribute
           </Button>
         </div>
       </div>
 
       {/* Document Content */}
-      <article className="max-w-[1200px] mx-auto shadow-2xl my-8 lg:my-12 print:my-0 print:shadow-none print:max-w-none">
+      <article className="max-w-[1300px] mx-auto my-8 lg:my-16 print:my-0 shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5 rounded-[2rem] overflow-hidden bg-slate-950/50 backdrop-blur-sm print:shadow-none print:border-none print:rounded-none">
         {/* Page 1: Executive Summary */}
-        <section className="bg-white min-h-[1000px] print:min-h-0">
+        <section className="min-h-[1000px] print:min-h-0 border-b border-white/5">
           <ScoutHeader metadata={playbook.metadata} />
           <ScoutMetricCards metadata={playbook.metadata} />
           
-          <div className="px-8 lg:px-12 py-16">
-            <div className="max-w-3xl">
-              <h2 className="text-sm font-black uppercase tracking-[0.2em] text-blue-600 mb-4">Executive Summary</h2>
-              <h3 className="text-3xl lg:text-4xl font-black tracking-tight text-slate-900 mb-6 font-syne">
+          <div className="px-8 lg:px-20 py-24 relative">
+            {/* Decorative element */}
+            <div className="absolute top-24 left-8 w-1 h-24 bg-gradient-to-b from-blue-500 to-transparent opacity-50" />
+            
+            <div className="max-w-4xl">
+              <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-6">Strategic Executive Brief</h2>
+              <h3 className="text-4xl lg:text-5xl font-black tracking-tighter text-white mb-8 font-syne leading-[1.1]">
                 {playbook.executive_summary.headline}
               </h3>
-              <p className="text-xl text-slate-600 leading-relaxed font-medium mb-8">
+              <p className="text-xl text-white/70 leading-relaxed font-medium mb-12 max-w-3xl">
                 {playbook.executive_summary.summary}
               </p>
-              <div className="p-6 bg-slate-900 rounded-3xl text-white">
-                <div className="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-2">Core Insight</div>
-                <p className="text-lg font-bold italic leading-snug">
-                  "{playbook.executive_summary.key_insight}"
-                </p>
+              
+              <div className="relative group p-[1px] rounded-3xl overflow-hidden bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-blue-500/20 max-w-2xl">
+                <div className="bg-slate-950 p-8 rounded-[calc(1.5rem-1px)]">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-3">Principal Insight</div>
+                  <p className="text-xl font-bold italic leading-snug text-white/90">
+                    "{playbook.executive_summary.key_insight}"
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -121,7 +140,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
         </section>
 
         {/* Page 2: Market Intel */}
-        <section className="print:break-before-page">
+        <section className="print:break-before-page border-b border-white/5">
           <ScoutMarketIntel intel={playbook.market_intelligence} recommendations={playbook.strategic_recommendations} />
         </section>
 
@@ -130,14 +149,17 @@ export const ExportScoutPlaybookPage: React.FC = () => {
           <ScoutExecutionPlaybook playbook={playbook.execution_playbook} />
           
           {/* Footer */}
-          <div className="px-8 lg:px-12 py-12 border-t border-slate-100 flex justify-between items-center bg-slate-50">
+          <div className="px-8 lg:px-20 py-16 flex justify-between items-end bg-[#020617]/50 border-t border-white/5">
             <div>
-              <div className="text-slate-900 font-black tracking-tighter">{playbook.footer.generated_by}</div>
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Global Trade Intelligence Unit</div>
+              <div className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
+                <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px]">GQ</div>
+                {playbook.footer.generated_by}
+              </div>
+              <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-2">Macro Intelligence Division · Confidential</div>
             </div>
             <div className="text-right">
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Generated On</div>
-              <div className="text-slate-900 font-bold text-sm">{playbook.footer.date}</div>
+              <div className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Authorization Date</div>
+              <div className="text-white font-black text-sm font-mono tracking-wider">{playbook.footer.date}</div>
             </div>
           </div>
         </section>
@@ -156,7 +178,16 @@ export const ExportScoutPlaybookPage: React.FC = () => {
           article {
             margin: 0 !important;
             padding: 0 !important;
+            box-shadow: none !important;
+            background: white !important;
           }
+          section {
+            border-bottom: 1px solid #eee !important;
+          }
+          h1, h2, h3, h4, p, div {
+            color: black !important;
+          }
+          .bg-slate-950 { background: #f8fafc !important; color: black !important; border: 1px solid #e2e8f0 !important; }
         }
       `}</style>
     </div>

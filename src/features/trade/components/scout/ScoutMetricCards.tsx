@@ -1,11 +1,10 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import { TrendingUp, Globe, Target, Zap } from 'lucide-react';
 
 interface ScoutMetricCardsProps {
   metadata: {
-    total_addressable_market: string;
-    india_global_share: string;
+    total_market: string;
+    india_share: string;
     opportunity_score: number;
   };
 }
@@ -14,55 +13,63 @@ export const ScoutMetricCards: React.FC<ScoutMetricCardsProps> = ({ metadata }) 
   const metrics = [
     {
       label: 'Global Market Size (TAM)',
-      value: metadata.total_addressable_market,
-      sub: 'Annual Import Value',
+      value: metadata.total_market,
+      sub: 'Annual Cumulative Value',
       icon: Globe,
-      color: 'text-blue-500',
-      bg: 'bg-blue-500/5',
+      color: 'text-blue-400',
+      glow: 'shadow-blue-500/20',
+      border: 'hover:border-blue-500/30',
     },
     {
-      label: "India's Market Share",
-      value: metadata.india_global_share,
-      sub: 'Of Global Demand',
+      label: "India's Current Share",
+      value: metadata.india_share,
+      sub: 'Share of Global Trade',
       icon: TrendingUp,
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-500/5',
+      color: 'text-emerald-400',
+      glow: 'shadow-emerald-500/20',
+      border: 'hover:border-emerald-500/30',
     },
     {
-      label: 'Strategic Opportunity Score',
-      value: `${metadata.opportunity_score}/100`,
-      sub: 'Proprietary Index',
+      label: 'Strategic Opportunity',
+      value: `${metadata.opportunity_score}`,
+      sub: 'Institutional Alpha Score',
       icon: Target,
-      color: 'text-amber-500',
-      bg: 'bg-amber-500/5',
+      color: 'text-amber-400',
+      glow: 'shadow-amber-500/20',
+      border: 'hover:border-amber-500/30',
     },
     {
-      label: 'Recommended Posture',
-      value: metadata.opportunity_score > 75 ? 'Aggressive Expansion' : metadata.opportunity_score > 50 ? 'Strategic Growth' : 'Opportunistic',
-      sub: 'Market Entry Strategy',
+      label: 'Execution Posture',
+      value: metadata.opportunity_score > 75 ? 'Aggressive' : 'Strategic',
+      sub: 'Recommended Mode',
       icon: Zap,
-      color: 'text-rose-500',
-      bg: 'bg-rose-500/5',
+      color: 'text-purple-400',
+      glow: 'shadow-purple-500/20',
+      border: 'hover:border-purple-500/30',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-8 lg:px-12 -mt-8 relative z-20">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-8 lg:px-20 -mt-12 relative z-20">
       {metrics.map((m) => (
-        <Card key={m.label} className="bg-white border border-slate-200 shadow-xl p-6 rounded-2xl flex flex-col justify-between hover:border-blue-500/30 transition-all group">
-          <div className="flex justify-between items-start mb-4">
-            <div className={`p-2 rounded-xl ${m.bg}`}>
-              <m.icon className={`w-5 h-5 ${m.color}`} />
+        <div 
+          key={m.label} 
+          className={`bg-slate-900/80 backdrop-blur-xl border border-white/5 p-8 rounded-[2rem] flex flex-col justify-between transition-all duration-500 group cursor-default shadow-2xl ${m.border}`}
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className={`p-4 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:scale-110 transition-transform duration-500 ${m.glow} shadow-2xl`}>
+              <m.icon className={`w-6 h-6 ${m.color}`} />
             </div>
           </div>
           <div>
-            <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">{m.label}</div>
-            <div className="text-3xl font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+            <div className="text-white/30 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{m.label}</div>
+            <div className={`text-4xl font-black tracking-tighter text-white font-syne`}>
               {m.value}
+              {m.label.includes('Opportunity') && <span className="text-sm text-white/20 ml-1 font-mono">/ 100</span>}
             </div>
-            <div className="text-slate-500 text-xs mt-1 font-medium">{m.sub}</div>
+            <div className="text-white/20 text-[10px] mt-2 font-black uppercase tracking-widest">{m.sub}</div>
           </div>
-        </Card>
+        </div>
       ))}
     </div>
   );

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Lightbulb, ShieldCheck, Zap } from 'lucide-react';
 
@@ -19,66 +18,72 @@ interface ScoutMarketIntelProps {
 
 export const ScoutMarketIntel: React.FC<ScoutMarketIntelProps> = ({ intel, recommendations }) => {
   return (
-    <div className="px-8 lg:px-12 py-16 bg-slate-50 border-y border-slate-200">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-black tracking-tight font-syne text-slate-900 mb-12 text-center">Strategic Market Intelligence</h2>
+    <div className="px-8 lg:px-20 py-32 bg-[#020617]">
+      <div className="max-w-[1300px] mx-auto">
+        <div className="mb-20 text-center">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500 mb-6">Intelligence Synthesis</h2>
+          <h3 className="text-5xl lg:text-7xl font-black tracking-tighter text-white font-syne">Strategic Market Intelligence</h3>
+        </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Trends */}
-          <Card className="p-8 bg-white border-slate-200 rounded-3xl shadow-sm h-full">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-blue-500/10 rounded-lg text-blue-600">
-                <Lightbulb className="w-5 h-5" />
+          <div className="p-10 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] shadow-2xl h-full flex flex-col group hover:bg-slate-900/60 transition-all duration-500">
+            <div className="flex items-center gap-4 mb-10">
+              <div className="p-3 bg-blue-600/10 rounded-2xl text-blue-400 border border-blue-500/10 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(37,99,235,0.1)]">
+                <Lightbulb className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-xl text-slate-900">Key Trends</h3>
+              <h3 className="font-black text-2xl text-white tracking-tight">Market Momentum</h3>
             </div>
-            <ul className="space-y-4">
+            <ul className="space-y-6 flex-1">
               {intel.top_trends.map((t, idx) => (
-                <li key={idx} className="flex gap-3 text-slate-600 text-sm leading-relaxed">
-                  <span className="text-blue-500 font-bold">•</span>
+                <li key={idx} className="flex gap-4 text-white/50 text-base leading-relaxed group-hover:text-white/70 transition-colors">
+                  <span className="text-blue-500 font-black font-mono mt-1 text-xs">{String(idx + 1).padStart(2, '0')}</span>
                   {t}
                 </li>
               ))}
             </ul>
-          </Card>
+          </div>
 
           {/* Competitive Context */}
-          <Card className="p-8 bg-white border-slate-200 rounded-3xl shadow-sm h-full">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-600">
-                <ShieldCheck className="w-5 h-5" />
+          <div className="p-10 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] shadow-2xl h-full flex flex-col group hover:bg-slate-900/60 transition-all duration-500">
+            <div className="flex items-center gap-4 mb-10">
+              <div className="p-3 bg-emerald-600/10 rounded-2xl text-emerald-400 border border-emerald-500/10 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                <ShieldCheck className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-xl text-slate-900">Competitive Edge</h3>
+              <h3 className="font-black text-2xl text-white tracking-tight">Competitive Advantage</h3>
             </div>
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
+            <p className="text-white/50 text-base leading-relaxed mb-10 group-hover:text-white/70 transition-colors">
               {intel.india_vs_competitors}
             </p>
-            <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-              <div className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">Certification Status</div>
-              <p className="text-xs text-emerald-800 font-medium">{recommendations.certification_notes}</p>
+            <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl backdrop-blur-md">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-2">Certification & Compliance</div>
+              <p className="text-sm text-emerald-400/80 font-medium leading-snug">{recommendations.certification_notes}</p>
             </div>
-          </Card>
+          </div>
 
-          {/* Logic */}
-          <Card className="p-8 bg-slate-900 border-slate-800 rounded-3xl shadow-2xl h-full text-white">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-amber-500/20 rounded-lg text-amber-500">
-                <Zap className="w-5 h-5" />
+          {/* Strategic Posture */}
+          <div className="p-10 bg-blue-600 border border-blue-500/20 rounded-[2.5rem] shadow-[0_30px_100px_rgba(37,99,235,0.2)] h-full flex flex-col group hover:scale-[1.02] transition-all duration-500 text-white relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(255,255,255,0.2),transparent)]" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="p-3 bg-white/10 rounded-2xl text-white border border-white/10 group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <h3 className="font-black text-2xl text-white tracking-tight">Path of Success</h3>
               </div>
-              <h3 className="font-bold text-xl text-white">Logic of Success</h3>
-            </div>
-            <p className="text-white/70 text-sm leading-relaxed mb-8 italic">
-              "{intel.path_of_least_resistance}"
-            </p>
-            <div className="space-y-4">
-              <div className="text-[10px] font-black uppercase tracking-widest text-amber-500">Target Rollout</div>
-              <div className="flex flex-wrap gap-2">
-                {recommendations.phase_1_markets.map(m => (
-                  <Badge key={m} className="bg-white/10 text-white hover:bg-white/20 border-white/10 font-bold">{m}</Badge>
-                ))}
+              <p className="text-white/90 text-xl font-bold leading-relaxed mb-12 italic tracking-tight">
+                "{intel.path_of_least_resistance}"
+              </p>
+              <div className="space-y-6">
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Primary Launch Vector</div>
+                <div className="flex flex-wrap gap-3">
+                  {recommendations.phase_1_markets.map(m => (
+                    <Badge key={m} className="bg-white/10 text-white hover:bg-white/20 border-white/20 font-black px-4 py-1.5 rounded-xl tracking-widest text-[10px] shadow-sm">{m}</Badge>
+                  ))}
+                </div>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>
