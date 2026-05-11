@@ -109,8 +109,8 @@ export const ExportScoutPlaybookPage: React.FC = () => {
       <article className="max-w-[1300px] mx-auto my-8 lg:my-16 print:my-0 shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5 rounded-[2rem] overflow-hidden bg-slate-950/50 backdrop-blur-sm print:shadow-none print:border-none print:rounded-none">
         {/* Page 1: Executive Summary */}
         <section className="min-h-[1000px] print:min-h-0 border-b border-white/5">
-          <ScoutHeader metadata={playbook.metadata} />
-          <ScoutMetricCards metadata={playbook.metadata} />
+          {playbook.metadata && <ScoutHeader metadata={playbook.metadata} />}
+          {playbook.metadata && <ScoutMetricCards metadata={playbook.metadata} />}
           
           <div className="px-8 lg:px-20 py-24 relative">
             {/* Decorative element */}
@@ -162,7 +162,17 @@ export const ExportScoutPlaybookPage: React.FC = () => {
             </div>
             <div className="text-right">
               <div className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Authorization Date</div>
-              <div className="text-white font-black text-sm font-mono tracking-wider">{playbook.footer?.date || new Date().toLocaleDateString()}</div>
+              <div className="text-white font-black text-sm font-mono tracking-wider">
+                {playbook.footer?.date ? new Date(playbook.footer.date).toLocaleDateString('en-US', { 
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                }).toUpperCase() : new Date().toLocaleDateString('en-US', { 
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                }).toUpperCase()}
+              </div>
             </div>
           </div>
         </section>
