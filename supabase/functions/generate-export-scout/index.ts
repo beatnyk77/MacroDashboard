@@ -100,10 +100,13 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    const openaiKey = Deno.env.get("OPENAI_API_KEY") ?? "";
+    const openrouterKey = Deno.env.get("OPENROUTER_API_KEY") ?? "";
 
     const sb = createClient(supabaseUrl, supabaseKey);
-    const openai = new OpenAI({ apiKey: openaiKey });
+    const openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: openrouterKey,
+    });
 
     // 1. Fetch Market Data
     const [demandRes, supplierRes] = await Promise.all([
@@ -185,8 +188,11 @@ Return ONLY a JSON object with this exact structure:
 `;
 
     const aiRes = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [{ role: "system", content: "You are a world-class export strategy consultant." }, { role: "user", content: prompt }],
+      model: "meta-llama/llama-3.1-8b-instruct",
+      messages: [
+        { role: "system", content: "You are a world-class export strategy consultant." },
+        { role: "user", content: prompt }
+      ],
       response_format: { type: "json_object" },
     });
 

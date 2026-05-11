@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown, Loader2 } from 'lucide-react'
+import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
 import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRanker'
@@ -10,8 +10,6 @@ import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSke
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
     const navigate = useNavigate()
-    const [generating, setGenerating] = useState(false)
-    const [genError, setGenError] = useState<string | null>(null)
 
     const handleGeneratePlaybook = () => {
         if (!code) return
@@ -71,14 +69,9 @@ const HSCodeOverviewPage: React.FC = () => {
                 <div className="flex items-center gap-3 flex-wrap">
                     <button
                         onClick={handleGeneratePlaybook}
-                        disabled={generating}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-500/50"
                     >
-                        {generating ? (
-                            <><Loader2 className="w-3 h-3 animate-spin" /> Generating…</>
-                        ) : (
-                            <><FileDown className="w-3 h-3" /> Export Scout Playbook</>
-                        )}
+                        <FileDown className="w-3 h-3" /> Export Scout Playbook
                     </button>
                     <button
                         onClick={() => refresh()}
@@ -93,9 +86,6 @@ const HSCodeOverviewPage: React.FC = () => {
                         {state.status === 'refreshing' ? 'Regenerating...' : 'Refresh Intelligence'}
                     </button>
                 </div>
-                {genError && (
-                    <p className="text-[10px] text-red-400/80 font-semibold mt-1 text-right">{genError}</p>
-                )}
             </div>
             
             {state.status === 'success' && state.isFallback && (
