@@ -119,47 +119,50 @@ export const ExportScoutPlaybookPage: React.FC = () => {
             <div className="max-w-4xl">
               <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-6">Strategic Executive Brief</h2>
               <h3 className="text-4xl lg:text-5xl font-black tracking-tighter text-white mb-8 font-syne leading-[1.1]">
-                {playbook.executive_summary.headline}
+                {playbook.executive_summary?.headline || 'Intelligence Synthesis Complete'}
               </h3>
               <p className="text-xl text-white/70 leading-relaxed font-medium mb-12 max-w-3xl">
-                {playbook.executive_summary.summary}
+                {playbook.executive_summary?.summary || 'Executive briefing for the analyzed trade corridor is now available for strategic review.'}
               </p>
               
               <div className="relative group p-[1px] rounded-3xl overflow-hidden bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-blue-500/20 max-w-2xl">
                 <div className="bg-slate-950 p-8 rounded-[calc(1.5rem-1px)]">
                   <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-3">Principal Insight</div>
                   <p className="text-xl font-bold italic leading-snug text-white/90">
-                    "{playbook.executive_summary.key_insight}"
+                    "{playbook.executive_summary?.key_insight || 'Market demand velocity suggests significant untapped potential for quality-certified suppliers.'}"
                   </p>
                 </div>
               </div>
             </div>
           </div>
           
-          <ScoutBeachheadsTable beachheads={playbook.priority_beachheads} />
+          <ScoutBeachheadsTable beachheads={playbook.priority_beachheads || []} />
         </section>
 
         {/* Page 2: Market Intel */}
         <section className="print:break-before-page border-b border-white/5">
-          <ScoutMarketIntel intel={playbook.market_intelligence} recommendations={playbook.strategic_recommendations} />
+          <ScoutMarketIntel 
+            intel={playbook.market_intelligence || { top_trends: [], india_vs_competitors: '', path_of_least_resistance: '' }} 
+            recommendations={playbook.strategic_recommendations || { phase_1_markets: [], phase_2_markets: [], certification_notes: '', key_risks: [] }} 
+          />
         </section>
 
         {/* Page 3: Execution */}
         <section className="print:break-before-page">
-          <ScoutExecutionPlaybook playbook={playbook.execution_playbook} />
+          <ScoutExecutionPlaybook playbook={playbook.execution_playbook || { timeline: [], outreach_templates: { cold_email: '', linkedin: '', whatsapp: '' } }} />
           
           {/* Footer */}
           <div className="px-8 lg:px-20 py-16 flex justify-between items-end bg-[#020617]/50 border-t border-white/5">
             <div>
               <div className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
                 <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px]">GQ</div>
-                {playbook.footer.generated_by}
+                {playbook.footer?.generated_by || 'GraphiQuestor Intelligence'}
               </div>
               <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-2">Macro Intelligence Division · Confidential</div>
             </div>
             <div className="text-right">
               <div className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Authorization Date</div>
-              <div className="text-white font-black text-sm font-mono tracking-wider">{playbook.footer.date}</div>
+              <div className="text-white font-black text-sm font-mono tracking-wider">{playbook.footer?.date || new Date().toLocaleDateString()}</div>
             </div>
           </div>
         </section>

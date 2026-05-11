@@ -42,7 +42,7 @@ export const useAuctionHealth = () => {
       const { data, error } = await supabase
         .from('ingestion_runs')
         .select('*')
-        .eq('job_id', 'ingest-us-macro-auctions')
+        .eq('job_name', 'ingest-us-macro-auctions')
         .order('started_at', { ascending: false })
         .limit(1);
 

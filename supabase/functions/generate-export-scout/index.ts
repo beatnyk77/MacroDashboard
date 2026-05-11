@@ -207,14 +207,16 @@ Return ONLY a JSON object with this exact structure:
     const aiPlaybook = JSON.parse(aiRes.choices[0].message.content || "{}");
 
     // 4. Final JSON Assembly
+    const reportTimestamp = new Date().getTime().toString().slice(-6);
     const finalPlaybook = {
       metadata: {
-        hs_code: hsn,
-        product_description: hsnDescription,
+        hsn_code: hsn,
+        hsn_description: hsnDescription,
+        report_id: `GQ-SCOUT-${hsn}-${reportTimestamp}`,
         generated_at: new Date().toISOString(),
         data_source: "UN Comtrade + GraphiQuestor Intelligence",
-        total_addressable_market: globalTamM >= 1000 ? `$${(globalTamM / 1000).toFixed(1)}B` : `$${globalTamM}M`,
-        india_global_share: `${globalIndiaShare}%`,
+        total_market: globalTamM >= 1000 ? `$${(globalTamM / 1000).toFixed(1)}B` : `$${globalTamM}M`,
+        india_share: `${globalIndiaShare}%`,
         opportunity_score: Math.round(markets.reduce((acc, m) => acc + m.opportunity_score, 0) / (markets.length || 1))
       },
       executive_summary: aiPlaybook.executive_summary,

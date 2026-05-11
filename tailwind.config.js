@@ -71,6 +71,7 @@ export default {
 	    		fontFamily: {
 	    			mono: ['Fira Code', 'monospace'],
 	    			sans: ['Fira Sans', 'sans-serif'],
+                    syne: ['Syne', 'sans-serif'],
 	    		},
 	    		borderRadius: {
     			lg: 'var(--radius)',
