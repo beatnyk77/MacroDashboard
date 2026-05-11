@@ -121,7 +121,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
               <h3 className="text-4xl lg:text-5xl font-black tracking-tighter text-white mb-8 font-syne leading-[1.1]">
                 {playbook.executive_summary?.headline || 'Intelligence Synthesis Complete'}
               </h3>
-              <p className="text-xl text-white/70 leading-relaxed font-medium mb-12 max-w-3xl">
+              <p className="text-xl text-white/70 leading-relaxed font-inter font-medium mb-12 max-w-3xl">
                 {playbook.executive_summary?.summary || 'Executive briefing for the analyzed trade corridor is now available for strategic review.'}
               </p>
               

@@ -72,6 +72,7 @@ export default {
 	    			mono: ['Fira Code', 'monospace'],
 	    			sans: ['Fira Sans', 'sans-serif'],
                     syne: ['Syne', 'sans-serif'],
+                    inter: ['Inter', 'sans-serif'],
 	    		},
 	    		borderRadius: {
     			lg: 'var(--radius)',
