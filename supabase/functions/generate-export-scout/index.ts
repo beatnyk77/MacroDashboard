@@ -94,9 +94,17 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    const body = await req.json();
-    const hsn = String(body.hsn || "8512").trim();
-    const hsnDescription = String(body.hsn_description || "Industrial Lighting Equipment").trim();
+    const body = await req.json().catch(() => ({}));
+
+    if (!body.hsn) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required parameter: hsn' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    const hsn = String(body.hsn).trim();
+    const hsnDescription = String(body.hsn_description || "Industrial Goods").trim();
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";

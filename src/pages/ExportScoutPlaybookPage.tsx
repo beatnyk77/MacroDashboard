@@ -16,16 +16,24 @@ export const ExportScoutPlaybookPage: React.FC = () => {
   const description = searchParams.get('description') || '';
   const navigate = useNavigate();
 
+  console.log('[ExportScoutPlaybook] Rendering for code:', code);
+
   const { data: playbook, isLoading, error } = useQuery({
     queryKey: ['export-scout', code, description],
     queryFn: async () => {
+      console.log('[ExportScoutPlaybook] Fetching playbook for:', code, description);
       const { data, error } = await supabase.functions.invoke('generate-export-scout', {
         body: { hsn: code, hsn_description: description }
       });
-      if (error) throw error;
+      if (error) {
+        console.error('[ExportScoutPlaybook] Edge Function Error:', error);
+        throw error;
+      }
+      console.log('[ExportScoutPlaybook] Received data:', data);
       return data;
     },
-    staleTime: Infinity, // Playbooks are static once generated for a specific session
+    enabled: !!code,
+    staleTime: Infinity,
   });
 
   if (isLoading) {
@@ -43,7 +51,9 @@ export const ExportScoutPlaybookPage: React.FC = () => {
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-4">
         <div className="bg-rose-500/10 border border-rose-500/20 p-8 rounded-3xl max-w-md text-center">
           <h2 className="text-2xl font-black text-rose-500 mb-4">Intelligence Synthesis Failed</h2>
-          <p className="text-white/60 mb-8">{error instanceof Error ? error.message : 'An unexpected error occurred during generation.'}</p>
+          <p className="text-white/60 mb-8">
+            {error instanceof Error ? error.message : (typeof error === 'object' && error !== null && 'message' in error) ? (error as any).message : 'An unexpected error occurred during generation.'}
+          </p>
           <Button onClick={() => navigate(-1)} variant="outline" className="border-white/10 hover:bg-white/5">
             Return to Overview
           </Button>
@@ -152,3 +162,6 @@ export const ExportScoutPlaybookPage: React.FC = () => {
     </div>
   );
 };
+
+export default ExportScoutPlaybookPage;
+
