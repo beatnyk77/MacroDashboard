@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
@@ -10,16 +10,12 @@ import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSke
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
+    const isEmbedded = searchParams.get('embed') === 'true'
 
     const handleGeneratePlaybook = () => {
-        alert('CLICK DETECTED');
-        if (!code) {
-            console.warn('[HSCodeOverview] No code found for navigation');
-            return;
-        }
-        const target = `/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`;
-        console.log('[HSCodeOverview] Navigating to playbook:', target);
-        navigate(target);
+        if (!code) return
+        navigate(`/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`)
     }
 
     const { refresh, ...state } = useHSDemand(code || null)
@@ -43,7 +39,7 @@ const HSCodeOverviewPage: React.FC = () => {
     const isLoading = state.status === 'loading' || state.status === 'fetching_live' || state.status === 'refreshing'
 
     return (
-        <div className="max-w-[1400px] mx-auto space-y-8 pb-24 px-4 sm:px-6">
+        <div className={`max-w-[1400px] mx-auto space-y-8 pb-24 px-4 sm:px-6 ${isEmbedded ? 'pt-4' : ''}`}>
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
