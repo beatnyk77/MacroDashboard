@@ -47,7 +47,7 @@ export const ScoutExecutionPlaybook: React.FC<ScoutExecutionPlaybookProps> = ({ 
                     <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 mb-2">{step.week}</div>
                     <h4 className="font-black text-white text-2xl mb-4 tracking-tight group-hover:text-blue-400 transition-colors">{step.focus}</h4>
                     <ul className="space-y-3">
-                      {step.key_actions.map((action, i) => (
+                      {step?.key_actions?.map((action, i) => (
                         <li key={i} className="text-white/40 text-base flex gap-3 group-hover:text-white/60 transition-colors leading-snug">
                           <span className="text-emerald-500 font-black mt-1">→</span>
                           {action}

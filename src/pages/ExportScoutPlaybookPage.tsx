@@ -21,16 +21,30 @@ export const ExportScoutPlaybookPage: React.FC = () => {
   const { data: playbook, isLoading, error } = useQuery({
     queryKey: ['export-scout', code, description],
     queryFn: async () => {
-      console.log('[ExportScoutPlaybook] Fetching playbook for:', code, description);
-      const { data, error } = await supabase.functions.invoke('generate-export-scout', {
-        body: { hsn: code, hsn_description: description }
-      });
-      if (error) {
-        console.error('[ExportScoutPlaybook] Edge Function Error:', error);
-        throw error;
+      console.log('[ExportScoutPlaybook] INITIATING FETCH for:', code, description);
+      try {
+        const result = await supabase.functions.invoke('generate-export-scout', {
+          body: { hsn: code, hsn_description: description }
+        });
+        
+        console.log('[ExportScoutPlaybook] RAW INVOKE RESULT:', result);
+        
+        if (result.error) {
+          console.error('[ExportScoutPlaybook] Supabase Invoke Error:', result.error);
+          throw result.error;
+        }
+        
+        if (!result.data) {
+          console.error('[ExportScoutPlaybook] No data returned from Edge Function');
+          throw new Error('No data returned from intelligence engine');
+        }
+
+        console.log('[ExportScoutPlaybook] SUCCESS: Playbook data received');
+        return result.data;
+      } catch (err) {
+        console.error('[ExportScoutPlaybook] UNCAUGHT FETCH ERROR:', err);
+        throw err;
       }
-      console.log('[ExportScoutPlaybook] Received data:', data);
-      return data;
     },
     enabled: !!code,
     staleTime: Infinity,
