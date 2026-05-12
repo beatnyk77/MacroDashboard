@@ -12,8 +12,13 @@ const HSCodeOverviewPage: React.FC = () => {
     const navigate = useNavigate()
 
     const handleGeneratePlaybook = () => {
-        if (!code) return
-        navigate(`/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`)
+        if (!code) {
+            console.warn('[HSCodeOverview] No code found for navigation');
+            return;
+        }
+        const target = `/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`;
+        console.log('[HSCodeOverview] Navigating to playbook:', target);
+        navigate(target);
     }
 
     const { refresh, ...state } = useHSDemand(code || null)

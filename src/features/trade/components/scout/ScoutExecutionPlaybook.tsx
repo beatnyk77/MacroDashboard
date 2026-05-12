@@ -36,7 +36,7 @@ export const ScoutExecutionPlaybook: React.FC<ScoutExecutionPlaybookProps> = ({ 
               {/* Vertical Line */}
               <div className="absolute left-[27px] top-4 bottom-4 w-px bg-white/5" />
               
-              {playbook.timeline.map((step, idx) => (
+              {playbook?.timeline?.map((step, idx) => (
                 <div key={idx} className="relative flex gap-10 group">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 z-10 border border-white/10 transition-all duration-500
                     ${idx === 0 ? 'bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.3)] scale-110' : 'bg-slate-900 text-white/40 group-hover:border-blue-500/30'}
@@ -89,7 +89,7 @@ export const ScoutExecutionPlaybook: React.FC<ScoutExecutionPlaybookProps> = ({ 
                       {type === 'email' ? 'Executive Cold Outreach' : type === 'linkedin' ? 'Direct Platform Message' : 'Instant Channel Intro'}
                     </div>
                     <div className="bg-black/40 p-8 rounded-3xl border border-white/5 text-sm text-white/70 leading-relaxed font-mono whitespace-pre-wrap shadow-inner h-[400px] overflow-y-auto custom-scrollbar">
-                      {playbook.outreach_templates[type === 'email' ? 'cold_email' : type as keyof typeof playbook.outreach_templates]}
+                      {playbook?.outreach_templates?.[type === 'email' ? 'cold_email' : type as keyof typeof playbook.outreach_templates]}
                     </div>
                   </TabsContent>
                 ))}

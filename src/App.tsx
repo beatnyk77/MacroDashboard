@@ -52,7 +52,13 @@ const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').t
 const TradeIntelligencePage = lazy(() => import('@/pages/TradeIntelligencePage').then(module => ({ default: module.default })));
 const HSCodeOverviewPage = lazy(() => import('@/pages/HSCodeOverviewPage').then(module => ({ default: module.default })));
 const MarketDeepDivePage = lazy(() => import('@/pages/MarketDeepDivePage').then(module => ({ default: module.default })));
-const ExportScoutPlaybookPage = lazy(() => import('@/pages/ExportScoutPlaybookPage').then(module => ({ default: module.default })));
+const ExportScoutPlaybookPage = lazy(() => {
+    console.log('[App] Loading ExportScoutPlaybookPage chunk...');
+    return import('@/pages/ExportScoutPlaybookPage').then(module => {
+        console.log('[App] ExportScoutPlaybookPage chunk loaded:', !!module.default);
+        return { default: module.default };
+    });
+});
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>

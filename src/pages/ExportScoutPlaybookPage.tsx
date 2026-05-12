@@ -11,12 +11,13 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, Printer, Download, Share2, Loader2 } from 'lucide-react';
 
 export const ExportScoutPlaybookPage: React.FC = () => {
+  console.log('[ExportScoutPlaybook] COMPONENT MOUNTED');
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
   const description = searchParams.get('description') || '';
   const navigate = useNavigate();
 
-  console.log('[ExportScoutPlaybook] Rendering for code:', code);
+  console.log('[ExportScoutPlaybook] Rendering for code:', code, 'description:', description);
 
   const { data: playbook, isLoading, error } = useQuery({
     queryKey: ['export-scout', code, description],
