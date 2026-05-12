@@ -39,6 +39,11 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
     const [searchParams] = useSearchParams();
+    
+    useEffect(() => {
+        console.log('[GlobalLayout] Location changed to:', location.pathname, location.search);
+    }, [location]);
+
     const isEmbedded = searchParams.get('embed') === 'true';
     const isObservatory = location.pathname.includes('/macro-observatory');
 
