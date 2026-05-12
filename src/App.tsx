@@ -54,10 +54,15 @@ const HSCodeOverviewPage = lazy(() => import('@/pages/HSCodeOverviewPage').then(
 const MarketDeepDivePage = lazy(() => import('@/pages/MarketDeepDivePage').then(module => ({ default: module.default })));
 const ExportScoutPlaybookPage = lazy(() => {
     console.log('[App] Loading ExportScoutPlaybookPage chunk...');
-    return import('@/pages/ExportScoutPlaybookPage').then(module => {
-        console.log('[App] ExportScoutPlaybookPage chunk loaded:', !!module.default);
-        return { default: module.default };
-    });
+    return import('@/pages/ExportScoutPlaybookPage')
+        .then(module => {
+            console.log('[App] ExportScoutPlaybookPage chunk loaded:', !!module.default);
+            return { default: module.default };
+        })
+        .catch(err => {
+            console.error('[App] ExportScoutPlaybookPage chunk LOAD FAILURE:', err);
+            throw err;
+        });
 });
 
 const LoadingFallback = () => (

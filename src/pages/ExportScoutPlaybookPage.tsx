@@ -11,12 +11,13 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, Printer, Download, Share2, Loader2 } from 'lucide-react';
 
 export const ExportScoutPlaybookPage: React.FC = () => {
-  const { code } = useParams<{ code: string }>();
-  const [searchParams] = useSearchParams();
-  const description = searchParams.get('description') || '';
-  const navigate = useNavigate();
+  try {
+    const { code } = useParams<{ code: string }>();
+    const [searchParams] = useSearchParams();
+    const description = searchParams.get('description') || '';
+    const navigate = useNavigate();
 
-  console.log('[ExportScoutPlaybook] Rendering for code:', code, 'description:', description);
+    console.log('[ExportScoutPlaybook] Rendering for code:', code, 'description:', description);
 
   const { data: playbook, isLoading, error } = useQuery({
     queryKey: ['export-scout', code, description],
@@ -28,6 +29,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
         });
         
         console.log('[ExportScoutPlaybook] RAW INVOKE RESULT:', result);
+        alert('FUNCTION RETURNED: ' + (result.error ? 'ERROR' : 'DATA'));
         
         if (result.error) {
           console.error('[ExportScoutPlaybook] Supabase Invoke Error:', result.error);
@@ -209,6 +211,15 @@ export const ExportScoutPlaybookPage: React.FC = () => {
       `}</style>
     </div>
   );
+  } catch (renderError) {
+    console.error('[ExportScoutPlaybook] RENDER CRASH:', renderError);
+    return (
+      <div style={{ padding: '50px', background: 'red', color: 'white' }}>
+        <h1>RENDER CRASH</h1>
+        <pre>{String(renderError)}</pre>
+      </div>
+    );
+  }
 };
 
 export default ExportScoutPlaybookPage;
