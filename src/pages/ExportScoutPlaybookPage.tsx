@@ -7,6 +7,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
   const description = searchParams.get('description');
 
   console.log('[ExportScoutPlaybook TEST] Rendering for code:', code);
+  alert('TEST PAGE RENDERED');
 
   return (
     <div style={{ padding: '50px', background: 'white', color: 'black', minHeight: '100vh', zIndex: 9999 }}>

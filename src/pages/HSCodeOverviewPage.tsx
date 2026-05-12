@@ -12,6 +12,7 @@ const HSCodeOverviewPage: React.FC = () => {
     const navigate = useNavigate()
 
     const handleGeneratePlaybook = () => {
+        alert('CLICK DETECTED');
         if (!code) {
             console.warn('[HSCodeOverview] No code found for navigation');
             return;
