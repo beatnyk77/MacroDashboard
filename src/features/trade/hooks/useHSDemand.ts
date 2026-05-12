@@ -72,9 +72,8 @@ export function useHSDemand(hsCode: string | null) {
                 // ── 2. Cache miss or Manual Refresh → invoke edge function ──
                 if (!cancelled) setState({ status: isManualRefresh ? 'refreshing' : 'fetching_live' })
 
-                const { data: resData, error: invokeErr } = await supabase.functions.invoke('fetch-hs-demand', {
-                    method: 'GET',
-                    queryParams: { hsCode }
+                const { data: resData, error: invokeErr } = await supabase.functions.invoke(`fetch-hs-demand?hsCode=${hsCode}`, {
+                    method: 'GET'
                 })
 
                 if (invokeErr && !cancelled) {
