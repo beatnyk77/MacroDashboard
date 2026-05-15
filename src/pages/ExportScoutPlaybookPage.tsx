@@ -25,10 +25,43 @@ interface PlaybookData {
     summary: string;
     key_insight: string;
   };
-  priority_beachheads: any[];
-  market_intelligence: any;
-  strategic_recommendations: any;
-  execution_playbook: any;
+  priority_beachheads: {
+    country: string;
+    total_market: string;
+    india_share: number;
+    yoy_growth: number;
+    opportunity_score: number;
+    priority: string;
+    recommended_action: string;
+  }[];
+  market_intelligence: {
+    top_trends: string[];
+    india_vs_competitors: string;
+    path_of_least_resistance: string;
+  };
+  strategic_recommendations: {
+    phase_1_markets: string[];
+    phase_2_markets: string[];
+    certification_notes: string;
+    key_risks: string[];
+  };
+  execution_playbook: {
+    timeline: {
+      week: string;
+      focus: string;
+      key_actions: string[];
+    }[];
+    outreach_templates: {
+      cold_email: string;
+      linkedin: string;
+      whatsapp: string;
+    };
+  };
+  footer: {
+    generated_by: string;
+    date: string;
+    data_sources: string;
+  };
 }
 
 export const ExportScoutPlaybookPage: React.FC = () => {
@@ -78,18 +111,27 @@ export const ExportScoutPlaybookPage: React.FC = () => {
       <div className="min-h-screen bg-[#020617] flex items-center justify-center p-8">
         <div className="max-w-md w-full bg-slate-900/50 border border-rose-500/20 p-10 rounded-[2.5rem] text-center backdrop-blur-xl">
           <div className="w-20 h-20 bg-rose-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-rose-500/20">
-            <Share2 className="w-10 h-10 text-rose-500" />
+            <AlertTriangle className="w-10 h-10 text-rose-500" />
           </div>
           <h2 className="text-2xl font-black text-white mb-4 tracking-tight">Synthesis Interrupted</h2>
-          <p className="text-rose-400 font-medium mb-8">
+          <p className="text-rose-400/80 text-sm font-medium mb-8 leading-relaxed">
             {errorMsg}
           </p>
-          <Button 
-            className="w-full bg-white text-black font-black uppercase tracking-widest py-6 rounded-2xl hover:bg-slate-200 transition-all"
-            onClick={() => navigate(-1)}
-          >
-            Return to Intelligence
-          </Button>
+          <div className="flex flex-col gap-3">
+            <Button 
+              className="w-full bg-white text-black font-black uppercase tracking-widest py-6 rounded-2xl hover:bg-slate-200 transition-all"
+              onClick={() => window.location.reload()}
+            >
+              Retry Synthesis
+            </Button>
+            <Button 
+              variant="ghost"
+              className="w-full text-white/40 hover:text-white font-bold"
+              onClick={() => navigate('/trade')}
+            >
+              Return to Trade Desk
+            </Button>
+          </div>
         </div>
       </div>
     );

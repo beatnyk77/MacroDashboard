@@ -15,15 +15,20 @@ function enrich(score: OpportunityScore): TradeMarket {
 }
 
 export function useHSDemand(hsCode: string | null) {
-    const [state, setState] = useState<DemandState>({ status: 'idle' })
+    // ── Refactor: Move initialization into initial state ──
+    const [state, setState] = useState<DemandState>(() => {
+        if (!hsCode) return { status: 'idle' }
+        return { status: 'loading' }
+    })
     const [refreshTrigger, setRefreshTrigger] = useState(0)
     const inflightRef = useRef<string | null>(null)
 
     const refresh = () => setRefreshTrigger(prev => prev + 1)
 
     useEffect(() => {
+        // ── Refactor: Gate setState behind status check to avoid synchronous redundant updates ──
         if (!hsCode) {
-            setState({ status: 'idle' })
+            setState(prev => prev.status === 'idle' ? prev : { status: 'idle' })
             return
         }
 
@@ -33,11 +38,11 @@ export function useHSDemand(hsCode: string | null) {
         const run = async () => {
             const isManualRefresh = refreshTrigger > 0
             
-            if (isManualRefresh) {
-                setState({ status: 'refreshing' })
-            } else {
-                setState({ status: 'loading' })
-            }
+            // Set initial state for the async operation only if needed
+            setState(prev => {
+                const targetStatus = isManualRefresh ? 'refreshing' : 'loading'
+                return prev.status === targetStatus ? prev : { status: targetStatus }
+            })
 
             try {
                 // ── 1. Check opportunity scores cache (skip if manual refresh) ──
