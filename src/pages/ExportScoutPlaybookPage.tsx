@@ -10,37 +10,48 @@ import { ScoutExecutionPlaybook } from '@/features/trade/components/scout/ScoutE
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Printer, Download, Share2, Loader2 } from 'lucide-react';
 
+interface PlaybookData {
+  metadata: {
+    hsn_code: string;
+    hsn_description: string;
+    generated_at: string;
+    report_id: string;
+    total_market: string;
+    india_share: string;
+    opportunity_score: number;
+  };
+  executive_summary: {
+    headline: string;
+    summary: string;
+    key_insight: string;
+  };
+  priority_beachheads: any[];
+  market_intelligence: any;
+  strategic_recommendations: any;
+  execution_playbook: any;
+}
+
 export const ExportScoutPlaybookPage: React.FC = () => {
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
   const description = searchParams.get('description') || '';
   const navigate = useNavigate();
 
-  const { data: playbook, isLoading, error } = useQuery({
+  const { data: playbook, isLoading, error } = useQuery<PlaybookData>({
     queryKey: ['export-scout', code, description],
     queryFn: async () => {
       console.log('[ExportScoutPlaybook] INITIATING FETCH for:', code, description);
       try {
-        const result = await supabase.functions.invoke('generate-export-scout', {
+        const { data, error } = await supabase.functions.invoke('generate-export-scout', {
           body: { hsn: code, hsn_description: description }
         });
         
-        console.log('[ExportScoutPlaybook] RAW INVOKE RESULT:', result);
-        
-        if (result.error) {
-          console.error('[ExportScoutPlaybook] Supabase Invoke Error:', result.error);
-          throw result.error;
-        }
-        
-        if (!result.data) {
-          console.error('[ExportScoutPlaybook] No data returned from Edge Function');
-          throw new Error('No data returned from intelligence engine');
-        }
+        if (error) throw error;
+        if (!data) throw new Error('No data returned from intelligence engine');
 
-        console.log('[ExportScoutPlaybook] SUCCESS: Playbook data received');
-        return result.data;
+        return data as PlaybookData;
       } catch (err) {
-        console.error('[ExportScoutPlaybook] UNCAUGHT FETCH ERROR:', err);
+        console.error('[ExportScoutPlaybook] FETCH ERROR:', err);
         throw err;
       }
     },

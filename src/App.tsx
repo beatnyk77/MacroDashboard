@@ -5,6 +5,7 @@ import { queryClient } from '@/lib/queryClient';
 import getTheme from '@/theme';
 import { GlobalLayout } from '@/layout/GlobalLayout';
 import { ExportScoutPlaybookPage } from '@/pages/ExportScoutPlaybookPage';
+import { ViewProvider } from '@/context/ViewContext';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -72,7 +73,7 @@ const LoadingFallback = () => (
     </Box>
 );
 
-import { ViewProvider } from '@/context/ViewContext';
+
 
 function App() {
     const theme = useMemo(() => getTheme('dark'), []);
