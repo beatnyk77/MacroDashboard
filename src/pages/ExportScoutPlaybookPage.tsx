@@ -8,7 +8,7 @@ import { ScoutBeachheadsTable } from '@/features/trade/components/scout/ScoutBea
 import { ScoutMarketIntel } from '@/features/trade/components/scout/ScoutMarketIntel';
 import { ScoutExecutionPlaybook } from '@/features/trade/components/scout/ScoutExecutionPlaybook';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Printer, Download, AlertTriangle, Loader2 } from 'lucide-react';
+import { ChevronLeft, Download, AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
 
 interface PlaybookData {
   metadata: {
@@ -19,6 +19,8 @@ interface PlaybookData {
     total_market: string;
     india_share: string;
     opportunity_score: number;
+    markets_analyzed?: number;
+    data_source?: string;
   };
   executive_summary: {
     headline: string;
@@ -70,66 +72,68 @@ export const ExportScoutPlaybookPage: React.FC = () => {
   const description = searchParams.get('description') || '';
   const navigate = useNavigate();
 
-  const { data: playbook, isLoading, error } = useQuery<PlaybookData>({
+  const { data: playbook, isLoading, error, refetch } = useQuery<PlaybookData>({
     queryKey: ['export-scout', code, description],
     queryFn: async () => {
-      console.log('[ExportScoutPlaybook] INITIATING FETCH for:', code, description);
-      try {
-        const { data, error } = await supabase.functions.invoke('generate-export-scout', {
-          body: { hsn: code, hsn_description: description }
-        });
-        
-        if (error) throw error;
-        if (!data) throw new Error('No data returned from intelligence engine');
-
-        return data as PlaybookData;
-      } catch (err) {
-        console.error('[ExportScoutPlaybook] FETCH ERROR:', err);
-        throw err;
-      }
+      const { data, error } = await supabase.functions.invoke('generate-export-scout', {
+        body: { hsn: code, hsn_description: description },
+      });
+      if (error) throw error;
+      if (!data) throw new Error('No data returned from intelligence engine');
+      if ((data as any).error) throw new Error((data as any).error);
+      return data as PlaybookData;
     },
     enabled: !!code,
     staleTime: Infinity,
+    retry: 1,
   });
 
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-8">
+      <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center gap-6 p-8">
         <div className="relative">
-          <div className="absolute -inset-4 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-6" />
+          <div className="absolute -inset-6 bg-blue-500/10 blur-2xl rounded-full" />
+          <Loader2 className="relative w-10 h-10 text-blue-500 animate-spin" />
         </div>
-        <h2 className="text-xl font-black text-white mb-2 tracking-tight">Synthesizing Export Intelligence</h2>
-        <p className="text-slate-400 font-medium animate-pulse">Assembling strategic playbook for {code}...</p>
+        <div className="text-center">
+          <h2 className="text-lg font-black text-white mb-1">Synthesizing Intelligence</h2>
+          <p className="text-sm text-white/30">Analyzing {code} across global trade corridors…</p>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-white/[0.03] border border-white/5 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-[10px] text-white/30 font-mono uppercase tracking-widest">AI Analysis · UN Comtrade</span>
+        </div>
       </div>
     );
   }
 
-  if (error || !playbook || (playbook && (playbook as any).error)) {
-    const errorMsg = (playbook as any)?.error || (error instanceof Error ? error.message : 'The intelligence synthesis engine encountered an unexpected interruption.');
+  // ── Error ────────────────────────────────────────────────────────────────
+  if (error || !playbook || (playbook as any).error) {
+    const errorMsg = (playbook as any)?.error
+      || (error instanceof Error ? error.message : 'Intelligence synthesis encountered an error.');
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center p-8">
-        <div className="max-w-md w-full bg-slate-900/50 border border-rose-500/20 p-10 rounded-[2.5rem] text-center backdrop-blur-xl">
-          <div className="w-20 h-20 bg-rose-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-rose-500/20">
-            <AlertTriangle className="w-10 h-10 text-rose-500" />
+        <div className="max-w-sm w-full bg-slate-900/50 border border-rose-500/15 p-8 rounded-2xl text-center">
+          <div className="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-rose-500/15">
+            <AlertTriangle className="w-7 h-7 text-rose-400" />
           </div>
-          <h2 className="text-2xl font-black text-white mb-4 tracking-tight">Synthesis Interrupted</h2>
-          <p className="text-rose-400/80 text-sm font-medium mb-8 leading-relaxed">
-            {errorMsg}
-          </p>
-          <div className="flex flex-col gap-3">
-            <Button 
-              className="w-full bg-white text-black font-black uppercase tracking-widest py-6 rounded-2xl hover:bg-slate-200 transition-all"
-              onClick={() => window.location.reload()}
+          <h2 className="text-lg font-black text-white mb-2">Synthesis Failed</h2>
+          <p className="text-rose-400/60 text-xs font-medium mb-6 leading-relaxed">{errorMsg}</p>
+          <div className="flex flex-col gap-2">
+            <Button
+              className="w-full bg-white text-black font-black uppercase tracking-widest text-xs py-5 rounded-xl hover:bg-slate-100"
+              onClick={() => refetch()}
             >
-              Retry Synthesis
+              <RefreshCw className="w-3.5 h-3.5 mr-2" />
+              Retry
             </Button>
-            <Button 
+            <Button
               variant="ghost"
-              className="w-full text-white/40 hover:text-white font-bold"
-              onClick={() => navigate('/trade')}
+              className="w-full text-white/30 hover:text-white text-xs font-bold"
+              onClick={() => navigate(-1)}
             >
-              Return to Trade Desk
+              ← Back
             </Button>
           </div>
         </div>
@@ -137,125 +141,140 @@ export const ExportScoutPlaybookPage: React.FC = () => {
     );
   }
 
+  const summary = playbook.executive_summary;
+  const hasHeadline = !!summary?.headline?.trim();
+  const hasInsight = !!summary?.key_insight?.trim();
+  const hasSummary = !!summary?.summary?.trim();
+  const hasBeachheads = playbook.priority_beachheads?.length > 0;
+  const hasIntel = !!(
+    playbook.market_intelligence?.top_trends?.length ||
+    playbook.market_intelligence?.india_vs_competitors ||
+    playbook.market_intelligence?.path_of_least_resistance
+  );
+  const hasPlaybook = !!(
+    playbook.execution_playbook?.timeline?.length ||
+    playbook.execution_playbook?.outreach_templates?.cold_email
+  );
+
   return (
-    <div className="min-h-screen bg-[#020617] pb-32">
-      {/* Top Bar - Hidden on print */}
-      <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/5 px-6 lg:px-12 py-4 flex justify-between items-center print:hidden">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            className="text-white/40 hover:text-white"
+    <div className="min-h-screen bg-[#020617] pb-24">
+
+      {/* ── Sticky Nav ─────────────────────────────────────────────────── */}
+      <nav className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-white/[0.06] px-6 lg:px-10 py-3 flex justify-between items-center print:hidden">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white/30 hover:text-white text-xs px-2"
             onClick={() => navigate(-1)}
           >
-            <ChevronLeft className="w-4 h-4 mr-2" /> Back to Intelligence
+            <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+            Back
           </Button>
-          <div className="h-4 w-px bg-white/10" />
-          <span className="text-xs font-black text-white uppercase tracking-widest hidden sm:inline">Export Scout Playbook</span>
+          <div className="h-3.5 w-px bg-white/10 hidden sm:block" />
+          <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.25em] hidden sm:inline">
+            Export Scout · {playbook.metadata.hsn_code}
+          </span>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" className="text-white/40 hover:text-white" onClick={() => window.print()}>
-            <Printer className="w-4 h-4 mr-2" /> Print
-          </Button>
-          <Button 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest text-xs px-6"
-            onClick={() => window.print()}
-          >
-            <Download className="w-4 h-4 mr-2" /> Download PDF
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest text-[10px] px-4"
+          onClick={() => window.print()}
+        >
+          <Download className="w-3 h-3 mr-1.5" />
+          Export PDF
+        </Button>
       </nav>
 
-      <article className="max-w-[1300px] mx-auto my-8 lg:my-16 print:my-0 shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5 rounded-[2rem] overflow-hidden bg-slate-950/50 backdrop-blur-sm print:shadow-none print:border-none print:rounded-none">
-        {/* Page 1: Executive Summary */}
-        <section className="min-h-[1000px] print:min-h-0 border-b border-white/5">
-          {playbook.metadata && <ScoutHeader metadata={playbook.metadata} />}
-          {playbook.metadata && <ScoutMetricCards metadata={playbook.metadata} />}
-          
-          <div className="px-8 lg:px-20 py-24 relative">
-            <div className="absolute top-24 left-8 w-1 h-24 bg-gradient-to-b from-blue-500 to-transparent opacity-50" />
-            
-            <div className="max-w-4xl">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-6">Strategic Executive Brief</h2>
-              <h3 className="text-4xl lg:text-5xl font-black tracking-tighter text-white mb-8 font-syne leading-[1.1]">
-                {playbook.executive_summary?.headline || 'Intelligence Synthesis Complete'}
-              </h3>
-              <p className="text-xl text-white/70 leading-relaxed font-inter font-medium mb-12 max-w-3xl">
-                {playbook.executive_summary?.summary || 'Executive briefing for the analyzed trade corridor is now available for strategic review.'}
-              </p>
-              
-              <div className="relative group p-[1px] rounded-3xl overflow-hidden bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-blue-500/20 max-w-2xl">
-                <div className="bg-slate-950 p-8 rounded-[calc(1.5rem-1px)]">
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-3">Principal Insight</div>
-                  <p className="text-xl font-bold italic leading-snug text-white/90">
-                    "{playbook.executive_summary?.key_insight || 'Market demand velocity suggests significant untapped potential for quality-certified suppliers.'}"
-                  </p>
+      {/* ── Main Content ───────────────────────────────────────────────── */}
+      <article className="max-w-[1280px] mx-auto my-8 lg:my-12 print:my-0 border border-white/[0.06] rounded-2xl overflow-hidden bg-slate-950/40 backdrop-blur-sm print:shadow-none print:border-none print:rounded-none">
+
+        {/* 1. Header */}
+        <ScoutHeader metadata={playbook.metadata} />
+
+        {/* 2. KPI Metrics */}
+        <div className="py-4">
+          <ScoutMetricCards metadata={playbook.metadata} />
+        </div>
+
+        {/* 3. Executive Summary */}
+        {(hasHeadline || hasSummary || hasInsight) && (
+          <div className="border-t border-white/[0.05] px-8 lg:px-16 py-12">
+            <div className="max-w-3xl">
+              {hasHeadline && (
+                <h2 className="text-2xl lg:text-3xl font-black tracking-tight text-white mb-5 leading-tight">
+                  {summary.headline}
+                </h2>
+              )}
+              {hasSummary && (
+                <p className="text-base text-white/50 leading-relaxed mb-6 max-w-2xl">
+                  {summary.summary}
+                </p>
+              )}
+              {hasInsight && (
+                <div className="flex gap-4 p-5 bg-blue-500/5 border border-blue-500/15 rounded-xl max-w-2xl">
+                  <div className="shrink-0 mt-0.5">
+                    <div className="w-1 h-full min-h-[2rem] bg-blue-500 rounded-full" />
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400 mb-1.5">Principal Insight</div>
+                    <p className="text-sm font-semibold text-white/75 leading-snug italic">
+                      "{summary.key_insight}"
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-          
-          <ScoutBeachheadsTable beachheads={playbook.priority_beachheads || []} />
-        </section>
+        )}
 
-        {/* Page 2: Market Intel */}
-        <section className="print:break-before-page border-b border-white/5">
-          <ScoutMarketIntel 
-            intel={playbook.market_intelligence || { top_trends: [], india_vs_competitors: '', path_of_least_resistance: '' }} 
-            recommendations={playbook.strategic_recommendations || { phase_1_markets: [], phase_2_markets: [], certification_notes: '', key_risks: [] }} 
-          />
-        </section>
+        {/* 4. Priority Beachheads Table */}
+        {hasBeachheads && (
+          <div className="border-t border-white/[0.05]">
+            <ScoutBeachheadsTable beachheads={playbook.priority_beachheads} />
+          </div>
+        )}
 
-        {/* Page 3: Execution */}
-        <section className="print:break-before-page">
-          <ScoutExecutionPlaybook playbook={playbook.execution_playbook || { timeline: [], outreach_templates: { cold_email: '', linkedin: '', whatsapp: '' } }} />
-          
-          {/* Footer */}
-          <div className="px-8 lg:px-20 py-16 flex justify-between items-end bg-[#020617]/50 border-t border-white/5">
+        {/* 5. Market Intelligence */}
+        {hasIntel && (
+          <div className="border-t border-white/[0.05]">
+            <ScoutMarketIntel
+              intel={playbook.market_intelligence}
+              recommendations={playbook.strategic_recommendations}
+              hsnCode={playbook.metadata.hsn_code}
+            />
+          </div>
+        )}
+
+        {/* 6. 90-Day Execution Playbook */}
+        {hasPlaybook && (
+          <div className="border-t border-white/[0.05]">
+            <ScoutExecutionPlaybook playbook={playbook.execution_playbook} />
+          </div>
+        )}
+
+        {/* 7. Footer */}
+        <div className="border-t border-white/[0.05] px-8 lg:px-16 py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.01]">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-[9px] font-black text-white">GQ</div>
             <div>
-              <div className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-[10px]">GQ</div>
-                {playbook.footer?.generated_by || 'GraphiQuestor Intelligence'}
-              </div>
-              <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-2">Macro Intelligence Division · Confidential</div>
-            </div>
-            <div className="text-right">
-              <div className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Authorization Date</div>
-              <div className="text-white font-black text-sm font-mono tracking-wider">
-                {playbook.footer?.date ? new Date(playbook.footer.date).toLocaleDateString('en-US', { 
-                  month: 'long', 
-                  day: 'numeric', 
-                  year: 'numeric' 
-                }).toUpperCase() : new Date().toLocaleDateString('en-US', { 
-                  month: 'long', 
-                  day: 'numeric', 
-                  year: 'numeric' 
-                }).toUpperCase()}
-              </div>
+              <div className="text-xs font-bold text-white/40">{playbook.footer?.generated_by || 'GraphiQuestor Export Scout'}</div>
+              <div className="text-[9px] text-white/15 uppercase tracking-[0.2em]">Macro Intelligence Division · Confidential</div>
             </div>
           </div>
-        </section>
+          <div className="text-right">
+            <div className="text-[9px] text-white/15 uppercase tracking-widest mb-0.5">Data Sources</div>
+            <div className="text-[10px] text-white/25 font-mono">{playbook.footer?.data_sources || 'UN Comtrade Intelligence'}</div>
+          </div>
+        </div>
+
       </article>
 
-      {/* Print-specific styles */}
       <style>{`
         @media print {
-          body {
-            background: white !important;
-            color: black !important;
-          }
-          .print\\:break-before-page {
-            break-before: page;
-          }
-          article {
-            margin: 0 !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-            background: white !important;
-          }
-          section {
-            border-bottom: 1px solid #eee !important;
-          }
+          body { background: white !important; color: black !important; }
+          nav { display: none !important; }
+          article { margin: 0 !important; padding: 0 !important; box-shadow: none !important; background: white !important; border: none !important; }
         }
       `}</style>
     </div>

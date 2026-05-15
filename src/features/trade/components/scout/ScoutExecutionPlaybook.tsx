@@ -1,6 +1,5 @@
-import React from 'react';
-import { Mail, Linkedin, MessageCircle } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from 'react';
+import { Mail, Linkedin, MessageCircle, Copy, Check } from 'lucide-react';
 
 interface TimelineStep {
   week: string;
@@ -19,91 +18,130 @@ interface ScoutExecutionPlaybookProps {
   };
 }
 
-export const ScoutExecutionPlaybook: React.FC<ScoutExecutionPlaybookProps> = ({ playbook }) => {
-  return (
-    <div className="px-8 lg:px-20 py-32 bg-[#020617]">
-      <div className="max-w-[1300px] mx-auto">
-        <div className="flex flex-col lg:flex-row gap-24">
-          
-          {/* Timeline */}
-          <div className="flex-1">
-            <div className="mb-16">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 mb-6">Strategic Roadmap</h2>
-              <h3 className="text-5xl lg:text-6xl font-black tracking-tighter text-white font-syne">90-Day Execution</h3>
-            </div>
+type OutreachTab = 'cold_email' | 'linkedin' | 'whatsapp';
 
-            <div className="space-y-12 relative">
-              {/* Vertical Line */}
-              <div className="absolute left-[27px] top-4 bottom-4 w-px bg-white/5" />
-              
-              {playbook?.timeline?.map((step, idx) => (
-                <div key={idx} className="relative flex gap-10 group">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 z-10 border border-white/10 transition-all duration-500
-                    ${idx === 0 ? 'bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.3)] scale-110' : 'bg-slate-900 text-white/40 group-hover:border-blue-500/30'}
+const TABS: { id: OutreachTab; label: string; icon: typeof Mail }[] = [
+  { id: 'cold_email', label: 'Email', icon: Mail },
+  { id: 'linkedin', label: 'LinkedIn', icon: Linkedin },
+  { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
+];
+
+export const ScoutExecutionPlaybook: React.FC<ScoutExecutionPlaybookProps> = ({ playbook }) => {
+  const [activeTab, setActiveTab] = useState<OutreachTab>('cold_email');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    const content = playbook?.outreach_templates?.[activeTab] ?? '';
+    navigator.clipboard.writeText(content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const hasTimeline = playbook?.timeline?.length > 0;
+  const hasOutreach = !!(playbook?.outreach_templates?.cold_email || playbook?.outreach_templates?.linkedin);
+  const currentTemplate = playbook?.outreach_templates?.[activeTab] ?? '';
+
+  return (
+    <div className="px-8 lg:px-16 py-16 bg-[#020617]">
+      {/* Section header */}
+      <div className="mb-10">
+        <div className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-2">Execution Roadmap</div>
+        <h2 className="text-2xl font-black tracking-tight text-white">90-Day Playbook</h2>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-12">
+
+        {/* Timeline */}
+        {hasTimeline && (
+          <div className="flex-1 min-w-0">
+            <div className="relative space-y-8">
+              {/* Vertical spine */}
+              <div className="absolute left-[19px] top-8 bottom-8 w-px bg-white/5" />
+
+              {playbook.timeline.map((step, idx) => (
+                <div key={idx} className="relative flex gap-6 group">
+                  {/* Node */}
+                  <div className={`
+                    w-10 h-10 rounded-xl flex items-center justify-center shrink-0 z-10
+                    text-xs font-black font-mono transition-all duration-300
+                    ${idx === 0
+                      ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)]'
+                      : 'bg-slate-900 border border-white/10 text-white/30 group-hover:border-blue-500/30 group-hover:text-white/60'
+                    }
                   `}>
-                    <span className="text-sm font-black font-mono">{String(idx + 1).padStart(2, '0')}</span>
+                    {String(idx + 1).padStart(2, '0')}
                   </div>
-                  <div className="pt-2">
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 mb-2">{step.week}</div>
-                    <h4 className="font-black text-white text-2xl mb-4 tracking-tight group-hover:text-blue-400 transition-colors">{step.focus}</h4>
-                    <ul className="space-y-3">
-                      {step?.key_actions?.map((action, i) => (
-                        <li key={i} className="text-white/40 text-base flex gap-3 group-hover:text-white/60 transition-colors leading-snug">
-                          <span className="text-emerald-500 font-black mt-1">→</span>
-                          {action}
-                        </li>
-                      ))}
-                    </ul>
+
+                  {/* Content */}
+                  <div className="pt-1.5 flex-1 min-w-0">
+                    <div className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500/60 mb-1">{step.week}</div>
+                    <h4 className="text-base font-black text-white mb-3 group-hover:text-blue-300 transition-colors">{step.focus}</h4>
+                    {step.key_actions?.length > 0 && (
+                      <ul className="space-y-2">
+                        {step.key_actions.map((action, i) => (
+                          <li key={i} className="text-xs text-white/35 flex gap-2 leading-snug group-hover:text-white/50 transition-colors">
+                            <span className="text-emerald-500/50 shrink-0 mt-0.5">→</span>
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        )}
 
-          {/* Outreach */}
-          <div className="lg:w-[450px]">
-            <div className="mb-16">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500 mb-6">Communication Vectors</h2>
-              <h3 className="text-5xl font-black tracking-tighter text-white font-syne">Global Outreach</h3>
+        {/* Outreach Templates */}
+        {hasOutreach && (
+          <div className="lg:w-[420px] shrink-0">
+            <div className="mb-6">
+              <div className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-500/60 mb-1">Outreach Templates</div>
+              <h3 className="text-base font-black text-white">Buyer Communication</h3>
             </div>
 
-            <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-[50px] rounded-full" />
-              
-              <Tabs defaultValue="email" className="relative z-10">
-                <TabsList className="grid grid-cols-3 gap-3 bg-white/[0.03] p-1.5 rounded-2xl mb-10 border border-white/5">
-                  <TabsTrigger value="email" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-xl py-3 transition-all duration-300">
-                    <Mail className="w-5 h-5" />
-                  </TabsTrigger>
-                  <TabsTrigger value="linkedin" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-xl py-3 transition-all duration-300">
-                    <Linkedin className="w-5 h-5" />
-                  </TabsTrigger>
-                  <TabsTrigger value="whatsapp" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-xl py-3 transition-all duration-300">
-                    <MessageCircle className="w-5 h-5" />
-                  </TabsTrigger>
-                </TabsList>
-                
-                {['email', 'linkedin', 'whatsapp'].map((type) => (
-                  <TabsContent key={type} value={type}>
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-4 px-2">
-                      {type === 'email' ? 'Executive Cold Outreach' : type === 'linkedin' ? 'Direct Platform Message' : 'Instant Channel Intro'}
-                    </div>
-                    <div className="bg-black/40 p-8 rounded-3xl border border-white/5 text-sm text-white/70 leading-relaxed font-mono whitespace-pre-wrap shadow-inner h-[400px] overflow-y-auto custom-scrollbar">
-                      {playbook?.outreach_templates?.[type === 'email' ? 'cold_email' : type as keyof typeof playbook.outreach_templates]}
-                    </div>
-                  </TabsContent>
+            <div className="bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden">
+              {/* Tab bar */}
+              <div className="flex border-b border-white/5">
+                {TABS.filter(t => !!playbook?.outreach_templates?.[t.id]).map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`
+                      flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold transition-all
+                      ${activeTab === tab.id
+                        ? 'bg-blue-600/20 text-blue-400 border-b-2 border-blue-500'
+                        : 'text-white/25 hover:text-white/50'}
+                    `}
+                  >
+                    <tab.icon className="w-3.5 h-3.5" />
+                    {tab.label}
+                  </button>
                 ))}
-              </Tabs>
-              
-              <div className="mt-10 p-1 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300">
-                <button className="w-full py-4 bg-slate-900 rounded-[calc(1rem-1px)] text-white font-black uppercase tracking-widest text-xs hover:bg-transparent transition-colors">
-                  Copy Strategic Template
-                </button>
+              </div>
+
+              {/* Template content */}
+              <div className="relative">
+                <pre className="p-5 text-[11px] text-white/50 leading-relaxed font-mono whitespace-pre-wrap h-[280px] overflow-y-auto bg-black/20">
+                  {currentTemplate || '—'}
+                </pre>
+
+                {currentTemplate && (
+                  <button
+                    onClick={handleCopy}
+                    className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800 border border-white/10 rounded-lg text-[10px] font-bold text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  >
+                    {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
+        )}
 
-        </div>
       </div>
     </div>
   );

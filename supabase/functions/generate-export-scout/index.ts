@@ -1,9 +1,8 @@
 // generate-export-scout/index.ts
-// Supabase Edge Function — Returns a McKinsey-quality Export Scout Playbook in JSON format.
+// Supabase Edge Function — Returns an executive Export Scout Playbook in JSON format.
 // POST body: { "hsn": "8512", "hsn_description": "Light towers and lighting equipment" }
 
 import { createClient } from "@supabase/supabase-js";
-import OpenAI from "openai";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,18 +30,16 @@ interface MarketEntry {
   country: string;
   iso3: string;
   total_market: number; // USD millions
-  india_share: number; // percentage
-  yoy_growth: number; // percentage
+  india_share: number;  // percentage
+  yoy_growth: number;   // percentage
   opportunity_score: number;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Aggregate values by (reporter, year) and then pick latest year */
 function aggregateAndDedup<T extends { reporter_iso3: string; year: number; import_value_usd: number | null }>(
   rows: T[]
 ): T[] {
-  // First, aggregate values for the same reporter and year
   const aggMap = new Map<string, T>();
   for (const row of rows) {
     const key = `${row.reporter_iso3}-${row.year}`;
@@ -53,8 +50,6 @@ function aggregateAndDedup<T extends { reporter_iso3: string; year: number; impo
       ex.import_value_usd = (ex.import_value_usd || 0) + (row.import_value_usd || 0);
     }
   }
-
-  // Then, pick the latest year for each reporter
   const finalMap = new Map<string, T>();
   for (const row of aggMap.values()) {
     const key = row.reporter_iso3;
@@ -66,9 +61,10 @@ function aggregateAndDedup<T extends { reporter_iso3: string; year: number; impo
   return [...finalMap.values()];
 }
 
-/** Calculate YoY growth between two latest years */
 function calculateGrowth(rows: DemandRow[], iso3: string): number {
-  const reporterRows = rows.filter(r => r.reporter_iso3 === iso3).sort((a, b) => b.year - a.year);
+  const reporterRows = rows
+    .filter(r => r.reporter_iso3 === iso3)
+    .sort((a, b) => b.year - a.year);
   if (reporterRows.length < 2) return 0;
   const current = reporterRows[0].import_value_usd || 0;
   const previous = reporterRows[1].import_value_usd || 0;
@@ -76,7 +72,6 @@ function calculateGrowth(rows: DemandRow[], iso3: string): number {
   return parseFloat(((current - previous) / previous * 100).toFixed(1));
 }
 
-/** Compute India share % */
 function getIndiaShare(supplierRow: SupplierRow | undefined, demandRow: DemandRow | undefined): number {
   if (!supplierRow) return 0;
   const india = supplierRow.import_value_usd ?? 0;
@@ -85,16 +80,36 @@ function getIndiaShare(supplierRow: SupplierRow | undefined, demandRow: DemandRo
   return 0;
 }
 
-/** Simple Opportunity Score (0-100) */
 function computeScore(share: number, tamM: number, growth: number): number {
-  let score = 50; 
+  let score = 50;
   if (tamM > 1000) score += 15;
   if (tamM > 100) score += 5;
   if (growth > 10) score += 15;
   if (growth < 0) score -= 10;
-  if (share < 2) score += 10; // Untapped potential
-  if (share > 15) score += 5; // Established stronghold
+  if (share < 2) score += 10;
+  if (share > 15) score += 5;
   return Math.min(100, Math.max(0, score));
+}
+
+/** Extract JSON from a response that may contain markdown fences */
+function extractJSON(raw: string): unknown {
+  // Try direct parse first
+  try {
+    return JSON.parse(raw.trim());
+  } catch {
+    // Strip markdown code fences
+    const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fenced) {
+      try { return JSON.parse(fenced[1].trim()); } catch { /* fall through */ }
+    }
+    // Try to find the outermost { ... }
+    const start = raw.indexOf('{');
+    const end = raw.lastIndexOf('}');
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(raw.slice(start, end + 1)); } catch { /* fall through */ }
+    }
+    throw new Error("Could not extract valid JSON from AI response");
+  }
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
@@ -109,8 +124,8 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     if (!body.hsn) {
       return new Response(
-        JSON.stringify({ error: 'Missing required parameter: hsn' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        JSON.stringify({ error: "Missing required parameter: hsn" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
       );
     }
 
@@ -121,13 +136,16 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const openrouterKey = Deno.env.get("OPENROUTER_API_KEY") ?? "";
 
-    const sb = createClient(supabaseUrl, supabaseKey);
-    const openai = new OpenAI({
-      baseURL: "https://openrouter.ai/api/v1",
-      apiKey: openrouterKey,
-    });
+    if (!openrouterKey) {
+      return new Response(
+        JSON.stringify({ error: "OPENROUTER_API_KEY not configured in edge function secrets" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
 
-    // 1. Fetch Market Data
+    const sb = createClient(supabaseUrl, supabaseKey);
+
+    // ── 1. Fetch Market Data ────────────────────────────────────────────────
     const [demandRes, supplierRes] = await Promise.all([
       sb.from("trade_demand_cache")
         .select("reporter_iso3,reporter_name,year,import_value_usd")
@@ -147,110 +165,173 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const primaryDemandMap = new Map(primaryDemand.map(r => [r.reporter_iso3, r]));
     const primaryIndiaMap = new Map(primaryIndia.map(r => [r.reporter_iso3, r]));
 
-    // 2. Build Market Entries
+    // ── 2. Build Market Entries ─────────────────────────────────────────────
     const markets: MarketEntry[] = [];
     for (const iso3 of primaryDemandMap.keys()) {
       if (iso3 === "IND") continue;
       const d = primaryDemandMap.get(iso3)!;
       const s = primaryIndiaMap.get(iso3);
-      
+
       const tamM = Math.round((d.import_value_usd ?? 0) / 1_000_000);
+      if (tamM < 1) continue; // Skip sub-$1M markets
+
       const share = getIndiaShare(s, d);
       const growth = calculateGrowth(allDemandRows, iso3);
       const score = computeScore(share, tamM, growth);
 
-      markets.push({
-        country: d.reporter_name || iso3,
-        iso3,
-        total_market: tamM,
-        india_share: share,
-        yoy_growth: growth,
-        opportunity_score: score
-      });
+      markets.push({ country: d.reporter_name || iso3, iso3, total_market: tamM, india_share: share, yoy_growth: growth, opportunity_score: score });
     }
 
-    // Sort and take top 15 for analysis
     markets.sort((a, b) => b.opportunity_score - a.opportunity_score);
-    const topMarkets = markets.slice(0, 15);
+    const topMarkets = markets.slice(0, 12);
     const globalTamM = markets.reduce((acc, m) => acc + m.total_market, 0);
     const indiaExportsM = markets.reduce((acc, m) => acc + (m.total_market * m.india_share / 100), 0);
     const globalIndiaShare = globalTamM > 0 ? (indiaExportsM / globalTamM * 100).toFixed(1) : "0";
+    const avgOpportunityScore = Math.round(markets.reduce((acc, m) => acc + m.opportunity_score, 0) / (markets.length || 1));
 
-    // 3. AI Synthesis
-    const prompt = `
-You are a principal strategy consultant at McKinsey. Generate an executive-grade Export Scout Playbook for HS Code ${hsn}: ${hsnDescription}.
+    // ── 3. AI Synthesis via OpenRouter ─────────────────────────────────────
+    const marketSummary = topMarkets.slice(0, 8).map(m =>
+      `${m.country}: TAM=$${m.total_market >= 1000 ? (m.total_market/1000).toFixed(1)+'B' : m.total_market+'M'}, India Share=${m.india_share}%, YoY=${m.yoy_growth > 0 ? '+' : ''}${m.yoy_growth}%, Score=${m.opportunity_score}`
+    ).join('\n');
 
-Market Data Context (UN Comtrade):
-- Total Addressable Market (Analyzed): $${(globalTamM / 1000).toFixed(1)}B
-- India's Global Market Share: ${globalIndiaShare}%
-- Top Markets Analyzed: ${JSON.stringify(topMarkets)}
+    const systemPrompt = `You are a principal strategy consultant specializing in global trade and export market entry. You produce concise, data-driven, institutional-quality analysis. You always respond with pure valid JSON only — no markdown fences, no preamble, no explanation.`;
 
-Requirements:
-- Headline: 1 powerful, strategic sentence.
-- Summary: 3-5 lines, calm, authoritative tone.
-- Key Insight: One sharp, non-obvious observation.
-- Trends: 3-4 specific industry trends for this HS code.
-- India vs Competitors: Short insight on how Indian suppliers stack up vs China/EU.
-- Path of Least Resistance: The core strategic logic for immediate success.
-- Phase 1/2 Markets: Prioritize the markets from the data.
-- Certification Notes: Specific compliance needed (e.g., CE, UL, SABS, etc.)
-- Timeline: A 12-week execution plan.
-- Outreach: Professional templates for Cold Email, LinkedIn, and WhatsApp.
+    const userPrompt = `Generate an Export Scout Playbook for HS Code ${hsn}: "${hsnDescription}".
 
-Return ONLY a JSON object with this exact structure:
+MARKET DATA (UN Comtrade):
+- Total Addressable Market: $${globalTamM >= 1000 ? (globalTamM/1000).toFixed(1)+'B' : globalTamM+'M'}
+- India's Global Share: ${globalIndiaShare}%
+- Opportunity Score: ${avgOpportunityScore}/100
+- Top Markets:
+${marketSummary}
+
+Respond ONLY with this exact JSON structure (no markdown, no extra text):
 {
-  "executive_summary": { "headline": "string", "summary": "string", "key_insight": "string" },
-  "market_intelligence": { "top_trends": ["string"], "india_vs_competitors": "string", "path_of_least_resistance": "string" },
-  "strategic_recommendations": { "phase_1_markets": ["string"], "phase_2_markets": ["string"], "certification_notes": "string", "key_risks": ["string"] },
-  "execution_playbook": { "timeline": [{ "week": "string", "focus": "string", "key_actions": ["string"] }], "outreach_templates": { "cold_email": "string", "linkedin": "string", "whatsapp": "string" } }
-}
-`;
+  "executive_summary": {
+    "headline": "One sharp strategic sentence specific to HS ${hsn}",
+    "summary": "3-4 sentences on the export opportunity, data-grounded",
+    "key_insight": "One non-obvious observation about India's position in this market"
+  },
+  "market_intelligence": {
+    "top_trends": ["trend 1 specific to HS ${hsn}", "trend 2", "trend 3", "trend 4"],
+    "india_vs_competitors": "2-3 sentences on India vs China, EU, Vietnam for this HS code",
+    "path_of_least_resistance": "The clearest route to first $1M in exports for this HS code"
+  },
+  "strategic_recommendations": {
+    "phase_1_markets": ["Country1", "Country2", "Country3"],
+    "phase_2_markets": ["Country4", "Country5"],
+    "certification_notes": "Specific certifications required (CE, UL, SABS, BIS, etc.)",
+    "key_risks": ["risk 1", "risk 2", "risk 3"]
+  },
+  "execution_playbook": {
+    "timeline": [
+      { "week": "Week 1-2", "focus": "Market Validation", "key_actions": ["action 1", "action 2", "action 3"] },
+      { "week": "Week 3-6", "focus": "Buyer Outreach", "key_actions": ["action 1", "action 2", "action 3"] },
+      { "week": "Week 7-10", "focus": "Pilot Shipment", "key_actions": ["action 1", "action 2", "action 3"] },
+      { "week": "Week 11-12", "focus": "Scale & Expand", "key_actions": ["action 1", "action 2", "action 3"] }
+    ],
+    "outreach_templates": {
+      "cold_email": "Subject: [India Manufacturer] HS ${hsn} Supply Inquiry\\n\\nDear [Buyer Name],\\n\\n[3-4 line professional cold email body specific to HS ${hsn}]\\n\\nBest regards,\\n[Name]",
+      "linkedin": "[2-3 line LinkedIn message specific to HS ${hsn} buyers]",
+      "whatsapp": "[2-line WhatsApp intro message for HS ${hsn} trade inquiry]"
+    }
+  }
+}`;
 
-    const aiRes = await openai.chat.completions.create({
-      model: "meta-llama/llama-3.1-8b-instruct",
-      messages: [
-        { role: "system", content: "You are a world-class export strategy consultant." },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
+    const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${openrouterKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://graphiquestor.com",
+        "X-Title": "GraphiQuestor Export Scout",
+      },
+      body: JSON.stringify({
+        model: "nvidia/nemotron-3-super-120b-a12b:free",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 3000,
+      }),
     });
 
-    const aiPlaybook = JSON.parse(aiRes.choices[0].message.content || "{}");
+    if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      throw new Error(`OpenRouter API error ${aiResponse.status}: ${errText}`);
+    }
 
-    // 4. Final JSON Assembly
+    const aiData = await aiResponse.json();
+    const rawContent = aiData.choices?.[0]?.message?.content ?? "{}";
+    const aiPlaybook = extractJSON(rawContent) as Record<string, unknown>;
+
+    // ── 4. Final JSON Assembly ──────────────────────────────────────────────
     const reportTimestamp = new Date().getTime().toString().slice(-6);
+
     const finalPlaybook = {
       metadata: {
         hsn_code: hsn,
         hsn_description: hsnDescription,
-        report_id: `GQ-SCOUT-${hsn}-${reportTimestamp}`,
-        generated_at: new Date().toISOString(),
-        data_source: "UN Comtrade + GraphiQuestor Intelligence",
-        total_market: globalTamM >= 1000 ? `$${(globalTamM / 1000).toFixed(1)}B` : `$${globalTamM}M`,
+        report_id: `GQ-${hsn}-${reportTimestamp}`,
+        generated_at: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+        data_source: "UN Comtrade · GraphiQuestor Intelligence",
+        total_market: globalTamM >= 1000
+          ? `$${(globalTamM / 1000).toFixed(1)}B`
+          : `$${globalTamM}M`,
         india_share: `${globalIndiaShare}%`,
-        opportunity_score: Math.round(markets.reduce((acc, m) => acc + m.opportunity_score, 0) / (markets.length || 1))
+        opportunity_score: avgOpportunityScore,
+        markets_analyzed: markets.length,
       },
-      executive_summary: aiPlaybook.executive_summary,
+      executive_summary: (aiPlaybook as any).executive_summary ?? {
+        headline: `Strategic export opportunity in HS ${hsn}: ${hsnDescription}`,
+        summary: `India holds a ${globalIndiaShare}% share of the $${globalTamM >= 1000 ? (globalTamM/1000).toFixed(1)+'B' : globalTamM+'M'} global market for ${hsnDescription}. ${topMarkets.length} priority markets have been identified with high demand velocity.`,
+        key_insight: "Untapped demand in emerging markets presents a significant first-mover opportunity for certified Indian manufacturers.",
+      },
       priority_beachheads: topMarkets.map(m => ({
         country: m.country,
-        flag: "", 
-        total_market: m.total_market >= 1000 ? `$${(m.total_market / 1000).toFixed(1)}B` : `$${m.total_market}M`,
+        total_market: m.total_market >= 1000
+          ? `$${(m.total_market / 1000).toFixed(1)}B`
+          : `$${m.total_market}M`,
         india_share: m.india_share,
         yoy_growth: m.yoy_growth,
         opportunity_score: m.opportunity_score,
-        lead_product: hsnDescription,
-        why_now: `High growth potential in ${m.country} for Indian manufacturers.`,
         priority: m.opportunity_score > 75 ? "NOW" : m.opportunity_score > 50 ? "HIGH" : "MEDIUM",
-        recommended_action: m.opportunity_score > 75 ? "Direct outreach to top 10 importers" : "Identify local distributors"
+        recommended_action: m.opportunity_score > 75
+          ? "Direct importer outreach"
+          : m.india_share < 1
+          ? "First-mover entry strategy"
+          : "Distributor partnership",
       })),
-      market_intelligence: aiPlaybook.market_intelligence,
-      strategic_recommendations: aiPlaybook.strategic_recommendations,
-      execution_playbook: aiPlaybook.execution_playbook,
+      market_intelligence: (aiPlaybook as any).market_intelligence ?? {
+        top_trends: [`Growing demand for ${hsnDescription} in Asia-Pacific`, "Diversification away from China suppliers", "Quality certification becoming a differentiator"],
+        india_vs_competitors: "Indian manufacturers are competitively priced vs. Chinese counterparts with improving quality perception.",
+        path_of_least_resistance: `Focus on ${topMarkets[0]?.country ?? "emerging markets"} where India already has an established presence.`,
+      },
+      strategic_recommendations: (aiPlaybook as any).strategic_recommendations ?? {
+        phase_1_markets: topMarkets.slice(0, 3).map(m => m.country),
+        phase_2_markets: topMarkets.slice(3, 6).map(m => m.country),
+        certification_notes: "CE marking (Europe), BIS certification (domestic), country-specific compliance.",
+        key_risks: ["Currency volatility", "Logistics and freight cost escalation", "Local regulatory compliance"],
+      },
+      execution_playbook: (aiPlaybook as any).execution_playbook ?? {
+        timeline: [
+          { week: "Week 1-2", focus: "Market Validation", key_actions: ["Identify top 20 importers in priority markets", "Verify HS code tariff schedules", "Map existing distributor networks"] },
+          { week: "Week 3-6", focus: "Buyer Outreach", key_actions: ["Send targeted cold emails", "LinkedIn outreach to procurement heads", "Attend trade directory listings"] },
+          { week: "Week 7-10", focus: "Pilot Shipment", key_actions: ["Negotiate first order terms", "Arrange quality inspection", "Coordinate with freight forwarder"] },
+          { week: "Week 11-12", focus: "Scale & Repeat", key_actions: ["Assess pilot results", "Expand to Phase 2 markets", "Build distributor relationships"] },
+        ],
+        outreach_templates: {
+          cold_email: `Subject: Indian Manufacturer of HS ${hsn} — Seeking Import Partnership\n\nDear [Buyer Name],\n\nWe are a certified Indian manufacturer of ${hsnDescription} (HS ${hsn}) with competitive pricing and international quality standards.\n\nWe noted strong import demand in your market and would like to explore a supply partnership. Can we schedule a brief call this week?\n\nBest regards,\n[Your Name] | [Company]`,
+          linkedin: `Hi [Name], I represent an Indian manufacturer of ${hsnDescription} (HS ${hsn}). Seeing strong demand in your market — we're actively seeking distribution partners. Open to a quick conversation?`,
+          whatsapp: `Hello, I'm from [Company], Indian manufacturer of ${hsnDescription} (HS ${hsn}). We offer competitive pricing & certified quality. Can we connect for export inquiry?`,
+        },
+      },
       footer: {
         generated_by: "GraphiQuestor Export Scout",
         data_sources: "UN Comtrade Intelligence",
-        date: new Date().toLocaleDateString()
-      }
+        date: new Date().toISOString(),
+      },
     };
 
     return new Response(JSON.stringify(finalPlaybook), {
@@ -260,9 +341,9 @@ Return ONLY a JSON object with this exact structure:
 
   } catch (err) {
     console.error("Playbook generation error:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 });
