@@ -35,6 +35,46 @@ const COST_COLORS = {
     tbill: '#94a3b8'    // slate-400
 };
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const dataPoint = payload[0].payload;
+        const total = dataPoint.amount;
+        return (
+            <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
+                <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{dataPoint.bucket}</p>
+                <div className="space-y-1">
+                    {dataPoint.tbill > 0 && (
+                        <div className="flex items-center justify-between gap-4">
+                            <span className="text-slate-400 text-xs flex items-center gap-1">
+                                <div className="w-2 h-2 rounded-full bg-slate-400 border border-dashed border-slate-200"></div>
+                                T-bills (discount, {dataPoint.tbillYield.toFixed(2)}%)
+                            </span>
+                            <span className="text-white font-mono">${dataPoint.tbill.toFixed(2)}T</span>
+                        </div>
+                    )}
+                    <div className="flex items-center justify-between gap-4">
+                        <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
+                        <span className="text-white font-mono">${dataPoint.high.toFixed(2)}T</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                        <span className="text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
+                        <span className="text-white font-mono">${dataPoint.medium.toFixed(2)}T</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                        <span className="text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
+                        <span className="text-white font-mono">${dataPoint.low.toFixed(2)}T</span>
+                    </div>
+                    <div className="border-t border-slate-700 pt-1 mt-1 flex items-center justify-between gap-4">
+                        <span className="text-slate-400 text-xs font-semibold">Total</span>
+                        <span className="text-cyan-400 font-bold">${total.toFixed(2)}T</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 export const USDebtMaturityWall: React.FC = () => {
     const [maturityData, setMaturityData] = useState<MaturityBucket[]>([]);
     const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
@@ -42,12 +82,6 @@ export const USDebtMaturityWall: React.FC = () => {
     const [latestDate, setLatestDate] = useState<string>('');
     const [latestTotalDebt, setLatestTotalDebt] = useState<number | null>(null);
     const [lastDebtDate, setLastDebtDate] = useState<string>('');
-
-    useEffect(() => {
-        fetchMaturityData();
-        fetchHistoricalData();
-        fetchLatestTotalDebt();
-    }, []);
 
     const fetchLatestTotalDebt = async () => {
         try {
@@ -134,6 +168,16 @@ export const USDebtMaturityWall: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        (async () => {
+            await Promise.all([
+                fetchMaturityData(),
+                fetchHistoricalData(),
+                fetchLatestTotalDebt(),
+            ]);
+        })();
+    }, []);
+
     if (loading) {
         return (
             <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl">
@@ -175,46 +219,6 @@ export const USDebtMaturityWall: React.FC = () => {
         high: (d.high_cost_amount || 0) / 1_000_000,
         amountMillions: parseFloat(d.amount.toString())
     }));
-
-    const CustomTooltip = ({ active, payload }: any) => {
-        if (active && payload && payload.length) {
-            const dataPoint = payload[0].payload;
-            const total = dataPoint.amount;
-            return (
-                <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
-                    <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{dataPoint.bucket}</p>
-                    <div className="space-y-1">
-                        {dataPoint.tbill > 0 && (
-                            <div className="flex items-center justify-between gap-4">
-                                <span className="text-slate-400 text-xs flex items-center gap-1">
-                                    <div className="w-2 h-2 rounded-full bg-slate-400 border border-dashed border-slate-200"></div>
-                                    T-bills (discount, {dataPoint.tbillYield.toFixed(2)}%)
-                                </span>
-                                <span className="text-white font-mono">${dataPoint.tbill.toFixed(2)}T</span>
-                            </div>
-                        )}
-                        <div className="flex items-center justify-between gap-4">
-                            <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
-                            <span className="text-white font-mono">${dataPoint.high.toFixed(2)}T</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-4">
-                            <span className="text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
-                            <span className="text-white font-mono">${dataPoint.medium.toFixed(2)}T</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-4">
-                            <span className="text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
-                            <span className="text-white font-mono">${dataPoint.low.toFixed(2)}T</span>
-                        </div>
-                        <div className="border-t border-slate-700 pt-1 mt-1 flex items-center justify-between gap-4">
-                            <span className="text-slate-400 text-xs font-semibold">Total</span>
-                            <span className="text-cyan-400 font-bold">${total.toFixed(2)}T</span>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">

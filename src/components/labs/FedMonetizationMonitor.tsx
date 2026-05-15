@@ -28,6 +28,28 @@ const QE_PERIODS = [
     { name: 'Pandemic QE', start: '2020-03-01', end: '2022-03-31', color: 'rgba(56, 189, 248, 0.25)' },
 ];
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
+                <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{label}</p>
+                {payload.map((p: any, idx: number) => (
+                    <div key={idx} className="flex items-center justify-between gap-4 py-0.5">
+                        <span className="text-xs flex items-center gap-1" style={{ color: p.color }}>
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }}></div>
+                            {p.name}
+                        </span>
+                        <span className="text-white font-mono text-sm">
+                            {p.value?.toFixed(2)}{p.dataKey.includes('Pct') || p.dataKey.includes('Yoy') || p.dataKey.includes('ield') ? '%' : 'T'}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
+
 export const FedMonetizationMonitor: React.FC = () => {
     const [data, setData] = useState<CombinedDataPoint[]>([]);
     const [latestGauge, setLatestGauge] = useState<number | null>(null);
@@ -197,28 +219,6 @@ export const FedMonetizationMonitor: React.FC = () => {
             </div>
         );
     }
-
-    const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
-                    <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{label}</p>
-                    {payload.map((p: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between gap-4 py-0.5">
-                            <span className="text-xs flex items-center gap-1" style={{ color: p.color }}>
-                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }}></div>
-                                {p.name}
-                            </span>
-                            <span className="text-white font-mono text-sm">
-                                {p.value?.toFixed(2)}{p.dataKey.includes('Pct') || p.dataKey.includes('Yoy') || p.dataKey.includes('ield') ? '%' : 'T'}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            );
-        }
-        return null;
-    };
 
     const formatXAxis = (tickItem: string) => {
         const d = new Date(tickItem);

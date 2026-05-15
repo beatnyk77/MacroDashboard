@@ -28,19 +28,9 @@ interface Props {
 
 export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
     const c = COLORS[result.color];
-    const [isStale, setIsStale] = React.useState(false);
-    const [dateStr, setDateStr] = React.useState('Live');
-
-    React.useEffect(() => {
-        const dateObj = result.lastUpdated ? new Date(result.lastUpdated) : null;
-        if (dateObj) {
-            setIsStale(Date.now() - dateObj.getTime() > 7 * 24 * 60 * 60 * 1000);
-            setDateStr(dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
-        } else {
-            setIsStale(false);
-            setDateStr('Live');
-        }
-    }, [result.lastUpdated]);
+    const dateObj = result.lastUpdated ? new Date(result.lastUpdated) : null;
+    const isStale = dateObj ? Date.now() - dateObj.getTime() > 7 * 24 * 60 * 60 * 1000 : false;
+    const dateStr = dateObj ? dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Live';
 
     return (
         <Box sx={{ mb: 6 }}>

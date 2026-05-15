@@ -52,10 +52,6 @@ export const CorporateDebtMaturityWall: React.FC = () => {
     const [stats, setStats] = useState({ total: 0, yr1Total: 0, count: 0, avgCpn: 0, deltaAvg: 0 });
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const fetchData = async () => {
         try {
             // Get the latest as_of_date
@@ -127,6 +123,11 @@ export const CorporateDebtMaturityWall: React.FC = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        (async () => { await fetchData(); })();
+    }, []);
+
 
     if (loading) {
         return (

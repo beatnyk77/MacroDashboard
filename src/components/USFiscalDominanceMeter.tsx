@@ -39,6 +39,56 @@ interface LatestValues {
     asOfDate: string;
 }
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const d = payload[0].payload;
+        const numerator = d.entitlements != null ? d.interest + d.entitlements : d.interest;
+        return (
+            <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-4 shadow-xl z-50 min-w-[220px]">
+                <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1 text-xs">
+                    {new Date(d.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                </p>
+                <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between gap-6">
+                        <span className="text-slate-400 flex items-center gap-1.5">
+                            <div className="w-2 h-2 rounded-full bg-red-500" />
+                            Interest Pmts (qtr)
+                        </span>
+                        <span className="text-white font-mono">${(d.interest / 1000).toFixed(3)}T</span>
+                    </div>
+                    {d.entitlements != null && (
+                        <div className="flex items-center justify-between gap-6">
+                            <span className="text-slate-400 flex items-center gap-1.5">
+                                <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                SocSec + Medicare (qtr)
+                            </span>
+                            <span className="text-white font-mono">${(d.entitlements / 1000).toFixed(3)}T</span>
+                        </div>
+                    )}
+                    <div className="flex items-center justify-between gap-6">
+                        <span className="text-slate-300 font-semibold">Numerator Total</span>
+                        <span className="text-red-300 font-mono">${(numerator / 1000).toFixed(3)}T</span>
+                    </div>
+                    <div className="border-t border-slate-700 pt-1 flex items-center justify-between gap-6">
+                        <span className="text-slate-400 flex items-center gap-1.5">
+                            <div className="w-2 h-2 rounded-full bg-cyan-500" />
+                            Tax Receipts (qtr)
+                        </span>
+                        <span className="text-cyan-300 font-mono">${(d.receipts / 1000).toFixed(3)}T</span>
+                    </div>
+                    <div className="border-t border-slate-700 pt-2 flex items-center justify-between gap-6">
+                        <span className="text-white font-black uppercase text-[10px] tracking-widest">Dominance Ratio</span>
+                        <span className={`text-lg font-bold ${d.ratio >= 100 ? 'text-red-400' : 'text-emerald-400'}`}>
+                            {d.ratio.toFixed(1)}%
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 export const USFiscalDominanceMeter: React.FC = () => {
     const [history, setHistory] = useState<RatioHistoryPoint[]>([]);
     const [latest, setLatest] = useState<LatestValues>({
@@ -49,10 +99,6 @@ export const USFiscalDominanceMeter: React.FC = () => {
         asOfDate: ''
     });
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchFiscalDominanceData();
-    }, []);
 
     const fetchFiscalDominanceData = async () => {
         try {
@@ -114,6 +160,10 @@ export const USFiscalDominanceMeter: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        (async () => { await fetchFiscalDominanceData(); })();
+    }, []);
+
     if (loading) {
         return (
             <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl">
@@ -144,57 +194,6 @@ export const USFiscalDominanceMeter: React.FC = () => {
         entitlements: h.entitlements,
         receipts: h.receipts
     }));
-
-    // Custom tooltip
-    const CustomTooltip = ({ active, payload }: any) => {
-        if (active && payload && payload.length) {
-            const d = payload[0].payload;
-            const numerator = d.entitlements != null ? d.interest + d.entitlements : d.interest;
-            return (
-                <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-4 shadow-xl z-50 min-w-[220px]">
-                    <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1 text-xs">
-                        {new Date(d.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
-                    </p>
-                    <div className="space-y-2 text-xs">
-                        <div className="flex items-center justify-between gap-6">
-                            <span className="text-slate-400 flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                                Interest Pmts (qtr)
-                            </span>
-                            <span className="text-white font-mono">${(d.interest / 1000).toFixed(3)}T</span>
-                        </div>
-                        {d.entitlements != null && (
-                            <div className="flex items-center justify-between gap-6">
-                                <span className="text-slate-400 flex items-center gap-1.5">
-                                    <div className="w-2 h-2 rounded-full bg-amber-500" />
-                                    SocSec + Medicare (qtr)
-                                </span>
-                                <span className="text-white font-mono">${(d.entitlements / 1000).toFixed(3)}T</span>
-                            </div>
-                        )}
-                        <div className="flex items-center justify-between gap-6">
-                            <span className="text-slate-300 font-semibold">Numerator Total</span>
-                            <span className="text-red-300 font-mono">${(numerator / 1000).toFixed(3)}T</span>
-                        </div>
-                        <div className="border-t border-slate-700 pt-1 flex items-center justify-between gap-6">
-                            <span className="text-slate-400 flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full bg-cyan-500" />
-                                Tax Receipts (qtr)
-                            </span>
-                            <span className="text-cyan-300 font-mono">${(d.receipts / 1000).toFixed(3)}T</span>
-                        </div>
-                        <div className="border-t border-slate-700 pt-2 flex items-center justify-between gap-6">
-                            <span className="text-white font-black uppercase text-[10px] tracking-widest">Dominance Ratio</span>
-                            <span className={`text-lg font-bold ${d.ratio >= 100 ? 'text-red-400' : 'text-emerald-400'}`}>
-                                {d.ratio.toFixed(1)}%
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-red-500/20">

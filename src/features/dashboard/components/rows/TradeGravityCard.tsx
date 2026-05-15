@@ -27,10 +27,10 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
     const { swingStates, loading, error } = useTradeGravityData();
     const [selected, setSelected] = useState<SwingStateData | null>(null);
 
-    // Default to first state once loaded
-    React.useEffect(() => {
-        if (swingStates.length > 0 && !selected) setSelected(swingStates[0]);
-    }, [swingStates, selected]);
+    // Set default selected in render phase — avoids setState-in-effect lint error
+    if (swingStates.length > 0 && !selected) {
+        setSelected(swingStates[0]);
+    }
 
     return (
         <Card className={cn("w-full bg-black/40 border-white/12 backdrop-blur-xl relative overflow-hidden", className)}>
