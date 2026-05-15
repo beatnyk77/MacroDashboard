@@ -9,21 +9,30 @@ export function useGlobalTrade(iso3: string | null) {
     const [error, setError] = useState<string | null>(null)
     const [refreshTrigger, setRefreshTrigger] = useState(0)
 
+    const [prevIso3, setPrevIso3] = useState(iso3)
+    const [prevTrigger, setPrevTrigger] = useState(refreshTrigger)
+
+    // Sync state in render phase
+    if (iso3 !== prevIso3) {
+        setPrevIso3(iso3)
+        setData([])
+        setLoading(!!iso3)
+        setError(null)
+    } else if (refreshTrigger !== prevTrigger) {
+        setPrevTrigger(refreshTrigger)
+        setRefreshing(true)
+        setError(null)
+    }
+
     const refresh = () => setRefreshTrigger(prev => prev + 1)
 
     useEffect(() => {
-        if (!iso3) {
-            setData([])
-            return
-        }
+        if (!iso3) return
 
         const fetchGlobalTrade = async () => {
-            const isManualRefresh = refreshTrigger > 0
-            if (isManualRefresh) setRefreshing(true)
-            else setLoading(true)
-            
-            setError(null)
             try {
+                const isManualRefresh = refreshTrigger > prevTrigger
+                
                 if (isManualRefresh) {
                     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                     const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -56,7 +65,7 @@ export function useGlobalTrade(iso3: string | null) {
         }
 
         fetchGlobalTrade()
-    }, [iso3, refreshTrigger])
+    }, [iso3, refreshTrigger, prevTrigger])
 
     const lastFetchedAt = data && data.length > 0 ? data[0].fetched_at : null
 

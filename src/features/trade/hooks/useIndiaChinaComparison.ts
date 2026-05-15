@@ -19,22 +19,32 @@ export function useIndiaChinaComparison(hsCode?: string) {
     const [error, setError] = useState<string | null>(null)
     const [refreshTrigger, setRefreshTrigger] = useState(0)
 
+    const [prevHsCode, setPrevHsCode] = useState(hsCode)
+    const [prevTrigger, setPrevTrigger] = useState(refreshTrigger)
+
+    // Sync state in render phase
+    if (hsCode !== prevHsCode) {
+        setPrevHsCode(hsCode)
+        setData([])
+        setLoading(true)
+        setError(null)
+    } else if (refreshTrigger !== prevTrigger) {
+        setPrevTrigger(refreshTrigger)
+        setRefreshing(true)
+        setError(null)
+    }
+
     const refresh = () => setRefreshTrigger(prev => prev + 1)
 
     useEffect(() => {
         const fetchComparison = async () => {
-            const isManualRefresh = refreshTrigger > 0
-            if (isManualRefresh) setRefreshing(true)
-            else setLoading(true)
-
-            setError(null)
             try {
+                const isManualRefresh = refreshTrigger > prevTrigger
+                
                 if (isManualRefresh && hsCode) {
                     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                     const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
                     
-                    // Trigger live ingestion for the specific HS code
-                    // fetch-hs-demand refreshes both IND and CHN by default (top reporters list)
                     await fetch(`${supabaseUrl}/functions/v1/fetch-hs-demand?hsCode=${hsCode}`, {
                         method: 'POST',
                         headers: {
@@ -67,7 +77,7 @@ export function useIndiaChinaComparison(hsCode?: string) {
         }
 
         fetchComparison()
-    }, [hsCode, refreshTrigger])
+    }, [hsCode, refreshTrigger, prevTrigger])
 
     const lastFetchedAt = data && data.length > 0 ? data[0].fetched_at : null
 

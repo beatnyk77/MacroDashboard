@@ -19,15 +19,28 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
         error: null,
     })
 
+    const [prevKeys, setPrevKeys] = useState(`${hsCode}-${reporterIso3}-${reporterIso2}`)
+
+    // Sync state in render phase
+    if (`${hsCode}-${reporterIso3}-${reporterIso2}` !== prevKeys) {
+        setPrevKeys(`${hsCode}-${reporterIso3}-${reporterIso2}`)
+        setData(prev => ({
+            ...prev,
+            trend: [],
+            suppliers: [],
+            macroMetrics: [],
+            loading: !!(hsCode && reporterIso3),
+            error: null,
+        }))
+    }
+
     useEffect(() => {
         if (!hsCode || !reporterIso3) return
         let cancelled = false
 
         const run = async () => {
-            setData(prev => ({ ...prev, loading: true, error: null }))
-
             try {
-                // ── Parallel fetch: trend + suppliers + macro ──
+                // Parallel fetch: trend + suppliers + macro
                 const [trendRes, supplierRes, macroRes] = await Promise.all([
                     // 5-year import trend
                     supabase

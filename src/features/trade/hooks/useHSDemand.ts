@@ -15,34 +15,38 @@ function enrich(score: OpportunityScore): TradeMarket {
 }
 
 export function useHSDemand(hsCode: string | null) {
-    // ── Refactor: Move initialization into initial state ──
     const [state, setState] = useState<DemandState>(() => {
         if (!hsCode) return { status: 'idle' }
         return { status: 'loading' }
     })
     const [refreshTrigger, setRefreshTrigger] = useState(0)
-    const inflightRef = useRef<string | null>(null)
+    const [prevHsCode, setPrevHsCode] = useState(hsCode)
+    const [prevTrigger, setPrevTrigger] = useState(refreshTrigger)
 
+    // Sync state in render phase
+    if (hsCode !== prevHsCode) {
+        setPrevHsCode(hsCode)
+        setState(hsCode ? { status: 'loading' } : { status: 'idle' })
+    } else if (refreshTrigger !== prevTrigger) {
+        setPrevTrigger(refreshTrigger)
+        setState({ status: 'refreshing' })
+    }
+
+    const inflightRef = useRef<string | null>(null)
     const refresh = () => setRefreshTrigger(prev => prev + 1)
 
     useEffect(() => {
-        // ── Refactor: Gate setState behind status check to avoid synchronous redundant updates ──
-        if (!hsCode) {
-            setState(prev => prev.status === 'idle' ? prev : { status: 'idle' })
-            return
-        }
+        if (!hsCode) return
 
         let cancelled = false
         inflightRef.current = hsCode
 
         const run = async () => {
-            const isManualRefresh = refreshTrigger > 0
+            const isManualRefresh = refreshTrigger > prevTrigger
             
-            // Set initial state for the async operation only if needed
-            setState(prev => {
-                const targetStatus = isManualRefresh ? 'refreshing' : 'loading'
-                return prev.status === targetStatus ? prev : { status: targetStatus }
-            })
+            // ── Refactor: Ensure first setState is non-synchronous to the effect body ──
+            await Promise.resolve()
+            if (cancelled) return
 
             try {
                 // ── 1. Check opportunity scores cache (skip if manual refresh) ──
@@ -177,7 +181,7 @@ export function useHSDemand(hsCode: string | null) {
 
         run()
         return () => { cancelled = true }
-    }, [hsCode, refreshTrigger])
+    }, [hsCode, refreshTrigger, prevTrigger])
 
     return { ...state, refresh }
 }
