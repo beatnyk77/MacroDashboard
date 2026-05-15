@@ -8,7 +8,7 @@ import { ScoutBeachheadsTable } from '@/features/trade/components/scout/ScoutBea
 import { ScoutMarketIntel } from '@/features/trade/components/scout/ScoutMarketIntel';
 import { ScoutExecutionPlaybook } from '@/features/trade/components/scout/ScoutExecutionPlaybook';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Printer, Download, Share2, Loader2 } from 'lucide-react';
+import { ChevronLeft, Printer, Download, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface PlaybookData {
   metadata: {
