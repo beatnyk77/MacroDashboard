@@ -14,8 +14,15 @@ const HSCodeOverviewPage: React.FC = () => {
     const isEmbedded = searchParams.get('embed') === 'true'
 
     const handleGeneratePlaybook = () => {
-        if (!code) return
-        navigate(`/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`)
+        console.log('[HSCodeOverview] Export Playbook Clicked. Code:', code, 'Description:', hsDescription);
+        if (!code) {
+            console.error('[HSCodeOverview] Missing code, cannot open playbook');
+            return;
+        }
+        // Force opening in a new tab for a clean "Document" experience and to bypass SPA layout constraints
+        const targetUrl = `/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`;
+        console.log('[HSCodeOverview] Opening playbook in new tab:', targetUrl);
+        window.open(targetUrl, '_blank');
     }
 
     const { refresh, ...state } = useHSDemand(code || null)
