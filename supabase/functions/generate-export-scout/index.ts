@@ -149,11 +149,11 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const [demandRes, supplierRes] = await Promise.all([
       sb.from("trade_demand_cache")
         .select("reporter_iso3,reporter_name,year,import_value_usd")
-        .filter("hs_code", "ilike", `${hsn}%`)
+        .eq("hs_code", hsn)
         .order("year", { ascending: false }),
       sb.from("trade_supplier_breakdown")
         .select("reporter_iso3,year,import_value_usd,market_share_pct")
-        .filter("hs_code", "ilike", `${hsn}%`)
+        .eq("hs_code", hsn)
         .eq("partner_iso3", "IND")
         .order("year", { ascending: false }),
     ]);
@@ -173,7 +173,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       const s = primaryIndiaMap.get(iso3);
 
       const tamM = Math.round((d.import_value_usd ?? 0) / 1_000_000);
-      if (tamM < 1) continue; // Skip sub-$1M markets
+      if (tamM <= 0) continue; // Allow small markets >0M
 
       const share = getIndiaShare(s, d);
       const growth = calculateGrowth(allDemandRows, iso3);
@@ -189,14 +189,18 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const globalIndiaShare = globalTamM > 0 ? (indiaExportsM / globalTamM * 100).toFixed(1) : "0";
     const avgOpportunityScore = Math.round(markets.reduce((acc, m) => acc + m.opportunity_score, 0) / (markets.length || 1));
 
-    // ── 3. AI Synthesis via OpenRouter ─────────────────────────────────────
-    const marketSummary = topMarkets.slice(0, 8).map(m =>
-      `${m.country}: TAM=$${m.total_market >= 1000 ? (m.total_market/1000).toFixed(1)+'B' : m.total_market+'M'}, India Share=${m.india_share}%, YoY=${m.yoy_growth > 0 ? '+' : ''}${m.yoy_growth}%, Score=${m.opportunity_score}`
-    ).join('\n');
+    const mode = body.mode || 'full';
 
-    const systemPrompt = `You are a principal strategy consultant specializing in global trade and export market entry. You produce concise, data-driven, institutional-quality analysis. You always respond with pure valid JSON only — no markdown fences, no preamble, no explanation.`;
+    // If mode is 'data', skip AI synthesis
+    let aiPlaybook: Record<string, unknown> = {};
+    if (mode === 'ai' || mode === 'full') {
+      const marketSummary = topMarkets.slice(0, 8).map(m =>
+        `${m.country}: TAM=$${m.total_market >= 1000 ? (m.total_market/1000).toFixed(1)+'B' : m.total_market+'M'}, India Share=${m.india_share}%, YoY=${m.yoy_growth > 0 ? '+' : ''}${m.yoy_growth}%, Score=${m.opportunity_score}`
+      ).join('\n');
 
-    const userPrompt = `Generate an Export Scout Playbook for HS Code ${hsn}: "${hsnDescription}".
+      const systemPrompt = `You are a principal strategy consultant specializing in global trade and export market entry. You produce concise, data-driven, institutional-quality analysis. You always respond with pure valid JSON only — no markdown fences, no preamble, no explanation.`;
+
+      const userPrompt = `Generate an Export Scout Playbook for HS Code ${hsn}: "${hsnDescription}".
 
 MARKET DATA (UN Comtrade):
 - Total Addressable Market: $${globalTamM >= 1000 ? (globalTamM/1000).toFixed(1)+'B' : globalTamM+'M'}
@@ -238,33 +242,34 @@ Respond ONLY with this exact JSON structure (no markdown, no extra text):
   }
 }`;
 
-    const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${openrouterKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://graphiquestor.com",
-        "X-Title": "GraphiQuestor Export Scout",
-      },
-      body: JSON.stringify({
-        model: "nvidia/nemotron-3-super-120b-a12b:free",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.3,
-        max_tokens: 3000,
-      }),
-    });
+      const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${openrouterKey}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://graphiquestor.com",
+          "X-Title": "GraphiQuestor Export Scout",
+        },
+        body: JSON.stringify({
+          model: "nvidia/nemotron-3-super-120b-a12b:free",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          temperature: 0.3,
+          max_tokens: 3000,
+        }),
+      });
 
-    if (!aiResponse.ok) {
-      const errText = await aiResponse.text();
-      throw new Error(`OpenRouter API error ${aiResponse.status}: ${errText}`);
+      if (!aiResponse.ok) {
+        const errText = await aiResponse.text();
+        throw new Error(`OpenRouter API error ${aiResponse.status}: ${errText}`);
+      }
+
+      const aiData = await aiResponse.json();
+      const rawContent = aiData.choices?.[0]?.message?.content ?? "{}";
+      aiPlaybook = extractJSON(rawContent) as Record<string, unknown>;
     }
-
-    const aiData = await aiResponse.json();
-    const rawContent = aiData.choices?.[0]?.message?.content ?? "{}";
-    const aiPlaybook = extractJSON(rawContent) as Record<string, unknown>;
 
     // ── 4. Final JSON Assembly ──────────────────────────────────────────────
     const reportTimestamp = new Date().getTime().toString().slice(-6);

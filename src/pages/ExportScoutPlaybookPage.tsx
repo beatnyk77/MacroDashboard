@@ -72,11 +72,11 @@ export const ExportScoutPlaybookPage: React.FC = () => {
   const description = searchParams.get('description') || '';
   const navigate = useNavigate();
 
-  const { data: playbook, isLoading, error, refetch } = useQuery<PlaybookData>({
-    queryKey: ['export-scout', code, description],
+  const { data: dataPlaybook, isLoading: isDataLoading, error: dataError, refetch: refetchData } = useQuery<PlaybookData>({
+    queryKey: ['export-scout', code, description, 'data'],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke('generate-export-scout', {
-        body: { hsn: code, hsn_description: description },
+        body: { hsn: code, hsn_description: description, mode: 'data' },
       });
       if (error) throw error;
       if (!data) throw new Error('No data returned from intelligence engine');
@@ -88,6 +88,26 @@ export const ExportScoutPlaybookPage: React.FC = () => {
     retry: 1,
   });
 
+  const { data: fullPlaybook, isLoading: isAiLoading, error: aiError } = useQuery<PlaybookData>({
+    queryKey: ['export-scout', code, description, 'full'],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke('generate-export-scout', {
+        body: { hsn: code, hsn_description: description, mode: 'full' },
+      });
+      if (error) throw error;
+      if (!data) throw new Error('No AI data returned');
+      if ((data as any).error) throw new Error((data as any).error);
+      return data as PlaybookData;
+    },
+    enabled: !!code && !!dataPlaybook,
+    staleTime: Infinity,
+    retry: 1,
+  });
+
+  const playbook = fullPlaybook || dataPlaybook;
+  const isLoading = isDataLoading;
+  const error = dataError;
+
   // ── Loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
@@ -98,11 +118,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
         </div>
         <div className="text-center">
           <h2 className="text-lg font-black text-white mb-1">Synthesizing Intelligence</h2>
-          <p className="text-sm text-white/30">Analyzing {code} across global trade corridors…</p>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-white/[0.03] border border-white/5 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-          <span className="text-[10px] text-white/30 font-mono uppercase tracking-widest">AI Analysis · UN Comtrade</span>
+          <p className="text-sm text-white/30">Loading market data for {code}…</p>
         </div>
       </div>
     );
@@ -123,7 +139,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
           <div className="flex flex-col gap-2">
             <Button
               className="w-full bg-white text-black font-black uppercase tracking-widest text-xs py-5 rounded-xl hover:bg-slate-100"
-              onClick={() => refetch()}
+              onClick={() => refetchData()}
             >
               <RefreshCw className="w-3.5 h-3.5 mr-2" />
               Retry
@@ -141,6 +157,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
     );
   }
 
+  const isSynthesizing = isAiLoading && !fullPlaybook;
   const summary = playbook.executive_summary;
   const hasHeadline = !!summary?.headline?.trim();
   const hasInsight = !!summary?.key_insight?.trim();
@@ -196,6 +213,23 @@ export const ExportScoutPlaybookPage: React.FC = () => {
         <div className="py-4">
           <ScoutMetricCards metadata={playbook.metadata} />
         </div>
+
+        {/* AI Synthesis Loading Banner */}
+        {isSynthesizing && (
+          <div className="mx-8 lg:mx-16 my-4 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
+              <div>
+                <div className="text-sm font-bold text-white">Synthesizing AI Playbook...</div>
+                <div className="text-xs text-white/50">Analyzing market context and building execution strategy</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.05] rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-[10px] text-white/40 font-mono uppercase tracking-widest">Nemotron 120B</span>
+            </div>
+          </div>
+        )}
 
         {/* 3. Executive Summary */}
         {(hasHeadline || hasSummary || hasInsight) && (
