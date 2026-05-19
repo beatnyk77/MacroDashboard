@@ -32,8 +32,10 @@ export const useOilSpread = () => {
                 throw error;
             }
 
-            if (!data || data.length === 0) {
-                console.log('No oil spread data found. Triggering ingestion edge function...');
+            const isStale = data && data.length > 0 ? getStaleness(data[0].computed_at, 'daily').state !== 'fresh' : true;
+
+            if (!data || data.length === 0 || isStale) {
+                console.log('Oil spread data missing or stale. Triggering ingestion edge function...');
                 try {
                     await supabase.functions.invoke('ingest-oil-spread');
                     
@@ -86,8 +88,10 @@ export const useLatestOilSpread = () => {
                 throw error;
             }
 
-            if (!data) {
-                console.log('No oil spread data found. Triggering ingestion edge function...');
+            const isStale = data ? getStaleness(data.computed_at, 'daily').state !== 'fresh' : true;
+
+            if (!data || isStale) {
+                console.log('Oil spread data missing or stale. Triggering ingestion edge function...');
                 try {
                     await supabase.functions.invoke('ingest-oil-spread');
                     await new Promise(r => setTimeout(r, 2000));
@@ -98,11 +102,11 @@ export const useLatestOilSpread = () => {
                         .limit(1)
                         .maybeSingle();
                         
-                    if (!retryData) return null;
-                    data = retryData;
+                    if (!retryData && !data) return null;
+                    if (retryData) data = retryData;
                 } catch (err) {
                     console.error('Auto-trigger failed:', err);
-                    return null;
+                    if (!data) return null;
                 }
             }
 
