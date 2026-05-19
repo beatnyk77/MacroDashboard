@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type MacroRegime = 'RISK_ON' | 'NEUTRAL' | 'RISK_OFF';
