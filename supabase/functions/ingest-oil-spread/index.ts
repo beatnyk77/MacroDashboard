@@ -14,12 +14,17 @@ function classifyRegime(spread: number): 'OVERSUPPLY' | 'NORMAL' | 'TIGHTENING' 
 }
 
 async function logIngestion(supabase: SupabaseClient, status: string, metadata: unknown) {
-    await supabase.from('ingestion_logs').insert({
-        function_name: 'ingest-oil-spread',
-        status,
-        metadata,
-        start_time: new Date().toISOString()
-    });
+    try {
+        await supabase.from('ingestion_logs').insert({
+            function_name: 'ingest-oil-spread',
+            status,
+            metadata,
+            start_time: new Date().toISOString()
+        });
+    } catch (_e) {
+        // Non-fatal — log but don't fail
+        console.warn('[ingest-oil-spread] Could not write ingestion log:', _e);
+    }
 }
 
 declare const Deno: any;
@@ -31,99 +36,134 @@ Deno.serve(async (_req: Request) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const eiaApiKey = Deno.env.get('EIA_API_KEY'); // Use EIA for the reliable spread
-    const _avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY'); // Backup/Spot price
+    const eiaApiKey = Deno.env.get('EIA_API_KEY');
+    if (!eiaApiKey) {
+        const msg = 'EIA_API_KEY is not set in environment secrets.';
+        console.error('[ingest-oil-spread]', msg);
+        await logIngestion(supabase, 'FAILED', { error: msg });
+        return new Response(JSON.stringify({ error: msg }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+    }
 
     try {
-        console.log("Starting Oil Spread Ingestion...");
+        console.log('[ingest-oil-spread] Starting oil spread ingestion...');
 
-        // 1. Fetch Front Month (CL1) and Next Month (CL2) from EIA
-        // Series IDs: RCLC1 (WTI Future Contract 1), RCLC2 (WTI Future Contract 2)
+        // ── 1. Fetch CL1 & CL2 from EIA — last 90 days for backfill coverage
+        //    Series IDs: RCLC1 = WTI Front Month, RCLC2 = WTI Second Month
         const fetchSeries = async (seriesId: string) => {
-            const url = `https://api.eia.gov/v2/petroleum/pri/fut/data/?api_key=${eiaApiKey}&facets[series][]=${seriesId}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=10`;
+            const url = `https://api.eia.gov/v2/petroleum/pri/fut/data/?api_key=${eiaApiKey}&facets[series][]=${seriesId}&frequency=daily&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=90`;
+            console.log(`[ingest-oil-spread] Fetching ${seriesId} from EIA...`);
             const res = await fetch(url);
             if (!res.ok) {
                 const errorText = await res.text();
-                throw new Error(`EIA Fetch failed for ${seriesId}: ${res.status} ${errorText}`);
+                throw new Error(`EIA fetch failed for ${seriesId}: HTTP ${res.status} — ${errorText.slice(0, 200)}`);
             }
             const json = (await res.json()) as any;
             if (!json.response?.data || json.response.data.length === 0) {
-                throw new Error(`No data returned from EIA for ${seriesId}`);
+                throw new Error(`EIA returned no data for series ${seriesId}. Check API key and quota.`);
             }
-            return json.response.data;
+            console.log(`[ingest-oil-spread] Got ${json.response.data.length} rows for ${seriesId}`);
+            return json.response.data as Array<{ period: string; value: string }>;
         };
 
         const [cl1Data, cl2Data] = await Promise.all([
             fetchSeries('RCLC1'),
-            fetchSeries('RCLC2')
+            fetchSeries('RCLC2'),
         ]);
 
-        // 2. Align data points - find the most recent dates present in BOTH series
-        const commonData: { date: string, cl1: number, cl2: number }[] = [];
-        
+        // ── 2. Align both series by date
+        const cl2Map = new Map<string, number>();
+        for (const row of cl2Data) {
+            const val = Number(row.value);
+            if (!isNaN(val) && val > 0) cl2Map.set(row.period, val);
+        }
+
+        const commonData: Array<{ date: string; cl1: number; cl2: number }> = [];
         for (const r1 of cl1Data) {
-            const r2 = cl2Data.find((d: any) => d.period === r1.period);
-            if (r2) {
-                commonData.push({
-                    date: r1.period,
-                    cl1: Number(r1.value),
-                    cl2: Number(r2.value)
-                });
+            const val1 = Number(r1.value);
+            if (isNaN(val1) || val1 <= 0) continue;
+            const val2 = cl2Map.get(r1.period);
+            if (val2 !== undefined) {
+                commonData.push({ date: r1.period, cl1: val1, cl2: val2 });
             }
-            if (commonData.length >= 5) break;
         }
 
         if (commonData.length === 0) {
-            throw new Error("Could not find any overlapping dates between CL1 and CL2 series in the last 10 days.");
+            throw new Error('No overlapping dates found between CL1 and CL2 from EIA. Check series availability.');
         }
 
-        const latest = commonData[0];
-        const latestDate = latest.date;
-        const cl1Price = latest.cl1;
-        const cl2Price = latest.cl2;
-        const spread = cl1Price - cl2Price;
-        const regime = classifyRegime(spread);
+        console.log(`[ingest-oil-spread] Found ${commonData.length} aligned data points (newest: ${commonData[0].date})`);
 
-        // 3. Change Detection
-        const prev = commonData[1] || latest;
-        const spreadPrev = prev.cl1 - prev.cl2;
-        const change_1d = spread - spreadPrev;
+        // ── 3. Build upsert rows for ALL aligned dates
+        const now = new Date().toISOString();
+        const rows = commonData.map((d, i) => {
+            const spread = d.cl1 - d.cl2;
+            const prev = commonData[i + 1];
+            const threeDaysBack = commonData[i + 3];
+            const change_1d = prev ? spread - (prev.cl1 - prev.cl2) : 0;
+            const change_3d = threeDaysBack ? spread - (threeDaysBack.cl1 - threeDaysBack.cl2) : 0;
 
-        const threeDaysAgo = commonData[3] || prev;
-        const spreadThree = threeDaysAgo.cl1 - threeDaysAgo.cl2;
-        const change_3d = spread - spreadThree;
-
-        // 4. Upsert to DB
-        const { error: dbError } = await supabase
-            .from('oil_market_spread')
-            .upsert({
-                date: latestDate,
-                front_price: cl1Price,
-                next_price: cl2Price,
-                spread: spread,
-                regime: regime,
-                change_1d: change_1d,
-                change_3d: change_3d,
-                computed_at: new Date().toISOString(),
+            return {
+                date: d.date,
+                front_price: d.cl1,
+                next_price: d.cl2,
+                spread,
+                regime: classifyRegime(spread),
+                change_1d,
+                change_3d,
+                computed_at: now,
                 metadata: {
                     source: 'EIA',
                     cl1_series: 'RCLC1',
                     cl2_series: 'RCLC2',
-                }
-            }, { onConflict: 'date' });
+                    ingested_at: now,
+                },
+            };
+        });
 
-        if (dbError) throw dbError;
+        // ── 4. Upsert all rows in batches of 30
+        const BATCH_SIZE = 30;
+        let upsertedCount = 0;
+        for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+            const batch = rows.slice(i, i + BATCH_SIZE);
+            const { error: dbError } = await supabase
+                .from('oil_market_spread')
+                .upsert(batch, { onConflict: 'date' });
 
-        await logIngestion(supabase, 'success', { spread, regime, date: latestDate });
+            if (dbError) {
+                console.error(`[ingest-oil-spread] DB upsert error (batch ${i}):`, dbError);
+                throw dbError;
+            }
+            upsertedCount += batch.length;
+        }
 
-        return new Response(JSON.stringify({ success: true, date: latestDate, spread }), {
+        const latestRow = rows[0];
+        console.log(`[ingest-oil-spread] Upserted ${upsertedCount} rows. Latest: ${latestRow.date}, spread=${latestRow.spread.toFixed(2)}`);
+
+        await logIngestion(supabase, 'success', {
+            rows_upserted: upsertedCount,
+            latest_date: latestRow.date,
+            latest_spread: latestRow.spread,
+            regime: latestRow.regime,
+        });
+
+        return new Response(JSON.stringify({
+            success: true,
+            rows_upserted: upsertedCount,
+            date: latestRow.date,
+            spread: latestRow.spread,
+            regime: latestRow.regime,
+        }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
     } catch (error: unknown) {
-        console.error("Ingestion error:", error);
-        await logIngestion(supabase, 'FAILED', { error: (error as Error).message });
-        return new Response(JSON.stringify({ error: (error as Error).message }), {
+        const msg = (error as Error).message ?? String(error);
+        console.error('[ingest-oil-spread] Fatal error:', msg);
+        await logIngestion(supabase, 'FAILED', { error: msg });
+        return new Response(JSON.stringify({ error: msg }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
