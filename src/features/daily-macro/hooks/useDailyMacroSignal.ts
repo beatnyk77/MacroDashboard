@@ -63,11 +63,11 @@ export function useDailyMacroSignal() {
         console.warn('[useDailyMacroSignal] view fetch failed:', error.message);
       }
 
-      if (data) {
+      if (data && data.signal_date === today) {
         const row = data as DailySignalRow;
         return {
           ...row,
-          is_stale: row.signal_date !== today,
+          is_stale: false,
         };
       }
 
