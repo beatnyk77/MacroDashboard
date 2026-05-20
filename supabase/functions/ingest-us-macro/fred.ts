@@ -77,7 +77,7 @@ export async function processFred(supabase: SupabaseClient, fredApiKey: string) 
                     try {
                         const [sofrRes, effrRes] = await Promise.all([
                             withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=SOFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'SOFR Fetch'),
-                            withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=FEDFUNDS&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'EFFR Fetch')
+                            withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=EFFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'EFFR Fetch')
                         ]);
 
                         const sofrData = await sofrRes.json() as any;
