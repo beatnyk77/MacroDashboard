@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 import { runIngestion, IngestionContext } from '../_shared/logging.ts'
 import { runWithRetry } from '../_shared/job-runner.ts'
 
@@ -124,7 +124,7 @@ async function doIngestFuelSecurityIndia(supabase: any) {
     const { data: fxObs, error: fxErr } = await supabase
       .from('metric_observations')
       .select('value')
-      .eq('metric_id', 'DEXINUS')
+      .eq('metric_id', 'USD_INR_RATE')
       .order('as_of_date', { ascending: false })
       .limit(1)
       .single();
