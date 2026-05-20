@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-
+import { withTimeout } from '../_shared/timeout-guard.ts';
 interface AuctionRecord {
     auction_date: string;
     security_type: string;
@@ -24,7 +24,7 @@ export async function processAuctions(supabase: SupabaseClient) {
 
         const apiUrl = `https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query?filter=auction_date:gte:${dateStr},security_type:in:(Bill,Note,Bond)&sort=-auction_date&page[size]=1000`;
 
-        const response = await fetch(apiUrl);
+        const response = await withTimeout(fetch(apiUrl), 20000, 'Auctions Fetch') as Response;
         if (!response.ok) throw new Error(`FiscalData API failed: ${response.status}`);
         
         const json = await response.json();

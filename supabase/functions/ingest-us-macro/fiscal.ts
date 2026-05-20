@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SupabaseClient } from '@supabase/supabase-js';
+import { withTimeout } from '../_shared/timeout-guard.ts';
 
 async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]> {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=250`;
     try {
-        const response = await fetch(url);
+        const response = await withTimeout(fetch(url), 15000, `FRED Fetch ${seriesId}`) as Response;
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`FRED API error for ${seriesId}: ${response.status} — ${errorText.slice(0, 100)}`);
@@ -22,7 +23,7 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
  * FRED Series used:
  *   A091RC1Q027SBEA  — Federal government interest payments (quarterly, billions USD, NIPA)
  *   FGRECPT           — Federal government current tax receipts (quarterly, billions USD)
- *   W068RC1Q027SBEA  — Social Security + Medicare benefits (quarterly, billions USD, NIPA)
+ *   B087RC1Q027SBEA  — Social Security + Medicare benefits (quarterly, billions USD, NIPA)
  *   A074RC1Q027SBEA  — Personal taxes (quarterly, billions USD)
  *   W780RC1Q027SBEA  — Payroll taxes (quarterly, billions USD)
  *   GDP               — Nominal GDP (quarterly, billions USD)
@@ -32,14 +33,12 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
  */
 export async function processFiscal(supabase: SupabaseClient, fredApiKey: string) {
     try {
-        const [interest, receipts, entitlements, personal, payroll, gdp] = await Promise.all([
-            fetchFredSeries('A091RC1Q027SBEA', fredApiKey),  // Interest expense, quarterly B$
-            fetchFredSeries('FGRECPT', fredApiKey),           // Tax receipts, quarterly B$
-            fetchFredSeries('W068RC1Q027SBEA', fredApiKey),   // SocSec + Medicare, quarterly B$
-            fetchFredSeries('A074RC1Q027SBEA', fredApiKey),   // Personal taxes, quarterly B$
-            fetchFredSeries('W780RC1Q027SBEA', fredApiKey),   // Payroll taxes, quarterly B$
-            fetchFredSeries('GDP', fredApiKey)                 // Nominal GDP, quarterly B$
-        ]);
+        const interest = await fetchFredSeries('A091RC1Q027SBEA', fredApiKey);
+        const receipts = await fetchFredSeries('FGRECPT', fredApiKey);
+        const entitlements = await fetchFredSeries('B087RC1Q027SBEA', fredApiKey);
+        const personal = await fetchFredSeries('A074RC1Q027SBEA', fredApiKey);
+        const payroll = await fetchFredSeries('W780RC1Q027SBEA', fredApiKey);
+        const gdp = await fetchFredSeries('GDP', fredApiKey);
 
         const dateMap = new Map<string, any>();
 

@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-
+import { withTimeout } from '../_shared/timeout-guard.ts';
 interface Observation {
     metric_id: string
     as_of_date: string
@@ -46,7 +46,7 @@ export async function processUST(supabase: SupabaseClient) {
         // A. Debt to the Penny (Daily)
         const debtUrl = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date&page[size]=200'
         try {
-            const resp = await fetch(debtUrl)
+            const resp = await withTimeout(fetch(debtUrl), 20000, 'UST Fetch') as Response
             const json = await resp.json()
             const data = json.data as any[]
             if (data && data.length > 0) {
@@ -81,7 +81,7 @@ export async function processUST(supabase: SupabaseClient) {
         // B. MSPD Table 1
         const mspd1Url = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/debt/mspd/mspd_table_1?filter=security_type_desc:eq:Marketable&sort=-record_date&page[size]=100'
         try {
-            const resp = await fetch(mspd1Url)
+            const resp = await withTimeout(fetch(mspd1Url), 20000, 'UST Fetch') as Response
             const json = await resp.json()
             const data = json.data as any[]
             if (data) {

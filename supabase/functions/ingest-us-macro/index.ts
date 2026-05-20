@@ -8,7 +8,6 @@ import { processFiscal } from './fiscal.ts'
 import { processUST } from './ust.ts'
 import { processFred } from './fred.ts'
 import { processAuctions } from './auctions.ts'
-import { processMaturities } from './maturities.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,34 +15,31 @@ const corsHeaders = {
 }
 
 async function doIngestUSMacro(supabase: any, fredApiKey: string) {
-    // Run all US macro ingestions concurrently 
-    const results = await Promise.allSettled([
-      processFiscal(supabase, fredApiKey),
-      processUST(supabase),
-      processFred(supabase, fredApiKey),
-      processAuctions(supabase),
-      processMaturities(supabase)
-    ]);
+    // Run US macro ingestions sequentially to avoid WORKER_RESOURCE_LIMIT
+    const tasks = [
+      { name: 'Fiscal', fn: () => processFiscal(supabase, fredApiKey) },
+      { name: 'UST', fn: () => processUST(supabase) },
+      { name: 'FRED', fn: () => processFred(supabase, fredApiKey) },
+      { name: 'Auctions', fn: () => processAuctions(supabase) }
+    ];
 
     let totalRowsInserted = 0;
     const errors: string[] = [];
     const details: any = {};
-    const names = ['Fiscal', 'UST', 'FRED', 'Auctions', 'Maturities'];
 
-    results.forEach((result, index) => {
-      const taskName = names[index];
-      if (result.status === 'fulfilled') {
-        const value = result.value as any;
+    for (const task of tasks) {
+      try {
+        const value = await task.fn() as any;
         if (value.success) {
            totalRowsInserted += (value.count || 0);
-           details[taskName] = value.details || { count: value.count };
+           details[task.name] = value.details || { count: value.count };
         } else {
-           errors.push(`[${taskName}] ${value.error}`);
+           errors.push(`[${task.name}] ${value.error}`);
         }
-      } else {
-        errors.push(`[${taskName}] Promise rejected: ${result.reason}`);
+      } catch (err: any) {
+        errors.push(`[${task.name}] Error: ${err.message}`);
       }
-    });
+    }
 
     if (errors.length > 0) {
       const errorMsg = `US Macro Ingestion encountered errors:\n${errors.join('\n')}`;
@@ -89,10 +85,12 @@ Deno.serve(async (req: Request) => {
     return runWithRetry(
         jobId,
         async () => {
-          if (task === 'auctions') {
-            return processAuctions(supabase);
-          }
-          // Default: Run all
+          if (task === 'fiscal') return processFiscal(supabase, fredApiKey);
+          if (task === 'ust') return processUST(supabase);
+          if (task === 'fred') return processFred(supabase, fredApiKey);
+          if (task === 'auctions') return processAuctions(supabase);
+          
+          // Default: Run all sequentially
           return doIngestUSMacro(supabase, fredApiKey);
         },
         { timeoutMs: 25 * 60 * 1000, maxRetries: 3 } // 25 mins timeout since it's heavy
