@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { runIngestion, IngestionContext } from '../_shared/logging.ts'
 import { runWithRetry } from '../_shared/job-runner.ts'
 
@@ -29,7 +29,7 @@ const CHOKEPOINT_EXPOSED_ORIGINS = new Set([
   'Saudi Arabia', 'Iraq', 'UAE', 'Kuwait', 'Iran', 'Qatar', 'Oman'
 ]);
 
-Deno.serve(async (_req: Request) => {
+Deno.serve((_req: Request) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
   const supabase = createClient(supabaseUrl, supabaseKey);
@@ -45,9 +45,9 @@ Deno.serve(async (_req: Request) => {
   });
 });
 
-async function doIngestFuelSecurityIndia(supabase: any) {
+async function doIngestFuelSecurityIndia(supabase: SupabaseClient) {
   const today = new Date().toISOString().split('T')[0];
-  const stepLogs: any[] = [];
+  const stepLogs: Record<string, unknown>[] = [];
 
   // ==========================================
   // Step 1: Fetch India oil consumption from EIA
@@ -63,7 +63,7 @@ async function doIngestFuelSecurityIndia(supabase: any) {
     const consumptionUrl = `https://api.eia.gov/v2/international/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[countryRegionId][]=IND&facets[activityId][]=1&facets[productId][]=5&sort[0][column]=period&sort[0][direction]=desc&length=1`;
     const consRes = await fetch(consumptionUrl);
     if (consRes.ok) {
-      const json = await consRes.json() as any;
+      const json = await consRes.json() as Record<string, any>;
       const latest = json.response?.data?.[0];
       if (latest && latest.value) {
         consumptionMbpd = Number(latest.value); 
@@ -76,10 +76,11 @@ async function doIngestFuelSecurityIndia(supabase: any) {
     }
     
     stepLogs.push({ step: 'india_consumption', status: 'success', value: consumptionMbpd });
-  } catch (e: any) {
-    console.error('India EIA consumption error:', e.message);
+  } catch (e: unknown) {
+    const error = e as Error;
+    console.error('India EIA consumption error:', error.message);
     consumptionMbpd = 5300.0;
-    stepLogs.push({ step: 'india_consumption', status: 'fallback', value: consumptionMbpd, error: e.message });
+    stepLogs.push({ step: 'india_consumption', status: 'fallback', value: consumptionMbpd, error: error.message });
   }
 
   // ==========================================
@@ -139,9 +140,10 @@ async function doIngestFuelSecurityIndia(supabase: any) {
     inrPerBarrel = brentPriceUsd * inrPerUsd;
 
     stepLogs.push({ step: 'brent_fx', status: 'success', brent: brentPriceUsd, fx: inrPerUsd, is_fallback: (brentErr || fxErr) ? true : false });
-  } catch (e: any) {
-    console.error('Brent/FX error:', e.message);
-    stepLogs.push({ step: 'brent_fx', status: 'error', message: e.message });
+  } catch (e: unknown) {
+    const error = e as Error;
+    console.error('Brent/FX error:', error.message);
+    stepLogs.push({ step: 'brent_fx', status: 'error', message: error.message });
     brentPriceUsd = brentPriceUsd || 85.0;
     inrPerBarrel = inrPerBarrel || (brentPriceUsd * 83.0);
   }
@@ -158,9 +160,9 @@ async function doIngestFuelSecurityIndia(supabase: any) {
   }
 
   // Scenario calculations
-  let scenarioBaselineDays: number = reservesDaysCoverage || 8.0;
-  let scenarioDisruptionDays: number = scenarioBaselineDays * 1.3; // 30% reduction extends reserves
-  let scenarioRationingDays: number = scenarioBaselineDays * 1.5;  // 50% rationing extends reserves
+  const scenarioBaselineDays: number = reservesDaysCoverage || 8.0;
+  const scenarioDisruptionDays: number = scenarioBaselineDays * 1.3; // 30% reduction extends reserves
+  const scenarioRationingDays: number = scenarioBaselineDays * 1.5;  // 50% rationing extends reserves
 
   stepLogs.push({ step: 'scenarios', status: 'success', baseline: scenarioBaselineDays });
 
@@ -168,7 +170,7 @@ async function doIngestFuelSecurityIndia(supabase: any) {
   // Step 5: Tanker pipeline heuristic
   // ==========================================
   let activeTankersCount = 0;
-  let tankerPipeline: any[] = [];
+  let tankerPipeline: Record<string, unknown>[] = [];
 
   try {
     console.log('Building tanker pipeline heuristic...');
@@ -238,11 +240,12 @@ async function doIngestFuelSecurityIndia(supabase: any) {
         }
       }
     }
-    tankerPipeline.sort((a, b) => new Date(a.eta).getTime() - new Date(b.eta).getTime());
+    tankerPipeline.sort((a, b) => new Date(a.eta as string).getTime() - new Date(b.eta as string).getTime());
     stepLogs.push({ step: 'tanker_pipeline', status: 'success', count: tankerPipeline.length });
-  } catch (e: any) {
-    console.error('Tanker pipeline error:', e.message);
-    stepLogs.push({ step: 'tanker_pipeline', status: 'error', message: e.message });
+  } catch (e: unknown) {
+    const error = e as Error;
+    console.error('Tanker pipeline error:', error.message);
+    stepLogs.push({ step: 'tanker_pipeline', status: 'error', message: error.message });
     activeTankersCount = 0;
     tankerPipeline = [];
   }
@@ -260,14 +263,14 @@ async function doIngestFuelSecurityIndia(supabase: any) {
       .single();
     if (riskData) geopoliticalRiskScore = Number(riskData.geopolitical_risk_score);
     stepLogs.push({ step: 'geopolitical_risk', status: 'success', score: geopoliticalRiskScore });
-  } catch (e: any) {
+  } catch (_e: unknown) {
     stepLogs.push({ step: 'geopolitical_risk', status: 'fallback', score: geopoliticalRiskScore });
   }
 
   // ==========================================
   // Step 7: Assemble row and upsert
   // ==========================================
-  const row: any = {
+  const row: Record<string, unknown> = {
     as_of_date: today,
     reserves_days_coverage: reservesDaysCoverage ? Math.round(reservesDaysCoverage * 10) / 10 : 8.0,
     reserves_days_official: reservesDaysOfficial,

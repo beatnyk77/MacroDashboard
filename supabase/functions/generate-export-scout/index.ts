@@ -288,7 +288,7 @@ Respond ONLY with this exact JSON structure (no markdown, no extra text):
         opportunity_score: avgOpportunityScore,
         markets_analyzed: markets.length,
       },
-      executive_summary: (aiPlaybook as any).executive_summary ?? {
+      executive_summary: aiPlaybook.executive_summary ?? {
         headline: `Strategic export opportunity in HS ${hsn}: ${hsnDescription}`,
         summary: `India holds a ${globalIndiaShare}% share of the $${globalTamM >= 1000 ? (globalTamM/1000).toFixed(1)+'B' : globalTamM+'M'} global market for ${hsnDescription}. ${topMarkets.length} priority markets have been identified with high demand velocity.`,
         key_insight: "Untapped demand in emerging markets presents a significant first-mover opportunity for certified Indian manufacturers.",
@@ -308,18 +308,18 @@ Respond ONLY with this exact JSON structure (no markdown, no extra text):
           ? "First-mover entry strategy"
           : "Distributor partnership",
       })),
-      market_intelligence: (aiPlaybook as any).market_intelligence ?? {
+      market_intelligence: aiPlaybook.market_intelligence ?? {
         top_trends: [`Growing demand for ${hsnDescription} in Asia-Pacific`, "Diversification away from China suppliers", "Quality certification becoming a differentiator"],
         india_vs_competitors: "Indian manufacturers are competitively priced vs. Chinese counterparts with improving quality perception.",
         path_of_least_resistance: `Focus on ${topMarkets[0]?.country ?? "emerging markets"} where India already has an established presence.`,
       },
-      strategic_recommendations: (aiPlaybook as any).strategic_recommendations ?? {
+      strategic_recommendations: aiPlaybook.strategic_recommendations ?? {
         phase_1_markets: topMarkets.slice(0, 3).map(m => m.country),
         phase_2_markets: topMarkets.slice(3, 6).map(m => m.country),
         certification_notes: "CE marking (Europe), BIS certification (domestic), country-specific compliance.",
         key_risks: ["Currency volatility", "Logistics and freight cost escalation", "Local regulatory compliance"],
       },
-      execution_playbook: (aiPlaybook as any).execution_playbook ?? {
+      execution_playbook: aiPlaybook.execution_playbook ?? {
         timeline: [
           { week: "Week 1-2", focus: "Market Validation", key_actions: ["Identify top 20 importers in priority markets", "Verify HS code tariff schedules", "Map existing distributor networks"] },
           { week: "Week 3-6", focus: "Buyer Outreach", key_actions: ["Send targeted cold emails", "LinkedIn outreach to procurement heads", "Attend trade directory listings"] },
