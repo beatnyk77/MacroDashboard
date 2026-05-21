@@ -168,6 +168,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 anchor="left"
                 open={mobileDrawerOpen}
                 onClose={() => setMobileDrawerOpen(false)}
+                disableScrollLock
                 ModalProps={{
                     keepMounted: true,
                 }}

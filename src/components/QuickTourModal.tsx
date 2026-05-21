@@ -71,6 +71,7 @@ export const QuickTourModal: React.FC = () => {
         <Dialog
             open={open}
             onClose={handleClose}
+            disableScrollLock
             PaperProps={{
                 sx: {
                     bgcolor: 'rgba(15, 23, 42, 0.9)',

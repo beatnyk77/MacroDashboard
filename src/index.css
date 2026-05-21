@@ -149,6 +149,8 @@
     html {
         @apply bg-background text-foreground tabular-nums;
         min-height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
     }
 
     body {
