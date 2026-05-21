@@ -215,6 +215,22 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 </section>
             </div>
 
+            {/* SEO Structural Analysis Text Block */}
+            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of De-Dollarization and Gold Accumulation">
+                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: The Shift to Hard Assets and Multipolar Settlement</h3>
+                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
+                    <p>
+                        The <strong>De-Dollarization & Gold Lab</strong> tracks the systemic migration of global reserve capital from fiat-centric ledgers to hard-asset anchors. Over the past decade, and accelerating post-2022, central banks outside the G7 have engaged in historic gold accumulation. This represents a fundamental shift in sovereign reserve management, prioritizing counterparty-risk-free assets over traditional US Treasuries.
+                    </p>
+                    <p>
+                        Our predictive telemetry isolates the exact velocity of this transition by measuring the <em>M2 to Gold Ratio</em>, central bank net purchases, and the evolving composition of the IMF's Currency Composition of Official Foreign Exchange Reserves (COFER). When combined with our <strong>Petrodollar vs Petroyuan</strong> analysis, institutional observers can map the structural decoupling of global energy trade from the US Dollar hegemony.
+                    </p>
+                    <p>
+                        Understanding the divergence between paper gold derivatives and physical gold arbitrage is critical for macro positioning. As the <a href="/glossary/de-dollarization" className="text-blue-400 hover:underline">De-dollarization</a> macro regime accelerates, the gravitational center of global trade is demonstrably shifting towards the BRICS+ block, fundamentally re-pricing geopolitical risk and necessitating a new framework for cross-border settlement.
+                    </p>
+                </div>
+            </article>
+
             <div className="mt-24 pt-12 border-t border-white/5 text-center">
                 <Button
                     variant="ghost"
