@@ -25,6 +25,7 @@ const OffshoreDollarStressCard = lazy(() => import('@/features/dashboard/compone
 const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/components/rows/USFiscalComparisonChart'));
 const FedMonetizationMonitor = lazy(() => import('@/components/labs/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 const FundingPlumbingStress = lazy(() => import('@/components/labs/FundingPlumbingStress').then(m => ({ default: m.FundingPlumbingStress })));
+const FOMCMinutesAnalysisCard = lazy(() => import('@/components/labs/FOMCMinutesAnalysisCard').then(m => ({ default: m.FOMCMinutesAnalysisCard })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -81,6 +82,17 @@ export const USMacroFiscalLab: React.FC = () => {
             </div>
 
             <div className="space-y-32">
+                {/* Section 0.5: FOMC Minutes Intelligence */}
+                <section>
+                    <SectionErrorBoundary name="FOMC Minutes Intelligence">
+                        <LazyRender minHeight="300px">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <FOMCMinutesAnalysisCard />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                </section>
+
                 {/* Section 1: Debt Maturity Wall */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
