@@ -95,7 +95,14 @@ async function run() {
     const server = app.listen(port, async () => {
         console.log(`Server listening on port ${port} for recursive prerendering...`);
         
-        const browser = await puppeteer.launch({ headless: 'new' });
+        const browser = await puppeteer.launch({
+            headless: 'new',
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage'
+            ]
+        });
         const routesToVisit = new Set(seedRoutes);
         const visitedRoutes = new Set();
         
