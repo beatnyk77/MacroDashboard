@@ -97,6 +97,18 @@ export const MacroObservatory: React.FC = () => {
                                     <CardDescription className="uppercase tracking-wide leading-relaxed flex-1">
                                         {lab.desc}
                                     </CardDescription>
+                                    {lab.title === 'De-Dollarization & Gold' && (
+                                        <div 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate('/labs/de-dollarization-gold#gold-oil-revaluation');
+                                            }}
+                                            className="mt-3 flex items-center gap-1.5 text-[9px] font-black tracking-uppercase text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full w-fit hover:bg-amber-500/25 transition-colors relative z-20 cursor-pointer"
+                                        >
+                                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                            Active Stress Scenario: Gold vs Oil Reset
+                                        </div>
+                                    )}
                                 </CardHeader>
                                 
                                 <CardFooter className="justify-between border-t border-white/5 py-4">

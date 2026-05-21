@@ -25,6 +25,8 @@ const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/compone
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
 const ReserveSellerTracker = lazy(() => import('@/features/dashboard/components/rows/ReserveSellerTracker').then(m => ({ default: m.ReserveSellerTracker })));
+const GoldOilRevaluationScenario = lazy(() => import('@/features/dashboard/components/sections/GoldOilRevaluationScenario').then(m => ({ default: m.GoldOilRevaluationScenario })));
+
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -95,6 +97,12 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <SectionErrorBoundary name="Gold Ratio Ribbon">
                             <Suspense fallback={<LoadingFallback />}>
                                 <GoldRatioRibbon />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                        <div id="gold-oil-revaluation" />
+                        <SectionErrorBoundary name="Gold Oil Revaluation Scenario">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GoldOilRevaluationScenario />
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
