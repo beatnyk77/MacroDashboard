@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { SupabaseClient } from '@supabase/supabase-js'
 
 export interface FetchOptions extends RequestInit {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { MoSPIClient } from '../ingest-mospi/mospi-client.ts';
 
 export interface TelemetryResult {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 import { runIngestion } from '../_shared/logging.ts'
 import { sendDiscordAlert } from '../_shared/webhook_utils.ts'

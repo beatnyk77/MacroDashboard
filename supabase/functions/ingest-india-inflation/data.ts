@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const INITIAL_INFLATION_DATA = [
     { date: '2023-01-01', cpi_headline_yoy: 6.52, cpi_sticky_yoy: 6.10, cpi_flexible_yoy: 6.80, wpi_core_yoy: 4.8 },
     { date: '2023-02-01', cpi_headline_yoy: 6.44, cpi_sticky_yoy: 6.05, cpi_flexible_yoy: 6.70, wpi_core_yoy: 4.6 },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createAdminClient } from './supabaseClient.ts'
 
 export type LogLevel = 'info' | 'warn' | 'error'

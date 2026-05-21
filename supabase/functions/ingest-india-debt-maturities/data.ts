@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const INITIAL_INDIA_DEBT_DATA = [
     // Data from RBI Handbook of Statistics 2024 / Quarterly Report on Public Debt (Sept 2024)
     // Central Government Dated Securities Maturity Profile

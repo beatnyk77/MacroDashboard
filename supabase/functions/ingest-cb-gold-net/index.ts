@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',

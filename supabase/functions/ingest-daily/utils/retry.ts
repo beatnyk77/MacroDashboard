@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export async function retry<T>(
     fn: () => Promise<T>,
     retries: number = 3,

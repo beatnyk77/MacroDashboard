@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.3.2'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'

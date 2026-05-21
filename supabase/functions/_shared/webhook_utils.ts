@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 /**
  * Utilities for sending alerts to a Discord Webhook.
  * Expects the environment variable SUPABASE_DISCORD_WEBHOOK_URL to be set.

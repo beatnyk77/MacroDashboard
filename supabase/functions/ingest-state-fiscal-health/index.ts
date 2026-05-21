@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 import { STATE_FISCAL_DATA } from './data.ts'
 

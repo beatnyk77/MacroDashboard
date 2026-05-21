@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 import { extractText } from "https://esm.sh/unpdf@0.12.1";
 

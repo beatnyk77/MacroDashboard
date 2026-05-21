@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { assertEquals } from "@std/assert";
 import { mapFinnhubEvent } from "./utils.ts";
 

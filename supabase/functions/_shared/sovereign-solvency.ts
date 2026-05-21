@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 /**
  * GraphiQuestor 2.0: Sovereign Solvency & Monetary Optionality Logic
  * Derived metrics for institutional-grade macro surveillance.

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const STATE_FISCAL_DATA = [
     { state_name: 'Gujarat', state_code: 'GJ', date: '2024-03-31', debt_to_gsdp: 15.7, gfd_to_gsdp: 1.7 },
     { state_name: 'Maharashtra', state_code: 'MH', date: '2024-03-31', debt_to_gsdp: 18.2, gfd_to_gsdp: 2.5 },

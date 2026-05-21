@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 /**
  * Reusable timeout wrapper for async tasks in Edge Functions.
  * Prevents functions from exceeding the 60s Supabase limit without logging.

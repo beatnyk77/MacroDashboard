@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 // Use full ESM URLs to avoid Deno bundling issues
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 

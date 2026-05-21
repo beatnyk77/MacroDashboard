@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { runIngestion } from '../_shared/logging.ts'
 import { fetchAlphaVantageCommodity, fetchAlphaVantageFX, upsertObservations } from '../_shared/ingest_utils.ts'

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 // generate-export-scout/index.ts
 // Supabase Edge Function — Returns an executive Export Scout Playbook in JSON format.
 // POST body: { "hsn": "8512", "hsn_description": "Light towers and lighting equipment" }

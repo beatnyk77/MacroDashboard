@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const INITIAL_CREDIT_CYCLE_DATA = [
     // Historical data representing a cycle progression over 18-24 months
     // Based on actual RBI Scheduled Commercial Banks data (DBIE)

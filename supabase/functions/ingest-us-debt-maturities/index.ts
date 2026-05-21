@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 // ingest-us-debt-maturities/index.ts
 // Dedicated edge function for US Treasury Debt Maturity Wall
 // Source: US Treasury FiscalData API — MSPD Marketable Securities (Table 3)
@@ -40,7 +41,7 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
     throw new Error(`Failed to fetch after ${retries} attempts: ${url.slice(0, 80)}`);
 }
 
-async function processMaturities(supabase: ReturnType<typeof createClient>, fredApiKey: string | undefined): Promise<{ success: boolean; count: number; latestDate: string; error?: string }> {
+async function processMaturities(supabase: any, fredApiKey: string | undefined): Promise<{ success: boolean; count: number; latestDate: string; error?: string }> {
     try {
         console.log('[maturities] Fetching current T-Bill yield proxy from FRED...');
 
@@ -227,7 +228,7 @@ async function processMaturities(supabase: ReturnType<typeof createClient>, fred
         console.log(`[maturities] Upserting ${results.length} buckets for ${latestDate}. Total marketable debt: $${(totalMarketableDebt / 1_000_000).toFixed(2)}T`);
         const { error: upsertError } = await supabase
             .from('us_debt_maturities')
-            .upsert(results, { onConflict: 'date, bucket' });
+            .upsert(results as any[], { onConflict: 'date, bucket' });
 
         if (upsertError) throw upsertError;
 

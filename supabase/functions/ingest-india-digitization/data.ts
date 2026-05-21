@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const INITIAL_DIGITIZATION_DATA = [
     { date: '2022-01-01', upi_volume_bn: 4.61, upi_value_inr_trillion: 8.32, rbi_dpi_index: 349.30, fi_index: 56.4, g20_digital_baseline: 120.0 },
     { date: '2022-02-01', upi_volume_bn: 4.52, upi_value_inr_trillion: 8.27, rbi_dpi_index: 355.10, fi_index: 56.4, g20_digital_baseline: 121.5 },

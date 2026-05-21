@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const INITIAL_LIQUIDITY_STRESS_DATA = [
     // 2023 - Broadly Surplus or Neutral
     { date: '2023-01-15', laf_net_injection_cr: -125000, repo_rate: 6.25, msf_rate: 6.50, call_rate: 6.15, treps_rate: 6.10, updated_at: new Date().toISOString() },

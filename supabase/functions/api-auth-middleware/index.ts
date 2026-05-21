@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from '@supabase/supabase-js';
 

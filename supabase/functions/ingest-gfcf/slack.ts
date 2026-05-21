@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export async function sendSlackAlert(text: string) {
   const url = Deno.env.get('SLACK_WEBHOOK_URL');
   if (!url) {

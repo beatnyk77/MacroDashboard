@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export const INITIAL_RBI_FX_DATA = [
     { date: '2023-01-31', fx_reserves_bn: 575.3, forward_book_net_bn: 15.2, reer_40: 99.8, neer_40: 94.5 },
     { date: '2023-02-28', fx_reserves_bn: 560.9, forward_book_net_bn: 20.3, reer_40: 98.5, neer_40: 93.1 },

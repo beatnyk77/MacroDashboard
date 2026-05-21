@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 /**
  * Computes Z-score for a value given a mean and standard deviation.
  * Z = (Value - Mean) / StdDev

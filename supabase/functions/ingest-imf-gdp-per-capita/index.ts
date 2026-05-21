@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
 

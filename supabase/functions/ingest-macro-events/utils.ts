@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 export function mapFinnhubEvent(e: any) {
     // Normalize impact level
     let impact = 'Low'

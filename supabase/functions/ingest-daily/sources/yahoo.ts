@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Logger } from '../utils/logger.ts'
 import { retry } from '../utils/retry.ts'

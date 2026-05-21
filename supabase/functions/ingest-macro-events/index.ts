@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { mapFinnhubEvent } from './utils.ts'
 

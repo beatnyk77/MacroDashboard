@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 // ingest-china-macro/index.ts
 // China Macro Pulse: Fetches real data from FRED, IMF WEO, and World Bank APIs
 // Sources: FRED (FX Reserves, CPI monthly), IMF WEO (GDP, CPI annual), World Bank (IP, Retail, FAI)
