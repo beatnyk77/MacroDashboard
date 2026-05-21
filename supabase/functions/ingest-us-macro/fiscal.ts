@@ -23,7 +23,7 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
  * FRED Series used:
  *   A091RC1Q027SBEA  — Federal government interest payments (quarterly, billions USD, NIPA)
  *   FGRECPT           — Federal government current tax receipts (quarterly, billions USD)
- *   B087RC1Q027SBEA  — Social Security + Medicare benefits (quarterly, billions USD, NIPA)
+ *   W068RC1Q027SBEA  — Government social benefits to persons (quarterly, billions USD, NIPA)
  *   A074RC1Q027SBEA  — Personal taxes (quarterly, billions USD)
  *   W780RC1Q027SBEA  — Payroll taxes (quarterly, billions USD)
  *   GDP               — Nominal GDP (quarterly, billions USD)
@@ -35,7 +35,7 @@ export async function processFiscal(supabase: SupabaseClient, fredApiKey: string
     try {
         const interest = await fetchFredSeries('A091RC1Q027SBEA', fredApiKey);
         const receipts = await fetchFredSeries('FGRECPT', fredApiKey);
-        const entitlements = await fetchFredSeries('B087RC1Q027SBEA', fredApiKey);
+        const entitlements = await fetchFredSeries('W068RC1Q027SBEA', fredApiKey);
         const personal = await fetchFredSeries('A074RC1Q027SBEA', fredApiKey);
         const payroll = await fetchFredSeries('W780RC1Q027SBEA', fredApiKey);
         const gdp = await fetchFredSeries('GDP', fredApiKey);
