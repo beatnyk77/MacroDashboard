@@ -120,7 +120,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    const body = await req.json().catch(() => ({}));
+    const body = (await req.json().catch(() => ({}))) as any;
 
     if (!body.hsn) {
       return new Response(
@@ -135,10 +135,11 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const openrouterKey = Deno.env.get("OPENROUTER_API_KEY") ?? "";
+    const aimlapiKey = Deno.env.get("AIMLAPI_KEY") ?? "";
 
-    if (!openrouterKey) {
+    if (!openrouterKey && !aimlapiKey) {
       return new Response(
-        JSON.stringify({ error: "OPENROUTER_API_KEY not configured in edge function secrets" }),
+        JSON.stringify({ error: "Neither OPENROUTER_API_KEY nor AIMLAPI_KEY configured in edge function secrets" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
@@ -242,33 +243,110 @@ Respond ONLY with this exact JSON structure (no markdown, no extra text):
   }
 }`;
 
-      const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${openrouterKey}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://graphiquestor.com",
-          "X-Title": "GraphiQuestor Export Scout",
-        },
-        body: JSON.stringify({
-          model: "nvidia/nemotron-3-super-120b-a12b:free",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
-          ],
-          temperature: 0.3,
-          max_tokens: 3000,
-        }),
-      });
-
-      if (!aiResponse.ok) {
-        const errText = await aiResponse.text();
-        throw new Error(`OpenRouter API error ${aiResponse.status}: ${errText}`);
+      const providers = [];
+      if (aimlapiKey) {
+        providers.push({
+          name: 'AIMLAPI',
+          url: 'https://api.aimlapi.com/v1/chat/completions',
+          key: aimlapiKey,
+          model: 'gpt-4o',
+          responseFormat: { type: 'json_object' }
+        });
+        providers.push({
+          name: 'AIMLAPI',
+          url: 'https://api.aimlapi.com/v1/chat/completions',
+          key: aimlapiKey,
+          model: 'gpt-4o-mini',
+          responseFormat: { type: 'json_object' }
+        });
+      }
+      if (openrouterKey) {
+        providers.push({
+          name: 'OpenRouter',
+          url: 'https://openrouter.ai/api/v1/chat/completions',
+          key: openrouterKey,
+          model: 'deepseek/deepseek-r1:free',
+          responseFormat: undefined
+        });
+        providers.push({
+          name: 'OpenRouter',
+          url: 'https://openrouter.ai/api/v1/chat/completions',
+          key: openrouterKey,
+          model: 'openrouter/free',
+          responseFormat: undefined
+        });
+        providers.push({
+          name: 'OpenRouter',
+          url: 'https://openrouter.ai/api/v1/chat/completions',
+          key: openrouterKey,
+          model: 'meta-llama/llama-3.3-70b-instruct:free',
+          responseFormat: undefined
+        });
       }
 
-      const aiData = await aiResponse.json();
-      const rawContent = aiData.choices?.[0]?.message?.content ?? "{}";
-      aiPlaybook = extractJSON(rawContent) as Record<string, unknown>;
+      if (providers.length === 0) {
+        throw new Error('No LLM providers configured.');
+      }
+
+      const errorsList: string[] = [];
+
+      for (let attempt = 1; attempt <= providers.length; attempt++) {
+        const provider = providers[attempt - 1];
+        try {
+          console.log(`[export-scout] Dispatching ${provider.name} call (Attempt ${attempt}/${providers.length}) using model ${provider.model}...`);
+
+          const headers: Record<string, string> = {
+            'Authorization': `Bearer ${provider.key}`,
+            'Content-Type': 'application/json',
+          };
+
+          if (provider.name === 'OpenRouter') {
+            headers['HTTP-Referer'] = 'https://graphiquestor.com';
+            headers['X-Title'] = 'GraphiQuestor Export Scout';
+          }
+
+          const requestBody: any = {
+            model: provider.model,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt + (attempt > 1 ? '\n\nIMPORTANT: Your previous output failed JSON validation. Please make absolutely certain there are no unescaped control characters, quotes, or trailing commas. Output pure JSON.' : '') }
+            ],
+            temperature: 0.3,
+            max_tokens: 3000,
+          };
+
+          if (provider.responseFormat) {
+            requestBody.response_format = provider.responseFormat;
+          }
+
+          const aiResponse = await fetch(provider.url, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(requestBody),
+          });
+
+          if (!aiResponse.ok) {
+            const errText = await aiResponse.text();
+            throw new Error(`${provider.name} API error ${aiResponse.status}: ${errText}`);
+          }
+
+          const aiData = (await aiResponse.json()) as any;
+          if (aiData.error) {
+            throw new Error(`${provider.name} API Error: ${aiData.error.message || JSON.stringify(aiData.error)}`);
+          }
+          const rawContent = aiData.choices?.[0]?.message?.content ?? "{}";
+          aiPlaybook = extractJSON(rawContent) as Record<string, unknown>;
+          console.log(`[export-scout] Successfully generated AI playbook using ${provider.name} (${provider.model})`);
+          break;
+        } catch (err: any) {
+          console.warn(`[export-scout] Ingestion attempt ${attempt} failed: ${err.message}`);
+          errorsList.push(`Attempt ${attempt} (${provider.name} - ${provider.model}): ${err.message}`);
+          if (attempt === providers.length) {
+            throw new Error(`Failed to generate export scout playbook after ${providers.length} attempts. Errors: ${errorsList.join(' | ')}`);
+          }
+          await new Promise(r => setTimeout(r, attempt * 2000));
+        }
+      }
     }
 
     // ── 4. Final JSON Assembly ──────────────────────────────────────────────

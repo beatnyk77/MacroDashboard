@@ -39,14 +39,7 @@ export async function logIngestionEnd(
     supabase: SupabaseClient,
     logId: number | null,
     status: 'success' | 'failed' | 'timeout',
-    details: {
-        error_message?: string,
-        rows_inserted?: number,
-        rows_updated?: number,
-        status_code?: number,
-        api_latency_ms?: number,
-        metadata?: any
-    }
+    details: any
 ) {
     if (!logId) return
 
@@ -54,8 +47,14 @@ export async function logIngestionEnd(
         const updateData: any = {
             completed_at: new Date().toISOString(),
             status: status,
-            ...details
         }
+
+        if (details.error_message !== undefined) updateData.error_message = details.error_message;
+        if (details.rows_inserted !== undefined) updateData.rows_inserted = details.rows_inserted;
+        if (details.rows_updated !== undefined) updateData.rows_updated = details.rows_updated;
+        if (details.status_code !== undefined) updateData.status_code = details.status_code;
+        if (details.api_latency_ms !== undefined) updateData.api_latency_ms = details.api_latency_ms;
+        if (details.metadata !== undefined) updateData.metadata = details.metadata;
 
         const { error } = await supabase
             .from('ingestion_logs')

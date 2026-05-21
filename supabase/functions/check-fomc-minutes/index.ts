@@ -108,9 +108,10 @@ Deno.serve(async (req: Request) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   const openrouterKey = Deno.env.get('OPENROUTER_API_KEY') ?? '';
+  const aimlapiKey = Deno.env.get('AIMLAPI_KEY') ?? '';
 
-  if (!openrouterKey) {
-    return new Response(JSON.stringify({ error: 'OPENROUTER_API_KEY is missing' }), { status: 500, headers: corsHeaders });
+  if (!openrouterKey && !aimlapiKey) {
+    return new Response(JSON.stringify({ error: 'Both OPENROUTER_API_KEY and AIMLAPI_KEY are missing' }), { status: 500, headers: corsHeaders });
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
@@ -261,39 +262,99 @@ Analyze this text and output a single valid JSON object following this exact str
 
     let parsedResult: FOMCAnalysis | null = null;
     let rawLLMText = '';
-    const maxLLMAttempts = 3;
+    const errorsList: string[] = [];
 
-    for (let attempt = 1; attempt <= maxLLMAttempts; attempt++) {
+    const providers = [];
+    if (aimlapiKey) {
+      providers.push({
+        name: 'AIMLAPI',
+        url: 'https://api.aimlapi.com/v1/chat/completions',
+        key: aimlapiKey,
+        model: 'gpt-4o',
+        responseFormat: { type: 'json_object' }
+      });
+      providers.push({
+        name: 'AIMLAPI',
+        url: 'https://api.aimlapi.com/v1/chat/completions',
+        key: aimlapiKey,
+        model: 'gpt-4o-mini',
+        responseFormat: { type: 'json_object' }
+      });
+    }
+    if (openrouterKey) {
+      providers.push({
+        name: 'OpenRouter',
+        url: 'https://openrouter.ai/api/v1/chat/completions',
+        key: openrouterKey,
+        model: 'deepseek/deepseek-r1:free',
+        responseFormat: undefined
+      });
+      providers.push({
+        name: 'OpenRouter',
+        url: 'https://openrouter.ai/api/v1/chat/completions',
+        key: openrouterKey,
+        model: 'openrouter/free',
+        responseFormat: undefined
+      });
+      providers.push({
+        name: 'OpenRouter',
+        url: 'https://openrouter.ai/api/v1/chat/completions',
+        key: openrouterKey,
+        model: 'meta-llama/llama-3.3-70b-instruct:free',
+        responseFormat: undefined
+      });
+    }
+
+    if (providers.length === 0) {
+      throw new Error('No LLM providers configured.');
+    }
+
+    for (let attempt = 1; attempt <= providers.length; attempt++) {
+      const provider = providers[attempt - 1];
       try {
-        console.log(`[fomc-minutes] Dispatching OpenRouter call (Attempt ${attempt}/${maxLLMAttempts})...`);
+        console.log(`[fomc-minutes] Dispatching ${provider.name} call (Attempt ${attempt}/${providers.length}) using model ${provider.model}...`);
         
-        const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const headers: Record<string, string> = {
+          'Authorization': `Bearer ${provider.key}`,
+          'Content-Type': 'application/json',
+        };
+
+        if (provider.name === 'OpenRouter') {
+          headers['HTTP-Referer'] = 'https://graphiquestor.com';
+          headers['X-Title'] = 'GraphiQuestor';
+        }
+
+        const requestBody: any = {
+          model: provider.model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt + (attempt > 1 ? '\n\nIMPORTANT: Your previous output failed JSON validation. Please make absolutely certain there are no unescaped control characters, quotes, or trailing commas. Output pure JSON.' : '') }
+          ],
+          temperature: 0.1,
+        };
+
+        if (provider.responseFormat) {
+          requestBody.response_format = provider.responseFormat;
+        }
+
+        const openRouterResponse = await fetch(provider.url, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${openrouterKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://graphiquestor.com',
-            'X-Title': 'GraphiQuestor',
-          },
-          body: JSON.stringify({
-            model: 'anthropic/claude-3.5-sonnet',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt + (attempt > 1 ? '\n\nIMPORTANT: Your previous output failed JSON validation. Please make absolutely certain there are no unescaped control characters, quotes, or trailing commas. Output pure JSON.' : '') }
-            ],
-            temperature: 0.1,
-          })
+          headers,
+          body: JSON.stringify(requestBody)
         });
 
         if (!openRouterResponse.ok) {
-          throw new Error(`OpenRouter returned status ${openRouterResponse.status}: ${await openRouterResponse.text()}`);
+          throw new Error(`${provider.name} returned status ${openRouterResponse.status}: ${await openRouterResponse.text()}`);
         }
 
-        const openRouterData = await openRouterResponse.json();
+        const openRouterData = (await openRouterResponse.json()) as any;
+        if (openRouterData.error) {
+          throw new Error(`${provider.name} API Error: ${openRouterData.error.message || JSON.stringify(openRouterData.error)}`);
+        }
         rawLLMText = openRouterData.choices?.[0]?.message?.content || '';
 
         if (!rawLLMText) {
-          throw new Error('OpenRouter response contains empty content.');
+          throw new Error(`${provider.name} response contains empty content/choices.`);
         }
 
         // Try extracting and parsing JSON
@@ -302,7 +363,7 @@ Analyze this text and output a single valid JSON object following this exact str
         // Validate Schema structure
         if (validateAnalysis(rawJsonObj)) {
           parsedResult = rawJsonObj;
-          console.log('[fomc-minutes] JSON schema validation succeeded.');
+          console.log(`[fomc-minutes] JSON schema validation succeeded using ${provider.name} (${provider.model}).`);
           break; // success!
         } else {
           throw new Error('JSON response parsing succeeded, but lacked required keys or types.');
@@ -310,8 +371,9 @@ Analyze this text and output a single valid JSON object following this exact str
 
       } catch (err: any) {
         console.warn(`[fomc-minutes] Ingestion attempt ${attempt} failed: ${err.message}`);
-        if (attempt === maxLLMAttempts) {
-          throw new Error(`Failed to generate a valid validated LLM response after ${maxLLMAttempts} attempts. Raw output was: ${rawLLMText.substring(0, 300)}...`);
+        errorsList.push(`Attempt ${attempt} (${provider.name} - ${provider.model}): ${err.message}`);
+        if (attempt === providers.length) {
+          throw new Error(`Failed to generate a valid validated LLM response after ${providers.length} attempts. Errors: ${errorsList.join(' | ')}. Raw output was: ${rawLLMText.substring(0, 300)}...`);
         }
         // exponential delay backoff retry
         await new Promise(r => setTimeout(r, attempt * 2000));
