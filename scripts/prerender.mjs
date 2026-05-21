@@ -96,62 +96,70 @@ async function run() {
         console.log(`Server listening on port ${port} for recursive prerendering...`);
         
         const browser = await puppeteer.launch({ headless: 'new' });
-        const page = await browser.newPage();
-
-        // Block analytics/ads during prerendering
-        await page.setRequestInterception(true);
-        page.on('request', (req) => {
-            if (req.url().includes('google-analytics') || req.url().includes('googletagmanager')) {
-                req.abort();
-            } else {
-                req.continue();
-            }
-        });
-
         const routesToVisit = new Set(seedRoutes);
         const visitedRoutes = new Set();
         
         while (routesToVisit.size > 0) {
-            // Get the first route from the Set
             const route = Array.from(routesToVisit)[0];
             routesToVisit.delete(route);
             
-            // Clean hash or search params from route for processing uniqueness
             const cleanRoute = route.split('#')[0].split('?')[0];
             
             if (visitedRoutes.has(cleanRoute)) continue;
             visitedRoutes.add(cleanRoute);
             
             console.log(`Prerendering [${visitedRoutes.size}] ${cleanRoute}...`);
-            await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 30000 });
             
-            // Wait an extra second for dynamic charts/components to finish rendering
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            let page = null;
+            try {
+                page = await browser.newPage();
+                
+                // Block analytics/ads during prerendering
+                await page.setRequestInterception(true);
+                page.on('request', (req) => {
+                    if (req.url().includes('google-analytics') || req.url().includes('googletagmanager')) {
+                        req.abort();
+                    } else {
+                        req.continue();
+                    }
+                });
 
-            // Extract internal links from the rendered DOM
-            const newLinks = await page.evaluate(() => {
-                const anchors = Array.from(document.querySelectorAll('a'));
-                return anchors.map(a => a.getAttribute('href'));
-            });
+                await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 30000 });
+                
+                // Wait an extra second for dynamic charts/components to finish rendering
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Add valid discovered links to the queue
-            for (const href of newLinks) {
-                const cleanedHref = href ? href.split('#')[0].split('?')[0] : '';
-                if (isRoutable(cleanedHref) && !visitedRoutes.has(cleanedHref)) {
-                    routesToVisit.add(cleanedHref);
+                // Extract internal links from the rendered DOM
+                const newLinks = await page.evaluate(() => {
+                    const anchors = Array.from(document.querySelectorAll('a'));
+                    return anchors.map(a => a.getAttribute('href'));
+                });
+
+                // Add valid discovered links to the queue
+                for (const href of newLinks) {
+                    const cleanedHref = href ? href.split('#')[0].split('?')[0] : '';
+                    if (isRoutable(cleanedHref) && !visitedRoutes.has(cleanedHref)) {
+                        routesToVisit.add(cleanedHref);
+                    }
+                }
+
+                const html = await page.evaluate(() => document.documentElement.outerHTML);
+                const finalHtml = `<!DOCTYPE html>\n<html>${html}</html>`;
+
+                const routeDir = path.join(distDir, cleanRoute);
+                if (!fs.existsSync(routeDir)) {
+                    fs.mkdirSync(routeDir, { recursive: true });
+                }
+                
+                const filePath = path.join(routeDir, 'index.html');
+                fs.writeFileSync(filePath, finalHtml);
+            } catch (err) {
+                console.error(`Failed to prerender ${cleanRoute}:`, err);
+            } finally {
+                if (page) {
+                    await page.close().catch(() => {});
                 }
             }
-
-            const html = await page.evaluate(() => document.documentElement.outerHTML);
-            const finalHtml = `<!DOCTYPE html>\n<html>${html}</html>`;
-
-            const routeDir = path.join(distDir, cleanRoute);
-            if (!fs.existsSync(routeDir)) {
-                fs.mkdirSync(routeDir, { recursive: true });
-            }
-            
-            const filePath = path.join(routeDir, 'index.html');
-            fs.writeFileSync(filePath, finalHtml);
         }
 
         // Generate and save the final comprehensive sitemap
