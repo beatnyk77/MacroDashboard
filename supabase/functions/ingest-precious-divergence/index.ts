@@ -147,7 +147,7 @@ Deno.serve(async (req: Request) => {
             () => doIngestPreciousDivergence(ctx.supabase, avApiKey),
             {
                 maxRetries: 3,
-                baseDelayMs: 2000,
+                backoffMs: 2000,
                 timeoutMs: 15 * 60 * 1000 // 15 minutes
             }
         )

@@ -23,12 +23,7 @@ function calculateWoW(current: number, previous: number) {
     return ((current - previous) / previous) * 100;
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
 import { runWithRetry } from '../_shared/job-runner.ts'
 

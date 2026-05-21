@@ -104,7 +104,7 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
     console.log(`[fetch-hs-demand] Starting for HS ${hsCode}`)
 
     let totalRecords = 0
-    const bilateralRecords = 0
+    let bilateralRecords = 0
     let firstBatchDebug: Record<string, unknown> | null = null;
     
     const topReportersList = ["842", "156", "276", "392", "826", "699", "251", "380", "124", "410"]; // USA, China, Germany, Japan, UK, India, France, Italy, Canada, Korea
@@ -175,8 +175,9 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
         const iso3Candidate = r.ReporterISO || r.reporterISO || r.reporterIso || r.reporteriso || r.rt3ISO;
         const iso3 = iso3Candidate || REPORTER_CODE_TO_ISO3[reporterCode];
         
-        const partnerCode = String(r.PartnerCode || r.partnerCode || "");
-        const pIso3Candidate = r.PartnerISO || r.partnerISO || r.partnerIso || r.pt3ISO;
+        const anyR = r as any;
+        const partnerCode = String(anyR.PartnerCode || anyR.partnerCode || "");
+        const pIso3Candidate = anyR.PartnerISO || anyR.partnerISO || anyR.partnerIso || anyR.pt3ISO;
         
         const val = r.PrimaryValue || r.primaryValue || 0;
         const qty = r.Qty || r.qty || null;
