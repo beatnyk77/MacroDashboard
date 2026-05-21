@@ -99,6 +99,9 @@ async function run() {
         const routesToVisit = new Set(seedRoutes);
         const visitedRoutes = new Set();
         
+        let page = null;
+        let pagesRenderedWithCurrentTab = 0;
+        
         while (routesToVisit.size > 0) {
             const route = Array.from(routesToVisit)[0];
             routesToVisit.delete(route);
@@ -110,21 +113,36 @@ async function run() {
             
             console.log(`Prerendering [${visitedRoutes.size}] ${cleanRoute}...`);
             
-            let page = null;
-            try {
-                page = await browser.newPage();
-                
-                // Block analytics/ads during prerendering
-                await page.setRequestInterception(true);
-                page.on('request', (req) => {
-                    if (req.url().includes('google-analytics') || req.url().includes('googletagmanager')) {
-                        req.abort();
-                    } else {
-                        req.continue();
-                    }
-                });
+            // Recreate page every 15 renders or if it is currently null to avoid CDP bottlenecks & memory issues
+            if (!page || pagesRenderedWithCurrentTab >= 15) {
+                if (page) {
+                    await page.close().catch(() => {});
+                }
+                try {
+                    page = await browser.newPage();
+                    pagesRenderedWithCurrentTab = 0;
+                    
+                    // Block analytics/ads during prerendering
+                    await page.setRequestInterception(true);
+                    page.on('request', (req) => {
+                        if (req.url().includes('google-analytics') || req.url().includes('googletagmanager')) {
+                            req.abort();
+                        } else {
+                            req.continue();
+                        }
+                    });
+                } catch (pageInitErr) {
+                    console.error('Failed to create new page context, forcing page recreate on next loop:', pageInitErr);
+                    page = null;
+                    // Push route back to routesToVisit to retry
+                    routesToVisit.add(route);
+                    continue;
+                }
+            }
 
+            try {
                 await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 30000 });
+                pagesRenderedWithCurrentTab++;
                 
                 // Wait an extra second for dynamic charts/components to finish rendering
                 await new Promise(resolve => setTimeout(resolve, 1500));
@@ -155,11 +173,20 @@ async function run() {
                 fs.writeFileSync(filePath, finalHtml);
             } catch (err) {
                 console.error(`Failed to prerender ${cleanRoute}:`, err);
-            } finally {
-                if (page) {
-                    await page.close().catch(() => {});
-                }
+                // If it failed because of a connection issue or page crash, discard page to force recreate
+                try {
+                    await page.close();
+                } catch (e) {}
+                page = null;
+                // Retry this route next time
+                visitedRoutes.delete(cleanRoute);
+                routesToVisit.add(route);
             }
+        }
+
+        // Clean up final page tab if still active
+        if (page) {
+            await page.close().catch(() => {});
         }
 
         // Generate and save the final comprehensive sitemap
