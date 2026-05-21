@@ -88,7 +88,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
     retry: 1,
   });
 
-  const { data: fullPlaybook, isLoading: isAiLoading, error: aiError } = useQuery<PlaybookData>({
+  const { data: fullPlaybook, isLoading: isAiLoading } = useQuery<PlaybookData>({
     queryKey: ['export-scout', code, description, 'full'],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke('generate-export-scout', {

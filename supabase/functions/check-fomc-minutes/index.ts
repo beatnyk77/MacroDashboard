@@ -1,8 +1,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
 import { runIngestion } from '../_shared/logging.ts'
 import { sendDiscordAlert } from '../_shared/webhook_utils.ts'
-// pdf-parse Node package imported directly into Deno via npm specifier
-import pdf from 'npm:pdf-parse@1.1.1'
+// unpdf ES module zero-dependency parser for pure Deno compatibility
+import { extractText } from 'https://esm.sh/unpdf@0.12.1'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -217,8 +217,8 @@ Deno.serve(async (req: Request) => {
       const pdfArrayBuffer = await pdfResponse.arrayBuffer();
       const pdfUint8 = new Uint8Array(pdfArrayBuffer);
       
-      // Node.js pdf-parse package extracts clean text line by line
-      const pdfData = await pdf(pdfUint8);
+      // unpdf zero-dependency Deno-native extractor
+      const pdfData = await extractText(pdfUint8, { mergePages: true });
       extractedText = pdfData.text || '';
     } else {
       throw new Error(`FOMC meeting on ${latestMeetingDate} exists, but lacks both HTML and PDF source links.`);
