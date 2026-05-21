@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Read sitemap to get routes
+// Read sitemap and RSS to get initial seed routes
 const sitemapPath = path.resolve(__dirname, '../public/sitemap.xml');
 let sitemap = '';
 try {
@@ -19,31 +19,26 @@ try {
 }
 
 const urlRegex = /<loc>https:\/\/graphiquestor\.com([^<]+)<\/loc>/g;
-const routes = [];
+const seedRoutes = new Set();
 let match;
 while ((match = urlRegex.exec(sitemap)) !== null) {
     if (match[1] === '/') {
-        routes.push('/');
+        seedRoutes.add('/');
     } else {
-        routes.push(match[1]);
+        seedRoutes.add(match[1]);
     }
 }
 
-// Add any dynamically generated blog routes that might not be in static sitemap
-// We can also extract from public/rss.xml if needed
 const rssPath = path.resolve(__dirname, '../public/rss.xml');
 if (fs.existsSync(rssPath)) {
     const rss = fs.readFileSync(rssPath, 'utf8');
     const rssRegex = /<link>https:\/\/graphiquestor\.com([^<]+)<\/link>/g;
     while ((match = rssRegex.exec(rss)) !== null) {
-        if (!routes.includes(match[1]) && match[1] !== '') {
-            routes.push(match[1]);
+        if (match[1] !== '') {
+            seedRoutes.add(match[1]);
         }
     }
 }
-
-// Remove duplicates
-const uniqueRoutes = [...new Set(routes)];
 
 const distDir = path.resolve(__dirname, '../dist');
 if (!fs.existsSync(distDir)) {
@@ -58,15 +53,52 @@ app.use((req, res) => {
     res.sendFile(path.resolve(distDir, 'index.html'));
 });
 
+// Routes to completely ignore from crawling and sitemap
+const ignorePrefixes = ['/admin', '/api'];
+
+function isRoutable(href) {
+    if (!href) return false;
+    if (!href.startsWith('/')) return false; // Ignore external, mailto, etc.
+    if (href.startsWith('//')) return false; // Protocol-relative URLs
+    if (ignorePrefixes.some(prefix => href.startsWith(prefix))) return false;
+    
+    // Ignore static files
+    const ext = path.extname(href.split('?')[0]);
+    if (ext && ext !== '.html') return false; 
+    
+    return true;
+}
+
+// Function to generate the new exhaustive sitemap.xml
+function generateSitemap(routes) {
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Sort routes for a cleaner XML output
+    const sortedRoutes = Array.from(routes).sort();
+    
+    for (const route of sortedRoutes) {
+        xml += `  <url>\n`;
+        xml += `    <loc>https://graphiquestor.com${route}</loc>\n`;
+        xml += `    <lastmod>${today}</lastmod>\n`;
+        // Basic priority logic
+        const priority = route === '/' ? '1.0' : route.split('/').length > 2 ? '0.7' : '0.8';
+        xml += `    <priority>${priority}</priority>\n`;
+        xml += `  </url>\n`;
+    }
+    xml += `</urlset>`;
+    return xml;
+}
+
 async function run() {
     const port = await portfinder.getPortPromise();
     const server = app.listen(port, async () => {
-        console.log(`Server listening on port ${port} for prerendering...`);
+        console.log(`Server listening on port ${port} for recursive prerendering...`);
         
         const browser = await puppeteer.launch({ headless: 'new' });
         const page = await browser.newPage();
 
-        // Optional: block analytics/ads during prerendering
+        // Block analytics/ads during prerendering
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if (req.url().includes('google-analytics') || req.url().includes('googletagmanager')) {
@@ -76,25 +108,58 @@ async function run() {
             }
         });
 
-        for (const route of uniqueRoutes) {
-            console.log(`Prerendering ${route}...`);
-            await page.goto(`http://localhost:${port}${route}`, { waitUntil: 'networkidle0', timeout: 30000 });
+        const routesToVisit = new Set(seedRoutes);
+        const visitedRoutes = new Set();
+        
+        while (routesToVisit.size > 0) {
+            // Get the first route from the Set
+            const route = Array.from(routesToVisit)[0];
+            routesToVisit.delete(route);
+            
+            // Clean hash or search params from route for processing uniqueness
+            const cleanRoute = route.split('#')[0].split('?')[0];
+            
+            if (visitedRoutes.has(cleanRoute)) continue;
+            visitedRoutes.add(cleanRoute);
+            
+            console.log(`Prerendering [${visitedRoutes.size}] ${cleanRoute}...`);
+            await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 30000 });
             
             // Wait an extra second for dynamic charts/components to finish rendering
             await new Promise(resolve => setTimeout(resolve, 1500));
 
+            // Extract internal links from the rendered DOM
+            const newLinks = await page.evaluate(() => {
+                const anchors = Array.from(document.querySelectorAll('a'));
+                return anchors.map(a => a.getAttribute('href'));
+            });
+
+            // Add valid discovered links to the queue
+            for (const href of newLinks) {
+                const cleanedHref = href ? href.split('#')[0].split('?')[0] : '';
+                if (isRoutable(cleanedHref) && !visitedRoutes.has(cleanedHref)) {
+                    routesToVisit.add(cleanedHref);
+                }
+            }
+
             const html = await page.evaluate(() => document.documentElement.outerHTML);
             const finalHtml = `<!DOCTYPE html>\n<html>${html}</html>`;
 
-            const routeDir = path.join(distDir, route);
+            const routeDir = path.join(distDir, cleanRoute);
             if (!fs.existsSync(routeDir)) {
                 fs.mkdirSync(routeDir, { recursive: true });
             }
             
             const filePath = path.join(routeDir, 'index.html');
             fs.writeFileSync(filePath, finalHtml);
-            console.log(`Saved ${filePath}`);
         }
+
+        // Generate and save the final comprehensive sitemap
+        console.log(`\nDiscovered and rendered ${visitedRoutes.size} unique pages.`);
+        const sitemapXml = generateSitemap(visitedRoutes);
+        const outSitemapPath = path.join(distDir, 'sitemap.xml');
+        fs.writeFileSync(outSitemapPath, sitemapXml);
+        console.log(`Successfully generated dynamic sitemap at ${outSitemapPath}`);
 
         await browser.close();
         server.close();
