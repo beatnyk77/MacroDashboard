@@ -61,7 +61,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
     return (
         <div
-            className="flex flex-col h-full w-full overflow-hidden bg-background transition-colors duration-500 ease-in-out"
+            className="flex flex-col h-full w-full bg-background transition-colors duration-500 ease-in-out"
         >
             {/* Skip to main content for keyboard navigation */}
             <a
