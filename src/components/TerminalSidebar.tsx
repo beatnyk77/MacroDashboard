@@ -32,7 +32,7 @@ export const TerminalSidebar: React.FC = () => {
 
     return (
         <aside 
-            className="hidden md:flex w-[220px] h-[calc(100vh-72px)] sticky top-[72px] left-0 flex-col border-r border-white/5 bg-slate-950/90 backdrop-blur-2xl py-6 z-[1200] overflow-y-auto"
+            className="hidden md:flex w-[220px] h-full flex-col border-r border-white/5 bg-slate-950/90 backdrop-blur-2xl py-6 z-[1200] overflow-y-auto"
             aria-label="Terminal Navigation Sidebar"
         >
             <div className="px-4 mb-6">

@@ -146,26 +146,21 @@
         min-height: 44px;
     }
 
+    html, body, #root {
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
     html {
         @apply bg-background text-foreground tabular-nums;
-        min-height: 100vh;
         scroll-behavior: smooth;
-    }
-
-    body {
-        min-height: 100vh;
-        width: 100%;
-        overflow-x: hidden;
     }
 
     body.share-mode {
         overflow: hidden !important;
-    }
-
-    #root {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
     }
 }
 

@@ -66,7 +66,7 @@ export const IntelligenceSidebar: React.FC = () => {
 
     return (
         <aside 
-            className="hidden xl:flex w-[280px] h-[calc(100vh-72px)] sticky top-[72px] right-0 flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100]"
+            className="hidden xl:flex w-[280px] h-full flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100]"
             aria-label="Intelligence News Sidebar"
         >
             <div className="p-4 border-b border-white/12 flex items-center justify-between bg-white/5">
