@@ -73,7 +73,7 @@ export const Terminal: React.FC = () => {
                 </div>
             </header>
 
-            <main className="space-y-24 pb-32">
+            <div className="space-y-24 pb-32">
                 {/* DAILY MACRO LAYER — pinned to top */}
                 <section id="daily-macro-layer" className="space-y-8">
                     <SectionErrorBoundary name="Daily Macro Layer">
@@ -426,7 +426,7 @@ export const Terminal: React.FC = () => {
                         </Suspense>
                     </SectionErrorBoundary>
                 </section>
-            </main>
+            </div>
         </div>
     );
 };

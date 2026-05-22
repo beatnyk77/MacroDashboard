@@ -570,7 +570,7 @@ export const MetricsMethodologyPage: React.FC = () => {
             </header>
 
             {/* Main content */}
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
                 {/* Principles Grid */}
                 <section aria-labelledby="principles-heading" className="mb-16">
@@ -695,7 +695,7 @@ export const MetricsMethodologyPage: React.FC = () => {
                         </Link>
                     </div>
                 </aside>
-            </main>
+            </div>
         </div>
     );
 };

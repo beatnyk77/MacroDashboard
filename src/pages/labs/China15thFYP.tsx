@@ -46,7 +46,7 @@ export const China15thFYPLab: React.FC = () => {
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 blur-[120px] translate-y-1/2 -translate-x-1/2" />
             </div>
 
-            <main className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-32">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-32">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
                     <div className="space-y-6 max-w-2xl">
@@ -154,7 +154,7 @@ export const China15thFYPLab: React.FC = () => {
                         Data source: Central Committee of the Communist Party of China (CPC), Official Release (March 2026). Forecast models internalized from GraphiQuestor Quantitative Intelligence.
                     </p>
                 </div>
-            </main>
+            </div>
         </div>
         </>
     );

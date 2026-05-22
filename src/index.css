@@ -157,9 +157,7 @@
         scroll-behavior: smooth;
     }
 
-    body.share-mode {
-        overflow: hidden !important;
-    }
+
 }
 
 @layer utilities {

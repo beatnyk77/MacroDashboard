@@ -231,7 +231,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 {/* Persistent Terminal Sidebar */}
                 {!isEmbedded && <TerminalSidebar />}
 
-                <main id="main-content" tabIndex={-1} className={cn("px-0 flex flex-col w-full relative min-h-screen", !isEmbedded && "py-4 md:py-8")}>
+                <main id="main-content" tabIndex={-1} className={cn("px-0 flex flex-col w-full relative", !isEmbedded && "py-4 md:py-8")}>
                     <div className={cn("flex-1 w-full max-w-[1920px] mx-auto", !isEmbedded && "px-4 sm:px-6 lg:px-8")}>
                         {children}
                     </div>

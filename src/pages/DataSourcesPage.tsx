@@ -561,7 +561,7 @@ export const DataSourcesPage: React.FC = () => {
             </div>
 
             {/* Main content */}
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
                 {/* Tier Legend */}
                 <section aria-labelledby="tier-legend-heading" className="mb-12">
@@ -784,7 +784,7 @@ export const DataSourcesPage: React.FC = () => {
                         </Link>
                     </div>
                 </aside>
-            </main>
+            </div>
         </div>
     );
 };
