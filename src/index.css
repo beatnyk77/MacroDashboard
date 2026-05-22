@@ -157,20 +157,8 @@
         scroll-behavior: smooth;
     }
 
-    body {
-        overflow-y: auto !important; /* Prevent MUI from locking scroll */
-    }
-
     body.share-mode {
         overflow: hidden !important;
-    }
-
-    /* Additional Safety to prevent MUI Dialog backdrop freeze */
-    .MuiModal-root {
-        pointer-events: none;
-    }
-    .MuiModal-root .MuiPaper-root {
-        pointer-events: auto;
     }
 }
 
