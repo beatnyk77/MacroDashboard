@@ -61,7 +61,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
     return (
         <div
-            className="flex flex-col h-full w-full bg-background transition-colors duration-500 ease-in-out"
+            className="flex flex-col min-h-screen w-full bg-background transition-colors duration-500 ease-in-out"
         >
             {/* Skip to main content for keyboard navigation */}
             <a
@@ -169,6 +169,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 open={mobileDrawerOpen}
                 onClose={() => setMobileDrawerOpen(false)}
                 disableScrollLock
+                ModalProps={{ keepMounted: false }}
                 PaperProps={{
                     sx: {
                         width: 280,
@@ -226,11 +227,11 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 </Box>
             </Drawer>
 
-            <div className="flex flex-1 overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px] min-h-screen">
                 {/* Persistent Terminal Sidebar */}
                 {!isEmbedded && <TerminalSidebar />}
 
-                <main id="main-content" tabIndex={-1} className={cn("flex-1 px-0 flex flex-col w-full overflow-y-auto relative", !isEmbedded && "py-4 md:py-8")}>
+                <main id="main-content" tabIndex={-1} className={cn("px-0 flex flex-col w-full relative min-h-screen", !isEmbedded && "py-4 md:py-8")}>
                     <div className={cn("flex-1 w-full max-w-[1920px] mx-auto", !isEmbedded && "px-4 sm:px-6 lg:px-8")}>
                         {children}
                     </div>

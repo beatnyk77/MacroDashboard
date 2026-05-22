@@ -72,6 +72,7 @@ export const QuickTourModal: React.FC = () => {
             open={open}
             onClose={handleClose}
             disableScrollLock
+            keepMounted={false}
             PaperProps={{
                 sx: {
                     bgcolor: 'rgba(15, 23, 42, 0.9)',

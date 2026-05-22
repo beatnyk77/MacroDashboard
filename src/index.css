@@ -147,8 +147,7 @@
     }
 
     html, body, #root {
-        height: 100vh;
-        width: 100vw;
+        min-height: 100vh;
         margin: 0;
         padding: 0;
     }
@@ -158,8 +157,20 @@
         scroll-behavior: smooth;
     }
 
+    body {
+        overflow-y: auto !important; /* Prevent MUI from locking scroll */
+    }
+
     body.share-mode {
         overflow: hidden !important;
+    }
+
+    /* Additional Safety to prevent MUI Dialog backdrop freeze */
+    .MuiModal-root {
+        pointer-events: none;
+    }
+    .MuiModal-root .MuiPaper-root {
+        pointer-events: auto;
     }
 }
 
