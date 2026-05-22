@@ -148,16 +148,18 @@
 
     html {
         @apply bg-background text-foreground tabular-nums;
-        min-height: 100vh !important;
-        overflow-y: auto !important;
-        scroll-behavior: smooth !important;
+        min-height: 100vh;
+        scroll-behavior: smooth;
     }
 
-    body:not(.share-mode) {
-        min-height: 100vh !important;
-        width: 100% !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
+    body {
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    body.share-mode {
+        overflow: hidden !important;
     }
 
     #root {
