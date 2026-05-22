@@ -169,9 +169,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 open={mobileDrawerOpen}
                 onClose={() => setMobileDrawerOpen(false)}
                 disableScrollLock
-                ModalProps={{
-                    keepMounted: true,
-                }}
                 PaperProps={{
                     sx: {
                         width: 280,
