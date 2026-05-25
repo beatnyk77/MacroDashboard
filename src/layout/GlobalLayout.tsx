@@ -228,18 +228,18 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </Drawer>
 
             <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px] min-h-screen">
-                {/* Persistent Terminal Sidebar */}
+                {/* Left Sidebar */}
                 {!isEmbedded && <TerminalSidebar />}
 
-                <main id="main-content" tabIndex={-1} className={cn("px-0 flex flex-col w-full relative", !isEmbedded && "py-4 md:py-8")}>
-                    <div className={cn("flex-1 w-full max-w-[1920px] mx-auto", !isEmbedded && "px-4 sm:px-6 lg:px-8")}>
+                {/* Main Content */}
+                <main id="main-content" className="flex flex-col w-full">
+                    <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         {children}
                     </div>
-                    {/* Dashboard Footer with Disclaimer & Data Transparency */}
                     {!isEmbedded && <InstitutionalFooter />}
                 </main>
 
-                {/* Intelligence Sidebar (Desktop Only) */}
+                {/* Right Sidebar */}
                 {!isEmbedded && <IntelligenceSidebar />}
             </div>
 

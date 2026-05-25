@@ -146,17 +146,22 @@
         min-height: 44px;
     }
 
+    /* Clean scrolling setup */
     html, body, #root {
         min-height: 100vh;
         margin: 0;
         padding: 0;
+    }
+
+    /* Allow natural body scrolling */
+    body {
+        overflow-y: auto;
     }
     
     html {
         @apply bg-background text-foreground tabular-nums;
         scroll-behavior: smooth;
     }
-
 
 }
 
@@ -302,18 +307,5 @@
         --tw-space-y-reverse: 0;
         margin-top: calc(4rem * calc(1 - var(--tw-space-y-reverse)));
         margin-bottom: calc(4rem * var(--tw-space-y-reverse));
-    }
-}
-
-/* ── Extremely Short Screen Breakpoint (Media Query Helper Rules) ── */
-@media (max-height: 600px) {
-    .short\:max-h-\[calc\(100vh-4rem\)\] {
-        max-height: calc(100vh - 4rem) !important;
-    }
-    .short\:max-h-\[calc\(100vh-8rem\)\] {
-        max-height: calc(100vh - 8rem) !important;
-    }
-    .short\:overflow-y-auto {
-        overflow-y: auto !important;
     }
 }
