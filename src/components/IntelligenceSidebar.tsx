@@ -66,7 +66,7 @@ export const IntelligenceSidebar: React.FC = () => {
 
     return (
         <aside 
-            className="hidden xl:flex w-full sticky top-16 self-start flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100] h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar"
+            className="hidden xl:block sticky top-16 self-start w-[300px] overflow-y-auto bg-background"
             aria-label="Intelligence News Sidebar"
         >
             <div className="p-4 border-b border-white/12 flex items-center justify-between bg-white/5">

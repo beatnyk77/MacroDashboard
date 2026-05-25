@@ -5,7 +5,6 @@ import {
     Box,
     Typography,
     Button,
-    IconButton,
     MobileStepper
 } from '@mui/material';
 import { X, ChevronRight, Zap, FlaskConical, Globe, Shield } from 'lucide-react';

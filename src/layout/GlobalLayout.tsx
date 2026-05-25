@@ -227,12 +227,13 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 </Box>
             </Drawer>
 
-            <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px] min-h-screen">
+            {/* Main Layout - Clean Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px] min-h-[calc(100vh-64px)]">
                 {/* Left Sidebar */}
                 {!isEmbedded && <TerminalSidebar />}
 
-                {/* Main Content */}
-                <main id="main-content" className="flex flex-col w-full">
+                {/* Main Content Area */}
+                <main id="main-content" className="w-full min-h-full flex flex-col">
                     <div className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         {children}
                     </div>
