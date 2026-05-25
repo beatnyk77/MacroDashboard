@@ -304,3 +304,16 @@
         margin-bottom: calc(4rem * var(--tw-space-y-reverse));
     }
 }
+
+/* ── Extremely Short Screen Breakpoint (Media Query Helper Rules) ── */
+@media (max-height: 600px) {
+    .short\:max-h-\[calc\(100vh-4rem\)\] {
+        max-height: calc(100vh - 4rem) !important;
+    }
+    .short\:max-h-\[calc\(100vh-8rem\)\] {
+        max-height: calc(100vh - 8rem) !important;
+    }
+    .short\:overflow-y-auto {
+        overflow-y: auto !important;
+    }
+}

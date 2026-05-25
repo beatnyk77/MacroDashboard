@@ -66,7 +66,7 @@ export const IntelligenceSidebar: React.FC = () => {
 
     return (
         <aside 
-            className="hidden xl:flex w-full sticky top-16 max-h-[calc(100vh-4rem)] self-start flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100]"
+            className="hidden xl:flex w-full sticky top-16 self-start flex-col border-l border-white/12 bg-background/50 backdrop-blur-xl z-[1100] max-h-none overflow-y-visible short:max-h-[calc(100vh-4rem)] short:overflow-y-auto"
             aria-label="Intelligence News Sidebar"
         >
             <div className="p-4 border-b border-white/12 flex items-center justify-between bg-white/5">
@@ -93,7 +93,7 @@ export const IntelligenceSidebar: React.FC = () => {
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <div className="flex-1 short:overflow-y-auto short:max-h-[calc(100vh-8rem)] custom-scrollbar">
                 <div className="px-4 py-6 space-y-6">
                     {isLoading ? (
                         <div className="space-y-4">
