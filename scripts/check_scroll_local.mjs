@@ -36,8 +36,15 @@ import puppeteer from 'puppeteer';
 
     // Now test scrolling the page
     console.log("Attempting to scroll the document page naturally...");
-    const scrollResult = await page.evaluate(() => {
+    await page.evaluate(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
         window.scrollBy(0, 300);
+    });
+
+    // Wait a brief moment for layout/paint
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const scrollResult = await page.evaluate(() => {
         return {
             scrollY: window.scrollY,
             overflowStyle: window.getComputedStyle(document.body).overflowY,
