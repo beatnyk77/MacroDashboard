@@ -9,7 +9,6 @@ import { TerminalSidebar } from '@/components/TerminalSidebar';
 import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
-import { QuickTourModal } from '@/components/QuickTourModal';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import { Button } from '@/components/ui/button';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
@@ -248,7 +247,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             <CommandPalette open={cmdKOpen} setOpen={setCmdKOpen} />
             {!isEmbedded && <SocialShareMode />}
             {!isEmbedded && <MobileNav />}
-            {!isEmbedded && <QuickTourModal />}
         </div>
     );
 };
