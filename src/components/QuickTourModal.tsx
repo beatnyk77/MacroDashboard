@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { X, ChevronRight, Zap, FlaskConical, Globe, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useScrollLock } from '@/lib/scroll-lock';
 
 const slides = [
     {
@@ -50,41 +51,8 @@ export const QuickTourModal: React.FC = () => {
         }
     }, []);
 
-    // Lock scroll when the modal is open, and restore it on close/unmount
-    useEffect(() => {
-        if (open) {
-            const originalBodyOverflow = document.body.style.overflow;
-            const originalHtmlOverflow = document.documentElement.style.overflow;
-
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-
-            // Prevent scroll/touch propagation outside the modal container
-            const handleWheel = (e: WheelEvent) => {
-                const modalPaper = document.querySelector('.MuiDialog-paper');
-                if (modalPaper && !modalPaper.contains(e.target as Node)) {
-                    e.preventDefault();
-                }
-            };
-
-            const handleTouchMove = (e: TouchEvent) => {
-                const modalPaper = document.querySelector('.MuiDialog-paper');
-                if (modalPaper && !modalPaper.contains(e.target as Node)) {
-                    e.preventDefault();
-                }
-            };
-
-            window.addEventListener('wheel', handleWheel, { passive: false });
-            window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-            return () => {
-                document.body.style.overflow = originalBodyOverflow;
-                document.documentElement.style.overflow = originalHtmlOverflow;
-                window.removeEventListener('wheel', handleWheel);
-                window.removeEventListener('touchmove', handleTouchMove);
-            };
-        }
-    }, [open]);
+    // Centralized scroll lock — guaranteed cleanup on close or unmount
+    useScrollLock(open);
 
     const handleClose = () => {
         localStorage.setItem('gqTourCompleted', 'true');

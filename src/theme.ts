@@ -157,6 +157,27 @@ const getTheme = (mode: 'light' | 'dark') => {
                     },
                 },
             },
+            // Prevent ALL MUI overlays from locking body scroll
+            MuiDialog: {
+                defaultProps: {
+                    disableScrollLock: true,
+                },
+            },
+            MuiDrawer: {
+                defaultProps: {
+                    disableScrollLock: true,
+                },
+            },
+            MuiModal: {
+                defaultProps: {
+                    disableScrollLock: true,
+                },
+            },
+            MuiPopover: {
+                defaultProps: {
+                    disableScrollLock: true,
+                },
+            },
         },
         shape: {
             borderRadius: 12,

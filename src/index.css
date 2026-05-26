@@ -154,16 +154,7 @@
     }
 
     body {
-      overflow-y: auto !important;   /* Force natural scrolling */
-    }
-
-    /* Remove any leftover MUI interference */
-    .MuiModal-root {
-      pointer-events: none;
-    }
-    .MuiModal-root .MuiPaper-root,
-    .MuiDrawer-root .MuiPaper-root {
-      pointer-events: auto;
+      overflow-y: auto;
     }
     
     html {
