@@ -23,16 +23,16 @@ function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function useDailyChanges() {
-  const today = todayISO();
+export function useDailyChanges(signalDate?: string) {
+  const queryDate = signalDate || todayISO();
 
   return useQuery({
-    queryKey: ['daily-changes', today],
+    queryKey: ['daily-changes', queryDate],
     queryFn: async (): Promise<DailyChange[]> => {
       const { data, error } = await supabase
         .from('daily_changes')
         .select('*')
-        .eq('signal_date', today)
+        .eq('signal_date', queryDate)
         .order('significance', { ascending: true }) // HIGH first
         .limit(8);
 

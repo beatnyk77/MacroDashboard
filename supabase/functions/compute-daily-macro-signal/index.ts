@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { runIngestion } from '../_shared/logging.ts'
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type MacroRegime = 'RISK_ON' | 'NEUTRAL' | 'RISK_OFF';
@@ -136,15 +137,24 @@ function computeMacroSignal(inputs: {
 
 // ─── Main handler ──────────────────────────────────────────────────────────
 
-Deno.serve(async (_req) => {
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   );
 
-  const today = new Date().toISOString().slice(0, 10);
+  return runIngestion(supabase, 'compute-daily-macro-signal', async (ctx) => {
+    const today = new Date().toISOString().slice(0, 10);
 
-  try {
     // ── 1. Fetch all inputs ──────────────────────────────────────────────
     const metricsNeeded = [
       'US_10Y_YIELD', 'US_2Y_YIELD', 'DOLLAR_INDEX_DXY',
@@ -158,6 +168,8 @@ Deno.serve(async (_req) => {
       supabase.from('daily_signal').select('score, regime').order('signal_date', { ascending: false }).limit(1).maybeSingle(),
     ]);
 
+    if (metricsRes.error) throw new Error(`vw_latest_metrics fetch failed: ${metricsRes.error.message}`);
+    
     const metrics = metricsRes.data ?? [];
     const liq = liquidityRes.data;
     const prev = prevSignalRes.data;
@@ -209,7 +221,7 @@ Deno.serve(async (_req) => {
     if (sigError) throw sigError;
 
     // ── 5. Upsert macro_brief ────────────────────────────────────────────
-    await supabase.from('macro_brief').upsert({
+    const { error: briefError } = await supabase.from('macro_brief').upsert({
       signal_date: today,
       regime_line,
       driver_line,
@@ -217,6 +229,8 @@ Deno.serve(async (_req) => {
       context_line,
       generated_at: new Date().toISOString(),
     }, { onConflict: 'signal_date' });
+
+    if (briefError) throw briefError;
 
     // ── 6. Contradiction detection ───────────────────────────────────────
     const goldZ = getZ('GOLD_COMEX_USD');
@@ -288,15 +302,17 @@ Deno.serve(async (_req) => {
       .slice(0, 2);
 
     // Delete old contradictions for today, insert fresh
-    await supabase.from('macro_contradictions').delete().eq('signal_date', today);
+    const { error: deleteContrError } = await supabase.from('macro_contradictions').delete().eq('signal_date', today);
+    if (deleteContrError) throw deleteContrError;
+
     if (topContradictions.length > 0) {
-      await supabase.from('macro_contradictions').insert(
+      const { error: insertContrError } = await supabase.from('macro_contradictions').insert(
         topContradictions.map(c => ({ ...c, signal_date: today }))
       );
+      if (insertContrError) throw insertContrError;
     }
 
     // ── 7. Detect significant changes ────────────────────────────────────
-    // Compare latest vs yesterday metrics
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().slice(0, 10);
@@ -333,12 +349,14 @@ Deno.serve(async (_req) => {
       const curr = Number(metrics.find((x: { metric_id: string; value: number }) => x.metric_id === m.id)?.value ?? null);
       if (!curr) continue;
 
-      const { data: prevData } = await supabase
+      const { data: prevData, error: prevError } = await supabase
         .from('metric_observations')
         .select('value')
         .eq('metric_id', m.id)
         .eq('as_of_date', yesterdayStr)
         .maybeSingle();
+
+      if (prevError) throw prevError;
 
       if (!prevData?.value) continue;
       const prev_value = Number(prevData.value);
@@ -371,27 +389,28 @@ Deno.serve(async (_req) => {
     }
 
     // Delete old changes for today, insert fresh
-    await supabase.from('daily_changes').delete().eq('signal_date', today);
+    const { error: deleteChangesError } = await supabase.from('daily_changes').delete().eq('signal_date', today);
+    if (deleteChangesError) throw deleteChangesError;
+
     if (changes.length > 0) {
-      await supabase.from('daily_changes').insert(changes);
+      const { error: insertChangesError } = await supabase.from('daily_changes').insert(changes);
+      if (insertChangesError) throw insertChangesError;
     }
 
-    return new Response(JSON.stringify({
+    return {
       ok: true,
       date: today,
       regime: signal.regime,
       score: signal.score,
       contradictions: topContradictions.length,
       changes: changes.length,
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-  } catch (err) {
-    console.error('[compute-daily-macro-signal]', err);
-    return new Response(JSON.stringify({ ok: false, error: String(err) }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+      metadata: {
+        date: today,
+        regime: signal.regime,
+        score: signal.score,
+        contradictions: topContradictions.length,
+        changes: changes.length,
+      }
+    };
+  });
 });

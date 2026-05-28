@@ -20,16 +20,16 @@ function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function useContradictions() {
-  const today = todayISO();
+export function useContradictions(signalDate?: string) {
+  const queryDate = signalDate || todayISO();
 
   return useQuery({
-    queryKey: ['macro-contradictions', today],
+    queryKey: ['macro-contradictions', queryDate],
     queryFn: async (): Promise<Contradiction[]> => {
       const { data, error } = await supabase
         .from('macro_contradictions')
         .select('*')
-        .eq('signal_date', today)
+        .eq('signal_date', queryDate)
         .order('severity', { ascending: true }) // EXTREME first
         .limit(2);
 

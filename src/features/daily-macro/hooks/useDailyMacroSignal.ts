@@ -61,13 +61,17 @@ export function useDailyMacroSignal() {
 
       if (error) {
         console.warn('[useDailyMacroSignal] view fetch failed:', error.message);
+        if (error.code !== 'PGRST116') {
+          throw new Error(error.message);
+        }
       }
 
-      if (data && data.signal_date === today) {
+      if (data) {
         const row = data as DailySignalRow;
+        const isStale = row.signal_date !== today;
         return {
           ...row,
-          is_stale: false,
+          is_stale: isStale,
         };
       }
 

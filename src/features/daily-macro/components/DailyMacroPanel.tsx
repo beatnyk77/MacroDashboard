@@ -48,9 +48,9 @@ const PanelSkeleton = () => (
 // ─── Inner (data ready) ────────────────────────────────────────────────────
 
 const DailyMacroPanelInner: React.FC = () => {
-  const { data: signal, isLoading: signalLoading, refetch: refetchSignal } = useDailyMacroSignal();
-  const { data: changes = [], isLoading: changesLoading, refetch: refetchChanges } = useDailyChanges();
-  const { data: contradictions = [] } = useContradictions();
+  const { data: signal, isLoading: signalLoading, isError: signalError, refetch: refetchSignal } = useDailyMacroSignal();
+  const { data: changes = [], isLoading: changesLoading, refetch: refetchChanges } = useDailyChanges(signal?.signal_date);
+  const { data: contradictions = [] } = useContradictions(signal?.signal_date);
   const { data: health = [] } = useIngestionHealth();
   
   const [isRefreshing, setIsRefreshing] = React.useState(false);
@@ -73,6 +73,33 @@ const DailyMacroPanelInner: React.FC = () => {
 
   const staleness = useStaleness(signal?.computed_at, 'daily');
   const isStale = staleness.state !== 'fresh';
+
+  if (signalError) {
+    return (
+      <div
+        className="rounded-2xl p-8 flex flex-col items-center justify-center text-center border border-white/10"
+        style={{
+          background: 'rgba(8,12,24,0.7)',
+          backdropFilter: 'blur(12px)',
+          minHeight: '260px'
+        }}
+      >
+        <AlertTriangle className="text-red-500 mb-3" size={28} />
+        <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-2">
+          Daily Macro Signal Temporarily Unavailable
+        </h3>
+        <p className="text-xs text-white/60 max-w-md mb-6 leading-relaxed">
+          The macro intelligence engine is currently unable to retrieve the latest signals. Our engineering team has been notified.
+        </p>
+        <button
+          onClick={() => refetchSignal()}
+          className="text-[10px] font-black uppercase tracking-widest px-5 py-2.5 bg-white/5 border border-white/15 hover:bg-white/10 active:scale-95 rounded-lg transition-all"
+        >
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
 
   if (signalLoading || !signal) return <PanelSkeleton />;
 
