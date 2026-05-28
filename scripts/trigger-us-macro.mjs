@@ -2,7 +2,7 @@ import https from 'https';
 
 const serviceKey = 'fe95bc684b136a455cb3ae290e273510317e0404e07de14b17f818857faae38e';
 const projectRef = 'debdriyzfcwvgrhzzzre';
-const url = `https://${projectRef}.functions.supabase.co/ingest-us-macro`;
+const url = `https://${projectRef}.supabase.co/functions/v1/ingest-us-macro?task=fred`;
 
 const req = https.request(url, {
   method: 'POST',
