@@ -31,8 +31,8 @@ export const TerminalSidebar: React.FC = () => {
     const location = useLocation();
 
     return (
-        <aside 
-            className="hidden md:block sticky top-16 self-start w-[260px] overflow-y-auto bg-background"
+        <aside
+            className="hidden md:block sticky top-16 h-[calc(100vh-4rem)] w-[260px] overflow-y-auto overscroll-contain bg-background"
             aria-label="Terminal Navigation Sidebar"
         >
             <div className="px-4 mb-6">
