@@ -44,14 +44,30 @@ export function useUSMacroPulse() {
     return useSuspenseQuery({
         queryKey: ['us-macro-pulse-25y'],
         queryFn: async (): Promise<USMacroPulseData[]> => {
-            // ... (keep fetch logic)
-            const { data: historyData, error: historyError } = await supabase
-                .from('metric_observations')
-                .select('metric_id, as_of_date, value')
-                .in('metric_id', US_MACRO_METRICS)
-                .order('as_of_date', { ascending: true });
+            // Fetch history for each metric individually to avoid PostgREST's default 1000-row limit truncation.
+            // Ordering descending and limiting ensures we fetch the latest observations, 
+            // and reversing maintains ascending order for proper UI rendering.
+            const historyPromises = US_MACRO_METRICS.map(async (metricId) => {
+                const { data, error } = await supabase
+                    .from('metric_observations')
+                    .select('as_of_date, value')
+                    .eq('metric_id', metricId)
+                    .order('as_of_date', { ascending: false })
+                    .limit(1000);
 
-            if (historyError) throw historyError;
+                if (error) throw error;
+                
+                return {
+                    metricId,
+                    history: (data || []).map((h: any) => ({
+                        date: h.as_of_date,
+                        value: Number(h.value)
+                    })).reverse()
+                };
+            });
+
+            const historyResults = await Promise.all(historyPromises);
+            const historyMap = new Map(historyResults.map(r => [r.metricId, r.history]));
 
             const { data: latestData, error: latestError } = await supabase
                 .from('vw_latest_metrics')
@@ -61,13 +77,7 @@ export function useUSMacroPulse() {
             if (latestError) throw latestError;
 
             return US_MACRO_METRICS.map(metricId => {
-                const metricHistory = historyData
-                    ?.filter((h: any) => h.metric_id === metricId)
-                    .map((h: any) => ({
-                        date: h.as_of_date,
-                        value: Number(h.value)
-                    })) || [];
-
+                const metricHistory = historyMap.get(metricId) || [];
                 const latest = latestData?.find((l: any) => l.metric_id === metricId);
 
                 const lastDate = latest?.last_updated_at ? new Date(latest.last_updated_at) : (metricHistory.length > 0 ? new Date(metricHistory[metricHistory.length - 1].date) : null);
