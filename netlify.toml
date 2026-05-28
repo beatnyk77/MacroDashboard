@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Deploy previews skip the Puppeteer-based prerender step — the full prerender
+# (which launches Chromium) consistently fails in Netlify's preview build context
+# due to resource/environment constraints. Production builds on main keep the
+# full pipeline. Previews still get a fully functional Vite SPA build.
+[context.deploy-preview]
+  command = "tsc && vite build"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
