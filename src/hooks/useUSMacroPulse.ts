@@ -84,6 +84,6 @@ export function useUSMacroPulse() {
                 };
             });
         },
-        staleTime: 1000 * 60 * 60 * 24, // 24 hours
+        staleTime: 1000 * 60 * 5, // 5 minutes (prevents spamming but keeps telemetry fresh)
     });
 }
