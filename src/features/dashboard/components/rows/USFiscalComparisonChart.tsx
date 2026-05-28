@@ -65,11 +65,16 @@ const USFiscalComparisonChart: React.FC = () => {
     // Compute latest values before conditional return to obey Rules of Hooks
     const latestValues = useMemo(() => {
         if (chartData.length === 0) return null;
-        const latest = chartData[chartData.length - 1];
+        
+        // Find latest valid value for defense and interest (in case of publication date mismatch)
+        const latestDefense = chartData.slice().reverse().find(d => d.defense !== undefined && d.defense !== null)?.defense;
+        const latestInterest = chartData.slice().reverse().find(d => d.interest !== undefined && d.interest !== null)?.interest;
+        const latestDate = chartData[chartData.length - 1].date;
+
         return {
-            defense: latest.defense,
-            interest: latest.interest,
-            date: latest.date
+            defense: latestDefense,
+            interest: latestInterest,
+            date: latestDate
         };
     }, [chartData]);
 
@@ -110,14 +115,18 @@ const USFiscalComparisonChart: React.FC = () => {
                             <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
                             <span className="text-white/60">Defense:</span>
                             <span className="text-indigo-400 font-mono font-bold">
-                                ${(latestValues.defense / 1e3).toFixed(1)}T
+                                {latestValues.defense !== undefined && latestValues.defense !== null
+                                    ? `$${(latestValues.defense / 1e3).toFixed(2)}T`
+                                    : '--'}
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-rose-500"></div>
                             <span className="text-white/60">Interest:</span>
                             <span className="text-rose-400 font-mono font-bold">
-                                ${(latestValues.interest / 1e3).toFixed(1)}T
+                                {latestValues.interest !== undefined && latestValues.interest !== null
+                                    ? `$${(latestValues.interest / 1e3).toFixed(2)}T`
+                                    : '--'}
                             </span>
                         </div>
                     </div>
