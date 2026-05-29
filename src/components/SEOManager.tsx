@@ -37,7 +37,10 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     const fullTitle = `${title} | GraphiQuestor`;
 
     // Auto-generate canonical if not provided — self-referencing per Google best practice
-    const resolvedCanonical = canonicalUrl || `https://graphiquestor.com${location.pathname}`;
+    const canonicalPath = location.pathname === '/'
+        ? '/'
+        : location.pathname.replace(/\/$/, '');
+    const resolvedCanonical = canonicalUrl || `https://graphiquestor.com${canonicalPath}`;
 
     return (
         <Helmet>
