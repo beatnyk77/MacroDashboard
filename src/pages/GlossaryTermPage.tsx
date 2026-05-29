@@ -107,22 +107,58 @@ export const GlossaryTermPage: React.FC = () => {
         }]
     };
 
-    // FAQ Schema for Cross-Pollination
-    const faqJsonLd = liveResult ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [{
+    // FAQ Schema — always present for all terms
+    const faqEntities: object[] = [
+        {
+            "@type": "Question",
+            "name": `What is ${termData.term}?`,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": termData.definition
+            }
+        }
+    ];
+
+    if (termData.whyItMatters) {
+        faqEntities.push({
+            "@type": "Question",
+            "name": `Why does ${termData.term} matter for macro investors?`,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": termData.whyItMatters
+            }
+        });
+    }
+
+    if (termData.formula) {
+        faqEntities.push({
+            "@type": "Question",
+            "name": `How is ${termData.term} calculated?`,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": `The formula for ${termData.term} is: ${termData.formula}`
+            }
+        });
+    }
+
+    if (liveResult) {
+        faqEntities.push({
             "@type": "Question",
             "name": GLOSSARY_LIVE_CONFIG[slug || ''].faqQuestion,
             "acceptedAnswer": {
                 "@type": "Answer",
                 "text": `${termData.term} is currently ${liveResult.displayValue}${liveResult.unit}. In our classification, this represents a ${liveResult.label} regime. Macro Implication: ${liveResult.interpretation}`
             }
-        }]
-    } : null;
+        });
+    }
 
-    const schemas: any[] = [termJsonLd, breadcrumbJsonLd];
-    if (faqJsonLd) schemas.push(faqJsonLd);
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqEntities
+    };
+
+    const schemas: any[] = [termJsonLd, breadcrumbJsonLd, faqJsonLd];
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh' }}>
