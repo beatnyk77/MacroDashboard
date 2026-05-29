@@ -222,7 +222,7 @@ const DailyMacroPanelInner: React.FC = () => {
         </div>
 
         {/* Row 2: Overnight Changes (Phase 2 — renders nothing if empty) */}
-        <OvernightChanges changes={changes} isLoading={changesLoading} refreshing={isRefreshing} />
+        <OvernightChanges changes={changes} isLoading={changesLoading} />
       </div>
     </div>
   );
