@@ -10,6 +10,13 @@
 [context.deploy-preview]
   command = "tsc && vite build"
 
+# 301: strip trailing slash from all non-root paths before the SPA catch-all
+[[redirects]]
+  from = "/*/"
+  to = "/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
