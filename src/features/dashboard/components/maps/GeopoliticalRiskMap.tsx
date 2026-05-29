@@ -3,7 +3,7 @@ import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps
 import { useGeopoliticalOSINT, GeopoliticalOSINT } from '@/hooks/useGeopoliticalOSINT';
 import { Plane, Ship, Activity, Globe, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -126,7 +126,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                                     "opacity-20 animate-pulse"
                                 )}
                             />
-                            <motion.circle
+                            <m.circle
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 r={6}
@@ -144,7 +144,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
             {/* Asset Detail Drawer */}
             <AnimatePresence>
                 {selectedAsset && (
-                    <motion.div
+                    <m.div
                         initial={{ x: 400 }}
                         animate={{ x: 0 }}
                         exit={{ x: 400 }}
@@ -229,7 +229,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                             </div>
                             <span className="text-xs font-mono text-muted-foreground/40 italic">Refreshed 1m ago</span>
                         </div>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
 
@@ -273,12 +273,12 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                 </div>
                 {isLoading && (
                     <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-500/10 border border-blue-500/20 shadow-lg">
-                        <motion.div 
+                        <m.div 
                             animate={{ rotate: 360 }}
                             transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                         >
                             <Globe size={14} className="text-blue-500" />
-                        </motion.div>
+                        </m.div>
                         <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase">Scanning Signal...</span>
                     </div>
                 )}

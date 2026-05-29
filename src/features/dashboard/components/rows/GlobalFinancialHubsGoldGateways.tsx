@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import {
     Landmark,
     Ship,
@@ -58,7 +58,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
     }));
 
     return (
-        <motion.div
+        <m.div
             variants={cardVariants}
             className="group relative bg-neutral-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 hover:bg-neutral-900/60 hover:border-white/12 transition-all duration-300 shadow-2xl overflow-hidden flex flex-col h-full"
         >
@@ -159,7 +159,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
             <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <ArrowUpRight className="w-16 h-16 text-white/5 -mb-4 -mr-4" />
             </div>
-        </motion.div>
+        </m.div>
     );
 };
 
@@ -193,7 +193,7 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
                 icon={<Landmark className="w-6 h-6 text-blue-400" />}
             />
 
-            <motion.div
+            <m.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -203,7 +203,7 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
                 {orderedHubs.map((hub) => (
                     <HubCard key={hub.id} hub={hub} />
                 ))}
-            </motion.div>
+            </m.div>
 
             <div className="mt-8 flex flex-col md:flex-row items-center justify-between border-t border-white/5 pt-6 gap-4">
                 <p className="text-xs text-neutral-500 uppercase tracking-uppercase font-medium text-center md:text-left">

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Globe, TrendingDown, ArrowRight, Package2, Leaf, Cpu } from 'lucide-react';
 
 // Lazy-load all sections
@@ -138,7 +138,7 @@ export const IntelChinaPage: React.FC = () => {
                     </nav>
 
                     {/* Flag + Title */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 24 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
@@ -183,10 +183,10 @@ export const IntelChinaPage: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                    </motion.div>
+                    </m.div>
 
                     {/* Signal Preview Cards */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.2 }}
@@ -203,7 +203,7 @@ export const IntelChinaPage: React.FC = () => {
                                 <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
                             </a>
                         ))}
-                    </motion.div>
+                    </m.div>
                     {/* FYP Teaser Row */}
                     <div className="mt-12">
                         <SectionErrorBoundary name="China 15th FYP Teaser">

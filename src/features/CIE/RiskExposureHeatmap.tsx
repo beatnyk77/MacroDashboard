@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, ArrowUpRight, ShieldAlert, X, Activity } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 interface Company {
     id: string;
@@ -218,12 +218,12 @@ export const RiskExposureHeatmap: React.FC = () => {
             <AnimatePresence>
                 {selectedSectorPanel && (
                     <>
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100]"
                             onClick={() => setSelectedSectorPanel(null)}
                         />
-                        <motion.div
+                        <m.div
                             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 200 }}
                             className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/12 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
@@ -294,7 +294,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </m.div>
                     </>
                 )}
             </AnimatePresence>
@@ -303,12 +303,12 @@ export const RiskExposureHeatmap: React.FC = () => {
             <AnimatePresence>
                 {selectedCDSPanel && (
                     <>
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100]"
                             onClick={() => setSelectedCDSPanel(null)}
                         />
-                        <motion.div
+                        <m.div
                             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 200 }}
                             className="fixed top-0 right-0 h-full w-full md:w-[500px] bg-[#050810] border-l border-white/12 z-[101] p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-y-auto no-scrollbar"
@@ -384,7 +384,7 @@ export const RiskExposureHeatmap: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </m.div>
                     </>
                 )}
             </AnimatePresence>

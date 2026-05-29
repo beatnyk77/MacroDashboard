@@ -2,7 +2,7 @@ import React from 'react';
 import { useGlobalRefiningData } from '@/hooks/useGlobalRefiningData';
 import { Zap, ArrowRightLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 export const RegionalImbalanceGauge: React.FC<{ className?: string }> = ({ className }) => {
     const { data } = useGlobalRefiningData();
@@ -36,20 +36,20 @@ export const RegionalImbalanceGauge: React.FC<{ className?: string }> = ({ class
             <div className="flex-1 flex flex-col justify-center gap-8">
                 {/* Visual Gauge */}
                 <div className="relative h-4 bg-white/5 rounded-full overflow-hidden flex">
-                    <motion.div
+                    <m.div
                         initial={{ width: 0 }}
                         animate={{ width: `${westPct}%` }}
                         className="h-full bg-slate-500 relative"
                     >
                         <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-black text-white/40 uppercase">West</div>
-                    </motion.div>
-                    <motion.div
+                    </m.div>
+                    <m.div
                         initial={{ width: 0 }}
                         animate={{ width: `${eastPct}%` }}
                         className="h-full bg-blue-500 shadow-[0_0_15px_#3B82F6] relative"
                     >
                         <div className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-black text-white uppercase">East</div>
-                    </motion.div>
+                    </m.div>
                 </div>
 
                 {/* Stats Grid */}

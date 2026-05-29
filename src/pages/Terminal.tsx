@@ -6,18 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Globe, MapPin, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Components
+// Components — above-fold, always eager
 import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
-import { NetLiquidityRow } from '@/features/dashboard/components/rows/NetLiquidityRow';
-import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
-import { CorporateDebtMaturityWall } from '@/components/CorporateDebtMaturityWall';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
-import { FeedbackSection } from '@/features/dashboard/components/sections/FeedbackSection';
-import { FedMonetizationMonitor } from '@/features/dashboard/components/rows/FedMonetizationMonitor';
 import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPanel';
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
-import { EnergySection } from '@/features/dashboard/components/sections/EnergySection';
-import { TradeEntryBanner } from '@/features/trade/components/TradeEntryBanner';
+
+// Components — below-fold, lazy-loaded
+const NetLiquidityRow = lazy(() => import('@/features/dashboard/components/rows/NetLiquidityRow').then(m => ({ default: m.NetLiquidityRow })));
+const USDebtMaturityWall = lazy(() => import('@/components/USDebtMaturityWall').then(m => ({ default: m.USDebtMaturityWall })));
+const CorporateDebtMaturityWall = lazy(() => import('@/components/CorporateDebtMaturityWall').then(m => ({ default: m.CorporateDebtMaturityWall })));
+const FeedbackSection = lazy(() => import('@/features/dashboard/components/sections/FeedbackSection').then(m => ({ default: m.FeedbackSection })));
+const FedMonetizationMonitor = lazy(() => import('@/features/dashboard/components/rows/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
+const EnergySection = lazy(() => import('@/features/dashboard/components/sections/EnergySection').then(m => ({ default: m.EnergySection })));
+const TradeEntryBanner = lazy(() => import('@/features/trade/components/TradeEntryBanner').then(m => ({ default: m.TradeEntryBanner })));
 
 const WeeklyRegimeDigest = lazy(() => import('@/features/dashboard/components/sections/WeeklyRegimeDigest').then(m => ({ default: m.WeeklyRegimeDigest })));
 const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/sections/RegimeDigestSection').then(m => ({ default: m.RegimeDigestSection })));
@@ -203,7 +205,9 @@ export const Terminal: React.FC = () => {
                         </CardHeader>
                         <CardContent>
                             <SectionErrorBoundary name="Net Liquidity">
-                                <NetLiquidityRow />
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <NetLiquidityRow />
+                                </Suspense>
                             </SectionErrorBoundary>
                         </CardContent>
                     </Card>

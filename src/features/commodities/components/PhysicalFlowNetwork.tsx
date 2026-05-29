@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Ship, ArrowRight, Info } from 'lucide-react';
 import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle } from 'recharts';
@@ -160,7 +160,7 @@ export const PhysicalFlowNetwork: React.FC = () => {
     if (isLoading) return <div className="h-[480px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
 
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -277,6 +277,6 @@ export const PhysicalFlowNetwork: React.FC = () => {
                     </div>
                 </div>
             </Card>
-        </motion.div>
+        </m.div>
     );
 };

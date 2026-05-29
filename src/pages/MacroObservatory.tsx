@@ -12,7 +12,7 @@ import {
     ChevronRight,
     Search
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 
 const labs = [
@@ -58,13 +58,13 @@ export const MacroObservatory: React.FC = () => {
         <div className="min-h-screen pt-24 pb-32">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
                 <div className="mb-16 text-center">
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8"
                     >
                         <Search size={14} /> Intelligence Network
-                    </motion.div>
+                    </m.div>
                     
                     <h1 className="text-4xl md:text-7xl font-black uppercase mb-3 letter-spacing-tight tracking-heading leading-none text-white">
                         Macro <span className="text-blue-500">Observatory</span>
@@ -77,7 +77,7 @@ export const MacroObservatory: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {labs.map((lab, index) => (
-                        <motion.div
+                        <m.div
                             key={lab.path}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -122,7 +122,7 @@ export const MacroObservatory: React.FC = () => {
                                     {React.cloneElement(lab.icon as React.ReactElement, { size: 120 })}
                                 </div>
                             </Card>
-                        </motion.div>
+                        </m.div>
                     ))}
 
                     {/* Coming Soon Card */}

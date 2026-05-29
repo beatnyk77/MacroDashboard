@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { TrendingUp, TrendingDown, Activity } from 'lucide-react';
 
 export const PromoterActivityHeatmap: React.FC = () => {
@@ -42,7 +42,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
         <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {sectorStats.map((sector, i) => (
-                    <motion.div
+                    <m.div
                         key={sector.name}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -70,7 +70,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
                                         </span>
                                     </div>
                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <motion.div
+                                        <m.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${Math.min(100, Math.abs(sector.netInsider) / 5)}%` }}
                                             className={`h-full ${sector.netInsider >= 0 ? 'bg-emerald-500' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}`}
@@ -86,7 +86,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
                                         </span>
                                     </div>
                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <motion.div
+                                        <m.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${Math.min(100, sector.avgPledge * 2.5)}%` }}
                                             className={`h-full ${sector.avgPledge > 20 ? 'bg-rose-500' : sector.avgPledge > 10 ? 'bg-amber-500' : 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'}`}
@@ -101,7 +101,7 @@ export const PromoterActivityHeatmap: React.FC = () => {
                                 Analyze Leaders <Activity size={14} className="group-hover:rotate-12 transition-transform" />
                             </button>
                         </div>
-                    </motion.div>
+                    </m.div>
                 ))}
             </div>
         </div>

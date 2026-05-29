@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from "@/lib/utils";
 
 const countries = [
@@ -37,8 +37,8 @@ export const AfricaComparisonHeatmap: React.FC = () => {
                 <thead>
                     <tr className="border-b border-white/10">
                         <th className="p-6 text-left text-[10px] font-black uppercase tracking-widest text-white/30">Country</th>
-                        {metrics.map(m => (
-                            <th key={m.key} className="p-6 text-center text-[10px] font-black uppercase tracking-widest text-white/30">{m.label}</th>
+                        {metrics.map(metric => (
+                            <th key={metric.key} className="p-6 text-center text-[10px] font-black uppercase tracking-widest text-white/30">{metric.label}</th>
                         ))}
                     </tr>
                 </thead>
@@ -53,32 +53,32 @@ export const AfricaComparisonHeatmap: React.FC = () => {
                                     <div className="text-sm font-black text-white">{c.name}</div>
                                 </div>
                             </td>
-                            {metrics.map(m => {
-                                const val = (c as any)[m.key];
-                                const intensity = getIntensity(val, m.key);
+                            {metrics.map(metric => {
+                                const val = (c as any)[metric.key];
+                                const intensity = getIntensity(val, metric.key);
                                 return (
-                                    <td key={m.key} className="p-2">
-                                        <motion.div
+                                    <td key={metric.key} className="p-2">
+                                        <m.div
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ delay: idx * 0.05 }}
                                             className={cn(
                                                 "h-12 flex items-center justify-center rounded-xl text-xs font-mono font-black tabular-nums border",
-                                                m.color === 'rose' ? `bg-rose-500/[${intensity * 0.2}] border-rose-500/[${intensity * 0.3}] text-rose-400` :
-                                                m.color === 'blue' ? `bg-blue-500/[${intensity * 0.2}] border-blue-500/[${intensity * 0.3}] text-blue-400` :
+                                                metric.color === 'rose' ? `bg-rose-500/[${intensity * 0.2}] border-rose-500/[${intensity * 0.3}] text-rose-400` :
+                                                metric.color === 'blue' ? `bg-blue-500/[${intensity * 0.2}] border-blue-500/[${intensity * 0.3}] text-blue-400` :
                                                 `bg-amber-500/[${intensity * 0.2}] border-amber-500/[${intensity * 0.3}] text-amber-400`
                                             )}
                                             style={{
-                                                backgroundColor: m.color === 'rose' ? `rgba(244, 63, 94, ${intensity * 0.2})` : 
-                                                                 m.color === 'blue' ? `rgba(59, 130, 246, ${intensity * 0.2})` :
+                                                backgroundColor: metric.color === 'rose' ? `rgba(244, 63, 94, ${intensity * 0.2})` :
+                                                                 metric.color === 'blue' ? `rgba(59, 130, 246, ${intensity * 0.2})` :
                                                                  `rgba(245, 158, 11, ${intensity * 0.2})`,
-                                                borderColor: m.color === 'rose' ? `rgba(244, 63, 94, ${intensity * 0.3})` : 
-                                                             m.color === 'blue' ? `rgba(59, 130, 246, ${intensity * 0.3})` :
+                                                borderColor: metric.color === 'rose' ? `rgba(244, 63, 94, ${intensity * 0.3})` :
+                                                             metric.color === 'blue' ? `rgba(59, 130, 246, ${intensity * 0.3})` :
                                                              `rgba(245, 158, 11, ${intensity * 0.3})`
                                             }}
                                         >
                                             {val}%
-                                        </motion.div>
+                                        </m.div>
                                     </td>
                                 );
                             })}

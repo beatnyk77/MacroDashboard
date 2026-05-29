@@ -14,7 +14,7 @@ import {
   Tooltip,
   ReferenceLine,
 } from 'recharts';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Activity, Database, TrendingUp, Clock, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -305,7 +305,7 @@ const MetricCard: React.FC<{
   sub?: string;
   trend?: 'up' | 'down' | 'neutral';
 }> = ({ icon, label, value, sub, trend }) => (
-  <motion.div
+  <m.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 hover:border-cyan-500/30 transition-colors"
@@ -326,7 +326,7 @@ const MetricCard: React.FC<{
     <div className="text-xl font-bold text-white tabular-nums">{value}</div>
     <div className="text-xs text-slate-500 mt-0.5">{label}</div>
     {sub && <div className="text-[10px] text-slate-600 mt-1">{sub}</div>}
-  </motion.div>
+  </m.div>
 );
 
 // ── Main Export ─────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Container, Typography, Box, Button, Grid } from '@mui/material';
 import { Zap, ShieldCheck, Database, ArrowRight, Lock } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { SEOManager } from '@/components/SEOManager';
 
 declare global {
@@ -93,7 +93,7 @@ export const APIAccessPage: React.FC = () => {
                                 { icon: ShieldCheck, title: "Sovereign Risk Matrix", desc: "Real-time updates on Treasury maturity walls and fiscal stress indices." },
                                 { icon: Zap, title: "High-Frequency Signals", desc: "Sub-second updates on global net liquidity and shadow reserve shifts." }
                             ].map((feature, i) => (
-                                <motion.div
+                                <m.div
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
@@ -107,13 +107,13 @@ export const APIAccessPage: React.FC = () => {
                                         <h4 className="text-sm font-black text-white uppercase tracking-heading mb-1">{feature.title}</h4>
                                         <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium uppercase">{feature.desc}</p>
                                     </div>
-                                </motion.div>
+                                </m.div>
                             ))}
                         </div>
                     </Grid>
 
                     <Grid item xs={12} md={6}>
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             className="p-10 rounded-[3rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] relative overflow-hidden"
@@ -160,7 +160,7 @@ export const APIAccessPage: React.FC = () => {
                                     30-Day Money Back Guarantee • Secure Checkout by Paddle
                                 </p>
                             </div>
-                        </motion.div>
+                        </m.div>
                     </Grid>
                 </Grid>
 

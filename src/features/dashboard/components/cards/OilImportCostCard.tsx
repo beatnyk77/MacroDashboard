@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
 import { ResponsiveContainer, ComposedChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Area } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface OilData {
     date: string;
@@ -75,7 +75,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
     if (isLoading) return <div className="h-[480px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
 
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
@@ -291,6 +291,6 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                     </div>
                 </CardContent>
             </Card>
-        </motion.div>
+        </m.div>
     );
 };

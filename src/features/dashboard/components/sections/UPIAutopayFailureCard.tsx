@@ -1,9 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Tooltip, Chip } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import { Info, TrendingUp, TrendingDown } from 'lucide-react';
 import { useUPIAutopay, useUPIAutopayHistory } from '@/hooks/useUPIAutopay';
 import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, Tooltip as RechartsTooltip } from 'recharts';
 
@@ -56,7 +54,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
                             </p>
                         </React.Fragment>
                     } arrow placement="top">
-                        <InfoOutlinedIcon className="text-muted-foreground/50 text-base cursor-help" />
+                        <Info className="text-muted-foreground/50 w-4 h-4 cursor-help" />
                     </Tooltip>
                 </div>
 
@@ -66,7 +64,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
                     </h3>
                     {failure_rate_delta_mom !== null && (
                         <Chip
-                            icon={isRising ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                            icon={isRising ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                             label={`${isRising ? '+' : ''}${(failure_rate_delta_mom !== undefined && failure_rate_delta_mom !== null) ? failure_rate_delta_mom.toFixed(2) : '-'}% MoM`}
                             size="small"
                         />

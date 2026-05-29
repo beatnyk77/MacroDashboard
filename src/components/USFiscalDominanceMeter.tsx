@@ -7,7 +7,7 @@ import {
     BarChart2,
     Percent
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 /**
@@ -224,7 +224,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
             {/* Key Callouts */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-slate-800/30">
                 {/* Current Ratio */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className={`${isAboveThreshold
                         ? 'bg-gradient-to-br from-red-500/10 to-red-600/5 border-red-500/30'
@@ -250,10 +250,10 @@ export const USFiscalDominanceMeter: React.FC = () => {
                             ? 'Mandatory spending exceeds tax revenue — fiscal dominance active'
                             : 'Below 100% — tax receipts still cover mandatory spending'}
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Interest Payments */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                     className="bg-slate-800/50 border border-red-500/20 rounded-xl p-5 hover:border-red-500/50 transition-colors"
                 >
@@ -264,10 +264,10 @@ export const USFiscalDominanceMeter: React.FC = () => {
                     <p className="text-2xl font-bold text-white">{formattedInterest}</p>
                     <p className="text-slate-500 text-xs mt-1">Quarterly · ≈{annualInterest}</p>
                     <p className="text-slate-600 text-[10px] mt-0.5">FRED: A091RC1Q027SBEA</p>
-                </motion.div>
+                </m.div>
 
                 {/* Major Entitlements */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                     className="bg-slate-800/50 border border-amber-500/20 rounded-xl p-5 hover:border-amber-500/50 transition-colors"
                 >
@@ -280,10 +280,10 @@ export const USFiscalDominanceMeter: React.FC = () => {
                         {latest.entitlements == null ? 'Populates on next ingest' : 'Quarterly benefits'}
                     </p>
                     <p className="text-slate-600 text-[10px] mt-0.5">FRED: W068RC1Q027SBEA</p>
-                </motion.div>
+                </m.div>
 
                 {/* Tax Receipts */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
                     className="bg-slate-800/50 border border-cyan-500/20 rounded-xl p-5 hover:border-cyan-500/50 transition-colors"
                 >
@@ -294,7 +294,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                     <p className="text-2xl font-bold text-white">{formattedReceipts}</p>
                     <p className="text-slate-500 text-xs mt-1">Quarterly receipts</p>
                     <p className="text-slate-600 text-[10px] mt-0.5">FRED: FGRECPT</p>
-                </motion.div>
+                </m.div>
             </div>
 
             {/* Main Chart */}

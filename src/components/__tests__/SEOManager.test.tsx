@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, afterEach, beforeAll } from 'vitest';
 import { render, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,7 +8,7 @@ import { SEOManager } from '@/components/SEOManager';
 // jsdom doesn't auto-advance rAF, so we replace it with a synchronous
 // implementation so that Helmet flushes immediately inside act().
 beforeAll(() => {
-    (window as any).requestAnimationFrame = (cb: FrameRequestCallback) => {
+    (window as any).requestAnimationFrame = (cb: (timestamp: number) => void) => {
         cb(0);
         return 0;
     };

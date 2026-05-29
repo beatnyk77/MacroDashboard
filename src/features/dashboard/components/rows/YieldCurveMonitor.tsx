@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 import { TrendingUp, TrendingDown, AlertTriangle, Info, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 /* ── Tenor ordering for x-axis ────────────────────────────────── */
@@ -104,7 +104,7 @@ export const YieldCurveMonitor: React.FC = () => {
 
     return (
         <SPASection id="yield-curve-monitor" className="py-16" disableAnimation>
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
@@ -228,7 +228,7 @@ export const YieldCurveMonitor: React.FC = () => {
                         </span>
                     </div>
                 </div>
-            </motion.div>
+            </m.div>
         </SPASection>
     );
 };
@@ -254,7 +254,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
     y10y: string;
     source: string;
 }) => (
-    <motion.div whileHover={{ y: -2 }}>
+    <m.div whileHover={{ y: -2 }}>
         <Card variant="elevated" className="p-4 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] group cursor-default h-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
@@ -321,7 +321,7 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
             <span className="text-[10px] font-bold text-muted-foreground/30 uppercase">{source}</span>
         </div>
     </Card>
-</motion.div>
+</m.div>
 );
 
 /* ── Custom Tooltip ───────────────────────────────────────────── */

@@ -5,7 +5,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { Info, TrendingUp, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/utils/formatNumber';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -248,13 +248,13 @@ export const USTreasuryDemandGauge: React.FC = () => {
 
               {/* Score Display */}
               <div className="flex items-baseline gap-4">
-                <motion.span 
+                <m.span 
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className={cn("text-7xl font-black tracking-tight transition-all duration-1000", regime.color)}
                 >
                   {currentScore.toFixed(2)}
-                </motion.span>
+                </m.span>
                 <span className="text-lg font-bold text-white/10 uppercase tracking-tighter">/ 2.50 Limit</span>
               </div>
 
@@ -265,7 +265,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     <div className="h-full w-[40%] border-r border-white/10" title="Weak threshold" />
                     <div className="h-full w-[24%] border-r border-white/10" title="Neutral threshold" />
                   </div>
-                  <motion.div
+                  <m.div
                     initial={{ width: 0 }}
                     animate={{ width: `${gaugePercent}%` }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
@@ -299,7 +299,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
 
                 <AnimatePresence>
                   {isExpanded && current && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -324,7 +324,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </div>

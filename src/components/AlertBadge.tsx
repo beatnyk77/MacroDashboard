@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface AlertBadgeProps {
@@ -19,7 +19,7 @@ export const AlertBadge: React.FC<AlertBadgeProps> = ({ zScore, size = 'md' }) =
     };
 
     return (
-        <motion.div
+        <m.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className={cn(
@@ -28,13 +28,13 @@ export const AlertBadge: React.FC<AlertBadgeProps> = ({ zScore, size = 'md' }) =
                 absZ > 3 ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
             )}
         >
-            <motion.span
+            <m.span
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
             >
                 {absZ > 3 ? '🔴' : '⚡'}
-            </motion.span>
+            </m.span>
             {absZ > 3 ? 'EXTREME' : 'ELEVATED'}
-        </motion.div>
+        </m.div>
     );
 };

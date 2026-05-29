@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CardContent, Skeleton, Button, Stack } from '@mui/material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { SectionHeader } from '@/components/SectionHeader';
 import { History, Info, ChevronRight, Activity } from 'lucide-react';
@@ -61,7 +61,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
     if (!digest) return null;
 
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -197,6 +197,6 @@ export const WeeklyNarrativeSection: React.FC = () => {
                     </Card>
                 </div>
             </div>
-        </motion.div>
+        </m.div>
     );
 };

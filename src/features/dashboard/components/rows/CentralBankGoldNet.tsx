@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper, Tooltip as MuiTooltip, Typography, Box
@@ -67,7 +67,7 @@ export const CentralBankGoldNet: React.FC = () => {
                 icon={<Scale className="w-6 h-6 text-yellow-500" />}
             />
 
-            <motion.div
+            <m.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -75,7 +75,7 @@ export const CentralBankGoldNet: React.FC = () => {
                 className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8"
             >
                 {/* Main Data Table */}
-                <motion.div variants={itemVariants} className="lg:col-span-2">
+                <m.div variants={itemVariants} className="lg:col-span-2">
                     <TableContainer component={Paper} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl overflow-hidden shadow-2xl">
                         <Table aria-label="central bank gold net purchases table">
                             <TableHead className="bg-white/5">
@@ -152,10 +152,10 @@ export const CentralBankGoldNet: React.FC = () => {
                         <Info className="w-4 h-4" />
                         <span>Hover over values to see top contributing central banks. % Global Stock based on ~212k tonnes above-ground estimate.</span>
                     </div>
-                </motion.div>
+                </m.div>
 
                 {/* Inset Chart: Since 2020 Breakdown */}
-                <motion.div variants={itemVariants} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl p-6 shadow-2xl flex flex-col h-[400px]">
+                <m.div variants={itemVariants} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl p-6 shadow-2xl flex flex-col h-[400px]">
                     <h3 className="text-lg font-medium text-white mb-2 flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-emerald-400" />
                         Since 2020 Breakdown
@@ -191,8 +191,8 @@ export const CentralBankGoldNet: React.FC = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-                </motion.div>
-            </motion.div>
+                </m.div>
+            </m.div>
         </div>
     );
 };

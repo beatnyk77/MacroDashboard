@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { LineChart, TrendingUp, TrendingDown, ServerCrash } from 'lucide-react';
 
 interface Fundamental {
@@ -114,7 +114,7 @@ export const QuarterlyAggregator: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-white/[0.03]">
                         {fundamentals.map((fund, i) => (
-                            <motion.tr
+                            <m.tr
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: i * 0.05 }}
@@ -153,7 +153,7 @@ export const QuarterlyAggregator: React.FC = () => {
                                         {fund.operating_margin ? `${(fund.operating_margin * 100).toFixed(1)}%` : 'N/A'}
                                     </div>
                                 </td>
-                            </motion.tr>
+                            </m.tr>
                         ))}
                     </tbody>
                 </table>

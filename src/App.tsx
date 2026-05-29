@@ -1,4 +1,5 @@
 import { useMemo, Suspense, lazy } from 'react';
+import { LazyMotion, domAnimation } from 'framer-motion';
 import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
@@ -82,6 +83,7 @@ function App() {
 
     return (
         <GlobalErrorBoundary>
+            <LazyMotion features={domAnimation} strict>
             <QueryClientProvider client={queryClient}>
                 <ViewProvider>
                     <ThemeProvider theme={theme}>
@@ -154,6 +156,7 @@ function App() {
                     </ThemeProvider>
                 </ViewProvider>
             </QueryClientProvider>
+            </LazyMotion>
         </GlobalErrorBoundary>
     );
 }

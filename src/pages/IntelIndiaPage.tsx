@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, BarChart3, MapPin, Landmark } from 'lucide-react';
 
 // Lazy-load heavy sub-sections
@@ -163,7 +163,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </nav>
 
                     {/* Flag + Title */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 24 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
@@ -182,7 +182,7 @@ export const IntelIndiaPage: React.FC = () => {
                                 Monitoring the RBI credit cycle, fiscal stress, and sovereign debt maturity walls in real-time.
                             </p>
                         </div>
-                    </motion.div>
+                    </m.div>
 
 
                     {/* Fast Signal Bar */}
@@ -215,7 +215,7 @@ export const IntelIndiaPage: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-8 relative z-20">
                 {/* Signal Preview Cards */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.2 }}
@@ -228,7 +228,7 @@ export const IntelIndiaPage: React.FC = () => {
                             <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
                         </a>
                     ))}
-                </motion.div>
+                </m.div>
             </div>
 
             {/* Content Sections */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useChinaFYP } from '@/hooks/useChinaFYP';
 import { Calendar } from 'lucide-react';
 
@@ -14,7 +14,7 @@ export const FYP_HeroTimeline: React.FC = () => {
             
             <div className="relative flex justify-between items-start max-w-6xl mx-auto gap-8 overflow-x-auto pb-8 scrollbar-hide">
                 {milestones.map((ms, idx) => (
-                    <motion.div 
+                    <m.div 
                         key={ms.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -46,7 +46,7 @@ export const FYP_HeroTimeline: React.FC = () => {
                             <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
                             <div className="w-[1px] h-8 bg-red-500/20" />
                         </div>
-                    </motion.div>
+                    </m.div>
                 ))}
             </div>
         </div>

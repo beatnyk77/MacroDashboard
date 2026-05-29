@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Activity, TrendingUp, TrendingDown, Minus, Calendar, ShieldAlert } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useIndiaMacroSnapshot } from '@/hooks/useIndiaMacroSnapshot';
@@ -75,7 +75,7 @@ export const IndiaMacroDashboard: React.FC = () => {
                         {/* Table Rows */}
                         <div className="mt-4 space-y-1">
                             {snapshot.metrics_data?.map((metric, idx) => (
-                                <motion.div
+                                <m.div
                                     key={metric.name}
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
@@ -110,7 +110,7 @@ export const IndiaMacroDashboard: React.FC = () => {
                                             </div>
                                         );
                                     })}
-                                </motion.div>
+                                </m.div>
                             ))}
                         </div>
                     </div>

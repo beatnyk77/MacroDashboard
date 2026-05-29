@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Shield, Lock, Eye, Bell, Trash2, Activity } from 'lucide-react';
 
 interface Watchlist {
@@ -110,7 +110,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                     ) : watchlists && watchlists.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {watchlists.map((list) => (
-                                <motion.div
+                                <m.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     key={list.id}
@@ -128,7 +128,7 @@ export const InstitutionalWatchlists: React.FC = () => {
                                         </div>
                                         <span className="text-xs font-black uppercase text-orange-400/60 bg-orange-500/5 px-3 py-1.5 rounded-full border border-orange-500/10">Active Protection</span>
                                     </div>
-                                </motion.div>
+                                </m.div>
                             ))}
                         </div>
                     ) : (

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useReserveSellerData, ReserveSellerCountry } from '@/hooks/useReserveSellerData';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const CountrySparkline: React.FC<{ data: any[], color: string, dataKey: string }> = ({ data, color, dataKey }) => {
     const gradId = React.useId();
@@ -60,7 +60,7 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
     };
 
     return (
-        <motion.div 
+        <m.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -142,7 +142,7 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
                     </div>
                 )}
             </div>
-        </motion.div>
+        </m.div>
     );
 };
 

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { TrendingUp, AlertTriangle, ShieldAlert } from 'lucide-react';
 
 export const ShortSellingReport: React.FC = () => {
@@ -69,7 +69,7 @@ export const ShortSellingReport: React.FC = () => {
                     const riskLabel = getSystemicRiskLabel(sector.avgShort, sector.avgCDS, sector.avgLiq);
 
                     return (
-                        <motion.div
+                        <m.div
                             key={sector.name}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -96,7 +96,7 @@ export const ShortSellingReport: React.FC = () => {
                                             </span>
                                         </div>
                                         <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                            <motion.div
+                                            <m.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${Math.min(100, sector.avgShort * 4)}%` }}
                                                 className={`h-full ${sector.avgShort > 15 ? 'bg-rose-600' : sector.avgShort > 10 ? 'bg-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.3)]' : 'bg-emerald-500'}`}
@@ -113,7 +113,7 @@ export const ShortSellingReport: React.FC = () => {
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                <motion.div
+                                                <m.div
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${Math.min(100, Math.abs(sector.avgMomentum) * 10)}%` }}
                                                     className={`h-full ${sector.avgMomentum > 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500'}`}
@@ -133,7 +133,7 @@ export const ShortSellingReport: React.FC = () => {
                                     Details
                                 </button>
                             </div>
-                        </motion.div>
+                        </m.div>
                     );
                 })}
             </div>

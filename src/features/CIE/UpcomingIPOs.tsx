@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import {
     Calendar,
     ExternalLink,
@@ -125,7 +125,7 @@ export const UpcomingIPOs: React.FC = () => {
                     <tbody className="divide-y divide-white/[0.03]">
                         <AnimatePresence mode="popLayout">
                             {filteredIPOs.map((ipo, i) => (
-                                <motion.tr
+                                <m.tr
                                     key={ipo.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -190,7 +190,7 @@ export const UpcomingIPOs: React.FC = () => {
                                             </a>
                                         )}
                                     </td>
-                                </motion.tr>
+                                </m.tr>
                             ))}
                         </AnimatePresence>
                     </tbody>

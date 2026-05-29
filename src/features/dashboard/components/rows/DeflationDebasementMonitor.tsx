@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import { AlertTriangle, TrendingDown, ShieldCheck, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 export const DeflationDebasementMonitor: React.FC = () => {
     const { data, isLoading } = useUSFiscalStress();
@@ -42,7 +42,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
 
     return (
         <SPASection id="deflation-debasement-monitor" className="py-24" disableAnimation>
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
@@ -179,7 +179,7 @@ export const DeflationDebasementMonitor: React.FC = () => {
                         </span>
                     </div>
                 </div>
-            </motion.div>
+            </m.div>
         </SPASection>
     );
 };

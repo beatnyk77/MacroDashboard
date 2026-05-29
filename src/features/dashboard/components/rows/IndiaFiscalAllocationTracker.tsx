@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 import { AlertTriangle, Building2, PieChart, Info, Map as MapIcon, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 export const IndiaFiscalAllocationTracker: React.FC = () => {
     const { data, isLoading } = useIndiaFiscalAllocation();
@@ -86,7 +86,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
 
     return (
         <section id="india-fiscal-allocation" className="py-24 relative overflow-hidden">
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
@@ -204,7 +204,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
 
                             <AnimatePresence>
                                 {selectedState && (
-                                    <motion.div
+                                    <m.div
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
@@ -217,7 +217,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                             <StateDetailRow label="Revenue Overhang" value={`${selectedState.revenue_pct_gdp?.toFixed(1)}%`} sub="of GSDP" color="text-amber-500" />
                                             <StateDetailRow label="Committed Burden" value={`${selectedState.freebies_pct_receipts?.toFixed(0)}%`} sub="of Receipts" color="text-rose-500" />
                                         </div>
-                                    </motion.div>
+                                    </m.div>
                                 )}
                             </AnimatePresence>
                         </div>
@@ -336,7 +336,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                         </span>
                     </div>
                 </div>
-            </motion.div>
+            </m.div>
         </section>
     );
 };

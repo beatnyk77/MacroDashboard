@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity, BookOpen } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 interface MaturityBucket {
@@ -244,7 +244,7 @@ export const USDebtMaturityWall: React.FC = () => {
 
             {/* Key Callouts */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 md:p-8 bg-slate-800/30">
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                     className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-cyan-500/30 transition-colors"
                 >
@@ -263,9 +263,9 @@ export const USDebtMaturityWall: React.FC = () => {
                     <p className="text-slate-500 text-xs mt-1">
                         {lastDebtDate ? `As of ${new Date(lastDebtDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'Outstanding Securities'}
                     </p>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                     className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-orange-500/30 transition-colors"
                 >
@@ -277,10 +277,10 @@ export const USDebtMaturityWall: React.FC = () => {
                     <p className="text-slate-500 text-xs mt-1">
                         {((parseFloat(shortTermTrillions) / parseFloat(totalDebtTrillions)) * 100).toFixed(1)}% of total debt
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Rollover Risk Card - NEW */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                 >
                     <Link
@@ -306,9 +306,9 @@ export const USDebtMaturityWall: React.FC = () => {
                             </div>
                         </div>
                     </Link>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
                     className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 hover:border-slate-500/30 transition-colors"
                 >
@@ -318,7 +318,7 @@ export const USDebtMaturityWall: React.FC = () => {
                     </div>
                     <p className="text-3xl font-bold text-white">${tbillShortTermTrillions}T</p>
                     <p className="text-slate-500 text-xs mt-1">Issued @ avg. {tbillAvgYield.toFixed(2)}% yield</p>
-                </motion.div>
+                </m.div>
             </div>
 
             {/* Main Chart: Maturity Buckets with Rollover Stack */}

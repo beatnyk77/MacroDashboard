@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { TrendingUp } from 'lucide-react';
 import { useG20GdpConvergence } from '@/hooks/useG20GdpConvergence';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 const G20_COUNTRIES = [
     { code: 'USA', name: 'USA', color: '#3b82f6' },
@@ -132,7 +132,7 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
             </Box>
 
             <AnimatePresence mode="wait">
-                <motion.div
+                <m.div
                     key={baseYear}
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -192,7 +192,7 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
                             </LineChart>
                         </ResponsiveContainer>
                     </Box>
-                </motion.div>
+                </m.div>
             </AnimatePresence>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 4, pt: 4, borderTop: '1px solid rgba(255,255,255,0.05)' }}>

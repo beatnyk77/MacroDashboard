@@ -3,7 +3,7 @@ import { ComposableMap, Geographies, Geography, Marker, Line } from 'react-simpl
 import { useGlobalRefiningData, GlobalRefiningFacility } from '@/hooks/useGlobalRefiningData';
 import { Activity, Info, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -129,7 +129,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                                     fill={color}
                                     className="opacity-10 animate-pulse"
                                 />
-                                <motion.circle
+                                <m.circle
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     whileHover={{ scale: 1.2 }}
@@ -146,7 +146,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
             {/* Facility Details Drawer */}
             <AnimatePresence>
                 {selectedFacility && (
-                    <motion.div
+                    <m.div
                         initial={{ x: 400 }}
                         animate={{ x: 0 }}
                         exit={{ x: 400 }}
@@ -192,7 +192,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                                     Correlation factor: {selectedFacility.import_dependency_correlation}
                                 </p>
                                 <div className="w-full h-1 bg-white/5 rounded-full mt-3 overflow-hidden">
-                                    <motion.div
+                                    <m.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${selectedFacility.import_dependency_correlation * 100}%` }}
                                         className="h-full bg-blue-500 shadow-[0_0_10px_#3B82F6]"
@@ -215,7 +215,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                             </div>
                             <span className="text-xs font-mono text-muted-foreground/40">{selectedFacility.as_of_date}</span>
                         </div>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
 

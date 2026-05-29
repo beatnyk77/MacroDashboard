@@ -112,18 +112,39 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: (id: string) => {
-                    if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-                        return 'vendor';
-                    }
-                    if (id.includes('@mui/material') || id.includes('@emotion/') || id.includes('lucide-react')) {
-                        return 'ui';
-                    }
-                    if (id.includes('recharts')) {
-                        return 'charts';
-                    }
+                    // React core + router — always eager, smallest possible vendor
+                    if (
+                        id.includes('node_modules/react/') ||
+                        id.includes('node_modules/react-dom/') ||
+                        id.includes('node_modules/react-router')
+                    ) return 'vendor';
+
+                    // MUI + Emotion — needed for layout shell, keep in critical path
+                    if (id.includes('@mui/material') || id.includes('@emotion/')) return 'ui';
+
+                    // Recharts — lazy (only chart pages need it)
+                    if (id.includes('recharts') || id.includes('node_modules/d3-')) return 'charts';
+
+                    // Nivo — only used on OilFlowsSankey, keep separate from recharts
+                    if (id.includes('@nivo/')) return 'nivo';
+
+                    // Maps — only needed on pages with Leaflet/world maps
+                    if (
+                        id.includes('node_modules/leaflet') ||
+                        id.includes('node_modules/react-leaflet') ||
+                        id.includes('node_modules/react-simple-maps') ||
+                        id.includes('node_modules/topojson')
+                    ) return 'maps';
+
+                    // Supabase — lazy until first data fetch
+                    if (id.includes('@supabase/')) return 'supabase';
+
+                    // framer-motion — lazy (animated pages pull it in)
+                    if (id.includes('framer-motion')) return 'motion';
                 },
             },
         },
+        cssCodeSplit: true,
         chunkSizeWarningLimit: 1000,
     },
 });

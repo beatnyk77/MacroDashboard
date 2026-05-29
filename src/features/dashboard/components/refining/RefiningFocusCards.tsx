@@ -2,7 +2,7 @@ import React from 'react';
 import { useGlobalRefiningData } from '@/hooks/useGlobalRefiningData';
 import { Shield, BarChart3, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const FocusCard: React.FC<{
     country: string;
@@ -44,7 +44,7 @@ const FocusCard: React.FC<{
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                            <motion.div
+                            <m.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${utilization}%` }}
                                 className="h-full bg-blue-500 shadow-[0_0_10px_#3B82F6]"

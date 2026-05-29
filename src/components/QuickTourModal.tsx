@@ -8,7 +8,7 @@ import {
     MobileStepper
 } from '@mui/material';
 import { X, ChevronRight, Zap, FlaskConical, Globe, Shield } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useScrollLock } from '@/lib/scroll-lock';
 
 const slides = [
@@ -126,7 +126,7 @@ export const QuickTourModal: React.FC = () => {
 
             <DialogContent sx={{ p: 6, pt: 8 }}>
                 <AnimatePresence mode="wait">
-                    <motion.div
+                    <m.div
                         key={activeStep}
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -152,7 +152,7 @@ export const QuickTourModal: React.FC = () => {
                                 {slides[activeStep].description}
                             </Typography>
                         </Box>
-                    </motion.div>
+                    </m.div>
                 </AnimatePresence>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>

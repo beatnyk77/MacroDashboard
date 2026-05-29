@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface MotionCardProps {
@@ -10,7 +10,7 @@ interface MotionCardProps {
 
 export const MotionCard: React.FC<MotionCardProps> = ({ children, delay = 0, className }) => {
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-50px" }}
@@ -22,6 +22,6 @@ export const MotionCard: React.FC<MotionCardProps> = ({ children, delay = 0, cla
             className={cn("h-full", className)}
         >
             {children}
-        </motion.div>
+        </m.div>
     );
 };

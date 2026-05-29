@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Box, Typography, Container, Paper, Button } from '@mui/material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { SEOManager } from '@/components/SEOManager';
 import { ExternalLink, ArrowUpRight, ArrowDownRight, Code } from 'lucide-react';
@@ -119,7 +119,7 @@ export const NetLiquidityGauge: React.FC = () => {
                                 strokeLinecap="round"
                             />
                             {/* Value Fill */}
-                            <motion.path
+                            <m.path
                                 d="M 20 100 A 80 80 0 0 1 180 100"
                                 fill="none"
                                 stroke={regime.color}
@@ -136,7 +136,7 @@ export const NetLiquidityGauge: React.FC = () => {
                         </svg>
 
                         <Box sx={{ position: 'absolute', bottom: 0, textAlign: 'center' }}>
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5 }}
@@ -147,7 +147,7 @@ export const NetLiquidityGauge: React.FC = () => {
                                 <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.3)', fontWeight: 800 }}>
                                     Z-Score Normalised
                                 </Typography>
-                            </motion.div>
+                            </m.div>
                         </Box>
                     </Box>
 

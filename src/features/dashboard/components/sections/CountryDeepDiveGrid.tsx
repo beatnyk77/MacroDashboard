@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ export const CountryDeepDiveGrid: React.FC = () => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {countries.map((c, idx) => (
-                <motion.div
+                <m.div
                     key={c.iso}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -54,7 +54,7 @@ export const CountryDeepDiveGrid: React.FC = () => {
                             )}>{c.outlook}</span>
                         </div>
                         <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                            <motion.div
+                            <m.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${c.stress_score}%` }}
                                 className={cn(
@@ -70,7 +70,7 @@ export const CountryDeepDiveGrid: React.FC = () => {
                     <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
                         <ExternalLink size={14} className="text-white/20" />
                     </div>
-                </motion.div>
+                </m.div>
             ))}
         </div>
     );

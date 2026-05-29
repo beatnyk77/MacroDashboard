@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 export const NotFound: React.FC = () => {
@@ -24,7 +24,7 @@ export const NotFound: React.FC = () => {
                     gap: 4
                 }}
             >
-                <motion.div
+                <m.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5 }}
@@ -41,9 +41,9 @@ export const NotFound: React.FC = () => {
                     >
                         <AlertCircle size={48} />
                     </Box>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
@@ -76,7 +76,7 @@ export const NotFound: React.FC = () => {
                     >
                         Return to Terminal
                     </Button>
-                </motion.div>
+                </m.div>
             </Box>
         </Container>
     );
