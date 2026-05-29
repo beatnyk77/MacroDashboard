@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Globe2, ArrowRight } from 'lucide-react'
 import { HSCodeSearch } from './HSCodeSearch'
 import type { HSCodeMaster } from '../types/trade'
@@ -45,21 +45,21 @@ export const TradeEntryBanner: React.FC = () => {
                     <div className="pt-2 flex items-center justify-between">
                         <div className="flex gap-2">
                             {['8542', '6203', '3004'].map(code => (
-                                <button
+                                <Link
                                     key={code}
-                                    onClick={() => navigate(`/trade/hs/${code}`)}
-                                    className="text-[10px] font-bold font-mono text-emerald-400/80 hover:text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded"
+                                    to={`/trade/hs/${code}`}
+                                    className="text-[10px] font-bold font-mono text-emerald-400/80 hover:text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded inline-block"
                                 >
                                     {code}
-                                </button>
+                                </Link>
                             ))}
                         </div>
-                        <button 
-                            onClick={() => navigate('/trade')}
+                        <Link 
+                            to="/trade"
                             className="text-[10px] font-black uppercase tracking-widest text-white hover:text-emerald-400 transition-colors flex items-center gap-1"
                         >
                             Advanced <ArrowRight className="w-3 h-3" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

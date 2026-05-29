@@ -39,9 +39,11 @@ const DebtGoldZScorePage = lazy(() => import('@/pages/methods/DebtGoldZScorePage
 const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEfficiencyPage').then(module => ({ default: module.LoanToJobEfficiencyPage })));
 const EnergyDependencyRatioPage = lazy(() => import('@/pages/methods/EnergyDependencyRatioPage').then(module => ({ default: module.EnergyDependencyRatioPage })));
 const FiscalDominanceMeterPage = lazy(() => import('@/pages/methods/FiscalDominanceMeterPage').then(module => ({ default: module.FiscalDominanceMeterPage })));
+const M2GoldRatioPage = lazy(() => import('@/pages/methods/M2GoldRatioPage').then(module => ({ default: module.M2GoldRatioPage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 const NotFound = lazy(() => import('@/pages/NotFound').then(module => ({ default: module.NotFound })));
 
+const ThematicLabsIndexPage = lazy(() => import('@/pages/labs/ThematicLabsIndexPage').then(module => ({ default: module.ThematicLabsIndexPage })));
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
 const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLab').then(module => ({ default: module.EnergyCommoditiesLab })));
@@ -110,6 +112,7 @@ function App() {
                                         <Route path="/methods/loan-to-job-efficiency" element={<LoanToJobEfficiencyPage />} />
                                         <Route path="/methods/energy-dependency-ratio" element={<EnergyDependencyRatioPage />} />
                                         <Route path="/methods/fiscal-dominance-meter" element={<FiscalDominanceMeterPage />} />
+                                        <Route path="/methods/m2-gold-ratio" element={<M2GoldRatioPage />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
@@ -139,8 +142,9 @@ function App() {
                                         <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
                                         <Route path="/labs/china-15th-fyp" element={<China15thFYPLab />} />
                                         <Route path="/labs/africa-macro" element={<AfricaMacroPulseLab />} />
-                                        {/* Legacy route redirects */}
-                                        <Route path="/thematics" element={<Navigate to="/#thematic-labs" replace />} />
+                                        {/* Labs Index & Thematic redirects */}
+                                        <Route path="/labs" element={<ThematicLabsIndexPage />} />
+                                        <Route path="/thematics" element={<Navigate to="/labs" replace />} />
                                         {/* Catch-all 404 */}
                                         <Route path="*" element={<NotFound />} />
                                     </Routes>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, RefreshCw, AlertTriangle, Calendar, MapPin, ExternalLink } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useMarketDrilldown } from '../features/trade/hooks/useMarketDrilldown'
@@ -11,6 +11,7 @@ import { isoToFlag } from '../features/trade/types/trade'
 import { FreshnessChip } from '../components/FreshnessChip'
 import { DrilldownSkeleton } from '../features/trade/components/DrilldownSkeleton'
 import { cn } from '../lib/utils'
+import { SEOManager } from '@/components/SEOManager'
 
 const MarketDeepDivePage: React.FC = () => {
     const { code, iso } = useParams<{ code: string; iso: string }>()
@@ -43,17 +44,44 @@ const MarketDeepDivePage: React.FC = () => {
 
     if (!code || !iso) return null
 
+    const countryName = marketScore?.reporter_name || iso
+    const displayTitle = `${countryName} Import Intelligence Deep Dive | HS ${code}`
+    const displayDesc = `Detailed import flows, supplier shares, and real-time macroeconomic health overlay for HS code ${code} into ${countryName}. Institutional macro telemetry.`
+
     return (
         <div className="max-w-[1400px] mx-auto space-y-8 pb-24">
+            <SEOManager
+                title={displayTitle}
+                description={displayDesc}
+                keywords={[
+                    `HS ${code} ${countryName}`, `${countryName} imports HS ${code}`,
+                    `supplier share ${countryName} HS ${code}`, 'GraphiQuestor'
+                ]}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Dataset",
+                    "@id": `https://graphiquestor.com/trade/hs/${code}/market/${iso}#dataset`,
+                    "name": `${countryName} Import Opportunity Dataset for HS ${code}`,
+                    "description": `Detailed bilateral import flows, HHI supplier shares, and real-time macroeconomic indicators for HS ${code} into ${countryName}.`,
+                    "url": `https://graphiquestor.com/trade/hs/${code}/market/${iso}`,
+                    "creator": {
+                        "@id": "https://graphiquestor.com/#organization"
+                    },
+                    "temporalCoverage": "2020-01-01/2026-05-30",
+                    "spatialCoverage": countryName
+                }}
+            />
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 sm:px-6">
                 <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => navigate(`/trade/hs/${code}`)}
-                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors shrink-0"
+                    <Link 
+                        to={`/trade/hs/${code}`}
+                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center shrink-0"
+                        title="Back to HS Code Overview"
+                        aria-label="Back to HS Code Overview"
                     >
                         <ArrowLeft className="w-5 h-5 text-white/60" />
-                    </button>
+                    </Link>
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl sm:text-2xl font-black text-white italic tracking-heading uppercase flex items-center gap-3">
@@ -164,16 +192,16 @@ const MarketDeepDivePage: React.FC = () => {
                                 <MacroOverlayPanel metrics={macroMetrics} loading={drilldownLoading} />
                                 
                                 {marketScore?.reporter_iso2 && (
-                                    <button
-                                        onClick={() => navigate(`/countries/${marketScore.reporter_iso2}`)}
-                                        className="w-full mt-6 py-3 px-4 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-colors flex items-center justify-center gap-2 group"
+                                    <Link
+                                        to={`/countries/${marketScore.reporter_iso2}`}
+                                        className="w-full mt-6 py-3 px-4 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-colors flex items-center justify-center gap-2 group decoration-none"
                                     >
                                         <MapPin className="w-4 h-4 text-blue-400" />
                                         <span className="text-xs font-black text-blue-400 uppercase tracking-widest group-hover:text-white transition-colors">
                                             View Full Macro Profile
                                         </span>
                                         <ExternalLink className="w-3 h-3 text-blue-400/50" />
-                                    </button>
+                                    </Link>
                                 )}
                             </div>
                         </div>

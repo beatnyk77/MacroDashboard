@@ -5,6 +5,7 @@ import { HSCodeSearch } from '../features/trade/components/HSCodeSearch'
 import { GlobalTradePulse } from '../features/trade/components/GlobalTradePulse'
 import { IndiaChinaDeepDive } from '../features/trade/components/IndiaChinaDeepDive'
 import type { HSCodeMaster } from '../features/trade/types/trade'
+import { SEOManager } from '@/components/SEOManager'
 
 const TradeIntelligencePage: React.FC = () => {
     const navigate = useNavigate()
@@ -15,6 +16,28 @@ const TradeIntelligencePage: React.FC = () => {
 
     return (
         <div className="max-w-[1400px] mx-auto space-y-16 pb-24">
+            <SEOManager
+                title="Trade Intelligence Engine | Bilateral Flows & Demand Ranking"
+                description="Real-time macro bilateral trade telemetry tracking 6-digit HS codes, market opportunity scoring, supplier concentration (HHI), and global demand shifts. Powered by live UN Comtrade integration."
+                keywords={[
+                    'Global Trade Intelligence', 'HS Code Opportunity Scoring', 'UN Comtrade Telemetry',
+                    'Supplier Dominance Analysis', 'Herfindahl-Hirschman Index', 'Export Scout Playbook',
+                    'Multipolar Trade Flows', 'Bilateral Trade Data'
+                ]}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Dataset",
+                    "@id": "https://graphiquestor.com/trade#dataset",
+                    "name": "Global Bilateral HS-6 Trade Intelligence Dataset",
+                    "description": "Institutional bilateral trade flows, HHI concentration, supplier dominance, and macroeconomic opportunity scoring based on 5-year UN Comtrade trend lines.",
+                    "url": "https://graphiquestor.com/trade",
+                    "creator": {
+                        "@id": "https://graphiquestor.com/#organization"
+                    },
+                    "temporalCoverage": "2020-01-01/2026-05-30",
+                    "spatialCoverage": "Worldwide"
+                }}
+            />
             {/* Header */}
             <div className="space-y-4 text-center mt-12">
                 <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-emerald-500/10 mb-2">

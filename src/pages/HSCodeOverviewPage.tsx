@@ -1,11 +1,12 @@
 import React from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
 import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRanker'
 import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
+import { SEOManager } from '@/components/SEOManager'
 
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
@@ -45,17 +46,48 @@ const HSCodeOverviewPage: React.FC = () => {
 
     const isLoading = state.status === 'loading' || state.status === 'fetching_live' || state.status === 'refreshing'
 
+    const displayTitle = hsDescription 
+        ? `HS ${code} ${hsDescription} | Global Demand & HHI Trade Ranking` 
+        : `HS ${code} Global Demand & HHI Trade Ranking`
+
+    const displayDesc = hsDescription
+        ? `Bilateral trade data & opportunity scoring for HS ${code} (${hsDescription}). Live global demand trends, HHI seller concentration, import values, and CAGR growth ratios.`
+        : `Bilateral trade data & opportunity scoring for HS ${code}. Live global demand trends, HHI seller concentration, import values, and CAGR growth ratios.`
+
     return (
         <div className={`max-w-[1400px] mx-auto space-y-8 pb-24 px-4 sm:px-6 ${isEmbedded ? 'pt-4' : ''}`}>
+            <SEOManager
+                title={displayTitle}
+                description={displayDesc}
+                keywords={[
+                    `HS ${code}`, hsDescription || '', `Bilateral trade HS ${code}`,
+                    `Global demand HS ${code}`, `HHI concentration HS ${code}`, 'GraphiQuestor'
+                ]}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Dataset",
+                    "@id": `https://graphiquestor.com/trade/hs/${code}#dataset`,
+                    "name": `Global Trade Opportunity dataset for HS ${code} - ${hsDescription || 'Commodity'}`,
+                    "description": `Surveillance data detailing bilateral trade flows, seller HHI concentration, and macroeconomic opportunity index scoring for HS code ${code} (${hsDescription || 'Commodity'}).`,
+                    "url": `https://graphiquestor.com/trade/hs/${code}`,
+                    "creator": {
+                        "@id": "https://graphiquestor.com/#organization"
+                    },
+                    "temporalCoverage": "2020-01-01/2026-05-30",
+                    "spatialCoverage": "Worldwide"
+                }}
+            />
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => navigate('/trade')}
-                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                    <Link 
+                        to="/trade"
+                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center shrink-0"
+                        title="Back to Trade Intelligence"
+                        aria-label="Back to Trade Intelligence"
                     >
                         <ArrowLeft className="w-5 h-5 text-white/60" />
-                    </button>
+                    </Link>
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl sm:text-2xl font-black text-white italic tracking-heading uppercase flex items-center gap-3">

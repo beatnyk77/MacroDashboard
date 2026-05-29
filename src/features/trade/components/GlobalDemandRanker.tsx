@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, ChevronsUpDown, Globe2, Target, Award, Banknote } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { OpportunityScoreBadge } from './OpportunityScoreBadge'
@@ -156,7 +156,13 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
                                             <span className="text-base leading-none">{m.flag}</span>
                                             <div>
                                                 <p className="font-black text-white/85 group-hover:text-white transition-colors">
-                                                    {m.reporter_name || m.reporter_iso3}
+                                                    <Link 
+                                                        to={`/trade/hs/${hsCode}/market/${m.reporter_iso3}`}
+                                                        className="hover:text-emerald-400 hover:underline"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {m.reporter_name || m.reporter_iso3}
+                                                    </Link>
                                                 </p>
                                                 <p className="text-[10px] text-white/25 font-mono">{m.reporter_iso3}</p>
                                             </div>

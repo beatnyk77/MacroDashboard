@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     Activity, Globe, TrendingUp, Anchor,
-    ShieldAlert, Database, Radio, FileText
+    ShieldAlert, Database, Radio, FileText, Library
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,14 +17,15 @@ const terminalNavItems: NavItem[] = [
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} /> },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} /> },
+    { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={14} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} /> },
-    { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={14} /> },
-    { id: 'trade-intelligence', label: 'Trade Intelligence', path: '/trade', icon: <Globe size={14} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
+    { id: 'trade-intelligence', label: 'Trade Intelligence', path: '/trade', icon: <Globe size={14} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} /> },
     { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} /> },
+    { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={14} /> },
 ];
 
 export const TerminalSidebar: React.FC = () => {

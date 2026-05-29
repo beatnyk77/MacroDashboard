@@ -111,13 +111,13 @@ export const IntelChinaPage: React.FC = () => {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
-                title="China Macro Intelligence Hub — PBOC, PMI, Credit Impulse & Energy Transition"
-                description="Institutional-grade macro telemetry for China: PBOC liquidity operations, NBS vs Caixin PMI, trade balance, FX reserves, grid carbon intensity, China credit impulse, de-dollarization velocity, and corporate distress score."
+                title="China Macro Pulse — Live PBoC, Credit Impulse & PMI Dashboard"
+                description="Live China macro dashboard: PBoC credit impulse, NBS vs Caixin PMI, trade balance, FX & gold reserves, deflation risk, and de-dollarization velocity. Updated daily."
                 keywords={[
-                    'China Macro Intelligence', 'PBoC Monetary Policy', 'China Credit Impulse',
-                    'China Deflation Risk', 'China Industrial Production', 'China FX Reserves',
-                    'China Gold Reserves', 'China De-Dollarization', 'China PMI', 'China Trade Balance',
-                    'China Carbon Intensity', 'China Energy Transition', 'China Institutional Macro'
+                    'China macro dashboard', 'China credit impulse', 'PBoC monetary policy',
+                    'China PMI live', 'China deflation risk', 'China FX reserves',
+                    'China gold reserves', 'China de-dollarization', 'China trade balance',
+                    'China macro data'
                 ]}
             />
 

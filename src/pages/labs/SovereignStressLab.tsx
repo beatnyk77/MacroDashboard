@@ -25,9 +25,9 @@ export const SovereignStressLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="Sovereign Stress Lab — G20 Debt Sustainability & Yield Curve Dynamics"
-            description="Monitor G20 sovereign debt sustainability, interest-to-revenue ratios, yield curve inversions, BoJ monetary dominance, and geopolitical stress tests. Institutional credit risk analytics."
-            keywords={['sovereign stress', 'G20 debt sustainability', 'yield curve', 'credit default swaps', 'BoJ balance sheet', 'sovereign risk matrix']}
+            title="Sovereign Debt Risk Dashboard — Real-Time G20 Stress Monitor"
+            description="Real-time sovereign debt risk dashboard tracking G20 debt sustainability, interest-to-revenue ratios, yield curve stress, BoJ dominance, and geopolitical credit risk. Updated daily."
+            keywords={['sovereign debt risk dashboard', 'sovereign stress monitor', 'G20 debt sustainability', 'real-time sovereign risk', 'yield curve stress', 'sovereign credit risk', 'BoJ balance sheet']}
             jsonLd={{
                 '@context': 'https://schema.org',
                 '@type': 'WebPage',

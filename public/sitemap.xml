@@ -24,8 +24,8 @@
   <url>
     <loc>https://graphiquestor.com/macro-observatory</loc>
     <lastmod>2026-04-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://graphiquestor.com/countries</loc>
@@ -62,6 +62,12 @@
   <url>
     <loc>https://graphiquestor.com/methods/fiscal-dominance-meter</loc>
     <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/methods/m2-gold-ratio</loc>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -152,12 +158,43 @@
   <url><loc>https://graphiquestor.com/blog/asi-manufacturing-intelligence-india-advantage</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://graphiquestor.com/blog/g20-macro-surveillance-dashboard-analysis</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 
-  <!-- Key Glossary Terms -->
-  <url><loc>https://graphiquestor.com/glossary/net-liquidity-z-score</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://graphiquestor.com/glossary/tga</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://graphiquestor.com/glossary/reverse-repo-facility-rrp</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://graphiquestor.com/glossary/fiscal-dominance</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://graphiquestor.com/glossary/de-dollarization</loc><lastmod>2026-04-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <!-- Full Glossary (all terms) -->
+  <url><loc>https://graphiquestor.com/glossary/net-liquidity-z-score</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/tga</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/reverse-repo-facility-rrp</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/carry-trade</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/stealth-qe</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/sofr</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/yield-curve-control</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/breakeven-inflation-rate</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/sovereign-rollover-risk</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/term-premium</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/fiscal-dominance</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/fiscal-dominance-meter</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/bid-to-cover-ratio</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/federal-debt-monetisation</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/de-dollarization</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/mospi</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/mbridge</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/petrodollar-system</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/reserve-currency-composition</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/foreign-exchange-reserves</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/m2-gold-ratio</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/debt-gold-z-score</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/gold-silver-ratio</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/loan-to-job-efficiency</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/energy-dependency-ratio</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/current-account-balance</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/macro-regime-classification</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/standing-repo-facility-srf</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/bank-term-funding-program-btfp</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/excess-reserves</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/gold-oil-ratio</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/copper-gold-ratio</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/real-interest-rates</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/interest-expense-to-tax-revenue</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/public-debt-to-gdp</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://graphiquestor.com/glossary/central-bank-gold-purchases</loc><lastmod>2026-05-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- Interactive Tools & API -->
   <url><loc>https://graphiquestor.com/tools/net-liquidity-gauge</loc><lastmod>2026-04-18</lastmod><changefreq>always</changefreq><priority>0.9</priority></url>
@@ -171,4 +208,48 @@
 
   <!-- Regime Digest Archive -->
   <url><loc>https://graphiquestor.com/regime-digest/archive</loc><lastmod>2026-04-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Trade Intelligence & Export Playbook Seed Suite -->
+  <url>
+    <loc>https://graphiquestor.com/trade</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trade/hs/8542</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trade/hs/6203</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trade/hs/3004</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trade/playbook/8542</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trade/playbook/6203</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trade/playbook/3004</loc>
+    <lastmod>2026-05-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>

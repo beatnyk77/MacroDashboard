@@ -137,12 +137,12 @@ export const IntelIndiaPage: React.FC = () => {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
-                title="India Macro Intelligence Hub — RBI, Fiscal Stress & Credit Cycle"
-                description="Institutional-grade macro telemetry for India: credit cycle clock, fiscal stress (interest payments/revenue), sovereign debt maturity wall, RBI liquidity surplus/deficit, and WPI/CPI inflation pulse."
+                title="India Macro Pulse — Live RBI, Fiscal & CPI Dashboard"
+                description="Live India macro dashboard: RBI credit cycle, fiscal stress ratio, sovereign debt maturity walls, CPI/WPI inflation, and FII flows. Data sourced from RBI DBIE & MoSPI, updated daily."
                 keywords={[
-                    'India Macro Intelligence', 'RBI Monetary Policy', 'India Fiscal Stress',
-                    'India Credit Cycle', 'India Sovereign Debt', 'India Inflation Monitor',
-                    'India Liquidity', 'India G-Sec', 'MoSPI', 'India Institutional Macro'
+                    'India macro dashboard', 'RBI monetary policy live', 'India fiscal deficit',
+                    'India CPI inflation', 'India credit cycle', 'India sovereign debt',
+                    'FII flows India', 'India G-Sec maturity', 'MoSPI data', 'RBI DBIE'
                 ]}
             />
 

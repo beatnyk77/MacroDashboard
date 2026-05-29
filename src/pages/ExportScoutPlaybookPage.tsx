@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { SEOManager } from '@/components/SEOManager';
 import { ScoutHeader } from '@/features/trade/components/scout/ScoutHeader';
 import { ScoutMetricCards } from '@/features/trade/components/scout/ScoutMetricCards';
 import { ScoutBeachheadsTable } from '@/features/trade/components/scout/ScoutBeachheadsTable';
@@ -173,8 +174,26 @@ export const ExportScoutPlaybookPage: React.FC = () => {
     playbook.execution_playbook?.outreach_templates?.cold_email
   );
 
+  const displayTitle = `Confidential Export Playbook for HS ${code} | GraphiQuestor`
+  const displayDesc = `Confidential institutional export scout intelligence playbook for HS code ${code}. Fusing bilateral trade flows, seller HHI concentration indices, 90-day execution sequences, and outreach templates.`
+
   return (
     <div className="min-h-screen bg-[#020617] pb-24">
+      <SEOManager
+        title={displayTitle}
+        description={displayDesc}
+        keywords={[`HS ${code} Playbook`, `Export Playbook HS ${code}`, `GraphiQuestor Trade Playbook`, 'GraphiQuestor']}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          "name": `Confidential Export Playbook for HS ${code}`,
+          "description": `Confidential market execution strategy and bilateral trade opportunity mapping for HSN code ${code}.`,
+          "url": `https://graphiquestor.com/trade/playbook/${code}`,
+          "author": {
+            "@id": "https://graphiquestor.com/#organization"
+          }
+        }}
+      />
 
       {/* ── Sticky Nav ─────────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-white/[0.06] px-6 lg:px-10 py-3 flex justify-between items-center print:hidden">

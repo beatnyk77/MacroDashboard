@@ -3,7 +3,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Globe, MapPin } from 'lucide-react';
+import { Globe, MapPin, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Components
@@ -109,7 +109,13 @@ export const Terminal: React.FC = () => {
                                             FX reserves, yield curves, and sovereign stress indicators — all updated via live APIs.
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <Button asChild variant="outline" size="lg" className="gap-2 border-blue-500/20 hover:bg-blue-500/5 hover:text-white">
+                                            <Link to="/labs">
+                                                <Activity className="w-4 h-4 text-blue-400" />
+                                                Thematic Labs Hub
+                                            </Link>
+                                        </Button>
                                         <Button asChild size="lg" className="gap-2">
                                             <Link to="/countries">
                                                 <MapPin className="w-4 h-4" />

@@ -92,7 +92,7 @@ function generateSitemap(routes) {
 
 async function run() {
     const port = await portfinder.getPortPromise();
-    const server = app.listen(port, async () => {
+    const server = app.listen(port, '127.0.0.1', async () => {
         console.log(`Server listening on port ${port} for recursive prerendering...`);
         
         const browser = await puppeteer.launch({
