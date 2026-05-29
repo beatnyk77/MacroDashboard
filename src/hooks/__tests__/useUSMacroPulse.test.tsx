@@ -48,12 +48,13 @@ describe('useUSMacroPulse', () => {
             }
         ];
 
-        // Setup the specific call chain for history
-        const mockOrder = vi.fn().mockResolvedValue({ data: mockHistoryData, error: null });
-        const mockInHistory = vi.fn().mockReturnValue({ order: mockOrder });
-        const mockSelectHistory = vi.fn().mockReturnValue({ in: mockInHistory });
+        // metric_observations chain: .select().eq().order().limit() → resolves
+        const mockLimit = vi.fn().mockResolvedValue({ data: mockHistoryData, error: null });
+        const mockOrder = vi.fn().mockReturnValue({ limit: mockLimit });
+        const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+        const mockSelectHistory = vi.fn().mockReturnValue({ eq: mockEq });
 
-        // Setup the specific call chain for latest
+        // vw_latest_metrics chain: .select().in() → resolves
         const mockInLatest = vi.fn().mockResolvedValue({ data: mockLatestData, error: null });
         const mockSelectLatest = vi.fn().mockReturnValue({ in: mockInLatest });
 
