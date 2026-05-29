@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-    Activity, Globe, TrendingUp, Anchor, 
-    ShieldAlert, Database, Radio, FileText, 
+    Globe, TrendingUp, Anchor,
+    ShieldAlert, Database,
     Zap, Cpu, BarChart3, Compass, Library
 } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';

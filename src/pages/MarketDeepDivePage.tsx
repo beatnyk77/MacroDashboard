@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, RefreshCw, AlertTriangle, Calendar, MapPin, ExternalLink } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useMarketDrilldown } from '../features/trade/hooks/useMarketDrilldown'
@@ -15,8 +15,6 @@ import { SEOManager } from '@/components/SEOManager'
 
 const MarketDeepDivePage: React.FC = () => {
     const { code, iso } = useParams<{ code: string; iso: string }>()
-    const navigate = useNavigate()
-
     // We need iso2 for macro overlay. The demand hook holds this in the list.
     const state = useHSDemand(code || null)
     const markets = state.status === 'success' ? state.markets : []

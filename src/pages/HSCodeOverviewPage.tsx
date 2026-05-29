@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
@@ -10,7 +10,6 @@ import { SEOManager } from '@/components/SEOManager'
 
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
-    const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const isEmbedded = searchParams.get('embed') === 'true'
 
