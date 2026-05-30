@@ -353,7 +353,9 @@ Deno.serve(async (req) => {
         .from('metric_observations')
         .select('value')
         .eq('metric_id', m.id)
-        .eq('as_of_date', yesterdayStr)
+        .lt('as_of_date', today)
+        .order('as_of_date', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (prevError) throw prevError;
