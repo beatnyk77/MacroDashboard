@@ -162,6 +162,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                                 key={section.id}
                                 onSelect={() => runCommand(() => {
                                     navigate('/');
+                                    // Wait for React Router to commit the new route's DOM before scrolling
                                     setTimeout(() => {
                                         document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                                     }, 100);
