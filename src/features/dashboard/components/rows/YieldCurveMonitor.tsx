@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useYieldCurves } from '@/hooks/useYieldCurves';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
+import { ExportCSVButton } from '@/components/ExportCSVButton';
 import { Card } from '@/components/ui/card';
 import {
     ResponsiveContainer,
@@ -115,6 +116,7 @@ export const YieldCurveMonitor: React.FC = () => {
                     <SectionHeader
                         title="Yield Curve Monitor"
                         subtitle="Government bond yield curves across major economies — inversion & steepening signals"
+                        action={<ExportCSVButton data={chartData} filename="yield_curves" />}
                     />
                     <div className="flex flex-wrap gap-3">
                         {COUNTRIES.map(c => {

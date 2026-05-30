@@ -29,7 +29,8 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     lastUpdated,
     sectionId,
     level = 'h2',
-    className
+    className,
+    action
 }) => {
     const dynamicInterpretations = useRegimeInterpretations(sectionId || '');
     const activeInterpretations = interpretations || (sectionId ? dynamicInterpretations : []);
@@ -57,6 +58,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {action}
                     {onRefresh && (
                         <button
                             onClick={onRefresh}
