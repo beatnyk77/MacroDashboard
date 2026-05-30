@@ -25,6 +25,9 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// Mock scrollIntoView for cmdk and other components using it
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
+
 // Polyfill fetch if needed (though vitest/jsdom usually has handles or we might use msw if we mocked)
 // For this project, we are doing "real data flows" so we might need a fetch polyfill or just rely on native fetch in Node 18+
 // Vitest handles this mostly nowadays but just in case:
