@@ -47,7 +47,7 @@ export interface SignalInputs {
   us10yYield: number;  // percentage e.g. 4.35
   us2yYield: number;
 
-  /** DXY z-score (from metric_observations DOLLAR_INDEX_DXY) */
+  /** DXY z-score (from metric_observations DXY_INDEX) */
   dxyZScore: number;
 
   /** SOFR-EFFR spread bps (from useNetLiquidity) */
@@ -316,7 +316,7 @@ export function detectContradictions(inputs: SignalInputs): ContradictionResult[
       interpretation:
         'Dollar strength coexists with accelerating sovereign gold accumulation. Historically precedes major dollar regime shifts; EM central banks are hedging at scale.',
       severity: inputs.dxyZScore > 2.5 ? 'EXTREME' : 'NOTABLE',
-      metric_a: 'DOLLAR_INDEX_DXY',
+      metric_a: 'DXY_INDEX',
       metric_b: 'CB_GOLD_NET',
     });
   }

@@ -42,4 +42,11 @@ SELECT public.schedule_standard_cron(
     'ingest-commodity-terminal'
 );
 
+-- 6. ingest-fiscaldata (Daily after FRED H.15)
+SELECT public.schedule_standard_cron(
+    'ingest-fiscaldata',
+    '0 7 * * *',
+    'ingest-fiscaldata'
+);
+
 COMMIT;

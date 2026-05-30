@@ -72,7 +72,9 @@ const DailyMacroPanelInner: React.FC = () => {
   };
 
   const staleness = useStaleness(signal?.computed_at, 'daily');
-  const isStale = staleness.state !== 'fresh';
+  // Use date-equality check (signal.is_stale) as the primary gate — catches a missed cron
+  // on the same day. useStaleness alone would not show a warning for 48h.
+  const isStale = !!signal?.is_stale || staleness.state !== 'fresh';
 
   if (signalError) {
     return (

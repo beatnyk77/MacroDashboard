@@ -80,7 +80,7 @@ export function useDailyMacroSignal() {
       const metricsNeeded = [
         'US_10Y_YIELD',
         'US_2Y_YIELD',
-        'DOLLAR_INDEX_DXY',
+        'DXY_INDEX',
         'SOFR_EFFR_SPREAD_BPS',
         'COPPER_GOLD_RATIO',
         'DEBT_GOLD_RATIO',
@@ -110,7 +110,7 @@ export function useDailyMacroSignal() {
 
       const us10y = Number(getMetric('US_10Y_YIELD')?.value ?? 4.3);
       const us2y = Number(getMetric('US_2Y_YIELD')?.value ?? 4.8);
-      const dxyZ = Number(getMetric('DOLLAR_INDEX_DXY')?.z_score ?? 0);
+      const dxyZ = Number(getMetric('DXY_INDEX')?.z_score ?? 0);
       const sofrSpread = Number(getMetric('SOFR_EFFR_SPREAD_BPS')?.value ?? 5);
       const cgRatioZ = Number(getMetric('COPPER_GOLD_RATIO')?.z_score ?? 0);
       const debtGoldZ = Number(getMetric('DEBT_GOLD_RATIO')?.z_score ?? 0);

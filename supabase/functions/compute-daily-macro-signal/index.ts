@@ -121,7 +121,10 @@ function computeMacroSignal(inputs: {
     metals: 'Copper/Gold ratio vs PMI trend',
   };
 
-  const sorted = Object.entries(component_scores).sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50));
+  const WEIGHTS_MAP: Record<string, number> = { liquidity: 0.30, rates: 0.25, dollar: 0.20, vol: 0.15, metals: 0.10 };
+  const sorted = Object.entries(component_scores).sort(
+    (a, b) => Math.abs(b[1] - 50) * (WEIGHTS_MAP[b[0]] ?? 0) - Math.abs(a[1] - 50) * (WEIGHTS_MAP[a[0]] ?? 0)
+  );
   const key_driver = DRIVER_LABELS[sorted[0][0]] ?? 'Cross-Market Signals';
   const watch_item = WATCH_LABELS[sorted[1][0]] ?? 'Multi-market alignment';
 
@@ -142,7 +145,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -157,7 +160,7 @@ Deno.serve(async (req) => {
 
     // ── 1. Fetch all inputs ──────────────────────────────────────────────
     const metricsNeeded = [
-      'US_10Y_YIELD', 'US_2Y_YIELD', 'DOLLAR_INDEX_DXY',
+      'US_10Y_YIELD', 'US_2Y_YIELD', 'DXY_INDEX',
       'SOFR_EFFR_SPREAD_BPS', 'COPPER_GOLD_RATIO',
       'GOLD_COMEX_USD', 'US_10Y_TIPS_YIELD', 'CB_GOLD_NET',
     ];
@@ -165,7 +168,7 @@ Deno.serve(async (req) => {
     const [metricsRes, liquidityRes, prevSignalRes] = await Promise.all([
       supabase.from('vw_latest_metrics').select('metric_id, value, z_score').in('metric_id', metricsNeeded),
       supabase.from('global_liquidity_direction').select('regime_label, composite_score, cb_aggregate_wow_pct').order('as_of_date', { ascending: false }).limit(1).single(),
-      supabase.from('daily_signal').select('score, regime').order('signal_date', { ascending: false }).limit(1).maybeSingle(),
+      supabase.from('daily_signal').select('score, regime').lt('signal_date', today).order('signal_date', { ascending: false }).limit(1).maybeSingle(),
     ]);
 
     if (metricsRes.error) throw new Error(`vw_latest_metrics fetch failed: ${metricsRes.error.message}`);
@@ -184,7 +187,7 @@ Deno.serve(async (req) => {
       liquidityWowPct: Number(liq?.cb_aggregate_wow_pct ?? 0),
       us10yYield: getVal('US_10Y_YIELD') || 4.3,
       us2yYield: getVal('US_2Y_YIELD') || 4.8,
-      dxyZScore: getZ('DOLLAR_INDEX_DXY'),
+      dxyZScore: getZ('DXY_INDEX'),
       sofrEffrSpreadBps: getVal('SOFR_EFFR_SPREAD_BPS') || 5,
       copperGoldZScore: getZ('COPPER_GOLD_RATIO'),
     });
@@ -237,7 +240,7 @@ Deno.serve(async (req) => {
     const realYield = getVal('US_10Y_TIPS_YIELD');
     const cbGoldYoY = getVal('CB_GOLD_NET');
     const cgZ = getZ('COPPER_GOLD_RATIO');
-    const dxyZ = getZ('DOLLAR_INDEX_DXY');
+    const dxyZ = getZ('DXY_INDEX');
     const us10y = getVal('US_10Y_YIELD') || 4.3;
     const us2y = getVal('US_2Y_YIELD') || 4.8;
     const slope = us10y - us2y;
@@ -291,7 +294,7 @@ Deno.serve(async (req) => {
         title: 'Strong DXY + CB Gold Accumulation',
         interpretation: 'Dollar strength coexists with accelerating sovereign gold accumulation — EM central banks hedging at scale.',
         severity: dxyZ > 2.5 ? 'EXTREME' : 'NOTABLE',
-        metric_a: 'DOLLAR_INDEX_DXY',
+        metric_a: 'DXY_INDEX',
         metric_b: 'CB_GOLD_NET',
       });
     }
@@ -320,7 +323,7 @@ Deno.serve(async (req) => {
     const watchMetrics = [
       { id: 'US_10Y_YIELD', label: 'US 10Y Treasury Yield', type: 'yield' },
       { id: 'COPPER_GOLD_RATIO', label: 'Copper/Gold Ratio', type: 'ratio' },
-      { id: 'DOLLAR_INDEX_DXY', label: 'US Dollar Index (DXY)', type: 'default' },
+      { id: 'DXY_INDEX', label: 'US Dollar Index (DXY)', type: 'default' },
       { id: 'SOFR_EFFR_SPREAD_BPS', label: 'SOFR-EFFR Spread', type: 'yield' },
       { id: 'GOLD_COMEX_USD', label: 'Gold Price (COMEX)', type: 'default' },
     ];
