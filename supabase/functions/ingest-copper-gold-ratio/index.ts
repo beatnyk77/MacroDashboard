@@ -32,10 +32,21 @@ Deno.serve(async (req: Request) => {
 
   const supabaseClient = createClient(supabaseUrl, supabaseKey)
 
+  // Backfill flag: read from JSON body so it works with both the Supabase CLI
+  // (`supabase functions invoke ... --body '{"backfill":true}'`) and curl.
+  // Falls back to the URL query param for backward-compat with curl calls.
+  let isBackfill = new URL(req.url).searchParams.get('backfill') === 'true'
+  try {
+    const body = await req.json()
+    if (body?.backfill === true) isBackfill = true
+  } catch {
+    // no body / not JSON — that's fine
+  }
+
   return runIngestion(supabaseClient, 'ingest-copper-gold-ratio', async (_ctx) => {
     const result = await runWithRetry(
       'ingest-copper-gold-ratio',
-      () => doIngestCopperGoldRatio(supabaseClient, fredApiKey, req.url),
+      () => doIngestCopperGoldRatio(supabaseClient, fredApiKey, isBackfill),
       { timeoutMs: 10 * 60 * 1000, maxRetries: 3, backoffMs: 60_000 }
     )
     if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
@@ -66,9 +77,7 @@ async function fetchFredSeries(
     .filter(o => !isNaN(o.value))
 }
 
-async function doIngestCopperGoldRatio(supabase: any, fredApiKey: string, reqUrl: string) {
-  const isBackfill = new URL(reqUrl).searchParams.get('backfill') === 'true'
-
+async function doIngestCopperGoldRatio(supabase: any, fredApiKey: string, isBackfill: boolean) {
   // Incremental: last 3 copper months + 90 gold days (enough to align any month-end).
   // Backfill:    5 years of copper + 7 years of gold daily to cover every pairing.
   const copperLimit = isBackfill ? 60 : 3
