@@ -87,7 +87,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 0. SOVEREIGN COMPASS - COUNTRY INTELLIGENCE */}
-                <section>
+                <section id="sovereign-compass">
                     <SectionErrorBoundary name="Sovereign Compass">
                         <Card variant="elevated" className="relative overflow-hidden">
                             {/* Background accent */}
@@ -159,7 +159,7 @@ export const Terminal: React.FC = () => {
 
 
                 {/* 1. STRATEGIC CONTEXT - UNIFIED WEEKLY DIGEST */}
-                <section>
+                <section id="weekly-regime-digest">
                     <SectionErrorBoundary name="Weekly Regime Digest">
                         <Suspense fallback={<LoadingFallback />}>
                             <WeeklyRegimeDigest />
@@ -168,7 +168,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 1.5. MONTHLY STRATEGY */}
-                <section className="space-y-8">
+                <section id="monthly-strategy" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">Monthly Strategy</h2>
@@ -182,7 +182,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 2. LIQUIDITY PLUMBLINE (Core Macro Input) */}
-                <section className="space-y-8">
+                <section id="liquidity-plumbline" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">Liquidity Plumbline</h2>
@@ -214,7 +214,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 3. SOVEREIGN STRESS (Risk Indicators) */}
-                <section className="space-y-8">
+                <section id="sovereign-stress" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-rose-500/80">Sovereign Stress</h2>
@@ -316,7 +316,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 3.5 TRADE INTELLIGENCE */}
-                <section className="space-y-8">
+                <section id="trade-intelligence" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500/80">Trade Intelligence</h2>
@@ -330,7 +330,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 4. REGIONAL INTELLIGENCE */}
-                <section className="space-y-8">
+                <section id="regional-intelligence" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/80">Regional Intelligence</h2>
@@ -368,7 +368,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 4.5 ENERGY & COMMODITIES */}
-                <section className="space-y-8">
+                <section id="energy-commodities" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500/80">Energy & Commodities</h2>
@@ -382,7 +382,7 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 {/* 5. INSTITUTIONAL STRATEGY */}
-                <section className="space-y-8">
+                <section id="institutional-strategy" className="space-y-8">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/80">Institutional Strategy</h2>
@@ -419,7 +419,7 @@ export const Terminal: React.FC = () => {
                     </Card>
                 </section>
 
-                <section className="space-y-8">
+                <section id="deflation-debasement" className="space-y-8">
                     <SectionErrorBoundary name="Deflation Debasement">
                         <Suspense fallback={<LoadingFallback />}>
                             <DeflationDebasementMonitor />
