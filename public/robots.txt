@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
-Allow: /blog/
-Allow: /regime-digest/
+Allow: /blog
+Allow: /regime-digest
 Allow: /methodology
 Allow: /countries
 Disallow: /admin/
