@@ -10,10 +10,38 @@ import {
     Globe,
     FlaskConical,
     Flag,
-    Home
+    Home,
+    Activity,
+    MapPin,
+    Calendar,
+    TrendingUp,
+    ShieldAlert,
+    AlertTriangle,
+    FileText,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './command-palette.css';
+
+interface TerminalSection {
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+}
+
+const TERMINAL_SECTIONS: TerminalSection[] = [
+    { id: 'daily-macro-layer',      label: 'Daily Macro Brief',              icon: <Activity className="h-4 w-4 text-blue-400" /> },
+    { id: 'sovereign-compass',      label: 'Sovereign Compass',              icon: <Globe className="h-4 w-4 text-blue-400" /> },
+    { id: 'weekly-regime-digest',   label: 'Weekly Regime Digest',           icon: <FileText className="h-4 w-4 text-slate-400" /> },
+    { id: 'monthly-strategy',       label: 'Monthly Strategy',               icon: <Calendar className="h-4 w-4 text-slate-400" /> },
+    { id: 'liquidity-plumbline',    label: 'Liquidity Plumbline',            icon: <TrendingUp className="h-4 w-4 text-emerald-400" /> },
+    { id: 'sovereign-stress',       label: 'Sovereign Stress',               icon: <ShieldAlert className="h-4 w-4 text-rose-400" /> },
+    { id: 'trade-intelligence',     label: 'Trade Intelligence',             icon: <Globe className="h-4 w-4 text-emerald-400" /> },
+    { id: 'regional-intelligence',  label: 'Regional Intelligence',          icon: <MapPin className="h-4 w-4 text-amber-400" /> },
+    { id: 'energy-commodities',     label: 'Energy & Commodities',           icon: <Zap className="h-4 w-4 text-orange-400" /> },
+    { id: 'institutional-strategy', label: 'Institutional Strategy',         icon: <BarChart3 className="h-4 w-4 text-cyan-400" /> },
+    { id: 'geopolitical-matrix',    label: 'Geopolitical Risk Matrix',       icon: <AlertTriangle className="h-4 w-4 text-rose-400" /> },
+    { id: 'deflation-debasement',   label: 'Deflation / Debasement Monitor', icon: <Activity className="h-4 w-4 text-purple-400" /> },
+];
 
 interface CommandPaletteProps {
     open: boolean;
@@ -129,15 +157,20 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                     </Command.Group>
 
                     <Command.Group heading="Terminal Sections" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
-                        <Item
-                            onSelect={() => runCommand(() => {
-                                navigate('/');
-                                setTimeout(() => document.getElementById('geopolitical-matrix')?.scrollIntoView({ behavior: 'smooth' }), 100);
-                            })}
-                            icon={<Globe className="h-4 w-4 text-rose-400" />}
-                        >
-                            Jump to Geopolitical Risk
-                        </Item>
+                        {TERMINAL_SECTIONS.map((section) => (
+                            <Item
+                                key={section.id}
+                                onSelect={() => runCommand(() => {
+                                    navigate('/');
+                                    setTimeout(() => {
+                                        document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }, 100);
+                                })}
+                                icon={section.icon}
+                            >
+                                {section.label}
+                            </Item>
+                        ))}
                     </Command.Group>
 
                     <Command.Group heading="Knowledge" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">

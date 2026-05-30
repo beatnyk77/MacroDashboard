@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 
 function renderPalette() {
-    render(
+    return render(
         <MemoryRouter>
             <CommandPalette open={true} setOpen={vi.fn()} />
         </MemoryRouter>
