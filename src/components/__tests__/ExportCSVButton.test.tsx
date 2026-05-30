@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ExportCSVButton } from '../ExportCSVButton';
 import { exportToCSV } from '@/utils/exportCSV';
 
@@ -9,6 +9,9 @@ vi.mock('@/utils/exportCSV', () => ({
 }));
 
 describe('ExportCSVButton', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
     it('renders correctly with default label', () => {
         render(<ExportCSVButton data={[{ a: 1 }]} filename="test" />);
         expect(screen.getByText('EXPORT CSV')).toBeInTheDocument();
@@ -40,7 +43,7 @@ describe('ExportCSVButton', () => {
     });
 
     it('is disabled and does not call exportToCSV if data is null', () => {
-        // @ts-ignore
+        // @ts-expect-error intentionally passing null to test disabled state
         render(<ExportCSVButton data={null} filename="null_test" />);
         
         const button = screen.getByRole('button');
