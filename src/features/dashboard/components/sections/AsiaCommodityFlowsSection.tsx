@@ -1,6 +1,10 @@
 import React, { Suspense, lazy } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useOilData } from '@/hooks/useOilData';
 import { MotionCard } from '@/components/MotionCard';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { supabase } from '@/lib/supabase';
+import { useStaleness } from '@/hooks/useStaleness';
 
 const OilImportVulnerabilityCard = lazy(() => import('../cards/OilImportVulnerabilityCard').then(m => ({ default: m.OilImportVulnerabilityCard })));
 const OilFlowsSankey = lazy(() => import('../cards/OilFlowsSankey').then(m => ({ default: m.OilFlowsSankey })));
@@ -9,6 +13,21 @@ const OilImportCostCard = lazy(() => import('../cards/OilImportCostCard').then(m
 
 export const AsiaCommodityFlowsSection: React.FC = () => {
     const { data: apiData } = useOilData();
+
+    const { data: importFreshness } = useQuery({
+        queryKey: ['oil-imports-freshness'],
+        queryFn: async () => {
+            const { data } = await supabase
+                .from('oil_imports_by_origin')
+                .select('as_of_date')
+                .order('as_of_date', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+            return data?.as_of_date ? String(data.as_of_date) : null;
+        },
+        staleTime: 1000 * 60 * 60,
+    });
+    const importStaleness = useStaleness(importFreshness ?? undefined, 'weekly');
 
     const hasNoData = !apiData?.importData?.length;
 
@@ -35,6 +54,9 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Molecular shift toward the East. Tracking Crude import origins for Bharat & China identifies emerging trade corridors and energy density dependencies.
                         </p>
+                        <div className="mt-2">
+                            <FreshnessChip status={importStaleness.state} lastUpdated={importFreshness ?? undefined} />
+                        </div>
                     </div>
                     <Suspense fallback={<div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />}>
                         <OilFlowsSankey data={apiData.importData} isLoading={false} />

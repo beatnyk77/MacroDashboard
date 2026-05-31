@@ -1,6 +1,10 @@
 import React, { Suspense, lazy } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useOilData } from '@/hooks/useOilData';
 import { MotionCard } from '@/components/MotionCard';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { supabase } from '@/lib/supabase';
+import { useStaleness } from '@/hooks/useStaleness';
 import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
 
 const RefiningCapacityCard = lazy(() => import('../cards/RefiningCapacityCard').then(m => ({ default: m.RefiningCapacityCard })));
@@ -11,6 +15,21 @@ const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCar
 
 export const SovereignEnergySecuritySection: React.FC = () => {
     const { data: apiData } = useOilData();
+
+    const { data: capacityFreshness } = useQuery({
+        queryKey: ['oil-refining-capacity-freshness'],
+        queryFn: async () => {
+            const { data } = await supabase
+                .from('oil_refining_capacity')
+                .select('last_updated_at')
+                .order('last_updated_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+            return data?.last_updated_at ?? null;
+        },
+        staleTime: 1000 * 60 * 60,
+    });
+    const capacityStaleness = useStaleness(capacityFreshness ?? undefined, 'weekly');
 
     const hasNoData = !apiData?.sprData?.length && !apiData?.capacityData?.length;
 
@@ -38,6 +57,9 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
                             Industrial backbone of US energy independence. Operable capacity vs. utilization rates indicates system stress and supply-side resilience.
                         </p>
+                        <div className="mt-2">
+                            <FreshnessChip status={capacityStaleness.state} lastUpdated={capacityFreshness ?? undefined} />
+                        </div>
                     </div>
                     <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-xl" />}>
                         {apiData.capacityData && apiData.capacityData.length > 0 ? (
