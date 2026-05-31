@@ -23,6 +23,39 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { useStaleness } from '@/hooks/useStaleness';
 import { WTICalendarSpreadSkeleton } from './WTICalendarSpreadSkeleton';
 
+export function getRegimeDetails(spread: number) {
+    if (spread > 16) return {
+        label: 'EXTREME BACKWARDATION',
+        color: 'text-rose-500 bg-rose-500/10',
+        icon: AlertTriangle,
+        desc: 'Extreme physical shortage — immediate supply crisis signal.',
+    };
+    if (spread > 10) return {
+        label: 'STRESSED',
+        color: 'text-orange-500 bg-orange-500/10',
+        icon: AlertTriangle,
+        desc: 'Severe market tightening — front-loading by physical buyers.',
+    };
+    if (spread > 5) return {
+        label: 'TIGHTENING',
+        color: 'text-amber-500 bg-amber-500/10',
+        icon: TrendingUp,
+        desc: 'Market tightening — physical buyers front-loading deliveries.',
+    };
+    if (spread < -5) return {
+        label: 'OVERSUPPLY',
+        color: 'text-blue-500 bg-blue-500/10',
+        icon: TrendingDown,
+        desc: 'Oversupply — excess supply forcing front-month below next-month.',
+    };
+    return {
+        label: 'NORMAL REGIME',
+        color: 'text-emerald-500 bg-emerald-500/10',
+        icon: CheckCircle2,
+        desc: 'Balanced physical flows — no immediate stress signals.',
+    };
+}
+
 const WTICalendarSpreadInner: React.FC = () => {
     const { data: spreadData, isLoading, error, refetch } = useOilSpread();
     const { data: health = [] } = useIngestionHealth();
@@ -54,13 +87,6 @@ const WTICalendarSpreadInner: React.FC = () => {
     const staleness = useStaleness(latest?.computed_at, 'daily');
     const isStale = staleness.state !== 'fresh';
     const signalHealth = health.find(h => h.job_name === 'ingest-oil-spread');
-    
-    const getRegimeDetails = (spread: number) => {
-        if (spread > 2.0) return { label: 'CRITICAL BACKWARDATION', color: 'text-rose-500 bg-rose-500/10', icon: AlertTriangle, desc: 'Extreme Physical Shortage' };
-        if (spread > 1.0) return { label: 'ELEVATED BACKWARDATION', color: 'text-orange-500 bg-orange-500/10', icon: TrendingUp, desc: 'Market Tightening' };
-        if (spread < -1.0) return { label: 'STEEP CONTANGO', color: 'text-blue-500 bg-blue-500/10', icon: TrendingDown, desc: 'Oversupply / Storage Stress' };
-        return { label: 'NORMAL REGIME', color: 'text-emerald-500 bg-emerald-500/10', icon: CheckCircle2, desc: 'Balanced Physical Flows' };
-    };
 
     const regime = latest ? getRegimeDetails(latest.spread) : null;
 
