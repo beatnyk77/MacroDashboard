@@ -38,8 +38,8 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
     const regime = useEnergyRegime();
     const regimeColor = REGIME_COLORS[regime.wtiRegime] ?? REGIME_COLORS.NORMAL;
 
-    const spreadSign = regime.wtiSpread >= 0 ? '+' : '';
-    const brentChangeSign = regime.brentChangePct >= 0 ? '+' : '';
+    const spreadSign = regime.wtiSpread > 0 ? '+' : '';
+    const brentChangeSign = regime.brentChangePct > 0 ? '+' : '';
 
     return (
         <div className={cn(
