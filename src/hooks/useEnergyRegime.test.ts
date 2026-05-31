@@ -31,4 +31,9 @@ describe('buildNarrative', () => {
         const result = buildNarrative('NORMAL', 85);
         expect(result).toContain('Balanced');
     });
+
+    it('returns tightening narrative for TIGHTENING with utilization <= 90', () => {
+        const result = buildNarrative('TIGHTENING', 85);
+        expect(result).toContain('tightening');
+    });
 });
