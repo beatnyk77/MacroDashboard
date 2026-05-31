@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 
-// We'll export this helper after extracting it in Step 3.
 import { getRegimeDetails } from './WTICalendarSpread';
 
 describe('getRegimeDetails', () => {
@@ -23,5 +22,22 @@ describe('getRegimeDetails', () => {
 
     it('returns OVERSUPPLY for spread < -5', () => {
         expect(getRegimeDetails(-6).label).toBe('OVERSUPPLY');
+    });
+
+    // Boundary contract: exact boundary values fall to the lower regime (strict > / <)
+    it('boundary: spread === 5 is NORMAL (not TIGHTENING)', () => {
+        expect(getRegimeDetails(5).label).toBe('NORMAL REGIME');
+    });
+
+    it('boundary: spread === -5 is NORMAL (not OVERSUPPLY)', () => {
+        expect(getRegimeDetails(-5).label).toBe('NORMAL REGIME');
+    });
+
+    it('boundary: spread === 10 is TIGHTENING (not STRESSED)', () => {
+        expect(getRegimeDetails(10).label).toBe('TIGHTENING');
+    });
+
+    it('boundary: spread === 16 is STRESSED (not EXTREME)', () => {
+        expect(getRegimeDetails(16).label).toBe('STRESSED');
     });
 });
