@@ -246,10 +246,10 @@ const WTICalendarSpreadInner: React.FC = () => {
                             <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/10">
                                 <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-3">So What?</h4>
                                 <p className="text-[11px] leading-relaxed text-amber-500/70 font-bold uppercase tracking-wide">
-                                    {regime?.desc}. {latest.spread > 1 ? 
-                                        "Physical buyers are front-loading deliveries, signaling immediate supply shortages." : 
-                                        latest.spread < -1 ? 
-                                        "Excess supply is hitting storage limits, forcing front-month prices below next-month." : 
+                                    {regime?.desc}. {latest.spread > 5 ?
+                                        "Physical buyers are front-loading deliveries, signaling immediate supply shortages." :
+                                        latest.spread < -5 ?
+                                        "Excess supply is hitting storage limits, forcing front-month prices below next-month." :
                                         "The physical market remains in equilibrium with no immediate stress signals."
                                     }
                                 </p>
