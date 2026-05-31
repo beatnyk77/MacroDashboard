@@ -219,7 +219,7 @@ export const FuelSecurityClockIndia: React.FC = () => {
                             <span className="text-sm font-black text-white">${data.brent_price_usd?.toFixed(2) || 'N/A'}</span>
                         </div>
                         <p className="text-[10px] text-muted-foreground/40 mt-3 uppercase tracking-wide">
-                            * Higher local cost widens current account deficit pressure
+                            * Higher INR/barrel widens current account deficit pressure
                         </p>
                     </div>
 

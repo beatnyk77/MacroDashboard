@@ -63,6 +63,7 @@ describe('FuelSecurityClockIndia', () => {
     it('shows Brent-INR cost panel', async () => {
         const { default: FuelSecurityClockIndia } = await import('./FuelSecurityClockIndia');
         render(React.createElement(FuelSecurityClockIndia), { wrapper });
-        expect(screen.getByText(/INR\/barrel/i)).toBeTruthy();
+        // Label and footnote both contain "INR/barrel" — getAllByText asserts at least one
+        expect(screen.getAllByText(/INR\/barrel/i).length).toBeGreaterThanOrEqual(1);
     });
 });
