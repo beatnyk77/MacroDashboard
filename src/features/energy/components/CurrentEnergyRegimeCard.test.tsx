@@ -34,9 +34,10 @@ describe('CurrentEnergyRegimeCard', () => {
     it('shows all four metric pillar labels', () => {
         render(React.createElement(CurrentEnergyRegimeCard), { wrapper });
         expect(screen.getByText(/WTI Spread/i)).toBeTruthy();
-        expect(screen.getByText(/Brent/i)).toBeTruthy();
-        expect(screen.getByText(/Refinery Util/i)).toBeTruthy();
-        expect(screen.getByText(/EU Gas/i)).toBeTruthy();
+        expect(screen.getByText(/Brent Crude/i)).toBeTruthy();
+        // getAllByText because "Refinery Util" may appear in both the pillar label and the narrative
+        expect(screen.getAllByText(/US Refinery Util/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getByText(/EU Gas Storage/i)).toBeTruthy();
     });
 
     it('renders the regime narrative', () => {

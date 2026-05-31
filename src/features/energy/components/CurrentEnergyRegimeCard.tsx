@@ -142,9 +142,7 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
                         Regime Synthesis
                     </span>
                     <p className="text-[11px] font-bold text-white/60 uppercase tracking-wide leading-relaxed">
-                        {/* Insert zero-width space to avoid regex collision between "refinery util"
-                            in the narrative and the "US Refinery Util" pillar label in tests */}
-                        {regime.overallNarrative.replace(/refinery util/gi, (m) => m.slice(0, 8) + '​' + m.slice(8))}
+                        {regime.overallNarrative}
                     </p>
                 </div>
             </div>
