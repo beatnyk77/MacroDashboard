@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { getRegimeDetails } from './WTICalendarSpread';
+import { getRegimeDetails } from './wtiCalendarSpreadUtils';
 
 describe('getRegimeDetails', () => {
     it('returns EXTREME for spread > 16', () => {
