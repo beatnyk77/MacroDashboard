@@ -185,8 +185,9 @@ export const ExportScoutPlaybookPage: React.FC = () => {
         keywords={[`HS ${code} Playbook`, `Export Playbook HS ${code}`, `GraphiQuestor Trade Playbook`, 'GraphiQuestor']}
         jsonLd={{
           "@context": "https://schema.org",
-          "@type": "CreativeWork",
+          "@type": "Article",
           "name": `Confidential Export Playbook for HS ${code}`,
+          "headline": `Confidential Export Playbook for HS ${code}`,
           "description": `Confidential market execution strategy and bilateral trade opportunity mapping for HSN code ${code}.`,
           "url": `https://graphiquestor.com/trade/playbook/${code}`,
           "author": {

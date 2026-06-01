@@ -40,21 +40,35 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 title="Energy & Commodities Lab — Supply Chains, Refining Capacity & Resource Security"
                 description="Analyze global physical flow dynamics, refining capacity elasticity, strategic oil reserves, and fuel security metrics. Institutional resource security intelligence."
                 keywords={['energy commodities', 'oil reserves', 'refining capacity', 'commodity flows', 'fuel security', 'India energy', 'WTI calendar spread']}
-                jsonLd={{
-                    '@context': 'https://schema.org',
-                    '@type': 'WebPage',
-                    'name': 'Energy & Commodities Lab',
-                    'url': 'https://graphiquestor.com/labs/energy-commodities',
-                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                    'breadcrumb': {
-                        '@type': 'BreadcrumbList',
-                        'itemListElement': [
-                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                            { '@type': 'ListItem', 'position': 3, 'name': 'Energy & Commodities Lab' },
-                        ],
+                jsonLd={[
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'WebPage',
+                        'name': 'Energy & Commodities Lab',
+                        'url': 'https://graphiquestor.com/labs/energy-commodities',
+                        'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                        'breadcrumb': {
+                            '@type': 'BreadcrumbList',
+                            'itemListElement': [
+                                { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                                { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                                { '@type': 'ListItem', 'position': 3, 'name': 'Energy & Commodities Lab' },
+                            ],
+                        },
                     },
-                }}
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'Dataset',
+                        'name': 'Global Energy Security Data',
+                        'description': 'Data on global physical flow dynamics, refining capacity elasticity, and strategic oil reserves.',
+                        'url': 'https://graphiquestor.com/labs/energy-commodities',
+                        'isAccessibleForFree': true,
+                        'creator': {
+                            '@type': 'Organization',
+                            'name': 'GraphiQuestor'
+                        }
+                    }
+                ]}
             />
             <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
                 {/* Breadcrumbs */}

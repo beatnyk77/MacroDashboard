@@ -28,21 +28,35 @@ export const SovereignStressLab: React.FC = () => {
             title="Sovereign Debt Risk Dashboard — Real-Time G20 Stress Monitor"
             description="Real-time sovereign debt risk dashboard tracking G20 debt sustainability, interest-to-revenue ratios, yield curve stress, BoJ dominance, and geopolitical credit risk. Updated daily."
             keywords={['sovereign debt risk dashboard', 'sovereign stress monitor', 'G20 debt sustainability', 'real-time sovereign risk', 'yield curve stress', 'sovereign credit risk', 'BoJ balance sheet']}
-            jsonLd={{
-                '@context': 'https://schema.org',
-                '@type': 'WebPage',
-                'name': 'Sovereign Stress Lab',
-                'url': 'https://graphiquestor.com/labs/sovereign-stress',
-                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                'breadcrumb': {
-                    '@type': 'BreadcrumbList',
-                    'itemListElement': [
-                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                        { '@type': 'ListItem', 'position': 3, 'name': 'Sovereign Stress Lab' }
-                    ]
+            jsonLd={[
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'WebPage',
+                    'name': 'Sovereign Stress Lab',
+                    'url': 'https://graphiquestor.com/labs/sovereign-stress',
+                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                    'breadcrumb': {
+                        '@type': 'BreadcrumbList',
+                        'itemListElement': [
+                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                            { '@type': 'ListItem', 'position': 3, 'name': 'Sovereign Stress Lab' }
+                        ]
+                    }
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'Dataset',
+                    'name': 'G20 Sovereign Stress Data',
+                    'description': 'Real-time sovereign debt risk tracking G20 debt sustainability, yield curve stress, and BoJ dominance.',
+                    'url': 'https://graphiquestor.com/labs/sovereign-stress',
+                    'isAccessibleForFree': true,
+                    'creator': {
+                        '@type': 'Organization',
+                        'name': 'GraphiQuestor'
+                    }
                 }
-            }}
+            ]}
         />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}

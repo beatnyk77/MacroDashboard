@@ -50,9 +50,6 @@ export const AfricaMacroPulseLab: React.FC = () => {
 
     return (
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(continentSchema) }} />
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
-
             <SEOManager
                 title="Africa Macro Pulse — Sovereign Debt, Commodity & Trade Gravity"
                 description="Institutional-grade terminal for tracking African macro intelligence. Monitor fiscal stress, debt-to-GDP, and the shift towards BRICS trade gravity for 10 key African economies."
@@ -61,26 +58,30 @@ export const AfricaMacroPulseLab: React.FC = () => {
                     'Nigeria Macro', 'South Africa Economy', 'Egypt Debt Stress',
                     'Kenya Fiscal Health', 'Commodity Exposure Africa', 'IMF Africa', 'AfDB'
                 ]}
-                jsonLd={[{
-                    "@context": "https://schema.org",
-                    "@type": "BreadcrumbList",
-                    "itemListElement": [{
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Home",
-                        "item": "https://graphiquestor.com"
-                    }, {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Observatory",
-                        "item": "https://graphiquestor.com/macro-observatory"
-                    }, {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": "Africa Macro Pulse",
-                        "item": "https://graphiquestor.com/labs/africa-macro"
-                    }]
-                }]}
+                jsonLd={[
+                    continentSchema,
+                    datasetSchema,
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "BreadcrumbList",
+                        "itemListElement": [{
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": "https://graphiquestor.com"
+                        }, {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Observatory",
+                            "item": "https://graphiquestor.com/macro-observatory"
+                        }, {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Africa Macro Pulse",
+                            "item": "https://graphiquestor.com/labs/africa-macro"
+                        }]
+                    }
+                ]}
             />
             {/* Breadcrumbs */}
             <div className="mb-8">

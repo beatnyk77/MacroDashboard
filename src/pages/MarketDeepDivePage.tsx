@@ -55,19 +55,31 @@ const MarketDeepDivePage: React.FC = () => {
                     `HS ${code} ${countryName}`, `${countryName} imports HS ${code}`,
                     `supplier share ${countryName} HS ${code}`, 'GraphiQuestor'
                 ]}
-                jsonLd={{
-                    "@context": "https://schema.org",
-                    "@type": "Dataset",
-                    "@id": `https://graphiquestor.com/trade/hs/${code}/market/${iso}#dataset`,
-                    "name": `${countryName} Import Opportunity Dataset for HS ${code}`,
-                    "description": `Detailed bilateral import flows, HHI supplier shares, and real-time macroeconomic indicators for HS ${code} into ${countryName}.`,
-                    "url": `https://graphiquestor.com/trade/hs/${code}/market/${iso}`,
-                    "creator": {
-                        "@id": "https://graphiquestor.com/#organization"
+                jsonLd={[
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Dataset",
+                        "@id": `https://graphiquestor.com/trade/hs/${code}/market/${iso}#dataset`,
+                        "name": `${countryName} Import Opportunity Dataset for HS ${code}`,
+                        "description": `Detailed bilateral import flows, HHI supplier shares, and real-time macroeconomic indicators for HS ${code} into ${countryName}.`,
+                        "url": `https://graphiquestor.com/trade/hs/${code}/market/${iso}`,
+                        "creator": {
+                            "@id": "https://graphiquestor.com/#organization"
+                        },
+                        "temporalCoverage": "2020-01-01/2026-05-30",
+                        "spatialCoverage": countryName
                     },
-                    "temporalCoverage": "2020-01-01/2026-05-30",
-                    "spatialCoverage": countryName
-                }}
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Article",
+                        "headline": `Market Deep Dive: HS ${code} in ${countryName}`,
+                        "description": `Detailed import flows, supplier shares, and real-time macroeconomic health overlay for HS code ${code} into ${countryName}.`,
+                        "author": {
+                            "@type": "Organization",
+                            "name": "GraphiQuestor"
+                        }
+                    }
+                ]}
             />
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 sm:px-6">

@@ -27,21 +27,35 @@ export const ShadowSystemLab: React.FC = () => {
             title="Shadow System Lab — Capital Flight, Trade Misinvoicing & Off-Grid Flows"
             description="Track the unobserved economy: elite wealth flight, trade misinvoicing indices, and non-G7 trade network gravitational shifts. Institutional dark-flow telemetry."
             keywords={['shadow trade', 'capital flight', 'trade misinvoicing', 'illicit financial flows', 'off-grid economy', 'shadow banking']}
-            jsonLd={{
-                '@context': 'https://schema.org',
-                '@type': 'WebPage',
-                'name': 'Shadow System Lab',
-                'url': 'https://graphiquestor.com/labs/shadow-system',
-                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                'breadcrumb': {
-                    '@type': 'BreadcrumbList',
-                    'itemListElement': [
-                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                        { '@type': 'ListItem', 'position': 3, 'name': 'Shadow System Lab' }
-                    ]
+            jsonLd={[
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'WebPage',
+                    'name': 'Shadow System Lab',
+                    'url': 'https://graphiquestor.com/labs/shadow-system',
+                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                    'breadcrumb': {
+                        '@type': 'BreadcrumbList',
+                        'itemListElement': [
+                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                            { '@type': 'ListItem', 'position': 3, 'name': 'Shadow System Lab' }
+                        ]
+                    }
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'Dataset',
+                    'name': 'Shadow System Trade Misinvoicing Data',
+                    'description': 'Data on capital flight, trade misinvoicing, and illicit financial flows.',
+                    'url': 'https://graphiquestor.com/labs/shadow-system',
+                    'isAccessibleForFree': true,
+                    'creator': {
+                        '@type': 'Organization',
+                        'name': 'GraphiQuestor'
+                    }
                 }
-            }}
+            ]}
         />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}

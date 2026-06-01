@@ -41,21 +41,35 @@ export const DeDollarizationGoldLab: React.FC = () => {
             title="De-Dollarization & Gold Lab — Reserve Shifts, Gold Flows & Trade Settlement"
             description="Track the structural shift from fiat reserves to hard-asset anchors. Central bank gold purchases, COFER reserve composition, petrodollar vs petroyuan settlement, and G20 gold-debt coverage analysis."
             keywords={['de-dollarization', 'gold reserves', 'central bank gold purchases', 'BRICS', 'petrodollar', 'petroyuan', 'reserve currency', 'COFER']}
-            jsonLd={{
-                '@context': 'https://schema.org',
-                '@type': 'WebPage',
-                'name': 'De-Dollarization & Gold Lab',
-                'url': 'https://graphiquestor.com/labs/de-dollarization-gold',
-                'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                'breadcrumb': {
-                    '@type': 'BreadcrumbList',
-                    'itemListElement': [
-                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                        { '@type': 'ListItem', 'position': 3, 'name': 'De-Dollarization & Gold Lab' }
-                    ]
+            jsonLd={[
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'WebPage',
+                    'name': 'De-Dollarization & Gold Lab',
+                    'url': 'https://graphiquestor.com/labs/de-dollarization-gold',
+                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
+                    'breadcrumb': {
+                        '@type': 'BreadcrumbList',
+                        'itemListElement': [
+                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                            { '@type': 'ListItem', 'position': 3, 'name': 'De-Dollarization & Gold Lab' }
+                        ]
+                    }
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'Dataset',
+                    'name': 'De-Dollarization & Gold Data',
+                    'description': 'Data on central bank gold purchases, COFER reserve composition, and petrodollar vs petroyuan settlement.',
+                    'url': 'https://graphiquestor.com/labs/de-dollarization-gold',
+                    'isAccessibleForFree': true,
+                    'creator': {
+                        '@type': 'Organization',
+                        'name': 'GraphiQuestor'
+                    }
                 }
-            }}
+            ]}
         />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}

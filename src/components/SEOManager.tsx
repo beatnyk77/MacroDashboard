@@ -45,11 +45,11 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     return (
         <Helmet>
             {/* Structured Data (JSON-LD) */}
-            {jsonLd && (
-                <script type="application/ld+json">
-                    {JSON.stringify(jsonLd)}
+            {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((schema, index) => (
+                <script key={`json-ld-${index}`} type="application/ld+json">
+                    {JSON.stringify(schema)}
                 </script>
-            )}
+            ))}
 
             {isApp && (
                 <script type="application/ld+json">

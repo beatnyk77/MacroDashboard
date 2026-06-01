@@ -5,7 +5,7 @@
   <link>https://graphiquestor.com</link>
   <description>Latest macro signals, liquidity regimes, sovereign stress markers, and geo-economic intelligence from GraphiQuestor observatory.</description>
   <language>en-us</language>
-  <lastBuildDate>Fri, 29 May 2026 21:46:01 GMT</lastBuildDate>
+  <lastBuildDate>Sun, 31 May 2026 13:57:08 GMT</lastBuildDate>
   <atom:link href="https://graphiquestor.com/rss.xml" rel="self" type="application/rss+xml" />
   <image>
     <url>https://graphiquestor.com/og-image.png</url>
@@ -13,6 +13,15 @@
     <link>https://graphiquestor.com</link>
   </image>
 
+  <item>
+    <title>M2/Gold Ratio in 2026: The Definitive Debasement Signal Explained</title>
+    <link>https://graphiquestor.com/blog/m2-gold-ratio-debasement-signal-2026</link>
+    <description>A complete guide to the M2/Gold Ratio — the macro signal that compares global money supply to gold market cap. Historical analysis from 2001 to 2026, interpretation framework, and what the current reading means for institutional gold positioning.</description>
+    <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
+    <guid isPermaLink="true">https://graphiquestor.com/blog/m2-gold-ratio-debasement-signal-2026</guid>
+    <category>Monetary Policy</category>
+    <author>research@graphiquestor.com (GraphiQuestor Research)</author>
+  </item>
   <item>
     <title>The Debt/Gold Ratio: Why It Matters for Monetary Sovereignty in 2026</title>
     <link>https://graphiquestor.com/blog/debt-gold-ratio-analysis-2026</link>
@@ -90,7 +99,7 @@
     <title>India Macro Intelligence Hub — Live Dashboard</title>
     <link>https://graphiquestor.com/intel/india</link>
     <description>Institutional-grade macro telemetry for India: credit cycle, fiscal stress, sovereign debt maturity wall, RBI liquidity dynamics, and de-dollarisation strategy.</description>
-    <pubDate>Fri, 29 May 2026 21:46:01 GMT</pubDate>
+    <pubDate>Sun, 31 May 2026 13:57:08 GMT</pubDate>
     <guid isPermaLink="true">https://graphiquestor.com/intel/india</guid>
     <category>India Macro</category>
   </item>
@@ -98,7 +107,7 @@
     <title>China Macro Intelligence Hub — Live Dashboard</title>
     <link>https://graphiquestor.com/intel/china</link>
     <description>High-frequency activity monitor tracking China's credit impulse, deflation risk, industrial velocity, PBoC monetary stance, FX reserves, and de-dollarization momentum.</description>
-    <pubDate>Fri, 29 May 2026 21:46:01 GMT</pubDate>
+    <pubDate>Sun, 31 May 2026 13:57:08 GMT</pubDate>
     <guid isPermaLink="true">https://graphiquestor.com/intel/china</guid>
     <category>China Macro</category>
   </item>
@@ -106,7 +115,7 @@
     <title>Macro Concepts Glossary — Institutional Definitions</title>
     <link>https://graphiquestor.com/glossary</link>
     <description>Institutional definitions for macro liquidity, sovereign debt risk, and geo-economic terminology — TGA, RRP, Net Liquidity Z-Score, Term Premium, Stealth QE, and more.</description>
-    <pubDate>Fri, 29 May 2026 21:46:01 GMT</pubDate>
+    <pubDate>Sun, 31 May 2026 13:57:08 GMT</pubDate>
     <guid isPermaLink="true">https://graphiquestor.com/glossary</guid>
     <category>Glossary</category>
   </item>

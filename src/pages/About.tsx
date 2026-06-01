@@ -11,25 +11,31 @@ export const About: React.FC = () => {
                 title="About the Analytics Team"
                 description="Learn about the institutional background behind GraphiQuestor. Founded by Kartikay Sharma, CA, dedicated to tracking structural macro reality."
                 canonicalUrl="https://graphiquestor.com/about"
-            />
-            {/* Person Schema for E-E-A-T */}
-            <script type="application/ld+json">
-                {JSON.stringify({
-                    "@context": "https://schema.org",
-                    "@type": "Person",
-                    "name": "Kartikay Sharma",
-                    "jobTitle": "Chartered Accountant & Macro Analyst",
-                    "url": "https://graphiquestor.com/about",
-                    "sameAs": [
-                        "https://www.linkedin.com/in/kartikay-sharma-b9190214/"
-                    ],
-                    "description": "Chartered Accountant focusing on institutional macro surveillance, systemic liquidity, and sovereign risk.",
-                    "worksFor": {
+                jsonLd={[
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Person",
+                        "name": "Kartikay Sharma",
+                        "jobTitle": "Chartered Accountant & Macro Analyst",
+                        "url": "https://graphiquestor.com/about",
+                        "sameAs": [
+                            "https://www.linkedin.com/in/kartikay-sharma-b9190214/"
+                        ],
+                        "description": "Chartered Accountant focusing on institutional macro surveillance, systemic liquidity, and sovereign risk.",
+                        "worksFor": {
+                            "@type": "Organization",
+                            "name": "GraphiQuestor"
+                        }
+                    },
+                    {
+                        "@context": "https://schema.org",
                         "@type": "Organization",
-                        "name": "GraphiQuestor"
+                        "name": "GraphiQuestor",
+                        "url": "https://graphiquestor.com",
+                        "logo": "https://graphiquestor.com/logo.png"
                     }
-                })}
-            </script>
+                ]}
+            />
 
             <Container maxWidth="md">
                 <Box sx={{ mb: 6, textAlign: 'center' }}>

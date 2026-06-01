@@ -52,16 +52,30 @@ export const Terminal: React.FC = () => {
     return (
         <div className="w-full max-w-[1920px] mx-auto bg-slate-950 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <SEOManager
-                title="Macro Observatory | Live Institutional Telemetry"
-                description="Real-time macro intelligence terminal tracking US net liquidity, sovereign stress, yield curves, and Fed balance sheet. Institutional-grade data for PMs, CIOs, and macro researchers."
-                keywords={[
-                    'Institutional Macro Dashboard', 'US Net Liquidity Monitor', 'Fed Balance Sheet Tracker',
-                    'Sovereign Risk Terminal', 'Yield Curve Inversion',
-                    'Treasury Auction Demand', 'Macro Liquidity Analysis', 'India Macro Data',
-                    'China Economic Pulse', 'Debt Maturity Wall',
-                    'Monetary Policy Tracker', 'Macro Research Terminal', 'GraphiQuestor'
-                ]}
+                title="Terminal"
+                description="GraphiQuestor: Institutional macro intelligence terminal tracking global liquidity, sovereign stress, and India/China macro. Advanced data visualization for the multipolar era."
+                keywords={['macro intelligence', 'global liquidity', 'sovereign stress', 'india macro', 'china macro', 'financial terminal']}
                 isApp={true}
+                jsonLd={[
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "GraphiQuestor",
+                        "@id": "https://graphiquestor.com/#organization",
+                        "url": "https://graphiquestor.com",
+                        "description": "Macro intelligence terminal tracking global liquidity, sovereign stress, and India/China macro."
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "GraphiQuestor",
+                        "url": "https://graphiquestor.com",
+                        "description": "Macro Observatory for the Multipolar Era",
+                        "publisher": {
+                            "@id": "https://graphiquestor.com/#organization"
+                        }
+                    }
+                ]}
             />
 
             <header className="mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
