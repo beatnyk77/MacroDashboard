@@ -90,9 +90,20 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
                     De-Dollarization & <span className="text-amber-500">Gold</span>
                 </h1>
-                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
+                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide mb-8">
                     Monitoring the systemic shift from fiat-centric reserves to hard-asset anchors and the fragmentation of global settlement networks.
                 </p>
+
+                {/* Pillar Page Banner */}
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div>
+                        <h3 className="text-amber-500 font-black uppercase tracking-widest text-lg mb-2">The Ultimate Guide to De-Dollarization</h3>
+                        <p className="text-white/70 text-sm font-medium">Read our comprehensive institutional analysis of global reserve shifts, BRICS currency dynamics, and actionable macro scenarios for 2026.</p>
+                    </div>
+                    <Button className="bg-amber-500 hover:bg-amber-600 text-black font-black uppercase tracking-widest shrink-0" asChild>
+                        <a href="/methods/de-dollarization-guide">Read the Guide</a>
+                    </Button>
+                </div>
             </div>
 
             <div className="space-y-32">
@@ -151,6 +162,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             </Suspense>
                         </SectionErrorBoundary>
                     </div>
+                    <div className="mt-6 flex justify-end">
+                        <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
+                            <a href="/labs/us-treasury-foreign-holdings">Deep Dive: US Treasury Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
+                        </Button>
+                    </div>
                 </section>
 
                 {/* 3. Central Bank Gold Net Purchases */}
@@ -164,6 +180,12 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             <CentralBankGoldNet />
                         </Suspense>
                     </SectionErrorBoundary>
+                    
+                    <div className="mt-6 flex justify-end">
+                        <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
+                            <a href="/labs/central-bank-gold-purchases">Deep Dive: Gold Purchases Tracker <ChevronRight size={14} className="ml-2" /></a>
+                        </Button>
+                    </div>
                 </section>
 
                 {/* 4. Global Financial Hubs & Gold Gateways */}
@@ -186,11 +208,18 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <h2 className="text-3xl font-black uppercase tracking-heading text-white">Trade Settlement & Misinvoicing</h2>
                     </div>
                     <div className="space-y-16">
-                        <SectionErrorBoundary name="Petrodollar vs Petroyuan">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <PetrodollarVsPetroyuan />
-                            </Suspense>
-                        </SectionErrorBoundary>
+                        <div className="space-y-6">
+                            <SectionErrorBoundary name="Petrodollar vs Petroyuan">
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <PetrodollarVsPetroyuan />
+                                </Suspense>
+                            </SectionErrorBoundary>
+                            <div className="flex justify-end">
+                                <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
+                                    <a href="/labs/petrodollar-decay-indicators">Deep Dive: Petrodollar Decay <ChevronRight size={14} className="ml-2" /></a>
+                                </Button>
+                            </div>
+                        </div>
                         <SectionErrorBoundary name="Trade Flows">
                             <Suspense fallback={<LoadingFallback />}>
                                 <TradeFlowsCard />
@@ -211,6 +240,12 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             <TradeGravityCard />
                         </Suspense>
                     </SectionErrorBoundary>
+                    
+                    <div className="mt-6 flex justify-end">
+                        <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
+                            <a href="/labs/brics-trade-settlement">Deep Dive: BRICS Trade Settlement <ChevronRight size={14} className="ml-2" /></a>
+                        </Button>
+                    </div>
                     <ChartInsightSummary id="lab-trade-gravity" insight="The gravitational shift in global trade flows from G7 to BRICS+ represents a fundamental re-pricing of geopolitical risk and settlement currency preference." />
                 </section>
 

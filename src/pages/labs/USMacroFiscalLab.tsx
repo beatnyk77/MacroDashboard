@@ -205,6 +205,12 @@ export const USMacroFiscalLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
+                    
+                    <div className="mt-6 flex justify-end">
+                        <Button variant="outline" className="text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10 uppercase tracking-widest text-xs font-black" asChild>
+                            <a href="/labs/us-treasury-foreign-holdings">Deep Dive: Foreign Holder Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
+                        </Button>
+                    </div>
                 </section>
 
                 {/* Section 4: US Fiscal Comparison */}

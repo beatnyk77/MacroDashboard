@@ -41,12 +41,17 @@ const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEffi
 const EnergyDependencyRatioPage = lazy(() => import('@/pages/methods/EnergyDependencyRatioPage').then(module => ({ default: module.EnergyDependencyRatioPage })));
 const FiscalDominanceMeterPage = lazy(() => import('@/pages/methods/FiscalDominanceMeterPage').then(module => ({ default: module.FiscalDominanceMeterPage })));
 const M2GoldRatioPage = lazy(() => import('@/pages/methods/M2GoldRatioPage').then(module => ({ default: module.M2GoldRatioPage })));
+const DeDollarizationGuide = lazy(() => import('@/pages/methods/DeDollarizationGuide').then(module => ({ default: module.DeDollarizationGuide })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 const NotFound = lazy(() => import('@/pages/NotFound').then(module => ({ default: module.NotFound })));
 
 const ThematicLabsIndexPage = lazy(() => import('@/pages/labs/ThematicLabsIndexPage').then(module => ({ default: module.ThematicLabsIndexPage })));
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
+const CentralBankGoldPurchases = lazy(() => import('@/pages/labs/CentralBankGoldPurchases').then(module => ({ default: module.CentralBankGoldPurchases })));
+const BricsTradeSettlement = lazy(() => import('@/pages/labs/BricsTradeSettlement').then(module => ({ default: module.BricsTradeSettlement })));
+const USTreasuryForeignHoldings = lazy(() => import('@/pages/labs/USTreasuryForeignHoldings').then(module => ({ default: module.USTreasuryForeignHoldings })));
+const PetrodollarDecay = lazy(() => import('@/pages/labs/PetrodollarDecay').then(module => ({ default: module.PetrodollarDecay })));
 const EnergyCommoditiesLab = lazy(() => import('@/pages/labs/EnergyCommoditiesLab').then(module => ({ default: module.EnergyCommoditiesLab })));
 
 const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').then(module => ({ default: module.SovereignStressLab })));
@@ -115,6 +120,7 @@ function App() {
                                         <Route path="/methods/energy-dependency-ratio" element={<EnergyDependencyRatioPage />} />
                                         <Route path="/methods/fiscal-dominance-meter" element={<FiscalDominanceMeterPage />} />
                                         <Route path="/methods/m2-gold-ratio" element={<M2GoldRatioPage />} />
+                                        <Route path="/methods/de-dollarization-guide" element={<DeDollarizationGuide />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />
@@ -139,6 +145,10 @@ function App() {
                                         <Route path="/labs/india" element={<Navigate to="/intel/india" replace />} />
                                         <Route path="/labs/china" element={<Navigate to="/intel/china" replace />} />
                                         <Route path="/labs/de-dollarization-gold" element={<DeDollarizationGoldLab />} />
+                                        <Route path="/labs/central-bank-gold-purchases" element={<CentralBankGoldPurchases />} />
+                                        <Route path="/labs/brics-trade-settlement" element={<BricsTradeSettlement />} />
+                                        <Route path="/labs/us-treasury-foreign-holdings" element={<USTreasuryForeignHoldings />} />
+                                        <Route path="/labs/petrodollar-decay-indicators" element={<PetrodollarDecay />} />
                                         <Route path="/labs/energy-commodities" element={<EnergyCommoditiesLab />} />
                                         <Route path="/labs/sovereign-stress" element={<SovereignStressLab />} />
                                         <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
