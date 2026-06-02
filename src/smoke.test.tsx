@@ -56,6 +56,7 @@ const mockDummyFlow = {
 // To avoid actual Supabase calls
 vi.mock('@/lib/supabase', () => ({
     supabase: {
+        rpc: vi.fn(() => Promise.resolve({ data: null, error: null })),
         from: vi.fn((table) => ({
             select: vi.fn().mockReturnThis(),
             order: vi.fn().mockReturnThis(),

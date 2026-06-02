@@ -1,5 +1,6 @@
-import { ShieldCheck, BookOpen, Globe } from 'lucide-react';
+import { ShieldCheck, BookOpen, Globe, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SubscribeCard } from '@/components/SubscribeCard';
 
 export const InstitutionalFooter: React.FC = () => {
     return (
@@ -16,6 +17,17 @@ export const InstitutionalFooter: React.FC = () => {
                         <div className="w-1 h-1 rounded-full bg-blue-400/40" />
                         <div className="w-1 h-1 rounded-full bg-blue-400/40" />
                     </div>
+                </div>
+
+                {/* Weekly Regime Digest capture — persistent footer placement */}
+                <div className="mb-12 flex flex-col gap-4 px-6 py-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-center gap-3 text-blue-400">
+                        <Mail size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-uppercase">
+                            Weekly Regime Digest — synthesized from 15+ official sources
+                        </span>
+                    </div>
+                    <SubscribeCard source="footer" variant="footer" className="md:max-w-[380px] md:flex-1" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start opacity-60">
