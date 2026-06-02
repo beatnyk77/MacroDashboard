@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { SubscriberTractionCard } from '@/components/admin/SubscriberTractionCard';
 
 // --- STYLING CONSTANTS ---
 const BLOOMBERG_ORANGE = '#f59e0b';
@@ -212,6 +213,11 @@ export const AdminDashboard = () => {
                         REFRESH SYSTEM
                     </Button>
                 </Box>
+            </Box>
+
+            {/* Subscriber Traction — north-star metric (plan D5/D15) */}
+            <Box sx={{ mb: 4 }}>
+                <SubscriberTractionCard />
             </Box>
 
             <Grid container spacing={3}>
