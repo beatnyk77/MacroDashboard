@@ -17,14 +17,50 @@ function wtiTicker(year: number, month0: number): string {
 // Returns the current CL2 (second month) ticker.
 // WTI front month expires ~3rd business day before the 25th of the prior month.
 // For simplicity: if today >= 15th, use month+2; otherwise month+1.
-function getCL2Ticker(): { ticker: string; fallback: string } {
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function getCL2Ticker(shortName?: string): { ticker: string; fallback: string } {
     const now = new Date();
+
+    if (shortName) {
+        // e.g. "Crude Oil Jul 26" or "WTI Crude Oil Jul 26"
+        const match = shortName.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{2,4})/i);
+        if (match) {
+            const monthStr = match[1];
+            const yearStr = match[2];
+
+            const monthIndex = MONTH_NAMES.findIndex(m => m.toLowerCase() === monthStr.toLowerCase());
+            const year = yearStr.length === 2 ? 2000 + parseInt(yearStr) : parseInt(yearStr);
+
+            if (monthIndex !== -1 && !isNaN(year)) {
+                // Front month contract code parsed successfully.
+                // The second month (CL2) is M+1 (e.g. August for July front month).
+                const cl2Month = (monthIndex + 1) % 12;
+                const cl2Year = monthIndex === 11 ? year + 1 : year;
+
+                const cl3Month = (monthIndex + 2) % 12;
+                const cl3Year = monthIndex >= 10 ? year + 1 : year;
+
+                console.log(`[ingest-oil-spread] Dynamically parsed front-month: ${monthStr} ${year}. CL2 ticker target: month=${cl2Month}, year=${cl2Year}`);
+
+                return {
+                    ticker: wtiTicker(cl2Year, cl2Month),
+                    fallback: wtiTicker(cl3Year, cl3Month),
+                };
+            }
+        }
+    }
+
+    // ── Fallback: date-based offset ─────────────────────────────────────────
+    console.warn(`[ingest-oil-spread] Failed to parse shortName "${shortName}", falling back to date-based offsets.`);
     const day = now.getUTCDate();
     const month = now.getUTCMonth(); // 0-indexed
     const year = now.getUTCFullYear();
 
-    // If past mid-month, front month may be rolling to next; CL2 jumps ahead
-    const offset = day >= 15 ? 2 : 1;
+    // WTI front month rolls around the 15-20th of the month.
+    // In month M, the M+1 contract is front month (CL1) before the roll, and rolls to M+2 after the roll.
+    // Therefore, CL2 (second month) is M+2 before the roll, and M+3 after.
+    const offset = day >= 15 ? 3 : 2;
 
     const cl2Month = (month + offset) % 12;
     const cl2Year = month + offset >= 12 ? year + 1 : year;
@@ -76,13 +112,27 @@ Deno.serve(async (_req: Request) => {
         console.log('[ingest-oil-spread] Starting oil spread ingestion via Yahoo Finance...');
 
         // ── 1. Fetch CL1 (front month continuous)
-        const cl1Series = await fetchYahooHistory('CL=F');
+        const cl1Url = `https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=3mo`;
+        const cl1Res = await fetch(cl1Url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' } });
+        if (!cl1Res.ok) throw new Error(`Yahoo HTTP ${cl1Res.status} for CL=F`);
+        const cl1Json = await cl1Res.json() as any;
+        const cl1Result = cl1Json?.chart?.result?.[0];
+        if (!cl1Result) throw new Error(`No chart result from Yahoo for CL=F`);
+
+        const cl1Timestamps: number[] = cl1Result.timestamp ?? [];
+        const cl1Closes: (number | null)[] = cl1Result.indicators?.quote?.[0]?.close ?? [];
+        const cl1Series = cl1Timestamps
+            .map((ts, i) => ({ date: new Date(ts * 1000).toISOString().slice(0, 10), close: cl1Closes[i] ?? 0 }))
+            .filter(r => r.close > 0)
+            .sort((a, b) => b.date.localeCompare(a.date));
+
         console.log(`[ingest-oil-spread] CL1 (CL=F): ${cl1Series.length} rows, latest ${cl1Series[0]?.date}`);
 
         if (cl1Series.length === 0) throw new Error('No CL1 data from Yahoo Finance (CL=F)');
 
         // ── 2. Resolve CL2 ticker dynamically, try fallback if primary 404s
-        const { ticker: cl2Primary, fallback: cl2Fallback } = getCL2Ticker();
+        const shortName = cl1Result.meta?.shortName;
+        const { ticker: cl2Primary, fallback: cl2Fallback } = getCL2Ticker(shortName);
         console.log(`[ingest-oil-spread] Trying CL2 tickers: ${cl2Primary}, fallback: ${cl2Fallback}`);
 
         let cl2Series: Array<{ date: string; close: number }> = [];

@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOilData } from '@/hooks/useOilData';
 import { MotionCard } from '@/components/MotionCard';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { PendingDataState } from '@/components/PendingDataState';
 import { supabase } from '@/lib/supabase';
 import { useStaleness } from '@/hooks/useStaleness';
 import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
@@ -15,6 +16,7 @@ const PowerMixDivergenceCard = lazy(() => import('../cards/PowerMixDivergenceCar
 
 export const SovereignEnergySecuritySection: React.FC = () => {
     const { data: apiData } = useOilData();
+    const queryClient = useQueryClient();
 
     const { data: capacityFreshness } = useQuery({
         queryKey: ['oil-refining-capacity-freshness'],
@@ -36,10 +38,12 @@ export const SovereignEnergySecuritySection: React.FC = () => {
     if (hasNoData) {
         return (
             <div className="space-y-8">
-                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
-                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">Energy Security data temporarily unavailable</span>
-                    <p className="text-xs text-muted-foreground/40 italic">System is currently normalizing upstream feeds. Please check back shortly.</p>
-                </div>
+                <PendingDataState
+                    height={400}
+                    accentColor="blue"
+                    statusText="UPSTREAM FEED SYNCHRONIZING — EIA / FRED pipeline normalizing. Strategic reserve data updates weekly."
+                    onRetry={() => queryClient.invalidateQueries({ queryKey: ['oil_data'] })}
+                />
             </div>
         );
     }

@@ -20,15 +20,15 @@ Deno.serve(async (req) => {
         const urlParams = new URL(req.url).searchParams;
         const category = urlParams.get('category') || 'Semiconductors';
         const hsCode = urlParams.get('hsCode') || '8542';
+        const flowCode = urlParams.get('flowCode') || 'X'; // X = Exports, M = Imports
+        const partnerCode = urlParams.get('partnerCode') || 'all'; // Default to 'all' to get bilateral flows
 
-        console.log(`Starting UN Comtrade Ingestion for ${category} (HS ${hsCode})...`);
+        console.log(`Starting UN Comtrade Ingestion for ${category} (HS ${hsCode}, Flow ${flowCode})...`);
 
         // Period: 2023
         // Add 699 (India) to reporters
         const reporterCode = "156,410,490,528,840,699";
         const period = "2023";
-        const flowCode = "X"; // Exports
-        const partnerCode = "0"; // World
 
         let url = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporterCode}&period=${period}&cmdCode=${hsCode}&flowCode=${flowCode}&partnerCode=${partnerCode}`;
 
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
             period: record.period,
             trade_value_usd: record.primaryValue,
             net_weight_kg: record.netWgt,
-            reporter_is_exporter: true,
+            reporter_is_exporter: flowCode === 'X',
             metadata: {
                 source: 'UN Comtrade',
                 flowDesc: record.flowDesc,

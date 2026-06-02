@@ -1,6 +1,7 @@
 // src/features/energy/components/FuelSecurityClockIndia.tsx
 import React, { useMemo } from 'react';
 import { MotionCard } from '@/components/MotionCard';
+import { PendingDataState } from '@/components/PendingDataState';
 import {
     ResponsiveContainer,
     BarChart,
@@ -18,6 +19,39 @@ import { useFuelSecurityIndia } from '../hooks/useFuelSecurityIndia';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+
+// Per-chokepoint risk: differentiated thresholds reflect India's actual import corridor exposure.
+type ChokepointStatus = 'critical' | 'elevated' | 'normal';
+
+const getChokepointStatus = (
+    chokepoint: 'Hormuz' | 'Malacca' | 'Red Sea',
+    geoScore: number,
+    tankerPipeline: Array<{ origin: string; risk_flag: string }>,
+): ChokepointStatus => {
+    const exposed = tankerPipeline.filter(v => v.risk_flag === 'chokepoint_exposed');
+
+    if (chokepoint === 'Hormuz') {
+        let status: ChokepointStatus = geoScore > 65 ? 'critical' : geoScore > 35 ? 'elevated' : 'normal';
+        if (status !== 'critical') {
+            const gulfOrigins = ['Iraq', 'Iran', 'Saudi', 'Kuwait', 'UAE'];
+            const hasGulfExposed = exposed.some(v => gulfOrigins.some(o => v.origin.includes(o)));
+            if (hasGulfExposed && status === 'normal') status = 'elevated';
+        }
+        return status;
+    }
+
+    if (chokepoint === 'Malacca') {
+        let status: ChokepointStatus = geoScore > 75 ? 'critical' : geoScore > 45 ? 'elevated' : 'normal';
+        if (status !== 'critical') {
+            const hasRuVzExposed = exposed.some(v => v.origin.includes('Russia') || v.origin.includes('Venezuela'));
+            if (hasRuVzExposed && status === 'normal') status = 'elevated';
+        }
+        return status;
+    }
+
+    // Red Sea — tracks geo risk tightly (Houthi / Bab-el-Mandeb)
+    return geoScore > 60 ? 'critical' : geoScore > 30 ? 'elevated' : 'normal';
+};
 
 const getRiskColor = (score: number): string => {
     if (score < 30) return '#10b981';
@@ -67,7 +101,7 @@ const useIndiaImportOrigins = () =>
     });
 
 export const FuelSecurityClockIndia: React.FC = () => {
-    const { data: apiData, isError } = useFuelSecurityIndia();
+    const { data: apiData, isError, refetch } = useFuelSecurityIndia();
     const { data: importOrigins = [] } = useIndiaImportOrigins();
 
     const projData = useMemo(() => {
@@ -84,14 +118,12 @@ export const FuelSecurityClockIndia: React.FC = () => {
     if (isError || !apiData) {
         return (
             <MotionCard className="w-full" delay={0.35}>
-                <div className="h-[400px] flex flex-col items-center justify-center bg-black/40 border border-white/12 rounded-[2.5rem] backdrop-blur-3xl">
-                    <span className="text-sm font-black text-rose-500/50 uppercase tracking-uppercase mb-2">
-                        Fuel Security Data Not Available
-                    </span>
-                    <p className="text-xs text-muted-foreground/40 italic">
-                        The ingestion pipeline has not yet produced data. Please check back later.
-                    </p>
-                </div>
+                <PendingDataState
+                    height={400}
+                    accentColor="amber"
+                    statusText="PIPELINE INITIALIZING — EIA International Energy Statistics / PPAC data sync in progress. Coverage data updates bi-weekly."
+                    onRetry={() => refetch()}
+                />
             </MotionCard>
         );
     }
@@ -245,11 +277,18 @@ export const FuelSecurityClockIndia: React.FC = () => {
                             </div>
                             <div className="flex-1 space-y-2">
                                 {(['Hormuz', 'Malacca', 'Red Sea'] as const).map(chokepoint => {
-                                    const status = data.geopolitical_risk_score > 70 ? 'critical' :
-                                        data.geopolitical_risk_score > 40 ? 'elevated' : 'normal';
+                                    const status = getChokepointStatus(chokepoint, data.geopolitical_risk_score, data.tanker_pipeline_json ?? []);
+                                    const subtitle = chokepoint === 'Hormuz'
+                                        ? 'Gulf crude corridor (~50%)'
+                                        : chokepoint === 'Malacca'
+                                        ? 'East Africa / Russia legs'
+                                        : 'Houthi / Bab-el-Mandeb';
                                     return (
                                         <div key={chokepoint} className="flex items-center justify-between text-xs">
-                                            <span className="text-muted-foreground/60 uppercase tracking-wider">{chokepoint}</span>
+                                            <div>
+                                                <span className="text-muted-foreground/60 uppercase tracking-wider">{chokepoint}</span>
+                                                <div className="text-[9px] text-muted-foreground/30 uppercase tracking-wide">{subtitle}</div>
+                                            </div>
                                             <span className={cn(
                                                 'font-black px-2 py-0.5 rounded text-[10px]',
                                                 status === 'critical' ? 'bg-rose-500/10 text-rose-500' :

@@ -77,6 +77,22 @@ vi.mock('@/lib/supabase', () => ({
                 if (table === 'smart_money_flow') data = mockDummyFlow;
                 if (table === 'vw_net_liquidity') data = [{ as_of_date: new Date().toISOString(), value: 4500, z_score: 1.5, percentile: 0.85, delta: 10, delta_pct: 0.2, alarm_status: 'nominal' }];
                 if (table === 'vw_latest_metrics') data = [{ value: 100 }];
+                if (table === 'vw_latest_daily_signal') data = { 
+                    signal_date: new Date().toISOString().slice(0, 10),
+                    regime: 'NEUTRAL', 
+                    score: 52.5, 
+                    confidence_pct: 66.0, 
+                    score_delta: -0.9, 
+                    regime_changed: false, 
+                    key_driver: 'Global Liquidity Conditions', 
+                    watch_item: 'DXY pivot vs EM FX moves', 
+                    component_scores: { vol: 65, rates: 40, dollar: 35, metals: 47, liquidity: 70 },
+                    computed_at: new Date().toISOString(),
+                    regime_line: '🟡 Regime: NEUTRAL · Score 52/100',
+                    driver_line: '⚡ Key Driver: Global Liquidity Conditions',
+                    watch_line: '👁 Watch: DXY pivot vs EM FX moves',
+                    context_line: 'Context: Global liquidity supportive.'
+                };
                 if (table === 'monthly_regime_digests') data = { year_month: '2024-03', subject_line: 'Test Digest', plain_text: 'Test content', generated_at: new Date().toISOString() };
                 if (table === 'g20_sovereign_risk') data = [{ country: 'USA', cds_spread: 10, debt_to_gdp: 120, fiscal_balance: -5, inflation: 2, credit_rating: 'AAA', outlook: 'Stable' }];
                 if (table === 'climate_risk_metrics') data = [{ id: '1', date: '2024-01-01', country_code: 'IND', region_code: null, grid_co2_intensity: 450, transition_risk_score: 65.5, renewable_share_pct: 22.5, total_ghg_emissions_mt: 3200, temperature_alignment_c: 2.8, is_climate_emergency: true, metadata: {}, created_at: new Date().toISOString() }];
@@ -146,6 +162,7 @@ import { China15thFYPLab } from '@/pages/labs/China15thFYP';
 import SovereignStressLab from '@/pages/labs/SovereignStressLab';
 
 import { About } from '@/pages/About';
+import TradeIntelligencePage from '@/pages/TradeIntelligencePage';
 
 const theme = createTheme();
 const queryClient = new QueryClient({
@@ -275,5 +292,14 @@ describe('Smoke Tests', () => {
         );
         // MUI Typography with h1 "The Surveillance Mandate"
         expect(await screen.findByText(/The Surveillance Mandate/i, {}, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders TradeIntelligencePage page without crashing', async () => {
+        render(
+            <TestWrapper route="/trade">
+                <TradeIntelligencePage />
+            </TestWrapper>
+        );
+        expect(await screen.findByText(/Trade Intelligence/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });

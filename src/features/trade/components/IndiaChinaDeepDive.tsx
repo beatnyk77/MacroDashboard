@@ -19,6 +19,9 @@ export const IndiaChinaDeepDive: React.FC = () => {
     const [selectedCode, setSelectedCode] = useState(COMPARISON_CATEGORIES[0].code)
     const { data, loading, refreshing, error, refresh, lastFetchedAt } = useIndiaChinaComparison(selectedCode)
     const latest = data[0]
+    const total = (latest?.india_export_usd ?? 0) + (latest?.china_export_usd ?? 0)
+    const indiaWidth = total > 0 ? Math.round((latest.india_export_usd / total) * 100) : 65
+    const chinaWidth = total > 0 ? Math.round((latest.china_export_usd / total) * 100) : 85
 
     const [now] = React.useState(() => Date.now())
 
@@ -147,7 +150,7 @@ export const IndiaChinaDeepDive: React.FC = () => {
                                 </span>
                             </div>
                             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-emerald-500 rounded-full" style={{ width: '65%' }} />
+                                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${indiaWidth}%` }} />
                             </div>
                         </div>
                     </div>
@@ -189,7 +192,7 @@ export const IndiaChinaDeepDive: React.FC = () => {
                                 </span>
                             </div>
                             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-blue-500 rounded-full" style={{ width: '85%' }} />
+                                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${chinaWidth}%` }} />
                             </div>
                         </div>
                     </div>

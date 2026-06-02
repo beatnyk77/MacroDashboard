@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
         // ── 1. Get all reporters and years from trade_demand_cache ──
         const { data: demandRows, error: demandErr } = await supabase
             .from('trade_demand_cache')
-            .select('reporter_iso3, reporter_iso2, reporter_name, year, export_value_usd')
+            .select('reporter_iso3, reporter_iso2, reporter_name, year, import_value_usd')
             .eq('hs_code', hsCode)
             .order('reporter_iso3')
             .order('year')
@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
                     yearlyValues: [],
                 }
             }
-            byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, usd: row.export_value_usd || 0 })
+            byReporter[row.reporter_iso3].yearlyValues.push({ year: row.year, usd: row.import_value_usd || 0 })
         }
 
 

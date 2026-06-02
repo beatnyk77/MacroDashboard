@@ -14,23 +14,30 @@ export function useRegime() {
         queryKey: ['regime-latest'],
         queryFn: async (): Promise<RegimeData | null> => {
             const { data, error } = await supabase
-                .from('regime_snapshots')
+                .from('vw_latest_daily_signal')
                 .select('*')
-                .order('timestamp', { ascending: false })
                 .limit(1)
-                .single();
+                .maybeSingle();
 
             if (error || !data) {
-                console.warn('Could not fetch latest regime snapshot');
+                console.warn('Could not fetch latest daily macro signal for regime snapshot');
                 return null;
             }
 
+            // Map RISK_ON -> Expansion, RISK_OFF -> Tightening, NEUTRAL -> Neutral
+            let regimeLabel = 'Neutral';
+            if (data.regime === 'RISK_ON') {
+                regimeLabel = 'Expansion';
+            } else if (data.regime === 'RISK_OFF') {
+                regimeLabel = 'Tightening';
+            }
+
             return {
-                id: data.id,
-                regimeLabel: data.regime_label,
-                pulseScore: Number(data.pulse_score),
-                signalBreadth: Number(data.signal_breadth),
-                timestamp: data.timestamp
+                id: data.signal_date, // Use signal_date as stable ID
+                regimeLabel: regimeLabel,
+                pulseScore: Number(data.score),
+                signalBreadth: Number(data.confidence_pct),
+                timestamp: data.computed_at
             };
         },
         staleTime: 1000 * 60 * 15, // 15 min

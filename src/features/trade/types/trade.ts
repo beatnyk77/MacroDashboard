@@ -66,7 +66,7 @@ export interface TradeMarket extends OpportunityScore {
 /** Trend data point for ImportTrendChart */
 export interface TrendPoint {
     year: number
-    export_value_usd: number
+    import_value_usd: number
 }
 
 /** State for the demand hook */

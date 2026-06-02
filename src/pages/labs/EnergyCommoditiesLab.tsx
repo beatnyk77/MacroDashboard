@@ -14,6 +14,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { CurrentEnergyRegimeCard } from '@/features/energy/components/CurrentEnergyRegimeCard';
+import { EnergyLabNav } from '@/features/energy/components/EnergyLabNav';
 
 const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/SovereignEnergySecuritySection').then(m => ({ default: m.SovereignEnergySecuritySection })));
 const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/components/sections/AsiaCommodityFlowsSection').then(m => ({ default: m.AsiaCommodityFlowsSection })));
@@ -36,10 +37,27 @@ const SmallLoadingFallback = () => (
 export const EnergyCommoditiesLab: React.FC = () => {
     return (
         <>
+            <EnergyLabNav />
             <SEOManager
-                title="Energy & Commodities Lab — Supply Chains, Refining Capacity & Resource Security"
-                description="Analyze global physical flow dynamics, refining capacity elasticity, strategic oil reserves, and fuel security metrics. Institutional resource security intelligence."
-                keywords={['energy commodities', 'oil reserves', 'refining capacity', 'commodity flows', 'fuel security', 'India energy', 'WTI calendar spread']}
+                title="Energy Security Intelligence Lab | WTI Contango, SPR Depletion & Refining Capacity Telemetry — GraphiQuestor"
+                description="Live WTI calendar spread, US SPR depletion tracker, global refining imbalance monitor, and India fuel security clock. Institutional-grade energy flow telemetry for macro strategists."
+                keywords={[
+                    'WTI contango backwardation',
+                    'US strategic petroleum reserve SPR depletion',
+                    'global refining capacity utilization',
+                    'India oil import dependency',
+                    'sovereign energy security score',
+                    'Asia commodity flow dynamics',
+                    'Brent crude India current account deficit',
+                    'OPEC production cut impact',
+                    'chokepoint risk Hormuz Malacca',
+                    'energy market regime indicator',
+                    'refinery utilization rate EIA',
+                    'EU natural gas storage level',
+                    'India fuel security coverage days',
+                    'shadow fleet crude oil flows',
+                    'refining margin arbitrage',
+                ]}
                 jsonLd={[
                     {
                         '@context': 'https://schema.org',
@@ -60,12 +78,18 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         '@context': 'https://schema.org',
                         '@type': 'Dataset',
                         'name': 'Global Energy Security Data',
-                        'description': 'Data on global physical flow dynamics, refining capacity elasticity, and strategic oil reserves.',
+                        'description': 'Institutional energy security telemetry including WTI calendar spread regime classification, US SPR capacity utilization (EIA/FRED), global refinery utilization rates, Asia crude import origin flows (UN Comtrade), India fuel security coverage estimates (PPAC/EIA), and sovereign energy vulnerability scoring. Updated weekly via automated ingestion pipelines.',
+                        'keywords': ['WTI calendar spread', 'SPR depletion', 'refining capacity', 'India energy security', 'Asia commodity flows', 'chokepoint risk', 'energy market regime'],
                         'url': 'https://graphiquestor.com/labs/energy-commodities',
                         'isAccessibleForFree': true,
                         'creator': {
                             '@type': 'Organization',
                             'name': 'GraphiQuestor'
+                        },
+                        'author': {
+                            '@type': 'Organization',
+                            'name': 'GraphiQuestor',
+                            'url': 'https://graphiquestor.com'
                         }
                     }
                 ]}
@@ -97,20 +121,20 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 max-w-4xl">
                         <h2 className="text-xs font-black text-white uppercase tracking-widest mb-4 border-b border-white/10 pb-4 inline-block">How to use this Lab</h2>
                         <p className="text-sm text-muted-foreground/60 leading-relaxed font-medium uppercase tracking-wide">
-                            Start with the <strong className="text-white">Energy Market Regime</strong> card — it frames the current physical stress state. Then drill into WTI Calendar Spread for oil market structure, followed by the Sovereign Energy Security and Asia Flows sections. The Fuel Security Clock gives India-specific vulnerability metrics.
+                            Start with the <strong className="text-white">Energy Market Regime</strong> card to frame the current physical stress state, then drill into <strong className="text-white">WTI Calendar Spread</strong> for forward paper market structure. <strong className="text-white">Live Commodity Prices</strong> surfaces real-time cross-asset anchoring before <strong className="text-white">Sovereign Energy Security</strong> maps strategic reserve depletion and import exposure by country. <strong className="text-white">Asia Energy &amp; Commodity Flows</strong> and <strong className="text-white">Global Refining Imbalance</strong> reveal where molecular bottlenecks and refinery migration are reshaping inflation trajectories across emerging markets. Complete the picture with the <strong className="text-white">Fuel Security Clock</strong> for India-specific vulnerability thresholds and the <strong className="text-white">Physical Flows Terminal</strong> for raw warehouse-level inventory data on critical metals.
                         </p>
                     </div>
                 </div>
 
                 {/* 0. ENERGY MARKET REGIME — Executive Summary */}
-                <div className="mb-16">
+                <div id="energy-regime" className="mb-16">
                     <SectionErrorBoundary name="Energy Market Regime">
                         <CurrentEnergyRegimeCard />
                     </SectionErrorBoundary>
                 </div>
 
                 {/* 1. WTI CALENDAR SPREAD */}
-                <div className="mb-32">
+                <div id="wti-spread" className="mb-32">
                     <SectionErrorBoundary name="WTI Calendar Spread">
                         <Suspense fallback={<LoadingFallback />}>
                             <WTICalendarSpread />
@@ -120,7 +144,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
 
                 <div className="space-y-32">
                     {/* 2. Live Commodity Prices — promoted from accordion */}
-                    <section>
+                    <section id="commodity-prices">
                         <div className="flex items-center gap-3 mb-10">
                             <BarChart2 className="text-amber-500" size={28} />
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Live Commodity Prices</h2>
@@ -133,7 +157,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </section>
 
                     {/* 3. Sovereign Energy Security */}
-                    <section>
+                    <section id="sovereign-security">
                         <div className="flex items-center gap-3 mb-10">
                             <Globe className="text-blue-500" size={28} />
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Sovereign Energy Security</h2>
@@ -154,7 +178,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </section>
 
                     {/* 4. Asia Energy & Commodity Flows */}
-                    <section>
+                    <section id="asia-flows">
                         <div className="flex items-center gap-3 mb-10">
                             <Ship className="text-emerald-500" size={28} />
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Asia Energy & Commodity Flows</h2>
@@ -175,7 +199,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </section>
 
                     {/* 5. Global Refining Imbalance */}
-                    <section>
+                    <section id="refining-imbalance">
                         <div className="flex items-center gap-3 mb-10">
                             <Activity className="text-blue-500" size={28} />
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Global Refining Imbalance</h2>
@@ -196,7 +220,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </section>
 
                     {/* 6. Fuel Security Clock – India */}
-                    <section>
+                    <section id="fuel-clock">
                         <div className="flex items-center gap-3 mb-10">
                             <Clock className="text-amber-500" size={28} />
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Fuel Security Clock – India</h2>
@@ -211,13 +235,13 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
                             <span className="text-xs font-black uppercase tracking-widest text-amber-400 block mb-4">So What? — Institutional Insight</span>
                             <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                India's import dependency creates structural inflation vulnerability. Track INR/barrel for currency pressure signals and the geopolitical risk score for chokepoint black swan exposure.
+                                India's ~85% maritime import dependency makes Hormuz closure the single highest-impact tail risk for sovereign fiscal stability — no overland substitution exists at scale. Track the INR/barrel cost metric against the INR 7,000+ threshold: sustained breach signals elevated current account deterioration and imported inflation pass-through into CPI. A geopolitical risk score above 70 combined with reserves coverage below 15 days constitutes the dual-trigger for immediate fiscal stress, requiring intervention in either foreign exchange reserves or domestic price controls. Monitor both simultaneously — each metric alone is insufficient for actionable positioning.
                             </p>
                         </div>
                     </section>
 
                     {/* 7. Physical Flows Terminal */}
-                    <section>
+                    <section id="flows-terminal">
                         <div className="flex items-center gap-3 mb-10">
                             <Activity className="text-amber-500" size={28} />
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Physical Flows Terminal</h2>
@@ -232,7 +256,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
                             <span className="text-xs font-black uppercase tracking-widest text-amber-500 block mb-4">So What? — Institutional Insight</span>
                             <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                Tracking physical delivery networks for critical metals (Copper, REMs) fronts the demand impulses of clean tech and defense manufacturing, bypassing financialization noise.
+                                Copper inventory at LME/SHFE below 5-day consumption is the canonical leading indicator of Chinese industrial re-stocking cycles, signaling demand inflection 4–6 weeks ahead of futures price confirmation. REM supply concentration — China controls ~85% of global processing capacity — means any export restriction creates immediate aerospace and defense procurement risk with no short-run substitution available. For structural demand reads, the physical premium versus spot (the basis) is materially more informative than headline futures prices, as it reflects actual delivery urgency rather than financial positioning. Watch warehouse cancellations and load-out rates alongside inventory levels for the highest-conviction entry signals.
                             </p>
                         </div>
                     </section>

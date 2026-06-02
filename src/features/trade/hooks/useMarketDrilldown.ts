@@ -45,7 +45,7 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
                     // 5-year import trend
                     supabase
                         .from('trade_demand_cache')
-                        .select('year, export_value_usd')
+                        .select('year, import_value_usd')
                         .eq('hs_code', hsCode)
                         .eq('reporter_iso3', reporterIso3)
                         .order('year', { ascending: true })
@@ -81,7 +81,7 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
 
                 const trend: TrendPoint[] = (trendRes.data || []).map(r => ({
                     year: r.year,
-                    export_value_usd: r.export_value_usd || 0,
+                    import_value_usd: r.import_value_usd || 0,
                 }))
 
                 const suppliers: SupplierBreakdown[] = supplierRes.data || []

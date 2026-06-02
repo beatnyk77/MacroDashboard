@@ -18,8 +18,24 @@ const MAJOR_REPORTERS = [
     { iso3: 'KOR', name: 'South Korea', iso2: 'KR' },
 ]
 
-export const GlobalTradePulse: React.FC = () => {
-    const [selectedISO, setSelectedISO] = useState('CHN')
+interface GlobalTradePulseProps {
+    /** When provided the country selector is hidden — parent controls selection */
+    selectedISO?: string
+    onCountryChange?: (iso3: string) => void
+    hideCountrySelector?: boolean
+}
+
+export const GlobalTradePulse: React.FC<GlobalTradePulseProps> = ({
+    selectedISO: controlledISO,
+    onCountryChange,
+    hideCountrySelector = false,
+}) => {
+    const [internalISO, setInternalISO] = useState('CHN')
+    const selectedISO = controlledISO ?? internalISO
+    const setSelectedISO = (iso: string) => {
+        if (onCountryChange) onCountryChange(iso)
+        else setInternalISO(iso)
+    }
     const { data, loading, refreshing, error, refresh, lastFetchedAt } = useGlobalTrade(selectedISO)
 
     const selectedCountry = MAJOR_REPORTERS.find(r => r.iso3 === selectedISO)
@@ -62,23 +78,25 @@ export const GlobalTradePulse: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex flex-wrap gap-2">
-                        {MAJOR_REPORTERS.map(r => (
-                            <button
-                                key={r.iso3}
-                                onClick={() => setSelectedISO(r.iso3)}
-                                className={cn(
-                                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                                    selectedISO === r.iso3
-                                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                                        : "bg-white/5 text-white/40 border border-transparent hover:bg-white/10"
-                                )}
-                            >
-                                <span className="mr-1.5">{isoToFlag(r.iso2)}</span>
-                                {r.iso3}
-                            </button>
-                        ))}
-                    </div>
+                    {!hideCountrySelector && (
+                        <div className="flex flex-wrap gap-2">
+                            {MAJOR_REPORTERS.map(r => (
+                                <button
+                                    key={r.iso3}
+                                    onClick={() => setSelectedISO(r.iso3)}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                                        selectedISO === r.iso3
+                                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                            : "bg-white/5 text-white/40 border border-transparent hover:bg-white/10"
+                                    )}
+                                >
+                                    <span className="mr-1.5">{isoToFlag(r.iso2)}</span>
+                                    {r.iso3}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
                     <button
                         onClick={() => refresh()}
@@ -135,28 +153,38 @@ export const GlobalTradePulse: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className={cn(refreshing && "opacity-50 transition-opacity")}>
-                            {data.slice(0, 15).map((row, _idx) => {
-                                const isPositive = (row.yoy_growth_pct ?? 0) >= 0
-                                return (
-                                    <tr key={row.hs_code} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
-                                        <td className="px-4 py-4 font-mono text-white/40">{row.hs_code}</td>
-                                        <td className="px-4 py-4">
-                                            <p className="font-bold text-white/80 group-hover:text-white transition-colors">
-                                                {HS2_CHAPTER_NAMES[row.hs_code] || `Chapter ${row.hs_code} Category`}
-                                            </p>
-                                        </td>
-                                        <td className="px-4 py-4 text-right font-mono font-black text-white/70">
-                                            {formatTradeValue(row.export_value_usd)}
-                                        </td>
-                                        <td className="px-4 py-4 text-right">
-                                            <div className={cn(
-                                                "flex items-center justify-end gap-1 font-mono font-black",
-                                                isPositive ? "text-emerald-400" : "text-rose-400"
-                                            )}>
-                                                {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                                {Math.abs(row.yoy_growth_pct ?? 0).toFixed(1)}%
-                                            </div>
-                                        </td>
+                            {(() => {
+                                const latestYear = Math.max(...data.map(r => r.year), 0);
+                                const filtered = latestYear > 0 ? data.filter(r => r.year === latestYear) : data;
+                                const uniqueData = Array.from(
+                                    new Map(filtered.map(r => [r.hs_code, r])).values()
+                                );
+                                return uniqueData.slice(0, 15).map((row) => {
+                                    const isPositive = (row.yoy_growth_pct ?? 0) >= 0;
+                                    return (
+                                        <tr key={row.hs_code} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
+                                            <td className="px-4 py-4 font-mono text-white/40">{row.hs_code}</td>
+                                            <td className="px-4 py-4">
+                                                <p className="font-bold text-white/80 group-hover:text-white transition-colors">
+                                                    {HS2_CHAPTER_NAMES[row.hs_code] || `Chapter ${row.hs_code} Category`}
+                                                </p>
+                                            </td>
+                                            <td className="px-4 py-4 text-right font-mono font-black text-white/70">
+                                                {formatTradeValue(row.export_value_usd)}
+                                            </td>
+                                            <td className="px-4 py-4 text-right font-mono font-black">
+                                                {row.yoy_growth_pct !== null && row.yoy_growth_pct !== undefined ? (
+                                                    <div className={cn(
+                                                        "flex items-center justify-end gap-1",
+                                                        isPositive ? "text-emerald-400" : "text-rose-400"
+                                                    )}>
+                                                        {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                                                        {Math.abs(row.yoy_growth_pct).toFixed(1)}%
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-white/20">—</span>
+                                                )}
+                                            </td>
                                         <td className="px-4 py-4 text-right font-mono text-white/40">
                                             {(row.share_of_total_pct ?? 0).toFixed(2)}%
                                         </td>
@@ -174,7 +202,8 @@ export const GlobalTradePulse: React.FC = () => {
                                         </td>
                                     </tr>
                                 )
-                            })}
+                            })
+                            })()}
                         </tbody>
                     </table>
                     

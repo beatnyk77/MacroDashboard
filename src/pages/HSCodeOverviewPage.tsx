@@ -7,11 +7,13 @@ import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRan
 import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
 import { SEOManager } from '@/components/SEOManager'
+import { useRecentHSCodes } from '../features/trade/hooks/useRecentHSCodes'
 
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
     const [searchParams] = useSearchParams()
     const isEmbedded = searchParams.get('embed') === 'true'
+    const { push: pushRecent } = useRecentHSCodes()
 
     const handleGeneratePlaybook = () => {
         console.log('[HSCodeOverview] Export Playbook Clicked. Code:', code, 'Description:', hsDescription);
@@ -30,6 +32,10 @@ const HSCodeOverviewPage: React.FC = () => {
     // Quick fetch to get description
     const { results } = useHSCodeSearch(code || '')
     const hsDescription = results.find(r => r.code === code)?.description
+
+    React.useEffect(() => {
+        if (code && hsDescription) pushRecent(code, hsDescription)
+    }, [code, hsDescription, pushRecent])
 
     const [now] = React.useState(() => Date.now())
     const cachedAt = state.status === 'success' ? state.cachedAt : null
