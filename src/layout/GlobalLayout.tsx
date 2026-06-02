@@ -31,6 +31,10 @@ const terminalNavItems = [
     { id: 'de-dollarization-guide', label: 'De-Dollarization Guide', path: '/methods/de-dollarization-guide', icon: <FileText size={18} /> },
     { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={18} /> },
     { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={18} /> },
+    { id: 'central-bank-gold', label: 'Central Bank Gold', path: '/labs/central-bank-gold-purchases', icon: <Activity size={18} /> },
+    { id: 'brics-trade', label: 'BRICS Trade Settlement', path: '/labs/brics-trade-settlement', icon: <Globe size={18} /> },
+    { id: 'us-treasury-holdings', label: 'US Treasury Holdings', path: '/labs/us-treasury-foreign-holdings', icon: <FileText size={18} /> },
+    { id: 'petrodollar-decay', label: 'Petrodollar Decay', path: '/labs/petrodollar-decay-indicators', icon: <Anchor size={18} /> },
 ];
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {

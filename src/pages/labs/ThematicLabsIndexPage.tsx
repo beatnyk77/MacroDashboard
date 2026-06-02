@@ -130,6 +130,54 @@ const labsList: LabItem[] = [
         primaryIndicators: ['Mining Royalty Benchmarks', 'Bilateral Debt Liabilities', 'Currency Volatility Thresholds', 'Food Import Dependence Index'],
         dataSource: 'AfDB / African Union / Comtrade',
         status: 'Active'
+    },
+    {
+        id: 'central-bank-gold',
+        name: 'Central Bank Gold Purchases',
+        path: '/labs/central-bank-gold-purchases',
+        icon: <Anchor className="w-6 h-6 text-yellow-300" />,
+        color: 'from-yellow-400/10 to-yellow-600/5 hover:border-yellow-400/30',
+        description: 'Real-time tracking of global central bank gold accumulation, PBoC and RBI reserve build-up, and the structural de-dollarization via hard asset rotation.',
+        methodology: 'IMF COFER + World Gold Council quarterly data reconciled against SWIFT cross-border reserve flow proxies.',
+        primaryIndicators: ['PBoC Gold Accumulation Rate', 'RBI Reserve Diversification', 'Net Central Bank Purchases (QoQ)', 'Gold-to-FX Reserve Ratio'],
+        dataSource: 'IMF / World Gold Council / BIS',
+        status: 'Active'
+    },
+    {
+        id: 'brics-trade',
+        name: 'BRICS Trade Settlement',
+        path: '/labs/brics-trade-settlement',
+        icon: <Globe className="w-6 h-6 text-teal-400" />,
+        color: 'from-teal-500/10 to-cyan-500/5 hover:border-teal-500/30',
+        description: 'Monitor BRICS bilateral trade settlement volumes, local currency adoption rates, and the structural gravity shift away from USD-denominated G7 trade networks.',
+        methodology: 'UN Comtrade bilateral flow analysis cross-referenced with SWIFT message volume divergence and CNH settlement data.',
+        primaryIndicators: ['Local Currency Settlement Share', 'BRICS Bilateral Trade Volumes', 'SWIFT vs. Non-SWIFT Divergence', 'CNH/INR/BRL Settlement Growth'],
+        dataSource: 'UN Comtrade / SWIFT / PBoC',
+        status: 'Active'
+    },
+    {
+        id: 'us-treasury-holdings',
+        name: 'US Treasury Foreign Holdings',
+        path: '/labs/us-treasury-foreign-holdings',
+        icon: <Library className="w-6 h-6 text-indigo-400" />,
+        color: 'from-indigo-500/10 to-blue-500/5 hover:border-indigo-500/30',
+        description: 'Deep analysis of foreign central bank UST holdings, sovereign selloff trajectories, and the fiscal dominance implications of declining demand at Treasury auctions.',
+        methodology: 'TIC data cross-referenced with auction bid-to-cover ratios and primary dealer positioning to identify structural demand erosion.',
+        primaryIndicators: ['Foreign UST Holdings (TIC Data)', 'Auction Bid-to-Cover Ratio', 'China / Japan Liquidation Rate', 'Primary Dealer Absorption Rate'],
+        dataSource: 'US Treasury TIC / Federal Reserve',
+        status: 'Active'
+    },
+    {
+        id: 'petrodollar-decay',
+        name: 'Petrodollar Decay Indicators',
+        path: '/labs/petrodollar-decay-indicators',
+        icon: <Zap className="w-6 h-6 text-orange-300" />,
+        color: 'from-orange-400/10 to-red-500/5 hover:border-orange-400/30',
+        description: 'Structural decay monitoring of the USD-oil peg system, Petroyuan settlement adoption, and the Gold/Oil revaluation scenario as the recycling mechanism fractures.',
+        methodology: 'Saudi Aramco settlement currency composition, CNY oil futures open interest, and OPEC+ invoice currency tracking.',
+        primaryIndicators: ['CNY-Denominated Oil Settlement Share', 'Petroyuan Futures OI', 'Gold/Oil Revaluation Ratio', 'OPEC+ Invoice Currency Breakdown'],
+        dataSource: 'EIA / OPEC / Shanghai INE / PBOC',
+        status: 'Active'
     }
 ];
 
