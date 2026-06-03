@@ -218,7 +218,7 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
                                     {/* Tags */}
                                     <td className="px-4 py-3">
                                         <div className="flex flex-wrap gap-1">
-                                            {m.opportunityTags.slice(0, 2).map(tag => (
+                                            {m.opportunityTags.slice(0, 2).map((tag: string) => (
                                                 <span key={tag} className="text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-white/5 text-white/40 whitespace-nowrap">
                                                     {tag}
                                                 </span>

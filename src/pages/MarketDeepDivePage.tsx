@@ -16,7 +16,8 @@ import { SEOManager } from '@/components/SEOManager'
 const MarketDeepDivePage: React.FC = () => {
     const { code, iso } = useParams<{ code: string; iso: string }>()
     // We need iso2 for macro overlay. The demand hook holds this in the list.
-    const state = useHSDemand(code || null)
+    const demandState = useHSDemand(code || null)
+    const state = demandState as any
     const markets = state.status === 'success' ? state.markets : []
     const marketScore = markets.find((m: any) => m.reporter_iso3 === iso)
     

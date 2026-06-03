@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 
 export interface USTreasuryAuction {
     id: string;
@@ -65,13 +65,13 @@ export const useAuctionSync = () => {
       return data;
     },
     onSuccess: () => {
-      toast.success('Treasury auction data synchronized');
+      toast({ title: 'Treasury auction data synchronized' });
       queryClient.invalidateQueries({ queryKey: ['us-treasury-auctions'] });
       queryClient.invalidateQueries({ queryKey: ['auction-ingestion-health'] });
     },
     onError: (error) => {
       console.error('Auction sync failed:', error);
-      toast.error('Failed to sync auction data');
+      toast({ title: 'Failed to sync auction data', variant: 'destructive' });
     }
   });
 };

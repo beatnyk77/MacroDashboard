@@ -27,7 +27,9 @@ const HSCodeOverviewPage: React.FC = () => {
         window.open(targetUrl, '_blank');
     }
 
-    const { refresh, ...state } = useHSDemand(code || null)
+    const demandState = useHSDemand(code || null)
+    const { refresh } = demandState
+    const state = demandState as any
     
     // Quick fetch to get description
     const { results } = useHSCodeSearch(code || '')
