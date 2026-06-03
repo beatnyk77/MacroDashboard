@@ -19,9 +19,11 @@ export const IndiaChinaDeepDive: React.FC = () => {
     const [selectedCode, setSelectedCode] = useState(COMPARISON_CATEGORIES[0].code)
     const { data, loading, refreshing, error, refresh, lastFetchedAt } = useIndiaChinaComparison(selectedCode)
     const latest = data[0]
-    const total = (latest?.india_export_usd ?? 0) + (latest?.china_export_usd ?? 0)
-    const indiaWidth = total > 0 ? Math.round((latest.india_export_usd / total) * 100) : 65
-    const chinaWidth = total > 0 ? Math.round((latest.china_export_usd / total) * 100) : 85
+    const indiaExport = latest?.india_export_usd ?? 0
+    const chinaExport = latest?.china_export_usd ?? 0
+    const total = indiaExport + chinaExport
+    const indiaWidth = total > 0 ? Math.round((indiaExport / total) * 100) : 65
+    const chinaWidth = total > 0 ? Math.round((chinaExport / total) * 100) : 85
 
     const [now] = React.useState(() => Date.now())
 
@@ -180,7 +182,7 @@ export const IndiaChinaDeepDive: React.FC = () => {
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Market Share</p>
                                 <p className="text-2xl font-black text-blue-400 font-mono">
-                                    {latest?.china_export_usd && latest?.india_export_usd ? Math.round((latest.china_export_usd / (latest.china_export_usd + latest.india_export_usd)) * 100) : 0}%
+                                    {chinaExport && indiaExport ? Math.round((chinaExport / (chinaExport + indiaExport)) * 100) : 0}%
                                 </p>
                             </div>
                         </div>

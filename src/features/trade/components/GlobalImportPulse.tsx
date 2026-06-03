@@ -76,7 +76,6 @@ export const GlobalImportPulse: React.FC<Props> = ({ selectedISO, selectedCountr
     const { data, loading, refreshing, error, refresh, lastFetchedAt } = useGlobalImports(selectedISO)
 
     const [now] = React.useState(() => Date.now())
-    const _isLoading = loading || refreshing
 
     const getFreshnessStatus = (date: string | null | undefined): FreshnessStatus => {
         if (!date) return 'no_data'
