@@ -32,6 +32,12 @@ function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+function isValidContent(v: unknown): v is BriefContent {
+  if (typeof v !== 'object' || v === null) return false;
+  const c = v as Record<string, unknown>;
+  return Array.isArray(c.what_changed) && typeof c.regime_status === 'string';
+}
+
 export function useMacroBrief(
   focusAreas: FocusAreaCode[] = DEFAULT_FOCUS_AREAS,
   briefDate?: string
@@ -42,9 +48,9 @@ export function useMacroBrief(
 
   return useQuery({
     queryKey: ['macro-brief', targetDate, focusKey],
-    queryFn: async (): Promise<{ brief: DailyMacroBrief; isYesterday: boolean } | null> => {
+    queryFn: async (): Promise<{ brief: DailyMacroBrief; isNotToday: boolean } | null> => {
       // 1. Try exact match for requested date + focus areas
-      const { data: exact } = await supabase
+      const { data: exact, error: exactErr } = await supabase
         .from('daily_macro_briefs')
         .select('*')
         .eq('brief_date', targetDate)
@@ -52,7 +58,12 @@ export function useMacroBrief(
         .containedBy('focus_areas', focusAreas)
         .maybeSingle();
 
-      if (exact) return { brief: exact as DailyMacroBrief, isYesterday: false };
+      if (exactErr && exactErr.code !== 'PGRST116') throw new Error(exactErr.message);
+
+      if (exact) {
+        if (!isValidContent(exact.content)) throw new Error('Brief content has unexpected shape');
+        return { brief: exact as DailyMacroBrief, isNotToday: false };
+      }
 
       // 2. Fall back to default focus areas for requested date
       if (focusKey !== defaultKey) {
@@ -64,7 +75,10 @@ export function useMacroBrief(
           .containedBy('focus_areas', DEFAULT_FOCUS_AREAS)
           .maybeSingle();
 
-        if (defaultBrief) return { brief: defaultBrief as DailyMacroBrief, isYesterday: false };
+        if (defaultBrief) {
+          if (!isValidContent(defaultBrief.content)) throw new Error('Brief content has unexpected shape');
+          return { brief: defaultBrief as DailyMacroBrief, isNotToday: false };
+        }
       }
 
       // 3. Today's brief not generated yet — fetch most recent available
@@ -76,8 +90,9 @@ export function useMacroBrief(
         .maybeSingle();
 
       if (recent) {
-        const isYesterday = recent.brief_date !== targetDate;
-        return { brief: recent as DailyMacroBrief, isYesterday };
+        if (!isValidContent(recent.content)) throw new Error('Brief content has unexpected shape');
+        const isNotToday = recent.brief_date !== targetDate;
+        return { brief: recent as DailyMacroBrief, isNotToday };
       }
 
       return null;
@@ -90,7 +105,7 @@ export function useMacroBrief(
 
 export function useMacroBriefArchive() {
   return useQuery({
-    queryKey: ['macro-brief-archive'],
+    queryKey: ['macro-brief', 'archive'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('daily_macro_briefs')
@@ -102,5 +117,6 @@ export function useMacroBriefArchive() {
       return (data ?? []) as Pick<DailyMacroBrief, 'id' | 'brief_date' | 'regime_label' | 'regime_score' | 'generated_at' | 'focus_areas'>[];
     },
     staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 2,
   });
 }

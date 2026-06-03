@@ -33,3 +33,11 @@ describe('getFocusAreasKey', () => {
     expect(getFocusAreasKey(['us'])).toBe('us');
   });
 });
+
+describe('DEFAULT_FOCUS_AREAS', () => {
+  it('contains us, india, and gold', async () => {
+    const { DEFAULT_FOCUS_AREAS } = await import('@/hooks/useMacroBrief');
+    expect(DEFAULT_FOCUS_AREAS).toEqual(expect.arrayContaining(['us', 'india', 'gold']));
+    expect(DEFAULT_FOCUS_AREAS).toHaveLength(3);
+  });
+});
