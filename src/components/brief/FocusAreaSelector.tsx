@@ -7,7 +7,7 @@ interface FocusArea {
   emoji: string;
 }
 
-export const FOCUS_AREAS: FocusArea[] = [
+const FOCUS_AREAS: FocusArea[] = [
   { code: 'us',        label: 'US Macro',                emoji: '🇺🇸' },
   { code: 'india',     label: 'India',                   emoji: '🇮🇳' },
   { code: 'china',     label: 'China',                   emoji: '🇨🇳' },
