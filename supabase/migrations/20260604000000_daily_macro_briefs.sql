@@ -31,3 +31,12 @@ CREATE POLICY "daily_macro_briefs_select"
   FOR SELECT
   TO anon, authenticated
   USING (true);
+
+-- Schema Documentation
+COMMENT ON TABLE public.daily_macro_briefs IS 'Pre-generated daily macro briefs. One row per (brief_date, focus_areas[]) combination. Upserted daily at 05:30 UTC by generate-morning-brief edge function.';
+COMMENT ON COLUMN public.daily_macro_briefs.brief_date IS 'Date the brief covers (YYYY-MM-DD).';
+COMMENT ON COLUMN public.daily_macro_briefs.focus_areas IS 'Sorted array of focus area codes (e.g., [''gold'', ''india'', ''us'']). Used as part of unique key.';
+COMMENT ON COLUMN public.daily_macro_briefs.content IS 'JSONB: {what_changed: string[], regime_status: string, focus_observations: string[], watch_today: string[]}';
+COMMENT ON COLUMN public.daily_macro_briefs.regime_score IS 'Macro regime score 0-100 from daily_macro_signal at generation time.';
+COMMENT ON COLUMN public.daily_macro_briefs.model_used IS 'Model identifier used for generation, or ''fallback-template'' if AI call failed.';
+COMMENT ON COLUMN public.daily_macro_briefs.tokens_used IS 'Total tokens consumed by the AI call (for cost tracking). 0 for fallback briefs.';
