@@ -1,8 +1,13 @@
+// @ts-ignore
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+// @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 import { runWithRetry } from "../_shared/job-runner.ts";
 import { sendDiscordAlert } from "../_shared/webhook_utils.ts";
+// @ts-ignore
 import { google } from "npm:googleapis";
+
+declare const Deno: any;
 
 const JOB_NAME = "gsc-sync";
 
@@ -80,7 +85,7 @@ async function fetchAndUpsertGscData() {
   }
 
   // Transform GSC rows to match database schema
-  const dbRecords = rows.map(row => {
+  const dbRecords = rows.map((row: any) => {
     // dimensions match the requested array: ["date", "page", "query", "country", "device"]
     const keys = row.keys || [];
     return {
@@ -94,7 +99,7 @@ async function fetchAndUpsertGscData() {
       ctr: row.ctr || 0,
       position: row.position || 0,
     };
-  }).filter(record => record.date && record.page && record.query);
+  }).filter((record: any) => record.date && record.page && record.query);
 
   if (dbRecords.length === 0) {
     return { rowsUpserted: 0 };
@@ -125,7 +130,7 @@ async function fetchAndUpsertGscData() {
   return { rowsUpserted: totalUpserted };
 }
 
-serve(async (req) => {
+serve(async (req: Request) => {
   // Only allow POST requests (standard for pg_cron invocations)
   if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 });

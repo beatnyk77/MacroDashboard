@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
 
+declare const Deno: any;
+
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
@@ -44,7 +46,7 @@ Deno.serve(async (req) => {
             throw new Error(`UN Comtrade API error (${response.status}): ${errorText}`);
         }
 
-        const data = await response.json();
+        const data = (await response.json()) as any;
         const records = data.data || [];
 
         console.log(`Received ${records.length} records from UN Comtrade.`);
