@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { Scale, Info } from 'lucide-react';
 import { useUSDebtGoldBacking } from '@/hooks/useUSDebtGoldBacking';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 export const USDebtGoldBackingCard: React.FC = () => {
     const { data, isLoading } = useUSDebtGoldBacking();
@@ -48,9 +49,15 @@ export const USDebtGoldBackingCard: React.FC = () => {
                             PAPER vs HARD MONEY
                         </Typography>
                     </Box>
-                    <Tooltip title="US Total Public Debt vs Market Value of US Treasury Gold Reserves.">
-                        <Info size={16} style={{ color: '#64748b', cursor: 'help' }} />
-                    </Tooltip>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <GQSignalBadge
+                            tooltip="Proprietary Z-Score: US debt-to-gold-reserve ratio normalized against its 30-year history, with implied full-backing gold price as a monetary anchor signal."
+                            href="/methods/debt-gold-z-score"
+                        />
+                        <Tooltip title="US Total Public Debt vs Market Value of US Treasury Gold Reserves.">
+                            <Info size={16} style={{ color: '#64748b', cursor: 'help' }} />
+                        </Tooltip>
+                    </Box>
                 </Box>
 
                 <Box sx={{ mb: 3 }}>

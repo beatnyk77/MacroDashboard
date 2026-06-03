@@ -44,6 +44,8 @@ const EnergyDependencyRatioPage = lazy(() => import('@/pages/methods/EnergyDepen
 const FiscalDominanceMeterPage = lazy(() => import('@/pages/methods/FiscalDominanceMeterPage').then(module => ({ default: module.FiscalDominanceMeterPage })));
 const M2GoldRatioPage = lazy(() => import('@/pages/methods/M2GoldRatioPage').then(module => ({ default: module.M2GoldRatioPage })));
 const DeDollarizationGuide = lazy(() => import('@/pages/methods/DeDollarizationGuide').then(module => ({ default: module.DeDollarizationGuide })));
+const FedMonetizationPage = lazy(() => import('@/pages/methods/FedMonetizationPage').then(module => ({ default: module.FedMonetizationPage })));
+const IndiaCreditCyclePage = lazy(() => import('@/pages/methods/IndiaCreditCyclePage').then(module => ({ default: module.IndiaCreditCyclePage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 const NotFound = lazy(() => import('@/pages/NotFound').then(module => ({ default: module.NotFound })));
 
@@ -125,6 +127,8 @@ function App() {
                                         <Route path="/methods/fiscal-dominance-meter" element={<FiscalDominanceMeterPage />} />
                                         <Route path="/methods/m2-gold-ratio" element={<M2GoldRatioPage />} />
                                         <Route path="/methods/de-dollarization-guide" element={<DeDollarizationGuide />} />
+                                        <Route path="/methods/fed-monetization-monitor" element={<FedMonetizationPage />} />
+                                        <Route path="/methods/india-credit-cycle-clock" element={<IndiaCreditCyclePage />} />
                                         <Route path="/intel/india" element={<IntelIndiaPage />} />
                                         <Route path="/intel/china" element={<IntelChinaPage />} />
                                         <Route path="/macro-observatory" element={<MacroObservatory />} />

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -48,12 +48,23 @@ const LoadingFallback = () => (
     </div>
 );
 
+const ORIENTING_DISMISSED_KEY = 'gq_orienting_dismissed';
+
 export const Terminal: React.FC = () => {
+    const [orientingDismissed, setOrientingDismissed] = useState(
+        () => typeof window !== 'undefined' && localStorage.getItem(ORIENTING_DISMISSED_KEY) === '1'
+    );
+
+    const dismissOrienting = () => {
+        localStorage.setItem(ORIENTING_DISMISSED_KEY, '1');
+        setOrientingDismissed(true);
+    };
+
     return (
         <div className="w-full max-w-[1920px] mx-auto bg-slate-950 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <SEOManager
-                title="Terminal"
-                description="GraphiQuestor: Institutional macro intelligence terminal tracking global liquidity, sovereign stress, and India/China macro. Advanced data visualization for the multipolar era."
+                title="GraphiQuestor — Global Macro Intelligence Terminal | Fiscal Dominance, Sovereign Stress & De-Dollarization"
+                description="GraphiQuestor tracks the macro variables that matter in a multipolar world — sovereign debt stress, de-dollarization momentum, Fed monetization, and gold's return as monetary anchor. Free institutional macro intelligence terminal."
                 keywords={['macro intelligence', 'global liquidity', 'sovereign stress', 'india macro', 'china macro', 'financial terminal']}
                 isApp={true}
                 jsonLd={[
@@ -88,6 +99,21 @@ export const Terminal: React.FC = () => {
                     </p>
                 </div>
             </header>
+
+            {!orientingDismissed && (
+                <div className="relative mb-8 -mt-4 flex items-start justify-between gap-4">
+                    <p className="text-sm text-white/50 font-light italic max-w-2xl">
+                        GraphiQuestor tracks the macro variables that matter in a multipolar world — sovereign stress, de-dollarization momentum, fiscal dominance, and gold&apos;s return as monetary anchor.
+                    </p>
+                    <button
+                        onClick={dismissOrienting}
+                        className="shrink-0 text-white/20 hover:text-white/50 transition-colors text-xs font-mono uppercase tracking-widest mt-0.5"
+                        aria-label="Dismiss"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
 
             <div className="space-y-24 pb-32">
                 {/* DAILY MACRO LAYER — pinned to top */}
@@ -215,7 +241,10 @@ export const Terminal: React.FC = () => {
                                 <CardTitle className="text-lg uppercase">US Net Liquidity Proxy</CardTitle>
                                 <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Monetary Base & Treasury General Account Telemetry</p>
                             </div>
-                            <LiveStatusIndicator source="FRED / Treasury" />
+                            <div className="flex items-center gap-4">
+                                <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                <LiveStatusIndicator source="FRED / Treasury" />
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <SectionErrorBoundary name="Net Liquidity">
@@ -285,7 +314,10 @@ export const Terminal: React.FC = () => {
                                 <Card variant="elevated">
                                     <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
                                         <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
-                                        <LiveStatusIndicator source="FRED" />
+                                        <div className="flex items-center gap-4">
+                                            <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                            <LiveStatusIndicator source="FRED" />
+                                        </div>
                                     </CardHeader>
                                     <CardContent>
                                         <FedMonetizationMonitor />
@@ -387,6 +419,7 @@ export const Terminal: React.FC = () => {
                         <div className="h-px flex-1 bg-white/5" />
                         <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500/80">Energy & Commodities</h2>
                         <div className="h-px flex-1 bg-white/5" />
+                        <Link to="/methods/energy-dependency-ratio" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors shrink-0">Methodology →</Link>
                     </div>
                     <SectionErrorBoundary name="Energy & Commodities">
                         <Suspense fallback={<LoadingFallback />}>
@@ -434,6 +467,12 @@ export const Terminal: React.FC = () => {
                 </section>
 
                 <section id="deflation-debasement" className="space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="h-px flex-1 bg-white/5" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500/80">De-Dollarization & Gold</h2>
+                        <div className="h-px flex-1 bg-white/5" />
+                        <Link to="/methods/debt-gold-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors shrink-0">Methodology →</Link>
+                    </div>
                     <SectionErrorBoundary name="Deflation Debasement">
                         <Suspense fallback={<LoadingFallback />}>
                             <DeflationDebasementMonitor />

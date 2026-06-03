@@ -3,10 +3,23 @@ import { AlertCircle, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 
+const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
+
 export const DataHealthBanner: React.FC = () => {
     const { data: health, isLoading } = useDataIntegrity();
 
     if (isLoading || !health || health.status === 'healthy') {
+        return null;
+    }
+
+    const lastIngestionMs = health.lastIngestionAt
+        ? new Date(health.lastIngestionAt).getTime()
+        : 0;
+    const ingestionAgeMs = Date.now() - lastIngestionMs;
+    const isOvernightStaleness = ingestionAgeMs < TWELVE_HOURS_MS;
+
+    // Suppress banner for routine overnight staleness (< 12 h) or low stale count
+    if (health.staleCount <= 30 || isOvernightStaleness) {
         return null;
     }
 
@@ -58,5 +71,31 @@ export const DataHealthBanner: React.FC = () => {
                 </a>
             </div>
         </div>
+    );
+};
+
+/** Subtle chip for the footer — shown when staleness is routine (< 12 h) */
+export const DataFreshnessFooterChip: React.FC = () => {
+    const { data: health, isLoading } = useDataIntegrity();
+
+    if (isLoading || !health || health.staleCount === 0) return null;
+
+    const lastIngestionMs = health.lastIngestionAt
+        ? new Date(health.lastIngestionAt).getTime()
+        : 0;
+    const ingestionAgeMs = Date.now() - lastIngestionMs;
+    const isOvernightStaleness = ingestionAgeMs < TWELVE_HOURS_MS;
+
+    // Only show when banner is suppressed (routine staleness)
+    if (!isOvernightStaleness && health.staleCount > 30) return null;
+
+    const hoursAgo = Math.round(ingestionAgeMs / (60 * 60 * 1000));
+
+    return (
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400/60 text-[10px] font-bold uppercase tracking-[0.12em]">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400/40" />
+            {health.staleCount} feed{health.staleCount !== 1 ? 's' : ''} lagged
+            {lastIngestionMs > 0 && ` · ${hoursAgo}h ago`}
+        </span>
     );
 };

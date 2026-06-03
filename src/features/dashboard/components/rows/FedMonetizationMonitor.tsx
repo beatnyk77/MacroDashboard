@@ -16,6 +16,7 @@ import {
 import { m } from 'framer-motion';
 import { Activity, TrendingUp, BarChart3, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -649,6 +650,10 @@ export const FedMonetizationMonitor: React.FC = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
               <Activity className="w-7 h-7 text-cyan-400" />
               FED Debt Monetization & Yield Control
+              <GQSignalBadge
+                tooltip="Proprietary composite: Fed balance sheet dynamics, SOMA weekly flows, real yield suppression, and M2-CPI spread — not available from any single public source."
+                href="/methods/fiscal-dominance-meter"
+              />
             </h2>
             <p className="text-slate-400 text-sm md:text-base max-w-2xl">
               Federal Reserve balance sheet dynamics · Yield suppression transmission · Real rates

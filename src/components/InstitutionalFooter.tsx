@@ -1,6 +1,8 @@
+import React from 'react';
 import { ShieldCheck, BookOpen, Globe, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SubscribeCard } from '@/components/SubscribeCard';
+import { DataFreshnessFooterChip } from '@/components/DataHealthBanner';
 
 export const InstitutionalFooter: React.FC = () => {
     return (
@@ -12,10 +14,13 @@ export const InstitutionalFooter: React.FC = () => {
                     <span className="text-xs font-black uppercase tracking-uppercase text-blue-400/80">
                         Institutional Grade Security: Row-Level Security (RLS) Active & Verified
                     </span>
-                    <div className="ml-auto flex gap-2">
-                        <div className="w-1 h-1 rounded-full bg-blue-400/40" />
-                        <div className="w-1 h-1 rounded-full bg-blue-400/40" />
-                        <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                    <div className="ml-auto flex items-center gap-3">
+                        <DataFreshnessFooterChip />
+                        <div className="flex gap-2">
+                            <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                            <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                            <div className="w-1 h-1 rounded-full bg-blue-400/40" />
+                        </div>
                     </div>
                 </div>
 

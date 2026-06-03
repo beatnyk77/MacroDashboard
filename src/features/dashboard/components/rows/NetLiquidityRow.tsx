@@ -1,8 +1,10 @@
+import React from 'react';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { RatioRow } from '@/components/spa/RatioRow';
 import { Sparkline } from '@/components/Sparkline';
 import { formatNumber } from '@/utils/formatNumber';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 export const NetLiquidityRow: React.FC = () => {
     const { data: liquidity } = useNetLiquidity();
@@ -27,9 +29,13 @@ export const NetLiquidityRow: React.FC = () => {
                 </div>
             </RatioRow>
             
-            <div className="flex justify-end pt-2">
-                <DataProvenanceBadge 
-                    source="FRED / Treasury" 
+            <div className="flex items-center justify-between pt-2">
+                <GQSignalBadge
+                    tooltip="Proprietary Z-Score: deviation of net liquidity (Fed assets − TGA − RRP) from its 3-year rolling mean, normalized by standard deviation."
+                    href="/methods/net-liquidity-z-score"
+                />
+                <DataProvenanceBadge
+                    source="FRED / Treasury"
                     methodology="B/S Aggregation"
                     lastVerified={liquidity?.as_of_date || new Date()}
                     size="sm"

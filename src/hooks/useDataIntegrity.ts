@@ -7,6 +7,7 @@ export interface IntegrityReport {
     staleCount: number;
     totalHighFrequency: number;
     lastChecked: string;
+    lastIngestionAt: string | null;
 }
 
 export function useDataIntegrity() {
@@ -41,7 +42,8 @@ export function useDataIntegrity() {
                     message: 'No metric data available in the synchronization layer.',
                     staleCount: 0,
                     totalHighFrequency: 0,
-                    lastChecked: new Date().toISOString()
+                    lastChecked: new Date().toISOString(),
+                    lastIngestionAt: null
                 };
             }
 
@@ -52,6 +54,13 @@ export function useDataIntegrity() {
             const highFreqMetrics = metrics.filter(m =>
                 HIGH_FREQUENCY_PREFIXES.some(prefix => m.metric_id?.startsWith(prefix))
             );
+
+            // Freshest as_of_date among high-freq metrics = proxy for last successful ingestion
+            const freshestMs = highFreqMetrics.reduce((acc, m) => {
+                const t = new Date(m.as_of_date).getTime();
+                return t > acc ? t : acc;
+            }, 0);
+            const lastIngestionAt = freshestMs > 0 ? new Date(freshestMs).toISOString() : null;
 
             const staleHighFreq = highFreqMetrics.filter(m => {
                 const diff = now - new Date(m.as_of_date).getTime();
@@ -69,7 +78,8 @@ export function useDataIntegrity() {
                     message: 'Data sync delayed',
                     staleCount,
                     totalHighFrequency: totalHighFreq,
-                    lastChecked: new Date().toISOString()
+                    lastChecked: new Date().toISOString(),
+                    lastIngestionAt
                 };
             }
 
@@ -80,7 +90,8 @@ export function useDataIntegrity() {
                     message: 'Data latency detected',
                     staleCount,
                     totalHighFrequency: totalHighFreq,
-                    lastChecked: new Date().toISOString()
+                    lastChecked: new Date().toISOString(),
+                    lastIngestionAt
                 };
             }
 
@@ -89,7 +100,8 @@ export function useDataIntegrity() {
                 message: 'All core systems operational.',
                 staleCount: 0,
                 totalHighFrequency: totalHighFreq,
-                lastChecked: new Date().toISOString()
+                lastChecked: new Date().toISOString(),
+                lastIngestionAt
             };
         },
         refetchInterval: 1000 * 60 * 30 // 30 min

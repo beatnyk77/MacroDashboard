@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { TrendingUp } from 'lucide-react';
 import { useG20GdpConvergence } from '@/hooks/useG20GdpConvergence';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { m, AnimatePresence } from 'framer-motion';
 
 const G20_COUNTRIES = [
@@ -95,6 +96,10 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
                     <Typography variant="h5" sx={{ fontWeight: 900, mb: 1, letterSpacing: '-0.02em', color: 'common.white', display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <TrendingUp size={24} className="text-blue-500" />
                         G20 GDP Convergence Monitor
+                        <GQSignalBadge
+                            tooltip="Proprietary indexed convergence model: real GDP per capita (PPP, constant USD) rebased to a user-selected pivot year, tracking divergence across the G20 bloc."
+                            href="/methods/de-dollarization-guide"
+                        />
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary', maxWidth: 600 }}>
                         Real GDP per capita (PPP) indexed to 100. Visualizing the relative trajectory of emerging vs. advanced economies since key macro pivot points.

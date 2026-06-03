@@ -8,6 +8,7 @@ import {
     ArrowUpRight, ArrowDownRight, Info
 } from 'lucide-react';
 import { useIndiaCreditCycle } from '@/hooks/useIndiaCreditCycle';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 // Defining quadrant bounds for historical perspective
 const Y_AXIS_MID = 14.5; // Credit Growth Midpoint
@@ -62,6 +63,10 @@ export const IndiaCreditCycleClock: React.FC = () => {
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                             </span>
                             <span className="text-blue-400 text-xs font-black uppercase tracking-uppercase">Proprietary RBI Signal</span>
+                            <GQSignalBadge
+                                tooltip="Proprietary phase model derived from RBI's credit-deposit ratio, systemic lending velocity, and deposit growth — mapped to four cycle quadrants."
+                                href="/methods/loan-to-job-efficiency"
+                            />
                         </div>
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-heading uppercase mb-1">
                             Credit Cycle <span className="text-blue-500">Clock</span>
