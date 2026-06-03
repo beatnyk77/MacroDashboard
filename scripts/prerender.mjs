@@ -96,7 +96,7 @@ async function run() {
         console.log(`Server listening on port ${port} for recursive prerendering...`);
         
         const browser = await puppeteer.launch({
-            headless: 'new',
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
