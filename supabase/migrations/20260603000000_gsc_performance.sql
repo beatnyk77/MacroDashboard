@@ -15,9 +15,11 @@ CREATE TABLE IF NOT EXISTS public.gsc_performance (
     inserted_at timestamptz DEFAULT now()
 );
 
--- Unique index to ensure idempotency. 
--- Using NULLS NOT DISTINCT ensures that multiple rows with null country/device for the same date/page/query won't be inserted.
-CREATE UNIQUE INDEX IF NOT EXISTS idx_gsc_performance_unique ON public.gsc_performance NULLS NOT DISTINCT (date, page, query, country, device);
+-- Unique index to ensure idempotency.
+-- COALESCE converts NULLs to empty string so they compare as equal (same behaviour
+-- as NULLS NOT DISTINCT, but compatible with PostgreSQL 14 and earlier).
+CREATE UNIQUE INDEX IF NOT EXISTS idx_gsc_performance_unique
+    ON public.gsc_performance (date, page, query, COALESCE(country, ''), COALESCE(device, ''));
 
 -- Enable RLS
 ALTER TABLE public.gsc_performance ENABLE ROW LEVEL SECURITY;

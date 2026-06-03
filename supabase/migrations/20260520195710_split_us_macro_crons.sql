@@ -2,7 +2,13 @@
 -- They will be spaced out slightly.
 
 -- 1. Remove the old bundled cron
-SELECT cron.unschedule('ingest-us-macro-daily');
+DO $$
+BEGIN
+  PERFORM cron.unschedule('ingest-us-macro-daily');
+EXCEPTION
+  WHEN OTHERS THEN
+    NULL;
+END $$;
 
 -- 2. Create independent crons for each task, spaced out by 5-10 minutes
 -- Run at 02:00, 02:10, 02:20, 02:30 UTC

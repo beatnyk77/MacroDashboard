@@ -15,8 +15,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # 1. Apply the SQL migration (vw_country_trade_imports view)
 echo ""
 echo "▶ Step 1/3: Applying SQL migration vw_country_trade_imports..."
-supabase db push \
-  2>&1 | tail -5
+supabase db push
 
 echo "  ✓ Migration applied"
 

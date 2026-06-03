@@ -1,4 +1,4 @@
--- 20260531000001_compute_zscores.sql
+-- 20260531000003_compute_zscores.sql
 
 -- Case C: Compute function doesn't exist.
 -- This migration creates a function to compute 252-day rolling z-scores
