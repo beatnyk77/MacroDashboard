@@ -108,6 +108,7 @@ Return ONLY valid JSON:
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
+      signal: AbortSignal.timeout(25_000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
@@ -219,7 +220,7 @@ Deno.serve(async (req) => {
       .upsert(
         {
           brief_date: briefDate,
-          focus_areas: DEFAULT_FOCUS_AREAS,
+          focus_areas: [...DEFAULT_FOCUS_AREAS].sort(),
           content,
           regime_score: signal.score,
           regime_label: signal.regime,

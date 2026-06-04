@@ -33,7 +33,7 @@ CREATE POLICY "daily_macro_briefs_select"
   USING (true);
 
 -- Schema Documentation
-COMMENT ON TABLE public.daily_macro_briefs IS 'Pre-generated daily macro briefs. One row per (brief_date, focus_areas[]) combination. Upserted daily at 05:30 UTC by generate-morning-brief edge function.';
+COMMENT ON TABLE public.daily_macro_briefs IS 'Pre-generated daily macro briefs. One row per (brief_date, focus_areas[]) combination. Upserted daily at 06:45 UTC by generate-morning-brief edge function.';
 COMMENT ON COLUMN public.daily_macro_briefs.brief_date IS 'Date the brief covers (YYYY-MM-DD).';
 COMMENT ON COLUMN public.daily_macro_briefs.focus_areas IS 'Sorted array of focus area codes (e.g., [''gold'', ''india'', ''us'']). Used as part of unique key.';
 COMMENT ON COLUMN public.daily_macro_briefs.content IS 'JSONB: {what_changed: string[], regime_status: string, focus_observations: string[], watch_today: string[]}';
