@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState } from 'react';
+import React, { Suspense, lazy, useState, useRef } from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { TodaysBriefPanel } from '@/features/dashboard/components/sections/Today
 import { ModuleRow } from '@/components/layout/ModuleRow';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { RegimeAnchor } from '@/features/dashboard/components/RegimeAnchor';
+import { ShareButton } from '@/components/ShareButton';
 
 // Components — below-fold, lazy-loaded
 const NetLiquidityRow = lazy(() => import('@/features/dashboard/components/rows/NetLiquidityRow').then(m => ({ default: m.NetLiquidityRow })));
@@ -47,6 +48,10 @@ export const Terminal: React.FC = () => {
     const [orientingDismissed, setOrientingDismissed] = useState(
         () => typeof window !== 'undefined' && localStorage.getItem(ORIENTING_DISMISSED_KEY) === '1'
     );
+
+    const netLiquidityRef = useRef<HTMLDivElement>(null);
+    const fedMonetizationRef = useRef<HTMLDivElement>(null);
+    const usDebtRef = useRef<HTMLDivElement>(null);
 
     const dismissOrienting = () => {
         localStorage.setItem(ORIENTING_DISMISSED_KEY, '1');
@@ -139,21 +144,24 @@ export const Terminal: React.FC = () => {
 
                     <SectionErrorBoundary name="Net Liquidity">
                         <Suspense fallback={<LoadingFallback />}>
-                            <Card variant="elevated">
-                                <CardHeader className="flex flex-row justify-between items-center border-b border-white/5 pb-4 mb-6">
-                                    <div>
-                                        <CardTitle className="text-lg uppercase">US Net Liquidity Proxy</CardTitle>
-                                        <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Monetary Base & Treasury General Account Telemetry</p>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
-                                        <LiveStatusIndicator source="FRED / Treasury" />
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <NetLiquidityRow />
-                                </CardContent>
-                            </Card>
+                            <div ref={netLiquidityRef} className="relative group">
+                                <ShareButton targetRef={netLiquidityRef} title="US Net Liquidity Proxy" dataSource="FRED / Treasury" href="/labs/us-macro-fiscal" />
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center border-b border-white/5 pb-4 mb-6">
+                                        <div>
+                                            <CardTitle className="text-lg uppercase">US Net Liquidity Proxy</CardTitle>
+                                            <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Monetary Base & Treasury General Account Telemetry</p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                            <LiveStatusIndicator source="FRED / Treasury" />
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <NetLiquidityRow />
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </Suspense>
                     </SectionErrorBoundary>
                 </ModuleRow>
@@ -163,18 +171,21 @@ export const Terminal: React.FC = () => {
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         <SectionErrorBoundary name="Fed Monetization Monitor">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
-                                        <div className="flex items-center gap-4">
-                                            <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
-                                            <LiveStatusIndicator source="FRED" />
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <FedMonetizationMonitor />
-                                    </CardContent>
-                                </Card>
+                                <div ref={fedMonetizationRef} className="relative group">
+                                    <ShareButton targetRef={fedMonetizationRef} title="Fed Monetization Monitor" dataSource="FRED" href="/labs/us-macro-fiscal" />
+                                    <Card variant="elevated">
+                                        <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                            <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
+                                            <div className="flex items-center gap-4">
+                                                <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                                <LiveStatusIndicator source="FRED" />
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <FedMonetizationMonitor />
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </Suspense>
                         </SectionErrorBoundary>
 
@@ -204,15 +215,18 @@ export const Terminal: React.FC = () => {
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         <SectionErrorBoundary name="US Debt Maturity Wall">
                             <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
-                                        <LiveStatusIndicator source="Treasury" />
-                                    </CardHeader>
-                                    <CardContent>
-                                        <USDebtMaturityWall />
-                                    </CardContent>
-                                </Card>
+                                <div ref={usDebtRef} className="relative group">
+                                    <ShareButton targetRef={usDebtRef} title="US Debt Maturity Wall" dataSource="Treasury" href="/labs/us-macro-fiscal" />
+                                    <Card variant="elevated">
+                                        <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                            <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
+                                            <LiveStatusIndicator source="Treasury" />
+                                        </CardHeader>
+                                        <CardContent>
+                                            <USDebtMaturityWall />
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </Suspense>
                         </SectionErrorBoundary>
 
