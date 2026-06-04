@@ -385,3 +385,6 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 
 [functions.generate-export-scout]
 verify_jwt = false
+
+[functions.generate-weekly-regime-digest]
+verify_jwt = false
