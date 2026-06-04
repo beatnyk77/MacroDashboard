@@ -38,29 +38,7 @@ const REPORTER_MAP: Record<string, string> = {
 
 
 
-const COMTRADE_BASE = 'https://comtradeapi.un.org/data/v1/get/C/A/HS';
-
 const DEFAULT_YEARS = ['2023', '2024'];
-
-
-
-export function parseComtradeRecord(record: { cmdCode?: unknown; primaryValue?: unknown }): {
-
-  hsCode: string;
-
-  importValue: number;
-
-} {
-
-  return {
-
-    hsCode: String(record.cmdCode ?? '').padStart(2, '0'),
-
-    importValue: Number(record.primaryValue ?? 0),
-
-  };
-
-}
 
 
 
@@ -95,16 +73,6 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
   const yearParam = url.searchParams.get('year');
 
   const years = yearParam ? [yearParam] : DEFAULT_YEARS;
-
-
-
-  const comtradeKey = Deno.env.get('COMTRADE_API_KEY') ?? '';
-
-  if (!comtradeKey) {
-
-    throw new Error('COMTRADE_API_KEY edge secret is not set');
-
-  }
 
 
 
@@ -154,52 +122,39 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
 
 
 
-  console.log(`[ingest-trade-imports] Processing ${reporters.length} reporters: ${reporters.join(', ')}`);
+  console.log(`[ingest-trade-imports] Processing ${reporters.length} reporters from cache: ${reporters.join(', ')}`);
 
   const summary: any[] = [];
   let totalRowsUpdated = 0;
 
-  // Fetch all country-year combinations in parallel (up to 8 concurrent requests)
-  const fetchTasks = [];
+  // Read from comtrade_cache table instead of making external API calls
+  const cacheTasks = [];
   for (const iso3 of reporters) {
-    const m49 = REPORTER_MAP[iso3];
-    if (!m49) {
-      console.warn(`[ingest-trade-imports] No M49 mapping for ${iso3}, skipping`);
-      summary.push({ reporter: iso3, status: 'skipped', reason: 'no_m49_mapping' });
-      continue;
-    }
-
     for (const year of years) {
-      fetchTasks.push(
+      cacheTasks.push(
         (async () => {
           try {
-            const comtradeUrl =
-              `${COMTRADE_BASE}?reporterCode=${m49}&period=${year}&cmdCode=AG2&flowCode=M&partnerCode=0` +
-              `&subscription-key=${comtradeKey}`;
+            console.log(`[ingest-trade-imports] Reading ${iso3} ${year} from cache...`);
 
-            console.log(`[ingest-trade-imports] Fetching ${iso3} (M49:${m49}) ${year}...`);
-            const res = await fetch(comtradeUrl);
+            const { data: cacheRecords, error: cacheErr } = await ctx.supabase
+              .from('comtrade_cache')
+              .select('hs_code, primary_value')
+              .eq('reporter_iso3', iso3)
+              .eq('period', year)
+              .gt('primary_value', 0);
 
-            if (!res.ok) {
-              const errText = await res.text();
-              throw new Error(`Comtrade API ${res.status}: ${errText.slice(0, 200)}`);
-            }
+            if (cacheErr) throw cacheErr;
 
-            const json = (await res.json()) as { data: any[] };
-            const parsed = (json.data ?? [])
-              .map(parseComtradeRecord)
-              .filter((r) => r.importValue > 0);
-
-            if (parsed.length === 0) {
-              console.log(`[ingest-trade-imports] No data for ${iso3} ${year}`);
+            if (!cacheRecords || cacheRecords.length === 0) {
+              console.log(`[ingest-trade-imports] No cached data for ${iso3} ${year}`);
               return { iso3, year, status: 'no_data', rows: [], error: null };
             }
 
-            const rows = parsed.map((r) => ({
+            const rows = cacheRecords.map((r: any) => ({
               reporter_iso3: iso3,
-              hs_code: r.hsCode,
+              hs_code: r.hs_code,
               year: parseInt(year, 10),
-              import_value_usd: r.importValue,
+              import_value_usd: r.primary_value,
               fetched_at: new Date().toISOString(),
             }));
 
@@ -213,8 +168,8 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
     }
   }
 
-  // Run fetches in parallel with concurrency control
-  const results = await Promise.all(fetchTasks);
+  // Read from cache in parallel
+  const results = await Promise.all(cacheTasks);
 
   // Process results sequentially for DB operations
   for (const result of results) {
