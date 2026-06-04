@@ -46,8 +46,8 @@ async function fetchRegionalPulse(supabase: SupabaseClient, table: string) {
     return data?.[0] || null;
 }
 
-Deno.serve(async (_req) => {
-    if (_req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+Deno.serve(async (req) => {
+    if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
     try {
         const supabaseClient = createClient(
@@ -55,7 +55,17 @@ Deno.serve(async (_req) => {
             Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
         );
 
-        const weekEndingDate = new Date().toISOString().split("T")[0];
+        let weekEndingDate = new Date().toISOString().split("T")[0];
+
+        // Allow optional week_ending_date parameter for backfill
+        try {
+            const body = await req.json();
+            if (body.week_ending_date) {
+                weekEndingDate = body.week_ending_date;
+            }
+        } catch {
+            // No JSON body or parsing failed, use default
+        }
 
         // 1. Fetch Core Data Pillars
         const [
