@@ -66,10 +66,8 @@ function useCountdown(): string {
 const MacroBriefRedirect: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    const d = new Date();
-    const y = d.getFullYear();
-    const mo = String(d.getMonth() + 1).padStart(2, '0');
-    const dy = String(d.getDate()).padStart(2, '0');
+    const iso = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD" in UTC
+    const [y, mo, dy] = iso.split('-');
     navigate(`/macro-brief/${y}/${mo}/${dy}`, { replace: true });
   }, [navigate]);
   return null;
