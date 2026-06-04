@@ -2,8 +2,6 @@ import React, { Suspense, lazy, useState } from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Globe, MapPin, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Components — above-fold, always eager
@@ -11,25 +9,23 @@ import { LiveStatusIndicator } from '@/components/LiveStatusIndicator';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPanel';
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
+import { ModuleRow } from '@/components/layout/ModuleRow';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
+import { RegimeAnchor } from '@/features/dashboard/components/RegimeAnchor';
 
 // Components — below-fold, lazy-loaded
 const NetLiquidityRow = lazy(() => import('@/features/dashboard/components/rows/NetLiquidityRow').then(m => ({ default: m.NetLiquidityRow })));
 const USDebtMaturityWall = lazy(() => import('@/components/USDebtMaturityWall').then(m => ({ default: m.USDebtMaturityWall })));
 const CorporateDebtMaturityWall = lazy(() => import('@/components/CorporateDebtMaturityWall').then(m => ({ default: m.CorporateDebtMaturityWall })));
-const FeedbackSection = lazy(() => import('@/features/dashboard/components/sections/FeedbackSection').then(m => ({ default: m.FeedbackSection })));
 const FedMonetizationMonitor = lazy(() => import('@/features/dashboard/components/rows/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 const EnergySection = lazy(() => import('@/features/dashboard/components/sections/EnergySection').then(m => ({ default: m.EnergySection })));
 const TradeEntryBanner = lazy(() => import('@/features/trade/components/TradeEntryBanner').then(m => ({ default: m.TradeEntryBanner })));
-
-const WeeklyRegimeDigest = lazy(() => import('@/features/dashboard/components/sections/WeeklyRegimeDigest').then(m => ({ default: m.WeeklyRegimeDigest })));
-const RegimeDigestSection = lazy(() => import('@/features/dashboard/components/sections/RegimeDigestSection').then(m => ({ default: m.RegimeDigestSection })));
 
 // 1. LIQUIDITY & FLOWS
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
 
 // 2. SOVEREIGN STRESS
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
-const G20GdpPerCapitaConvergence = lazy(() => import('@/features/dashboard/components/rows/G20GdpPerCapitaConvergence').then(m => ({ default: m.G20GdpPerCapitaConvergence })));
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
 const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/components/sections/TreasurySnapshotSection').then(m => ({ default: m.TreasurySnapshotSection })));
 
@@ -38,9 +34,6 @@ const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/component
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
 const IndiaMacroDashboard = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroDashboard').then(m => ({ default: m.IndiaMacroDashboard })));
 const AfricaMacroSnapshot = lazy(() => import('@/features/dashboard/components/sections/AfricaMacroSnapshot').then(m => ({ default: m.AfricaMacroSnapshot })));
-const GeopoliticalEventsRow = lazy(() => import('@/features/dashboard/components/rows/GeopoliticalEventsRow').then(m => ({ default: m.GeopoliticalEventsRow })));
-const DeflationDebasementMonitor = lazy(() => import('@/features/dashboard/components/rows/DeflationDebasementMonitor').then(m => ({ default: m.DeflationDebasementMonitor })));
-
 
 const LoadingFallback = () => (
     <div className="w-full h-full min-h-[150px] bg-slate-900/50 border border-white/5 rounded-xl animate-pulse flex items-center justify-center">
@@ -61,7 +54,7 @@ export const Terminal: React.FC = () => {
     };
 
     return (
-        <div className="w-full max-w-[1920px] mx-auto bg-slate-950 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full min-h-screen py-6">
             <SEOManager
                 title="GraphiQuestor — Global Macro Intelligence Terminal | Fiscal Dominance, Sovereign Stress & De-Dollarization"
                 description="GraphiQuestor tracks the macro variables that matter in a multipolar world — sovereign debt stress, de-dollarization momentum, Fed monetization, and gold's return as monetary anchor. Free institutional macro intelligence terminal."
@@ -115,60 +108,208 @@ export const Terminal: React.FC = () => {
                 </div>
             )}
 
-            <div className="space-y-24 pb-32">
-                {/* DAILY MACRO LAYER — pinned to top */}
-                <section id="daily-macro-layer" className="space-y-8">
+            {/* ── REGIME ANCHOR — position 0, above-fold interpretive frame ── */}
+            {/* Full-bleed: uses negative margins to break out of px-4 sm:px-6 lg:px-8 */}
+            <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] -mx-4 sm:-mx-6 lg:-mx-8 mb-0">
+                <RegimeAnchor />
+            </div>
+
+            <div className="flex flex-col pb-32">
+                {/* Row 1: REGIME SIGNAL */}
+                <ModuleRow label="REGIME SIGNAL" href="/regime-digest">
                     <SectionErrorBoundary name="Daily Macro Layer">
-                        <DailyMacroPanel />
-                        <div className="mt-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <DailyMacroPanel />
                             <TodaysBriefPanel />
                         </div>
                     </SectionErrorBoundary>
-                </section>
+                </ModuleRow>
 
-                {/* 0. SOVEREIGN COMPASS - COUNTRY INTELLIGENCE */}
-                <section id="sovereign-compass">
-                    <SectionErrorBoundary name="Sovereign Compass">
-                        <Card variant="elevated" className="relative overflow-hidden">
-                            {/* Background accent */}
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+                {/* Row 2: LIQUIDITY PLUMBLINE */}
+                <ModuleRow
+                    label="LIQUIDITY PLUMBLINE"
+                    badge={<GQSignalBadge href="/methods/net-liquidity-z-score" />}
+                    alternateBg
+                >
+                    <SectionErrorBoundary name="Global Liquidity Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <GlobalLiquidityMonitor />
+                        </Suspense>
+                    </SectionErrorBoundary>
 
-                            <CardHeader className="relative z-10">
-                                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <SectionErrorBoundary name="Net Liquidity">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <Card variant="elevated">
+                                <CardHeader className="flex flex-row justify-between items-center border-b border-white/5 pb-4 mb-6">
                                     <div>
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <Globe className="w-6 h-6 text-blue-400" />
-                                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">
-                                                Sovereign Compass
-                                            </h2>
-                                        </div>
-                                        <CardTitle className="text-2xl md:text-3xl font-black mb-3">
-                                            Country Intelligence Terminals
-                                        </CardTitle>
-                                        <p className="text-sm text-muted-foreground/70 max-w-2xl">
-                                            Deep-dive macro profiles for 40+ sovereigns. Real-time GDP, inflation, debt ratios,
-                                            FX reserves, yield curves, and sovereign stress indicators — all updated via live APIs.
-                                        </p>
+                                        <CardTitle className="text-lg uppercase">US Net Liquidity Proxy</CardTitle>
+                                        <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Monetary Base & Treasury General Account Telemetry</p>
                                     </div>
-                                    <div className="flex items-center gap-3 flex-wrap">
-                                        <Button asChild variant="outline" size="lg" className="gap-2 border-blue-500/20 hover:bg-blue-500/5 hover:text-white">
-                                            <Link to="/labs">
-                                                <Activity className="w-4 h-4 text-blue-400" />
-                                                Thematic Labs Hub
-                                            </Link>
-                                        </Button>
-                                        <Button asChild size="lg" className="gap-2">
-                                            <Link to="/countries">
-                                                <MapPin className="w-4 h-4" />
-                                                Explore All Countries
-                                            </Link>
-                                        </Button>
+                                    <div className="flex items-center gap-4">
+                                        <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                        <LiveStatusIndicator source="FRED / Treasury" />
                                     </div>
-                                </div>
-                            </CardHeader>
+                                </CardHeader>
+                                <CardContent>
+                                    <NetLiquidityRow />
+                                </CardContent>
+                            </Card>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
 
-                            <CardContent className="relative z-10 pt-6">
+                {/* Row 3: US SOVEREIGN STRESS */}
+                <ModuleRow label="US SOVEREIGN STRESS" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <SectionErrorBoundary name="Fed Monetization Monitor">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                        <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
+                                        <div className="flex items-center gap-4">
+                                            <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                            <LiveStatusIndicator source="FRED" />
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <FedMonetizationMonitor />
+                                    </CardContent>
+                                </Card>
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        <SectionErrorBoundary name="Auction Demand Gauge">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                        <CardTitle className="text-sm uppercase">Auction Demand Gauge</CardTitle>
+                                        <LiveStatusIndicator source="Treasury" />
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <USTreasuryDemandGauge />
+                                        <div className="flex justify-end pt-2">
+                                            <DataProvenanceBadge
+                                                source="FRED / Treasury"
+                                                methodology="B/S Aggregation"
+                                                lastVerified={new Date()}
+                                                size="sm"
+                                            />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <SectionErrorBoundary name="US Debt Maturity Wall">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <Card variant="elevated">
+                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                        <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
+                                        <LiveStatusIndicator source="Treasury" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <USDebtMaturityWall />
+                                    </CardContent>
+                                </Card>
+                            </Suspense>
+                        </SectionErrorBoundary>
+
+                        <SectionErrorBoundary name="Corporate Debt Maturity Wall">
+                            <Suspense fallback={<LoadingFallback />}>
+                                <CorporateDebtMaturityWall />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
+                    <SectionErrorBoundary name="Treasury Snapshot">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <Card variant="elevated">
+                                <CardContent>
+                                    <TreasurySnapshotSection />
+                                </CardContent>
+                            </Card>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 4: ENERGY MARKETS */}
+                <ModuleRow label="ENERGY MARKETS" href="/labs/energy-commodities" labelColor="text-orange-500/80" alternateBg>
+                    <SectionErrorBoundary name="Energy & Commodities">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <EnergySection />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 5: TRADE INTELLIGENCE */}
+                <ModuleRow label="TRADE INTELLIGENCE" href="/trade" labelColor="text-emerald-500/80">
+                    <SectionErrorBoundary name="Trade Intelligence">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <TradeEntryBanner />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 6: INDIA MACRO */}
+                <ModuleRow
+                    label="INDIA MACRO"
+                    href="/intel/india"
+                    badge={<GQSignalBadge href="/methods/india-credit-cycle-clock" />}
+                    labelColor="text-amber-500/80"
+                    alternateBg
+                >
+                    <SectionErrorBoundary name="India Macro Snapshot">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaMacroDashboard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+
+                    <SectionErrorBoundary name="India Credit Cycle">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <IndiaCreditCycleClock />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 7: CHINA MACRO */}
+                <ModuleRow label="CHINA MACRO" href="/intel/china" labelColor="text-red-500/80">
+                    <SectionErrorBoundary name="China Macro Pulse">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <Card variant="elevated">
+                                <CardContent>
+                                    <ChinaMacroPulseSection />
+                                </CardContent>
+                            </Card>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 8: AFRICA MACRO */}
+                <ModuleRow label="AFRICA MACRO" href="/labs/africa-macro" labelColor="text-amber-500/80" alternateBg>
+                    <SectionErrorBoundary name="Africa Macro Snapshot">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <AfricaMacroSnapshot />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 9: SOVEREIGN COMPASS */}
+                <ModuleRow label="SOVEREIGN COMPASS" href="/countries" labelColor="text-blue-500/80">
+                    <SectionErrorBoundary name="Sovereign Risk Matrix">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <SovereignRiskMatrix />
+                        </Suspense>
+                    </SectionErrorBoundary>
+
+                    <SectionErrorBoundary name="Country Intelligence">
+                        <Card variant="elevated" className="relative overflow-hidden">
+                            <CardHeader>
+                                <CardTitle className="text-lg uppercase font-black">Country Intelligence Terminals</CardTitle>
+                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Deep-dive macro profiles for 40+ sovereigns</p>
+                            </CardHeader>
+                            <CardContent>
                                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                                     {[
                                         { code: 'US', name: 'United States', flag: '🇺🇸' },
@@ -195,300 +336,7 @@ export const Terminal: React.FC = () => {
                             </CardContent>
                         </Card>
                     </SectionErrorBoundary>
-                </section>
-
-
-                {/* 1. STRATEGIC CONTEXT - UNIFIED WEEKLY DIGEST */}
-                <section id="weekly-regime-digest">
-                    <SectionErrorBoundary name="Weekly Regime Digest">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <WeeklyRegimeDigest />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 1.5. MONTHLY STRATEGY */}
-                <section id="monthly-strategy" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">Monthly Strategy</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-                    <SectionErrorBoundary name="Regime Digest Section">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <RegimeDigestSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 2. LIQUIDITY PLUMBLINE (Core Macro Input) */}
-                <section id="liquidity-plumbline" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/80">Liquidity Plumbline</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-                    
-                    <SectionErrorBoundary name="Global Liquidity Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GlobalLiquidityMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    
-                    <Card variant="elevated">
-                        <CardHeader className="flex flex-row justify-between items-center border-b border-white/5 pb-4 mb-6">
-                            <div>
-                                <CardTitle className="text-lg uppercase">US Net Liquidity Proxy</CardTitle>
-                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Monetary Base & Treasury General Account Telemetry</p>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
-                                <LiveStatusIndicator source="FRED / Treasury" />
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <SectionErrorBoundary name="Net Liquidity">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <NetLiquidityRow />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </CardContent>
-                    </Card>
-                </section>
-
-                {/* 3. SOVEREIGN STRESS (Risk Indicators) */}
-                <section id="sovereign-stress" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-rose-500/80">Sovereign Stress</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-
-                    <div className="space-y-8">
-                        <SectionErrorBoundary name="Sovereign Risk Matrix">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <SovereignRiskMatrix />
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="G20 Convergence">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase italic text-blue-400">Proprietary Signal: G20 GDP Per Capita Convergence</CardTitle>
-                                        <LiveStatusIndicator source="World Bank / IMF" />
-                                    </CardHeader>
-                                    <CardContent>
-                                        <G20GdpPerCapitaConvergence />
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="US Debt Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
-                                        <LiveStatusIndicator source="Treasury" />
-                                    </CardHeader>
-                                    <CardContent>
-                                        <USDebtMaturityWall />
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    {/* Divider between US Debt & Fed Monetization */}
-                    <div className="border-t border-slate-700/30 my-8" />
-                    <p className="text-center">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                            Federal Reserve Policy Impact
-                        </span>
-                    </p>
-
-                    <div className="w-full">
-                        <SectionErrorBoundary name="Fed Monetization Monitor">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
-                                        <div className="flex items-center gap-4">
-                                            <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
-                                            <LiveStatusIndicator source="FRED" />
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <FedMonetizationMonitor />
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <div className="w-full">
-                        <SectionErrorBoundary name="Corporate Debt Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CorporateDebtMaturityWall />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <div className="space-y-8">
-
-                        <SectionErrorBoundary name="Auction Demand Gauge">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase">Auction Demand Gauge</CardTitle>
-                                        <LiveStatusIndicator source="Treasury" />
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <USTreasuryDemandGauge />
-                                        <div className="flex justify-end pt-2">
-                                            <DataProvenanceBadge
-                                                source="FRED / Treasury"
-                                                methodology="B/S Aggregation"
-                                                lastVerified={new Date()}
-                                                size="sm"
-                                            />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-                </section>
-
-                {/* 3.5 TRADE INTELLIGENCE */}
-                <section id="trade-intelligence" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500/80">Trade Intelligence</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-                    <SectionErrorBoundary name="Trade Intelligence">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TradeEntryBanner />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 4. REGIONAL INTELLIGENCE */}
-                <section id="regional-intelligence" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/80">Regional Intelligence</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-                    <div className="space-y-12">
-                        <SectionErrorBoundary name="India Macro Snapshot">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <IndiaMacroDashboard />
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="Africa Macro Snapshot">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <AfricaMacroSnapshot />
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="China Macro Pulse">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <Card variant="elevated">
-                                    <CardContent>
-                                        <ChinaMacroPulseSection />
-                                    </CardContent>
-                                </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="India Credit Cycle">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <IndiaCreditCycleClock />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
-                </section>
-
-                {/* 4.5 ENERGY & COMMODITIES */}
-                <section id="energy-commodities" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500/80">Energy & Commodities</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                        <Link to="/methods/energy-dependency-ratio" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors shrink-0">Methodology →</Link>
-                    </div>
-                    <SectionErrorBoundary name="Energy & Commodities">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <EnergySection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 5. INSTITUTIONAL STRATEGY */}
-                <section id="institutional-strategy" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/80">Institutional Strategy</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                    </div>
-                    <SectionErrorBoundary name="Treasury Snapshot">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <Card variant="elevated">
-                                <CardContent>
-                                    <TreasurySnapshotSection />
-                                </CardContent>
-                            </Card>
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 6. SYSTEMIC RISK & MONITORING */}
-                <section>
-                    <Card variant="elevated" id="geopolitical-matrix">
-                        <CardHeader className="flex flex-row justify-between items-center mb-8 border-b border-white/5 pb-4">
-                            <div>
-                                <CardTitle className="text-lg uppercase">Geopolitical Risk Matrix</CardTitle>
-                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">ADS-B Conflict Telemetry & GDELT Event Stream</p>
-                            </div>
-                            <LiveStatusIndicator source="GDELT / OpenSky" />
-                        </CardHeader>
-                        <CardContent>
-                            <SectionErrorBoundary name="Geopolitical Matrix">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GeopoliticalEventsRow />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </CardContent>
-                    </Card>
-                </section>
-
-                <section id="deflation-debasement" className="space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="h-px flex-1 bg-white/5" />
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500/80">De-Dollarization & Gold</h2>
-                        <div className="h-px flex-1 bg-white/5" />
-                        <Link to="/methods/debt-gold-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors shrink-0">Methodology →</Link>
-                    </div>
-                    <SectionErrorBoundary name="Deflation Debasement">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <DeflationDebasementMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
-
-                </section>
-
-                {/* User Feedback Section */}
-                <section className="py-12">
-                    <SectionErrorBoundary name="User Feedback">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <FeedbackSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                </section>
+                </ModuleRow>
             </div>
         </div>
     );

@@ -212,7 +212,7 @@ describe('Smoke Tests', () => {
                 <Terminal />
             </TestWrapper>
         );
-        expect(await screen.findByText(/Sovereign Compass/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByText(/Macro Observatory/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
     it('renders DataHealthDashboard (authenticated) without crashing', async () => {
