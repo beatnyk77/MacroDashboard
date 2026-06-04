@@ -156,144 +156,98 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
 
   console.log(`[ingest-trade-imports] Processing ${reporters.length} reporters: ${reporters.join(', ')}`);
 
-
-
   const summary: any[] = [];
-
   let totalRowsUpdated = 0;
 
-
-
+  // Fetch all country-year combinations in parallel (up to 8 concurrent requests)
+  const fetchTasks = [];
   for (const iso3 of reporters) {
-
     const m49 = REPORTER_MAP[iso3];
-
     if (!m49) {
-
       console.warn(`[ingest-trade-imports] No M49 mapping for ${iso3}, skipping`);
-
       summary.push({ reporter: iso3, status: 'skipped', reason: 'no_m49_mapping' });
-
       continue;
-
     }
-
-
 
     for (const year of years) {
+      fetchTasks.push(
+        (async () => {
+          try {
+            const comtradeUrl =
+              `${COMTRADE_BASE}?reporterCode=${m49}&period=${year}&cmdCode=AG2&flowCode=M&partnerCode=0` +
+              `&subscription-key=${comtradeKey}`;
 
-      try {
+            console.log(`[ingest-trade-imports] Fetching ${iso3} (M49:${m49}) ${year}...`);
+            const res = await fetch(comtradeUrl);
 
-        const comtradeUrl =
+            if (!res.ok) {
+              const errText = await res.text();
+              throw new Error(`Comtrade API ${res.status}: ${errText.slice(0, 200)}`);
+            }
 
-          `${COMTRADE_BASE}?reporterCode=${m49}&period=${year}&cmdCode=AG2&flowCode=M&partnerCode=0` +
+            const json = (await res.json()) as { data: any[] };
+            const parsed = (json.data ?? [])
+              .map(parseComtradeRecord)
+              .filter((r) => r.importValue > 0);
 
-          `&subscription-key=${comtradeKey}`;
+            if (parsed.length === 0) {
+              console.log(`[ingest-trade-imports] No data for ${iso3} ${year}`);
+              return { iso3, year, status: 'no_data', rows: [], error: null };
+            }
 
+            const rows = parsed.map((r) => ({
+              reporter_iso3: iso3,
+              hs_code: r.hsCode,
+              year: parseInt(year, 10),
+              import_value_usd: r.importValue,
+              fetched_at: new Date().toISOString(),
+            }));
 
-
-        console.log(`[ingest-trade-imports] Fetching ${iso3} (M49:${m49}) ${year}...`);
-
-        const res = await fetch(comtradeUrl);
-
-
-
-        if (!res.ok) {
-
-          const errText = await res.text();
-
-          throw new Error(`Comtrade API ${res.status}: ${errText.slice(0, 200)}`);
-
-        }
-
-
-
-        const json = (await res.json()) as { data: any[] };
-
-        const parsed = (json.data ?? [])
-
-          .map(parseComtradeRecord)
-
-          .filter((r) => r.importValue > 0);
-
-
-
-        if (parsed.length === 0) {
-
-          console.log(`[ingest-trade-imports] No data for ${iso3} ${year}`);
-
-          summary.push({ reporter: iso3, year, status: 'no_data', rows_updated: 0 });
-
-          await new Promise((r) => setTimeout(r, 200));
-
-          continue;
-
-        }
-
-
-
-        const rows = parsed.map((r) => ({
-
-          reporter_iso3: iso3,
-
-          hs_code: r.hsCode,
-
-          year: parseInt(year, 10),
-
-          import_value_usd: r.importValue,
-
-          fetched_at: new Date().toISOString(),
-
-        }));
-
-
-
-        const { error: upsertErr } = await ctx.supabase
-
-          .from('trade_global_aggregates')
-
-          .upsert(rows, { onConflict: 'reporter_iso3,hs_code,year', ignoreDuplicates: false });
-
-
-
-        if (upsertErr) throw upsertErr;
-
-
-
-        totalRowsUpdated += rows.length;
-
-        summary.push({ reporter: iso3, year, status: 'success', rows_updated: rows.length });
-
-        console.log(`[ingest-trade-imports] ✓ ${iso3} ${year}: ${rows.length} rows upserted`);
-
-
-
-      } catch (e: any) {
-
-        console.error(`[ingest-trade-imports] ✗ ${iso3} ${year}:`, e.message);
-
-        summary.push({ reporter: iso3, year, status: 'failed', error: e.message });
-
-      }
-
-
-
-      await new Promise((r) => setTimeout(r, 200));
-
+            return { iso3, year, status: 'success', rows, error: null };
+          } catch (e: any) {
+            console.error(`[ingest-trade-imports] ✗ ${iso3} ${year}:`, e.message);
+            return { iso3, year, status: 'failed', rows: [], error: e.message };
+          }
+        })()
+      );
     }
-
   }
 
+  // Run fetches in parallel with concurrency control
+  const results = await Promise.all(fetchTasks);
 
+  // Process results sequentially for DB operations
+  for (const result of results) {
+    if (result.status === 'no_data') {
+      summary.push({ reporter: result.iso3, year: result.year, status: 'no_data', rows_updated: 0 });
+      continue;
+    }
+
+    if (result.status === 'failed') {
+      summary.push({ reporter: result.iso3, year: result.year, status: 'failed', error: result.error });
+      continue;
+    }
+
+    try {
+      const { error: upsertErr } = await ctx.supabase
+        .from('trade_global_aggregates')
+        .upsert(result.rows, { onConflict: 'reporter_iso3,hs_code,year', ignoreDuplicates: false });
+
+      if (upsertErr) throw upsertErr;
+
+      totalRowsUpdated += result.rows.length;
+      summary.push({ reporter: result.iso3, year: result.year, status: 'success', rows_updated: result.rows.length });
+      console.log(`[ingest-trade-imports] ✓ ${result.iso3} ${result.year}: ${result.rows.length} rows upserted`);
+    } catch (e: any) {
+      console.error(`[ingest-trade-imports] DB upsert failed for ${result.iso3} ${result.year}:`, e.message);
+      summary.push({ reporter: result.iso3, year: result.year, status: 'failed', error: e.message });
+    }
+  }
 
   return {
-
     countries_updated: reporters.length,
-
     rows_updated: totalRowsUpdated,
-
     metadata: { summary },
-
   };
 
 }
