@@ -6,7 +6,7 @@ vi.mock('@/lib/supabase', () => ({
   },
 }));
 
-import type { BriefContent, DailyMacroBrief } from '@/hooks/useMacroBrief';
+import type { BriefContent } from '@/hooks/useMacroBrief';
 
 describe('BriefContent type', () => {
   it('satisfies the expected shape', () => {

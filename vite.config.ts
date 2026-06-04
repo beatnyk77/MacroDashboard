@@ -100,9 +100,58 @@ ${hubItems}
     };
 }
 
+// ── Sitemap Brief Plugin ──────────────────────────────────────────────────
+// Injects the last 30 days of brief URLs into the sitemap at build time.
+function sitemapBriefPlugin(): Plugin {
+    return {
+        name: 'sitemap-brief-injector',
+        closeBundle() {
+            try {
+                const sitemapPath = path.resolve(__dirname, 'public/sitemap.xml');
+                if (!fs.existsSync(sitemapPath)) return;
+
+                let sitemap = fs.readFileSync(sitemapPath, 'utf-8');
+
+                // Generate last 30 days of brief URLs
+                const today = new Date();
+                const briefUrls: string[] = [];
+                for (let i = 0; i < 30; i++) {
+                    const d = new Date(today);
+                    d.setDate(d.getDate() - i);
+                    const y = d.getUTCFullYear();
+                    const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+                    const day = String(d.getUTCDate()).padStart(2, '0');
+                    const dateStr = `${y}-${m}-${day}`;
+                    briefUrls.push(`  <url>
+    <loc>https://graphiquestor.com/macro-brief/${y}/${m}/${day}</loc>
+    <lastmod>${dateStr}</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+                }
+
+                // Remove any previously injected brief URLs (idempotent builds)
+                sitemap = sitemap.replace(
+                    /\s*<!-- AUTO:BRIEF_URLS -->[\s\S]*?<!-- \/AUTO:BRIEF_URLS -->/,
+                    ''
+                );
+
+                // Inject before closing tag
+                const injection = `\n  <!-- AUTO:BRIEF_URLS -->\n${briefUrls.join('\n')}\n  <!-- /AUTO:BRIEF_URLS -->`;
+                sitemap = sitemap.replace('</urlset>', `${injection}\n</urlset>`);
+
+                fs.writeFileSync(sitemapPath, sitemap, 'utf-8');
+                console.log(`✅ Sitemap brief URLs injected: last 30 days → public/sitemap.xml`);
+            } catch (err) {
+                console.warn('⚠️  Sitemap brief injection failed (non-fatal):', err);
+            }
+        },
+    };
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), rssGeneratorPlugin()],
+    plugins: [react(), rssGeneratorPlugin(), sitemapBriefPlugin()],
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
