@@ -20,7 +20,6 @@ export function useCardCapture() {
         if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
         el.appendChild(wm);
         try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const canvas = await (html2canvas as any)(el, { useCORS: true, allowTaint: false, scale: 2, logging: false });
             const dataUrl = canvas.toDataURL('image/png');
             const blob = await new Promise<Blob>((resolve, reject) => {

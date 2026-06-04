@@ -113,6 +113,7 @@ export default [
                 crypto: 'readonly',
                 btoa: 'readonly',
                 Buffer: 'readonly',
+                getComputedStyle: 'readonly',
             }
         },
         plugins: {
