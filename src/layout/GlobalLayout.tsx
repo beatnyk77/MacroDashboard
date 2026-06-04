@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
 import { useLocation, NavLink, useSearchParams } from 'react-router-dom';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
@@ -18,6 +18,7 @@ interface GlobalLayoutProps {
 }
 
 const terminalNavItems = [
+    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={18} /> },
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
