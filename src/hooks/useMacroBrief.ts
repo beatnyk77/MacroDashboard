@@ -35,7 +35,12 @@ function todayISO(): string {
 function isValidContent(v: unknown): v is BriefContent {
   if (typeof v !== 'object' || v === null) return false;
   const c = v as Record<string, unknown>;
-  return Array.isArray(c.what_changed) && typeof c.regime_status === 'string';
+  return (
+    Array.isArray(c.what_changed) &&
+    typeof c.regime_status === 'string' &&
+    Array.isArray(c.focus_observations) &&
+    Array.isArray(c.watch_today)
+  );
 }
 
 export function useMacroBrief(

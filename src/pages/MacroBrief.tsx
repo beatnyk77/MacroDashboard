@@ -28,18 +28,26 @@ function saveFocusAreas(areas: FocusAreaCode[]) {
   localStorage.setItem(LS_KEY, JSON.stringify(areas));
 }
 
-/** Returns ms until next 9:30 AM ET (fixed EDT offset UTC-4) */
+/** Returns ms until next 9:30 AM ET. Uses Intl API to handle EDT/EST correctly on any machine. */
 function msUntilNYOpen(): number {
   const now = new Date();
-  // EDT = UTC-4. Target: today's 13:30 UTC = 9:30 ET
-  const target = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-    13, 30, 0, 0
-  ));
-  if (now >= target) target.setUTCDate(target.getUTCDate() + 1);
-  return target.getTime() - now.getTime();
+  // Get current ET wall-clock time using Intl (handles DST automatically)
+  const etParts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false,
+  }).formatToParts(now);
+  const get = (type: string) => parseInt(etParts.find((p) => p.type === type)?.value ?? '0', 10);
+  const etH = get('hour');
+  const etM = get('minute');
+  const etS = get('second');
+  // Seconds from now until 9:30:00 ET
+  const nowSec = etH * 3600 + etM * 60 + etS;
+  const openSec = 9 * 3600 + 30 * 60;
+  const diffSec = nowSec < openSec ? openSec - nowSec : 86400 - (nowSec - openSec);
+  return diffSec * 1000;
 }
 
 function useCountdown(): string {
