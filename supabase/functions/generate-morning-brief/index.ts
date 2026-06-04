@@ -139,7 +139,12 @@ Return ONLY valid JSON:
     }
 
     const content = JSON.parse(jsonMatch[0]) as BriefContent;
-    if (!Array.isArray(content.what_changed) || typeof content.regime_status !== "string") {
+    if (
+      !Array.isArray(content.what_changed) ||
+      typeof content.regime_status !== "string" ||
+      !Array.isArray(content.focus_observations) ||
+      !Array.isArray(content.watch_today)
+    ) {
       throw new Error("Invalid content shape from LLM");
     }
 
@@ -171,7 +176,7 @@ Deno.serve(async (req) => {
       .from("daily_changes")
       .select("metric_label, prev_value, curr_value, pct_delta, direction, interpretation, significance")
       .eq("signal_date", briefDate)
-      .order("significance", { ascending: true })
+      .order("significance", { ascending: false })
       .limit(10);
 
     const changes: DailyChange[] = (changesData ?? []) as DailyChange[];

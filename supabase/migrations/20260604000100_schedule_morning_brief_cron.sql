@@ -1,10 +1,9 @@
--- Schedule daily morning brief generation at 05:30 UTC
--- Runs after overnight ingest jobs have settled; compute-daily-macro-signal fires at 06:00 UTC,
--- so this brief is built from the PREVIOUS day's signal — adjust to 06:15 UTC if same-day signal is needed.
+-- Schedule daily morning brief generation at 06:15 UTC
+-- Runs after compute-daily-macro-signal (06:00 UTC) to ensure same-day signal is available.
 SELECT
   cron.schedule(
     'generate-morning-brief',
-    '30 5 * * *',
+    '15 6 * * *',
     $$
     SELECT
       net.http_post(
