@@ -12,16 +12,14 @@ In an era defined by monetary experimentation and supply-side constraints, conve
 
 GraphiQuestor operates as a pure data terminal. The moment you arrive, you're presented with live, automatically updating telemetry across these specialized intelligence hubs:
 
-*   **Macro Observatory** — Digital entrance to the full suite of research labs and structural telemetry terminals.
-*   **India Intelligence Hub** — Consolidated state-level macro pulse, MoSPI direct ingestion, and the **Bharat Investment Universe (BIU)** for mutual fund analytics.
+*   **Macro Observatory** — The homepage terminal layout featuring 17 dedicated separate rows of high-frequency liquidity, sovereign stress, energy, trade, and regional macro telemetry.
+*   **India Intelligence Hub** — Consolidated state-level macro pulse, MoSPI direct ingestion, and sub-national cap-ex/development analytics.
 *   **China Macro Hub** — PBOC liquidity cycles, provincial industrial telemetry, and the 15th Five-Year Plan transition tracker.
-*   **US Corporate Terminal** — Institutional-grade equity surveillance including **expanded 13F whale tracking** (Top 15 positions) and SEC EDGAR fundmentals.
 *   **US Macro & Fiscal** — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve monetization monitors.
 *   **De-Dollarization & Gold Anchor Lab** — Mathematical tracking of the G7 vs. BRICS+ fracture and hard-money reserve accumulation.
 *   **Energy Security & Commodities** — Crude import dependency cartography and the **WTI Calendar Spread Monitor (Industry First)** for physical market tightness.
 *   **Global Trade Intelligence** — Real-time tracking of 2-digit HS export flows across 20+ major economies, mapping the manufacturing shifts of the multipolar era.
 *   **Sovereign Stress Lab** — EM credit matrix and the **Bank of Japan (BoJ) Stress Monitor** (Total Assets vs. Monetary Base).
-*   **Sustainable Finance & Climate Risk** — Energy transition analytics and carbon intensity telemetry.
 *   **Shadow System Signals** — Capital flight indicators and illicit trade flow telemetry (restricted access).
 *   **Data Health Dashboard** — Real-time pipeline status, authenticity scores, and data provenance tracking across all modules
 
@@ -37,7 +35,6 @@ Standard platforms offer high-level national aggregates. GraphiQuestor delivers 
 
 *   **The India Advantage:** Live direct integration with MoSPI's eSankhyiki platform delivers state/UT-level ASI, PLFS, CPI, energy, and fiscal data in near real-time. No lagging national averages—see the actual conditions in Maharashtra, Gujarat, Tamil Nadu, and every other state as they unfold.
 *   **The China Advantage:** Automated ingestion of NBS and PBOC data at the provincial level, revealing leading indicators before national aggregates shift. Track policy divergence between Shanghai's monetary accommodation and Beijing's deleveraging edicts—the tension that defines China's macroeconomic regime.
-*   **US Equities Edge:** Recent pipeline hardening (April 2026) ensures reliable, daily ingestion of SEC EDGAR filings—13F positions, 10-K/10-Q fundamentals, and insider trades—powering the US Corporate Terminal with institutional-quality data.
 *   **Energy Arbitrage Edge:** The **WTI Calendar Spread Monitor** provides a "physical market filter"—an industry-first telemetry layer that identifies structural supply shortages (Backwardation) versus storage gluts (Contango) with mathematical precision.
 
 ---
@@ -122,15 +119,12 @@ Through direct integration with India's Ministry of Statistics & Programme Imple
 *   **Global Trade Intelligence:** A high-velocity telemetry layer tracking 2nd-digit HS chapter exports across 20+ major economies. Reveals the real-time ebb and flow of global manufacturing and identifies emerging "manufacturing hubs" before national GDP prints.
 *   **Manufacturing Shift Tracker (India vs China):** Side-by-side comparative analysis of 6-digit HS codes for strategic sectors (EVs, Smartphones, Solar, Semiconductors). Tracks the "China+1" narrative with ruthless, data-driven precision.
 *   **India Macro Pulse:** Unified dashboard synthesizing RBI liquidity, state fiscal stress, credit cycles, and debt maturity walls.
-* **Bharat Investment Universe (BIU):** A high-fidelity analyzer tracking 400+ Indian Mutual Funds. Integrates proprietary Macro Impact Scores and performance telemetry directly from `mfapi.in`.
-* **State-Level Granularity:** Industrial output (ASI), employment efficiency (PLFS), energy dependency, and fiscal allocation tracking down to the state/UT level.
-* **Market Microstructure:** FII/DII flows, promoter activity, bulk/block deals, short selling reports, IPO pipelines, and advanced screening tools for the Corporate India Engine.
+*   **State-Level Granularity:** Industrial output (ASI), employment efficiency (PLFS), energy dependency, and fiscal allocation tracking down to the state/UT level.
 
 **China Macro Hub** (Consolidated Q1 2026)
 Real-time tracking of policy divergence and real-economy dynamics across China's vast administrative landscape:
 * **PBOC Liquidity Monitor:** MLF operations, reverse repos, M2 growth, and regime identification—highlighting moments when Shanghai's monetary accommodation conflicts with Beijing's deleveraging mandates.
 * **Provincial Industrial Telemetry:** Tracking production, investment, and energy transition metrics across provinces to identify leading indicators before national aggregates shift.
-* **15th Five-Year Path:** Early signals on policy direction, credit impulse, and de-dollarization flows through China's official channels and bilateral mechanisms.
 
 **Institutional Application:** The India and China hubs provide sovereign wealth funds and EM-dedicated allocators with the granularity required to identify productive capital allocation versus rent-seeking, to position ahead of policy pivots, and to understand the real-economy demand that drives commodity markets and currency realignments.
 
@@ -187,9 +181,6 @@ GraphiQuestor synthesizes intelligence from the world's most authoritative insti
 *   **EIA (U.S. Energy Information Administration):** Global refining capacity, crude import/export flows, SPR dynamics, and oil market balances.
 *   **Real-Time OSINT:** GDELT event feeds, vessel tracking (AIS), and flight telemetry for geopolitical risk mapping.
 *   **Market Data Feeds:** Alpha Vantage, Finnhub, and trading economics for real-time commodity and volatility metrics.
-
-### US Equities & Corporate Fundamentals
-*   **SEC EDGAR:** 13F filings, 10-K/10-Q reports, and insider transaction disclosures—ingested daily with automated parsing and signal extraction. Pipeline hardened and restored to production in April 2026.
 
 ---
 

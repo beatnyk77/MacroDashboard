@@ -121,28 +121,38 @@ export const Terminal: React.FC = () => {
             </div>
 
             <div className="flex flex-col pb-32">
-                {/* Row 1: REGIME SIGNAL */}
+                {/* Row 1: DAILY REGIME SIGNAL */}
                 <ModuleRow label="REGIME SIGNAL" href="/regime-digest">
                     <SectionErrorBoundary name="Daily Macro Layer">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <DailyMacroPanel />
-                            <TodaysBriefPanel />
-                        </div>
+                        <DailyMacroPanel />
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 2: LIQUIDITY PLUMBLINE */}
+                {/* Row 2: LIVE INTELLIGENCE FEED */}
+                <ModuleRow label="LIVE BRIEF" href="/regime-digest" alternateBg>
+                    <SectionErrorBoundary name="Intelligence Feed">
+                        <TodaysBriefPanel />
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 3: GLOBAL LIQUIDITY COMPOSITE */}
                 <ModuleRow
-                    label="LIQUIDITY PLUMBLINE"
+                    label="GLOBAL LIQUIDITY"
                     badge={<GQSignalBadge href="/methods/net-liquidity-z-score" />}
-                    alternateBg
                 >
                     <SectionErrorBoundary name="Global Liquidity Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <GlobalLiquidityMonitor />
                         </Suspense>
                     </SectionErrorBoundary>
+                </ModuleRow>
 
+                {/* Row 4: US NET LIQUIDITY PROXY */}
+                <ModuleRow
+                    label="NET LIQUIDITY PROXY"
+                    badge={<GQSignalBadge href="/methods/net-liquidity-z-score" />}
+                    alternateBg
+                >
                     <SectionErrorBoundary name="Net Liquidity">
                         <Suspense fallback={<LoadingFallback />}>
                             <div ref={netLiquidityRef} className="relative group">
@@ -167,77 +177,77 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 3: US SOVEREIGN STRESS */}
-                <ModuleRow label="US SOVEREIGN STRESS" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                        <SectionErrorBoundary name="Fed Monetization Monitor">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div ref={fedMonetizationRef} className="relative group">
-                                    <ShareButton targetRef={fedMonetizationRef} title="Fed Monetization Monitor" dataSource="FRED" href="/labs/us-macro-fiscal" />
-                                    <Card variant="elevated">
-                                        <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                            <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
-                                            <div className="flex items-center gap-4">
-                                                <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
-                                                <LiveStatusIndicator source="FRED" />
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <FedMonetizationMonitor />
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
-
-                        <SectionErrorBoundary name="Auction Demand Gauge">
-                            <Suspense fallback={<LoadingFallback />}>
+                {/* Row 5: FED MONETIZATION MONITOR */}
+                <ModuleRow label="FED MONETIZATION" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
+                    <SectionErrorBoundary name="Fed Monetization Monitor">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <div ref={fedMonetizationRef} className="relative group">
+                                <ShareButton targetRef={fedMonetizationRef} title="Fed Monetization Monitor" dataSource="FRED" href="/labs/us-macro-fiscal" />
                                 <Card variant="elevated">
                                     <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-sm uppercase">Auction Demand Gauge</CardTitle>
-                                        <LiveStatusIndicator source="Treasury" />
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <USTreasuryDemandGauge />
-                                        <div className="flex justify-end pt-2">
-                                            <DataProvenanceBadge
-                                                source="FRED / Treasury"
-                                                methodology="B/S Aggregation"
-                                                lastVerified={new Date()}
-                                                size="sm"
-                                            />
+                                        <CardTitle className="text-sm uppercase">Fed Monetization Monitor</CardTitle>
+                                        <div className="flex items-center gap-4">
+                                            <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                            <LiveStatusIndicator source="FRED" />
                                         </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <FedMonetizationMonitor />
                                     </CardContent>
                                 </Card>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
+                            </div>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                        <SectionErrorBoundary name="US Debt Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <div ref={usDebtRef} className="relative group">
-                                    <ShareButton targetRef={usDebtRef} title="US Debt Maturity Wall" dataSource="Treasury" href="/labs/us-macro-fiscal" />
-                                    <Card variant="elevated">
-                                        <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                            <CardTitle className="text-sm uppercase">US Debt Maturity Wall</CardTitle>
-                                            <LiveStatusIndicator source="Treasury" />
-                                        </CardHeader>
-                                        <CardContent>
-                                            <USDebtMaturityWall />
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
+                {/* Row 6: TREASURY AUCTION DEMAND */}
+                <ModuleRow label="AUCTION DEMAND" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80" alternateBg>
+                    <SectionErrorBoundary name="Auction Demand Gauge">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <Card variant="elevated">
+                                <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
+                                    <CardTitle className="text-sm uppercase">Auction Demand Gauge</CardTitle>
+                                    <LiveStatusIndicator source="Treasury" />
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <USTreasuryDemandGauge />
+                                    <div className="flex justify-end pt-2">
+                                        <DataProvenanceBadge
+                                            source="FRED / Treasury"
+                                            methodology="B/S Aggregation"
+                                            lastVerified={new Date()}
+                                            size="sm"
+                                        />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
 
-                        <SectionErrorBoundary name="Corporate Debt Maturity Wall">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CorporateDebtMaturityWall />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </div>
+                {/* Row 7: US DEBT MATURITY WALL */}
+                <ModuleRow label="US DEBT WALL" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
+                    <SectionErrorBoundary name="US Debt Maturity Wall">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <div ref={usDebtRef} className="relative group">
+                                <ShareButton targetRef={usDebtRef} title="US Debt Maturity Wall" dataSource="Treasury" href="/labs/us-macro-fiscal" />
+                                <USDebtMaturityWall />
+                            </div>
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
 
+                {/* Row 8: CORPORATE DEBT MATURITY WALL */}
+                <ModuleRow label="CORP DEBT WALL" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80" alternateBg>
+                    <SectionErrorBoundary name="Corporate Debt Maturity Wall">
+                        <Suspense fallback={<LoadingFallback />}>
+                            <CorporateDebtMaturityWall />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </ModuleRow>
+
+                {/* Row 9: TREASURY YIELD SNAPSHOT */}
+                <ModuleRow label="TREASURY YIELD" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
                     <SectionErrorBoundary name="Treasury Snapshot">
                         <Suspense fallback={<LoadingFallback />}>
                             <Card variant="elevated">
@@ -249,7 +259,7 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 4: ENERGY MARKETS */}
+                {/* Row 10: ENERGY MARKETS */}
                 <ModuleRow label="ENERGY MARKETS" href="/labs/energy-commodities" labelColor="text-orange-500/80" alternateBg>
                     <SectionErrorBoundary name="Energy & Commodities">
                         <Suspense fallback={<LoadingFallback />}>
@@ -258,8 +268,8 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 5: TRADE INTELLIGENCE */}
-                <ModuleRow label="TRADE INTELLIGENCE" href="/trade" labelColor="text-emerald-500/80">
+                {/* Row 11: TRADE INTELLIGENCE */}
+                <ModuleRow label="TRADE INTEL" href="/trade" labelColor="text-emerald-500/80">
                     <SectionErrorBoundary name="Trade Intelligence">
                         <Suspense fallback={<LoadingFallback />}>
                             <TradeEntryBanner />
@@ -267,11 +277,10 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 6: INDIA MACRO */}
+                {/* Row 12: INDIA MACRO SUMMARY */}
                 <ModuleRow
-                    label="INDIA MACRO"
+                    label="INDIA SUMMARY"
                     href="/intel/india"
-                    badge={<GQSignalBadge href="/methods/india-credit-cycle-clock" />}
                     labelColor="text-amber-500/80"
                     alternateBg
                 >
@@ -280,7 +289,15 @@ export const Terminal: React.FC = () => {
                             <IndiaMacroDashboard />
                         </Suspense>
                     </SectionErrorBoundary>
+                </ModuleRow>
 
+                {/* Row 13: INDIA CREDIT CYCLE */}
+                <ModuleRow
+                    label="CREDIT CYCLE"
+                    href="/intel/india"
+                    badge={<GQSignalBadge href="/methods/india-credit-cycle-clock" />}
+                    labelColor="text-amber-500/80"
+                >
                     <SectionErrorBoundary name="India Credit Cycle">
                         <Suspense fallback={<LoadingFallback />}>
                             <IndiaCreditCycleClock />
@@ -288,8 +305,8 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 7: CHINA MACRO */}
-                <ModuleRow label="CHINA MACRO" href="/intel/china" labelColor="text-red-500/80">
+                {/* Row 14: CHINA MACRO PULSE */}
+                <ModuleRow label="CHINA PULSE" href="/intel/china" labelColor="text-red-500/80" alternateBg>
                     <SectionErrorBoundary name="China Macro Pulse">
                         <Suspense fallback={<LoadingFallback />}>
                             <Card variant="elevated">
@@ -301,8 +318,8 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 8: AFRICA MACRO */}
-                <ModuleRow label="AFRICA MACRO" href="/labs/africa-macro" labelColor="text-amber-500/80" alternateBg>
+                {/* Row 15: AFRICA MACRO */}
+                <ModuleRow label="AFRICA MACRO" href="/labs/africa-macro" labelColor="text-amber-500/80">
                     <SectionErrorBoundary name="Africa Macro Snapshot">
                         <Suspense fallback={<LoadingFallback />}>
                             <AfricaMacroSnapshot />
@@ -310,14 +327,17 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                {/* Row 9: SOVEREIGN COMPASS */}
-                <ModuleRow label="SOVEREIGN COMPASS" href="/countries" labelColor="text-blue-500/80">
+                {/* Row 16: SOVEREIGN RISK MATRIX */}
+                <ModuleRow label="SOVEREIGN RISK" href="/countries" labelColor="text-blue-500/80" alternateBg>
                     <SectionErrorBoundary name="Sovereign Risk Matrix">
                         <Suspense fallback={<LoadingFallback />}>
                             <SovereignRiskMatrix />
                         </Suspense>
                     </SectionErrorBoundary>
+                </ModuleRow>
 
+                {/* Row 17: COUNTRY PORTALS */}
+                <ModuleRow label="COUNTRY PORTALS" href="/countries" labelColor="text-blue-500/80">
                     <SectionErrorBoundary name="Country Intelligence">
                         <Card variant="elevated" className="relative overflow-hidden">
                             <CardHeader>
