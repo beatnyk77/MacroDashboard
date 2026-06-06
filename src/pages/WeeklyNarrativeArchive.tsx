@@ -92,7 +92,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                         <ListItem disablePadding>
                                             <ListItemButton
                                                 component={Link}
-                                                to={`/?week=${narrative.week_ending_date}#weekly-narrative`}
+                                                to={`/weekly-narrative/${narrative.week_ending_date}`}
                                                 className="py-10 px-8 md:px-12 hover:bg-white/[0.03] transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group"
                                             >
                                                 <div className="flex-1">
