@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
+import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, NavLink, useSearchParams } from 'react-router-dom';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
@@ -28,6 +29,7 @@ const terminalNavItems = [
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
     { id: 'trade-intelligence', label: 'Trade Intelligence', path: '/trade', icon: <Globe size={18} /> },
+    { id: 'sovereign-compass', label: 'Sovereign Compass', path: '/countries', icon: <Globe size={18} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
     { id: 'de-dollarization-guide', label: 'De-Dollarization Guide', path: '/methods/de-dollarization-guide', icon: <FileText size={18} /> },
     { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={18} /> },
@@ -101,10 +103,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 className={regimeColorClass}
                             />
                             <div className="hidden sm:block text-2xl font-black tracking-heading leading-none">
-                                <span className="text-foreground">Graphi</span>
-                                <span className="text-blue-500">Questor</span>
+                                <span className="text-foreground">{BrandConfig.namePrefix}</span>
+                                <span className="text-blue-500">{BrandConfig.nameSuffix}</span>
                                 <div className="text-xs font-bold text-muted-foreground/50 tracking-uppercase mt-1 uppercase">
-                                    Macro Observatory · Not Sovereign AI
+                                    {BrandConfig.tagline}
                                 </div>
                             </div>
                         </div>

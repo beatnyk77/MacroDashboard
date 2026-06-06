@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Container, Typography, Box, Button, Grid } from '@mui/material';
-import { Zap, ShieldCheck, Database, ArrowRight, Lock } from 'lucide-react';
+import { Zap, ShieldCheck, Database, ArrowRight, Lock, BookOpen } from 'lucide-react';
 import { m } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
 
 declare global {
@@ -164,7 +165,15 @@ export const APIAccessPage: React.FC = () => {
                     </Grid>
                 </Grid>
 
-                <Box sx={{ mt: 16, textAlign: 'center' }}>
+                <Box sx={{ mt: 12, textAlign: 'center' }}>
+                    <Link
+                        to="/api-docs"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 12, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', color: '#93c5fd', textDecoration: 'none', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}
+                    >
+                        <BookOpen size={14} /> View Full API Documentation
+                    </Link>
+                </Box>
+                <Box sx={{ mt: 4, textAlign: 'center' }}>
                     <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                         Need higher throughput? <Button sx={{ fontWeight: 900, color: 'white', textDecoration: 'underline' }}>Request Enterprise keys</Button>
                     </Typography>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { BrandConfig } from '@/config/brandConfig';
 
 interface GQSignalBadgeProps {
   tooltip?: string;
@@ -15,7 +16,7 @@ const BadgeContent: React.FC<{ tooltip?: string }> = ({ tooltip }) => (
       cursor-default select-none"
   >
     <span aria-hidden>◆</span>
-    GQ SIGNAL
+    {BrandConfig.signalBadgePrefix} SIGNAL
   </span>
 );
 

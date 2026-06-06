@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
+export interface MetricsSnapshot {
+    us?: { cpi_yoy?: number; dxy?: number; dxy_prev?: number; debt_gold_ratio?: number; vix?: number; global_liquidity_usd_bn?: number };
+    india?: { gdp_yoy?: number; cpi_yoy?: number };
+    china?: { gdp_yoy?: number };
+    commodities?: { gold_usd?: number; gold_prev?: number; brent_crude?: number; brent_prev?: number };
+}
+
 export interface Digest {
     id: string;
     year_month: string;
@@ -8,6 +15,7 @@ export interface Digest {
     plain_text: string;
     subject_line: string;
     created_at: string;
+    metrics_snapshot?: MetricsSnapshot | null;
 }
 
 export function useRegimeDigest(year?: string, month?: string) {

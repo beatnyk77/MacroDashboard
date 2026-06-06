@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
+import { BrandConfig } from '@/config/brandConfig';
 
 interface SEOManagerProps {
     title: string;
@@ -22,7 +23,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     title,
     description,
     keywords,
-    ogImage = 'https://graphiquestor.com/hero-preview.jpg',
+    ogImage = BrandConfig.seo.ogImage,
     ogType = 'website',
     ogLocale = 'en_US',
     canonicalUrl,
@@ -34,13 +35,13 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     targetCountry = 'GLOBAL',
 }) => {
     const location = useLocation();
-    const fullTitle = `${title} | GraphiQuestor`;
+    const fullTitle = BrandConfig.seo.titleTemplate.replace('%s', title);
 
     // Auto-generate canonical if not provided — self-referencing per Google best practice
     const canonicalPath = location.pathname === '/'
         ? '/'
         : location.pathname.replace(/\/$/, '');
-    const resolvedCanonical = canonicalUrl || `https://graphiquestor.com${canonicalPath}`;
+    const resolvedCanonical = canonicalUrl || `${BrandConfig.baseUrl}${canonicalPath}`;
 
     return (
         <Helmet>
@@ -56,14 +57,14 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "SoftwareApplication",
-                        "@id": "https://graphiquestor.com/#software",
-                        "name": "GraphiQuestor Macro Intelligence Terminal",
+                        "@id": `${BrandConfig.baseUrl}/#software`,
+                        "name": `${BrandConfig.name} Macro Intelligence Terminal`,
                         "operatingSystem": "All",
                         "applicationCategory": "FinanceApplication",
                         "description": description,
-                        "url": "https://graphiquestor.com/",
+                        "url": `${BrandConfig.baseUrl}/`,
                         "author": {
-                            "@id": "https://graphiquestor.com/#organization"
+                            "@id": `${BrandConfig.baseUrl}/#organization`
                         },
                         "offers": {
                             "@type": "Offer",
@@ -92,7 +93,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta property="og:type" content={ogType} />
             <meta property="og:image" content={ogImage} />
             <meta property="og:url" content={resolvedCanonical} />
-            <meta property="og:site_name" content="GraphiQuestor" />
+            <meta property="og:site_name" content={BrandConfig.seo.siteName} />
             <meta property="og:locale" content={ogLocale} />
             <link rel="canonical" href={resolvedCanonical} />
 
@@ -101,8 +102,8 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta name="twitter:description" content={description} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:image" content={ogImage} />
-            <meta name="twitter:site" content="@GraphiQuestor" />
-            <meta name="twitter:creator" content="@GraphiQuestor" />
+            <meta name="twitter:site" content={BrandConfig.twitter} />
+            <meta name="twitter:creator" content={BrandConfig.twitter} />
 
             {/* Article Schema */}
             {ogType === 'article' && publishedTime && (

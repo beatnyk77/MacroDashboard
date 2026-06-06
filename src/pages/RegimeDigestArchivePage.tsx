@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Calendar } from 'lucide-react';
+import { ChevronRight, Calendar, FileText } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface DigestSummary {
@@ -43,53 +43,82 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 title="Macro Regime Digest Archive"
                 description="Monthly institutional-grade macro intelligence reports on Global Liquidity, Debt/Gold, and Geopolitics."
             />
-            
-            <div className="mb-12 text-center">
-                <h1 className="text-4xl font-black text-white tracking-heading uppercase mb-3">
-                    Macro Regime Digest
+
+            <div className="mb-12">
+                <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500 mb-3">
+                    GraphiQuestor Intelligence
+                </p>
+                <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tighter uppercase leading-none mb-4">
+                    Macro Regime<br /><span className="text-blue-500">Digest Archive</span>
                 </h1>
-                <p className="text-sm font-bold text-muted-foreground/60 tracking-uppercase uppercase">
-                    Monthly institutional intelligence on Global Liquidity, Sovereign Stress, and De-Dollarization.
+                <p className="text-sm text-muted-foreground/60 max-w-xl leading-relaxed">
+                    Monthly institutional synthesis on Global Liquidity, Sovereign Stress, De-Dollarization, and structural regime shifts. Published on the 1st of each month.
                 </p>
             </div>
 
             <Card variant="elevated" className="overflow-hidden bg-slate-950/50 backdrop-blur-md border-white/10">
                 <CardContent className="p-0">
                     {loading ? (
-                        <div className="p-12 text-center text-sm font-bold tracking-uppercase uppercase text-muted-foreground/50 animate-pulse">
-                            Loading archives...
+                        <div className="p-16 flex flex-col items-center gap-4">
+                            <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                            <p className="text-[10px] font-black tracking-[0.25em] uppercase text-muted-foreground/40 animate-pulse">
+                                Loading Intelligence Archive...
+                            </p>
                         </div>
                     ) : digests.length === 0 ? (
-                        <div className="p-12 text-center text-sm font-bold tracking-uppercase uppercase text-muted-foreground/50">
-                            No digests published yet.
+                        <div className="p-16 flex flex-col items-center gap-4 text-center">
+                            <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-2">
+                                <FileText className="w-5 h-5 text-blue-500/50" />
+                            </div>
+                            <p className="text-sm font-bold text-white/50">No digests published yet</p>
+                            <p className="text-xs text-muted-foreground/40 max-w-xs">
+                                The first digest will be generated on the 1st of next month, or you can trigger one from the terminal.
+                            </p>
+                            <Link
+                                to="/"
+                                className="mt-2 text-[10px] font-black tracking-widest uppercase text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                                Go to Terminal →
+                            </Link>
                         </div>
                     ) : (
                         <ul className="divide-y divide-white/5">
                             {digests.map((digest, index) => (
                                 <li key={digest.id} className="group">
-                                    <Link 
+                                    <Link
                                         to={`/regime-digest/${digest.year_month.replace('-', '/')}`}
-                                        className="block p-6 hover:bg-white/[0.02] transition-colors"
+                                        className="flex items-center justify-between gap-4 p-6 sm:p-8 hover:bg-white/[0.02] transition-colors"
                                     >
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 border border-white/10 text-xs font-bold text-white tracking-uppercase uppercase">
-                                                        <Calendar size={12} className="text-blue-400" />
+                                        <div className="flex items-start gap-5 flex-1 min-w-0">
+                                            {/* Issue number */}
+                                            <div className="hidden sm:flex flex-col items-center shrink-0 pt-0.5">
+                                                <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground/25">
+                                                    #{digests.length - index}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex-1 min-w-0 space-y-2">
+                                                <div className="flex items-center gap-3 flex-wrap">
+                                                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 border border-white/8 text-xs font-bold text-white/70">
+                                                        <Calendar size={11} className="text-blue-400/70" />
                                                         {formatDate(digest.year_month)}
                                                     </div>
                                                     {index === 0 && (
-                                                        <span className="px-2 py-0.5 rounded bg-blue-500/20 border border-blue-500/30 text-[10px] font-black text-blue-400 tracking-uppercase uppercase">
+                                                        <span className="px-2 py-0.5 rounded bg-blue-500/15 border border-blue-500/25 text-[10px] font-black text-blue-400 tracking-widest uppercase">
                                                             Latest
                                                         </span>
                                                     )}
                                                 </div>
-                                                <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors leading-snug">
+                                                <h3 className="text-base sm:text-lg font-bold text-white/90 group-hover:text-blue-400 transition-colors leading-snug truncate">
                                                     {digest.subject_line}
                                                 </h3>
+                                                <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
+                                                    Published {new Date(digest.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </p>
                                             </div>
-                                            <ChevronRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-blue-500 transition-colors shrink-0 mt-2" />
                                         </div>
+
+                                        <ChevronRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-blue-500 transition-colors shrink-0" />
                                     </Link>
                                 </li>
                             ))}
@@ -97,6 +126,10 @@ export const RegimeDigestArchivePage: React.FC = () => {
                     )}
                 </CardContent>
             </Card>
+
+            <p className="mt-8 text-center text-[10px] font-bold text-muted-foreground/25 uppercase tracking-widest">
+                GraphiQuestor · Institutional Macro Intelligence · Generated via AI synthesis
+            </p>
         </div>
     );
 };

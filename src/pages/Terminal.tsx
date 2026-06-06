@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useState, useRef } from 'react';
 import { SEOManager } from '@/components/SEOManager';
+import { BrandConfig } from '@/config/brandConfig';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
@@ -61,27 +62,27 @@ export const Terminal: React.FC = () => {
     return (
         <div className="w-full min-h-screen py-6">
             <SEOManager
-                title="GraphiQuestor — Global Macro Intelligence Terminal | Fiscal Dominance, Sovereign Stress & De-Dollarization"
-                description="GraphiQuestor tracks the macro variables that matter in a multipolar world — sovereign debt stress, de-dollarization momentum, Fed monetization, and gold's return as monetary anchor. Free institutional macro intelligence terminal."
+                title={BrandConfig.seo.defaultTitle}
+                description={`${BrandConfig.name} tracks the macro variables that matter in a multipolar world — sovereign debt stress, de-dollarization momentum, Fed monetization, and gold's return as monetary anchor. Free institutional macro intelligence terminal.`}
                 keywords={['macro intelligence', 'global liquidity', 'sovereign stress', 'india macro', 'china macro', 'financial terminal']}
                 isApp={true}
                 jsonLd={[
                     {
                         "@context": "https://schema.org",
                         "@type": "Organization",
-                        "name": "GraphiQuestor",
-                        "@id": "https://graphiquestor.com/#organization",
-                        "url": "https://graphiquestor.com",
+                        "name": BrandConfig.name,
+                        "@id": `${BrandConfig.baseUrl}/#organization`,
+                        "url": BrandConfig.baseUrl,
                         "description": "Macro intelligence terminal tracking global liquidity, sovereign stress, and India/China macro."
                     },
                     {
                         "@context": "https://schema.org",
                         "@type": "WebSite",
-                        "name": "GraphiQuestor",
-                        "url": "https://graphiquestor.com",
+                        "name": BrandConfig.name,
+                        "url": BrandConfig.baseUrl,
                         "description": "Macro Observatory for the Multipolar Era",
                         "publisher": {
-                            "@id": "https://graphiquestor.com/#organization"
+                            "@id": `${BrandConfig.baseUrl}/#organization`
                         }
                     }
                 ]}
@@ -101,7 +102,7 @@ export const Terminal: React.FC = () => {
             {!orientingDismissed && (
                 <div className="relative mb-8 -mt-4 flex items-start justify-between gap-4">
                     <p className="text-sm text-white/50 font-light italic max-w-2xl">
-                        GraphiQuestor tracks the macro variables that matter in a multipolar world — sovereign stress, de-dollarization momentum, fiscal dominance, and gold&apos;s return as monetary anchor.
+                        {BrandConfig.name} tracks the macro variables that matter in a multipolar world — sovereign stress, de-dollarization momentum, fiscal dominance, and gold&apos;s return as monetary anchor.
                     </p>
                     <button
                         onClick={dismissOrienting}

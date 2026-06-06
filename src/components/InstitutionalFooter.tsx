@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheck, BookOpen, Globe, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { BrandConfig } from '@/config/brandConfig';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { DataFreshnessFooterChip } from '@/components/DataHealthBanner';
 
@@ -24,6 +25,11 @@ export const InstitutionalFooter: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Industry-first trackers callout */}
+                <div className="mb-4 text-center text-[10px] font-medium text-muted-foreground/50 tracking-wide">
+                    Industry-first: Fed Debt Monetization Tracker · De-Dollarization Composite · India Credit Cycle Clock
+                </div>
+
                 {/* Weekly Regime Digest capture — persistent footer placement */}
                 <div className="mb-12 flex flex-col gap-4 px-6 py-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-3 text-blue-400">
@@ -39,7 +45,7 @@ export const InstitutionalFooter: React.FC = () => {
                     <div className="space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-uppercase text-white">Legal Disclaimer</h3>
                         <p className="text-xs leading-relaxed text-muted-foreground font-medium">
-                            GraphiQuestor is a macro intelligence platform provided for informational and educational purposes only.
+                            {BrandConfig.name} is a macro intelligence platform provided for informational and educational purposes only.
                             The data, analytics, and interpretations presented do not constitute investment advice, financial planning,
                             or solicitation for any financial product. Past performance of macro indicators is not indicative of future market outcomes.
                             Institutional users should conduct independent verification of all data points.
@@ -72,7 +78,7 @@ export const InstitutionalFooter: React.FC = () => {
 
                 <div className="mt-12 pt-8 border-t border-white/[0.03] flex justify-between items-center">
                     <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
-                        © 2026 GraphiQuestor. PRO-SERIES TERMINAL.
+                        © 2026 {BrandConfig.name}. PRO-SERIES TERMINAL.
                     </span>
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-4 border-r border-white/5 pr-6">

@@ -1,19 +1,12 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe, TrendingUp, Activity } from 'lucide-react';
 import { ALL_COUNTRIES } from '@/lib/countries';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
-
 
 export const CountriesIndexPage: React.FC = () => {
   // Fetch which countries actually have data
@@ -110,25 +103,26 @@ export const CountriesIndexPage: React.FC = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {countries.map(country => (
-                <Link
-                  key={country.code}
-                  to={`/countries/${country.code}`}
-                  className={`block p-4 rounded-xl border transition-all duration-200 ${
-                    country.hasData
-                      ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/50 hover:scale-[1.02]'
-                      : 'bg-white/5 border-white/5 opacity-40 hover:opacity-60 cursor-not-allowed'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">{country.flag}</div>
-                  <div className="font-bold text-sm">{country.name}</div>
-                  <div className="text-xs text-muted-foreground/50 mt-1">
-                    {country.hasData ? (
-                      <span className="text-emerald-400">Live Data</span>
-                    ) : (
-                      <span>Coming Soon</span>
-                    )}
+                country.hasData ? (
+                  <Link
+                    key={country.code}
+                    to={`/countries/${country.code}`}
+                    className="block p-4 rounded-xl border bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/50 hover:scale-[1.02] transition-all duration-200"
+                  >
+                    <div className="text-2xl mb-2">{country.flag}</div>
+                    <div className="font-bold text-sm">{country.name}</div>
+                    <div className="text-xs text-emerald-400 mt-1">Live Data</div>
+                  </Link>
+                ) : (
+                  <div
+                    key={country.code}
+                    className="block p-4 rounded-xl border bg-white/5 border-white/5 opacity-40"
+                  >
+                    <div className="text-2xl mb-2">{country.flag}</div>
+                    <div className="font-bold text-sm">{country.name}</div>
+                    <div className="text-xs text-muted-foreground/50 mt-1">Coming Soon</div>
                   </div>
-                </Link>
+                )
               ))}
             </div>
           </div>

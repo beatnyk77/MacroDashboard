@@ -5,7 +5,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import getTheme from '@/theme';
 import { GlobalLayout } from '@/layout/GlobalLayout';
-import { ExportScoutPlaybookPage } from '@/pages/ExportScoutPlaybookPage';
 import { ViewProvider } from '@/context/ViewContext';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -70,18 +69,7 @@ const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').t
 const TradeIntelligencePage = lazy(() => import('@/pages/TradeIntelligencePage').then(module => ({ default: module.default })));
 const HSCodeOverviewPage = lazy(() => import('@/pages/HSCodeOverviewPage').then(module => ({ default: module.default })));
 const MarketDeepDivePage = lazy(() => import('@/pages/MarketDeepDivePage').then(module => ({ default: module.default })));
-// const ExportScoutPlaybookPage = lazy(() => {
-//     console.log('[App] Loading ExportScoutPlaybookPage chunk...');
-//     return import('@/pages/ExportScoutPlaybookPage')
-//         .then(module => {
-//             console.log('[App] ExportScoutPlaybookPage chunk loaded:', !!module.default);
-//             return { default: module.default };
-//         })
-//         .catch(err => {
-//             console.error('[App] ExportScoutPlaybookPage chunk LOAD FAILURE:', err);
-//             throw err;
-//         });
-// });
+const ExportScoutPlaybookPage = lazy(() => import('@/pages/ExportScoutPlaybookPage').then(module => ({ default: module.ExportScoutPlaybookPage })));
 
 const LoadingFallback = () => (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>

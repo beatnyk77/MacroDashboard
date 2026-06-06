@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 import { Container, Typography, Box, Grid } from '@mui/material';
 import { Activity, TrendingUp, Lock, AlertTriangle, Database, Globe } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
@@ -11,11 +11,6 @@ import { COUNTRY_METRIC_GROUPS } from '@/lib/macro-metrics';
 import { CountryNarrativeBlock } from '@/components/CountryNarrativeBlock';
 import { COUNTRY_NARRATIVES } from '@/data/countryNarratives';
 import { ALL_COUNTRIES } from '@/lib/countries';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 // High-level grouping for the country terminal layout
 const TERMINAL_SECTIONS = [
@@ -169,9 +164,8 @@ export const CountryProfilePage: React.FC = () => {
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="flex items-center gap-6">
-              <span className="text-7xl md:text-8xl select-none grayscale-[0.5] opacity-80">
-                {/* Fallback to code if flag emoji mapping needed, for now use standard emoji if ISO matched */}
-                <Globe className="w-16 h-16 text-blue-500/50" />
+              <span className="text-7xl md:text-8xl select-none leading-none">
+                {ALL_COUNTRIES.find(c => c.code === uppercaseIso)?.flag ?? <Globe className="w-16 h-16 text-blue-500/50" />}
               </span>
               <div>
                 <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.8] mb-2 uppercase italic text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/20">

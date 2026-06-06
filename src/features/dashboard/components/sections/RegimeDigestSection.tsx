@@ -38,15 +38,53 @@ export const RegimeDigestSection: React.FC = () => {
         );
     }
 
-    if (!latestDigest) return null;
+    if (!latestDigest) {
+        return (
+            <Card variant="elevated" className="overflow-hidden border-white/5 bg-slate-950/60">
+                <CardContent className="p-6 md:p-10">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                                <Newspaper className="text-blue-500/50 h-4 w-4" />
+                                <span className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/50">Monthly Regime Digest</span>
+                            </div>
+                            <p className="text-sm font-bold text-muted-foreground/40 uppercase tracking-widest">
+                                No digest generated yet for this period.
+                            </p>
+                        </div>
+                        <Button
+                            onClick={() => regenerate(undefined)}
+                            disabled={isRegenerating}
+                            className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg shrink-0"
+                        >
+                            {isRegenerating ? (
+                                <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                            ) : (
+                                <RefreshCw className="mr-2 h-3 w-3" />
+                            )}
+                            {isRegenerating ? 'Generating...' : 'Generate Digest'}
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     const [year, month] = latestDigest.year_month.split('-');
     const dateFormatted = new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
+    // First 2 sentences of the plain text as a meaningful preview
+    const previewText = latestDigest.plain_text
+        .replace(/\s+/g, ' ')
+        .match(/[^.!?]+[.!?]+/g)
+        ?.slice(0, 2)
+        .join(' ')
+        .trim() ?? latestDigest.plain_text.substring(0, 200);
+
     return (
         <Card variant="elevated" className="overflow-hidden border-blue-500/10 bg-slate-950 group relative">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none" />
-            
+
             <CardContent className="p-0">
                 <div className="relative p-6 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="flex-1 space-y-4">
@@ -56,9 +94,9 @@ export const RegimeDigestSection: React.FC = () => {
                                 <span className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500">Monthly Regime Digest</span>
                             </div>
                             <div className="h-px w-12 bg-white/5" />
-                            <FreshnessChip 
-                                status={status} 
-                                lastUpdated={latestDigest.created_at} 
+                            <FreshnessChip
+                                status={status}
+                                lastUpdated={latestDigest.created_at}
                                 label={status === 'fresh' ? 'VERIFIED' : 'HISTORICAL'}
                             />
                         </div>
@@ -77,8 +115,8 @@ export const RegimeDigestSection: React.FC = () => {
                             </div>
                         </div>
 
-                        <p className="text-slate-400 text-sm leading-relaxed line-clamp-2 max-w-2xl">
-                            {latestDigest.plain_text}
+                        <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">
+                            {previewText}
                         </p>
                     </div>
 
@@ -88,10 +126,10 @@ export const RegimeDigestSection: React.FC = () => {
                                 Read Full Digest <ChevronRight size={14} className="ml-2" />
                             </Link>
                         </Button>
-                        <Button 
-                            onClick={() => regenerate(undefined)} 
+                        <Button
+                            onClick={() => regenerate(undefined)}
                             disabled={isRegenerating}
-                            variant="outline" 
+                            variant="outline"
                             className="border-white/10 hover:bg-white/5 text-white font-bold text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg"
                         >
                             {isRegenerating ? (
