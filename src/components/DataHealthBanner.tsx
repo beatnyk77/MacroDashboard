@@ -48,12 +48,11 @@ function nextMondayRefreshLabel(): string {
 
 export const DataHealthBanner: React.FC = () => {
     const { data: health, isLoading } = useDataIntegrity();
+    const [now] = React.useState(() => Date.now());
 
     if (isLoading || !health || health.status === 'healthy') {
         return null;
     }
-
-    const [now] = React.useState(() => Date.now());
     const lastIngestionMs = health.lastIngestionAt
         ? new Date(health.lastIngestionAt).getTime()
         : 0;
@@ -127,10 +126,9 @@ export const DataHealthBanner: React.FC = () => {
 
 export const DataFreshnessFooterChip: React.FC = () => {
     const { data: health, isLoading } = useDataIntegrity();
+    const [now] = React.useState(() => Date.now());
 
     if (isLoading || !health) return null;
-
-    const [now] = React.useState(() => Date.now());
     const lastIngestionMs = health.lastIngestionAt
         ? new Date(health.lastIngestionAt).getTime()
         : 0;

@@ -10,9 +10,9 @@ export const MacroEconomicCalendar: React.FC = () => {
     const [filter, setFilter] = useState<'all' | 'high'>('all');
     const [currencyFilter, setCurrencyFilter] = useState<string>('ALL');
 
-    if (isLoading) return <Skeleton className="w-full h-[400px] rounded-2xl" />;
-
     const [now] = useState(() => Date.now());
+
+    if (isLoading) return <Skeleton className="w-full h-[400px] rounded-2xl" />;
     const currencies = ['ALL', ...new Set(events?.map(e => e.country) || [])].sort();
 
     const filteredEvents = (events || [])
