@@ -48,9 +48,8 @@ const FedMonetizationPage = lazy(() => import('@/pages/methods/FedMonetizationPa
 const IndiaCreditCyclePage = lazy(() => import('@/pages/methods/IndiaCreditCyclePage').then(module => ({ default: module.IndiaCreditCyclePage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 const NotFound = lazy(() => import('@/pages/NotFound').then(module => ({ default: module.NotFound })));
-const MacroBriefToday = lazy(() => import('@/pages/MacroBrief').then(module => ({ default: module.MacroBriefToday })));
-const MacroBrief = lazy(() => import('@/pages/MacroBrief').then(module => ({ default: module.MacroBrief })));
-const MacroBriefArchive = lazy(() => import('@/pages/MacroBriefArchive').then(module => ({ default: module.MacroBriefArchive })));
+const MacroBriefPage = lazy(() => import('@/pages/MacroBriefPage').then(module => ({ default: module.MacroBriefPage })));
+const MacroBriefArchivePage = lazy(() => import('@/pages/MacroBriefArchivePage').then(module => ({ default: module.MacroBriefArchivePage })));
 
 const ThematicLabsIndexPage = lazy(() => import('@/pages/labs/ThematicLabsIndexPage').then(module => ({ default: module.ThematicLabsIndexPage })));
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
@@ -159,9 +158,9 @@ function App() {
                                         <Route path="/labs" element={<ThematicLabsIndexPage />} />
                                         <Route path="/thematics" element={<Navigate to="/labs" replace />} />
                                         {/* Morning Macro Brief */}
-                                        <Route path="/macro-brief" element={<MacroBriefToday />} />
-                                        <Route path="/macro-brief/archive" element={<MacroBriefArchive />} />
-                                        <Route path="/macro-brief/:year/:month/:day" element={<MacroBrief />} />
+                                         <Route path="/macro-brief" element={<MacroBriefPage />} />
+                                         <Route path="/macro-brief/:date" element={<MacroBriefPage />} />
+                                         <Route path="/macro-brief/archive" element={<MacroBriefArchivePage />} />
                                         {/* Catch-all 404 */}
                                         <Route path="*" element={<NotFound />} />
                                     </Routes>

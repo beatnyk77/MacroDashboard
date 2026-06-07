@@ -1,97 +1,78 @@
-import React from 'react';
-import type { FocusAreaCode } from '@/hooks/useMacroBrief';
+import React, { useEffect } from 'react';
+import type { FocusArea } from '@/types/brief';
+import { FOCUS_AREA_LABELS } from '@/types/brief';
 
-interface FocusArea {
-  code: FocusAreaCode;
-  label: string;
-  emoji: string;
-}
-
-const FOCUS_AREAS: FocusArea[] = [
-  { code: 'us',        label: 'US Macro',                emoji: '🇺🇸' },
-  { code: 'india',     label: 'India',                   emoji: '🇮🇳' },
-  { code: 'china',     label: 'China',                   emoji: '🇨🇳' },
-  { code: 'africa',    label: 'Africa',                  emoji: '🌍' },
-  { code: 'energy',    label: 'Energy',                  emoji: '⚡' },
-  { code: 'sovereign', label: 'Sovereign Debt',          emoji: '🏦' },
-  { code: 'gold',      label: 'Gold & De-Dollarization', emoji: '💛' },
-  { code: 'trade',     label: 'Trade Flows',             emoji: '🔄' },
-];
-
-const MAX_SELECTIONS = 3;
+const STORAGE_KEY = 'gq_focus_areas';
+const DEFAULT_AREAS: FocusArea[] = ['india', 'us_macro', 'gold_dedollarization'];
 
 interface FocusAreaSelectorProps {
-  selected: FocusAreaCode[];
-  onChange: (areas: FocusAreaCode[]) => void;
-  open: boolean;
-  onClose: () => void;
+  selected: FocusArea[];
+  onChange: (areas: FocusArea[]) => void;
 }
 
 export const FocusAreaSelector: React.FC<FocusAreaSelectorProps> = ({
   selected,
   onChange,
-  open,
-  onClose,
 }) => {
-  if (!open) return null;
-
-  const toggle = (code: FocusAreaCode) => {
-    if (selected.includes(code)) {
-      onChange(selected.filter((c) => c !== code));
-    } else if (selected.length < MAX_SELECTIONS) {
-      onChange([...selected, code]);
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const validAreas = parsed.filter((area) =>
+            Object.keys(FOCUS_AREA_LABELS).includes(area)
+          ) as FocusArea[];
+          if (validAreas.length > 0) {
+            onChange(validAreas);
+            return;
+          }
+        }
+      }
+    } catch {
+      // Ignore errors, fallback to default
     }
-    // Silent no-op if at max and trying to add
+    onChange(DEFAULT_AREAS);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggle = (area: FocusArea) => {
+    let next: FocusArea[];
+    if (selected.includes(area)) {
+      next = selected.filter((a) => a !== area);
+    } else {
+      if (selected.length < 3) {
+        next = [...selected, area];
+      } else {
+        // Sliding window: remove oldest (first element) and append new
+        next = [...selected.slice(1), area];
+      }
+    }
+    onChange(next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   };
 
   return (
-    <div
-      className="absolute right-0 top-full mt-2 z-50 w-72 rounded-xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-2xl p-4"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
-          Focus Areas <span className="text-white/20">({selected.length}/{MAX_SELECTIONS})</span>
-        </span>
-        <button
-          onClick={onClose}
-          className="text-[10px] font-black uppercase text-white/30 hover:text-white/60 transition-colors"
-        >
-          Done
-        </button>
-      </div>
+    <div className="flex flex-wrap gap-2.5">
+      {(Object.keys(FOCUS_AREA_LABELS) as FocusArea[]).map((area) => {
+        const isSelected = selected.includes(area);
+        const label = FOCUS_AREA_LABELS[area];
 
-      <div className="grid grid-cols-2 gap-1.5">
-        {FOCUS_AREAS.map((area) => {
-          const isSelected = selected.includes(area.code);
-          const isDisabled = !isSelected && selected.length >= MAX_SELECTIONS;
-
-          return (
-            <button
-              key={area.code}
-              onClick={() => toggle(area.code)}
-              data-selected={isSelected ? 'true' : 'false'}
-              disabled={isDisabled}
-              aria-pressed={isSelected}
-              className={[
-                'flex items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-bold transition-all',
-                isSelected
-                  ? 'bg-blue-500/20 border border-blue-500/40 text-blue-300'
-                  : isDisabled
-                  ? 'bg-white/[0.02] border border-white/5 text-white/20 cursor-not-allowed'
-                  : 'bg-white/[0.04] border border-white/10 text-white/60 hover:bg-white/[0.08] hover:text-white/80',
-              ].join(' ')}
-            >
-              <span>{area.emoji}</span>
-              <span className="leading-tight">{area.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <p className="mt-3 text-[9px] text-white/20 text-center uppercase tracking-widest">
-        Personalizes Section 3 of the brief. No login required.
-      </p>
+        return (
+          <button
+            key={area}
+            onClick={() => handleToggle(area)}
+            className={[
+              'px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200',
+              isSelected
+                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                : 'text-white/40 border border-white/10 hover:text-white/70 hover:border-white/20 bg-white/[0.01]',
+            ].join(' ')}
+          >
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 };

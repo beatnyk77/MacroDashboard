@@ -1,250 +1,379 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from '@supabase/supabase-js';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface DailyChange {
-  metric_label: string;
-  prev_value: number;
-  curr_value: number;
-  pct_delta: number;
-  direction: "UP" | "DOWN" | "FLAT";
-  interpretation: string;
-  significance: "HIGH" | "MEDIUM";
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+);
+
+const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+
+const FOCUS_AREA_CONFIGS = {
+  india: {
+    label: 'India Macro',
+    metric_ids: [
+      'india_gsec_10y', 'india_rbi_rate', 'india_cpi_yoy', 
+      'india_gdp_yoy', 'india_fx_reserves_usd_bn',
+      'india_cd_ratio', 'india_mfg_pmi',
+      'india_gst_collections', 'india_inr_usd'
+    ]
+  },
+  us_macro: {
+    label: 'US Macro',
+    metric_ids: [
+      'us_cpi_yoy', 'us_10y_yield', 
+      'us_dxy', 'us_fed_funds_rate',
+      'us_net_liquidity', 'us_debt_gdp'
+    ]
+  },
+  gold_dedollarization: {
+    label: 'Gold & De-Dollarization',
+    metric_ids: [
+      'gold_price_usd', 'debt_gold_ratio',
+      'central_bank_gold_purchases',
+      'dedollarization_composite_score'
+    ]
+  },
+  china: {
+    label: 'China Macro',
+    metric_ids: [
+      'china_gdp_yoy', 'china_cpi_yoy',
+      'china_credit_impulse', 'china_fx_reserves'
+    ]
+  },
+  energy: {
+    label: 'Energy & Commodities',
+    metric_ids: [
+      'wti_price', 'wti_calendar_spread',
+      'brent_price', 'natural_gas_price'
+    ]
+  },
+  sovereign_debt: {
+    label: 'Sovereign Debt',
+    metric_ids: [
+      'us_debt_gdp', 'g20_debt_gdp_avg',
+      'us_10y_yield', 'treasury_auction_btc_10y',
+      'fed_monetization_ratio'
+    ]
+  },
+};
+
+// Default focus areas for the "base" brief
+const DEFAULT_FOCUS_COMBOS: string[][] = [
+  ['india', 'us_macro', 'gold_dedollarization'],
+  ['india', 'us_macro', 'sovereign_debt'],
+  ['india', 'energy', 'gold_dedollarization'],
+];
+
+interface ObservationPoint {
+  metric_id: string;
+  value: number | string;
+  as_of_date: string;
 }
 
-interface DailySignal {
+interface DailySignalRow {
   regime: string;
   score: number;
-  key_driver: string;
-  watch_item: string;
-  signal_date: string;
 }
 
-interface BriefContent {
-  what_changed: string[];
-  regime_status: string;
-  focus_observations: string[];
-  watch_today: string[];
+interface MetricInfoRow {
+  id: string;
+  name: string;
+  unit: string | null;
 }
 
-const DEFAULT_FOCUS_AREAS = ["us", "india", "gold"];
-const DEFAULT_FOCUS_LABEL = "US Macro, India, and Gold/De-Dollarization";
-
-function buildFallbackBrief(changes: DailyChange[], signal: DailySignal): BriefContent {
-  const what_changed = changes
-    .filter((c) => c.significance === "HIGH")
-    .slice(0, 5)
-    .map((c) => {
-      const dir = c.direction === "UP" ? "+" : c.direction === "DOWN" ? "-" : "±";
-      const pct = Math.abs(c.pct_delta).toFixed(2);
-      return `◆ ${c.metric_label} ${dir}${pct}% — ${c.interpretation || "Monitoring for follow-through."}`;
-    });
-
-  if (what_changed.length === 0) {
-    what_changed.push("◆ No significant metric movements detected overnight — regime steady.");
-  }
-
-  return {
-    what_changed,
-    regime_status:
-      `Macro regime classified as ${signal.regime} (score: ${signal.score}). ` +
-      `Key driver: ${signal.key_driver}. Watch: ${signal.watch_item}.`,
-    focus_observations: [
-      "◆ US: Monitoring Fed balance sheet dynamics and Treasury issuance pace.",
-      "◆ India: RBI liquidity stance and current account trajectory remain the primary risk vectors.",
-      "◆ Gold: Central bank buying data and real yield spreads driving near-term price discovery.",
-    ],
-    watch_today: [
-      "◆ Check US economic calendar for CPI, PCE, or Fed speaker events today.",
-      "◆ Monitor EUR/USD and EM FX for dollar-stress divergence at Asia open.",
-    ],
-  };
+interface LatestMetricPoint {
+  metric_id: string;
+  value: number;
+  prev_value: number;
+  label: string;
+  unit: string;
 }
 
-async function callOpenRouter(
-  apiKey: string,
-  changes: DailyChange[],
-  signal: DailySignal,
-  focusLabel: string
-): Promise<{ content: BriefContent; model_used: string; tokens_used: number } | null> {
-  const changesText = changes
-    .slice(0, 8)
-    .map((c) => {
-      const dir = c.direction === "UP" ? "▲" : c.direction === "DOWN" ? "▼" : "—";
-      const pct = Math.abs(c.pct_delta).toFixed(2);
-      return `${c.metric_label}: ${dir}${pct}% (${c.significance}) — ${c.interpretation || "No interpretation available."}`;
-    })
-    .join("\n");
-
-  const prompt = `You are GraphiQuestor's macro intelligence system. Generate a concise morning macro brief for an institutional analyst focused on ${focusLabel}.
-
-Current regime: ${signal.regime} (Score: ${signal.score}/100)
-Key driver: ${signal.key_driver}
-Watch item: ${signal.watch_item}
-
-Metrics that moved significantly overnight:
-${changesText || "No significant movements detected overnight — regime steady."}
-
-Generate exactly:
-1. 3-5 "What Changed" bullets (format: "◆ [Metric] [+/-][value] → [one-line interpretation]")
-2. Regime status paragraph (2 sentences, no hedging)
-3. 3 focus-area specific observations (format: "◆ [Area]: [observation]")
-4. 2-3 "Watch Today" items
-
-Style: institutional, terse, no hedging language, no filler. Write like a senior macro strategist, not a retail newsletter.
-
-Return ONLY valid JSON:
-{
-  "what_changed": ["string"],
-  "regime_status": "string",
-  "focus_observations": ["string", "string", "string"],
-  "watch_today": ["string", "string"]
-}`;
-
-  try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      signal: AbortSignal.timeout(25_000),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://graphiquestor.com",
-        "X-Title": "GraphiQuestor Morning Brief",
-      },
-      body: JSON.stringify({
-        model: "nvidia/llama-3.1-nemotron-70b-instruct:free",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 700,
-        temperature: 0.3,
-      }),
-    });
-
-    if (!response.ok) {
-      console.error("[generate-morning-brief] OpenRouter HTTP error:", response.status);
-      return null;
-    }
-
-    const result = await response.json();
-    const raw: string = result.choices?.[0]?.message?.content ?? "";
-    const tokens_used: number = result.usage?.total_tokens ?? 0;
-    const model_used: string = result.model ?? "nvidia/llama-3.1-nemotron-70b-instruct:free";
-
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error("[generate-morning-brief] No JSON in response:", raw.slice(0, 200));
-      return null;
-    }
-
-    const content = JSON.parse(jsonMatch[0]) as BriefContent;
-    if (
-      !Array.isArray(content.what_changed) ||
-      typeof content.regime_status !== "string" ||
-      !Array.isArray(content.focus_observations) ||
-      !Array.isArray(content.watch_today)
-    ) {
-      throw new Error("Invalid content shape from LLM");
-    }
-
-    return { content, model_used, tokens_used };
-  } catch (err) {
-    console.error("[generate-morning-brief] OpenRouter call failed:", err);
-    return null;
-  }
+interface SignificantChangePoint {
+  label: string;
+  value: number;
+  prev_value: number;
+  unit: string;
+  direction: string;
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
-  const startMs = Date.now();
-
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    const today = new Date().toISOString().split('T')[0];
+    
+    // 1. Get current regime
+    const { data: regimeData } = await supabase
+      .from('metric_observations')
+      .select('metric_id, value, as_of_date')
+      .in('metric_id', [
+        'regime_label', 'regime_score', 
+        'regime_confidence'
+      ])
+      .order('as_of_date', { ascending: false })
+      .limit(3);
+    
+    const typedRegimeData = regimeData as unknown as ObservationPoint[] | null;
+    let label = typedRegimeData?.find((r) => r.metric_id === 'regime_label')?.value;
+    let score = typedRegimeData?.find((r) => r.metric_id === 'regime_score')?.value;
 
-    const openRouterKey = Deno.env.get("OPENROUTER_API_KEY") ?? "";
-    const briefDate = new Date().toISOString().slice(0, 10);
-
-    // 1. Fetch overnight changes (may be empty — that's fine)
-    const { data: changesData } = await supabase
-      .from("daily_changes")
-      .select("metric_label, prev_value, curr_value, pct_delta, direction, interpretation, significance")
-      .eq("signal_date", briefDate)
-      .order("significance", { ascending: false })
-      .limit(10);
-
-    const changes: DailyChange[] = (changesData ?? []) as DailyChange[];
-
-    // 2. Fetch current regime signal
-    const { data: signalData } = await supabase
-      .from("vw_latest_daily_signal")
-      .select("regime, score, key_driver, watch_item, signal_date")
-      .single();
-
-    const signal: DailySignal = signalData ?? {
-      regime: "Neutral Persistence",
-      score: 50,
-      key_driver: "Liquidity neutral",
-      watch_item: "Fed balance sheet",
-      signal_date: briefDate,
-    };
-
-    // 3. Generate brief content (AI or fallback)
-    let content: BriefContent;
-    let model_used = "fallback-template";
-    let tokens_used = 0;
-
-    if (openRouterKey) {
-      const aiResult = await callOpenRouter(openRouterKey, changes, signal, DEFAULT_FOCUS_LABEL);
-      if (aiResult) {
-        content = aiResult.content;
-        model_used = aiResult.model_used;
-        tokens_used = aiResult.tokens_used;
-      } else {
-        content = buildFallbackBrief(changes, signal);
+    // Fallback to daily_signal if missing in metric_observations
+    if (!label || !score) {
+      const { data: signalData } = await supabase
+        .from('daily_signal')
+        .select('regime, score')
+        .order('signal_date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      const typedSignal = signalData as unknown as DailySignalRow | null;
+      if (typedSignal) {
+        label = label ?? typedSignal.regime;
+        score = score ?? typedSignal.score;
       }
-    } else {
-      content = buildFallbackBrief(changes, signal);
     }
 
-    // 4. Upsert to daily_macro_briefs
-    const { error: upsertErr } = await supabase
-      .from("daily_macro_briefs")
-      .upsert(
-        {
-          brief_date: briefDate,
-          focus_areas: [...DEFAULT_FOCUS_AREAS].sort(),
-          content,
-          regime_score: signal.score,
-          regime_label: signal.regime,
-          generated_at: new Date().toISOString(),
-          model_used,
-          tokens_used,
-        },
-        { onConflict: "brief_date,focus_areas" }
+    const regime = {
+      label: String(label ?? 'Neutral'),
+      score: Number(score ?? 55),
+    };
+    
+    // 2. Resolve recent observations for significant changes calculation
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const dateLimit = sevenDaysAgo.toISOString().split('T')[0];
+
+    const { data: observations } = await supabase
+      .from('metric_observations')
+      .select('metric_id, value, as_of_date')
+      .gte('as_of_date', dateLimit)
+      .order('as_of_date', { ascending: false });
+
+    const typedObservations = observations as unknown as ObservationPoint[] | null;
+
+    // Fetch metric metadata (names and units)
+    const { data: metricsInfo } = await supabase
+      .from('metrics')
+      .select('id, name, unit');
+    
+    const typedMetricsInfo = metricsInfo as unknown as MetricInfoRow[] | null;
+    
+    const metricsMap = new Map<string, { name: string; unit: string }>();
+    (typedMetricsInfo ?? []).forEach((m) => {
+      metricsMap.set(m.id, { name: m.name ?? m.id, unit: m.unit ?? '' });
+    });
+
+    // Group observations by metric to calculate 24h change
+    const metricGroups: Record<string, { value: number, as_of_date: string }[]> = {};
+    (typedObservations ?? []).forEach((obs) => {
+      if (!metricGroups[obs.metric_id]) {
+        metricGroups[obs.metric_id] = [];
+      }
+      metricGroups[obs.metric_id].push({
+        value: Number(obs.value),
+        as_of_date: String(obs.as_of_date)
+      });
+    });
+
+    const latestMetrics: LatestMetricPoint[] = Object.entries(metricGroups).map(([metric_id, history]): LatestMetricPoint => {
+      history.sort((a, b) => b.as_of_date.localeCompare(a.as_of_date));
+      const latest = history[0];
+      const prev = history[1];
+      const info = metricsMap.get(metric_id);
+      return {
+        metric_id,
+        value: latest.value,
+        prev_value: prev ? prev.value : latest.value,
+        label: info?.name ?? metric_id,
+        unit: info?.unit ?? '',
+      };
+    });
+    
+    // Find significant changes (>0.5% relative change as threshold)
+    const significantChanges = latestMetrics
+      .filter((m: LatestMetricPoint) => {
+        const change = Math.abs(
+          (m.value - m.prev_value) / (m.prev_value || 1)
+        );
+        return change > 0.005;
+      })
+      .slice(0, 8)
+      .map((m: LatestMetricPoint): SignificantChangePoint => ({
+        label: m.label,
+        value: m.value,
+        prev_value: m.prev_value,
+        unit: m.unit,
+        direction: m.value > m.prev_value ? 'up' : 'down',
+      }));
+    
+    // 3. Generate brief for each focus combo
+    for (const focusCombo of DEFAULT_FOCUS_COMBOS) {
+      // Skip if already generated today
+      const { data: existing } = await supabase
+        .from('daily_macro_briefs')
+        .select('id')
+        .eq('brief_date', today)
+        .contains('focus_areas', focusCombo)
+        .maybeSingle();
+      
+      if (existing) continue;
+      
+      // Build focus-area specific metrics
+      const focusMetricIds = focusCombo.flatMap(
+        area => FOCUS_AREA_CONFIGS[
+          area as keyof typeof FOCUS_AREA_CONFIGS
+        ]?.metric_ids ?? []
       );
+      
+      const focusMetrics = latestMetrics
+        .filter((m: LatestMetricPoint) => focusMetricIds.includes(m.metric_id))
+        .map((m: LatestMetricPoint) => `${m.label}: ${m.value}${m.unit}`);
+      
+      const focusLabels = focusCombo.map(
+        area => FOCUS_AREA_CONFIGS[
+          area as keyof typeof FOCUS_AREA_CONFIGS
+        ]?.label ?? area
+      ).join(', ');
+      
+      // 4. Call OpenRouter API
+      const prompt = `You are GraphiQuestor's macro intelligence engine generating a morning brief for institutional analysts.
 
-    if (upsertErr) throw upsertErr;
+Current macro regime: ${regime.label} (Score: ${regime.score}/100)
+Analyst focus areas: ${focusLabels}
 
-    const durationMs = Date.now() - startMs;
-    console.log(`[generate-morning-brief] Done in ${durationMs}ms. model=${model_used} tokens=${tokens_used}`);
+Metrics that changed significantly in the last 24 hours:
+${significantChanges.map((m: SignificantChangePoint) => `- ${m.label}: ${m.value}${m.unit} (${m.direction === 'up' ? '↑' : '↓'} from ${m.prev_value}${m.unit})`).join('\n')}
 
+Focus area metrics (current readings):
+${focusMetrics.join('\n')}
+
+Generate a morning macro brief. Return ONLY valid JSON, no markdown, no explanation:
+{
+  "what_changed": ["3-5 bullets about overnight changes. Format: 'METRIC moved DIRECTION — one-line institutional interpretation'"],
+  "regime_status": "2 sentences on current regime and what it means for positioning",
+  "focus_observations": ["3 observations specific to the analyst's focus areas"],
+  "watch_today": ["2-3 specific things to monitor today — data releases, market levels, events"]
+}
+
+Style rules:
+- Write like a senior macro strategist at a sovereign wealth fund
+- No hedging language ('may', 'might', 'could possibly')
+- No retail language ('investors should', 'bulls believe')
+- Terse, precise, institutional
+- Each bullet max 25 words
+- No bullet point prefixes in the JSON strings`;
+
+      let content = {
+        what_changed: [
+          `Regime at ${regime.score}/100 — ${regime.label} conditions persisting`,
+          'Brief generation pending first data ingestion',
+        ],
+        regime_status: `Current regime: ${regime.label}. Score ${regime.score}/100.`,
+        focus_observations: focusMetrics.slice(0, 3).map(m => m),
+        watch_today: ['Monitor key data releases', 'Watch central bank communications'],
+      };
+      
+      let tokensUsed = 0;
+      let modelUsed = 'fallback-template';
+      
+      if (OPENROUTER_API_KEY) {
+        try {
+          const response = await fetch(
+            'https://openrouter.ai/api/v1/chat/completions',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'HTTP-Referer': 'https://graphiquestor.com',
+                'X-Title': 'GraphiQuestor Morning Brief',
+              },
+              body: JSON.stringify({
+                model: 'nvidia/llama-3.1-nemotron-70b-instruct:free',
+                max_tokens: 800,
+                messages: [
+                  { 
+                    role: 'user', 
+                    content: prompt 
+                  }
+                ],
+              }),
+            }
+          );
+
+          if (response.ok) {
+            const result = await response.json();
+            tokensUsed = result.usage?.total_tokens ?? 0;
+            modelUsed = result.model ?? 'nvidia/llama-3.1-nemotron-70b-instruct:free';
+            const rawText = result.choices?.[0]?.message?.content ?? '';
+
+            // Safe JSON parse
+            try {
+              const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+              if (jsonMatch) {
+                const parsed = JSON.parse(jsonMatch[0]);
+                if (
+                  parsed.what_changed &&
+                  parsed.regime_status &&
+                  parsed.focus_observations &&
+                  parsed.watch_today
+                ) {
+                  content = parsed;
+                }
+              }
+            } catch (jsonErr) {
+              console.error('JSON parse failed:', rawText, jsonErr);
+            }
+          } else {
+            console.error('OpenRouter HTTP error:', response.status, await response.text());
+          }
+        } catch (apiErr) {
+          console.error('OpenRouter API error:', apiErr);
+        }
+      }
+      
+      // 5. Store in database
+      const { error: upsertErr } = await supabase
+        .from('daily_macro_briefs')
+        .upsert({
+          brief_date: today,
+          focus_areas: [...focusCombo].sort(),
+          content,
+          regime_score: regime.score,
+          regime_label: regime.label,
+          model_used: modelUsed,
+          tokens_used: tokensUsed,
+        }, {
+          onConflict: 'brief_date,focus_areas',
+        });
+
+      if (upsertErr) {
+        console.error(`Error saving brief for ${focusCombo}:`, upsertErr);
+      }
+    }
+    
     return new Response(
-      JSON.stringify({ success: true, briefDate, model_used, tokens_used, durationMs }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ 
+        success: true, 
+        date: today,
+        briefs_generated: DEFAULT_FOCUS_COMBOS.length 
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  } catch (error: unknown) {
-    console.error("[generate-morning-brief] Fatal:", (error as Error).message);
+    
+  } catch (err) {
+    console.error('Brief generation error:', err);
     return new Response(
-      JSON.stringify({ error: (error as Error).message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: String(err) }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

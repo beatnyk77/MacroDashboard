@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     Activity, Globe, TrendingUp, Anchor,
-    ShieldAlert, Database, Radio, FileText, Library
+    ShieldAlert, Database, Radio, FileText, Library, Newspaper
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -14,6 +14,7 @@ interface NavItem {
 }
 
 const terminalNavItems: NavItem[] = [
+    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={14} /> },
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} /> },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} /> },

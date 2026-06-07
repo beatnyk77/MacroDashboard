@@ -34,6 +34,12 @@ const RBIFXDefenseMonitor = lazy(() =>
 const RBIMoneyMarketMonitor = lazy(() =>
     import('@/features/dashboard/components/sections/RBIMoneyMarketMonitor').then(m => ({ default: m.RBIMoneyMarketMonitor }))
 );
+const IndiaExternalSectorPanel = lazy(() =>
+    import('@/features/dashboard/components/rows/IndiaExternalSectorPanel').then(m => ({ default: m.IndiaExternalSectorPanel }))
+);
+const IndiaFIIFlowsMonitor = lazy(() =>
+    import('@/features/dashboard/components/rows/IndiaFIIFlowsMonitor').then(m => ({ default: m.IndiaFIIFlowsMonitor }))
+);
 const IndiaDigitizationPremiumMonitor = lazy(() =>
     import('@/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor').then(m => ({ default: m.IndiaDigitizationPremiumMonitor }))
 );
@@ -193,6 +199,8 @@ export const IntelIndiaPage: React.FC = () => {
                             { href: '#fiscal',       label: 'Fiscal Stress' },
                             { href: '#credit',       label: 'Credit Cycle' },
                             { href: '#monetary',     label: 'RBI & FX' },
+                            { href: '#external-sector', label: 'External Sector' },
+                            { href: '#fii-flows',    label: 'FII Flows' },
                             { href: '#state-fiscal', label: 'State Fiscal' },
                             { href: '#digital',      label: 'Digital Premium' },
                             { href: '#debt',         label: 'Debt Wall' },
@@ -339,6 +347,24 @@ export const IntelIndiaPage: React.FC = () => {
                         </div>
                     </div>
                 </section>
+
+                <div className="border-t border-white/5" />
+
+                {/* India External Sector */}
+                <SectionErrorBoundary name="India External Sector">
+                    <Suspense fallback={<SectionSkeleton />}>
+                        <IndiaExternalSectorPanel />
+                    </Suspense>
+                </SectionErrorBoundary>
+
+                <div className="border-t border-white/5" />
+
+                {/* India FII Flows */}
+                <SectionErrorBoundary name="India FII Flows">
+                    <Suspense fallback={<SectionSkeleton />}>
+                        <IndiaFIIFlowsMonitor />
+                    </Suspense>
+                </SectionErrorBoundary>
 
                 <div className="border-t border-white/5" />
 

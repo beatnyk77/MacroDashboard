@@ -19,7 +19,7 @@ interface GlobalLayoutProps {
 }
 
 const terminalNavItems = [
-    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={18} /> },
+    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={18} />, group: 'INTELLIGENCE' },
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
