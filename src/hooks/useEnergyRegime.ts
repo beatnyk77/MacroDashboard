@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useLatestOilSpread } from './useOilSpread';
+import { useState } from 'react';
 
 export interface EnergyRegime {
     wtiSpread: number;
@@ -82,8 +83,9 @@ export const useEnergyRegime = (): EnergyRegime => {
     const oldestObsDate = metrics && metrics.length > 0
         ? new Date(metrics[metrics.length - 1].as_of_date as string).getTime()
         : null;
+    const [now] = useState(() => Date.now());
     const obsIsStale = oldestObsDate !== null
-        ? Date.now() - oldestObsDate > STALE_THRESHOLD_MS
+        ? now - oldestObsDate > STALE_THRESHOLD_MS
         : false;
     const isAnyStale = (spread?.is_stale ?? false) || obsIsStale;
 

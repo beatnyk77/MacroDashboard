@@ -17,6 +17,7 @@ interface TodaysBriefPanelProps {
 type FeedTab = 'all' | 'india' | 'global';
 
 export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className }) => {
+    const [now] = useState(() => Date.now());
     const { data: regime } = useRegime();
     const { data: liquidity } = useNetLiquidity();
     const { data: headlines } = useMacroHeadlines();
@@ -219,7 +220,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             <div className="space-y-3 divide-y divide-white/5">
                                 {filteredHeadlines.length > 0 ? (
                                     filteredHeadlines.map((headline: MacroHeadline, idx: number) => {
-                                        const stale = isHeadlineStale(headline.published_at);
+                                        const stale = isHeadlineStale(headline.published_at, now);
                                         return (
                                             <div key={headline.id || idx} className="flex items-start gap-3 pt-3 first:pt-0">
                                                 <div className={cn(
@@ -250,7 +251,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                                             {headline.source}
                                                         </span>
                                                         <span className="text-xs text-muted-foreground/50 font-medium">
-                                                            {timeAgo(headline.published_at)}
+                                                            {timeAgo(headline.published_at, now)}
                                                         </span>
                                                         {stale && (
                                                             <span className="text-xs text-amber-400/80 font-bold flex items-center gap-0.5" title="This headline is older than 48 hours">

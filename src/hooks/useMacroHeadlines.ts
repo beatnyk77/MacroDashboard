@@ -13,14 +13,14 @@ export interface MacroHeadline {
 }
 
 /** Compute staleness — >48h is stale */
-export function isHeadlineStale(publishedAt: string): boolean {
-    const diff = Date.now() - new Date(publishedAt).getTime();
+export function isHeadlineStale(publishedAt: string, now: number): boolean {
+    const diff = now - new Date(publishedAt).getTime();
     return diff > 48 * 60 * 60 * 1000;
 }
 
 /** Relative time label */
-export function timeAgo(dateStr: string): string {
-    const ms = Date.now() - new Date(dateStr).getTime();
+export function timeAgo(dateStr: string, now: number): string {
+    const ms = now - new Date(dateStr).getTime();
     const hrs = Math.floor(ms / (1000 * 60 * 60));
     if (hrs < 1) return 'Just now';
     if (hrs < 24) return `${hrs}h ago`;

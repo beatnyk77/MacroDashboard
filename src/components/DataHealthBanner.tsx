@@ -53,10 +53,11 @@ export const DataHealthBanner: React.FC = () => {
         return null;
     }
 
+    const [now] = React.useState(() => Date.now());
     const lastIngestionMs = health.lastIngestionAt
         ? new Date(health.lastIngestionAt).getTime()
         : 0;
-    const ingestionAgeMs = Date.now() - lastIngestionMs;
+    const ingestionAgeMs = now - lastIngestionMs;
     const hoursSinceLastRefresh = ingestionAgeMs / (60 * 60 * 1000);
     const expectedLag = getExpectedLagHours();
 
@@ -129,10 +130,11 @@ export const DataFreshnessFooterChip: React.FC = () => {
 
     if (isLoading || !health) return null;
 
+    const [now] = React.useState(() => Date.now());
     const lastIngestionMs = health.lastIngestionAt
         ? new Date(health.lastIngestionAt).getTime()
         : 0;
-    const ingestionAgeMs = Date.now() - lastIngestionMs;
+    const ingestionAgeMs = now - lastIngestionMs;
     const hoursSinceRefresh = ingestionAgeMs / (60 * 60 * 1000);
     const expectedLag = getExpectedLagHours();
     const weekend = isMarketWeekend();

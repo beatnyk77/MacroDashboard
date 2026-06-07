@@ -12,7 +12,7 @@ export const MacroEconomicCalendar: React.FC = () => {
 
     if (isLoading) return <Skeleton className="w-full h-[400px] rounded-2xl" />;
 
-    const now = Date.now();
+    const [now] = useState(() => Date.now());
     const currencies = ['ALL', ...new Set(events?.map(e => e.country) || [])].sort();
 
     const filteredEvents = (events || [])

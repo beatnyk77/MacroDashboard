@@ -31,18 +31,18 @@ const prettify = (fn: string) =>
         .replace(/-/g, ' ')
         .replace(/\b\w/g, (c) => c.toUpperCase());
 
-const daysSince = (iso: string): number =>
-    (Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24);
+const daysSince = (iso: string, now: number): number =>
+    (now - new Date(iso).getTime()) / (1000 * 60 * 60 * 24);
 
-const freshnessFor = (row: IngestionRow): FreshnessStatus => {
-    const d = daysSince(row.start_time);
+const freshnessFor = (row: IngestionRow, now: number): FreshnessStatus => {
+    const d = daysSince(row.start_time, now);
     if (d <= 7) return 'fresh';
     if (d <= 14) return 'lagged';
     return 'stale';
 };
 
-const relativeTime = (iso: string): string => {
-    const ms = Date.now() - new Date(iso).getTime();
+const relativeTime = (iso: string, now: number): string => {
+    const ms = now - new Date(iso).getTime();
     const hours = Math.floor(ms / (1000 * 60 * 60));
     if (hours < 1) return 'updated just now';
     if (hours < 24) return `updated ${hours}h ago`;
@@ -51,6 +51,8 @@ const relativeTime = (iso: string): string => {
 };
 
 export const DataHealthPublic: React.FC = () => {
+    const [now] = React.useState(() => Date.now());
+
     const { data: ingestions } = useQuery({
         queryKey: ['public-data-health', 'ingestions'],
         queryFn: async (): Promise<IngestionRow[]> => {
@@ -79,7 +81,7 @@ export const DataHealthPublic: React.FC = () => {
 
     const rows = ingestions ?? [];
     const total = rows.length;
-    const freshCount = rows.filter((r) => freshnessFor(r) === 'fresh').length;
+    const freshCount = rows.filter((r) => freshnessFor(r, now) === 'fresh').length;
     const lastSweep = rows[0]?.start_time;
     const authScore = authenticity?.authenticity_score;
 
@@ -106,14 +108,14 @@ export const DataHealthPublic: React.FC = () => {
                     value={authScore != null ? `${authScore}%` : '—'}
                     accent
                 />
-                <Stat label="Last Sweep" value={lastSweep ? relativeTime(lastSweep).replace('updated ', '') : '—'} small />
+                <Stat label="Last Sweep" value={lastSweep ? relativeTime(lastSweep, now).replace('updated ', '') : '—'} small />
             </div>
 
             {/* Status-board card grid (D10) */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {rows.map((row) => {
                     const meta = SOURCE_META[row.function_name];
-                    const status = freshnessFor(row);
+                    const status = freshnessFor(row, now);
                     const live = row.status_code === 200;
                     return (
                         <div
@@ -132,7 +134,7 @@ export const DataHealthPublic: React.FC = () => {
                                 <FreshnessChip status={status} lastUpdated={row.start_time} />
                             </div>
                             <div className="flex justify-between font-mono text-[11px] text-white/50">
-                                <span>{relativeTime(row.start_time)}</span>
+                                <span>{relativeTime(row.start_time, now)}</span>
                                 <span className={live ? 'text-emerald-400' : 'text-amber-400'}>
                                     {live ? `api_live · ${row.status_code}` : (row.status_code ?? '—')}
                                 </span>
