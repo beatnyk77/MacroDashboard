@@ -3,6 +3,7 @@ import { Box, Container, Typography, Avatar, Stack, Divider, Button } from '@mui
 import { SEOManager } from '@/components/SEOManager';
 import { Linkedin, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 export const About: React.FC = () => {
     return (
@@ -112,6 +113,147 @@ export const About: React.FC = () => {
                     </Box>
                 </Stack>
 
+                {/* ── Proprietary Intelligence Table ────────────────────────── */}
+                <Box sx={{ mt: 10 }}>
+                    <Typography
+                        variant="h2"
+                        component="h2"
+                        sx={{ fontWeight: 900, fontSize: { xs: '1.6rem', md: '2rem' }, mb: 1 }}
+                    >
+                        Industry-First Signals
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 4, maxWidth: 680 }}>
+                        GraphiQuestor surfaces macro variables that institutional terminals don&apos;t natively track.
+                        Each signal below is computed from primary official sources — no vendor resale, no stale aggregates.
+                    </Typography>
+
+                    {/* Table */}
+                    <Box
+                        component="div"
+                        sx={{
+                            overflowX: 'auto',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            borderRadius: '12px',
+                            background: 'rgba(255,255,255,0.02)',
+                        }}
+                    >
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                    {['Signal', 'What It Measures', 'Commercial Equivalent'].map(h => (
+                                        <th
+                                            key={h}
+                                            style={{
+                                                padding: '10px 16px',
+                                                textAlign: 'left',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.10em',
+                                                fontSize: '0.68rem',
+                                                color: 'rgba(255,255,255,0.35)',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            {h}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[
+                                    {
+                                        signal: 'Fed Debt Monetization Tracker',
+                                        measures: 'Fed balance sheet as % of total US debt — the yield control early warning system',
+                                        commercial: 'Bloomberg: manual WALCL/GFDEBTN calculation',
+                                        href: '/#liquidity-hero',
+                                    },
+                                    {
+                                        signal: 'India Credit Cycle Clock',
+                                        measures: 'CD ratio vs credit growth quadrant — RBI intervention signal',
+                                        commercial: 'CEIC India ($800/month)',
+                                        href: '/#india-pulse',
+                                    },
+                                    {
+                                        signal: 'De-Dollarization Composite',
+                                        measures: 'Central bank gold buying + BRICS settlement + petrodollar stress in one score',
+                                        commercial: 'Haver Analytics ($200/month)',
+                                        href: '/#policy-geopolitics',
+                                    },
+                                    {
+                                        signal: 'G20 Sovereign Stress Matrix',
+                                        measures: 'Debt/GDP vs real growth scatter for all G20 simultaneously',
+                                        commercial: 'S&P Sovereign Risk ($400/month)',
+                                        href: '/#sovereign-debt-stress',
+                                    },
+                                    {
+                                        signal: 'Net Liquidity Z-Score',
+                                        measures: 'G5 CB assets + M2 + TGA normalized — structural regime signal',
+                                        commercial: 'Bloomberg custom feed',
+                                        href: '/#liquidity-hero',
+                                    },
+                                ].map((row, i) => (
+                                    <tr
+                                        key={row.signal}
+                                        style={{
+                                            borderBottom: i < 4 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                                            transition: 'background 0.15s',
+                                        }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                    >
+                                        <td style={{ padding: '12px 16px', verticalAlign: 'top' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                                                <a
+                                                    href={row.href}
+                                                    style={{ color: '#e2e8f0', fontWeight: 700, textDecoration: 'none' }}
+                                                    onMouseEnter={e => ((e.target as HTMLElement).style.color = '#60a5fa')}
+                                                    onMouseLeave={e => ((e.target as HTMLElement).style.color = '#e2e8f0')}
+                                                >
+                                                    {row.signal}
+                                                </a>
+                                                <GQSignalBadge />
+                                            </div>
+                                        </td>
+                                        <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.55)', verticalAlign: 'top', lineHeight: 1.6 }}>
+                                            {row.measures}
+                                        </td>
+                                        <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.30)', verticalAlign: 'top', fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                            {row.commercial}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </Box>
+
+                    {/* Cost callout */}
+                    <Box
+                        sx={{
+                            mt: 3,
+                            px: 4,
+                            py: 2.5,
+                            borderRadius: '10px',
+                            background: 'rgba(245, 158, 11, 0.05)',
+                            border: '1px solid rgba(245, 158, 11, 0.15)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            flexWrap: 'wrap',
+                        }}
+                    >
+                        <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800, color: 'rgba(245,158,11,0.7)' }}>
+                            ◆ Estimated commercial data cost to replicate GraphiQuestor&apos;s proprietary signal layer:
+                        </span>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#f59e0b', fontFamily: 'monospace' }}>
+                            $4,400/month
+                        </span>
+                        <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.30)', fontWeight: 600 }}>
+                            — available here, free.
+                        </span>
+                    </Box>
+                </Box>
+
+                {/* ── CTA ──────────────────────────────────────────────────────── */}
                 <Box sx={{ mt: 10, textAlign: 'center' }}>
                     <Button
                         component={Link}

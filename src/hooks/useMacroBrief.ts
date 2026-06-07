@@ -15,12 +15,11 @@ export function useMacroBrief(
         .from('daily_macro_briefs')
         .select('*')
         .eq('brief_date', date)
-        .contains('focus_areas', sortedAreas)
         .order('generated_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
       
-      if (error) {
+      if (error || !data) {
         // Fall back to yesterday's brief
         const yesterday = new Date(date);
         yesterday.setDate(yesterday.getDate() - 1);

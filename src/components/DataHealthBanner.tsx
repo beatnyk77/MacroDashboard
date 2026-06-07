@@ -3,7 +3,48 @@ import { AlertCircle, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
 
-const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
+// ---------------------------------------------------------------------------
+// Helpers — weekend / business-hours awareness
+// ---------------------------------------------------------------------------
+
+/** Returns true on UTC Saturday (6) or Sunday (0). */
+function isMarketWeekend(): boolean {
+    const day = new Date().getUTCDay();
+    return day === 0 || day === 6;
+}
+
+/**
+ * Returns the "expected" maximum lag in hours before we should consider
+ * a staleness event genuinely alarming.
+ *
+ * - Weekend:           72 h (Sat/Sun — most macro feeds are silent)
+ * - Weekday pre-10 UTC: 14 h (overnight batch hasn't settled)
+ * - Weekday business:    8 h (flag anything older than a workday)
+ */
+export function getExpectedLagHours(): number {
+    if (isMarketWeekend()) return 72;
+    const hour = new Date().getUTCHours();
+    if (hour < 10) return 14;
+    return 8;
+}
+
+/**
+ * Returns the next Monday at 02:30 UTC as a compact string,
+ * e.g. "Mon 02:30 UTC".
+ */
+function nextMondayRefreshLabel(): string {
+    const now = new Date();
+    const day = now.getUTCDay(); // 0=Sun, 6=Sat
+    const daysUntilMon = day === 0 ? 1 : 7 - day + 1; // Sun→1, Sat→2
+    const mon = new Date(now);
+    mon.setUTCDate(now.getUTCDate() + daysUntilMon);
+    mon.setUTCHours(2, 30, 0, 0);
+    return `Mon ${mon.getUTCHours().toString().padStart(2, '0')}:${mon.getUTCMinutes().toString().padStart(2, '0')} UTC`;
+}
+
+// ---------------------------------------------------------------------------
+// DataHealthBanner — sticky top banner for genuine failures only
+// ---------------------------------------------------------------------------
 
 export const DataHealthBanner: React.FC = () => {
     const { data: health, isLoading } = useDataIntegrity();
@@ -16,13 +57,18 @@ export const DataHealthBanner: React.FC = () => {
         ? new Date(health.lastIngestionAt).getTime()
         : 0;
     const ingestionAgeMs = Date.now() - lastIngestionMs;
-    const isOvernightStaleness = ingestionAgeMs < TWELVE_HOURS_MS;
+    const hoursSinceLastRefresh = ingestionAgeMs / (60 * 60 * 1000);
+    const expectedLag = getExpectedLagHours();
 
-    // Suppress banner for routine overnight staleness (< 12 h) or low stale count
-    if (health.staleCount <= 30 || isOvernightStaleness) {
-        return null;
-    }
+    // Suppress banner when staleness is within expected bounds for the time of week,
+    // or when the absolute stale count is low enough to be noise.
+    const shouldShowBanner =
+        health.staleCount > 30 &&
+        hoursSinceLastRefresh > expectedLag;
 
+    if (!shouldShowBanner) return null;
+
+    // Only flag critical after a full weekday business day of silence
     const isCritical = health.status === 'critical' || health.staleCount > 10;
 
     return (
@@ -74,28 +120,72 @@ export const DataHealthBanner: React.FC = () => {
     );
 };
 
-/** Subtle chip for the footer — shown when staleness is routine (< 12 h) */
+// ---------------------------------------------------------------------------
+// DataFreshnessFooterChip — contextual, weekend-aware footer indicator
+// ---------------------------------------------------------------------------
+
 export const DataFreshnessFooterChip: React.FC = () => {
     const { data: health, isLoading } = useDataIntegrity();
 
-    if (isLoading || !health || health.staleCount === 0) return null;
+    if (isLoading || !health) return null;
 
     const lastIngestionMs = health.lastIngestionAt
         ? new Date(health.lastIngestionAt).getTime()
         : 0;
     const ingestionAgeMs = Date.now() - lastIngestionMs;
-    const isOvernightStaleness = ingestionAgeMs < TWELVE_HOURS_MS;
+    const hoursSinceRefresh = ingestionAgeMs / (60 * 60 * 1000);
+    const expectedLag = getExpectedLagHours();
+    const weekend = isMarketWeekend();
 
-    // Only show when banner is suppressed (routine staleness)
-    if (!isOvernightStaleness && health.staleCount > 30) return null;
+    // ── Case 1: All feeds fresh ──────────────────────────────────────────
+    if (health.staleCount === 0) {
+        return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400/70 text-[10px] font-bold uppercase tracking-[0.12em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/70 animate-pulse" />
+                All feeds live
+            </span>
+        );
+    }
 
-    const hoursAgo = Math.round(ingestionAgeMs / (60 * 60 * 1000));
+    // ── Case 2: Weekend — lag is normal, show subtle scheduled refresh ──
+    if (weekend) {
+        return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/30 text-[10px] font-bold uppercase tracking-[0.12em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                Weekend · Next refresh {nextMondayRefreshLabel()}
+            </span>
+        );
+    }
 
+    // ── Case 3: Weekday, within expected lag window ──────────────────────
+    if (hoursSinceRefresh <= expectedLag) {
+        const lastLabel = lastIngestionMs > 0
+            ? new Date(lastIngestionMs).toUTCString().replace(':00 GMT', ' UTC').slice(0, -4).split(' ').slice(-2).join(' ')
+            : 'recently';
+        return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/15 text-blue-400/50 text-[10px] font-bold uppercase tracking-[0.12em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400/40 animate-pulse" />
+                Refreshing · Last update {lastLabel}
+            </span>
+        );
+    }
+
+    // ── Case 4: Weekday genuine staleness (>expected but <24 h) — amber ──
+    const hoursAgo = Math.round(hoursSinceRefresh);
+    if (hoursSinceRefresh <= 24) {
+        return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-[0.12em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400/60" />
+                {health.staleCount} feed{health.staleCount !== 1 ? 's' : ''} lagged · {hoursAgo}h ago
+            </span>
+        );
+    }
+
+    // ── Case 5: Critical failure — >24 h on a weekday ───────────────────
     return (
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400/60 text-[10px] font-bold uppercase tracking-[0.12em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400/40" />
-            {health.staleCount} feed{health.staleCount !== 1 ? 's' : ''} lagged
-            {lastIngestionMs > 0 && ` · ${hoursAgo}h ago`}
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold uppercase tracking-[0.12em]">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400/70 animate-pulse" />
+            {health.staleCount} feeds stale · {hoursAgo}h ago
         </span>
     );
 };

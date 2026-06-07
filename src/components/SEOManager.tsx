@@ -11,6 +11,7 @@ interface SEOManagerProps {
     ogType?: 'website' | 'article';
     ogLocale?: string;
     canonicalUrl?: string;
+    canonical?: string;
     publishedTime?: string;
     jsonLd?: Record<string, any> | any[];
     robots?: string;
@@ -27,6 +28,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     ogType = 'website',
     ogLocale = 'en_US',
     canonicalUrl,
+    canonical,
     publishedTime,
     jsonLd,
     robots = 'index, follow',
@@ -41,7 +43,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     const canonicalPath = location.pathname === '/'
         ? '/'
         : location.pathname.replace(/\/$/, '');
-    const resolvedCanonical = canonicalUrl || `${BrandConfig.baseUrl}${canonicalPath}`;
+    const resolvedCanonical = canonical || canonicalUrl || `${BrandConfig.baseUrl}${canonicalPath}`;
 
     return (
         <Helmet>
