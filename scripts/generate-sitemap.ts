@@ -4,11 +4,6 @@ import { writeFileSync } from 'fs';
 const BASE_URL = 'https://graphiquestor.com';
 
 async function generateSitemap() {
-  const supabase = createClient(
-    process.env.VITE_SUPABASE_URL!,
-    process.env.VITE_SUPABASE_ANON_KEY!
-  );
-
   // Static routes (always present)
   const staticRoutes = [
     { url: '/',                    priority: '1.0', changefreq: 'daily'   },
@@ -26,53 +21,67 @@ async function generateSitemap() {
     { url: '/countries',           priority: '0.7', changefreq: 'weekly'  },
   ];
 
-  // Dynamic: Morning Brief pages (last 60 days)
-  const { data: briefs } = await supabase
-    .from('daily_macro_briefs')
-    .select('brief_date, generated_at')
-    .order('brief_date', { ascending: false })
-    .limit(60);
+  // Dynamic routes require Supabase — degrade gracefully if env vars unavailable (e.g. CI)
+  let briefRoutes: SitemapRoute[] = [];
+  let narrativeRoutes: SitemapRoute[] = [];
+  let digestRoutes: SitemapRoute[] = [];
 
-  const briefRoutes = (briefs ?? []).map(b => ({
-    url: `/macro-brief/${b.brief_date}`,
-    priority: '0.8',
-    changefreq: 'never' as const,
-    lastmod: b.generated_at,
-  }));
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-  // Dynamic: Weekly narrative pages
-  const { data: narratives } = await supabase
-    .from('weekly_regime_digests')
-    .select('week_start, created_at')
-    .order('week_start', { ascending: false })
-    .limit(52);
+  if (supabaseUrl && supabaseKey) {
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const narrativeRoutes = (narratives ?? []).map(n => ({
-    url: `/weekly-narrative/${n.week_start}`,
-    priority: '0.7',
-    changefreq: 'never' as const,
-    lastmod: n.created_at,
-  }));
+    // Dynamic: Morning Brief pages (last 60 days)
+    const { data: briefs } = await supabase
+      .from('daily_macro_briefs')
+      .select('brief_date, generated_at')
+      .order('brief_date', { ascending: false })
+      .limit(60);
 
-  // Dynamic: Regime digest monthly pages
-  const { data: digests } = await supabase
-    .from('weekly_regime_digests')
-    .select('week_start')
-    .order('week_start', { ascending: false })
-    .limit(24);
+    briefRoutes = (briefs ?? []).map(b => ({
+      url: `/macro-brief/${b.brief_date}`,
+      priority: '0.8',
+      changefreq: 'never' as const,
+      lastmod: b.generated_at,
+    }));
 
-  // Derive unique year/month combos
-  const monthSet = new Set(
-    (digests ?? []).map(d => {
-      const date = new Date(d.week_start);
-      return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}`;
-    })
-  );
-  const digestRoutes = [...monthSet].map(ym => ({
-    url: `/regime-digest/${ym}`,
-    priority: '0.7',
-    changefreq: 'never' as const,
-  }));
+    // Dynamic: Weekly narrative pages
+    const { data: narratives } = await supabase
+      .from('weekly_regime_digests')
+      .select('week_start, created_at')
+      .order('week_start', { ascending: false })
+      .limit(52);
+
+    narrativeRoutes = (narratives ?? []).map(n => ({
+      url: `/weekly-narrative/${n.week_start}`,
+      priority: '0.7',
+      changefreq: 'never' as const,
+      lastmod: n.created_at,
+    }));
+
+    // Dynamic: Regime digest monthly pages
+    const { data: digests } = await supabase
+      .from('weekly_regime_digests')
+      .select('week_start')
+      .order('week_start', { ascending: false })
+      .limit(24);
+
+    // Derive unique year/month combos
+    const monthSet = new Set(
+      (digests ?? []).map(d => {
+        const date = new Date(d.week_start);
+        return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+      })
+    );
+    digestRoutes = [...monthSet].map(ym => ({
+      url: `/regime-digest/${ym}`,
+      priority: '0.7',
+      changefreq: 'never' as const,
+    }));
+  } else {
+    console.warn('⚠ VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set — generating sitemap with static routes only.');
+  }
 
 interface SitemapRoute {
   url: string;

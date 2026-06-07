@@ -21,7 +21,7 @@ function isMarketWeekend(): boolean {
  * - Weekday pre-10 UTC: 14 h (overnight batch hasn't settled)
  * - Weekday business:    8 h (flag anything older than a workday)
  */
-export function getExpectedLagHours(): number {
+function getExpectedLagHours(): number {
     if (isMarketWeekend()) return 72;
     const hour = new Date().getUTCHours();
     if (hour < 10) return 14;
