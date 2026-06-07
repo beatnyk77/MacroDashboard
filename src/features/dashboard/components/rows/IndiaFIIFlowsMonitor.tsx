@@ -45,6 +45,28 @@ const formatYtd = (val: number) => {
     return `YTD: ${sign}$${formatted}mn`;
 };
 
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const item = payload[0].payload;
+        const formattedDate = parseDateSafe(item.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        const val = Number(item.value);
+        return (
+            <div style={DEFAULT_TOOLTIP_STYLE} className="shadow-2xl">
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-uppercase mb-2 pb-1 border-b border-white/5">
+                    {formattedDate}
+                </div>
+                <div className="flex justify-between items-center gap-6">
+                    <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">Net Flow</span>
+                    <span className={cn("font-black font-mono text-xs", val >= 0 ? "text-emerald-400" : "text-rose-400")}>
+                        {formatValueUSD(val)}
+                    </span>
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 export const IndiaFIIFlowsMonitor: React.FC = () => {
     const { data: latest, isLoading: latestLoading } = useLatestMetric('india_fii_equity_net_usd_mn');
     const { data: history, isLoading: historyLoading } = useMetricHistory('india_fii_equity_net_usd_mn', 12);
@@ -100,28 +122,6 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
     const latestVal = latest?.value ?? (chartData.length > 0 ? chartData[chartData.length - 1].value : null);
 
     const hasData = chartData.length > 0;
-
-    const CustomTooltip = ({ active, payload }: any) => {
-        if (active && payload && payload.length) {
-            const item = payload[0].payload;
-            const formattedDate = parseDateSafe(item.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-            const val = Number(item.value);
-            return (
-                <div style={DEFAULT_TOOLTIP_STYLE} className="shadow-2xl">
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-uppercase mb-2 pb-1 border-b border-white/5">
-                        {formattedDate}
-                    </div>
-                    <div className="flex justify-between items-center gap-6">
-                        <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">Net Flow</span>
-                        <span className={cn("font-black font-mono text-xs", val >= 0 ? "text-emerald-400" : "text-rose-400")}>
-                            {formatValueUSD(val)}
-                        </span>
-                    </div>
-                </div>
-            );
-        }
-        return null;
-    };
 
     if (isLoading) {
         return (

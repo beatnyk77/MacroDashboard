@@ -312,6 +312,12 @@
 
   <!-- AUTO:BRIEF_URLS -->
   <url>
+    <loc>https://graphiquestor.com/macro-brief/2026/06/07</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://graphiquestor.com/macro-brief/2026/06/06</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>never</changefreq>
@@ -482,12 +488,6 @@
   <url>
     <loc>https://graphiquestor.com/macro-brief/2026/05/09</loc>
     <lastmod>2026-05-09</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/08</loc>
-    <lastmod>2026-05-08</lastmod>
     <changefreq>never</changefreq>
     <priority>0.7</priority>
   </url>
