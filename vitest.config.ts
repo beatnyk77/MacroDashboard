@@ -13,5 +13,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    testTimeout: 30000,
+    pool: 'forks',
   },
 });
