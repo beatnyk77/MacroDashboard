@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer';
 import express from 'express';
-import portfinder from 'portfinder';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -91,18 +90,29 @@ function generateSitemap(routes) {
 }
 
 async function run() {
-    const port = await portfinder.getPortPromise();
+    const port = Number(process.env.PRERENDER_PORT || process.env.PORT || 4173);
     const server = app.listen(port, '127.0.0.1', async () => {
         console.log(`Server listening on port ${port} for recursive prerendering...`);
         
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage'
-            ]
-        });
+        let browser;
+        try {
+            browser = await puppeteer.launch({
+                headless: true,
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage'
+                ]
+            });
+        } catch (launchErr) {
+            console.warn('⚠️  Puppeteer browser unavailable; skipping prerender step:', launchErr);
+            const sitemapXml = generateSitemap(seedRoutes);
+            const outSitemapPath = path.join(distDir, 'sitemap.xml');
+            fs.writeFileSync(outSitemapPath, sitemapXml);
+            console.log(`Generated sitemap without prerender at ${outSitemapPath}`);
+            server.close();
+            return;
+        }
         const routesToVisit = new Set(seedRoutes);
         const visitedRoutes = new Set();
         

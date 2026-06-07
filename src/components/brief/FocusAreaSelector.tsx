@@ -62,6 +62,8 @@ export const FocusAreaSelector: React.FC<FocusAreaSelectorProps> = ({
           <button
             key={area}
             onClick={() => handleToggle(area)}
+            data-selected={isSelected ? 'true' : 'false'}
+            aria-pressed={isSelected}
             className={[
               'px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200',
               isSelected
