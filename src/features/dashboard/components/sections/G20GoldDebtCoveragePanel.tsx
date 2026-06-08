@@ -138,39 +138,45 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
                 {/* Map Section */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="h-[450px] relative rounded-3xl bg-slate-950/50 border border-white/[0.03] overflow-hidden group">
+                    <div className="relative rounded-3xl bg-slate-950/50 border border-white/[0.03] overflow-hidden group" style={{ height: '450px' }}>
                         <div className="absolute top-4 left-4 z-10 pointer-events-none">
                             <span className="text-xs font-black text-white/30 uppercase tracking-uppercase">Sovereign Heatmap (Coverage %)</span>
                         </div>
-                        <ComposableMap projectionConfig={{ rotate: [-10, 0, 0], scale: 145 }} className="w-full h-full">
-                            <Geographies geography={geoUrl}>
-                                {({ geographies }) =>
-                                    geographies.map((geo) => {
-                                        const iso3 = geo.properties.ISO_A3 || geo.id;
-                                        const code = ISO3_TO_CODE[iso3];
-                                        const countryData = sortedRows.find(d => d.country_code === code);
-                                        const isHovered = hoveredCountry?.country_code === code;
+                        <div style={{ width: '100%', height: '100%' }}>
+                            <ComposableMap
+                                projectionConfig={{ rotate: [-10, 0, 0], scale: 145 }}
+                                width={800}
+                                height={450}
+                            >
+                                <Geographies geography={geoUrl}>
+                                    {({ geographies }) =>
+                                        geographies.map((geo) => {
+                                            const iso3 = geo.properties.ISO_A3 || geo.id;
+                                            const code = ISO3_TO_CODE[iso3];
+                                            const countryData = sortedRows.find(d => d.country_code === code);
+                                            const isHovered = hoveredCountry?.country_code === code;
 
-                                        return (
-                                            <Geography
-                                                key={geo.rsmKey}
-                                                geography={geo}
-                                                onMouseEnter={() => countryData && setHoveredCountry(countryData)}
-                                                onMouseLeave={() => setHoveredCountry(null)}
-                                                fill={countryData ? colorScale(countryData.coverage_ratio) : "#0f172a"}
-                                                stroke={isHovered ? "#ffffff" : "rgba(255,255,255,0.05)"}
-                                                strokeWidth={isHovered ? 1.5 : 0.5}
-                                                style={{
-                                                    default: { outline: 'none', transition: 'all 200ms' },
-                                                    hover: { outline: 'none', fill: countryData ? colorScale(countryData.coverage_ratio) : '#1e293b', cursor: countryData ? 'pointer' : 'default' },
-                                                    pressed: { outline: 'none' }
-                                                }}
-                                            />
-                                        );
-                                    })
-                                }
-                            </Geographies>
-                        </ComposableMap>
+                                            return (
+                                                <Geography
+                                                    key={geo.rsmKey}
+                                                    geography={geo}
+                                                    onMouseEnter={() => countryData && setHoveredCountry(countryData)}
+                                                    onMouseLeave={() => setHoveredCountry(null)}
+                                                    fill={countryData ? colorScale(countryData.coverage_ratio) : "#0f172a"}
+                                                    stroke={isHovered ? "#ffffff" : "rgba(255,255,255,0.05)"}
+                                                    strokeWidth={isHovered ? 1.5 : 0.5}
+                                                    style={{
+                                                        default: { outline: 'none', transition: 'all 200ms' },
+                                                        hover: { outline: 'none', fill: countryData ? colorScale(countryData.coverage_ratio) : '#1e293b', cursor: countryData ? 'pointer' : 'default' },
+                                                        pressed: { outline: 'none' }
+                                                    }}
+                                                />
+                                            );
+                                        })
+                                    }
+                                </Geographies>
+                            </ComposableMap>
+                        </div>
 
                         {hoveredCountry && (
                             <div className="absolute bottom-6 left-6 p-5 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/12 shadow-2xl z-50 min-w-[240px] animate-in fade-in slide-in-from-bottom-2">
