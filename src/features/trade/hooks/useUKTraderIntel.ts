@@ -40,12 +40,13 @@ export function useUKTraderIntel(hsCode: string, isPremium: boolean = false) {
             // 2. If no data found, dynamically invoke the edge function to fetch from the UK Trade Info API
             if (!data || data.length === 0) {
                 console.log(`No UK trader intel found for HS ${hsCode}, triggering ingestion...`);
-                const { error: invokeError } = await supabase.functions.invoke('ingest-uk-trade-traders', {
-                    body: {},
-                    headers: { 'Content-Type': 'application/json' },
-                    method: 'POST',
-                    query: { hsCode }
-                });
+                const { error: invokeError } = await supabase.functions.invoke(
+                    `ingest-uk-trade-traders?hsCode=${encodeURIComponent(hsCode)}`,
+                    {
+                        headers: { 'Content-Type': 'application/json' },
+                        method: 'POST',
+                    }
+                );
 
                 if (invokeError) {
                     console.error("Failed to ingest UK trader intel:", invokeError);
