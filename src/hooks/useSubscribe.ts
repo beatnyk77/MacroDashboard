@@ -66,12 +66,13 @@ export function useSubscribe() {
         setError(null);
 
         // 3. Insert pending subscriber.
+        const confirmToken = generateToken();
         const { error: insertError } = await supabase
             .from('subscribers')
             .insert({
                 email: cleanedEmail,
                 status: 'pending',
-                confirm_token: generateToken(),
+                confirm_token: confirmToken,
                 source: source ?? 'unknown',
             });
 
@@ -86,7 +87,17 @@ export function useSubscribe() {
             return { ok: false, outcome: 'error' };
         }
 
-        // 4. New capture — fire the GA4 conversion event.
+        // 4. Send the double opt-in confirmation email.
+        try {
+            await supabase.functions.invoke('send-confirm-email', {
+                body: { email: cleanedEmail, token: confirmToken },
+            });
+        } catch (emailErr) {
+            // Non-fatal: the subscriber row is already written. Log and continue.
+            console.warn('[useSubscribe] confirmation email failed to send:', emailErr);
+        }
+
+        // 5. New capture — fire the GA4 conversion event.
         trackEvent('subscribe', {
             event_category: 'conversion',
             event_label: source ?? 'unknown',

@@ -8,6 +8,7 @@ import { ScoutMetricCards } from '@/features/trade/components/scout/ScoutMetricC
 import { ScoutBeachheadsTable } from '@/features/trade/components/scout/ScoutBeachheadsTable';
 import { ScoutMarketIntel } from '@/features/trade/components/scout/ScoutMarketIntel';
 import { ScoutExecutionPlaybook } from '@/features/trade/components/scout/ScoutExecutionPlaybook';
+import { UKTraderDirectory } from '@/features/trade/components/scout/UKTraderDirectory';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Download, AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
 
@@ -300,7 +301,12 @@ export const ExportScoutPlaybookPage: React.FC = () => {
           </div>
         )}
 
-        {/* 6. 90-Day Execution Playbook */}
+        {/* 6. UK Target Entities Reconnaissance */}
+        <div className="border-t border-white/[0.05] px-8 lg:px-16 py-12">
+          <UKTraderDirectory code={code || ''} />
+        </div>
+
+        {/* 7. 90-Day Execution Playbook */}
         {hasPlaybook && (
           <div className="border-t border-white/[0.05]">
             <ScoutExecutionPlaybook playbook={playbook.execution_playbook} />

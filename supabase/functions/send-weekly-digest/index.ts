@@ -121,7 +121,7 @@ Deno.serve(async (req: Request) => {
                     Authorization: `Bearer ${resendApiKey}`,
                 },
                 body: JSON.stringify({
-                    from: "GraphiQuestor <digest@resend.dev>",
+                    from: "GraphiQuestor <digest@graphiquestor.com>",
                     to: "digest@resend.dev",
                     bcc: chunk,
                     subject,

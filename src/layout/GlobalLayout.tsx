@@ -7,7 +7,6 @@ import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { TerminalSidebar } from '@/components/TerminalSidebar';
-import { IntelligenceSidebar } from '@/components/IntelligenceSidebar';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
@@ -236,20 +235,17 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </Drawer>
 
             {/* Main Layout - Clean Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_300px]">
+            <div className="grid grid-cols-1 md:grid-cols-[260px_1fr]">
                 {/* Left Sidebar */}
                 {!isEmbedded && <TerminalSidebar />}
 
                 {/* Main Content Area */}
                 <main id="main-content" className="min-w-0">
-                    <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
                         {children}
                     </div>
                     {!isEmbedded && <InstitutionalFooter />}
                 </main>
-
-                {/* Right Sidebar */}
-                {!isEmbedded && <IntelligenceSidebar />}
             </div>
 
 
