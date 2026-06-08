@@ -5604,6 +5604,7 @@
         "npm:tailwind-merge@^3.4.0",
         "npm:tailwindcss-animate@^1.0.7",
         "npm:tailwindcss@^3.4.17",
+        "npm:tsx@^4.19.0",
         "npm:typescript@^5.2.0",
         "npm:vite-prerender-plugin@~0.5.13",
         "npm:vite@^8.0.8",

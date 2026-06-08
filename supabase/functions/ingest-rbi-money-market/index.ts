@@ -62,6 +62,17 @@ Deno.serve(async (req: Request) => {
 async function doIngestRbiMoneyMarket(supabase: any) {
   console.log("Fetching RBI Money Market Operations...");
 
+  // Weekend & holiday guard: RBI markets are closed on weekends and Indian holidays
+  const today = new Date();
+  const dayOfWeek = today.getUTCDay(); // 0=Sunday, 6=Saturday
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    console.log(`Weekend detected (day ${dayOfWeek}): RBI markets closed. Skipping ingest.`);
+    return {
+      rows_inserted: 0,
+      metadata: { skipped: true, reason: 'weekend', date: today.toISOString().split('T')[0] }
+    };
+  }
+
   const response = await fetch(RBI_URL);
   const html = await response.text();
   const $ = cheerio.load(html);

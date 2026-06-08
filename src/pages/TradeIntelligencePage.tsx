@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Globe2, PackageSearch, Target, TrendingDown } from 'lucide-react'
 import { HSCodeSearch } from '../features/trade/components/HSCodeSearch'
@@ -11,9 +11,10 @@ import { isoToFlag } from '../features/trade/types/trade'
 import { SEOManager } from '@/components/SEOManager'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { useAvailableImportCountries } from '../features/trade/hooks/useAvailableImportCountries'
 import { cn } from '@/lib/utils'
 
-const MAJOR_REPORTERS = [
+const FALLBACK_REPORTERS = [
     { iso3: 'USA', name: 'United States', iso2: 'US' },
     { iso3: 'CHN', name: 'China', iso2: 'CN' },
     { iso3: 'DEU', name: 'Germany', iso2: 'DE' },
@@ -29,7 +30,21 @@ const TradeIntelligencePage: React.FC = () => {
     // Lifted country selector — shared by both Exports and Imports panels
     const [selectedISO, setSelectedISO] = useState('CHN')
 
-    const selectedCountry = MAJOR_REPORTERS.find(r => r.iso3 === selectedISO) ?? MAJOR_REPORTERS[0]
+    const { data: availableCountries = [] } = useAvailableImportCountries(20)
+
+    // Use dynamic countries if available, fallback to hardcoded list
+    const displayCountries = useMemo(() => {
+        if (availableCountries.length > 0) {
+            return availableCountries.map(c => ({
+                iso3: c.iso3,
+                name: c.name,
+                iso2: c.iso2,
+            }))
+        }
+        return FALLBACK_REPORTERS
+    }, [availableCountries])
+
+    const selectedCountry = displayCountries.find(r => r.iso3 === selectedISO) ?? displayCountries[0]
 
     const handleSelect = (code: HSCodeMaster) => {
         navigate(`/trade/hs/${code.code}`)
@@ -124,7 +139,7 @@ const TradeIntelligencePage: React.FC = () => {
                         <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Country</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        {MAJOR_REPORTERS.map(r => (
+                        {displayCountries.map(r => (
                             <button
                                 key={r.iso3}
                                 onClick={() => setSelectedISO(r.iso3)}

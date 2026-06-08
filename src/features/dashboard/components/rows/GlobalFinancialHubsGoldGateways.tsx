@@ -10,12 +10,78 @@ import {
     ArrowUpRight,
     MapPin,
     Gem,
-    Building
+    Building,
+    Info
 } from 'lucide-react';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Sparkline } from '@/components/Sparkline';
 import { useFinancialHubs, FinancialHubMetric } from '@/hooks/useFinancialHubs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+const HUB_INTELLIGENCE: Record<string, {
+    roleType: 'PHYSICAL' | 'FUTURES' | 'CLEARING' | 'CORRIDOR' | 'CENTRAL_BANK';
+    dailyVolume: string;
+    significance: string;
+    strategicNote: string;
+    geoRegion: 'WEST' | 'EAST' | 'MIDDLE';
+}> = {
+    'London': {
+        roleType: 'CLEARING',
+        dailyVolume: '~$30bn OTC/day',
+        significance: 'World\'s largest OTC gold clearing. Primary gold lending market. LBMA benchmark sets global spot price.',
+        strategicNote: 'Post-2022: CBs auditing London vault holdings. Singapore and UAE gaining share.',
+        geoRegion: 'WEST'
+    },
+    'New York': {
+        roleType: 'FUTURES',
+        dailyVolume: '~$60bn futures/day',
+        significance: 'COMEX dominates paper gold. 200:1 paper-to-physical ratio. Registered vaults hold delivery inventory.',
+        strategicNote: 'COMEX-LBMA basis spread watched as physical tightness signal. Elevated = real demand.',
+        geoRegion: 'WEST'
+    },
+    'Switzerland': {
+        roleType: 'PHYSICAL',
+        dailyVolume: '~2,000t refined/year',
+        significance: 'Swiss refiners (PAMP, Valcambi, Argor-Heraeus) process ~70% of global newly mined gold.',
+        strategicNote: 'Neutral status = preferred CB storage. Receives African/Latin American mine output.',
+        geoRegion: 'WEST'
+    },
+    'Shanghai': {
+        roleType: 'PHYSICAL',
+        dailyVolume: '~10-15t physical/day',
+        significance: 'SGE is a closed loop — gold imported, rarely exported. Tracks Chinese domestic demand directly.',
+        strategicNote: 'SGE premium to LBMA = Chinese demand intensity gauge. Also PBoC accumulation pathway.',
+        geoRegion: 'EAST'
+    },
+    'Dubai': {
+        roleType: 'CORRIDOR',
+        dailyVolume: '~25t transit/month',
+        significance: 'DMCC GOLD souk. UAE abstained from Russia sanctions — now handles significant non-Western gold flows.',
+        strategicNote: 'Post-2022: Russian, African, and Central Asian gold transits through Dubai. Growing BRICS+ node.',
+        geoRegion: 'MIDDLE'
+    },
+    'Singapore': {
+        roleType: 'CENTRAL_BANK',
+        dailyVolume: '~$2bn/day cleared',
+        significance: 'Asia\'s preferred vault jurisdiction for CB reserves. MAS exempts investment gold from GST.',
+        strategicNote: 'Multiple CBs repatriated gold FROM London TO Singapore post-2022. Geopolitical hedge in action.',
+        geoRegion: 'EAST'
+    },
+    'Hong Kong': {
+        roleType: 'CORRIDOR',
+        dailyVolume: '~5-10t/week',
+        significance: 'Regional wealth hub. Gateway between Western and Eastern gold markets. HKMA holds substantial reserves.',
+        strategicNote: 'Squeezed between US restrictions and BRICS+ corridor growth. Critical for CNY-denominated flows.',
+        geoRegion: 'EAST'
+    },
+    'GIFT City': {
+        roleType: 'CENTRAL_BANK',
+        dailyVolume: '~$1-2bn/day cleared',
+        significance: 'India\'s offshore financial center. RBI repatriating gold from UK to local vaults.',
+        strategicNote: 'RBI repatriated 100t from UK (2024). India reducing London gold custody exposure.',
+        geoRegion: 'EAST'
+    }
+};
 
 const HUB_ICONS: Record<string, React.ReactNode> = {
     Switzerland: <Landmark className="text-blue-400" />,
@@ -37,6 +103,23 @@ const HUB_COLORS: Record<string, string> = {
     "Shanghai": '#fbbf24'
 };
 
+const getRoleBadgeColor = (roleType: string): { bg: string; text: string; border: string } => {
+    switch (roleType) {
+        case 'CLEARING':
+            return { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-400/30' };
+        case 'FUTURES':
+            return { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-400/30' };
+        case 'PHYSICAL':
+            return { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-400/30' };
+        case 'CORRIDOR':
+            return { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-400/30' };
+        case 'CENTRAL_BANK':
+            return { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-400/30' };
+        default:
+            return { bg: 'bg-neutral-500/10', text: 'text-neutral-400', border: 'border-neutral-400/30' };
+    }
+};
+
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -56,6 +139,8 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
         date: i.toString(),
         value: val
     }));
+    const intelligence = HUB_INTELLIGENCE[hub.hub];
+    const roleBadgeColor = intelligence ? getRoleBadgeColor(intelligence.roleType) : null;
 
     return (
         <m.div
@@ -69,32 +154,39 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
             />
 
             <div className="relative z-10 flex flex-col h-full">
-                {/* TOP SECTION: Hub Info + Primary Metric */}
-                <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center gap-3">
+                {/* HEADER: Hub Name + Role Badge */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-3 flex-1">
                         <div className="p-3 bg-white/5 rounded-xl">
                             {HUB_ICONS[hub.hub] || <Coins className="text-yellow-400 w-8 h-8" />}
                         </div>
                         <div>
-                            <h3 className="text-lg font-black text-white tracking-heading leading-none mb-1">
-                                {hub.hub === 'GIFT City' ? 'GIFT City' : hub.hub}
+                            <h3 className="text-lg font-black text-white tracking-heading leading-none">
+                                {hub.hub}
                             </h3>
-                            <p className="text-xs text-neutral-500 uppercase tracking-uppercase font-black">
-                                {hub.hub === 'Switzerland' ? 'Safe-Haven' :
-                                    hub.hub === 'Singapore' ? 'Asian Wealth' :
-                                        hub.hub === 'London' ? 'Fin. Plumbing' :
-                                            hub.hub === 'GIFT City' ? "Offshore Hub" :
-                                                hub.hub === 'Hong Kong' ? 'Wealth Gateway' :
-                                                    hub.hub === 'Shanghai' ? 'Gold Exchange' : 'Trade Gateway'}
-                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="mb-6">
-                    <div className="flex items-baseline gap-2 mb-1">
-                        <span className="text-4xl font-black text-white font-mono leading-none">
-                            {hub.hub === 'GIFT City' ? '$' : ''}
+                {/* Role Badge */}
+                {intelligence && roleBadgeColor && (
+                    <div className={`mb-4 inline-block px-3 py-1.5 rounded border ${roleBadgeColor.bg} ${roleBadgeColor.text} ${roleBadgeColor.border} text-xs font-bold uppercase tracking-wide w-fit`}>
+                        {intelligence.roleType.replace(/_/g, ' ')}
+                    </div>
+                )}
+
+                {/* Daily Volume */}
+                {intelligence && (
+                    <div className="mb-4 p-3 bg-white/5 rounded border border-white/5">
+                        <p className="text-xs text-neutral-500 uppercase tracking-heading mb-1">Daily Volume</p>
+                        <p className="text-sm font-mono text-white">{intelligence.dailyVolume}</p>
+                    </div>
+                )}
+
+                {/* Primary Metric */}
+                <div className="mb-4">
+                    <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-3xl font-black text-white font-mono leading-none">
                             {hub.primary_metric_value.toLocaleString()}
                             <span className="text-sm text-neutral-500 ml-1 font-normal uppercase">
                                 {hub.hub === 'Singapore' ? '%' :
@@ -115,7 +207,7 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <p className="text-xs text-neutral-400 uppercase tracking-uppercase truncate cursor-help hover:text-white transition-colors">
+                                <p className="text-xs text-neutral-400 uppercase tracking-uppercase cursor-help hover:text-white transition-colors">
                                     {hub.primary_metric_label}
                                 </p>
                             </TooltipTrigger>
@@ -126,8 +218,8 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                     </TooltipProvider>
                 </div>
 
-                {/* MIDDLE: Sparkline */}
-                <div className="h-12 mb-6">
+                {/* Sparkline */}
+                <div className="h-12 mb-4">
                     <Sparkline
                         data={sparklineData}
                         color={HUB_COLORS[hub.hub]}
@@ -135,25 +227,27 @@ const HubCard: React.FC<{ hub: FinancialHubMetric }> = ({ hub }) => {
                     />
                 </div>
 
-                {/* BOTTOM: Secondary Metrics */}
-                <div className="mt-auto grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
-                    {Object.entries(hub.secondary_metrics)
-                        .filter(([key]) => key !== 'vs_singapore_aum_pct')
-                        .slice(0, 2)
-                        .map(([key, value]) => (
-                            <div key={key}>
-                                <p className="text-xs text-neutral-500 uppercase tracking-heading mb-0.5 truncate">
-                                    {key.replace(/_/g, ' ').replace(/yoy/gi, 'YoY').replace(/aum/gi, 'AUM').replace(/tonnes/gi, '')}
-                                </p>
-                                <div className="text-xs font-bold text-white font-mono truncate">
-                                    {typeof value === 'number' ?
-                                        (value > 10 ? value.toLocaleString() : value.toFixed(2)) :
-                                        value}
-                                    {key.includes('growth') || key.includes('yoy') || key.includes('pct') ? '%' : ''}
-                                </div>
-                            </div>
-                        ))}
-                </div>
+                {/* Significance */}
+                {intelligence && (
+                    <div className="mb-4 p-3 bg-white/5 rounded border border-white/5">
+                        <p className="text-xs text-neutral-500 uppercase tracking-heading mb-1 flex items-center gap-1">
+                            <Info className="w-3 h-3" />
+                            Significance
+                        </p>
+                        <p className="text-xs text-neutral-300 leading-relaxed">
+                            {intelligence.significance}
+                        </p>
+                    </div>
+                )}
+
+                {/* Strategic Note */}
+                {intelligence && (
+                    <div className="mt-auto pt-4 border-t border-white/5">
+                        <p className="text-xs italic text-neutral-400 leading-relaxed">
+                            {intelligence.strategicNote}
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
@@ -193,12 +287,21 @@ export const GlobalFinancialHubsGoldGateways: React.FC = () => {
                 icon={<Landmark className="w-6 h-6 text-blue-400" />}
             />
 
+            {/* Market Summary Header */}
+            <div className="mt-8 mb-12 p-4 bg-white/5 border border-white/10 rounded-lg">
+                <p className="text-xs text-neutral-300 font-mono leading-relaxed">
+                    <span className="text-emerald-400 font-bold">GOLD MARKET INFRASTRUCTURE</span> – Global OTC clearing ~$182bn/day |
+                    COMEX paper:physical ~200:1 | Physical corridor: London → Zurich → Singapore → Dubai |
+                    <span className="text-amber-400 font-bold ml-1">Post-2022 shift:</span> Central banks accelerating repatriation from Western vaults to Singapore/Dubai/Mumbai
+                </p>
+            </div>
+
             <m.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
-                className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
                 {orderedHubs.map((hub) => (
                     <HubCard key={hub.id} hub={hub} />

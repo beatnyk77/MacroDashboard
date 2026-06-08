@@ -35,17 +35,23 @@ export const useRBIMoneyMarket = () => {
         .order('date', { ascending: false })
         .limit(1000); // Fetch full historical series
       if (error) throw error;
-      return data.map((d: any) => ({
-        ...d,
-        call_money_vol: d.call_money_vol !== null ? Number(d.call_money_vol) : null,
-        call_money_rate: d.call_money_rate !== null ? Number(d.call_money_rate) : null,
-        triparty_repo_vol: d.triparty_repo_vol !== null ? Number(d.triparty_repo_vol) : null,
-        triparty_repo_rate: d.triparty_repo_rate !== null ? Number(d.triparty_repo_rate) : null,
-        market_repo_vol: d.market_repo_vol !== null ? Number(d.market_repo_vol) : null,
-        market_repo_rate: d.market_repo_rate !== null ? Number(d.market_repo_rate) : null,
-        notice_money_vol: d.notice_money_vol !== null ? Number(d.notice_money_vol) : null,
-        notice_money_rate: d.notice_money_rate !== null ? Number(d.notice_money_rate) : null
-      })) as MoneyMarketOps[];
+      return data
+        .map((d: any) => ({
+          ...d,
+          call_money_vol: d.call_money_vol !== null ? Number(d.call_money_vol) : null,
+          call_money_rate: d.call_money_rate !== null ? Number(d.call_money_rate) : null,
+          triparty_repo_vol: d.triparty_repo_vol !== null ? Number(d.triparty_repo_vol) : null,
+          triparty_repo_rate: d.triparty_repo_rate !== null ? Number(d.triparty_repo_rate) : null,
+          market_repo_vol: d.market_repo_vol !== null ? Number(d.market_repo_vol) : null,
+          market_repo_rate: d.market_repo_rate !== null ? Number(d.market_repo_rate) : null,
+          notice_money_vol: d.notice_money_vol !== null ? Number(d.notice_money_vol) : null,
+          notice_money_rate: d.notice_money_rate !== null ? Number(d.notice_money_rate) : null
+        }))
+        // Filter out rows where all volumes are zero (weekend/holiday artifacts)
+        .filter((d: any) => {
+          const totalVol = (d.call_money_vol || 0) + (d.triparty_repo_vol || 0) + (d.market_repo_vol || 0) + (d.notice_money_vol || 0);
+          return totalVol > 0;
+        }) as MoneyMarketOps[];
     },
     refetchInterval: 1000 * 60 * 60 * 4, // 4 hours
   });

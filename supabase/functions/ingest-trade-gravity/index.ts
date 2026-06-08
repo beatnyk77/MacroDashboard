@@ -9,55 +9,105 @@ const corsHeaders = {
 };
 
 async function doIngestTradeGravity(supabase: any) {
-    const tradeData = [
-        // INDIA
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'BRICS+', period: '2018', trade_value_usd: 210e9, trade_share_pct: 32.1 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'G7', period: '2018', trade_value_usd: 290e9, trade_share_pct: 44.2 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'BRICS+', period: '2020', trade_value_usd: 195e9, trade_share_pct: 34.5 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'G7', period: '2020', trade_value_usd: 255e9, trade_share_pct: 45.1 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'BRICS+', period: '2022', trade_value_usd: 390e9, trade_share_pct: 43.6 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'G7', period: '2022', trade_value_usd: 370e9, trade_share_pct: 41.4 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'BRICS+', period: '2023', trade_value_usd: 445e9, trade_share_pct: 46.8 },
-        { swing_state_code: '699', swing_state_name: 'India', bloc: 'G7', period: '2023', trade_value_usd: 360e9, trade_share_pct: 37.9 },
+    const comtradeKey = Deno.env.get('COMTRADE_API_KEY');
 
-        // BRAZIL
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'BRICS+', period: '2018', trade_value_usd: 98e9, trade_share_pct: 34.2 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'G7', period: '2018', trade_value_usd: 120e9, trade_share_pct: 41.8 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'BRICS+', period: '2020', trade_value_usd: 105e9, trade_share_pct: 38.4 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'G7', period: '2020', trade_value_usd: 112e9, trade_share_pct: 40.9 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'BRICS+', period: '2022', trade_value_usd: 148e9, trade_share_pct: 42.7 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'G7', period: '2022', trade_value_usd: 140e9, trade_share_pct: 40.4 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'BRICS+', period: '2023', trade_value_usd: 162e9, trade_share_pct: 44.1 },
-        { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'G7', period: '2023', trade_value_usd: 138e9, trade_share_pct: 37.6 },
-
-        // SAUDI ARABIA
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'BRICS+', period: '2018', trade_value_usd: 102e9, trade_share_pct: 31.8 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'G7', period: '2018', trade_value_usd: 145e9, trade_share_pct: 45.2 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'BRICS+', period: '2020', trade_value_usd: 88e9, trade_share_pct: 33.1 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'G7', period: '2020', trade_value_usd: 122e9, trade_share_pct: 45.9 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'BRICS+', period: '2022', trade_value_usd: 178e9, trade_share_pct: 37.2 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'G7', period: '2022', trade_value_usd: 218e9, trade_share_pct: 45.6 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'BRICS+', period: '2023', trade_value_usd: 193e9, trade_share_pct: 38.9 },
-        { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'G7', period: '2023', trade_value_usd: 210e9, trade_share_pct: 42.3 },
-
-        // INDONESIA (NEW)
-        { swing_state_code: '360', swing_state_name: 'Indonesia', bloc: 'BRICS+', period: '2018', trade_value_usd: 65e9, trade_share_pct: 28.5 },
-        { swing_state_code: '360', swing_state_name: 'Indonesia', bloc: 'G7', period: '2018', trade_value_usd: 95e9, trade_share_pct: 41.7 },
-        { swing_state_code: '360', swing_state_name: 'Indonesia', bloc: 'BRICS+', period: '2023', trade_value_usd: 125e9, trade_share_pct: 44.5 },
-        { swing_state_code: '360', swing_state_name: 'Indonesia', bloc: 'G7', period: '2023', trade_value_usd: 85e9, trade_share_pct: 30.2 },
-
-        // MEXICO (NEW)
-        { swing_state_code: '484', swing_state_name: 'Mexico', bloc: 'BRICS+', period: '2018', trade_value_usd: 45e9, trade_share_pct: 12.5 },
-        { swing_state_code: '484', swing_state_name: 'Mexico', bloc: 'G7', period: '2018', trade_value_usd: 285e9, trade_share_pct: 79.2 },
-        { swing_state_code: '484', swing_state_name: 'Mexico', bloc: 'BRICS+', period: '2023', trade_value_usd: 88e9, trade_share_pct: 19.5 },
-        { swing_state_code: '484', swing_state_name: 'Mexico', bloc: 'G7', period: '2023', trade_value_usd: 355e9, trade_share_pct: 78.5 },
-
-        // SOUTH AFRICA (NEW)
-        { swing_state_code: '710', swing_state_name: 'South Africa', bloc: 'BRICS+', period: '2018', trade_value_usd: 42e9, trade_share_pct: 30.2 },
-        { swing_state_code: '710', swing_state_name: 'South Africa', bloc: 'G7', period: '2018', trade_value_usd: 55e9, trade_share_pct: 39.5 },
-        { swing_state_code: '710', swing_state_name: 'South Africa', bloc: 'BRICS+', period: '2023', trade_value_usd: 72e9, trade_share_pct: 45.4 },
-        { swing_state_code: '710', swing_state_name: 'South Africa', bloc: 'G7', period: '2023', trade_value_usd: 52e9, trade_share_pct: 32.8 },
+    // Define swing states and their bloc partners
+    const swingStates = [
+        { code: '699', name: 'India', bricsPartners: ['356', '76', '682', '360', '710'], g7Partners: ['124', '250', '276', '392', '380', '826', '840'] },
+        { code: '76', name: 'Brazil', bricsPartners: ['356', '682', '360', '710'], g7Partners: ['124', '250', '276', '392', '380', '826', '840'] },
+        { code: '682', name: 'Saudi Arabia', bricsPartners: ['356', '76', '360', '710'], g7Partners: ['124', '250', '276', '392', '380', '826', '840'] },
+        { code: '360', name: 'Indonesia', bricsPartners: ['356', '76', '682', '710'], g7Partners: ['124', '250', '276', '392', '380', '826', '840'] },
+        { code: '484', name: 'Mexico', bricsPartners: ['356', '76', '682', '360'], g7Partners: ['124', '250', '276', '392', '380', '826', '840'] },
+        { code: '710', name: 'South Africa', bricsPartners: ['356', '76', '682', '360'], g7Partners: ['124', '250', '276', '392', '380', '826', '840'] },
     ];
+
+    // Get available periods: prefer 2024 & 2023, fallback to cached hardcoded data
+    const currentYear = new Date().getFullYear();
+    const periodsToFetch = ['2024', '2023'];
+
+    let tradeData: any[] = [];
+    let fetchedPeriods = new Set<string>();
+
+    // Try to fetch from UN Comtrade API for latest periods
+    if (comtradeKey) {
+        for (const period of periodsToFetch) {
+            try {
+                console.log(`Fetching UN Comtrade data for period ${period}...`);
+
+                for (const state of swingStates) {
+                    // Fetch BRICS+ partners
+                    const bricsUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${state.code}&partnerCode=${state.bricsPartners.join(',')}&period=${period}&cmdCode=TOTAL&flowCode=X,M&subscription-key=${comtradeKey}`;
+                    const bricsResp = await fetch(bricsUrl);
+
+                    if (bricsResp.ok) {
+                        const bricsData = await bricsResp.json();
+                        const bricsTotal = (bricsData.data || []).reduce((sum: number, r: any) => sum + (r.primaryValue || 0), 0);
+
+                        // Fetch G7 partners
+                        const g7Url = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${state.code}&partnerCode=${state.g7Partners.join(',')}&period=${period}&cmdCode=TOTAL&flowCode=X,M&subscription-key=${comtradeKey}`;
+                        const g7Resp = await fetch(g7Url);
+
+                        if (g7Resp.ok) {
+                            const g7Data = await g7Resp.json();
+                            const g7Total = (g7Data.data || []).reduce((sum: number, r: any) => sum + (r.primaryValue || 0), 0);
+
+                            const totalTrade = bricsTotal + g7Total;
+                            if (totalTrade > 0) {
+                                tradeData.push({
+                                    swing_state_code: state.code,
+                                    swing_state_name: state.name,
+                                    bloc: 'BRICS+',
+                                    period: period,
+                                    trade_value_usd: bricsTotal,
+                                    trade_share_pct: (bricsTotal / totalTrade) * 100
+                                });
+                                tradeData.push({
+                                    swing_state_code: state.code,
+                                    swing_state_name: state.name,
+                                    bloc: 'G7',
+                                    period: period,
+                                    trade_value_usd: g7Total,
+                                    trade_share_pct: (g7Total / totalTrade) * 100
+                                });
+                                fetchedPeriods.add(period);
+                            }
+                        }
+                    }
+                }
+            } catch (apiErr: any) {
+                console.warn(`API fetch failed for period ${period}: ${apiErr.message}. Will use fallback data.`);
+            }
+        }
+    }
+
+    // Fallback: include historical hardcoded data if API didn't provide fresh data
+    if (!fetchedPeriods.has('2023')) {
+        console.log('Using fallback hardcoded 2023 data');
+        tradeData.push(
+            // INDIA
+            { swing_state_code: '699', swing_state_name: 'India', bloc: 'BRICS+', period: '2023', trade_value_usd: 445e9, trade_share_pct: 46.8 },
+            { swing_state_code: '699', swing_state_name: 'India', bloc: 'G7', period: '2023', trade_value_usd: 360e9, trade_share_pct: 37.9 },
+            // BRAZIL
+            { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'BRICS+', period: '2023', trade_value_usd: 162e9, trade_share_pct: 44.1 },
+            { swing_state_code: '76', swing_state_name: 'Brazil', bloc: 'G7', period: '2023', trade_value_usd: 138e9, trade_share_pct: 37.6 },
+            // SAUDI ARABIA
+            { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'BRICS+', period: '2023', trade_value_usd: 193e9, trade_share_pct: 38.9 },
+            { swing_state_code: '682', swing_state_name: 'Saudi Arabia', bloc: 'G7', period: '2023', trade_value_usd: 210e9, trade_share_pct: 42.3 },
+            // INDONESIA
+            { swing_state_code: '360', swing_state_name: 'Indonesia', bloc: 'BRICS+', period: '2023', trade_value_usd: 125e9, trade_share_pct: 44.5 },
+            { swing_state_code: '360', swing_state_name: 'Indonesia', bloc: 'G7', period: '2023', trade_value_usd: 85e9, trade_share_pct: 30.2 },
+            // MEXICO
+            { swing_state_code: '484', swing_state_name: 'Mexico', bloc: 'BRICS+', period: '2023', trade_value_usd: 88e9, trade_share_pct: 19.5 },
+            { swing_state_code: '484', swing_state_name: 'Mexico', bloc: 'G7', period: '2023', trade_value_usd: 355e9, trade_share_pct: 78.5 },
+            // SOUTH AFRICA
+            { swing_state_code: '710', swing_state_name: 'South Africa', bloc: 'BRICS+', period: '2023', trade_value_usd: 72e9, trade_share_pct: 45.4 },
+            { swing_state_code: '710', swing_state_name: 'South Africa', bloc: 'G7', period: '2023', trade_value_usd: 52e9, trade_share_pct: 32.8 }
+        );
+    }
+
+    if (tradeData.length === 0) {
+        throw new Error('No trade gravity data available from API or fallback');
+    }
 
     const { error } = await supabase
         .from('trade_gravity')
@@ -65,9 +115,10 @@ async function doIngestTradeGravity(supabase: any) {
 
     if (error) throw error;
 
+    console.log(`Fetched periods from API: ${Array.from(fetchedPeriods).join(', ') || 'none'}`);
     return {
         rows_inserted: tradeData.length,
-        metadata: { message: `Upserted ${tradeData.length} expanded trade gravity records.` }
+        metadata: { message: `Upserted ${tradeData.length} trade gravity records.`, fetched_periods: Array.from(fetchedPeriods) }
     };
 }
 

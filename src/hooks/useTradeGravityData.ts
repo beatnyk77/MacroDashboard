@@ -73,7 +73,9 @@ export const useTradeGravityData = () => {
                         byPeriod[r.period][r.bloc] = Number(r.trade_share_pct);
                     });
 
-                    const curr = byPeriod['2023'] || { 'BRICS+': 0, G7: 0 };
+                    // Use latest period available (2024 preferred, fallback to 2023)
+                    const latestPeriod = Object.keys(byPeriod).sort().reverse()[0] || '2023';
+                    const curr = byPeriod[latestPeriod] || { 'BRICS+': 0, G7: 0 };
 
                     result.push({
                         name: stateName,

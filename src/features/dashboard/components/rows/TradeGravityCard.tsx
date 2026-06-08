@@ -11,7 +11,7 @@ interface TradeGravityCardProps {
     className?: string;
 }
 
-const PERIODS = ['2018', '2020', '2022', '2023'];
+const PERIODS = ['2018', '2020', '2022', '2023', '2024'];
 
 const BRICS_COLOR = '#f97316'; // orange
 const G7_COLOR = '#3b82f6'; // blue
@@ -49,7 +49,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                         </div>
                         <CardDescription className="flex items-center gap-2 text-xs font-mono uppercase text-muted-foreground">
                             <Zap className="w-3.5 h-3.5 text-orange-400" />
-                            <span>Swing-State Trade Allegiance · All Goods · 2018–2023</span>
+                            <span>Swing-State Trade Allegiance · All Goods · 2018–2024</span>
                         </CardDescription>
                     </div>
                     {/* Bloc Legend */}
@@ -178,7 +178,7 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
                                         </h3>
                                         {selected.hasShifted && (
                                             <span className="text-xs font-mono font-bold text-orange-200 bg-orange-500/15 border border-orange-500/25 px-2 py-0.5 rounded-full">
-                                                ⚡ BRICS+ Dominant in 2023
+                                                ⚡ BRICS+ Dominant in {PERIODS[PERIODS.length - 1]}
                                             </span>
                                         )}
                                     </div>

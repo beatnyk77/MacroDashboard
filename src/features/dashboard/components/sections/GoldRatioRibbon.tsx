@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ReferenceArea } from 'recharts';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { cn } from '@/lib/utils';
-import { AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, Zap, Clock } from 'lucide-react';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
@@ -37,6 +37,27 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export const GoldRatioRibbon: React.FC = () => {
     const { data: ratios, isLoading } = useGoldRatios();
+
+    // Calculate staleness
+    const stalenessInfo = useMemo(() => {
+        if (!ratios || ratios.length === 0) return { isStale: false, daysOld: 0, severity: 'fresh' };
+
+        const now = new Date();
+        const maxDaysOld = Math.max(...ratios.map(r => {
+            const lastUpdate = new Date(r.last_updated);
+            return Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
+        }));
+
+        let severity: 'fresh' | 'lagged' | 'very_lagged' = 'fresh';
+        if (maxDaysOld > 30) severity = 'very_lagged';
+        else if (maxDaysOld > 7) severity = 'lagged';
+
+        return {
+            isStale: maxDaysOld > 3,
+            daysOld: maxDaysOld,
+            severity
+        };
+    }, [ratios]);
 
     const chartData = useMemo(() => {
         if (!ratios || ratios.length === 0) return [];
@@ -116,6 +137,41 @@ export const GoldRatioRibbon: React.FC = () => {
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] -mr-64 -mt-64 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
             <div className="relative z-10 space-y-8">
+                {/* Staleness Warning Banner */}
+                {stalenessInfo.isStale && (
+                    <div className={cn(
+                        "p-4 rounded-2xl border flex items-start gap-3 backdrop-blur-sm",
+                        stalenessInfo.severity === 'very_lagged'
+                            ? "bg-red-500/10 border-red-500/30"
+                            : "bg-amber-500/10 border-amber-500/30"
+                    )}>
+                        <div className={cn(
+                            "p-2 rounded-lg flex-shrink-0",
+                            stalenessInfo.severity === 'very_lagged' ? "bg-red-500/20" : "bg-amber-500/20"
+                        )}>
+                            <Clock className={cn(
+                                "w-5 h-5",
+                                stalenessInfo.severity === 'very_lagged' ? "text-red-400" : "text-amber-400"
+                            )} />
+                        </div>
+                        <div className="space-y-1 flex-1">
+                            <div className={cn(
+                                "text-xs font-black uppercase tracking-uppercase",
+                                stalenessInfo.severity === 'very_lagged' ? "text-red-400" : "text-amber-400"
+                            )}>
+                                {stalenessInfo.severity === 'very_lagged' ? 'Critical Data Staleness' : 'Data Staleness Warning'}
+                            </div>
+                            <p className="text-xs leading-tight text-muted-foreground font-medium">
+                                Gold ratio data is {stalenessInfo.daysOld} days old. {
+                                    stalenessInfo.severity === 'very_lagged'
+                                        ? 'Automated refresh in progress. Caution: Use for reference only.'
+                                        : 'Latest update may be delayed. Refresh scheduled.'
+                                }
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Header Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-3">
@@ -255,6 +311,10 @@ export const GoldRatioRibbon: React.FC = () => {
                     {ratios?.filter(r => series.some(s => s.key === r.ratio_name)).map(ratio => {
                         const sConfig = series.find(s => s.key === ratio.ratio_name);
                         const isExtreme = Math.abs(ratio.z_score) > 2.0;
+                        const lastUpdate = new Date(ratio.last_updated);
+                        const daysStale = Math.floor((new Date().getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
+                        const isRatioStale = daysStale > 3;
+
                         return (
                             <div key={ratio.ratio_name} className="group/metric relative p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] transition-all duration-300">
                                 <div className="flex justify-between items-center mb-3">
@@ -264,7 +324,19 @@ export const GoldRatioRibbon: React.FC = () => {
                                             {ratio.ratio_name}
                                         </span>
                                     </div>
-                                    {isExtreme && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />}
+                                    <div className="flex items-center gap-2">
+                                        {isRatioStale && (
+                                            <div className={cn(
+                                                "text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-widest",
+                                                daysStale > 30
+                                                    ? "bg-red-500/20 text-red-400"
+                                                    : "bg-amber-500/20 text-amber-400"
+                                            )}>
+                                                {daysStale}d old
+                                            </div>
+                                        )}
+                                        {isExtreme && <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />}
+                                    </div>
                                 </div>
                                 <div className="flex items-baseline justify-between">
                                     <div className="text-xl font-black text-white/90 tabular-nums tracking-heading">
