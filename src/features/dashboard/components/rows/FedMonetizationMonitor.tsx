@@ -609,7 +609,7 @@ export const FedMonetizationMonitor: React.FC = () => {
 
       // Handle CPI: if > 50, it's an index, compute YoY
       let cpiRaw = cpiData.find(d => d.date <= row.date)?.cpiYoY ?? cpiData[0]?.cpiYoY;
-      let cpi = cpiRaw;
+      let cpi: number | undefined = cpiRaw; // TODO(types): explicit annotation prevents spurious narrowing inside the if-block below
       if (cpiRaw !== undefined && cpiRaw > 50) {
         const nearestCpiDate = cpiData.find(d => d.date <= row.date)?.date ?? cpiDates[0];
         cpi = computeYoY(nearestCpiDate, cpiLevelMap, cpiDates);

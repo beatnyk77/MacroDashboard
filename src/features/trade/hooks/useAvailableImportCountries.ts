@@ -53,6 +53,7 @@ export function useAvailableImportCountries(limit: number = 20) {
                 const countryTotals: Record<string, number> = {}
                 data.forEach(row => {
                     const iso3 = row.reporter_iso3
+                    if (!iso3) return // TODO(types): vw_country_trade_imports.reporter_iso3 is nullable
                     if (!countryTotals[iso3]) {
                         countryTotals[iso3] = 0
                     }

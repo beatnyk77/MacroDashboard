@@ -43,8 +43,8 @@ export function useContradictions(signalDate?: string) {
           title: row.title,
           interpretation: row.interpretation,
           severity: row.severity as 'NOTABLE' | 'EXTREME',
-          metric_a: row.metric_a,
-          metric_b: row.metric_b,
+          metric_a: row.metric_a ?? '',
+          metric_b: row.metric_b ?? '',
         }));
       }
 

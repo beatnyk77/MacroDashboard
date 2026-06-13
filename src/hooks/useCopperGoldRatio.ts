@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface CopperGoldRatioData {
     value: number;
@@ -18,7 +19,7 @@ export function useCopperGoldRatio() {
             const { data: latest, error: latestError } = await supabase
                 .from('vw_latest_metrics')
                 .select('*')
-                .eq('metric_id', 'COPPER_GOLD_RATIO')
+                .eq('metric_id', MID.COPPER_GOLD_RATIO)
                 .maybeSingle();
 
             if (latestError || !latest) {
@@ -30,7 +31,7 @@ export function useCopperGoldRatio() {
             const { data: history } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', 'COPPER_GOLD_RATIO')
+                .eq('metric_id', MID.COPPER_GOLD_RATIO)
                 .order('as_of_date', { ascending: false })
                 .limit(250);
 
@@ -49,7 +50,7 @@ export function useCopperGoldRatio() {
                 delta_yoy: Number(latest.delta_mom || 0), // Defaulting to delta_mom for now if YoY not computed in view
                 z_score: zScore,
                 history: (history || []).map(h => ({ date: String(h.as_of_date), value: Number(h.value) })).reverse(),
-                last_updated: latest.as_of_date,
+                last_updated: latest.as_of_date ?? '',
                 status
             };
         },

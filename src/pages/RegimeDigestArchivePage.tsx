@@ -9,7 +9,7 @@ interface DigestSummary {
     id: string;
     year_month: string;
     subject_line: string;
-    created_at: string;
+    generated_at: string | null;
 }
 
 export const RegimeDigestArchivePage: React.FC = () => {
@@ -20,7 +20,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
         const fetchDigests = async () => {
             const { data, error } = await supabase
                 .from('monthly_regime_digests')
-                .select('id, year_month, subject_line, created_at')
+                .select('id, year_month, subject_line, generated_at')
                 .order('year_month', { ascending: false });
 
             if (!error && data) {
@@ -113,7 +113,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                                                     {digest.subject_line}
                                                 </h3>
                                                 <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
-                                                    Published {new Date(digest.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                    Published {digest.generated_at ? new Date(digest.generated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                                                 </p>
                                             </div>
                                         </div>

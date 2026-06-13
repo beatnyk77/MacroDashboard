@@ -106,7 +106,7 @@ export function useDailyMacroSignal() {
       const liq = liquidityRes.data;
 
       const getMetric = (id: string) =>
-        metrics.find((m: { metric_id: string; value: number; z_score: number | null }) => m.metric_id === id);
+        metrics.find(m => m.metric_id === id); // TODO(types): vw_latest_metrics metric_id/value are nullable in schema
 
       const us10y = Number(getMetric('US_10Y_YIELD')?.value ?? 4.3);
       const us2y = Number(getMetric('US_2Y_YIELD')?.value ?? 4.8);

@@ -44,7 +44,7 @@ export const useMacroHeadlines = (category?: 'India' | 'Global') => {
 
             const { data, error } = await query;
             if (error) throw error;
-            return data || [];
+            return (data || []) as unknown as MacroHeadline[]; // TODO(types): DB has nullable ingested_at/published_at; interface expects non-null
         },
         refetchInterval: 1000 * 60 * 2, // 2 minutes
         staleTime: 1000 * 60 * 1, // 1 minute

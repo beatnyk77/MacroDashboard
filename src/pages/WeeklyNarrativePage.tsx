@@ -54,7 +54,7 @@ const WeeklyNarrativeContent: React.FC = () => {
                 return;
             }
 
-            setDigest(data);
+            setDigest(data as unknown as WeeklyRegimeDigest); // TODO(types): regime_shifts/what_changed/what_to_watch are Json
 
             // Fetch adjacent weeks in parallel
             const [prevRes, nextRes] = await Promise.all([

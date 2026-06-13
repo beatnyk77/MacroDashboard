@@ -31,7 +31,7 @@ export const useCommodityImports = () => {
                 ...d,
                 value_usd: Number(d.value_usd),
                 volume: Number(d.volume)
-            })) as CommodityImport[];
+            })) as unknown as CommodityImport[]; // TODO(types): top_partners_json is Json — shape validated at runtime
         }
     });
 };

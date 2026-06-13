@@ -32,7 +32,7 @@ export const CountryProfilePage: React.FC = () => {
       const { data, error } = await supabase
         .from('vw_country_terminal')
         .select('*')
-        .eq('iso', uppercaseIso)
+        .eq('iso', uppercaseIso!)
         .single();
       if (error) throw error;
       return data;

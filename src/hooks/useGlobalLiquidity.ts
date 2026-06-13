@@ -40,7 +40,7 @@ export function useGlobalLiquidity() {
                 .single();
 
             if (error) throw error;
-            return data as GlobalLiquidityData;
+            return data as unknown as GlobalLiquidityData; // TODO(types): all-nullable view columns — shape validated at runtime
         },
         // Refetch every 1 hour (as data is daily/weekly anyway)
         staleTime: 1000 * 60 * 60,

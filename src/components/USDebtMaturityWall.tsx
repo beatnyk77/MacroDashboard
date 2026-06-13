@@ -118,7 +118,7 @@ export const USDebtMaturityWall: React.FC = () => {
                 const sorted = [...data].sort((a, b) =>
                     BUCKET_ORDER.indexOf(a.bucket) - BUCKET_ORDER.indexOf(b.bucket)
                 );
-                setMaturityData(sorted);
+                setMaturityData(sorted as unknown as MaturityBucket[]); // TODO(types): DB has nullable optional cost fields; interface expects non-null
             }
         } catch (error) {
             console.error('Error fetching maturity data:', error);

@@ -28,7 +28,7 @@ export const AlertHistory: React.FC = () => {
                 .select('*')
                 .order('created_at', { ascending: false });
             if (error) return [] as Alert[];
-            return data as Alert[];
+            return data as unknown as Alert[]; // TODO(types): cie_alerts shape narrowed at runtime
         }
     });
 

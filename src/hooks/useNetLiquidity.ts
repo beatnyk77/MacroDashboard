@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface NetLiquidityData {
     as_of_date: string;
@@ -23,10 +24,10 @@ export function useNetLiquidity() {
         queryFn: async (): Promise<NetLiquidityData> => {
             const [liqRes, rrpRes, tgaRes, spreadRes, fedRes] = await Promise.all([
                 supabase.from('vw_net_liquidity').select('*').order('as_of_date', { ascending: false }).limit(90),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'RRP_BALANCE_BN').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'TGA_BALANCE_BN').maybeSingle(),
-                supabase.from('metric_observations').select('as_of_date, value').eq('metric_id', 'SOFR_EFFR_SPREAD_BPS').order('as_of_date', { ascending: false }).limit(30),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FED_BALANCE_SHEET').maybeSingle()
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.RRP_BALANCE_BN).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.TGA_BALANCE_BN).maybeSingle(),
+                supabase.from('metric_observations').select('as_of_date, value').eq('metric_id', MID.SOFR_EFFR_SPREAD_BPS).order('as_of_date', { ascending: false }).limit(30),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.FED_BALANCE_SHEET).maybeSingle()
             ]);
 
             if (liqRes.error || !liqRes.data || liqRes.data.length === 0) {
@@ -51,24 +52,24 @@ export function useNetLiquidity() {
 
             const latest = liqRes.data[0];
             const history = liqRes.data.map(d => ({
-                date: d.as_of_date,
+                date: d.as_of_date ?? '',
                 value: Number(d.value)
             })).reverse();
 
             const spreadData = spreadRes.data || [];
             const sofr_effr_history = spreadData.map(d => ({
-                date: d.as_of_date,
+                date: d.as_of_date ?? '',
                 value: Number(d.value)
             })).reverse();
 
             return {
-                as_of_date: latest.as_of_date,
+                as_of_date: latest.as_of_date ?? '',
                 current_value: Number(latest.value),
                 z_score: Number(latest.z_score),
                 percentile: Number(latest.percentile),
                 delta: Number(latest.delta),
                 delta_pct: Number(latest.delta_pct),
-                alarm_status: latest.alarm_status,
+                alarm_status: latest.alarm_status ?? '',
                 history: history,
                 rrp_balance: rrpRes.data?.value || 0,
                 tga_balance: tgaRes.data?.value || 0,

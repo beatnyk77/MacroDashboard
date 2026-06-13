@@ -24,7 +24,7 @@ export function useHSCodeSearch(query: string) {
                     .ilike('code', `${trimmed}%`)
                     .order('level')
                     .limit(12)
-                setResults(data || [])
+                setResults((data || []) as unknown as HSCodeMaster[]) // TODO(types): hs_code_master has nullable chapter/heading/level; interface expects non-null
             } else {
                 // Text search → full-text description search
                 const { data } = await supabase
@@ -33,7 +33,7 @@ export function useHSCodeSearch(query: string) {
                     .ilike('description', `%${trimmed}%`)
                     .order('level')
                     .limit(12)
-                setResults(data || [])
+                setResults((data || []) as unknown as HSCodeMaster[]) // TODO(types): hs_code_master has nullable chapter/heading/level; interface expects non-null
             }
         } catch (err) {
             console.error('[useHSCodeSearch]', err)

@@ -34,7 +34,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                     .single();
 
                 if (!error && data) {
-                    setDigest(data);
+                    setDigest(data as unknown as WeeklyRegimeDigest); // TODO(types): Json fields narrow at runtime
                 }
             } catch (err) {
                 console.error('Error fetching weekly narrative:', err);

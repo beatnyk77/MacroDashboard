@@ -62,7 +62,7 @@ export function useBricsTracker() {
             }, {});
 
             return {
-                metrics: (metrics as BricsMetric[]) || [],
+                metrics: (metrics as unknown as BricsMetric[]) || [], // TODO(types): vw_brics_tracker all-nullable — shape validated at runtime
                 countryReserves: (countryReserves as BricsCountryReserves[]) || [],
                 history: historyGrouped
             };

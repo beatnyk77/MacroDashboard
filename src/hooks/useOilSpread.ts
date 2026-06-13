@@ -110,7 +110,8 @@ export const useLatestOilSpread = () => {
                 }
             }
 
-            const staleness = getStaleness(data.computed_at, 'daily');
+            if (!data) return null;
+            const staleness = getStaleness(data.computed_at ?? '', 'daily');
             return {
                 ...data,
                 front_price: Number(data.front_price),
@@ -119,7 +120,7 @@ export const useLatestOilSpread = () => {
                 change_1d: Number(data.change_1d),
                 change_3d: Number(data.change_3d),
                 is_stale: staleness.state !== 'fresh'
-            };
+            } as unknown as OilSpreadRecord; // TODO(types): nullable DB fields narrowed above
         },
         staleTime: 1000 * 60 * 5, // 5 mins
     });

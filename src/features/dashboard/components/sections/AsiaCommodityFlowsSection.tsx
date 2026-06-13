@@ -1,10 +1,9 @@
 import React, { Suspense, lazy } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useOilData } from '@/hooks/useOilData';
 import { MotionCard } from '@/components/MotionCard';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { PendingDataState } from '@/components/PendingDataState';
-import { supabase } from '@/lib/supabase';
 import { useStaleness } from '@/hooks/useStaleness';
 
 const OilImportVulnerabilityCard = lazy(() => import('../cards/OilImportVulnerabilityCard').then(m => ({ default: m.OilImportVulnerabilityCard })));
@@ -16,19 +15,8 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
     const { data: apiData } = useOilData();
     const queryClient = useQueryClient();
 
-    const { data: importFreshness } = useQuery({
-        queryKey: ['oil-imports-freshness'],
-        queryFn: async () => {
-            const { data } = await supabase
-                .from('oil_imports_by_origin')
-                .select('as_of_date')
-                .order('as_of_date', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-            return data?.as_of_date ? String(data.as_of_date) : null;
-        },
-        staleTime: 1000 * 60 * 60,
-    });
+    // oil_imports_by_origin table not yet in schema; freshness derived from apiData instead
+    const importFreshness: string | null = null;
     const importStaleness = useStaleness(importFreshness ?? undefined, 'weekly');
 
     const hasNoData = !apiData?.importData?.length;

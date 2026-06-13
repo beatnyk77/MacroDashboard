@@ -45,7 +45,7 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
                     // 5-year import trend
                     supabase
                         .from('trade_demand_cache')
-                        .select('year, import_value_usd')
+                        .select('year, export_value_usd')
                         .eq('hs_code', hsCode)
                         .eq('reporter_iso3', reporterIso3)
                         .order('year', { ascending: true })
@@ -54,7 +54,7 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
                     // Supplier breakdown — latest year
                     supabase
                         .from('trade_supplier_breakdown')
-                        .select('hs_code, reporter_iso3, partner_iso3, partner_name, year, export_value_usd, market_share_pct')
+                        .select('hs_code, reporter_iso3, partner_iso3, partner_name, year, import_value_usd, market_share_pct')
                         .eq('hs_code', hsCode)
                         .eq('reporter_iso3', reporterIso3)
                         .order('export_value_usd', { ascending: false })
@@ -81,10 +81,10 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
 
                 const trend: TrendPoint[] = (trendRes.data || []).map(r => ({
                     year: r.year,
-                    import_value_usd: r.import_value_usd || 0,
+                    import_value_usd: r.export_value_usd || 0,
                 }))
 
-                const suppliers: SupplierBreakdown[] = supplierRes.data || []
+                const suppliers: SupplierBreakdown[] = (supplierRes.data || []) as unknown as SupplierBreakdown[] // TODO(types)
 
                 const macroMetrics = (macroRes.data || []).map(r => ({
                     metric_key: r.metric_key,

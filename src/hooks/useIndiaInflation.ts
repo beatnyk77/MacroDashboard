@@ -26,7 +26,7 @@ export function useIndiaInflation() {
                 if (dbError) throw dbError;
 
                 if (dbData) {
-                    setData(dbData);
+                    setData(dbData as unknown as IndiaInflationData[]); // TODO(types): nullable columns narrowed at runtime
                 }
             } catch (err: any) {
                 console.error('Error fetching India Inflation Pulse data:', err);

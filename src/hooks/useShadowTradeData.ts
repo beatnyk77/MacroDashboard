@@ -33,7 +33,7 @@ export const useShadowTradeData = (category: string = 'Semiconductors (HS 8542)'
                     .order('spike_ratio', { ascending: false });
 
                 if (dbError) throw new Error(dbError.message);
-                if (isMounted) setData(rawData || []);
+                if (isMounted) setData((rawData || []) as unknown as ShadowTradeAnomaly[]); // TODO(types): as_of_date nullable; narrowed at runtime
             } catch (err: any) {
                 if (isMounted) setError(err);
             } finally {

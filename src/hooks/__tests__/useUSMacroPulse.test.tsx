@@ -41,7 +41,7 @@ describe('useUSMacroPulse', () => {
             { 
                 metric_id: 'INFLATION_HEADLINE_YOY', 
                 value: 6.0, 
-                delta_yoy: -1.5, 
+                delta_mom: -1.5,
                 z_score: 2.1, 
                 percentile: 85,
                 last_updated_at: new Date().toISOString() // Not stale

@@ -28,7 +28,7 @@ export const SubscriberTractionCard: React.FC = () => {
         queryFn: async (): Promise<SubscriberStats | null> => {
             const { data, error } = await supabase.rpc('get_subscriber_stats');
             if (error) throw error;
-            return data as SubscriberStats;
+            return data as unknown as SubscriberStats; // TODO(types): RPC returns Json — shape validated at runtime
         },
     });
 

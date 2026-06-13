@@ -26,7 +26,7 @@ export function useStateFiscalHealth() {
                 if (dbError) throw dbError;
 
                 if (dbData) {
-                    setData(dbData);
+                    setData(dbData as unknown as StateFiscalHealthData[]); // TODO(types): nullable columns narrowed at runtime
                 }
             } catch (err: any) {
                 console.error('Error fetching State Fiscal Health data:', err);

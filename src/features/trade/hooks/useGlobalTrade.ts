@@ -54,7 +54,7 @@ export function useGlobalTrade(iso3: string | null) {
                     .order('export_value_usd', { ascending: false })
 
                 if (err) throw err
-                setData(results || [])
+                setData((results || []) as unknown as GlobalAggregate[]) // TODO(types): trade_global_aggregates has nullable columns; interface expects non-null
             } catch (e: any) {
                 console.error('[useGlobalTrade] Error:', e)
                 setError(e.message)

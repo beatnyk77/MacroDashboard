@@ -48,7 +48,7 @@ export const DataHealthTicker: React.FC = () => {
                 </span>
                 <span className="pl-2 flex items-center gap-1.5 text-xs font-bold opacity-70 leading-none">
                     <Clock size={10} />
-                    {health.service}: {timeAgo}
+                    {health.function_name}: {timeAgo}
                 </span>
             </div>
         </div>

@@ -33,11 +33,11 @@ export function useRegime() {
             }
 
             return {
-                id: data.signal_date, // Use signal_date as stable ID
+                id: data.signal_date ?? '', // Use signal_date as stable ID
                 regimeLabel: regimeLabel,
                 pulseScore: Number(data.score),
                 signalBreadth: Number(data.confidence_pct),
-                timestamp: data.computed_at
+                timestamp: data.computed_at ?? ''
             };
         },
         staleTime: 1000 * 60 * 15, // 15 min

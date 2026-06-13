@@ -24,7 +24,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
                 .limit(1)
                 .single();
             if (error) return null;
-            return data as Digest;
+            return data as unknown as Digest; // TODO(types): Json fields (regime_shifts, what_changed, what_to_watch) narrow at runtime
         }
     });
 

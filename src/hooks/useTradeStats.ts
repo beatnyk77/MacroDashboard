@@ -36,7 +36,7 @@ export function useTradeStats(countryCode?: string) {
                 throw error;
             }
 
-            return data as TradeStat[];
+            return data as unknown as TradeStat[]; // TODO(types): ftas_json is Json; nullable fields narrowed at runtime
         },
         staleTime: 1000 * 60 * 60 * 24, // 24 hours (monthly data)
         retry: 2,

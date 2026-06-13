@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface BoJMetricData {
     id: string;
@@ -24,11 +25,11 @@ export function useBoJBalanceSheet() {
         queryKey: ['boj-balance-sheet'],
         queryFn: async (): Promise<BoJBalanceSheetData> => {
             const metricIds = [
-                'BOJ_EXCESS_RESERVES_TRJPY',
-                'BOJ_TOTAL_ASSETS_TRJPY',
-                'BOJ_MONETARY_BASE_TRJPY',
-                'BOJ_JGB_HOLDINGS_TRJPY',
-                'BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY'
+                MID.BOJ_EXCESS_RESERVES_TRJPY,
+                MID.BOJ_TOTAL_ASSETS_TRJPY,
+                MID.BOJ_MONETARY_BASE_TRJPY,
+                MID.BOJ_JGB_HOLDINGS_TRJPY,
+                MID.BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY,
             ];
 
             const [latestRes, historyRes] = await Promise.all([
@@ -52,14 +53,14 @@ export function useBoJBalanceSheet() {
 
                 const history = (historyRes.data || [])
                     .filter(h => h.metric_id === id)
-                    .map(h => ({ date: h.as_of_date, value: Number(h.value) }))
+                    .map(h => ({ date: h.as_of_date ?? '', value: Number(h.value) }))
                     .reverse();
 
                 return {
-                    id: latest.metric_id,
-                    name: latest.metric_name,
+                    id: latest.metric_id ?? '',
+                    name: latest.metric_name ?? '',
                     value: Number(latest.value),
-                    as_of_date: latest.as_of_date,
+                    as_of_date: latest.as_of_date ?? '',
                     delta_wow: latest.delta_wow,
                     delta_mom: latest.delta_mom,
                     history
@@ -67,11 +68,11 @@ export function useBoJBalanceSheet() {
             };
 
             return {
-                excessReserves: mapMetric('BOJ_EXCESS_RESERVES_TRJPY'),
-                totalAssets: mapMetric('BOJ_TOTAL_ASSETS_TRJPY'),
-                monetaryBase: mapMetric('BOJ_MONETARY_BASE_TRJPY'),
-                jgbHoldings: mapMetric('BOJ_JGB_HOLDINGS_TRJPY'),
-                currentAccountDeposits: mapMetric('BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY')
+                excessReserves: mapMetric(MID.BOJ_EXCESS_RESERVES_TRJPY),
+                totalAssets: mapMetric(MID.BOJ_TOTAL_ASSETS_TRJPY),
+                monetaryBase: mapMetric(MID.BOJ_MONETARY_BASE_TRJPY),
+                jgbHoldings: mapMetric(MID.BOJ_JGB_HOLDINGS_TRJPY),
+                currentAccountDeposits: mapMetric(MID.BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY)
             };
         },
         staleTime: 1000 * 60 * 60, // 1h

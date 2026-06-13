@@ -138,15 +138,15 @@ export function useHSDemand(hsCode: string | null) {
                         .limit(100)
 
                     // For manual refresh, we want to make sure computed_at is NEWER than when we started
-                    const isNewEnough = !isManualRefresh || (fresh && fresh.length > 0 && new Date(fresh[0].computed_at) > now)
+                    const isNewEnough = !isManualRefresh || (fresh && fresh.length > 0 && new Date(fresh[0].computed_at ?? '') > now) // TODO(types): computed_at nullable
 
                     if (fresh && fresh.length > 0 && isNewEnough && !cancelled) {
                         success = true
                         setState({
                             status: 'success',
-                            markets: fresh.map(enrich),
+                            markets: (fresh as unknown as OpportunityScore[]).map(enrich), // TODO(types): hs_opportunity_scores nullable mismatch with OpportunityScore
                             hsCode,
-                            cachedAt: fresh[0].computed_at,
+                            cachedAt: fresh[0].computed_at ?? '',
                         })
                     } else {
                         return poll()

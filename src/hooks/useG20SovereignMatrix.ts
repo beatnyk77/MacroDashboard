@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export type G20Region = 'G7' | 'BRICS' | 'Other';
 
@@ -94,7 +95,7 @@ export function useG20SovereignMatrix() {
             const { data: goldPriceData } = await supabase
                 .from('vw_latest_metrics')
                 .select('value')
-                .eq('metric_id', 'GOLD_PRICE_USD')
+                .eq('metric_id', MID.GOLD_PRICE_USD)
                 .maybeSingle();
 
             const goldPriceUsd = goldPriceData?.value || 2650;
@@ -104,7 +105,7 @@ export function useG20SovereignMatrix() {
             const latestReserves: Record<string, { gold_tonnes: number; gold_usd: number }> = {};
             codes.forEach(c => {
                 const r = reserves?.find(r => r.country_code === c);
-                if (r) latestReserves[c] = { gold_tonnes: r.gold_tonnes, gold_usd: r.gold_usd };
+                if (r) latestReserves[c] = { gold_tonnes: r.gold_tonnes ?? 0, gold_usd: r.gold_usd ?? 0 };
             });
 
             // Assemble raw points

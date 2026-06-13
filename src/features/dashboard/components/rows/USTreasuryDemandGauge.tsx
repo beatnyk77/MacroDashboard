@@ -168,8 +168,8 @@ export const USTreasuryDemandGauge: React.FC = () => {
   }, [auctions]);
 
   const isStale = useMemo(() => {
-    if (!health?.completed_at) return false;
-    const lastRun = new Date(health.completed_at);
+    if (!health?.finished_at) return false;
+    const lastRun = new Date(health.finished_at);
     const now = new Date();
     return (now.getTime() - lastRun.getTime()) > 1000 * 60 * 60 * 24; // 24h
   }, [health]);
@@ -216,7 +216,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
             <div className="text-right hidden md:block">
               <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Last Intelligence Sync</div>
               <div className="text-xs font-bold text-slate-300 tabular-nums">
-                {health?.completed_at ? formatDistanceToNow(new Date(health.completed_at), { addSuffix: true }) : 'Unknown'}
+                {health?.finished_at ? formatDistanceToNow(new Date(health.finished_at), { addSuffix: true }) : 'Unknown'}
               </div>
             </div>
             <Button

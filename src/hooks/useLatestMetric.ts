@@ -53,12 +53,12 @@ export function useLatestMetric(metricId: string) {
                 deltaPeriod: latest.display_frequency === 'daily' ? 'WoW' : 'MoM',
                 trend: (latest.delta_mom || latest.delta_wow || 0) > 0 ? 'up' : 'down',
                 history: (history || []).map(h => ({ date: String(h.as_of_date), value: Number(h.value) })).reverse(),
-                status: statusMap[latest.staleness_flag] || 'neutral',
-                lastUpdated: latest.as_of_date,
-                zScore: latest.z_score,
-                percentile: latest.percentile,
+                status: statusMap[latest.staleness_flag ?? ''] || 'neutral',
+                lastUpdated: latest.as_of_date ?? '',
+                zScore: latest.z_score ?? undefined,
+                percentile: latest.percentile ?? undefined,
                 source: latest.source_name || 'Internal Analytics',
-                frequency: latest.native_frequency,
+                frequency: latest.native_frequency ?? undefined,
                 methodology: 'Rolling 252-day Z-Score'
             };
         },

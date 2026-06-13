@@ -8,20 +8,25 @@ export interface TradeGravityPoint {
     period: string;
     trade_value_usd: number;
     trade_share_pct: number;
+    source_ref?: string | null;
+    is_provisional?: boolean;
 }
 
 export interface SwingStateData {
     name: string;
     code: string;
-    // lat/lng for map marker
+    /** lat/lng for map marker */
     lat: number;
     lng: number;
-    // Data by period: {period -> {BRICS+: share, G7: share}}
+    /** Data by period: {period -> {BRICS+: share, G7: share}} */
     byPeriod: Record<string, { 'BRICS+': number; G7: number }>;
-    // Current (2023) gravity indicator
+    /** Current (latest period) gravity indicator */
     currentBricsShare: number;
     currentG7Share: number;
-    hasShifted: boolean; // BRICS+ > G7 in 2023
+    /** true when BRICS+ share > G7 share in the latest period */
+    hasShifted: boolean;
+    /** true when any row for this state carries is_provisional=true */
+    hasProvisionalData: boolean;
 }
 
 const STATE_GEO: Record<string, { lat: number; lng: number }> = {
@@ -57,7 +62,7 @@ export const useTradeGravityData = () => {
 
                 // Group by swing_state_name
                 const stateMap = new Map<string, TradeGravityPoint[]>();
-                rawData.forEach((row: TradeGravityPoint) => {
+                (rawData as unknown as TradeGravityPoint[]).forEach((row) => { // TODO(types): nullable DB columns narrowed at runtime
                     const list = stateMap.get(row.swing_state_name) || [];
                     list.push(row);
                     stateMap.set(row.swing_state_name, list);
@@ -76,6 +81,7 @@ export const useTradeGravityData = () => {
                     // Use latest period available (2024 preferred, fallback to 2023)
                     const latestPeriod = Object.keys(byPeriod).sort().reverse()[0] || '2023';
                     const curr = byPeriod[latestPeriod] || { 'BRICS+': 0, G7: 0 };
+                    const hasProvisionalData = rows.some(r => r.is_provisional === true);
 
                     result.push({
                         name: stateName,
@@ -86,6 +92,7 @@ export const useTradeGravityData = () => {
                         currentBricsShare: curr['BRICS+'],
                         currentG7Share: curr['G7'],
                         hasShifted: curr['BRICS+'] > curr['G7'],
+                        hasProvisionalData,
                     });
                 });
 

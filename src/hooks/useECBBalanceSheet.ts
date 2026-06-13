@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface ECBMetricData {
     id: string;
@@ -22,10 +23,10 @@ export function useECBBalanceSheet() {
         queryKey: ['ecb-balance-sheet'],
         queryFn: async (): Promise<ECBBalanceSheetData> => {
             const metricIds = [
-                'ECB_TOTAL_ASSETS_MEUR',
-                'ECB_MRO_OUTSTANDING_MEUR',
-                'ECB_DF_OUTSTANDING_MEUR',
-                'ECB_EXCESS_LIQUIDITY_MEUR'
+                MID.ECB_TOTAL_ASSETS_MEUR,
+                MID.ECB_MRO_OUTSTANDING_MEUR,
+                MID.ECB_DF_OUTSTANDING_MEUR,
+                MID.ECB_EXCESS_LIQUIDITY_MEUR,
             ];
 
             const [latestRes, historyRes] = await Promise.all([
@@ -50,16 +51,16 @@ export function useECBBalanceSheet() {
                     id,
                     value: Number(latest.value),
                     delta: latest.delta_wow || latest.delta_mom || null,
-                    as_of_date: latest.as_of_date,
+                    as_of_date: latest.as_of_date ?? '',
                     history
                 };
             };
 
             return {
-                totalAssets: mapMetric('ECB_TOTAL_ASSETS_MEUR'),
-                mro: mapMetric('ECB_MRO_OUTSTANDING_MEUR'),
-                df: mapMetric('ECB_DF_OUTSTANDING_MEUR'),
-                excessLiquidity: mapMetric('ECB_EXCESS_LIQUIDITY_MEUR'),
+                totalAssets: mapMetric(MID.ECB_TOTAL_ASSETS_MEUR),
+                mro: mapMetric(MID.ECB_MRO_OUTSTANDING_MEUR),
+                df: mapMetric(MID.ECB_DF_OUTSTANDING_MEUR),
+                excessLiquidity: mapMetric(MID.ECB_EXCESS_LIQUIDITY_MEUR),
                 isLoading: false
             };
         },

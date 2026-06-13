@@ -28,7 +28,18 @@ jobs:
       
     - name: Lint
       run: npm run lint -- --max-warnings 0
-      
+
+    - name: Type check
+      run: npx tsc --noEmit
+
+    - name: Schema drift check
+      run: |
+        npm install -g supabase --legacy-peer-deps 2>/dev/null || true
+        npx supabase gen types typescript --project-id debdriyzfcwvgrhzzzre > src/types/database.types.ts
+        git diff --exit-code src/types/database.types.ts || (echo "DB schema drift detected — regenerate types and commit." && exit 1)
+      env:
+        SUPABASE_ACCESS_TOKEN: "${{ secrets.SUPABASE_ACCESS_TOKEN }}"
+
     - name: Test
       run: npm test
 

@@ -32,7 +32,8 @@ export function useIngestionHealth() {
 
       // Get latest success per job
       const latestSuccess: Record<string, IngestionRun> = {};
-      data.forEach((run) => {
+      // TODO(types): ingestion_runs.status is string in schema; cast to known union at runtime
+      (data as unknown as IngestionRun[]).forEach((run) => {
         if (run.status === 'success' && !latestSuccess[run.job_name]) {
           latestSuccess[run.job_name] = run;
         }

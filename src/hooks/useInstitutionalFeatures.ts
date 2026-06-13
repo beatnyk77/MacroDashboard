@@ -56,8 +56,9 @@ export function useInstitutionalFeatures() {
 
             // Group by country and get latest for each
             const latest = data.reduce((acc: any, curr) => {
-                if (!acc[curr.country_code]) {
-                    acc[curr.country_code] = {
+                const code = curr.country_code ?? '';
+                if (!acc[code]) {
+                    acc[code] = {
                         ...curr,
                         current_stock: Number(curr.current_stock || 0),
                         change_12m: Number(curr.change_12m || 0),

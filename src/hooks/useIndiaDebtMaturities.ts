@@ -23,7 +23,7 @@ export const useIndiaDebtMaturities = () => {
                     .order('date', { ascending: false });
 
                 if (supabaseError) throw supabaseError;
-                setData(maturities || []);
+                setData((maturities || []) as unknown as IndiaDebtMaturity[]); // TODO(types): DB columns match at runtime
             } catch (err: any) {
                 setError(err.message);
             } finally {

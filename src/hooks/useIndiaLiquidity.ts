@@ -27,7 +27,7 @@ export function useIndiaLiquidity() {
                 if (dbError) throw dbError;
 
                 if (dbData) {
-                    setData(dbData);
+                    setData(dbData as unknown as IndiaLiquidityData[]); // TODO(types): nullable columns narrowed at runtime
                 }
             } catch (err: any) {
                 console.error('Error fetching India Liquidity Stress data:', err);

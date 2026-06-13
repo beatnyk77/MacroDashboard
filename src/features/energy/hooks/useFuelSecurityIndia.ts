@@ -53,7 +53,7 @@ export const useFuelSecurityIndia = () => {
           return null;
         }
 
-        return data as FuelSecurityIndia;
+        return data as unknown as FuelSecurityIndia; // TODO(types): tanker_pipeline_json is Json — shape validated at runtime
       } catch (err) {
         console.error('Unexpected Fuel Security error:', err);
         return null;

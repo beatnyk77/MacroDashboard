@@ -17,7 +17,6 @@ import {
 } from 'recharts';
 import { useFuelSecurityIndia } from '../hooks/useFuelSecurityIndia';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
 // Per-chokepoint risk: differentiated thresholds reflect India's actual import corridor exposure.
@@ -81,22 +80,11 @@ const projectionData = (base: number, disruption: number, rationing: number) => 
     return data;
 };
 
+// oil_imports_by_origin table not yet in schema; returns empty until ingestion pipeline lands
 const useIndiaImportOrigins = () =>
     useQuery({
         queryKey: ['india-import-origins'],
-        queryFn: async () => {
-            const { data, error } = await supabase
-                .from('oil_imports_by_origin')
-                .select('exporter_country_name, import_volume_mbbl')
-                .eq('importer_country_code', 'IN')
-                .order('import_volume_mbbl', { ascending: false })
-                .limit(8);
-            if (error) throw error;
-            return (data ?? []).map(r => ({
-                origin: r.exporter_country_name ?? 'Unknown',
-                volume: Number(r.import_volume_mbbl),
-            }));
-        },
+        queryFn: async (): Promise<{ origin: string; volume: number }[]> => [],
         staleTime: 1000 * 60 * 60,
     });
 

@@ -57,13 +57,13 @@ export function useDataIntegrity() {
 
             // Freshest as_of_date among high-freq metrics = proxy for last successful ingestion
             const freshestMs = highFreqMetrics.reduce((acc, m) => {
-                const t = new Date(m.as_of_date).getTime();
+                const t = new Date(m.as_of_date ?? '').getTime(); // TODO(types): vw_latest_metrics.as_of_date is nullable
                 return t > acc ? t : acc;
             }, 0);
             const lastIngestionAt = freshestMs > 0 ? new Date(freshestMs).toISOString() : null;
 
             const staleHighFreq = highFreqMetrics.filter(m => {
-                const diff = now - new Date(m.as_of_date).getTime();
+                const diff = now - new Date(m.as_of_date ?? '').getTime(); // TODO(types): nullable
                 return diff > weekInMs;
             });
 

@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface OilRefiningCapacity {
     country_code: string;
@@ -54,20 +55,14 @@ export const useOilData = () => {
 
             if (capError) console.warn('Refining Capacity fetch error:', capError);
 
-            // 2. Fetch Imports (Last 12 months)
-            const { data: impData, error: impError } = await supabase
-                .from('oil_imports_by_origin')
-                .select('*')
-                .order('as_of_date', { ascending: false })
-                .limit(500);
-
-            if (impError) console.warn('Oil Imports fetch error:', impError);
+            // 2. oil_imports_by_origin table does not exist in schema; stub as empty
+            const impData: OilImport[] = [];
 
             // 3. Fetch SPR Levels (Metric: OIL_SPR_LEVEL_US)
             const { data: sprObs, error: sprError } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', 'OIL_SPR_LEVEL_US')
+                .eq('metric_id', MID.OIL_SPR_LEVEL_US)
                 .order('as_of_date', { ascending: true });
 
             if (sprError) console.warn('SPR Levels fetch error:', sprError);
@@ -76,17 +71,17 @@ export const useOilData = () => {
             const { data: utilObs, error: utilError } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', 'OIL_REFINERY_UTILIZATION_US')
+                .eq('metric_id', MID.OIL_REFINERY_UTILIZATION_US)
                 .order('as_of_date', { ascending: true });
 
             if (utilError) console.warn('Refinery Utilization fetch error:', utilError);
 
             // 5. Fetch Power Mix Metrics (Lastest observations)
             const powerMetrics = [
-                'US_POWER_COAL_PCT', 'US_POWER_RENEWABLE_PCT', 'US_POWER_OTHER_PCT',
-                'EU_POWER_COAL_PCT', 'EU_POWER_RENEWABLE_PCT', 'EU_POWER_OTHER_PCT',
-                'IN_POWER_COAL_PCT', 'IN_POWER_RENEWABLE_PCT', 'IN_POWER_OTHER_PCT',
-                'CN_POWER_COAL_PCT', 'CN_POWER_RENEWABLE_PCT', 'CN_POWER_OTHER_PCT'
+                MID.US_POWER_COAL_PCT, MID.US_POWER_RENEWABLE_PCT, MID.US_POWER_OTHER_PCT,
+                MID.EU_POWER_COAL_PCT, MID.EU_POWER_RENEWABLE_PCT, MID.EU_POWER_OTHER_PCT,
+                MID.IN_POWER_COAL_PCT, MID.IN_POWER_RENEWABLE_PCT, MID.IN_POWER_OTHER_PCT,
+                MID.CN_POWER_COAL_PCT, MID.CN_POWER_RENEWABLE_PCT, MID.CN_POWER_OTHER_PCT,
             ];
 
             const { data: powerObs, error: powerError } = await supabase
@@ -115,7 +110,7 @@ export const useOilData = () => {
             const { data: gasObs, error: gasError } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', 'EU_GAS_STORAGE_PCT')
+                .eq('metric_id', MID.EU_GAS_STORAGE_PCT)
                 .order('as_of_date', { ascending: true });
 
             if (gasError) console.warn('EU Gas fetch error:', gasError);
@@ -124,7 +119,7 @@ export const useOilData = () => {
             const { data: brentObs, error: brentError } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', 'OIL_BRENT_PRICE_USD')
+                .eq('metric_id', MID.OIL_BRENT_PRICE_USD)
                 .order('as_of_date', { ascending: true });
 
             if (brentError) console.warn('Brent Price fetch error:', brentError);
@@ -142,7 +137,7 @@ export const useOilData = () => {
                     ...d,
                     capacity_mbpd: Number(d.capacity_mbpd)
                 })),
-                importData: (impData as OilImport[]) || [],
+                importData: impData,
                 sprData: (sprObs || []).map((d: any) => ({
                     date: String(d.as_of_date),
                     value: Number(d.value)
@@ -157,7 +152,7 @@ export const useOilData = () => {
                 })),
                 powerMixData,
                 powerMixLastUpdated,
-                metrics: (metData as MetricDefinition[]) || [],
+                metrics: (metData as unknown as MetricDefinition[]) || [], // TODO(types)
                 brentPriceData: (brentObs || []).map((d: any) => ({
                     date: String(d.as_of_date),
                     value: Number(d.value)

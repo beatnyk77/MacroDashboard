@@ -66,7 +66,7 @@ export function useIndiaChinaComparison(hsCode?: string) {
                 const { data: results, error: err } = await query
 
                 if (err) throw err
-                setData(results || [])
+                setData((results || []) as unknown as IndiaChinaCompRecord[]) // TODO(types): view columns are nullable; interface expects non-null
             } catch (e: any) {
                 console.error('[useIndiaChinaComparison] Error:', e)
                 setError(e.message)

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface PreciousDivergenceData {
     metric_id: string;
@@ -15,12 +16,12 @@ export function usePreciousDivergence() {
         queryKey: ['precious-divergence'],
         queryFn: async (): Promise<PreciousDivergenceData[]> => {
             const metricIds = [
-                'GOLD_COMEX_SHANGHAI_SPREAD_PCT',
-                'SILVER_COMEX_SHANGHAI_SPREAD_PCT',
-                'GOLD_COMEX_USD',
-                'GOLD_SHANGHAI_USD',
-                'SILVER_COMEX_USD',
-                'SILVER_SHANGHAI_USD'
+                MID.GOLD_COMEX_SHANGHAI_SPREAD_PCT,
+                MID.SILVER_COMEX_SHANGHAI_SPREAD_PCT,
+                MID.GOLD_COMEX_USD,
+                MID.GOLD_SHANGHAI_USD,
+                MID.SILVER_COMEX_USD,
+                MID.SILVER_SHANGHAI_USD,
             ];
 
             const { data: latestMetrics, error: metricsError } = await supabase
@@ -34,18 +35,18 @@ export function usePreciousDivergence() {
             const { data: historyData, error: historyError } = await supabase
                 .from('metric_observations')
                 .select('metric_id, value, as_of_date')
-                .in('metric_id', ['GOLD_COMEX_SHANGHAI_SPREAD_PCT', 'SILVER_COMEX_SHANGHAI_SPREAD_PCT'])
+                .in('metric_id', [MID.GOLD_COMEX_SHANGHAI_SPREAD_PCT, MID.SILVER_COMEX_SHANGHAI_SPREAD_PCT])
                 .order('as_of_date', { ascending: false })
                 .limit(730); // ~1 year for 2 metrics
 
             if (historyError) throw historyError;
 
             return (latestMetrics || []).map(m => ({
-                metric_id: m.metric_id,
-                metric_name: m.metric_name,
+                metric_id: m.metric_id ?? '',
+                metric_name: m.metric_name ?? '',
                 value: Number(m.value),
                 delta_wow: Number(m.delta_wow || 0),
-                last_updated: m.last_updated_at,
+                last_updated: m.last_updated_at ?? '',
                 history: (historyData || [])
                     .filter((h: any) => h.metric_id === m.metric_id)
                     .map((h: any) => ({ date: h.as_of_date, value: Number(h.value) }))

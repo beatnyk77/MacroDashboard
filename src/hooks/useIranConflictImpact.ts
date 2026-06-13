@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface StateConflictRisk {
     state_code: string;
@@ -30,7 +31,7 @@ export function useIranConflictImpact() {
             const { data: brentData } = await supabase
                 .from('metric_observations')
                 .select('value')
-                .eq('metric_id', 'OIL_BRENT_PRICE_USD')
+                .eq('metric_id', MID.OIL_BRENT_PRICE_USD)
                 .order('as_of_date', { ascending: false })
                 .limit(1);
 
@@ -38,7 +39,7 @@ export function useIranConflictImpact() {
             const { data: fxData } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', 'IN_FX_RESERVES')
+                .eq('metric_id', MID.IN_FX_RESERVES)
                 .order('as_of_date', { ascending: true });
 
             // 3. Fetch State Fiscal Health
@@ -85,7 +86,7 @@ export function useIranConflictImpact() {
 
             // 5. Calculate State Risk Scores (Dynamic based on Live OSINT & Real Fiscal Data)
             const stateRisks: StateConflictRisk[] = (stateData || []).map(state => {
-                const fiscalStress = Number(state.debt_to_gsdp) / 100; // Normalized factor
+                const fiscalStress = Number(state.debt_to_gsdp ?? 0) / 100; // Normalized factor
                 // Dynamic exposure using the live osint counts as a regional stress multiplier
                 // More events -> higher perceived exposure risk across all major states.
                 const exposure = Math.min(0.3, (osintCount * 0.005) + (fiscalStress * 0.1));
@@ -94,8 +95,8 @@ export function useIranConflictImpact() {
                 const score = (exposure * 100 * 0.7 * geoRiskMultiplier) + (fiscalStress * 100 * 0.3);
 
                 return {
-                    state_code: state.state_code,
-                    state_name: state.state_name,
+                    state_code: state.state_code ?? '',
+                    state_name: state.state_name ?? '',
                     gulf_remittance_exposure: exposure * 100,
                     fiscal_dependency: Number(state.debt_to_gsdp),
                     risk_score: Math.min(100, score * 1.8) // Scaling for visual impact

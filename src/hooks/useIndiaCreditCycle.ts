@@ -25,7 +25,7 @@ export function useIndiaCreditCycle() {
                 if (dbError) throw dbError;
 
                 if (creditData) {
-                    setData(creditData);
+                    setData(creditData as unknown as CreditCycleData[]); // TODO(types): nullable columns narrowed at runtime
                 }
             } catch (err: any) {
                 console.error('Error fetching India Credit Cycle data:', err);

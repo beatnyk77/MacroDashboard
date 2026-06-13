@@ -38,7 +38,7 @@ export const useUPIAutopayHistory = () => {
                 .order('as_of_date', { ascending: true });
 
             if (error) throw error;
-            return data as UPIAutopayMetric[];
+            return data as unknown as UPIAutopayMetric[]; // TODO(types): nullable columns narrowed at runtime
         },
         staleTime: 1000 * 60 * 60 * 24, // 24 hours
         retry: 2

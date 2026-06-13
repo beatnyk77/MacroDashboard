@@ -46,7 +46,7 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
         if (error) {
           console.error('Error fetching FOMC Minutes analysis:', error);
         } else if (data) {
-          setAnalysis(data);
+          setAnalysis(data as unknown as FOMCMinutesRecord); // TODO(types): key_themes is Json in DB; interface expects string[]
         }
       } catch (err) {
         console.error('Unexpected error fetching FOMC analysis:', err);

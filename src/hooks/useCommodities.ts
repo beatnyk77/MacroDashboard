@@ -44,7 +44,7 @@ export function useCommodities() {
 
             const mapMetric = (id: string, defUnit: string) => {
                 const m = (latestData || []).find(d => d.metric_id === id);
-                return m ? { metric_id: id, value: Number(m.value), delta_qoq: m.delta_qoq, unit: defUnit } : null;
+                return m ? { metric_id: id, value: Number(m.value), unit: defUnit } : null;
             };
 
             const getHistory = (id: string) => {

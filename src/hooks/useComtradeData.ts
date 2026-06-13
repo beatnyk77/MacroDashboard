@@ -41,7 +41,7 @@ export const useComtradeData = (category: string = 'Semiconductors', hsCode: str
                 if (dbError) throw new Error(dbError.message);
 
                 if (rawData && rawData.length > 0 && isMounted) {
-                    setLastUpdated(rawData[0].as_of_date || rawData[0].period || new Date().toISOString());
+                    setLastUpdated(rawData[0].period || new Date().toISOString());
 
                     // Format data for Nivo Sankey
                     const nodesMap = new Map<string, SankeyNode>();

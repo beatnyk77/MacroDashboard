@@ -23,7 +23,7 @@ export function useNetLiquidityHistory() {
             }
 
             return res.map(d => ({
-                date: d.as_of_date,
+                date: d.as_of_date ?? '', // TODO(types): vw_net_liquidity.as_of_date is nullable
                 value: Number(d.value),
                 z_score: Number(d.z_score),
                 percentile: Number(d.percentile)

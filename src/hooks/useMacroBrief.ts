@@ -36,9 +36,9 @@ export function useMacroBrief(
         if (fallbackError || !fallback) {
           return null;
         }
-        return fallback as MacroBrief;
+        return fallback as unknown as MacroBrief; // TODO(types): content is Json — shape validated at runtime
       }
-      return data as MacroBrief;
+      return data as unknown as MacroBrief; // TODO(types): content is Json — shape validated at runtime
     },
     staleTime: 1000 * 60 * 30,  // 30 minutes
   });

@@ -53,8 +53,9 @@ export const useGoldPositioning = () => {
                 paper_vs_physical_ratio: Number(row.paper_vs_physical_ratio),
                 prediction_gauge_score: Number(row.prediction_gauge_score),
                 sankey_data: {
-                    nodes: row.sankey_data?.nodes || [],
-                    links: (row.sankey_data?.links || []).map((l: any) => ({
+                    // TODO(types): sankey_data is Json — cast to access known runtime shape
+                    nodes: (row.sankey_data as unknown as { nodes?: unknown[]; links?: unknown[] })?.nodes || [],
+                    links: ((row.sankey_data as unknown as { nodes?: unknown[]; links?: unknown[] })?.links || []).map((l: any) => ({
                         ...l,
                         value: Number(l.value)
                     }))

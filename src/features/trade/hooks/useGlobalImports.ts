@@ -63,7 +63,7 @@ export function useGlobalImports(iso3: string | null) {
                         .eq('reporter_iso3', iso3)
                         .order('import_value_usd', { ascending: false })
                     err = viewErr
-                    results = viewData
+                    results = viewData as unknown as GlobalAggregate[] // TODO(types)
                 } catch {
                     // View not available — fall back to base table with import filter
                     const { data: tableData, error: tableErr } = await supabase
@@ -74,11 +74,11 @@ export function useGlobalImports(iso3: string | null) {
                         .gt('import_value_usd', 0)
                         .order('import_value_usd', { ascending: false })
                     err = tableErr
-                    results = tableData
+                    results = tableData as unknown as GlobalAggregate[] // TODO(types)
                 }
 
                 if (err) throw err
-                setData(results || [])
+                setData((results || []) as unknown as GlobalAggregate[]) // TODO(types): view/table have nullable columns; interface expects non-null
             } catch (e: unknown) {
                 const msg = e instanceof Error ? e.message : String(e)
                 console.error('[useGlobalImports] Error:', msg)

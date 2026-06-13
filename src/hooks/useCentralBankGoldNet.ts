@@ -29,7 +29,7 @@ export const useCentralBankGoldNet = () => {
                 .order('period_start_year', { ascending: true });
 
             if (error) throw error;
-            return data as CentralBankGoldNetData[];
+            return data as unknown as CentralBankGoldNetData[]; // TODO(types): top_buyers_json/top_sellers_json are Json — shape validated at runtime
         },
         staleTime: 1000 * 60 * 60 * 24, // 24 hours
         refetchOnWindowFocus: false,

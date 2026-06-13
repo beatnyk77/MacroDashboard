@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface MajorEconomyMetric {
     metric_id: string;
@@ -73,7 +74,7 @@ export function useMajorEconomies() {
             const { data: goldPrice } = await supabase
                 .from('vw_latest_metrics')
                 .select('value')
-                .eq('metric_id', 'GOLD_PRICE_USD')
+                .eq('metric_id', MID.GOLD_PRICE_USD)
                 .maybeSingle();
 
             const gp = goldPrice?.value || 0;
@@ -87,10 +88,10 @@ export function useMajorEconomies() {
 
             // 3. Assemble rows
             const rows: MajorEconomyRow[] = codes.map(code => {
-                const countryMetrics = metrics?.filter(m => m.metric_id.startsWith(code));
+                const countryMetrics = metrics?.filter(m => m.metric_id?.startsWith(code)); // TODO(types): metric_id nullable in schema
                 const res = latestReserves[code];
 
-                const findVal = (suffix: string) => countryMetrics?.find(m => m.metric_id.endsWith(suffix));
+                const findVal = (suffix: string) => countryMetrics?.find(m => m.metric_id?.endsWith(suffix));
 
                 const gdpNom = findVal('GDP_NOMINAL_TN');
                 const gdpPpp = findVal('GDP_PPP_TN');
@@ -107,7 +108,7 @@ export function useMajorEconomies() {
                 if (gp > 0 && res?.gold_tonnes > 0) {
                     const debtValue = Number(debt?.value || 0);
                     // If US, debt (UST_DEBT_TOTAL) is in absolute USD. If others, in Trillions USD.
-                    const debtInUSD = (code === 'US' && !debt?.metric_id.includes('TN')) ? debtValue : debtValue * 1e12;
+                    const debtInUSD = (code === 'US' && !debt?.metric_id?.includes('TN')) ? debtValue : debtValue * 1e12;
                     const goldValueUSD = res.gold_tonnes * 32150.75 * gp;
                     if (goldValueUSD > 0) {
                         debtGoldRatio = debtInUSD / goldValueUSD;

@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface USMacroMetricPoint {
     date: string;
@@ -17,27 +18,27 @@ export interface USMacroPulseData {
 }
 
 const US_MACRO_METRICS = [
-    'CAPITAL_FROM_EM_DEBT_BN',
-    'CAPITAL_FROM_GOLD_ETF_BN',
-    'INFLATION_HEADLINE_YOY',
-    'INFLATION_CORE_YOY',
-    'BOP_CURRENT_ACCOUNT_GDP',
-    'BOP_RESERVES_MONTHS',
-    'BOP_SHORT_TERM_DEBT_GDP',
-    'HOUSING_PRICE_INDEX',
-    'HOUSING_MORTGAGE_RATE_30Y',
-    'PMI_US_MFG',
-    'PMI_US_SERVICES',
-    'LABOR_VACANCIES_JOLTS',
-    'LABOR_UNEMPLOYMENT_RATE',
-    'LABOR_WAGE_GROWTH_YOY',
-    'US_10Y_YIELD',
-    'US_DEFENSE_SPENDING',
-    'US_FEDERAL_INTEREST_PAYMENTS',
-    'SRF_USAGE',
-    'FX_SWAP_LINES',
-    'TGA_BALANCE',
-    'REVERSE_REPO_OUTSTANDING'
+    MID.CAPITAL_FROM_EM_DEBT_BN,
+    MID.CAPITAL_FROM_GOLD_ETF_BN,
+    MID.INFLATION_HEADLINE_YOY,
+    MID.INFLATION_CORE_YOY,
+    MID.BOP_CURRENT_ACCOUNT_GDP,
+    MID.BOP_RESERVES_MONTHS,
+    MID.BOP_SHORT_TERM_DEBT_GDP,
+    MID.HOUSING_PRICE_INDEX,
+    MID.HOUSING_MORTGAGE_RATE_30Y,
+    MID.PMI_US_MFG,
+    MID.PMI_US_SERVICES,
+    MID.LABOR_VACANCIES_JOLTS,
+    MID.LABOR_UNEMPLOYMENT_RATE,
+    MID.LABOR_WAGE_GROWTH_YOY,
+    MID.US_10Y_YIELD,
+    MID.US_DEFENSE_SPENDING,
+    MID.US_FEDERAL_INTEREST_PAYMENTS,
+    MID.SRF_USAGE,
+    MID.FX_SWAP_LINES,
+    MID.TGA_BALANCE,
+    MID.REVERSE_REPO_OUTSTANDING,
 ];
 
 export function useUSMacroPulse() {
@@ -87,9 +88,9 @@ export function useUSMacroPulse() {
                     metric_id: metricId,
                     history: metricHistory,
                     current_value: latest?.value !== undefined ? Number(latest.value) : (metricHistory.length > 0 ? metricHistory[metricHistory.length - 1].value : 0),
-                    delta_yoy: latest?.delta_yoy,
-                    z_score: latest?.z_score,
-                    percentile: latest?.percentile,
+                    delta_yoy: latest?.delta_mom ?? undefined, // delta_yoy not in vw_latest_metrics; using delta_mom as proxy
+                    z_score: latest?.z_score ?? undefined,
+                    percentile: latest?.percentile ?? undefined,
                     isStale
                 };
             });
