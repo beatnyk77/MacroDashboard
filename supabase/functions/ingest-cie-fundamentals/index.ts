@@ -1,55 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-
-Deno.serve(async (req: Request) => {
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-    const client = createClient(supabaseUrl, supabaseKey)
-
-    const url = new URL(req.url)
-    let functionName = 'ingest-cie-fundamentals'
-    let handler = ingestFundamentals
-
-    if (url.pathname.endsWith('deals')) {
-        functionName = 'ingest-cie-deals'
-        handler = ingestDeals
-    } else if (url.pathname.endsWith('promoters')) {
-        functionName = 'ingest-cie-promoters'
-        handler = ingestPromoters
-    }
-
-    const start = new Date().toISOString()
-    try {
-        const response = await handler(client)
-        const result = await response.clone().json() as any
-
-        await client.from('ingestion_logs').insert({
-            function_name: functionName,
-            status: 'success',
-            rows_inserted: result.processed || result.dealsInserted || result.updates || 0,
-            start_time: start,
-            completed_at: new Date().toISOString(),
-            status_code: 200
-        })
-
-        return response
-    } catch (e: any) {
-        await client.from('ingestion_logs').insert({
-            function_name: functionName,
-            status: 'failed',
-            error_message: e.message,
-            start_time: start,
-            completed_at: new Date().toISOString(),
-            status_code: 500
-        })
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 })
-    }
-})
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 const baseHeaders = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -65,8 +16,8 @@ async function getNseCookies() {
         const resp = await fetch('https://www.nseindia.com/', { headers: baseHeaders });
         const setCookie = resp.headers.get('set-cookie');
         if (setCookie) cookies = setCookie;
-                if (!cookies && typeof resp.headers.getSetCookie === 'function') {
-                        cookies = resp.headers.getSetCookie().join('; ');
+        if (!cookies && typeof resp.headers.getSetCookie === 'function') {
+            cookies = resp.headers.getSetCookie().join('; ');
         }
     } catch (e: any) {
         console.warn('Failed to get NSE cookies:', e)
@@ -74,145 +25,9 @@ async function getNseCookies() {
     return cookies;
 }
 
-async function ingestDeals(client: any) {
-    const cookies = await getNseCookies();
-    const today = new Date();
-    const d = today.getDate().toString().padStart(2, '0');
-    const m = (today.getMonth() + 1).toString().padStart(2, '0');
-    const y = today.getFullYear();
-    const dateStr = `${d}-${m}-${y}`;
-
-    const { data: cieCompanies } = await client.from('cie_companies').select('id, symbol, name, ticker');
-    const symbolMap = new Map();
-    if (cieCompanies) {
-        for (const c of cieCompanies) {
-            symbolMap.set(c.symbol.replace('.NS', ''), { id: c.id, ticker: c.ticker });
-        }
-    }
-
-    let dealsInserted = 0;
-    // Bulk Deals
-    const bulkRes = await fetch(`https://www.nseindia.com/api/historical/bulk-deals?symbol=&from=${dateStr}&to=${dateStr}`, {
-        headers: { ...baseHeaders, 'Cookie': cookies }
-    });
-
-    if (bulkRes.ok) {
-        const data = await bulkRes.json() as any;
-        if (data && data.data) {
-            for (const deal of data.data) {
-                const info = symbolMap.get(deal.symbol);
-                if (info) {
-                    await client.from('cie_bulk_block_deals').upsert({
-                        company_id: info.id,
-                        date: today.toISOString().split('T')[0],
-                        symbol: info.ticker,
-                        client_name: deal.clientName,
-                        type: deal.buySell === 'BUY' ? 'BUY' : 'SELL',
-                        deal_type: 'BULK',
-                        quantity: parseInt(deal.quantityTraded.replace(/,/g, '')),
-                        price: parseFloat(deal.tradePrice.replace(/,/g, '')),
-                        equity_pct: 0.0
-                    }, { onConflict: 'company_id,date,client_name,quantity,price,type' })
-                    dealsInserted++;
-                }
-            }
-        }
-    }
-
-    // Block Deals
-    const blockRes = await fetch(`https://www.nseindia.com/api/historical/block-deals?symbol=&from=${dateStr}&to=${dateStr}`, {
-        headers: { ...baseHeaders, 'Cookie': cookies }
-    });
-
-    if (blockRes.ok) {
-        const data = await blockRes.json() as any;
-        if (data && data.data) {
-            for (const deal of data.data) {
-                const info = symbolMap.get(deal.symbol);
-                if (info) {
-                    await client.from('cie_bulk_block_deals').upsert({
-                        company_id: info.id,
-                        date: today.toISOString().split('T')[0],
-                        symbol: info.ticker,
-                        client_name: deal.clientName,
-                        type: deal.buySell === 'BUY' ? 'BUY' : 'SELL',
-                        deal_type: 'BLOCK',
-                        quantity: parseInt(deal.quantityTraded.replace(/,/g, '')),
-                        price: parseFloat(deal.tradePrice.replace(/,/g, '')),
-                        equity_pct: 0.0
-                    }, { onConflict: 'company_id,date,client_name,quantity,price,type' })
-                    dealsInserted++;
-                }
-            }
-        }
-    }
-
-    return new Response(JSON.stringify({ success: true, dealsInserted }), {
-        headers: { 'Content-Type': 'application/json' }
-    });
-}
-
-async function ingestPromoters(client: any) {
-    const cookies = await getNseCookies();
-    const today = new Date().toISOString().split('T')[0];
-
-    const { data: cieCompanies } = await client.from('cie_companies').select('id, symbol, name, ticker');
-    const symbolMap = new Map();
-    if (cieCompanies) {
-        for (const c of cieCompanies) {
-            symbolMap.set(c.symbol.replace('.NS', ''), { id: c.id, ticker: c.ticker });
-        }
-    }
-
-    let updates = 0;
-    const pitRes = await fetch(`https://www.nseindia.com/api/corporates-pit?index=equities`, {
-        headers: { ...baseHeaders, 'Cookie': cookies }
-    });
-
-    const updatesMap = new Map();
-    if (pitRes.ok) {
-        const data = await pitRes.json() as any;
-        if (data && data.data) {
-            for (const trade of data.data) {
-                const info = symbolMap.get(trade.symbol);
-                if (info) {
-                    const isBuy = trade.acqMode === 'Market Purchase' || trade.secAcq > 0;
-                    const qty = parseInt(trade.secAcq) || 0;
-                    const net = isBuy ? qty : -qty;
-
-                    if (!updatesMap.has(info.id)) {
-                        updatesMap.set(info.id, { insider_net_buying: net });
-                    } else {
-                        updatesMap.get(info.id).insider_net_buying += net;
-                    }
-                }
-            }
-        }
-    }
-
-    for (const [id, stats] of updatesMap.entries()) {
-        await client.from('cie_promoter_history').upsert({
-            company_id: id,
-            date: today,
-            insider_net_buying: stats.insider_net_buying
-        }, { onConflict: 'company_id,date' });
-
-        await client.from('cie_companies').update({
-            insider_buy_sell_net: stats.insider_net_buying
-        }).eq('id', id);
-
-        updates++;
-    }
-
-    return new Response(JSON.stringify({ success: true, updates }), {
-        headers: { 'Content-Type': 'application/json' }
-    });
-}
-
-async function ingestFundamentals(client: any) {
+async function doIngest(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
     const cookies = await getNseCookies();
     const results: string[] = []
-    const errors: any[] = []
     let tickersToProcess: { symbol: string, name: string, price: number, mcap: number }[] = [];
 
     const indexRes = await fetch("https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%20200", {
@@ -282,7 +97,7 @@ async function ingestFundamentals(client: any) {
                     targetSector = 'Consumer Defensive'; industry = 'FMCG';
                 }
 
-                const { data: company, error: companyError } = await client
+                const { data: company, error: companyError } = await supabase
                     .from('cie_companies')
                     .upsert({
                         ticker: ticker,
@@ -337,12 +152,12 @@ async function ingestFundamentals(client: any) {
                     }
                 }];
 
-                await client
+                await supabase
                     .from('cie_fundamentals')
                     .upsert(recordsToInsert, { onConflict: 'company_id, quarter_date', ignoreDuplicates: false })
 
                 const todayStr = today.toISOString().split('T')[0]
-                await client
+                await supabase
                     .from('cie_price_history')
                     .upsert({
                         company_id: company.id,
@@ -360,11 +175,17 @@ async function ingestFundamentals(client: any) {
         await new Promise(r => setTimeout(r, 100));
     }
 
-    return new Response(JSON.stringify({
-        success: true,
-        processed: results.length,
-        tickers: results
-    }), {
-        headers: { 'Content-Type': 'application/json' }
-    })
+    return {
+        ok: true,
+        counts: { upserted: results.length, skipped: tickersToProcess.length - results.length },
+        meta: { tickers_processed: results.length }
+    }
 }
+
+serveIngest('ingest-cie-fundamentals', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    return doIngest(supabase)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })
