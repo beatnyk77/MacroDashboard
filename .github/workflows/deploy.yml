@@ -25,7 +25,10 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-      
+
+    - name: Security audit (warn — flip to blocking 2026-07-14 after 30 clean days)
+      run: npm audit --omit=dev --audit-level=high || echo "::warning::npm audit found high vulnerabilities — resolve before 2026-07-14 when this step becomes blocking"
+
     - name: Lint
       run: npm run lint -- --max-warnings 0
 
