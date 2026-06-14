@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import { upsertObservations } from '../_shared/ingest_utils.ts'
 
 const EIA_API_BASE = "https://api.eia.gov/v2";
 const FRED_API_BASE = "https://api.stlouisfed.org/fred";
@@ -36,32 +31,7 @@ async function fetchEiaBrent(apiKey: string) {
     return json.response?.data || [];
 }
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const eiaApiKey = Deno.env.get('EIA_API_KEY');
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-oil-india-china', async (ctx) => {
-        if (!eiaApiKey || !fredApiKey) throw new Error('Missing API keys (EIA or FRED)');
-
-        const result = await runWithRetry(
-            'ingest-oil-india-china',
-            () => doIngestOilIndiaChina(supabase, eiaApiKey, fredApiKey),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    });
-});
-
-// ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestOilIndiaChina(supabase: any, eiaApiKey: string, fredApiKey: string) {
+async function doIngestOilIndiaChina(supabase: any, eiaApiKey: string, fredApiKey: string): Promise<IngestResult> {
     const { data: source } = await supabase.from('data_sources').select('id').eq('name', 'EIA').single();
     const sourceId = source?.id;
     if (!sourceId) throw new Error("EIA Data Source not found");
@@ -161,21 +131,33 @@ async function doIngestOilIndiaChina(supabase: any, eiaApiKey: string, fredApiKe
         }
     }
 
-    // Also update the OIL_BRENT_PRICE_USD metric
+    // Also update the OIL_BRENT_PRICE_USD metric via upsertObservations
     if (brentData.length > 0) {
         const metricObs = brentData.map((b: any) => ({
             metric_id: 'OIL_BRENT_PRICE_USD',
             as_of_date: `${b.period}-01-01`,
             value: Number(b.value),
-            last_updated_at: new Date().toISOString()
         }));
-        await supabase.from('metric_observations').upsert(metricObs, {
-            onConflict: 'metric_id, as_of_date'
+        await upsertObservations(supabase, metricObs, {
+            source_ref: 'live_api:ingest-oil-india-china',
+            is_provisional: false,
         });
     }
 
     return {
-        rows_inserted: totalProcessed,
-        metadata: { lastError: lastError || null }
+        ok: true,
+        counts: { upserted: totalProcessed, skipped: 0 },
+        meta: { lastError: lastError || null }
     };
 }
+
+serveIngest('ingest-oil-india-china', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const eiaApiKey = Deno.env.get('EIA_API_KEY') ?? ''
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    if (!eiaApiKey || !fredApiKey) throw new Error('Missing API keys (EIA or FRED)')
+    return doIngestOilIndiaChina(supabase, eiaApiKey, fredApiKey)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

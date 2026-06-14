@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { extractText } from "https://esm.sh/unpdf@0.12.1";
 import * as cheerio from "https://esm.sh/cheerio@1.0.0-rc.12";
 
@@ -33,33 +32,7 @@ interface LiquidityData {
   sdf_rate?: number;
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-      }
-    });
-  }
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  return runIngestion(supabase, 'ingest-rbi-money-market', async (ctx) => {
-    const result = await runWithRetry(
-      'ingest-rbi-money-market',
-      () => doIngestRbiMoneyMarket(supabase),
-      { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-    )
-    if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-    return result.value!
-  });
-});
-
-// ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestRbiMoneyMarket(supabase: any) {
+async function doIngestRbiMoneyMarket(supabase: any): Promise<IngestResult> {
   console.log("Fetching RBI Money Market Operations...");
 
   // Weekend & holiday guard: RBI markets are closed on weekends and Indian holidays
@@ -68,8 +41,9 @@ async function doIngestRbiMoneyMarket(supabase: any) {
   if (dayOfWeek === 0 || dayOfWeek === 6) {
     console.log(`Weekend detected (day ${dayOfWeek}): RBI markets closed. Skipping ingest.`);
     return {
-      rows_inserted: 0,
-      metadata: { skipped: true, reason: 'weekend', date: today.toISOString().split('T')[0] }
+      ok: true,
+      counts: { upserted: 0, skipped: 0 },
+      meta: { reason: 'weekend_skip' }
     };
   }
 
@@ -304,8 +278,9 @@ async function doIngestRbiMoneyMarket(supabase: any) {
   console.log('Final liqData:', JSON.stringify(liqData));
 
   return {
-    rows_inserted: 2,
-    metadata: {
+    ok: true,
+    counts: { upserted: 2, skipped: 0 },
+    meta: {
       date: isoDate,
       ops_fields: Object.keys(opsData),
       liq_fields: Object.keys(liqData),
@@ -317,3 +292,11 @@ async function doIngestRbiMoneyMarket(supabase: any) {
     }
   };
 }
+
+serveIngest('ingest-rbi-money-market', async (_req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  )
+  return doIngestRbiMoneyMarket(supabase)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

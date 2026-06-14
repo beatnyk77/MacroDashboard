@@ -1,19 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-async function logIngestion(supabase: SupabaseClient, functionName: string, status: string, metadata: any = {}) {
-    await supabase.from('ingestion_logs').insert({
-        function_name: functionName,
-        status: status,
-        metadata: metadata,
-        start_time: new Date().toISOString()
-    });
-}
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 const GLOBAL_REFINERIES_SEED = [
     { country: 'China', region: 'East', facility_name: 'Zhejiang Petrochemical', capacity_mbpd: 800, status: 'Expansion', latitude: 30.2, longitude: 122.2, import_dependency_correlation: 0.85, is_top_10: true },
@@ -30,82 +17,72 @@ const GLOBAL_REFINERIES_SEED = [
     { country: 'UAE', region: 'Middle East', facility_name: 'Ruwais Refinery', capacity_mbpd: 830, status: 'Expansion', latitude: 24.1, longitude: 52.7, import_dependency_correlation: 0.05, is_top_10: true }
 ];
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+async function doIngestGlobalRefining(supabase: any, eiaApiKey: string): Promise<IngestResult> {
+    console.log('Ingesting global refining data from EIA International...')
 
+    const asOfDate = new Date().toISOString().split('T')[0];
+
+    // Fetch international refinery data from EIA
+    // Series: Refining utilization (%); Route: international/data
+    const eiaUrl = `https://api.eia.gov/v2/international/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[activityId][]=12&facets[productId][]=5&sort[0][column]=period&sort[0][direction]=desc&length=100`;
+
+    let eiaData: Record<string, number> = {};
+    try {
+        const res = await fetch(eiaUrl);
+        if (res.ok) {
+            const json = await res.json() as any;
+            (json.response.data || []).forEach((d: any) => {
+                if (!eiaData[d.countryRegionId]) {
+                    eiaData[d.countryRegionId] = Number(d.value);
+                }
+            });
+        }
+    } catch (e: any) {
+        console.warn('Failed to fetch EIA International data, using high-fidelity estimates:', e);
+    }
+
+    const rows = GLOBAL_REFINERIES_SEED.map(f => {
+        // Map common names to EIA IDs (simplified for top countries)
+        const countryIdMap: Record<string, string> = {
+            'USA': 'USA', 'China': 'CHN', 'India': 'IND', 'Saudi Arabia': 'SAU',
+            'South Korea': 'KOR', 'Singapore': 'SGP', 'United Kingdom': 'GBR', 'Germany': 'DEU', 'UAE': 'ARE'
+        };
+        const eiaVal = eiaData[countryIdMap[f.country] || f.country];
+
+        // If no EIA data available, skip this facility (null will not be upserted)
+        if (eiaVal === undefined) {
+            console.warn(`No EIA utilization data for ${f.country} - ${f.facility_name}, skipping`);
+            return null;
+        }
+
+        return {
+            ...f,
+            as_of_date: asOfDate,
+            utilization_pct: eiaVal,
+            historical_median_pct: 88.5,
+            data_provenance: 'EIA_INTERNATIONAL'
+        };
+    }).filter(r => r !== null);
+
+    const { error } = await supabase
+        .from('global_refining_capacity')
+        .upsert(rows, { onConflict: 'as_of_date, facility_name, country' });
+
+    if (error) throw error as any;
+
+    return {
+        ok: true,
+        counts: { upserted: rows.length, skipped: 0 },
+        meta: { count: rows.length }
+    };
+}
+
+serveIngest('ingest-global-refining', async (_req: Request): Promise<IngestResult> => {
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-
-    try {
-        const eiaApiKey = Deno.env.get('EIA_API_KEY');
-        if (!eiaApiKey) throw new Error("Missing EIA_API_KEY");
-
-        console.log('Ingesting global refining data from EIA International...')
-
-        const asOfDate = new Date().toISOString().split('T')[0];
-        
-        // Fetch international refinery data from EIA
-        // Series: Refining utilization (%); Route: international/data
-        const eiaUrl = `https://api.eia.gov/v2/international/data/?api_key=${eiaApiKey}&frequency=annual&data[0]=value&facets[activityId][]=12&facets[productId][]=5&sort[0][column]=period&sort[0][direction]=desc&length=100`;
-        
-        let eiaData: Record<string, number> = {};
-        try {
-            const res = await fetch(eiaUrl);
-            if (res.ok) {
-                const json = await res.json() as any;
-                (json.response.data || []).forEach((d: any) => {
-                    if (!eiaData[d.countryRegionId]) {
-                        eiaData[d.countryRegionId] = Number(d.value);
-                    }
-                });
-            }
-        } catch (e: any) {
-            console.warn('Failed to fetch EIA International data, using high-fidelity estimates:', e);
-        }
-
-        const rows = GLOBAL_REFINERIES_SEED.map(f => {
-            // Map common names to EIA IDs (simplified for top countries)
-            const countryIdMap: Record<string, string> = {
-                'USA': 'USA', 'China': 'CHN', 'India': 'IND', 'Saudi Arabia': 'SAU',
-                'South Korea': 'KOR', 'Singapore': 'SGP', 'United Kingdom': 'GBR', 'Germany': 'DEU', 'UAE': 'ARE'
-            };
-            const eiaVal = eiaData[countryIdMap[f.country] || f.country];
-
-            // If no EIA data available, skip this facility (null will not be upserted)
-            if (eiaVal === undefined) {
-                console.warn(`No EIA utilization data for ${f.country} - ${f.facility_name}, skipping`);
-                return null;
-            }
-
-            return {
-                ...f,
-                as_of_date: asOfDate,
-                utilization_pct: eiaVal,
-                historical_median_pct: 88.5,
-                data_provenance: 'EIA_INTERNATIONAL'
-            };
-        }).filter(r => r !== null);
-
-        const { error } = await supabase
-            .from('global_refining_capacity')
-            .upsert(rows, { onConflict: 'as_of_date, facility_name, country' });
-
-        if (error) throw error as any;
-
-        await logIngestion(supabase, 'ingest-global-refining', 'success', { count: rows.length });
-
-        return new Response(JSON.stringify({ status: 'success', count: rows.length }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200,
-        })
-    } catch (error: any) {
-        console.error(error)
-        await logIngestion(supabase, 'ingest-global-refining', 'error', { error: error.message });
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500,
-        })
-    }
-})
+    const eiaApiKey = Deno.env.get('EIA_API_KEY') ?? ''
+    if (!eiaApiKey) throw new Error('Missing EIA_API_KEY')
+    return doIngestGlobalRefining(supabase, eiaApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

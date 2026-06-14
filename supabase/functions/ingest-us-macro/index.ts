@@ -1,20 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { sendDiscordAlert } from '../_shared/webhook_utils.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
 
 import { processFiscal } from './fiscal.ts'
 import { processUST } from './ust.ts'
 import { processFred } from './fred.ts'
 import { processAuctions } from './auctions.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-async function doIngestUSMacro(supabase: any, fredApiKey: string) {
+async function doIngestUSMacro(supabase: any, fredApiKey: string): Promise<IngestResult> {
     // Run US macro ingestions sequentially to avoid WORKER_RESOURCE_LIMIT
     const tasks = [
       { name: 'Fiscal', fn: () => processFiscal(supabase, fredApiKey) },
@@ -52,48 +46,43 @@ async function doIngestUSMacro(supabase: any, fredApiKey: string) {
     }
 
     return {
-      rows_inserted: totalRowsInserted,
-      metadata: {
-        errors,
-        details,
-        total_rows: totalRowsInserted
-      }
+      ok: true,
+      counts: { upserted: totalRowsInserted, skipped: 0 },
+      meta: { errors, details, total_rows: totalRowsInserted }
     };
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+serveIngest('ingest-us-macro', async (req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  )
+  const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+  if (!fredApiKey) {
+    const errorMsg = 'FRED_API_KEY is not set';
+    await sendDiscordAlert('US Macro Ingestion Failed 🚨', errorMsg, true);
+    throw new Error(errorMsg);
+  }
 
-  const url = new URL(req.url);
-  const task = url.searchParams.get('task');
+  const task = new URL(req.url).searchParams.get('task');
 
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  const fredApiKey = Deno.env.get('FRED_API_KEY');
-  
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  if (task === 'fiscal') {
+    const value = await processFiscal(supabase, fredApiKey) as any;
+    return { ok: true, counts: { upserted: value.count || 0, skipped: 0 }, meta: value.details || {} };
+  }
+  if (task === 'ust') {
+    const value = await processUST(supabase) as any;
+    return { ok: true, counts: { upserted: value.count || 0, skipped: 0 }, meta: value.details || {} };
+  }
+  if (task === 'fred') {
+    const value = await processFred(supabase, fredApiKey) as any;
+    return { ok: true, counts: { upserted: value.count || 0, skipped: 0 }, meta: value.details || {} };
+  }
+  if (task === 'auctions') {
+    const value = await processAuctions(supabase) as any;
+    return { ok: true, counts: { upserted: value.count || 0, skipped: 0 }, meta: value.details || {} };
+  }
 
-  const jobId = task ? `ingest-us-macro-${task}` : 'ingest-us-macro';
-
-  return runIngestion(supabase, jobId, async (ctx) => {
-    if (!fredApiKey) {
-      const errorMsg = 'FRED_API_KEY is not set';
-      await sendDiscordAlert('US Macro Ingestion Failed 🚨', errorMsg, true);
-      throw new Error(errorMsg);
-    }
-
-    return runWithRetry(
-        jobId,
-        async () => {
-          if (task === 'fiscal') return processFiscal(supabase, fredApiKey);
-          if (task === 'ust') return processUST(supabase);
-          if (task === 'fred') return processFred(supabase, fredApiKey);
-          if (task === 'auctions') return processAuctions(supabase);
-          
-          // Default: Run all sequentially
-          return doIngestUSMacro(supabase, fredApiKey);
-        },
-        { timeoutMs: 25 * 60 * 1000, maxRetries: 3 } // 25 mins timeout since it's heavy
-    );
-  });
-});
+  // Default: Run all sequentially
+  return doIngestUSMacro(supabase, fredApiKey);
+}, { timeoutMs: 25 * 60 * 1000, retries: 3 })

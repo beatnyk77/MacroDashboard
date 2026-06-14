@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-// @ts-ignore
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 // WTI NYMEX month codes: Jan=F, Feb=G, Mar=H, Apr=J, May=K, Jun=M, Jul=N, Aug=Q, Sep=U, Oct=V, Nov=X, Dec=Z
 const MONTH_CODES = 'FGHJKMNQUVXZ';
@@ -99,128 +94,114 @@ async function fetchYahooHistory(ticker: string): Promise<Array<{ date: string; 
         .sort((a, b) => b.date.localeCompare(a.date)); // newest first
 }
 
-declare const Deno: any;
+async function doIngestOilSpread(supabase: any): Promise<IngestResult> {
+    console.log('[ingest-oil-spread] Starting oil spread ingestion via Yahoo Finance...');
 
-Deno.serve(async (_req: Request) => {
-    if (_req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+    // ── 1. Fetch CL1 (front month continuous)
+    const cl1Url = `https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=3mo`;
+    const cl1Res = await fetch(cl1Url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' } });
+    if (!cl1Res.ok) throw new Error(`Yahoo HTTP ${cl1Res.status} for CL=F`);
+    const cl1Json = await cl1Res.json() as any;
+    const cl1Result = cl1Json?.chart?.result?.[0];
+    if (!cl1Result) throw new Error(`No chart result from Yahoo for CL=F`);
 
-    const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const cl1Timestamps: number[] = cl1Result.timestamp ?? [];
+    const cl1Closes: (number | null)[] = cl1Result.indicators?.quote?.[0]?.close ?? [];
+    const cl1Series = cl1Timestamps
+        .map((ts, i) => ({ date: new Date(ts * 1000).toISOString().slice(0, 10), close: cl1Closes[i] ?? 0 }))
+        .filter(r => r.close > 0)
+        .sort((a, b) => b.date.localeCompare(a.date));
 
+    console.log(`[ingest-oil-spread] CL1 (CL=F): ${cl1Series.length} rows, latest ${cl1Series[0]?.date}`);
+
+    if (cl1Series.length === 0) throw new Error('No CL1 data from Yahoo Finance (CL=F)');
+
+    // ── 2. Resolve CL2 ticker dynamically, try fallback if primary 404s
+    const shortName = cl1Result.meta?.shortName;
+    const { ticker: cl2Primary, fallback: cl2Fallback } = getCL2Ticker(shortName);
+    console.log(`[ingest-oil-spread] Trying CL2 tickers: ${cl2Primary}, fallback: ${cl2Fallback}`);
+
+    let cl2Series: Array<{ date: string; close: number }> = [];
+    let cl2TickerUsed = cl2Primary;
     try {
-        console.log('[ingest-oil-spread] Starting oil spread ingestion via Yahoo Finance...');
-
-        // ── 1. Fetch CL1 (front month continuous)
-        const cl1Url = `https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=3mo`;
-        const cl1Res = await fetch(cl1Url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' } });
-        if (!cl1Res.ok) throw new Error(`Yahoo HTTP ${cl1Res.status} for CL=F`);
-        const cl1Json = await cl1Res.json() as any;
-        const cl1Result = cl1Json?.chart?.result?.[0];
-        if (!cl1Result) throw new Error(`No chart result from Yahoo for CL=F`);
-
-        const cl1Timestamps: number[] = cl1Result.timestamp ?? [];
-        const cl1Closes: (number | null)[] = cl1Result.indicators?.quote?.[0]?.close ?? [];
-        const cl1Series = cl1Timestamps
-            .map((ts, i) => ({ date: new Date(ts * 1000).toISOString().slice(0, 10), close: cl1Closes[i] ?? 0 }))
-            .filter(r => r.close > 0)
-            .sort((a, b) => b.date.localeCompare(a.date));
-
-        console.log(`[ingest-oil-spread] CL1 (CL=F): ${cl1Series.length} rows, latest ${cl1Series[0]?.date}`);
-
-        if (cl1Series.length === 0) throw new Error('No CL1 data from Yahoo Finance (CL=F)');
-
-        // ── 2. Resolve CL2 ticker dynamically, try fallback if primary 404s
-        const shortName = cl1Result.meta?.shortName;
-        const { ticker: cl2Primary, fallback: cl2Fallback } = getCL2Ticker(shortName);
-        console.log(`[ingest-oil-spread] Trying CL2 tickers: ${cl2Primary}, fallback: ${cl2Fallback}`);
-
-        let cl2Series: Array<{ date: string; close: number }> = [];
-        let cl2TickerUsed = cl2Primary;
+        cl2Series = await fetchYahooHistory(cl2Primary);
+    } catch (_) {
+        console.warn(`[ingest-oil-spread] ${cl2Primary} failed, trying ${cl2Fallback}`);
         try {
-            cl2Series = await fetchYahooHistory(cl2Primary);
-        } catch (_) {
-            console.warn(`[ingest-oil-spread] ${cl2Primary} failed, trying ${cl2Fallback}`);
-            try {
-                cl2Series = await fetchYahooHistory(cl2Fallback);
-                cl2TickerUsed = cl2Fallback;
-            } catch (e2) {
-                console.warn(`[ingest-oil-spread] Both CL2 tickers failed. Using synthetic CL2.`);
-            }
+            cl2Series = await fetchYahooHistory(cl2Fallback);
+            cl2TickerUsed = cl2Fallback;
+        } catch (e2) {
+            console.warn(`[ingest-oil-spread] Both CL2 tickers failed. Using synthetic CL2.`);
         }
-
-        console.log(`[ingest-oil-spread] CL2 (${cl2TickerUsed}): ${cl2Series.length} rows`);
-
-        // ── 3. Align CL1 and CL2 by date
-        let aligned: Array<{ date: string; cl1: number; cl2: number }>;
-
-        if (cl2Series.length > 0) {
-            const cl2Map = new Map(cl2Series.map(r => [r.date, r.close]));
-            aligned = cl1Series
-                .filter(r => cl2Map.has(r.date))
-                .map(r => ({ date: r.date, cl1: r.close, cl2: cl2Map.get(r.date)! }));
-        } else {
-            // Synthetic CL2: CL1 adjusted by the historical WTI contango (~$0.50)
-            aligned = cl1Series.map(r => ({ date: r.date, cl1: r.close, cl2: r.close - 0.50 }));
-            cl2TickerUsed = 'synthetic';
-        }
-
-        if (aligned.length === 0) throw new Error('No overlapping dates between CL1 and CL2');
-        console.log(`[ingest-oil-spread] Aligned: ${aligned.length} rows, latest: ${aligned[0].date}`);
-
-        // ── 4. Build upsert rows
-        const now = new Date().toISOString();
-        const rows = aligned.map((d, i) => {
-            const spread = d.cl1 - d.cl2;
-            const prev = aligned[i + 1];
-            const prev3 = aligned[i + 3];
-            return {
-                date: d.date,
-                front_price: Math.round(d.cl1 * 100) / 100,
-                next_price: Math.round(d.cl2 * 100) / 100,
-                spread: Math.round(spread * 100) / 100,
-                regime: classifyRegime(spread),
-                change_1d: prev ? Math.round((spread - (prev.cl1 - prev.cl2)) * 100) / 100 : 0,
-                change_3d: prev3 ? Math.round((spread - (prev3.cl1 - prev3.cl2)) * 100) / 100 : 0,
-                computed_at: now,
-                metadata: { source: 'Yahoo Finance', cl1_ticker: 'CL=F', cl2_ticker: cl2TickerUsed },
-            };
-        });
-
-        // ── 5. Upsert in batches of 30
-        let upserted = 0;
-        for (let i = 0; i < rows.length; i += 30) {
-            const { error } = await supabase
-                .from('oil_market_spread')
-                .upsert(rows.slice(i, i + 30), { onConflict: 'date' });
-            if (error) throw error;
-            upserted += Math.min(30, rows.length - i);
-        }
-
-        const latest = rows[0];
-        console.log(`[ingest-oil-spread] Done. ${upserted} rows. Latest: ${latest.date} CL1=$${latest.front_price} CL2=$${latest.next_price} spread=${latest.spread >= 0 ? '+' : ''}${latest.spread}`);
-
-        await supabase.from('ingestion_logs').insert({
-            function_name: 'ingest-oil-spread', status: 'success',
-            metadata: { rows_upserted: upserted, latest_date: latest.date, spread: latest.spread, regime: latest.regime, cl2_ticker: cl2TickerUsed },
-            start_time: now,
-        });
-
-        return new Response(JSON.stringify({
-            success: true, rows_upserted: upserted,
-            date: latest.date, spread: latest.spread, regime: latest.regime,
-        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-
-    } catch (err: unknown) {
-        const msg = (err as Error).message ?? String(err);
-        console.error('[ingest-oil-spread] Fatal:', msg);
-        await supabase.from('ingestion_logs').insert({
-            function_name: 'ingest-oil-spread', status: 'FAILED',
-            metadata: { error: msg }, start_time: new Date().toISOString(),
-        });
-        return new Response(JSON.stringify({ error: msg }), {
-            status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
     }
-});
+
+    console.log(`[ingest-oil-spread] CL2 (${cl2TickerUsed}): ${cl2Series.length} rows`);
+
+    // ── 3. Align CL1 and CL2 by date
+    let aligned: Array<{ date: string; cl1: number; cl2: number }>;
+
+    if (cl2Series.length > 0) {
+        const cl2Map = new Map(cl2Series.map(r => [r.date, r.close]));
+        aligned = cl1Series
+            .filter(r => cl2Map.has(r.date))
+            .map(r => ({ date: r.date, cl1: r.close, cl2: cl2Map.get(r.date)! }));
+    } else {
+        // Synthetic CL2: CL1 adjusted by the historical WTI contango (~$0.50)
+        aligned = cl1Series.map(r => ({ date: r.date, cl1: r.close, cl2: r.close - 0.50 }));
+        cl2TickerUsed = 'synthetic';
+    }
+
+    if (aligned.length === 0) throw new Error('No overlapping dates between CL1 and CL2');
+    console.log(`[ingest-oil-spread] Aligned: ${aligned.length} rows, latest: ${aligned[0].date}`);
+
+    // ── 4. Build upsert rows
+    const now = new Date().toISOString();
+    const rows = aligned.map((d, i) => {
+        const spread = d.cl1 - d.cl2;
+        const prev = aligned[i + 1];
+        const prev3 = aligned[i + 3];
+        return {
+            date: d.date,
+            front_price: Math.round(d.cl1 * 100) / 100,
+            next_price: Math.round(d.cl2 * 100) / 100,
+            spread: Math.round(spread * 100) / 100,
+            regime: classifyRegime(spread),
+            change_1d: prev ? Math.round((spread - (prev.cl1 - prev.cl2)) * 100) / 100 : 0,
+            change_3d: prev3 ? Math.round((spread - (prev3.cl1 - prev3.cl2)) * 100) / 100 : 0,
+            computed_at: now,
+            metadata: { source: 'Yahoo Finance', cl1_ticker: 'CL=F', cl2_ticker: cl2TickerUsed },
+        };
+    });
+
+    // ── 5. Upsert in batches of 30
+    let upserted = 0;
+    for (let i = 0; i < rows.length; i += 30) {
+        const { error } = await supabase
+            .from('oil_market_spread')
+            .upsert(rows.slice(i, i + 30), { onConflict: 'date' });
+        if (error) throw error;
+        upserted += Math.min(30, rows.length - i);
+    }
+
+    const latest = rows[0];
+    console.log(`[ingest-oil-spread] Done. ${upserted} rows. Latest: ${latest.date} CL1=$${latest.front_price} CL2=$${latest.next_price} spread=${latest.spread >= 0 ? '+' : ''}${latest.spread}`);
+
+    return {
+        ok: true,
+        counts: { upserted, skipped: 0 },
+        meta: {
+            latest_date: latest.date,
+            spread: latest.spread,
+            regime: latest.regime,
+            cl2_ticker: cl2TickerUsed
+        }
+    };
+}
+
+serveIngest('ingest-oil-spread', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    return doIngestOilSpread(supabase)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 async function fetchFredSeries(fredId: string, apiKey: string, limit = 52) {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=${limit}`;
@@ -23,11 +18,7 @@ function calculateWoW(current: number, previous: number) {
     return ((current - previous) / previous) * 100;
 }
 
-
-
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-async function doIngestGlobalLiquidity(supabase: any, fredApiKey: string) {
+async function doIngestGlobalLiquidity(supabase: any, fredApiKey: string): Promise<IngestResult> {
     // 1. Fetch required series
     // VIXCLS is a good risk-off proxy (high VIX = tight liquidity/risk-off)
     const [fedAssets, ecbAssets, m2Money, vix, dxyProxy] = await Promise.all([
@@ -57,7 +48,7 @@ async function doIngestGlobalLiquidity(supabase: any, fredApiKey: string) {
 
     const vix_val = vix[0].value;
     const dxy = dxyProxy[0].value;
-    // Risk Proxy: Inverse of (VIX * DXY) scaled. 
+    // Risk Proxy: Inverse of (VIX * DXY) scaled.
     // Higher VIX/DXY = tighter conditions. Lower = better liquidity.
     const risk_proxy = 1000 / (vix_val * (dxy / 100));
     const prev_risk_proxy = 1000 / (vix[1].value * (dxyProxy[1].value / 100));
@@ -135,33 +126,18 @@ async function doIngestGlobalLiquidity(supabase: any, fredApiKey: string) {
     if (upsertError) throw upsertError;
 
     return {
-        success: true,
-        date: latestDate,
-        score: composite_score,
-        regime: regime_label,
-        rows_inserted: 1,
-        raw_payload: payload
+        ok: true,
+        counts: { upserted: 1, skipped: 0 },
+        meta: { date: latestDate, score: composite_score, regime: regime_label, raw_payload: payload }
     };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-global-liquidity', async (ctx) => {
-        const fredApiKey = Deno.env.get('FRED_API_KEY');
-        if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
-
-        const result = await runWithRetry(
-            'ingest-global-liquidity',
-            () => doIngestGlobalLiquidity(supabase, fredApiKey),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-
-        if (!result.ok) throw new Error(`Global liquidity ingestion failed: ${result.error}`);
-        return result.value!;
-    });
-});
+serveIngest('ingest-global-liquidity', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
+    return doIngestGlobalLiquidity(supabase, fredApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

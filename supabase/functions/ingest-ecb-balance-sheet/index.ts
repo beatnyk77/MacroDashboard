@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import { upsertObservations } from '../_shared/ingest_utils.ts'
 
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
     let lastError: Error | null = null;
@@ -33,77 +29,73 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
     throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
+async function doIngestEcb(supabase: any, fredApiKey: string): Promise<IngestResult> {
+    // Metrics to fetch from FRED
+    const metricsMap = [
+        { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' },
+        { id: 'ECB_DF_OUTSTANDING_MEUR', fredId: 'ECBDFR' }, // Using Rate for now as proxy or check if balance exists
+        { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMRRFR' }, // Using Rate
+        // Euro Area Government Debt to GDP (replaces stale TED_SPREAD timeline)
+        { id: 'EU_DEBT_GDP_PCT', fredId: 'DEBTGDP', description: 'Euro Area General Government Debt to GDP Ratio (%)' }
+    ];
+
+    const results: any[] = [];
+    const errors: any[] = [];
+
+    for (const item of metricsMap) {
+        try {
+            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
+
+            const response = await fetchWithRetry(fredUrl);
+            const data = await response.json();
+
+            if (data.observations) {
+                data.observations.forEach((obs: any) => {
+                    const value = parseFloat(obs.value);
+                    if (!isNaN(value)) {
+                        results.push({
+                            metric_id: item.id,
+                            as_of_date: obs.date,
+                            value: value,
+                            last_updated_at: new Date().toISOString()
+                        });
+                    }
+                });
+            }
+        } catch (e: any) {
+            console.error(`Error fetching ${item.id}:`, e);
+            errors.push({ metric: item.id, error: e.message });
+        }
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
+    // Calculate Excess Liquidity (Assets - Liabilities/Providing Ops? Actually ECB publishes a specific series, but we can approximate)
+    // For now, let's just ensure we have the primary ones.
 
-    if (!fredApiKey) {
-        return new Response(JSON.stringify({ error: 'FRED_API_KEY is missing' }), { status: 500, headers: corsHeaders });
+    let upserted = 0;
+    if (results.length > 0) {
+        const { count } = await upsertObservations(supabase, results, {
+            source_ref: 'live_api:ingest-ecb-balance-sheet',
+            is_provisional: false,
+        });
+        upserted = count ?? 0;
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-ecb-balance-sheet', async (ctx) => {
-        // Metrics to fetch from FRED
-        const metricsMap = [
-            { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' },
-            { id: 'ECB_DF_OUTSTANDING_MEUR', fredId: 'ECBDFR' }, // Using Rate for now as proxy or check if balance exists
-            { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMRRFR' }, // Using Rate
-            // Euro Area Government Debt to GDP (replaces stale TED_SPREAD timeline)
-            { id: 'EU_DEBT_GDP_PCT', fredId: 'DEBTGDP', description: 'Euro Area General Government Debt to GDP Ratio (%)' }
-        ];
-
-        const results: any[] = [];
-        const errors: any[] = [];
-
-        for (const item of metricsMap) {
-            try {
-                const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
-
-                const response = await fetchWithRetry(fredUrl);
-                const data = await response.json();
-
-                if (data.observations) {
-                    data.observations.forEach((obs: any) => {
-                        const value = parseFloat(obs.value);
-                        if (!isNaN(value)) {
-                            results.push({
-                                metric_id: item.id,
-                                as_of_date: obs.date,
-                                value: value,
-                                last_updated_at: new Date().toISOString()
-                            });
-                        }
-                    });
-                }
-            } catch (e: any) {
-                console.error(`Error fetching ${item.id}:`, e);
-                errors.push({ metric: item.id, error: e.message });
-            }
+    return {
+        ok: true,
+        counts: { upserted, skipped: 0 },
+        meta: {
+            metrics_processed: metricsMap.map(m => m.id),
+            errors
         }
+    };
+}
 
-        // Calculate Excess Liquidity (Assets - Liabilities/Providing Ops? Actually ECB publishes a specific series, but we can approximate)
-        // For now, let's just ensure we have the primary ones.
-
-        if (results.length > 0) {
-            const { error: upsertError } = await ctx.supabase
-                .from('metric_observations')
-                .upsert(results, { onConflict: 'metric_id, as_of_date' });
-
-            if (upsertError) throw upsertError;
-        }
-
-        return {
-            rows_inserted: results.length,
-            metadata: {
-                metrics_processed: metricsMap.map(m => m.id),
-                errors
-            }
-        };
-    });
-})
+serveIngest('ingest-ecb-balance-sheet', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    if (!fredApiKey) throw new Error('FRED_API_KEY is missing')
+    return doIngestEcb(supabase, fredApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })
