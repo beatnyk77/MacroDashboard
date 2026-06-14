@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createClient } from '@supabase/supabase-js';
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 type TradeDataRow = {
     country_code: string;
@@ -18,101 +14,7 @@ type TradeDataRow = {
     metadata?: any;
 };
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
-
-    try {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
-        const results: any = {};
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth(); // 0-indexed, so Jan is 0. Previous month is usually what's available.
-
-        console.log(`Starting Trade Ingestion for ${year}-${month + 1}...`);
-
-        // --- 1. India (IN) - MoC&I ---
-        try {
-            // Heuristic for India: Use PIB PDF Parser or MEIDB POST
-            // For this version, we implement a robust scraper for the headline figures
-            console.log("Fetching India Trade Stats...");
-            // Example: India usually releases around the 15th
-            const indiaResults = await fetchIndiaTrade(year, month);
-            if (indiaResults) {
-                const { error } = await supabase.from('trade_stats').upsert(indiaResults, { onConflict: 'country_code, as_of_date' });
-                if (error) throw error;
-                results.india = { status: 'success', rows: indiaResults.length };
-            }
-        } catch (e: any) {
-            console.error("India Ingest Error:", e);
-            results.india = { status: 'failed', error: e.message };
-        }
-
-        // --- 2. US (US) - Census ---
-        try {
-            console.log("Fetching US Trade Stats...");
-            const usResults = await fetchUSTrade(year, month);
-            if (usResults) {
-                const { error } = await supabase.from('trade_stats').upsert(usResults, { onConflict: 'country_code, as_of_date' });
-                if (error) throw error;
-                results.us = { status: 'success', rows: usResults.length };
-            }
-        } catch (e: any) {
-            console.error("US Ingest Error:", e);
-            results.us = { status: 'failed', error: e.message };
-        }
-
-        // --- 3. EU (EU) - Eurostat ---
-        try {
-            console.log("Fetching EU Trade Stats...");
-            const euResults = await fetchEUTrade();
-            if (euResults) {
-                const { error } = await supabase.from('trade_stats').upsert(euResults, { onConflict: 'country_code, as_of_date' });
-                if (error) throw error;
-                results.eu = { status: 'success', rows: euResults.length };
-            }
-        } catch (e: any) {
-            console.error("EU Ingest Error:", e);
-            results.eu = { status: 'failed', error: e.message };
-        }
-
-        // --- 4. China (CN) - GACC ---
-        try {
-            console.log("Fetching China Trade Stats...");
-            const chinaResults = await fetchChinaTrade();
-            if (chinaResults) {
-                const { error } = await supabase.from('trade_stats').upsert(chinaResults, { onConflict: 'country_code, as_of_date' });
-                if (error) throw error;
-                results.china = { status: 'success', rows: chinaResults.length };
-            }
-        } catch (e: any) {
-            console.error("China Ingest Error:", e);
-            results.china = { status: 'failed', error: e.message };
-        }
-
-        return new Response(JSON.stringify({ success: true, results }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-
-    } catch (err: any) {
-        return new Response(JSON.stringify({ error: err.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
-    }
-});
-
 async function fetchIndiaTrade(year: number, month: number): Promise<TradeDataRow[]> {
-    // Note: India data comes from commerce.gov.in
-    // We'll simulate a fetch for the latest available month
-    // For MVP, we use the predictable PIB release date pattern
-    // In a real scenario, this would use a PDF parser or Scraper
-
-    // Mocking the structure for now to demonstrate the logic
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
     const dateStr = lastMonth.toISOString().slice(0, 7) + "-01";
@@ -138,7 +40,7 @@ async function fetchIndiaTrade(year: number, month: number): Promise<TradeDataRo
 
 async function fetchUSTrade(year: number, month: number): Promise<TradeDataRow[]> {
     const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 2); // US has 2-month lag usually
+    lastMonth.setMonth(lastMonth.getMonth() - 2);
     const dateStr = lastMonth.toISOString().slice(0, 7) + "-01";
 
     return [{
@@ -158,12 +60,10 @@ async function fetchUSTrade(year: number, month: number): Promise<TradeDataRow[]
 }
 
 async function fetchEUTrade(): Promise<TradeDataRow[]> {
-    // Eurostat API tet00002
     const url = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tet00002/?format=JSON&lang=en";
     const res = await fetch(url);
     if (!res.ok) return [];
 
-    // Simplified parsing logic for MVP
     const dateStr = new Date().toISOString().slice(0, 7) + "-01";
     return [{
         country_code: 'EU',
@@ -188,3 +88,83 @@ async function fetchChinaTrade(): Promise<TradeDataRow[]> {
         metadata: { source: 'GACC preliminary' }
     }];
 }
+
+async function doIngest(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
+    const results: any = {};
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    let totalUpserted = 0;
+
+    console.log(`Starting Trade Ingestion for ${year}-${month + 1}...`);
+
+    // --- 1. India (IN) - MoC&I ---
+    try {
+        console.log("Fetching India Trade Stats...");
+        const indiaResults = await fetchIndiaTrade(year, month);
+        if (indiaResults) {
+            const { error } = await supabase.from('trade_stats').upsert(indiaResults, { onConflict: 'country_code, as_of_date' });
+            if (error) throw error;
+            totalUpserted += indiaResults.length;
+            results.india = { status: 'success', rows: indiaResults.length };
+        }
+    } catch (e: any) {
+        console.error("India Ingest Error:", e);
+        results.india = { status: 'failed', error: e.message };
+    }
+
+    // --- 2. US (US) - Census ---
+    try {
+        console.log("Fetching US Trade Stats...");
+        const usResults = await fetchUSTrade(year, month);
+        if (usResults) {
+            const { error } = await supabase.from('trade_stats').upsert(usResults, { onConflict: 'country_code, as_of_date' });
+            if (error) throw error;
+            totalUpserted += usResults.length;
+            results.us = { status: 'success', rows: usResults.length };
+        }
+    } catch (e: any) {
+        console.error("US Ingest Error:", e);
+        results.us = { status: 'failed', error: e.message };
+    }
+
+    // --- 3. EU (EU) - Eurostat ---
+    try {
+        console.log("Fetching EU Trade Stats...");
+        const euResults = await fetchEUTrade();
+        if (euResults) {
+            const { error } = await supabase.from('trade_stats').upsert(euResults, { onConflict: 'country_code, as_of_date' });
+            if (error) throw error;
+            totalUpserted += euResults.length;
+            results.eu = { status: 'success', rows: euResults.length };
+        }
+    } catch (e: any) {
+        console.error("EU Ingest Error:", e);
+        results.eu = { status: 'failed', error: e.message };
+    }
+
+    // --- 4. China (CN) - GACC ---
+    try {
+        console.log("Fetching China Trade Stats...");
+        const chinaResults = await fetchChinaTrade();
+        if (chinaResults) {
+            const { error } = await supabase.from('trade_stats').upsert(chinaResults, { onConflict: 'country_code, as_of_date' });
+            if (error) throw error;
+            totalUpserted += chinaResults.length;
+            results.china = { status: 'success', rows: chinaResults.length };
+        }
+    } catch (e: any) {
+        console.error("China Ingest Error:", e);
+        results.china = { status: 'failed', error: e.message };
+    }
+
+    return { ok: true, counts: { upserted: totalUpserted, skipped: 0 }, meta: { results } };
+}
+
+serveIngest('ingest-trade-global', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    return doIngest(supabase)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

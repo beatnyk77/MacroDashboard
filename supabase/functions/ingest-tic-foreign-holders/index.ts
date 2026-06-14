@@ -1,15 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-declare const Deno: any;
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-async function doIngestTic(supabase: any) {
+async function doIngestTic(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
     console.log('Fetching TIC data from Treasury.gov...')
 
     // Major Foreign Holders (MFH) Historical data in text format
@@ -28,19 +21,16 @@ async function doIngestTic(supabase: any) {
 
     // Find the header line that contains the months
     let headerIndex = lines.findIndex(l => l.startsWith('Country\t'))
-    
+
     if (headerIndex === -1) throw new Error('Could not identify TIC data structure')
 
     const headerTokens = lines[headerIndex].split('\t').map(s => s.trim())
-    
+
     // Extract dates from the header. Format is YYYY-MM
     const monthData: { index: number; dateStr: string }[] = []
     for (let i = 1; i < headerTokens.length; i++) {
         const token = headerTokens[i]
         if (/^\d{4}-\d{2}$/.test(token)) {
-            // Approximate end of month by appending -28 (close enough for mostly monthly data)
-            // TIC data is traditionally end-of-month
-            // Let's create a date object for the 1st of next month, subtract 1 day
             const [year, month] = token.split('-')
             const d = new Date(Number(year), Number(month), 0)
             monthData.push({ index: i, dateStr: d.toISOString().split('T')[0] })
@@ -60,10 +50,10 @@ async function doIngestTic(supabase: any) {
     for (let i = headerIndex + 1; i < lines.length; i++) {
         const line = lines[i]
         if (!line.trim()) continue;
-        
+
         const tokens = line.split('\t').map(s => s.trim())
         const rawCountry = tokens[0]
-        
+
         const country = majorCountries.find(c => rawCountry === c)
 
         if (country) {
@@ -95,26 +85,19 @@ async function doIngestTic(supabase: any) {
     if (error) throw error
 
     return {
-        message: 'Success',
-        recordsParsed: holders.length,
-        countries: Array.from(new Set(holders.map(h => h.country_name)))
+        ok: true,
+        counts: { upserted: holders.length, skipped: 0 },
+        meta: {
+            records_parsed: holders.length,
+            countries: Array.from(new Set(holders.map(h => h.country_name)))
+        },
     }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-tic-foreign-holders', async (ctx) => {
-        return runWithRetry(
-            'ingest-tic-foreign-holders',
-            () => doIngestTic(supabase),
-            { timeoutMs: 5 * 60 * 1000, maxRetries: 3 }
-        )
-    })
-})
+serveIngest('ingest-tic-foreign-holders', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    return doIngestTic(supabase)
+}, { timeoutMs: 5 * 60 * 1000, retries: 3 })

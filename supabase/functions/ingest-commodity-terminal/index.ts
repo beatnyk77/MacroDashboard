@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-declare const Deno: any;
-import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts';
-import { runWithRetry } from '../_shared/job-runner.ts';
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import { upsertObservations } from '../_shared/ingest_utils.ts'
 
 const COMTRADE_API_BASE = "https://comtradeapi.un.org/data/v1/get";
 
@@ -50,9 +44,8 @@ const COMMODITY_NAME_MAP: Record<string, string> = {
 async function fetchComtradeFlows(apiKey: string, reporterCode: string, hsCodes: string[], year: number): Promise<any[]> {
     const url = new URL(COMTRADE_API_BASE);
     url.searchParams.append('reporterCode', reporterCode);
-    url.searchParams.append('partnerCode', ''); // all partners
+    url.searchParams.append('partnerCode', '');
     url.searchParams.append('period', year.toString());
-    // Use first HS code; we'll aggregate across our list outside
     url.searchParams.append('cmdCode', hsCodes[0]);
     url.searchParams.append('subscription-key', apiKey);
 
@@ -64,19 +57,17 @@ async function fetchComtradeFlows(apiKey: string, reporterCode: string, hsCodes:
     return json.data || [];
 }
 
-async function doIngestCommodityTerminal(supabase: any, reqUrl: string) {
-    const comtradeApiKey = Deno.env.get('COMTRADE_API_KEY');
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
-    const eiaApiKey = Deno.env.get('EIA_API_KEY');
-
-    if (!comtradeApiKey) {
-        throw new Error('Missing COMTRADE_API_KEY');
-    }
-
+async function doIngestCommodityTerminal(
+    supabase: ReturnType<typeof createClient>,
+    comtradeApiKey: string,
+    reqUrl: string,
+    fredApiKey: string | undefined,
+    eiaApiKey: string | undefined
+): Promise<IngestResult> {
     console.log("Starting Commodity Terminal Ingestion...");
 
     // ==========================================
-    // 1. Commodity Prices (FRED) — keep existing
+    // 1. Commodity Prices (FRED) — write via upsertObservations
     // ==========================================
     const priceSeries = [
         { id: 'DCOILWTICO', metric_id: 'WTI_CRUDE_PRICE' },
@@ -102,21 +93,21 @@ async function doIngestCommodityTerminal(supabase: any, reqUrl: string) {
                         metric_id: series.metric_id,
                         as_of_date: o.date,
                         value: parseFloat(o.value),
-                        last_updated_at: new Date().toISOString()
                     }));
 
                 if (observations.length > 0) {
-                    const { error } = await supabase
-                        .from('metric_observations')
-                        .upsert(observations, { onConflict: 'metric_id, as_of_date' });
-                    if (!error) pricesProcessed += observations.length;
+                    const { count } = await upsertObservations(supabase, observations, {
+                        source_ref: 'live_api:ingest-commodity-terminal',
+                        is_provisional: false,
+                    });
+                    pricesProcessed += count ?? 0;
                 }
             }
         }
     }
 
     // ==========================================
-    // 2. Commodity Reserves (EIA SPR) — keep existing
+    // 2. Commodity Reserves (EIA SPR) — domain table write
     // ==========================================
     let reservesProcessed = 0;
     if (eiaApiKey) {
@@ -139,27 +130,26 @@ async function doIngestCommodityTerminal(supabase: any, reqUrl: string) {
     }
 
     // ==========================================
-    // 3. Commodity Flows (Real Comtrade Data)
+    // 3. Commodity Flows (Real Comtrade Data) — domain table write
     // ==========================================
     let flowsProcessed = 0;
+    let flowsSkipped = 0;
     const currentYear = new Date().getFullYear();
-    const years = [currentYear - 1, currentYear]; // Prior year and current
+    const years = [currentYear - 1, currentYear];
 
     for (const [commodity, hsCodes] of Object.entries(COMMODITY_HS_CODES)) {
         for (const reporterName of Object.keys(MAJOR_IMPORTERS)) {
             const reporterCode = MAJOR_IMPORTERS[reporterName];
             for (const year of years) {
                 try {
-                    // Fetch imports for this reporter (target = reporter, sources = partners)
                     const data = await fetchComtradeFlows(comtradeApiKey, reporterCode, hsCodes, year);
                     const rows: any[] = [];
 
                     for (const item of data) {
                         const partnerName = item.partnerCountryName || item.partner || 'Unknown';
-                        const quantity = parseFloat(item.qty) || 0; // in KG
+                        const quantity = parseFloat(item.qty) || 0;
                         if (quantity <= 0) continue;
 
-                        // Convert KG to KT (kilotonnes)
                         const volumeKt = quantity / 1_000_000;
 
                         rows.push({
@@ -167,9 +157,9 @@ async function doIngestCommodityTerminal(supabase: any, reqUrl: string) {
                             target: reporterName,
                             commodity: COMMODITY_NAME_MAP[commodity] || commodity,
                             volume: volumeKt,
-                            as_of_date: `${year}-01-01`, // annual flow
+                            as_of_date: `${year}-01-01`,
                             meta: {
-                                latency_days: Math.floor(Math.random() * 30) + 5 // estimated transit
+                                latency_days: Math.floor(Math.random() * 30) + 5
                             }
                         });
                     }
@@ -179,38 +169,37 @@ async function doIngestCommodityTerminal(supabase: any, reqUrl: string) {
                             onConflict: 'source, target, commodity, as_of_date'
                         });
                         if (!error) flowsProcessed += rows.length;
+                        else flowsSkipped += rows.length;
                     }
 
                     // Rate limiting
                     await new Promise(r => setTimeout(r, 300));
                 } catch (e: any) {
                     console.error(`Comtrade flows fetch failed for ${reporterName} ${commodity} ${year}:`, e.message);
-                    // Continue
+                    flowsSkipped++;
                 }
             }
         }
     }
 
+    const totalUpserted = pricesProcessed + reservesProcessed + flowsProcessed;
+    const totalSkipped = flowsSkipped;
+
     return {
-        success: true,
-        processed: { prices: pricesProcessed, reserves: reservesProcessed, flows: flowsProcessed }
+        ok: true,
+        counts: { upserted: totalUpserted, skipped: totalSkipped },
+        meta: { prices: pricesProcessed, reserves: reservesProcessed, flows: flowsProcessed },
     };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-commodity-terminal', async (ctx) => {
-        return runWithRetry(
-            'ingest-commodity-terminal',
-            () => doIngestCommodityTerminal(supabase, req.url),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
-});
+serveIngest('ingest-commodity-terminal', async (req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const comtradeApiKey = Deno.env.get('COMTRADE_API_KEY') ?? ''
+    if (!comtradeApiKey) throw new Error('Missing COMTRADE_API_KEY')
+    const fredApiKey = Deno.env.get('FRED_API_KEY')
+    const eiaApiKey = Deno.env.get('EIA_API_KEY')
+    return doIngestCommodityTerminal(supabase, comtradeApiKey, req.url, fredApiKey, eiaApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

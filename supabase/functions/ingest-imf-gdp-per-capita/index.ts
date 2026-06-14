@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createAdminClient } from './utils/supabaseClient.ts'
-import { Logger } from './utils/logger.ts'
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 const G20_COUNTRIES: Record<string, string> = {
     'USA': 'United States',
@@ -51,104 +51,92 @@ const ANCHOR_VALUES: Record<string, number> = {
     'EU27': 59500.0 // Approximation for EU aggregate
 }
 
-Deno.serve(async (req: Request) => {
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+async function doIngest(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
+    console.log('Starting IMF DataMapper ingestion (NGDP_RPCH)')
 
-    const runId = crypto.randomUUID()
-    const client = createAdminClient()
-    const logger = new Logger(runId)
-    const start = performance.now()
+    // Fetch growth rates for all G20 countries
+    const isos = Object.keys(G20_COUNTRIES).join('/')
+    const url = `https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH/${isos}`
 
-    try {
-        await logger.log('imf-gdp-per-capita', 'processing', 0, 'Starting IMF DataMapper ingestion (NGDP_RPCH)')
+    const response = await fetch(url)
+    if (!response.ok) throw new Error(`IMF API failed: ${response.status}`)
 
-        // Fetch growth rates for all G20 countries
-        const isos = Object.keys(G20_COUNTRIES).join('/')
-        const url = `https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH/${isos}`
+    const data = await response.json()
+    const values = data?.values?.NGDP_RPCH
+    if (!values) throw new Error('No values found in IMF response')
 
-        const response = await fetch(url)
-        if (!response.ok) throw new Error(`IMF API failed: ${response.status}`)
+    const rowsToUpsert: any[] = []
 
-        const data = await response.json()
-        const values = data?.values?.NGDP_RPCH
-        if (!values) throw new Error('No values found in IMF response')
+    for (const iso of Object.keys(G20_COUNTRIES)) {
+        const growthRates = values[iso]
+        const anchorVal = ANCHOR_VALUES[iso]
+        if (!growthRates || !anchorVal) continue
 
-        const rowsToUpsert: any[] = []
+        // Calculate historical and projected values based on the anchor year
+        const years = Object.keys(growthRates).map(Number).sort((a, b) => a - b)
 
-        for (const iso of Object.keys(G20_COUNTRIES)) {
-            const growthRates = values[iso]
-            const anchorVal = ANCHOR_VALUES[iso]
-            if (!growthRates || !anchorVal) continue
+        // We calculate in two directions from the anchor year
+        const calculatedValues: Record<number, number> = {}
+        calculatedValues[ANCHOR_YEAR] = anchorVal
 
-            // Calculate historical and projected values based on the anchor year
-            const years = Object.keys(growthRates).map(Number).sort((a, b) => a - b)
-
-            // We calculate in two directions from the anchor year
-            const calculatedValues: Record<number, number> = {}
-            calculatedValues[ANCHOR_YEAR] = anchorVal
-
-            // Forward from anchor (2024 onwards)
-            let currentVal = anchorVal
-            for (let y = ANCHOR_YEAR + 1; y <= Math.max(...years); y++) {
-                const growth = growthRates[y.toString()]
-                if (growth !== undefined) {
-                    currentVal = currentVal * (1 + growth / 100)
-                    calculatedValues[y] = currentVal
-                }
-            }
-
-            // Backward from anchor (2022 downwards)
-            currentVal = anchorVal
-            for (let y = ANCHOR_YEAR - 1; y >= Math.min(...years); y--) {
-                const growthNextYear = growthRates[(y + 1).toString()]
-                if (growthNextYear !== undefined) {
-                    currentVal = currentVal / (1 + growthNextYear / 100)
-                    calculatedValues[y] = currentVal
-                }
-            }
-
-            for (const [year, val] of Object.entries(calculatedValues)) {
-                rowsToUpsert.push({
-                    country_code: iso,
-                    country_name: G20_COUNTRIES[iso],
-                    year: parseInt(year),
-                    value_constant_usd: val,
-                    last_updated_at: new Date().toISOString()
-                })
+        // Forward from anchor (2024 onwards)
+        let currentVal = anchorVal
+        for (let y = ANCHOR_YEAR + 1; y <= Math.max(...years); y++) {
+            const growth = growthRates[y.toString()]
+            if (growth !== undefined) {
+                currentVal = currentVal * (1 + growth / 100)
+                calculatedValues[y] = currentVal
             }
         }
 
-        if (rowsToUpsert.length > 0) {
-            // Chunking for safe upsert
-            const chunkSize = 500
-            for (let i = 0; i < rowsToUpsert.length; i += chunkSize) {
-                const chunk = rowsToUpsert.slice(i, i + chunkSize)
-                const { error: upsertError } = await client
-                    .from('imf_gdp_per_capita')
-                    .upsert(chunk, { onConflict: 'country_code, year' })
-                if (upsertError) throw upsertError
+        // Backward from anchor (2022 downwards)
+        currentVal = anchorVal
+        for (let y = ANCHOR_YEAR - 1; y >= Math.min(...years); y--) {
+            const growthNextYear = growthRates[(y + 1).toString()]
+            if (growthNextYear !== undefined) {
+                currentVal = currentVal / (1 + growthNextYear / 100)
+                calculatedValues[y] = currentVal
             }
-
-            await logger.log('imf-gdp-per-capita', 'success', rowsToUpsert.length, `Successfully calculated and ingested ${rowsToUpsert.length} data points`)
         }
 
-        const duration = Math.round(performance.now() - start)
-        return new Response(JSON.stringify({
-            message: 'IMF ingestion complete',
-            processed: rowsToUpsert.length,
-            duration_ms: duration,
-            runId
-        }), { headers: { 'Content-Type': 'application/json' } })
-
-    } catch (err: any) {
-        console.error('Ingestion error:', err)
-        await logger.log('imf-gdp-per-capita', 'error', 0, err.message)
-        return new Response(JSON.stringify({ error: err.message, runId }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        })
+        for (const [year, val] of Object.entries(calculatedValues)) {
+            rowsToUpsert.push({
+                country_code: iso,
+                country_name: G20_COUNTRIES[iso],
+                year: parseInt(year),
+                value_constant_usd: val,
+                last_updated_at: new Date().toISOString()
+            })
+        }
     }
-})
+
+    let upserted = 0;
+    if (rowsToUpsert.length > 0) {
+        // Chunking for safe upsert
+        const chunkSize = 500
+        for (let i = 0; i < rowsToUpsert.length; i += chunkSize) {
+            const chunk = rowsToUpsert.slice(i, i + chunkSize)
+            const { error: upsertError } = await supabase
+                .from('imf_gdp_per_capita')
+                .upsert(chunk, { onConflict: 'country_code, year' })
+            if (upsertError) throw upsertError
+            upserted += chunk.length
+        }
+    }
+
+    console.log(`Successfully calculated and ingested ${upserted} data points`)
+
+    return {
+        ok: true,
+        counts: { upserted, skipped: 0 },
+        meta: { processed: upserted },
+    }
+}
+
+serveIngest('ingest-imf-gdp-per-capita', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    return doIngest(supabase)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })
