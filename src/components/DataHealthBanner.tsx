@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { AlertCircle, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
@@ -189,3 +190,13 @@ export const DataFreshnessFooterChip: React.FC = () => {
         </span>
     );
 };
+
+// Alias — the refactor renamed this; kept so existing imports don't break
+export const DataFreshnessStatusChip = DataFreshnessFooterChip;
+
+// Header variant — wraps the chip in a router link to the data-health page
+export const DataHealthHeaderChip: React.FC = () => (
+    <Link to="/data-health" aria-label="Data feed status">
+        <DataFreshnessFooterChip />
+    </Link>
+);
