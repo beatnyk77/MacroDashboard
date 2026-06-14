@@ -3,6 +3,10 @@ import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 const ReserveSellerTracker = lazy(() => import('@/features/dashboard/components/rows/ReserveSellerTracker').then(m => ({ default: m.ReserveSellerTracker })));
 const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
@@ -14,6 +18,8 @@ const LoadingFallback = () => (
 );
 
 export const USTreasuryForeignHoldings: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.FED_TREASURY_HOLDINGS);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
             <SEOManager
@@ -42,9 +48,12 @@ export const USTreasuryForeignHoldings: React.FC = () => {
                 </div>
 
                 <div className="mb-12">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
-                        US Treasury Foreign Holdings & <span className="text-amber-500">Selloff Risk</span>
-                    </h1>
+                    <div className="flex items-center gap-3 mb-4">
+                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">
+                            US Treasury Foreign Holdings & <span className="text-amber-500">Selloff Risk</span>
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                         Tracking the transition of the US Treasury market from a globally absorbed asset to a domestically financed liability.
                     </p>

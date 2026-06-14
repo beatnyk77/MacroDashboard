@@ -3,6 +3,10 @@ import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/m
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell } from 'recharts';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
 
 // Illustrative Debt/Gold ratio Z-score data
@@ -38,6 +42,8 @@ function BarTooltip({ active, payload, label }: { active?: boolean; payload?: { 
 }
 
 export const DebtGoldZScorePage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.RATIO_DEBT_GOLD);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -78,9 +84,12 @@ export const DebtGoldZScorePage: React.FC = () => {
                 <Box mb={8}>
                     <Chip label="Methods Article · Hard Assets" variant="outlined"
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#f59e0b', color: '#f59e0b' }} />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
-                        Debt/Gold Z-Score
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Typography variant="h2" component="h1" fontWeight={900}>
+                            Debt/Gold Z-Score
+                        </Typography>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </Box>
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A thought-experiment made operational: how many "gold equivalents" would it take to redeem US Federal Debt? Normalised as a Z-score to identify structural gold undervaluation.
                     </Typography>

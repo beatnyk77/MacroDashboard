@@ -1,4 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     ChevronRight,
     ArrowLeft,
@@ -35,6 +39,8 @@ const LoadingFallback = () => (
 );
 
 export const DeDollarizationGoldLab: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.GOLD_PRICE_USD);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
         <SEOManager
@@ -87,9 +93,12 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <Coins size={12} /> Hard Money Telemetry
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
-                    De-Dollarization & <span className="text-amber-500">Gold</span>
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
+                        De-Dollarization & <span className="text-amber-500">Gold</span>
+                    </h1>
+                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide mb-8">
                     Monitoring the systemic shift from fiat-centric reserves to hard-asset anchors and the fragmentation of global settlement networks.
                 </p>

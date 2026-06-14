@@ -1,5 +1,9 @@
 // src/pages/labs/EnergyCommoditiesLab.tsx
 import React, { Suspense, lazy } from 'react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     ChevronRight,
     ArrowLeft,
@@ -35,6 +39,8 @@ const SmallLoadingFallback = () => (
 );
 
 export const EnergyCommoditiesLab: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
             <EnergyLabNav />
@@ -111,9 +117,12 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-uppercase mb-6">
                         <Fuel size={12} /> Institutional Resource Security
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
-                        Energy & <span className="text-blue-500">Commodities</span>
-                    </h1>
+                    <div className="flex items-center gap-3 mb-4">
+                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
+                            Energy & <span className="text-blue-500">Commodities</span>
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide mb-8">
                         Analyzing global physical flow dynamics, refining capacity elasticity, and sovereign energy vulnerability.
                     </p>

@@ -3,6 +3,10 @@ import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
@@ -14,6 +18,8 @@ const LoadingFallback = () => (
 );
 
 export const BricsTradeSettlement: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.BRICS_GDP_PPP_TN);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
             <SEOManager
@@ -42,9 +48,12 @@ export const BricsTradeSettlement: React.FC = () => {
                 </div>
 
                 <div className="mb-12">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
-                        BRICS Trade Settlement & <span className="text-amber-500">Local Currency</span>
-                    </h1>
+                    <div className="flex items-center gap-3 mb-4">
+                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">
+                            BRICS Trade Settlement & <span className="text-amber-500">Local Currency</span>
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                         Tracking the reality of the "BRICS Currency" through the architecture of local currency clearing and trade gravity.
                     </p>

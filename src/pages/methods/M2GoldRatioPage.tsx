@@ -1,6 +1,10 @@
 import React from 'react';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, TrendingUp } from 'lucide-react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { Link } from 'react-router-dom';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -101,6 +105,8 @@ function RatioTooltip({ active, payload, label }: { active?: boolean; payload?: 
 }
 
 export const M2GoldRatioPage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.RATIO_M2_GOLD);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -150,9 +156,12 @@ export const M2GoldRatioPage: React.FC = () => {
                         variant="outlined"
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#f59e0b', color: '#f59e0b' }}
                     />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
-                        M2/Gold Ratio
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Typography variant="h2" component="h1" fontWeight={900}>
+                            M2/Gold Ratio
+                        </Typography>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </Box>
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A structural debasement gauge: how much global M2 money supply is "covered" by the world's above-ground gold supply at current spot prices. When M2 expands faster than gold, the ratio rises — historically a leading indicator for structural gold re-ratings.
                     </Typography>

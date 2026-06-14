@@ -1,4 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     ChevronRight,
     ArrowLeft,
@@ -21,6 +25,8 @@ const LoadingFallback = () => (
 );
 
 export const ShadowSystemLab: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.RRP_BALANCE_BN);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
         <SEOManager
@@ -73,9 +79,12 @@ export const ShadowSystemLab: React.FC = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <EyeOff size={12} /> Off-Grid Telemetry
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
-                    Shadow <span className="text-slate-400">System</span> Lab
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
+                        Shadow <span className="text-slate-400">System</span> Lab
+                    </h1>
+                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     Tracking the unobserved economy: Elite wealth flight, trade misinvoicing, and the gravitational shifts in non-G7 trade networks.
                 </p>

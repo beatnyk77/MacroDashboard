@@ -1,6 +1,10 @@
 import React from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { useNavigate } from 'react-router-dom';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     Activity,
     Coins,
@@ -38,6 +42,8 @@ const colorMap: Record<string, string> = {
 
 export const MacroObservatory: React.FC = () => {
     const navigate = useNavigate();
+    const { data: primaryMetric } = useLatestMetric(MID.GOLD_PRICE_USD);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
 
     return (
         <>
@@ -66,9 +72,12 @@ export const MacroObservatory: React.FC = () => {
                         <Search size={14} /> Intelligence Network
                     </m.div>
                     
-                    <h1 className="text-4xl md:text-7xl font-black uppercase mb-3 letter-spacing-tight tracking-heading leading-none text-white">
-                        Macro <span className="text-blue-500">Observatory</span>
-                    </h1>
+                    <div className="flex items-center justify-center gap-3 mb-3">
+                        <h1 className="text-4xl md:text-7xl font-black uppercase letter-spacing-tight tracking-heading leading-none text-white">
+                            Macro <span className="text-blue-500">Observatory</span>
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     
                     <p className="text-muted-foreground/60 text-lg md:text-xl font-medium max-w-2xl mx-auto uppercase tracking-wide leading-relaxed">
                         Access specialized research labs. Institutional-grade telemetry across global credit, currency, and commodity regimes.

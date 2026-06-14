@@ -3,6 +3,10 @@ import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/m
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
 
 // Illustrative Fiscal Dominance Meter data: interest/tax ratio for US, Japan, India
@@ -38,6 +42,8 @@ function FdmTooltip({ active, payload, label }: { active?: boolean; payload?: { 
 }
 
 export const FiscalDominanceMeterPage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -78,9 +84,12 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                 <Box mb={8}>
                     <Chip label="Methods Article · Sovereign Debt · Monetary Policy" variant="outlined"
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#ef4444', color: '#ef4444' }} />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
-                        Fiscal Dominance Meter
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Typography variant="h2" component="h1" fontWeight={900}>
+                            Fiscal Dominance Meter
+                        </Typography>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </Box>
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         The single most important structural constraint on Fed policy independence: when does the cost of government debt service make rate hikes fiscally impossible?
                     </Typography>

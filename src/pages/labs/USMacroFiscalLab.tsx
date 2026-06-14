@@ -1,5 +1,9 @@
 import React, { Suspense, lazy } from 'react';
 import { Button } from '@/components/ui/button';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     ChevronRight,
     ArrowLeft,
@@ -34,6 +38,8 @@ const LoadingFallback = () => (
 );
 
 export const USMacroFiscalLab: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
         <SEOManager
@@ -87,9 +93,12 @@ export const USMacroFiscalLab: React.FC = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <Zap size={12} /> Core Sovereign Telemetry
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
-                    US Macro & Fiscal <span className="text-blue-500">Lab</span>
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
+                        US Macro & Fiscal <span className="text-blue-500">Lab</span>
+                    </h1>
+                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-base md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     Tracking the structural debt dynamics, treasury demand vectors, and fiscal policy impact of the world's reserve currency issuer.
                 </p>

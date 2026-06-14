@@ -14,6 +14,10 @@ import { ModuleRow } from '@/components/layout/ModuleRow';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { RegimeAnchor } from '@/features/dashboard/components/RegimeAnchor';
 import { ShareButton } from '@/components/ShareButton';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 // Components — below-fold, lazy-loaded
 const NetLiquidityRow = lazy(() => import('@/features/dashboard/components/rows/NetLiquidityRow').then(m => ({ default: m.NetLiquidityRow })));
@@ -49,6 +53,8 @@ export const Terminal: React.FC = () => {
     const [orientingDismissed, setOrientingDismissed] = useState(
         () => typeof window !== 'undefined' && localStorage.getItem(ORIENTING_DISMISSED_KEY) === '1'
     );
+    const { data: primaryMetric } = useLatestMetric(MID.FED_BALANCE_SHEET);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
 
     const netLiquidityRef = useRef<HTMLDivElement>(null);
     const fedMonetizationRef = useRef<HTMLDivElement>(null);
@@ -90,9 +96,12 @@ export const Terminal: React.FC = () => {
 
             <header className="mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
                 <div>
-                    <h1 className="text-3xl font-black text-white uppercase tracking-heading leading-tight mb-2">
-                        Macro Observatory
-                    </h1>
+                    <div className="flex items-center gap-2 mb-2">
+                        <h1 className="text-3xl font-black text-white uppercase tracking-heading leading-tight">
+                            Macro Observatory
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase">
                         High-Frequency Liquidity & Sovereign Stress Telemetry
                     </p>

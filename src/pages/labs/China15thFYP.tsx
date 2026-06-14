@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
-import { 
+import {
     Flag, Shield, Terminal as TerminalIcon, Info,
     ArrowUpRight, Share2, Download
 } from 'lucide-react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { FYP_HeroTimeline } from '@/features/dashboard/components/rows/China15thFYP/FYP_HeroTimeline';
 import { FYP_MissionControlRadar } from '@/features/dashboard/components/rows/China15thFYP/FYP_MissionControlRadar';
 import { FYP_TargetGrid } from '@/features/dashboard/components/rows/China15thFYP/FYP_TargetGrid';
@@ -16,6 +20,8 @@ export const China15thFYPLab: React.FC = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+    const { data: primaryMetric } = useLatestMetric(MID.CN_GDP_GROWTH_YOY);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
 
     return (
         <>
@@ -70,9 +76,12 @@ export const China15thFYPLab: React.FC = () => {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xs font-black uppercase tracking-uppercase text-red-500">Mission Intelligence Lab</span>
-                                <h1 className="text-4xl md:text-5xl font-black tracking-heading text-white italic uppercase">
-                                    China 15th <span className="text-red-500">Five-Year Plan</span>
-                                </h1>
+                                <div className="flex items-center gap-3">
+                                    <h1 className="text-4xl md:text-5xl font-black tracking-heading text-white italic uppercase">
+                                        China 15th <span className="text-red-500">Five-Year Plan</span>
+                                    </h1>
+                                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                                </div>
                             </div>
                         </div>
                         <p className="text-lg text-slate-400 leading-relaxed font-medium">

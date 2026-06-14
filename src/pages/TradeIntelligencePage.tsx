@@ -13,6 +13,8 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAvailableImportCountries } from '../features/trade/hooks/useAvailableImportCountries'
 import { cn } from '@/lib/utils'
+import { getStaleness } from '@/hooks/useStaleness'
+import { FreshnessChip } from '@/components/FreshnessChip'
 
 const FALLBACK_REPORTERS = [
     { iso3: 'USA', name: 'United States', iso2: 'US' },
@@ -67,6 +69,7 @@ const TradeIntelligencePage: React.FC = () => {
         },
         refetchInterval: 30000
     });
+    const dataFreshness = getStaleness(latestLog?.start_time, 'daily');
 
     return (
         <div className="max-w-[1400px] mx-auto space-y-16 pb-24">
@@ -98,9 +101,12 @@ const TradeIntelligencePage: React.FC = () => {
                 <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-emerald-500/10 mb-2">
                     <Globe2 className="w-8 h-8 text-emerald-400" />
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-heading uppercase">
-                    Trade Intelligence
-                </h1>
+                <div className="flex items-center justify-center gap-3">
+                    <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-heading uppercase">
+                        Trade Intelligence
+                    </h1>
+                    <FreshnessChip status={dataFreshness.state} lastUpdated={latestLog?.start_time} />
+                </div>
                 <p className="text-sm font-bold text-emerald-400/80 uppercase tracking-[0.2em] max-w-2xl mx-auto">
                     Global Demand · Supplier Competition · Import Vulnerabilities · Macro Overlay
                 </p>

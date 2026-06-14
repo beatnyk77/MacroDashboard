@@ -3,6 +3,10 @@ import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
 const GoldOilRevaluationScenario = lazy(() => import('@/features/dashboard/components/sections/GoldOilRevaluationScenario').then(m => ({ default: m.GoldOilRevaluationScenario })));
@@ -14,6 +18,8 @@ const LoadingFallback = () => (
 );
 
 export const PetrodollarDecay: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.OIL_BRENT_PRICE_USD);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
             <SEOManager
@@ -42,9 +48,12 @@ export const PetrodollarDecay: React.FC = () => {
                 </div>
 
                 <div className="mb-12">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
-                        Petrodollar System <span className="text-amber-500">Decay Indicators</span>
-                    </h1>
+                    <div className="flex items-center gap-3 mb-4">
+                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">
+                            Petrodollar System <span className="text-amber-500">Decay Indicators</span>
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                         Monitoring the expiration of historical US-Saudi agreements and the emergence of a multipolar energy pricing regime.
                     </p>

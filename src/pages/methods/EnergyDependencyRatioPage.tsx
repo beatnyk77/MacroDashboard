@@ -3,6 +3,10 @@ import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/m
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
 
 // Illustrative energy dependency data
@@ -42,6 +46,8 @@ function EdrTooltip({ active, payload, label }: { active?: boolean; payload?: { 
 }
 
 export const EnergyDependencyRatioPage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -82,9 +88,12 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                 <Box mb={8}>
                     <Chip label="Methods Article · Macro Indicators · Sovereign Risk" variant="outlined"
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#10b981', color: '#10b981' }} />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
-                        Energy Dependency Ratio
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Typography variant="h2" component="h1" fontWeight={900}>
+                            Energy Dependency Ratio
+                        </Typography>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </Box>
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Quantifying how exposed a sovereign is to global energy price shocks — and translating that into direct current account and currency risk.
                     </Typography>

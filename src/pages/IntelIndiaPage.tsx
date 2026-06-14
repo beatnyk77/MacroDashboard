@@ -5,6 +5,10 @@ import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { m } from 'framer-motion';
 import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, BarChart3, MapPin, Landmark } from 'lucide-react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 // Lazy-load heavy sub-sections
 const IndiaMacroPulseSection = lazy(() =>
@@ -78,6 +82,8 @@ const colorMap: Record<string, string> = {
 };
 
 export const IntelIndiaPage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.IN_REPO_RATE);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const placeSchema = {
         "@context": "https://schema.org",
         "@type": "Place",
@@ -177,12 +183,15 @@ export const IntelIndiaPage: React.FC = () => {
                     >
                         <span className="text-6xl md:text-8xl select-none">🇮🇳</span>
                         <div className="flex-1">
-                            <h1 className="text-4xl md:text-7xl font-black tracking-heading text-white leading-[0.9] mb-4">
-                                India <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-orange-400">
-                                    Intelligence
-                                </span>
-                            </h1>
+                            <div className="flex items-center gap-3 mb-4">
+                                <h1 className="text-4xl md:text-7xl font-black tracking-heading text-white leading-[0.9]">
+                                    India <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-orange-400">
+                                        Intelligence
+                                    </span>
+                                </h1>
+                                <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                            </div>
                             <p className="max-w-xl text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
                                 Institutional-grade telemetry for the world's fastest-growing major economy.
                                 Monitoring the RBI credit cycle, fiscal stress, and sovereign debt maturity walls in real-time.
