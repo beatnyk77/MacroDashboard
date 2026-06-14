@@ -146,3 +146,31 @@ export function serveIngest(
     );
   });
 }
+
+// ─── Migration template (copy into supabase/functions/<name>/index.ts) ───────
+//
+// import { createClient } from '@supabase/supabase-js';
+// import { serveIngest, type IngestResult } from '../_shared/handler.ts';
+//
+// async function doIngest(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
+//   // 1. Fetch upstream data (use fetchWithRetry from ingest_utils.ts for HTTP)
+//   // 2. Validate numerics before upsert (validateNumericData)
+//   // 3. Upsert idempotently (onConflict keys — never delete-then-insert)
+//   // 4. Bump metrics.updated_at ONLY on successful upsert — never in catch/finally
+//   // 5. Return { ok: true, counts: { upserted: N } } or throw / { ok: false, error }
+// }
+//
+// serveIngest('<function-name>', async (_req: Request): Promise<IngestResult> => {
+//   const supabase = createClient(
+//     Deno.env.get('SUPABASE_URL') ?? '',
+//     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+//   );
+//   return doIngest(supabase);
+// }, { timeoutMs: 45 * 60 * 1000, retries: 3 });
+//
+// Cron header (add to net.http_post in migrations — see 20260613000000_canonical_crons.sql):
+//   'x-cron-secret', (SELECT decrypted_secret FROM vault.decrypted_secrets
+//                      WHERE name = 'CRON_SECRET' LIMIT 1)
+// Enforcement is inert until CRON_SECRET env var is set on the function.
+//
+// Codemod for raw Deno.serve wrappers: npx tsx scripts/migrate-to-harness.ts [--dry-run]

@@ -32,6 +32,9 @@ jobs:
     - name: Lint
       run: npm run lint -- --max-warnings 0
 
+    - name: CI pattern guards (edge functions + migrations)
+      run: node scripts/ci-guards.mjs
+
     - name: Type check
       run: npx tsc --noEmit
 
