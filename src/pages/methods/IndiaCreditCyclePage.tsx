@@ -3,7 +3,12 @@ import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/m
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedContent } from '@/components/RelatedContent';
 
 const quadrantData = [
     { creditGrowth: 14.2, cdRatio: 76, year: '2007', quadrant: 'Expansion' },
@@ -50,6 +55,8 @@ function ScatterTooltipContent({ active, payload }: { active?: boolean; payload?
 }
 
 export const IndiaCreditCyclePage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.IN_REPO_RATE);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -90,9 +97,12 @@ export const IndiaCreditCyclePage: React.FC = () => {
                 <Box mb={8}>
                     <Chip label="Methods Article · India Macro" variant="outlined"
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#22c55e', color: '#22c55e' }} />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
-                        India Credit Cycle Clock
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Typography variant="h2" component="h1" fontWeight={900}>
+                            India Credit Cycle Clock
+                        </Typography>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </Box>
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Maps the Indian banking system's lending cycle across four regimes — Expansion, Downturn, Repair, and Recovery — using the relationship between credit growth momentum and the credit-deposit ratio as calibrated against RBI 10-year averages.
                     </Typography>
@@ -264,6 +274,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
                     <Button component={Link} to="/data-sources" variant="outlined" startIcon={<Link2 size={14} />} sx={{ borderColor: 'divider', color: 'text.secondary' }}>Data Sources</Button>
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
+                <RelatedContent />
             </Container>
         </Box>
     );

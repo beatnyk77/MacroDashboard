@@ -1,4 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     ChevronRight,
     ArrowLeft,
@@ -10,6 +14,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedContent } from '@/components/RelatedContent';
 
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -22,6 +27,8 @@ const LoadingFallback = () => (
 );
 
 export const SovereignStressLab: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.US_DEBT_GDP_PCT);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
         <SEOManager
@@ -74,9 +81,12 @@ export const SovereignStressLab: React.FC = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <ShieldAlert size={12} /> Fiscal Sustainability Monitor
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
-                    Sovereign <span className="text-purple-500">Stress</span> Lab
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
+                        Sovereign <span className="text-purple-500">Stress</span> Lab
+                    </h1>
+                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     Monitoring G20 debt sustainability, interest-to-revenue ratios, and the structural widening of sovereign credit default swaps.
                 </p>
@@ -141,6 +151,7 @@ export const SovereignStressLab: React.FC = () => {
                     </a>
                 </Button>
             </div>
+            <RelatedContent />
         </div>
         </>
     );

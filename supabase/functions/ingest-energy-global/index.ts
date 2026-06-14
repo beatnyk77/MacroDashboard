@@ -1,18 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 // --- DATA PROVIDER CONFIGS ---
 const _EMBER_API_BASE = "https://api.ember-climate.org/v1/data/generation"; // Placeholder
 const _EUROSTAT_API_BASE = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data";
 
-Deno.serve(async (req) => {
+serveIngest('ingest-energy-global', async (req) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+        return { ok: true, counts: {} };
     }
 
     try {
@@ -152,15 +150,10 @@ Deno.serve(async (req) => {
             console.error("GIE Fetch failed:", e);
         }
 
-        return new Response(JSON.stringify({ success: true, ingested: results }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200
-        });
+        return { ok: true, counts: {} };
 
     } catch (err: any) {
-        return new Response(JSON.stringify({ error: err.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        throw e;
+
     }
 });

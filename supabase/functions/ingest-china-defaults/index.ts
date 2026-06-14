@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 async function logIngestion(supabase: SupabaseClient, functionName: string, status: string, metadata: any = {}) {
     await supabase.from('ingestion_logs').insert({
@@ -22,8 +19,8 @@ async function logIngestion(supabase: SupabaseClient, functionName: string, stat
  * 2. Real-time volatility adjustment based on Alpha Vantage News Sentiment for "China Default".
  * 3. Fallback to a high-fidelity institutional baseline (1.4% - 1.8% range).
  */
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+serveIngest('ingest-china-defaults', async (_req) => {
+
 
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -93,16 +90,9 @@ Deno.serve(async (req) => {
 
         await logIngestion(supabase, 'ingest-china-defaults', 'success', row);
 
-        return new Response(JSON.stringify(row), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200,
-        })
-    } catch (error: any) {
+        return { ok: true, counts: {} };} catch (error: any) {
         console.error(error)
         await logIngestion(supabase, 'ingest-china-defaults', 'error', { error: error.message });
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500,
-        })
-    }
+        throw e;
+}
 })

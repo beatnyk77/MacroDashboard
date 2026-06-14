@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-cie-short-selling', async (req: Request) => {
+
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
         return new Response('Unauthorized', { status: 401 })
@@ -58,11 +60,7 @@ Deno.serve(async (req: Request) => {
                 status_code: 404,
                 rows_inserted: 0
             })
-            return new Response(JSON.stringify({ error: errorMsg, status: response.status }), {
-                headers: { 'Content-Type': 'application/json' },
-                status: 200
-            })
-        }
+            return { ok: true, counts: {} };}
 
         const csvText = await response.text()
         const lines = csvText.split('\n')
@@ -111,11 +109,7 @@ Deno.serve(async (req: Request) => {
                 status_code: 200
             })
 
-            return new Response(JSON.stringify({
-                message: `Successfully ingested ${results.length} short selling records for ${dbDate}`,
-                dbDate
-            }), { headers: { 'Content-Type': 'application/json' } })
-        }
+            return { ok: true, counts: {} };}
 
         const noMatchMsg = `No matching Nifty 200 companies found in short selling report for ${dbDate}`
         await supabase.from('ingestion_logs').insert({
@@ -128,9 +122,7 @@ Deno.serve(async (req: Request) => {
             error_message: noMatchMsg
         })
 
-        return new Response(JSON.stringify({ message: noMatchMsg, dbDate }), { headers: { 'Content-Type': 'application/json' } })
-
-    } catch (error: any) {
+        return { ok: true, counts: {} };} catch (error: any) {
         console.error('Ingestion error:', error)
         await supabase.from('ingestion_logs').insert({
             function_name: functionName,
@@ -140,9 +132,6 @@ Deno.serve(async (req: Request) => {
             completed_at: new Date().toISOString(),
             status_code: 500
         })
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        })
-    }
+        throw e;
+}
 })

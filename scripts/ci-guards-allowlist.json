@@ -1,0 +1,11 @@
+{
+  "_README": [
+    "BURN-DOWN FILE — entries may only be REMOVED, never added.",
+    "New violations must be fixed, not allowlisted.",
+    "Format: \"<GUARD-LETTER>:<repo-relative path>\".",
+    "Guard A = swallow-and-return-200 in edge function catch blocks.",
+    "Guard B = vault secret concatenated into ::json/::jsonb cast in migrations.",
+    "Regenerate (maintenance only): node scripts/ci-guards.mjs --update-allowlist"
+  ],
+  "violations": []
+}

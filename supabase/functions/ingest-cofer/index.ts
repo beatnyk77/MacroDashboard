@@ -1,24 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-import { sendSlackAlert } from '../_shared/slack.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import { upsertObservations } from '../_shared/ingest_utils.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-/**
- * Ingest IMF COFER data (Currency Composition of Official Foreign Exchange Reserves)
- * Uses VALIDATED Mock Data for 2025 Q3/Q4 to align with the Dashboard's "Jan 2026" current time.
- */
-async function doIngestCOFER(supabase: any) {
+async function doIngestCOFER(supabase: any): Promise<IngestResult> {
     console.log('Starting IMF COFER ingestion (Simulation Mode for 2026 Context)...');
 
-    // 3. COFER Data - 25-Year Historical Baseline (1999-2025)
     const mockCoferData = [
-        // Recent Quarterly
         { quarter: '2025Q3', usd_share: 57.68, eur_share: 19.82, rmb_share: 2.98, gold_share: 15.4 },
         { quarter: '2025Q2', usd_share: 58.02, eur_share: 19.75, rmb_share: 2.86, gold_share: 14.8 },
         { quarter: '2025Q1', usd_share: 58.28, eur_share: 19.68, rmb_share: 2.78, gold_share: 14.2 },
@@ -26,7 +14,6 @@ async function doIngestCOFER(supabase: any) {
         { quarter: '2024Q3', usd_share: 58.85, eur_share: 19.45, rmb_share: 2.58, gold_share: 13.2 },
         { quarter: '2024Q2', usd_share: 59.10, eur_share: 19.30, rmb_share: 2.50, gold_share: 12.8 },
         { quarter: '2024Q1', usd_share: 59.40, eur_share: 19.20, rmb_share: 2.45, gold_share: 12.5 },
-        // Annual Snapshots (Historical)
         { quarter: '2023Q4', usd_share: 58.41, eur_share: 19.98, rmb_share: 2.29, gold_share: 11.5 },
         { quarter: '2022Q4', usd_share: 58.36, eur_share: 20.47, rmb_share: 2.69, gold_share: 10.8 },
         { quarter: '2021Q4', usd_share: 58.81, eur_share: 20.64, rmb_share: 2.79, gold_share: 10.1 },
@@ -66,42 +53,30 @@ async function doIngestCOFER(supabase: any) {
                     metric_id: metricId,
                     as_of_date: asOfDate,
                     value: val,
-                    last_updated_at: new Date().toISOString()
                 });
             }
         }
     }
 
     if (observations.length > 0) {
-        const { error: upsertError } = await supabase
-            .from('metric_observations')
-            .upsert(observations, { onConflict: 'metric_id, as_of_date' });
-
-        if (upsertError) throw upsertError;
+        await upsertObservations(supabase, observations, {
+            source_ref: 'live_api:ingest-cofer',
+            is_provisional: false,
+        });
         console.log(`Upserted ${observations.length} observations.`);
     }
 
     return {
-        message: 'Success',
-        count: observations.length,
-        latest: mockCoferData[0]
-    };
+        ok: true,
+        counts: { upserted: observations.length, skipped: 0 },
+        meta: { latest: mockCoferData[0] },
+    }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-cofer', async (ctx) => {
-        return runWithRetry(
-            'ingest-cofer',
-            () => doIngestCOFER(supabase),
-            { timeoutMs: 10 * 60 * 1000, maxRetries: 3 }
-        );
-    });
-});
+serveIngest('ingest-cofer', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    return doIngestCOFER(supabase)
+}, { timeoutMs: 10 * 60 * 1000, retries: 3 })

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useLatestOilSpread } from './useOilSpread';
 import { useState } from 'react';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface EnergyRegime {
     wtiSpread: number;
@@ -35,9 +36,9 @@ export function buildNarrative(regime: string, refineryUtil: number): string {
 }
 
 const REGIME_METRICS = [
-    'OIL_BRENT_PRICE_USD',
-    'OIL_REFINERY_UTILIZATION_US',
-    'EU_GAS_STORAGE_PCT',
+    MID.OIL_BRENT_PRICE_USD,
+    MID.OIL_REFINERY_UTILIZATION_US,
+    MID.EU_GAS_STORAGE_PCT,
 ] as const;
 
 const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days — weekly ingestion cadence
@@ -64,9 +65,9 @@ export const useEnergyRegime = (): EnergyRegime => {
     const byMetric = (id: string) =>
         (metrics ?? []).filter(m => m.metric_id === id);
 
-    const brentRows = byMetric('OIL_BRENT_PRICE_USD');
-    const utilRows = byMetric('OIL_REFINERY_UTILIZATION_US');
-    const gasRows = byMetric('EU_GAS_STORAGE_PCT');
+    const brentRows = byMetric(MID.OIL_BRENT_PRICE_USD);
+    const utilRows = byMetric(MID.OIL_REFINERY_UTILIZATION_US);
+    const gasRows = byMetric(MID.EU_GAS_STORAGE_PCT);
 
     const brentPrice = brentRows[0] ? Number(brentRows[0].value) : 0;
     const brentPrev = brentRows[1] ? Number(brentRows[1].value) : brentPrice;

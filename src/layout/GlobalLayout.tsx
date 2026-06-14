@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, NavLink, useSearchParams } from 'react-router-dom';
+import { DefaultSEO } from '@/components/DefaultSEO';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
@@ -70,6 +71,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
         <div
             className="flex flex-col min-h-screen w-full bg-background transition-colors duration-500 ease-in-out"
         >
+            {/* Default canonical + robots for every route; page-level SEOManager overrides this */}
+            <DefaultSEO />
             {/* Skip to main content for keyboard navigation */}
             <a
                 href="#main-content"

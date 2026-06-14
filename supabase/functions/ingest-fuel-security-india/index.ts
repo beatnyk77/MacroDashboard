@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { runIngestion, IngestionContext } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 // Transit days by origin region for heuristic tanker pipeline
 const TRANSIT_DAYS_BY_ORIGIN: Record<string, number> = {
@@ -29,23 +28,7 @@ const CHOKEPOINT_EXPOSED_ORIGINS = new Set([
   'Saudi Arabia', 'Iraq', 'UAE', 'Kuwait', 'Iran', 'Qatar', 'Oman'
 ]);
 
-Deno.serve((_req: Request) => {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  return runIngestion(supabase, 'ingest-fuel-security-india', async (_ctx: IngestionContext) => {
-    const result = await runWithRetry(
-      'ingest-fuel-security-india',
-      () => doIngestFuelSecurityIndia(supabase),
-      { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-    )
-    if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-    return result.value!
-  });
-});
-
-async function doIngestFuelSecurityIndia(supabase: SupabaseClient) {
+async function doIngestFuelSecurityIndia(supabase: SupabaseClient, eiaApiKey: string, fredKey: string): Promise<IngestResult> {
   const today = new Date().toISOString().split('T')[0];
   const stepLogs: Record<string, unknown>[] = [];
 
@@ -56,7 +39,6 @@ async function doIngestFuelSecurityIndia(supabase: SupabaseClient) {
 
   try {
     console.log('Fetching India oil consumption from EIA...');
-    const eiaApiKey = Deno.env.get('EIA_API_KEY');
     if (!eiaApiKey) throw new Error('Missing EIA_API_KEY for India fuel security');
 
     // EIA International: India crude oil consumption (thousand barrels per day)
@@ -91,7 +73,6 @@ async function doIngestFuelSecurityIndia(supabase: SupabaseClient) {
 
   try {
       console.log('Fetching India ending stocks from EIA International...');
-      const eiaApiKey = Deno.env.get('EIA_API_KEY');
 
       if (eiaApiKey) {
           // EIA International: India crude oil + petroleum products ending stocks (Mbbl)
@@ -169,7 +150,6 @@ async function doIngestFuelSecurityIndia(supabase: SupabaseClient) {
       inrPerUsd = Number(fxObs.value);
     } else {
       // Try FRED direct if DB miss
-      const fredKey = Deno.env.get('FRED_API_KEY');
       if (fredKey) {
         try {
           const fxUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=DEXINUS&api_key=${fredKey}&file_type=json&sort_order=desc&limit=1`;
@@ -347,7 +327,18 @@ async function doIngestFuelSecurityIndia(supabase: SupabaseClient) {
   if (upsertError) throw upsertError;
 
   return {
-    rows_upserted: 1,
-    metadata: { steps: stepLogs, as_of_date: today }
+    ok: true,
+    counts: { upserted: 1, skipped: 0 },
+    meta: { steps: stepLogs, as_of_date: today }
   };
 }
+
+serveIngest('ingest-fuel-security-india', async (_req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  )
+  const eiaApiKey = Deno.env.get('EIA_API_KEY') ?? ''
+  const fredKey = Deno.env.get('FRED_API_KEY') ?? ''
+  return doIngestFuelSecurityIndia(supabase, eiaApiKey, fredKey)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

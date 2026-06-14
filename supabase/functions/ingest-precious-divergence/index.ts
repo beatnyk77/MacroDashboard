@@ -1,17 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { fetchAlphaVantageCommodity, fetchAlphaVantageFX, upsertObservations } from '../_shared/ingest_utils.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-/**
- * Scrape benchmark prices from Shanghai Gold Exchange (SGE)
- */
 async function fetchSGEPrice(contract: string, retries = 3): Promise<number> {
     const today = new Date();
     const dateStr = today.toISOString().split('T')[0];
@@ -62,8 +53,7 @@ async function fetchSGEPrice(contract: string, retries = 3): Promise<number> {
     return 0;
 }
 
-async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: string) {
-    // 1. Fetch benchmark data from AlphaVantage
+async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: string): Promise<IngestResult> {
     const [goldData, silverData, fxData] = await Promise.all([
         fetchAlphaVantageCommodity('GOLD', avApiKey, 'daily'),
         fetchAlphaVantageCommodity('SILVER', avApiKey, 'daily'),
@@ -79,17 +69,13 @@ async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: st
     const usdcny = fxData[0].value
     const asOfDate = goldData[0].date
 
-    // 2. Shanghai Prices (SGE)
     let gold_sge_rmb_g = await fetchSGEPrice('SHAU').catch(() => 0);
     let silver_sge_rmb_kg = await fetchSGEPrice('SHAG').catch(() => 0);
 
-    // Fallback for Silver SGE (using internal estimate if scrape fails)
-    // Note: Removing Yahoo XAGCNY fallback as requested to remove Yahoo references
     if (silver_sge_rmb_kg === 0) {
-        console.warn('Silver SGE scrape failed, no fallback available (Yahoo disabled)');
+        console.warn('Silver SGE scrape failed, no fallback available');
     }
 
-    // 3. Compute Spreads
     const TROY_OZ_TO_GRAMS = 31.1035
     const gold_shanghai_usd = gold_sge_rmb_g > 0 ? (gold_sge_rmb_g * TROY_OZ_TO_GRAMS) / usdcny : 0;
     const gold_spread_pct = gold_shanghai_usd > 0 ? ((gold_shanghai_usd - gold_bench) / gold_bench) * 100 : 0;
@@ -111,45 +97,24 @@ async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: st
     }
 
     console.log(`Upserting ${observations.length} observations...`)
-    const { count } = await upsertObservations(supabase, observations);
+    const { count } = await upsertObservations(supabase, observations, {
+        source_ref: 'live_api:ingest-precious-divergence',
+        is_provisional: false,
+    });
 
     return {
-        rows_inserted: count,
-        metadata: {
-            gold_spread: gold_spread_pct,
-            silver_spread: silver_spread_pct,
-            date: asOfDate,
-            usdcny
-        }
-    };
+        ok: true,
+        counts: { upserted: count ?? 0, skipped: 0 },
+        meta: { gold_spread: gold_spread_pct, silver_spread: silver_spread_pct, date: asOfDate, usdcny },
+    }
 }
 
-/**
- * Precious Metals Divergence Ingestion
- * Source: AlphaVantage (Benchmark) + SGE (Shanghai)
- */
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    const avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY')
-    if (!avApiKey) {
-        return new Response(JSON.stringify({ error: 'ALPHAVANTAGE_API_KEY not found' }), { status: 500 })
-    }
-
-    return runIngestion(supabase, 'ingest-precious-divergence', async (ctx) => {
-        console.log('Starting Precious Metals Divergence ingestion...')
-        return runWithRetry(
-            'ingest-precious-divergence',
-            () => doIngestPreciousDivergence(ctx.supabase, avApiKey),
-            {
-                maxRetries: 3,
-                backoffMs: 2000,
-                timeoutMs: 15 * 60 * 1000 // 15 minutes
-            }
-        )
-    })
-});
+serveIngest('ingest-precious-divergence', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    const avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY') ?? ''
+    if (!avApiKey) throw new Error('ALPHAVANTAGE_API_KEY not found')
+    return doIngestPreciousDivergence(supabase, avApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

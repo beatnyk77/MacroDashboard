@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 type TradeDataRow = {
     country_code: string;
@@ -18,9 +15,10 @@ type TradeDataRow = {
     metadata?: any;
 };
 
-Deno.serve(async (req) => {
+serveIngest('ingest-trade-global', async (req) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+        return { ok: true, counts: {} };
     }
 
     try {
@@ -94,15 +92,11 @@ Deno.serve(async (req) => {
             results.china = { status: 'failed', error: e.message };
         }
 
-        return new Response(JSON.stringify({ success: true, results }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return { ok: true, counts: {} };
 
     } catch (err: any) {
-        return new Response(JSON.stringify({ error: err.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        throw e;
+
     }
 });
 

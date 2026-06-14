@@ -20,18 +20,6 @@ ON public.india_macro_snapshots
 FOR SELECT
 USING (true);
 
--- Schedule the edge function via pg_cron
--- This assumes the extension exists and the function URL is accessible
--- 0 0 4 * * runs on the 4th of every month at midnight
-SELECT
-  cron.schedule(
-    'ingest-india-macro-snapshot-job',
-    '0 0 4 * *',
-    $$
-    SELECT
-      net.http_post(
-        url:='https://graphiquestor.com/functions/v1/ingest-india-macro-snapshot',
-        headers:='{"Content-Type": "application/json", "Authorization": "Bearer ' || current_setting('vault.service_role_key') || '"}'::jsonb
-      ) as request_id;
-    $$
-  );
+-- [cron.schedule omitted] SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled ingest-india-macro-snapshot-job (0 0 4 * *).
+-- Rescheduled with safe COALESCE + x-cron-secret vault pattern on 2026-06-13.

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface CurrencyWarsData {
     date: string;
@@ -29,18 +30,19 @@ export const useCurrencyWars = () => {
     return useQuery<CurrencyWarsData[]>({
         queryKey: ['currency-wars'],
         queryFn: async () => {
+            // USD_CNY/BRL/MXN/TWD are stubs: 0 rows in DB, no backend writes them yet.
             const metricIds = [
-                'FED_FUNDS_RATE',
-                'IN_REPO_RATE',
-                'USD_INR_RATE',
-                'POLICY_DIVERGENCE_INDEX',
-                'FLOW_TENSION_INDEX',
-                'USD_CNY_RATE',
-                'USD_BRL_RATE',
-                'USD_MXN_RATE',
-                'USD_TWD_RATE',
-                'COMPOSITE_PRESSURE_INDEX',
-                'EM_RELATIVE_PRESSURE'
+                MID.FED_FUNDS_RATE,
+                MID.IN_REPO_RATE,
+                MID.USD_INR_RATE,
+                MID.POLICY_DIVERGENCE_INDEX,
+                MID.FLOW_TENSION_INDEX,
+                MID.USD_CNY_RATE,
+                MID.USD_BRL_RATE,
+                MID.USD_MXN_RATE,
+                MID.USD_TWD_RATE,
+                MID.COMPOSITE_PRESSURE_INDEX,
+                MID.EM_RELATIVE_PRESSURE,
             ];
 
             const { data, error } = await supabase
@@ -57,17 +59,17 @@ export const useCurrencyWars = () => {
             const latestValues: Record<string, number> = {};
 
             const keyMap: Record<string, keyof CurrencyWarsData> = {
-                'FED_FUNDS_RATE': 'fed_rate',
-                'IN_REPO_RATE': 'rbi_rate',
-                'USD_INR_RATE': 'usd_inr',
-                'POLICY_DIVERGENCE_INDEX': 'divergence',
-                'FLOW_TENSION_INDEX': 'tension',
-                'USD_CNY_RATE': 'usd_cny',
-                'USD_BRL_RATE': 'usd_brl',
-                'USD_MXN_RATE': 'usd_mxn',
-                'USD_TWD_RATE': 'usd_twd',
-                'COMPOSITE_PRESSURE_INDEX': 'composite_pressure',
-                'EM_RELATIVE_PRESSURE': 'em_relative_pressure'
+                [MID.FED_FUNDS_RATE]: 'fed_rate',
+                [MID.IN_REPO_RATE]: 'rbi_rate',
+                [MID.USD_INR_RATE]: 'usd_inr',
+                [MID.POLICY_DIVERGENCE_INDEX]: 'divergence',
+                [MID.FLOW_TENSION_INDEX]: 'tension',
+                [MID.USD_CNY_RATE]: 'usd_cny',
+                [MID.USD_BRL_RATE]: 'usd_brl',
+                [MID.USD_MXN_RATE]: 'usd_mxn',
+                [MID.USD_TWD_RATE]: 'usd_twd',
+                [MID.COMPOSITE_PRESSURE_INDEX]: 'composite_pressure',
+                [MID.EM_RELATIVE_PRESSURE]: 'em_relative_pressure',
             };
 
             (data as MetricObservation[]).forEach(obs => {

@@ -7,6 +7,7 @@ import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRan
 import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
 import { SEOManager } from '@/components/SEOManager'
+import { RelatedContent } from '@/components/RelatedContent'
 import { useRecentHSCodes } from '../features/trade/hooks/useRecentHSCodes'
 
 const HSCodeOverviewPage: React.FC = () => {
@@ -201,6 +202,7 @@ const HSCodeOverviewPage: React.FC = () => {
                     refreshing={state.status === 'refreshing'}
                 />
             )}
+            <RelatedContent />
         </div>
     )
 }

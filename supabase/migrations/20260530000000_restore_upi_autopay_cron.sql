@@ -1,29 +1,6 @@
--- Restore and update the UPI Autopay cron job
--- This was accidentally removed during a bulk cron auth standardization and is now set to run daily
--- to account for varying publication dates from NPCI.
-
--- Unschedule just in case it exists
-DO $$
-BEGIN
-    PERFORM cron.unschedule('ingest-upi-autopay-daily');
-    PERFORM cron.unschedule('ingest-upi-autopay-monthly');
-EXCEPTION WHEN OTHERS THEN
-    NULL;
-END $$;
-
--- Schedule it daily at 8:30 AM
-SELECT cron.schedule(
-    'ingest-upi-autopay-daily',
-    '30 8 * * *',
-    format(
-        'SELECT net.http_post(' ||
-        'url := ''https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/ingest-upi-autopay'', ' ||
-        'headers := jsonb_build_object(' ||
-        '''Content-Type'', ''application/json'', ' ||
-        '''Authorization'', ''Bearer '' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = ''SUPABASE_SERVICE_ROLE_KEY'' LIMIT 1)' ||
-        '), ' ||
-        'body := ''{}''::jsonb, ' ||
-        'timeout_milliseconds := 55000' ||
-        ') AS request_id;'
-    )
-);
+-- SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Unscheduled ingest-upi-autopay-daily and ingest-upi-autopay-monthly,
+--           rescheduled ingest-upi-autopay-daily (30 8 * * *).
+-- All cron schedule operations in this migration were unscheduled and rescheduled
+-- with the safe COALESCE + x-cron-secret vault pattern on 2026-06-13.
+-- This file is retained as a historical record only — do not re-apply.

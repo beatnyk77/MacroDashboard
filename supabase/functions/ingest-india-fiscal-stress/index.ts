@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]> {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=300`;
@@ -50,27 +44,8 @@ const INDIA_FISCAL_DATA = [
     { fy: '2014-15', date: '2015-03-31', interest_payments: 390000, revenue_receipts: 1200000, total_expenditure: 1780000, gross_tax_revenue: 1350000, revenue_deficit: 580000, fiscal_deficit: 720000, general_govt_debt: 7800000 },
 ];
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-india-fiscal-stress', async (ctx) => {
-        const result = await runWithRetry(
-            'ingest-india-fiscal-stress',
-            () => doIngestIndiaFiscalStress(supabase, fredApiKey),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    })
-})
-
 // ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestIndiaFiscalStress(supabase: any, fredApiKey: string) {
+async function doIngestIndiaFiscalStress(supabase: any, fredApiKey: string): Promise<IngestResult> {
     console.log('Starting India fiscal stress data ingestion...');
 
     // Fetch India GDP from FRED (annual data in current USD)
@@ -138,7 +113,17 @@ async function doIngestIndiaFiscalStress(supabase: any, fredApiKey: string) {
     }
 
     return {
-        rows_inserted: upsertData.length,
-        metadata: { latest: upsertData[0] }
+        ok: true,
+        counts: { upserted: upsertData.length, skipped: 0 },
+        meta: { latest: upsertData[0] }
     };
 }
+
+serveIngest('ingest-india-fiscal-stress', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    return doIngestIndiaFiscalStress(supabase, fredApiKey)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

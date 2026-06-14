@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 const CENTRAL_FISCAL_DATA = [
     { fy: '2024-25', date: '2025-03-31', capex: 1111111, revenue_exp: 3708870, total_exp: 4820881, subsidies: 381175, committed: 2000000, gdp: 32771808 },
@@ -40,24 +34,7 @@ const STATE_FISCAL_DATA = [
     { code: 'HR', name: 'Haryana', fy: '2023-24', capex_pct_gsdp: 1.8, rev_exp_pct_gsdp: 12.4, comm_pct_receipts: 35, subsidies_pct_gsdp: 1.1 },
 ];
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-india-fiscal-allocation', async (ctx) => {
-        const result = await runWithRetry(
-            'ingest-india-fiscal-allocation',
-            () => doIngestIndiaFiscalAllocation(supabase),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    })
-})
-
-async function doIngestIndiaFiscalAllocation(supabase: any) {
+async function doIngestIndiaFiscalAllocation(supabase: any): Promise<IngestResult> {
     console.log('Starting India Fiscal Allocation Ingestion...');
     const upsertData: any[] = [];
 
@@ -92,5 +69,18 @@ async function doIngestIndiaFiscalAllocation(supabase: any) {
             .upsert(upsertData, { onConflict: 'entity_type,state_code,fy' });
         if (error) throw error;
     }
-    return { rows_inserted: upsertData.length, metadata: {} };
+
+    return {
+        ok: true,
+        counts: { upserted: upsertData.length, skipped: 0 },
+        meta: {}
+    };
 }
+
+serveIngest('ingest-india-fiscal-allocation', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    return doIngestIndiaFiscalAllocation(supabase)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

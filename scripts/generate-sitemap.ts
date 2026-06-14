@@ -1,24 +1,50 @@
 import { createClient } from '@supabase/supabase-js';
 import { writeFileSync } from 'fs';
+import { execSync } from 'child_process';
 
 const BASE_URL = 'https://graphiquestor.com';
 
+/**
+ * Returns the date of the last git commit touching the given source file,
+ * formatted as YYYY-MM-DD.  Falls back to today's build date if git is
+ * unavailable or the file isn't tracked.
+ *
+ * Used for static pages whose content changes only when the source file
+ * changes — giving Google accurate freshness signals without fabricating dates.
+ */
+function gitLastmod(sourceFile: string): string {
+  try {
+    const iso = execSync(`git log -1 --format=%cI -- ${sourceFile}`, { encoding: 'utf8' }).trim();
+    if (iso) return iso.split('T')[0];
+  } catch {
+    // git unavailable (e.g. CI without repo) — fall through to build date
+  }
+  return new Date().toISOString().split('T')[0];
+}
+
+const BUILD_DATE = new Date().toISOString().split('T')[0];
+
 async function generateSitemap() {
-  // Static routes (always present)
+  // Static routes — lastmod strategy:
+  //   • Live-data pages (changefreq daily/weekly): data genuinely refreshes on
+  //     every ingestion run, so build date is the honest answer.
+  //   • Editorial/static pages: git log date of the owning component file.
   const staticRoutes = [
-    { url: '/',                    priority: '1.0', changefreq: 'daily'   },
-    { url: '/macro-brief',         priority: '0.9', changefreq: 'daily'   },
-    { url: '/weekly-narrative',    priority: '0.8', changefreq: 'weekly'  },
-    { url: '/regime-digest',       priority: '0.8', changefreq: 'monthly' },
-    { url: '/intel/india',         priority: '0.9', changefreq: 'daily'   },
-    { url: '/intel/china',         priority: '0.8', changefreq: 'daily'   },
-    { url: '/trade',               priority: '0.8', changefreq: 'weekly'  },
-    { url: '/labs',                priority: '0.7', changefreq: 'weekly'  },
-    { url: '/api-docs',            priority: '0.8', changefreq: 'monthly' },
-    { url: '/demo',                priority: '0.7', changefreq: 'monthly' },
-    { url: '/macro-brief/archive', priority: '0.6', changefreq: 'weekly'  },
-    { url: '/glossary',            priority: '0.7', changefreq: 'weekly'  },
-    { url: '/countries',           priority: '0.7', changefreq: 'weekly'  },
+    // Live-data pages — lastmod = build date (data refreshes daily via crons)
+    { url: '/',                    priority: '1.0', changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/macro-brief',         priority: '0.9', changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/weekly-narrative',    priority: '0.8', changefreq: 'weekly',  lastmod: BUILD_DATE },
+    { url: '/regime-digest',       priority: '0.8', changefreq: 'monthly', lastmod: BUILD_DATE },
+    { url: '/intel/india',         priority: '0.9', changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/intel/china',         priority: '0.8', changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/trade',               priority: '0.8', changefreq: 'weekly',  lastmod: BUILD_DATE },
+    { url: '/countries',           priority: '0.7', changefreq: 'weekly',  lastmod: BUILD_DATE },
+    // Static/editorial pages — lastmod = git log date of owning component
+    { url: '/labs',                priority: '0.7', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/labs/ThematicLabsIndexPage.tsx') },
+    { url: '/api-docs',            priority: '0.8', changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIDocsPage.tsx') },
+    { url: '/glossary',            priority: '0.7', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/GlossaryIndexPage.tsx') },
+    { url: '/macro-brief/archive', priority: '0.6', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroBriefArchivePage.tsx') },
+    { url: '/demo',                priority: '0.7', changefreq: 'monthly', lastmod: BUILD_DATE },
   ];
 
   // Dynamic routes require Supabase — degrade gracefully if env vars unavailable (e.g. CI)
@@ -74,10 +100,14 @@ async function generateSitemap() {
         return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}`;
       })
     );
+    // Derive lastmod from the month itself (first day): the digest was
+    // created during that month, so the month-start date is the earliest
+    // honest bound and is always distinct per entry.
     digestRoutes = [...monthSet].map(ym => ({
       url: `/regime-digest/${ym}`,
       priority: '0.7',
       changefreq: 'never' as const,
+      lastmod: `${ym.replace('/', '-')}-01`,
     }));
   } else {
     console.warn('⚠ VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set — generating sitemap with static routes only.');

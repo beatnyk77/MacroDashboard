@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 import { sendSlackAlert } from '../_shared/slack.ts'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-events', async (req: Request) => {
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+    return { ok: true, counts: {} };}
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -60,16 +57,12 @@ Deno.serve(async (req: Request) => {
 
     if (upsertError) throw upsertError;
 
-    return new Response(JSON.stringify({ message: 'Events updated successfully', count: events.length }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return { ok: true, counts: {} };
 
   } catch (error: any) {
     console.error('Error in ingest-events:', error.message);
     await sendSlackAlert(`GraphiQuestor ingestion failed: ingest-events - ${error.message}`);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    throw error;
+
   }
 })

@@ -1,7 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const url = 'https://debdriyzfcwvgrhzzzre.supabase.co';
-const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlYmRyaXl6ZmN3dmdyaHp6enJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0NDczOTAsImV4cCI6MjA4NTAyMzM5MH0.jhSYCXDWIScrRgVqt947i_ggAotYn_NN2qxFXQOhplc';
+const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const key = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!url || !key) {
+  console.error("Missing SUPABASE_URL or SUPABASE_ANON_KEY in environment");
+  process.exit(1);
+}
 
 const supabase = createClient(url, key);
 
@@ -10,7 +17,7 @@ async function testQuery() {
         .from('vw_latest_daily_signal')
         .select('*')
         .single();
-    
+
     console.log("Error:", error);
     console.log("Data:", data);
 }

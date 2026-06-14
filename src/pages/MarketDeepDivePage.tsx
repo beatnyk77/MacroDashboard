@@ -12,6 +12,7 @@ import { FreshnessChip } from '../components/FreshnessChip'
 import { DrilldownSkeleton } from '../features/trade/components/DrilldownSkeleton'
 import { cn } from '../lib/utils'
 import { SEOManager } from '@/components/SEOManager'
+import { RelatedContent } from '@/components/RelatedContent'
 
 const MarketDeepDivePage: React.FC = () => {
     const { code, iso } = useParams<{ code: string; iso: string }>()
@@ -219,6 +220,7 @@ const MarketDeepDivePage: React.FC = () => {
                     </div>
                 )}
             </div>
+            <RelatedContent />
         </div>
     )
 }

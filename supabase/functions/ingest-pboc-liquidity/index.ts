@@ -1,18 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 /**
  * Ingest PBOC Liquidity & Monetary Operations
  * Uses FRED API for M2 (MYAGM2CNM189N), LPR proxies, FX Reserves
  * Computes: Regime Label, PBOC vs Fed Gap
  */
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+serveIngest('ingest-pboc-liquidity', async (_req: Request) => {
+
 
     try {
         const supabase = createClient(
@@ -123,15 +120,10 @@ Deno.serve(async (req: Request) => {
 
         console.log('[PBOC] Done. Regime:', regime_label);
 
-        return new Response(JSON.stringify({ success: true, regime: regime_label, m2Growth }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200
-        });
+        return { ok: true, counts: {} };
     } catch (error: any) {
         console.error('[PBOC] Error:', error);
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        throw e;
+
     }
 });

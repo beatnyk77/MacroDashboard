@@ -3,6 +3,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,20 +69,86 @@ function isRoutable(href) {
     return true;
 }
 
+// Routes whose content is entirely static (editorial/docs).
+// lastmod = date of last git commit touching the owning component file.
+// All other routes either carry their date in the URL (content pages) or
+// refresh daily via cron jobs (live-data pages → build date is honest).
+const STATIC_PAGE_FILES = {
+    '/about':                             'src/pages/About.tsx',
+    '/terms':                             'src/pages/TermsOfService.tsx',
+    '/privacy':                           'src/pages/PrivacyPolicy.tsx',
+    '/glossary':                          'src/pages/GlossaryIndexPage.tsx',
+    '/methodology':                       'src/pages/MetricsMethodologyPage.tsx',
+    '/api-docs':                          'src/pages/APIDocsPage.tsx',
+    '/api-access':                        'src/pages/APIAccessPage.tsx',
+    '/labs':                              'src/pages/labs/ThematicLabsIndexPage.tsx',
+    '/macro-brief/archive':               'src/pages/MacroBriefArchivePage.tsx',
+    '/methods/net-liquidity-z-score':     'src/pages/methods/NetLiquidityZScorePage.tsx',
+    '/methods/debt-gold-z-score':         'src/pages/methods/DebtGoldZScorePage.tsx',
+    '/methods/loan-to-job-efficiency':    'src/pages/methods/LoanToJobEfficiencyPage.tsx',
+    '/methods/energy-dependency-ratio':   'src/pages/methods/EnergyDependencyRatioPage.tsx',
+    '/methods/fiscal-dominance-meter':    'src/pages/methods/FiscalDominanceMeterPage.tsx',
+    '/methods/m2-gold-ratio':             'src/pages/methods/M2GoldRatioPage.tsx',
+    '/methods/de-dollarization-guide':    'src/pages/methods/DeDollarizationGuide.tsx',
+    '/methods/fed-monetization-monitor':  'src/pages/methods/FedMonetizationPage.tsx',
+    '/methods/india-credit-cycle-clock':  'src/pages/methods/IndiaCreditCyclePage.tsx',
+};
+
+/** Run git log for one file; return YYYY-MM-DD or fall back to build date. */
+function gitLastmod(file) {
+    try {
+        const iso = execSync(`git log -1 --format=%cI -- ${file}`, { encoding: 'utf8' }).trim();
+        if (iso) return iso.split('T')[0];
+    } catch {
+        // git unavailable in this environment
+    }
+    return BUILD_DATE;
+}
+
+/**
+ * Per-route lastmod strategy:
+ *  1. Dated-content URLs  (/macro-brief/YYYY-MM-DD, /weekly-narrative/YYYY-MM-DD,
+ *     /regime-digest/YYYY/MM)  → parse date from path (each entry unique).
+ *  2. Static/editorial pages → git log date of owning component file.
+ *  3. Everything else (live-data pages, countries, trade, labs/*)
+ *     → build date (data refreshes daily via scheduled cron jobs; honest).
+ */
+function routeLastmod(route) {
+    // 1a. Morning brief: /macro-brief/YYYY-MM-DD
+    const briefMatch = route.match(/^\/macro-brief\/(\d{4}-\d{2}-\d{2})$/);
+    if (briefMatch) return briefMatch[1];
+
+    // 1b. Weekly narrative: /weekly-narrative/YYYY-MM-DD
+    const narrativeMatch = route.match(/^\/weekly-narrative\/(\d{4}-\d{2}-\d{2})$/);
+    if (narrativeMatch) return narrativeMatch[1];
+
+    // 1c. Regime digest: /regime-digest/YYYY/MM
+    const digestMatch = route.match(/^\/regime-digest\/(\d{4})\/(\d{2})$/);
+    if (digestMatch) return `${digestMatch[1]}-${digestMatch[2]}-01`;
+
+    // 2. Static page with a known source file
+    if (STATIC_PAGE_FILES[route]) return gitLastmod(STATIC_PAGE_FILES[route]);
+
+    // 3. Live-data page — build date is the honest lastmod
+    return BUILD_DATE;
+}
+
+const BUILD_DATE = new Date().toISOString().split('T')[0];
+
 // Function to generate the new exhaustive sitemap.xml
 function generateSitemap(routes) {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-    const today = new Date().toISOString().split('T')[0];
-    
+
     // Sort routes for a cleaner XML output
     const sortedRoutes = Array.from(routes).sort();
-    
+
     for (const route of sortedRoutes) {
-        xml += `  <url>\n`;
-        xml += `    <loc>https://graphiquestor.com${route}</loc>\n`;
-        xml += `    <lastmod>${today}</lastmod>\n`;
+        const lastmod = routeLastmod(route);
         // Basic priority logic
         const priority = route === '/' ? '1.0' : route.split('/').length > 2 ? '0.7' : '0.8';
+        xml += `  <url>\n`;
+        xml += `    <loc>https://graphiquestor.com${route}</loc>\n`;
+        xml += `    <lastmod>${lastmod}</lastmod>\n`;
         xml += `    <priority>${priority}</priority>\n`;
         xml += `  </url>\n`;
     }

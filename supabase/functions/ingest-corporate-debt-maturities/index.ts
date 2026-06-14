@@ -16,12 +16,7 @@
 // Schedule: 5th of each month at 14:00 UTC (see cron migration).
 
 import { createClient } from '@supabase/supabase-js';
-declare const Deno: any;
-
-const CORS = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { serveIngest } from '../_shared/handler.ts';
 
 // FRED series IDs
 const S = {
@@ -209,9 +204,7 @@ async function processCorpDebt(
     return { success: true, count: rows.length };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
-
+serveIngest('ingest-corporate-debt-maturities', async (req: Request) => {
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -220,38 +213,16 @@ Deno.serve(async (req: Request) => {
         if (!fredApiKey) throw new Error('FRED_API_KEY env var not set');
 
         const supabase = createClient(supabaseUrl, supabaseKey);
-        const startTime = Date.now();
 
         const result = await processCorpDebt(supabase, fredApiKey);
-        const durationMs = Date.now() - startTime;
-
-        await supabase.from('ingestion_logs').insert({
-            function_name: 'ingest-corporate-debt-maturities',
-            status: result.success ? 'success' : 'failed',
-            rows_inserted: result.count ?? 0,
-            start_time: new Date(startTime).toISOString(),
-            error_message: result.error ?? null,
-            metadata: { durationMs, skipped: result.skipped ?? false },
-        });
 
         if (!result.success) {
-            return new Response(JSON.stringify({ success: false, error: result.error }), {
-                status: 500,
-                headers: { ...CORS, 'Content-Type': 'application/json' },
-            });
+            return { ok: false, error: result.error ?? 'processCorpDebt returned failure' };
         }
 
-        return new Response(JSON.stringify({ ...result, durationMs }), {
-            status: 200,
-            headers: { ...CORS, 'Content-Type': 'application/json' },
-        });
+        return { ok: true, counts: { rows: result.count ?? 0 } };
 
     } catch (err: any) {
-        const msg = err.message ?? String(err);
-        console.error('[ingest-corporate-debt-maturities] Fatal:', msg);
-        return new Response(JSON.stringify({ success: false, error: msg }), {
-            status: 500,
-            headers: { ...CORS, 'Content-Type': 'application/json' },
-        });
+        throw err;
     }
 });

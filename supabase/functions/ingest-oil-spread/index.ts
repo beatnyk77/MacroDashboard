@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 // WTI NYMEX month codes: Jan=F, Feb=G, Mar=H, Apr=J, May=K, Jun=M, Jul=N, Aug=Q, Sep=U, Oct=V, Nov=X, Dec=Z
 const MONTH_CODES = 'FGHJKMNQUVXZ';
@@ -99,10 +96,10 @@ async function fetchYahooHistory(ticker: string): Promise<Array<{ date: string; 
         .sort((a, b) => b.date.localeCompare(a.date)); // newest first
 }
 
-declare const Deno: any;
 
-Deno.serve(async (_req: Request) => {
-    if (_req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+serveIngest('ingest-oil-spread', async (_req: Request) => {
+
+    if (_req.method === 'OPTIONS') return { ok: true, counts: {} };
 
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,
@@ -207,10 +204,7 @@ Deno.serve(async (_req: Request) => {
             start_time: now,
         });
 
-        return new Response(JSON.stringify({
-            success: true, rows_upserted: upserted,
-            date: latest.date, spread: latest.spread, regime: latest.regime,
-        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        return { ok: true, counts: {} };
 
     } catch (err: unknown) {
         const msg = (err as Error).message ?? String(err);
@@ -219,8 +213,7 @@ Deno.serve(async (_req: Request) => {
             function_name: 'ingest-oil-spread', status: 'FAILED',
             metadata: { error: msg }, start_time: new Date().toISOString(),
         });
-        return new Response(JSON.stringify({ error: msg }), {
-            status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        throw _;
+
     }
 });

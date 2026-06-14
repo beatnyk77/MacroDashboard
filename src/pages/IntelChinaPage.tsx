@@ -5,6 +5,11 @@ import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { m } from 'framer-motion';
 import { Globe, TrendingDown, ArrowRight, Package2, Leaf, Cpu } from 'lucide-react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { RelatedContent } from '@/components/RelatedContent';
 
 // Lazy-load all sections
 const ChinaMacroPulseSection = lazy(() =>
@@ -56,6 +61,8 @@ const colorMap: Record<string, string> = {
 };
 
 export const IntelChinaPage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.CN_GDP_GROWTH_YOY);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const placeSchema = {
         "@context": "https://schema.org",
         "@type": "Place",
@@ -147,12 +154,15 @@ export const IntelChinaPage: React.FC = () => {
                         <span className="text-6xl md:text-8xl select-none">🇨🇳</span>
                         <div className="flex-1">
                             <p className="text-xs font-black text-red-400 uppercase tracking-uppercase mb-2">GraphiQuestor Intelligence Series</p>
-                            <h1 className="text-4xl md:text-6xl font-black tracking-heading text-white leading-none mb-4">
-                                China<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-300 to-amber-400">
-                                    Macro Hub
-                                </span>
-                            </h1>
+                            <div className="flex items-center gap-3 mb-4">
+                                <h1 className="text-4xl md:text-6xl font-black tracking-heading text-white leading-none">
+                                    China<br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-300 to-amber-400">
+                                        Macro Hub
+                                    </span>
+                                </h1>
+                                <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                            </div>
                             <p className="mt-2 text-muted-foreground text-sm md:text-base max-w-2xl leading-relaxed">
                                 Institutional-grade macro intelligence for the world's second-largest economy.
                                 Daily coverage of PBOC liquidity operations, PMI divergence, trade flows, energy transition,
@@ -373,6 +383,7 @@ export const IntelChinaPage: React.FC = () => {
 
             </div>
 
+            <RelatedContent />
             <InstitutionalFooter />
         </div>
     );

@@ -35,28 +35,6 @@ COMMENT ON TABLE public.gold_debt_coverage_g20 IS 'Government debt per gold ounc
 COMMENT ON COLUMN public.gold_debt_coverage_g20.debt_local IS 'Total government debt in local currency units.';
 COMMENT ON COLUMN public.gold_debt_coverage_g20.coverage_ratio IS 'Percentage of government debt backed by gold reserves at current market prices.';
 
--- Schedule monthly ingestion if not already exists
--- Using public.schedule_standard_cron helper from 20260310000001 migration
--- Note: This assumes the helper exists. If not, the cron.schedule should be used directly.
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'schedule_standard_cron') THEN
-        PERFORM public.schedule_standard_cron('ingest-gold-debt-coverage-monthly', '30 2 1 * *', 'ingest-gold-debt-coverage');
-    ELSE
-        PERFORM cron.schedule(
-            'ingest-gold-debt-coverage-monthly',
-            '30 2 1 * *',
-            format(
-                'SELECT net.http_post(' ||
-                'url := ''https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/ingest-gold-debt-coverage'', ' ||
-                'headers := jsonb_build_object(' ||
-                '''Content-Type'', ''application/json'', ' ||
-                '''Authorization'', ''Bearer '' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = ''SUPABASE_SERVICE_ROLE_KEY'' LIMIT 1)' ||
-                '), ' ||
-                'body := ''{}''::jsonb, ' ||
-                'timeout_milliseconds := 55000' ||
-                ') AS request_id;'
-            )
-        );
-    END IF;
-END $$;
+-- [cron.schedule omitted] SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled ingest-gold-debt-coverage-monthly (30 2 1 * *).
+-- Rescheduled with safe COALESCE + x-cron-secret vault pattern on 2026-06-13.

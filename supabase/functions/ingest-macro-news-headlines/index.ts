@@ -3,11 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.3.2'
 import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
 import { withTimeout } from '../_shared/timeout-guard.ts'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 const FEEDS = [
     // Google News RSS — publicly accessible, no paywall
@@ -55,10 +52,10 @@ function isValidUrl(url: string): boolean {
         (lower.startsWith('http://') || lower.startsWith('https://'));
 }
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-macro-news-headlines', async (req: Request) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+        return { ok: true, counts: {} };}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -212,11 +209,7 @@ Deno.serve(async (req: Request) => {
             metadata: { summary }
         });
 
-        return new Response(JSON.stringify(summary), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-
-    } catch (error: any) {
+        return { ok: true, counts: {} };} catch (error: any) {
         console.error('Master Error:', error.message)
 
         // Ensure log end is recorded
@@ -228,9 +221,6 @@ Deno.serve(async (req: Request) => {
             console.error('Failed to log News Ingestion end:', logErr);
         }
 
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-    }
+        throw e;
+}
 })

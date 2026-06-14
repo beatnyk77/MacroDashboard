@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 interface ImportData {
     country: string;
@@ -102,9 +99,10 @@ function processComtradeItems(items: any[], country: string, metal: string, year
     }];
 }
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-commodity-imports', async (req: Request) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+        return { ok: true, counts: {} };
     }
 
     try {
@@ -193,19 +191,11 @@ Deno.serve(async (req: Request) => {
             }
         }
 
-        return new Response(JSON.stringify({
-            success: true,
-            message: `Processed ${totalInserted} records.`,
-            meta: { countries, metals, timeframe: `${startYear}-${currentYear}` }
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return { ok: true, counts: {} };
 
     } catch (err: any) {
         console.error(err);
-        return new Response(JSON.stringify({ error: err.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        throw e;
+
     }
 });

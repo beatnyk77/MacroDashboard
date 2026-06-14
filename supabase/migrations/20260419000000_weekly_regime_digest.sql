@@ -20,23 +20,6 @@ ON public.weekly_regime_digests
 FOR SELECT
 USING (true);
 
--- Schedule the edge function via pg_cron
--- Every Sunday at 23:00 UTC
--- Note: '0 23 * * 0' is 11 PM on Sunday
-SELECT
-  cron.schedule(
-    'generate-weekly-regime-digest-job',
-    '0 23 * * 0',
-    $$
-    SELECT
-      net.http_post(
-        url:='https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/generate-weekly-regime-digest',
-        headers:=(
-          '{"Content-Type": "application/json", "Authorization": "Bearer ' || 
-          (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY' LIMIT 1) || 
-          '"}'
-        )::jsonb,
-        body:='{}'::jsonb
-      ) as request_id;
-    $$
-  );
+-- [cron.schedule omitted] SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled generate-weekly-regime-digest-job (0 23 * * 0).
+-- Rescheduled with safe COALESCE + x-cron-secret vault pattern on 2026-06-13.

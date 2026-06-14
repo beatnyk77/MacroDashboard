@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest } from '../_shared/handler.ts';
 
 /**
  * Ingest China Real Economy Data
  * Sources: FRED (Industrial Production, Trade, PMI proxies)
  * Monthly cadence — triggered on 5th of each month via cron
  */
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
+serveIngest('ingest-china-real-economy', async (req: Request) => {
     try {
         const supabase = createClient(
             Deno.env.get('SUPABASE_URL') ?? '',
@@ -85,9 +79,7 @@ Deno.serve(async (req: Request) => {
         }
 
         if (upserts.length === 0) {
-            return new Response(JSON.stringify({ success: true, count: 0, note: 'No new data' }), {
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
+            return { ok: false, error: 'No new data' };
         }
 
         // Batch upsert in chunks of 100
@@ -126,15 +118,8 @@ Deno.serve(async (req: Request) => {
 
         console.log(`[ChinaRealEcon] Done. Upserted ${upserts.length} records.`);
 
-        return new Response(JSON.stringify({ success: true, count: upserts.length }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200
-        });
+        return { ok: true, counts: { upserted: upserts.length } };
     } catch (error: any) {
-        console.error('[ChinaRealEcon] Error:', error);
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        throw error;
     }
 });

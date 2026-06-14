@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-us-edgar-fundamentals', async (req: Request) => {
+
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
         return new Response('Unauthorized', { status: 401 })
@@ -51,9 +53,7 @@ Deno.serve(async (req: Request) => {
             value: result.processed || result.inserted || 1
         });
 
-        return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
-
-    } catch (e: any) {
+        return { ok: true, counts: {} };} catch (e: any) {
         await client.from('ingestion_logs').insert({
             function_name: `ingest-us-edgar-fundamentals-${mode}`,
             status: 'failed',
@@ -62,8 +62,8 @@ Deno.serve(async (req: Request) => {
             completed_at: new Date().toISOString(),
             status_code: 500
         })
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 })
-    }
+        throw e;
+}
 })
 
 // SEC requires a specific User-Agent format: CompanyName ContactEmail

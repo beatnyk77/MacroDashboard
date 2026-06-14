@@ -4,12 +4,7 @@
 // POST body: { "hsn": "8512", "hsn_description": "Light towers and lighting equipment" }
 
 import { createClient } from "@supabase/supabase-js";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { serveIngest } from '../_shared/handler.ts';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -115,19 +110,12 @@ function extractJSON(raw: string): unknown {
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 
-Deno.serve(async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
+serveIngest('generate-export-scout', async (req: Request) => {
   try {
     const body = (await req.json().catch(() => ({}))) as any;
 
     if (!body.hsn) {
-      return new Response(
-        JSON.stringify({ error: "Missing required parameter: hsn" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
+      return { ok: false, error: 'Missing required parameter: hsn' };
     }
 
     const hsn = String(body.hsn).trim();
@@ -139,10 +127,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const aimlapiKey = Deno.env.get("AIMLAPI_KEY") ?? "";
 
     if (!openrouterKey && !aimlapiKey) {
-      return new Response(
-        JSON.stringify({ error: "Neither OPENROUTER_API_KEY nor AIMLAPI_KEY configured in edge function secrets" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-      );
+      return { ok: false, error: 'Neither OPENROUTER_API_KEY nor AIMLAPI_KEY configured in edge function secrets' };
     }
 
     const sb = createClient(supabaseUrl, supabaseKey);
@@ -418,16 +403,9 @@ Respond ONLY with this exact JSON structure (no markdown, no extra text):
       },
     };
 
-    return new Response(JSON.stringify(finalPlaybook), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return { ok: true, counts: { markets: markets.length }, meta: { playbook: finalPlaybook } };
 
   } catch (err) {
-    console.error("Playbook generation error:", err);
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    throw err;
   }
 });

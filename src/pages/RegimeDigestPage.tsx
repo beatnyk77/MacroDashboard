@@ -9,6 +9,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { useRegimeDigest, MetricsSnapshot } from '@/features/regime-digest/hooks/useRegimeDigest';
 import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
 import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip';
+import { RelatedContent } from '@/components/RelatedContent';
 import { format } from 'date-fns';
 
 // ── Metric pill ──────────────────────────────────────────────────────────────
@@ -333,6 +334,7 @@ export const RegimeDigestPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <RelatedContent />
         </div>
     );
 };

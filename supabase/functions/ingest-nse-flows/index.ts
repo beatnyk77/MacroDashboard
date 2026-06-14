@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { upsertObservations } from '../_shared/ingest_utils.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 /**
  * FII Equity Flow Ingestion
@@ -19,7 +13,7 @@ const corsHeaders = {
  * Unit: USD millions, net (buy - sell)
  */
 
-async function doIngestFIIFlows(supabase: any) {
+async function doIngestFIIFlows(supabase: any): Promise<IngestResult> {
     console.log('Fetching FII equity flows from RBI DBIE API...');
 
     // Try primary RBI DBIE endpoint
@@ -81,11 +75,12 @@ async function doIngestFIIFlows(supabase: any) {
     }
 
     console.log(`Upserting ${observations.length} FII flow observations...`);
-    const { count } = await upsertObservations(supabase, observations);
+    const { count } = await upsertObservations(supabase, observations, { source_ref: 'live_api:ingest-fii-flows', is_provisional: false });
 
     return {
-        rows_inserted: count,
-        metadata: {
+        ok: true,
+        counts: { upserted: count, skipped: 0 },
+        meta: {
             latest_date: observations[observations.length - 1]?.as_of_date,
             latest_value: observations[observations.length - 1]?.value,
             data_points: observations.length,
@@ -94,23 +89,10 @@ async function doIngestFIIFlows(supabase: any) {
     };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-fii-flows', async (ctx) => {
-        const result = await runWithRetry(
-            'ingest-fii-flows',
-            () => doIngestFIIFlows(ctx.supabase),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        );
-
-        if (!result.ok) throw new Error(`FII flows ingestion failed: ${result.error}`);
-        return result.value!;
-    })
-})
+serveIngest('ingest-fii-flows', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    return doIngestFIIFlows(supabase)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

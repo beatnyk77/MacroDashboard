@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
+import { serveIngest } from '../_shared/handler.ts';
 
 const G20_COUNTRIES: Record<string, string> = {
     'USA': 'United States',
@@ -51,7 +52,8 @@ const ANCHOR_VALUES: Record<string, number> = {
     'EU27': 59500.0 // Approximation for EU aggregate
 }
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-imf-gdp-per-capita', async (req: Request) => {
+
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
         return new Response('Unauthorized', { status: 401 })
@@ -136,19 +138,9 @@ Deno.serve(async (req: Request) => {
         }
 
         const duration = Math.round(performance.now() - start)
-        return new Response(JSON.stringify({
-            message: 'IMF ingestion complete',
-            processed: rowsToUpsert.length,
-            duration_ms: duration,
-            runId
-        }), { headers: { 'Content-Type': 'application/json' } })
-
-    } catch (err: any) {
+        return { ok: true, counts: {} };} catch (err: any) {
         console.error('Ingestion error:', err)
         await logger.log('imf-gdp-per-capita', 'error', 0, err.message)
-        return new Response(JSON.stringify({ error: err.message, runId }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        })
-    }
+        throw err;
+}
 })

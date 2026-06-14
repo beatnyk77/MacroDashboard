@@ -1,58 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { upsertObservations } from '../_shared/ingest_utils.ts'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-// FRED series used:
-//   PCOPPUSDM        — Global Price of Copper, USD per Metric Ton, monthly
-//   GOLDAMGBD228NLBM — Gold Fixing Price AM (London), USD per Troy Oz, daily business days
-//
-// Root cause of prior 500s: AlphaVantage has no GOLD commodity endpoint —
-// gold is not in their physical-commodities API family, so the old
-// fetchAlphaVantageCommodity('GOLD', ...) always returned [] → threw → 500.
-
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  const fredApiKey = Deno.env.get('FRED_API_KEY')
-
-  if (!fredApiKey) {
-    return new Response(JSON.stringify({ error: 'FRED_API_KEY not found' }), { status: 500 })
-  }
-
-  const supabaseClient = createClient(supabaseUrl, supabaseKey)
-
-  // Backfill flag: read from JSON body so it works with both the Supabase CLI
-  // (`supabase functions invoke ... --body '{"backfill":true}'`) and curl.
-  // Falls back to the URL query param for backward-compat with curl calls.
-  let isBackfill = new URL(req.url).searchParams.get('backfill') === 'true'
-  try {
-    const body = await req.json()
-    if (body?.backfill === true) isBackfill = true
-  } catch {
-    // no body / not JSON — that's fine
-  }
-
-  return runIngestion(supabaseClient, 'ingest-copper-gold-ratio', async (_ctx) => {
-    const result = await runWithRetry(
-      'ingest-copper-gold-ratio',
-      () => doIngestCopperGoldRatio(supabaseClient, fredApiKey, isBackfill),
-      { timeoutMs: 10 * 60 * 1000, maxRetries: 3, backoffMs: 60_000 }
-    )
-    if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-    return result.value!
-  })
-})
 
 async function fetchFredSeries(
   seriesId: string,
@@ -75,72 +24,6 @@ async function fetchFredSeries(
     .filter(o => o.value !== '.')
     .map(o => ({ date: o.date, value: parseFloat(o.value) }))
     .filter(o => !isNaN(o.value))
-}
-
-async function doIngestCopperGoldRatio(supabase: any, fredApiKey: string, isBackfill: boolean) {
-  // Incremental: last 3 copper months + 90 gold days (enough to align any month-end).
-  // Backfill:    5 years of copper + 7 years of gold daily to cover every pairing.
-  const copperLimit = isBackfill ? 60 : 3
-  const goldLimit   = isBackfill ? 2000 : 90
-
-  console.log(`[ingest-copper-gold-ratio] mode=${isBackfill ? 'backfill' : 'incremental'} copperLimit=${copperLimit} goldLimit=${goldLimit}`)
-
-  const [copperObs, goldObs] = await Promise.all([
-    fetchFredSeries('PCOPPUSDM', fredApiKey, copperLimit, isBackfill ? 'asc' : 'desc'),
-    fetchFredSeries('GOLDAMGBD228NLBM', fredApiKey, goldLimit, isBackfill ? 'asc' : 'desc'),
-  ])
-
-  if (copperObs.length === 0) throw new Error('FRED returned no copper observations (PCOPPUSDM)')
-  if (goldObs.length === 0)   throw new Error('FRED returned no gold observations (GOLDAMGBD228NLBM)')
-
-  // Build a gold lookup keyed by YYYY-MM for fast monthly pairing.
-  // For each month, keep the last (latest) gold observation in that month.
-  const goldByMonth = new Map<string, { date: string; value: number }>()
-  for (const g of goldObs) {
-    const ym = g.date.slice(0, 7) // "YYYY-MM"
-    const existing = goldByMonth.get(ym)
-    if (!existing || g.date > existing.date) goldByMonth.set(ym, g)
-  }
-
-  const observations: any[] = []
-
-  for (const copper of copperObs) {
-    const ym = copper.date.slice(0, 7)
-    const gold = goldByMonth.get(ym)
-
-    if (!gold) {
-      // Try adjacent month (copper can publish one month ahead of gold settlement).
-      const prevYm = prevMonth(ym)
-      const goldFallback = goldByMonth.get(prevYm)
-      if (!goldFallback) {
-        console.warn(`[ingest-copper-gold-ratio] No gold data for month ${ym} or ${prevYm}, skipping copper date ${copper.date}`)
-        continue
-      }
-      observations.push(...buildObservations(copper, goldFallback))
-    } else {
-      observations.push(...buildObservations(copper, gold))
-    }
-  }
-
-  if (observations.length === 0) {
-    throw new Error('No copper/gold date pairs could be aligned — check FRED data availability')
-  }
-
-  const { count } = await upsertObservations(supabase, observations)
-
-  const latest = observations.filter(o => o.metric_id === 'COPPER_GOLD_RATIO').at(-1)
-  return {
-    rows_inserted: count,
-    mode: isBackfill ? 'backfill' : 'incremental',
-    metadata: latest
-      ? {
-          ratio: latest.value,
-          date: latest.as_of_date,
-          copper_usd_per_mt: latest.metadata.copper_usd_per_mt,
-          gold_usd_per_oz: latest.metadata.gold_usd_per_oz,
-        }
-      : null,
-  }
 }
 
 function buildObservations(
@@ -171,9 +54,87 @@ function buildObservations(
   ]
 }
 
-// Returns the YYYY-MM string for the month before the given YYYY-MM string.
 function prevMonth(ym: string): string {
   const [y, m] = ym.split('-').map(Number)
   if (m === 1) return `${y - 1}-12`
   return `${y}-${String(m - 1).padStart(2, '0')}`
 }
+
+async function doIngestCopperGoldRatio(supabase: any, fredApiKey: string, isBackfill: boolean): Promise<IngestResult> {
+  const copperLimit = isBackfill ? 60 : 3
+  const goldLimit   = isBackfill ? 2000 : 90
+
+  console.log(`[ingest-copper-gold-ratio] mode=${isBackfill ? 'backfill' : 'incremental'} copperLimit=${copperLimit} goldLimit=${goldLimit}`)
+
+  const [copperObs, goldObs] = await Promise.all([
+    fetchFredSeries('PCOPPUSDM', fredApiKey, copperLimit, isBackfill ? 'asc' : 'desc'),
+    fetchFredSeries('GOLDAMGBD228NLBM', fredApiKey, goldLimit, isBackfill ? 'asc' : 'desc'),
+  ])
+
+  if (copperObs.length === 0) throw new Error('FRED returned no copper observations (PCOPPUSDM)')
+  if (goldObs.length === 0)   throw new Error('FRED returned no gold observations (GOLDAMGBD228NLBM)')
+
+  const goldByMonth = new Map<string, { date: string; value: number }>()
+  for (const g of goldObs) {
+    const ym = g.date.slice(0, 7)
+    const existing = goldByMonth.get(ym)
+    if (!existing || g.date > existing.date) goldByMonth.set(ym, g)
+  }
+
+  const observations: any[] = []
+
+  for (const copper of copperObs) {
+    const ym = copper.date.slice(0, 7)
+    const gold = goldByMonth.get(ym)
+
+    if (!gold) {
+      const prevYm = prevMonth(ym)
+      const goldFallback = goldByMonth.get(prevYm)
+      if (!goldFallback) {
+        console.warn(`[ingest-copper-gold-ratio] No gold data for month ${ym} or ${prevYm}, skipping copper date ${copper.date}`)
+        continue
+      }
+      observations.push(...buildObservations(copper, goldFallback))
+    } else {
+      observations.push(...buildObservations(copper, gold))
+    }
+  }
+
+  if (observations.length === 0) {
+    throw new Error('No copper/gold date pairs could be aligned — check FRED data availability')
+  }
+
+  const { count } = await upsertObservations(supabase, observations, {
+    source_ref: 'live_api:ingest-copper-gold-ratio',
+    is_provisional: false,
+  })
+
+  const latest = observations.filter(o => o.metric_id === 'COPPER_GOLD_RATIO').at(-1)
+  return {
+    ok: true,
+    counts: { upserted: count ?? 0, skipped: 0 },
+    meta: {
+      mode: isBackfill ? 'backfill' : 'incremental',
+      ...(latest ? { ratio: latest.value, date: latest.as_of_date, copper_usd_per_mt: latest.metadata.copper_usd_per_mt, gold_usd_per_oz: latest.metadata.gold_usd_per_oz } : {}),
+    },
+  }
+}
+
+serveIngest('ingest-copper-gold-ratio', async (req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  )
+  const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+  if (!fredApiKey) throw new Error('FRED_API_KEY not found')
+
+  let isBackfill = new URL(req.url).searchParams.get('backfill') === 'true'
+  try {
+    const body = await req.json()
+    if (body?.backfill === true) isBackfill = true
+  } catch {
+    // no body / not JSON
+  }
+
+  return doIngestCopperGoldRatio(supabase, fredApiKey, isBackfill)
+}, { timeoutMs: 10 * 60 * 1000, retries: 3 })

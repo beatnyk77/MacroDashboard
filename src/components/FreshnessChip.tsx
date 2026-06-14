@@ -8,9 +8,11 @@ interface FreshnessChipProps {
     status: FreshnessStatus;
     lastUpdated?: string | Date;
     label?: string;
+    /** When true, overrides chip colour to amber and shows a provisional-data tooltip. */
+    isProvisional?: boolean;
 }
 
-export const FreshnessChip: React.FC<FreshnessChipProps> = ({ status, lastUpdated, label }) => {
+export const FreshnessChip: React.FC<FreshnessChipProps> = ({ status, lastUpdated, label, isProvisional }) => {
     const config = {
         fresh: {
             text: 'FRESH',
@@ -45,7 +47,10 @@ export const FreshnessChip: React.FC<FreshnessChipProps> = ({ status, lastUpdate
     };
 
     const current = config[status] || config.no_data;
-    const displayText = label || current.text;
+    const displayText = label || (isProvisional ? 'PROVISIONAL' : current.text);
+
+    const chipColor  = isProvisional ? 'warning' : current.color;
+    const chipBg     = isProvisional ? 'rgba(245, 158, 11, 0.1)' : current.bgcolor;
 
     const formattedDate = lastUpdated
         ? new Date(lastUpdated).toLocaleString(undefined, {
@@ -56,8 +61,12 @@ export const FreshnessChip: React.FC<FreshnessChipProps> = ({ status, lastUpdate
         })
         : 'Unknown';
 
+    const tooltipTitle = isProvisional
+        ? 'Provisional / fallback data — pending live source confirmation.'
+        : `Last Updated: ${formattedDate}`;
+
     return (
-        <Tooltip title={`Last Updated: ${formattedDate}`} arrow placement="top">
+        <Tooltip title={tooltipTitle} arrow placement="top">
             <Chip
                 label={displayText}
                 size="small"
@@ -67,9 +76,9 @@ export const FreshnessChip: React.FC<FreshnessChipProps> = ({ status, lastUpdate
                     fontSize: '0.6rem',
                     fontWeight: 900,
                     letterSpacing: '0.05em',
-                    color: `${current.color}.main`,
-                    borderColor: `${current.color}.main`,
-                    bgcolor: current.bgcolor,
+                    color: `${chipColor}.main`,
+                    borderColor: `${chipColor}.main`,
+                    bgcolor: chipBg,
                     '& .MuiChip-label': { px: 1 },
                     border: '1px solid',
                     opacity: 0.9

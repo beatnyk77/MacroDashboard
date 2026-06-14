@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 const EIA_API_BASE = "https://api.eia.gov/v2";
 
@@ -29,9 +26,10 @@ const COUNTRY_MAP_ISO3_TO_2: Record<string, string> = {
     'IND': 'IN'
 };
 
-Deno.serve(async (req) => {
+serveIngest('ingest-oil-global', async (req) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+        return { ok: true, counts: {} };
     }
 
     try {
@@ -167,18 +165,11 @@ Deno.serve(async (req) => {
         if (partnerError) console.error("Partner Upsert Error", partnerError);
         else importsRowsProcessed += partnerRows.length;
 
-        return new Response(JSON.stringify({
-            success: true,
-            processed: { capacity: capacityRowsProcessed, imports: importsRowsProcessed }
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return { ok: true, counts: {} };
 
     } catch (err: any) {
         console.error(err);
-        return new Response(JSON.stringify({ error: err.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500
-        });
+        throw err;
+
     }
 });

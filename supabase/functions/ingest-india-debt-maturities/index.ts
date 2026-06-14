@@ -1,36 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { INITIAL_INDIA_DEBT_DATA } from './data.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-india-debt-maturities', async (ctx) => {
-        const result = await runWithRetry(
-            'ingest-india-debt-maturities',
-            () => doIngestIndiaDebtMaturities(supabase),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    })
-})
-
 // ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestIndiaDebtMaturities(supabase: any) {
+async function doIngestIndiaDebtMaturities(supabase: any): Promise<IngestResult> {
     console.log('Starting India Debt Maturity ingestion...')
 
     // Calculate totals for percent_total calculation
@@ -59,10 +33,19 @@ async function doIngestIndiaDebtMaturities(supabase: any) {
     }
 
     return {
-        rows_inserted: results.length,
-        metadata: {
+        ok: true,
+        counts: { upserted: results.length, skipped: 0 },
+        meta: {
             central_total_crore: centralTotal,
             state_total_crore: stateTotal
         }
     };
 }
+
+serveIngest('ingest-india-debt-maturities', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    return doIngestIndiaDebtMaturities(supabase)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

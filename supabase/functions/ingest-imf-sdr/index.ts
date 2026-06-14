@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { logIngestionStart, logIngestionEnd } from '../_shared/logging.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
     let lastError: Error | null = null;
@@ -27,84 +22,53 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
     throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
+serveIngest('ingest-imf-sdr', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
+
+    const fredApiKey = Deno.env.get('FRED_API_KEY');
+    if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
+
+    const metricsMap = [
+        { id: 'IMF_SDR_TOTAL_BILLIONS', fredId: 'SDR' }
+    ];
+
+    const results: any[] = [];
+
+    for (const item of metricsMap) {
+        const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=50`;
+
+        const response = await fetchWithRetry(fredUrl);
+        const data = await response.json();
+
+        if (data.observations) {
+            data.observations.forEach((obs: any) => {
+                const value = parseFloat(obs.value);
+                if (!isNaN(value)) {
+                    results.push({
+                        metric_id: item.id,
+                        as_of_date: obs.date,
+                        value: value,
+                        last_updated_at: new Date().toISOString()
+                    });
+                }
+            });
+        }
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    if (results.length > 0) {
+        const { error: upsertError } = await supabase
+            .from('metric_observations')
+            .upsert(results, { onConflict: 'metric_id, as_of_date' });
 
-    // Start logging
-    const logId = await logIngestionStart(supabase, 'ingest-imf-sdr');
-
-    try {
-        const fredApiKey = Deno.env.get('FRED_API_KEY');
-        if (!fredApiKey) throw new Error('FRED_API_KEY environment variable is required');
-
-        // IMF SDR Allocations can be fetched from FRED (series: SDR)
-        // Or specific SDR rates. For balance sheet purposes, we usually look at Total SDRs.
-        const metricsMap = [
-            { id: 'IMF_SDR_TOTAL_BILLIONS', fredId: 'SDR' } // SDR Allocations in Billions
-        ];
-
-        const results: any[] = [];
-
-        for (const item of metricsMap) {
-            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=50`;
-
-            const response = await fetchWithRetry(fredUrl);
-            const data = await response.json();
-
-            if (data.observations) {
-                data.observations.forEach((obs: any) => {
-                    const value = parseFloat(obs.value);
-                    if (!isNaN(value)) {
-                        results.push({
-                            metric_id: item.id,
-                            as_of_date: obs.date,
-                            value: value,
-                            last_updated_at: new Date().toISOString()
-                        });
-                    }
-                });
-            }
-        }
-
-        if (results.length > 0) {
-            const { error: upsertError } = await supabase
-                .from('metric_observations')
-                .upsert(results, { onConflict: 'metric_id, as_of_date' });
-
-            if (upsertError) throw upsertError;
-        }
-
-        const summary = {
-            status: 'success',
-            processed: results.length,
-            metrics: metricsMap.map(m => m.id)
-        };
-
-        // Log success
-        await logIngestionEnd(supabase, logId, 'success', {
-            rows_inserted: results.length,
-            metadata: { summary }
-        });
-
-        return new Response(JSON.stringify(summary), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-
-    } catch (error: any) {
-        console.error('IMF SDR Ingestion error:', error);
-
-        // Log failure
-        await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500,
-        });
+        if (upsertError) throw upsertError;
     }
+
+    return {
+        ok: true,
+        counts: { upserted: results.length, skipped: 0 },
+        meta: { metrics: metricsMap.map(m => m.id) },
+    };
 })

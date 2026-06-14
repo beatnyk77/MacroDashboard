@@ -18,16 +18,6 @@ ON public.monthly_regime_digests
 FOR SELECT
 USING (true);
 
--- Schedule the edge function via pg_cron
--- 1st of every month at 00:30 UTC
-SELECT cron.schedule('generate-monthly-regime-digest-job', '30 0 1 * *', $$
-  SELECT net.http_post(
-      url := 'https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/generate-monthly-regime-digest',
-      headers := (
-        '{"Content-Type": "application/json", "Authorization": "Bearer ' || 
-        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY' LIMIT 1) || 
-        '"}'
-      )::jsonb,
-      body := '{}'::jsonb
-  ) as request_id;
-$$);
+-- [cron.schedule omitted] SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled generate-monthly-regime-digest-job (30 0 1 * *).
+-- Rescheduled with safe COALESCE + x-cron-secret vault pattern on 2026-06-13.

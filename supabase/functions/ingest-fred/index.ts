@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-// --- SHARED UTILS ---
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 async function withTimeout<T>(
   promise: Promise<T>,
@@ -28,9 +21,6 @@ async function withTimeout<T>(
   }
 }
 
-/**
- * Fetch with exponential backoff retry logic
- */
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 2): Promise<Response> {
   let lastError: Error | null = null;
   for (let i = 0; i <= maxRetries; i++) {
@@ -54,42 +44,10 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
   throw lastError || new Error(`Failed to fetch ${url}`);
 }
 
-// --- MAIN FUNCTION ---
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  return runIngestion(supabase, 'ingest-fred', async (ctx) => {
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
-    if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
-
-    // Wrap the entire batch in runWithRetry so transient failures (network blip,
-    // cold FRED API) automatically get a second chance before marking as failed.
-    const result = await runWithRetry(
-      'ingest-fred',
-      () => doIngestFred(supabase, fredApiKey),
-      {
-        timeoutMs:  25 * 60 * 1000,  // 25 min per attempt (under 28 min global cap)
-        maxRetries: 3,
-        backoffMs:  30_000,           // 30s → 60s → 120s
-      }
-    );
-
-    if (!result.ok) throw new Error(`All attempts failed: ${result.error}`);
-    return result.value!;
-  });
-});
-
 // ─── Core ingest logic ────────────────────────────────────────────────────────
-// Extracted into its own function so runWithRetry can restart it cleanly.
-// No changes to the actual fetching / upsert logic below.
-async function doIngestFred(supabase: any, fredApiKey: string) {
+async function doIngestFred(supabase: any, fredApiKey: string): Promise<IngestResult> {
     const startTime = Date.now();
-    // 25 minute budget — stays under the 28 minute global safety timeout in runIngestion.
-    // The old 50s budget was the root cause: it aborted after processing only a fraction of metrics.
+    // 25 minute budget — stays under the 28 minute global safety timeout in serveIngest.
     const runtimeBudget = 25 * 60 * 1000;
 
     // 1. Resolve FRED source_id
@@ -108,10 +66,9 @@ async function doIngestFred(supabase: any, fredApiKey: string) {
 
     let successCount = 0;
     let totalRows = 0;
-    const processedMetrics = [];
-    const errors = [];
-    const batchSize = 10; 
-
+    const processedMetrics: string[] = [];
+    const errors: { metric: string; error: string | undefined }[] = [];
+    const batchSize = 10;
     const rawPayloads: any[] = [];
 
     for (let i = 0; i < targetMetrics.length; i += batchSize) {
@@ -134,7 +91,7 @@ async function doIngestFred(supabase: any, fredApiKey: string) {
 
             const sofrData = await sofrRes.json() as any;
             const effrData = await effrRes.json() as any;
-            
+
             rawPayloads.push({ metricId: 'SOFR', data: sofrData });
             rawPayloads.push({ metricId: 'EFFR', data: effrData });
 
@@ -176,7 +133,7 @@ async function doIngestFred(supabase: any, fredApiKey: string) {
         try {
           const response = await withTimeout(fetchWithRetry(url), 10000, `FRED Fetch ${fredId}`);
           const data = await response.json() as any;
-          
+
           rawPayloads.push({ metricId: metric.id, data });
 
           if (!data.observations) return { metricId: metric.id, count: 0, success: false, error: 'No observations' };
@@ -200,6 +157,7 @@ async function doIngestFred(supabase: any, fredApiKey: string) {
           await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
           return { metricId: metric.id, count: 0, success: true };
         } catch (err: any) {
+          // TODO(task-1.3): evaluate whether bumping updated_at on per-metric fetch errors is correct
           await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
           return { metricId: metric.id, count: 0, success: false, error: err.message };
         }
@@ -217,9 +175,10 @@ async function doIngestFred(supabase: any, fredApiKey: string) {
     }
 
     return {
-      rows_inserted: totalRows,
-      raw_payload: rawPayloads,
-      metadata: {
+      ok: true,
+      counts: { upserted: totalRows, skipped: errors.length },
+      meta: {
+        raw_payload: rawPayloads,
         attempted: targetMetrics.length,
         successful: successCount,
         processed: processedMetrics,
@@ -228,3 +187,15 @@ async function doIngestFred(supabase: any, fredApiKey: string) {
       }
     };
 }
+
+serveIngest('ingest-fred', async (_req: Request): Promise<IngestResult> => {
+  const fredApiKey = Deno.env.get('FRED_API_KEY');
+  if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
+
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  );
+
+  return doIngestFred(supabase, fredApiKey);
+}, { timeoutMs: 25 * 60 * 1000, retries: 3 });

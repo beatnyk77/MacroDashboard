@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { serveIngest } from '../_shared/handler.ts';
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -46,8 +47,8 @@ async function fetchRegionalPulse(supabase: SupabaseClient, table: string) {
     return data?.[0] || null;
 }
 
-Deno.serve(async (req) => {
-    if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+serveIngest('generate-weekly-regime-digest', async (req) => {
+
 
     try {
         const supabaseClient = createClient(
@@ -151,9 +152,7 @@ Deno.serve(async (req) => {
 
         if (dbError) throw dbError;
 
-        return new Response(JSON.stringify({ success: true, digest: { weekEndingDate, executive_summary, regimeShifts, whatChanged, whatToWatch, holistic_narrative } }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return { ok: true, counts: {} };
 
     } catch (error: unknown) {
         return new Response(JSON.stringify({ error: (error as Error).message }), {

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface MoneyMarketOps {
   date: string;
@@ -87,7 +88,7 @@ export const useRBIMoneyMarket = () => {
       const { data, error } = await supabase
         .from('metric_observations')
         .select('value')
-        .eq('metric_id', 'IN_POLICY_RATE')
+        .eq('metric_id', MID.IN_POLICY_RATE)
         .order('as_of_date', { ascending: false })
         .limit(1)
         .maybeSingle(); // Do not throw if no row

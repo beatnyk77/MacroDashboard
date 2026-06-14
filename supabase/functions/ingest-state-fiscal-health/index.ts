@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 import { STATE_FISCAL_DATA } from './data.ts'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-state-fiscal-health', async (req: Request) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+        return { ok: true, counts: {} };}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -35,15 +32,8 @@ Deno.serve(async (req: Request) => {
             latest_date: '2024-03-31'
         };
 
-        return new Response(JSON.stringify(summary), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-
-    } catch (error: any) {
+        return { ok: true, counts: {} };} catch (error: any) {
         console.error('State Fiscal Health Ingestion error:', error.message)
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
-    }
+        throw error;
+}
 })

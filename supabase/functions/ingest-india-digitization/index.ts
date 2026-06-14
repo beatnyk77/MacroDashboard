@@ -1,39 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { INITIAL_DIGITIZATION_DATA } from './data.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const fredApiKey = Deno.env.get('FRED_API_KEY')
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-india-digitization', async (ctx) => {
-        if (!fredApiKey) throw new Error('FRED_API_KEY is required for live proxy telemetry.')
-
-        const result = await runWithRetry(
-            'ingest-india-digitization',
-            () => doIngestIndiaDigitization(supabase, fredApiKey),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    })
-})
-
 // ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestIndiaDigitization(supabase: any, fredApiKey: string) {
+async function doIngestIndiaDigitization(supabase: any, fredApiKey: string): Promise<IngestResult> {
     console.log('Starting India Digitization & Formalization live proxy ingestion...')
 
     // Fetch live economic proxies from RBI via FRED
@@ -95,11 +66,22 @@ async function doIngestIndiaDigitization(supabase: any, fredApiKey: string) {
     }
 
     return {
-        rows_inserted: results.length,
-        metadata: {
+        ok: true,
+        counts: { upserted: results.length, skipped: 0 },
+        meta: {
             latest_date: results[0]?.date,
             latest_upi_vol: results[0]?.upi_volume_bn,
             latest_dpi: results[0]?.rbi_dpi_index
         }
     };
 }
+
+serveIngest('ingest-india-digitization', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY')
+    if (!fredApiKey) throw new Error('FRED_API_KEY is required for live proxy telemetry.')
+    return doIngestIndiaDigitization(supabase, fredApiKey)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

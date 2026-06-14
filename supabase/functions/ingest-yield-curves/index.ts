@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 /* ─── FRED series map (full US + China curves) ─────────────────── */
-// US: Daily Treasury Yield Curve Rates (H.15)
-// CN: International Financial Statistics (IFS) Government Bond Yields
 const FRED_SERIES: { country: string; tenor: string; seriesId: string; source: string }[] = [
   // United States
   { country: 'US', tenor: '3M', seriesId: 'DGS3MO', source: 'FRED' },
@@ -20,31 +14,14 @@ const FRED_SERIES: { country: string; tenor: string; seriesId: string; source: s
   { country: 'US', tenor: '30Y', seriesId: 'DGS30', source: 'FRED' },
 
   // China: Full curve from IFS (INTDSRCNMXXXN where XXX = months)
-  // Primary series: IFS standard tenors
   { country: 'CN', tenor: '3M', seriesId: 'INTDSRCNM003N', source: 'FRED' },
   { country: 'CN', tenor: '6M', seriesId: 'INTDSRCNM006N', source: 'FRED' },
   { country: 'CN', tenor: '1Y', seriesId: 'INTDSRCNM012N', source: 'FRED' },
   { country: 'CN', tenor: '2Y', seriesId: 'INTDSRCNM024N', source: 'FRED' },
   { country: 'CN', tenor: '5Y', seriesId: 'INTDSRCNM060N', source: 'FRED' },
-  // 10Y: Use the established series (INTDSRCNM193N) - primary source
   { country: 'CN', tenor: '10Y', seriesId: 'INTDSRCNM193N', source: 'FRED' },
-  // 30Y: IFS 30-year
   { country: 'CN', tenor: '30Y', seriesId: 'INTDSRCNM360N', source: 'FRED' },
 ]
-
-/* ─── ECB SDW keys for German Bund yields ───────────────────────── */
-const ECB_TENORS: { tenor: string; maturity: string }[] = [
-  { tenor: '3M', maturity: '3M' },
-  { tenor: '6M', maturity: '6M' },
-  { tenor: '1Y', maturity: '1Y' },
-  { tenor: '2Y', maturity: '2Y' },
-  { tenor: '5Y', maturity: '5Y' },
-  { tenor: '10Y', maturity: '10Y' },
-  { tenor: '30Y', maturity: '30Y' },
-]
-
-/* ─── India RBI DBIE SDMX tenors ──────────────────────────────── */
-const INDIA_TENOR_SET = ['P3M', 'P6M', 'P1Y', 'P2Y', 'P5Y', 'P10Y', 'P30Y']
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 2): Promise<Response> {
@@ -64,8 +41,9 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
 }
 
 /* ─── FRED fetcher ──────────────────────────────────────────────── */
-async function fetchFredYields(apiKey: string) {
+async function fetchFredYields(apiKey: string): Promise<{ results: any[]; skipped: number }> {
   const results: any[] = []
+  let skipped = 0
 
   const batchSize = 4
   for (let i = 0; i < FRED_SERIES.length; i += batchSize) {
@@ -76,7 +54,7 @@ async function fetchFredYields(apiKey: string) {
         const res = await fetchWithRetry(url)
         const data = await res.json() as any
         const obs = (data.observations || []).filter((o: any) => o.value !== '.' && !isNaN(parseFloat(o.value)))
-        if (obs.length === 0) return []
+        if (obs.length === 0) { skipped++; return [] }
 
         const latest = obs[0]
         const prev = obs.length > 1 ? obs[1] : null
@@ -91,20 +69,20 @@ async function fetchFredYields(apiKey: string) {
         }]
       } catch (err: any) {
         console.error(`FRED error for ${s.seriesId}: ${err.message}`)
+        skipped++
         return []
       }
     }))
     results.push(...batchResults.flat())
   }
-  return results
+  return { results, skipped }
 }
 
 /* ─── ECB SDW fetcher (Euro area AAA government bonds) ────────────── */
-async function fetchECBYields() {
+async function fetchECBYields(): Promise<{ results: any[]; skipped: number }> {
   const results: any[] = []
+  let skipped = 0
 
-  // Using ECB Yield curve spot rate, AAA rated government bonds
-  // Pattern: YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_{maturity}
   const maturities = ['3M', '6M', '1Y', '2Y', '5Y', '10Y', '30Y']
 
   for (const tenor of maturities) {
@@ -112,25 +90,23 @@ async function fetchECBYields() {
     const url = `https://data-api.ecb.europa.eu/service/data/YC/${key}?format=jsondata&lastNObservations=5`
 
     try {
-      const res = await fetchWithRetry(url, {
-        headers: { 'Accept': 'application/json' }
-      })
+      const res = await fetchWithRetry(url, { headers: { 'Accept': 'application/json' } })
       const data = await res.json() as any
 
       const dataset = data?.dataSets?.[0]
       const series = dataset?.series
-      if (!series) continue
+      if (!series) { skipped++; continue }
 
       const seriesKey = Object.keys(series)[0]
-      if (!seriesKey) continue
+      if (!seriesKey) { skipped++; continue }
 
       const observations = series[seriesKey].observations
       const timePeriods = data?.structure?.dimensions?.observation?.[0]?.values
 
-      if (!observations || !timePeriods) continue
+      if (!observations || !timePeriods) { skipped++; continue }
 
       const obsKeys = Object.keys(observations).sort((a, b) => parseInt(b) - parseInt(a))
-      if (obsKeys.length === 0) continue
+      if (obsKeys.length === 0) { skipped++; continue }
 
       const latestKey = obsKeys[0]
       const prevKey = obsKeys.length > 1 ? obsKeys[1] : null
@@ -139,7 +115,7 @@ async function fetchECBYields() {
       const prevVal = prevKey ? parseFloat(observations[prevKey][0]) : null
       const latestDate = timePeriods[parseInt(latestKey)]?.id
 
-      if (isNaN(latestVal) || !latestDate) continue
+      if (isNaN(latestVal) || !latestDate) { skipped++; continue }
 
       const dateStr = latestDate.length === 7 ? `${latestDate}-01` : latestDate
 
@@ -148,30 +124,29 @@ async function fetchECBYields() {
         tenor: tenor,
         yield_pct: latestVal,
         prev_yield: prevVal && !isNaN(prevVal) ? prevVal : null,
-        as_of_date: dateStr.split('T')[0], // handle ECB datetime 
+        as_of_date: dateStr.split('T')[0],
         source: 'ECB',
       })
     } catch (err: any) {
       console.error(`ECB error for ${tenor}: ${err.message}`)
+      skipped++
     }
   }
 
-  return results
+  return { results, skipped }
 }
 
 /* ─── India RBI DBIE SDMX fetcher (Direct) ─────────────────────── */
-async function fetchIndiaYields() {
+async function fetchIndiaYields(): Promise<{ results: any[]; skipped: number }> {
   const results: any[] = []
+  let skipped = 0
 
-  // Tenors provided by user. ISO 8601 or numeric shorthand.
-  // IRFCY dataset: Government Securities Yield Curve
   const tenors = ['P3M', 'P6M', 'P1Y', 'P2Y', 'P5Y', 'P10Y', 'P30Y']
   const tenorMap: Record<string, string> = {
     'P3M': '3M', 'P6M': '6M', 'P1Y': '1Y', 'P2Y': '2Y', 'P5Y': '5Y', 'P10Y': '10Y', 'P30Y': '30Y',
     '003M': '3M', '006M': '6M', '01Y': '1Y', '02Y': '2Y', '05Y': '5Y'
   }
 
-  // Use a startPeriod 3 months back to ensure we get data even if there's a reporting lag
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
   const startPeriod = threeMonthsAgo.toISOString().split('T')[0];
@@ -179,9 +154,7 @@ async function fetchIndiaYields() {
   const url = `https://data.rbi.org.in/DBIE/SDMX/JSON/RBI/IRFCY/?TENOR=${tenors.join(',')}&startPeriod=${startPeriod}`
 
   try {
-    const res = await fetchWithRetry(url, {
-      headers: { 'Accept': 'application/json' }
-    })
+    const res = await fetchWithRetry(url, { headers: { 'Accept': 'application/json' } })
     const data = await res.json() as any
 
     const dataset = data?.dataSets?.[0]
@@ -193,7 +166,6 @@ async function fetchIndiaYields() {
       throw new Error('Malformed SDMX response from RBI')
     }
 
-    // Find the tenor dimension index
     const tenorDimIndex = dimensions.findIndex((d: any) => d.id === 'TENOR' || d.id === 'MATURITY')
     if (tenorDimIndex === -1) throw new Error('Could not find TENOR dimension in RBI response')
 
@@ -203,10 +175,10 @@ async function fetchIndiaYields() {
       const mappedTenor = tenorMap[rawTenor] || rawTenor
 
       const observations = (value as any).observations
-      if (!observations) continue
+      if (!observations) { skipped++; continue }
 
       const obsKeys = Object.keys(observations).sort((a, b) => parseInt(b) - parseInt(a))
-      if (obsKeys.length === 0) continue
+      if (obsKeys.length === 0) { skipped++; continue }
 
       const latestKey = obsKeys[0]
       const prevKey = obsKeys.length > 1 ? obsKeys[1] : null
@@ -224,105 +196,65 @@ async function fetchIndiaYields() {
           as_of_date: latestDate,
           source: 'RBI DBIE',
         })
+      } else {
+        skipped++
       }
     }
   } catch (err: any) {
     console.error(`RBI SDMX error: ${err.message}`)
-    // We could add FRED fallback here if needed, but better to fix direct access
+    skipped += tenors.length
   }
 
-  return results
+  return { results, skipped }
 }
 
-/* ─── Main Serve ──────────────────────────────────────────────── */
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+serveIngest('ingest-yield-curves', async (_req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  )
   const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
-  const supabase = createClient(supabaseUrl, supabaseKey)
 
-  // Log start
-  let logId: number | null = null
-  try {
-    const { data: logRow } = await supabase
-      .from('ingestion_logs')
-      .insert({ function_name: 'ingest-yield-curves', status: 'started', start_time: new Date().toISOString() })
-      .select('id')
-      .single()
-    logId = logRow?.id ?? null
-  } catch { /* ignore */ }
+  if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
 
-  try {
-    if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
+  console.log('Fetching US + CN yields from FRED...')
+  const { results: fredResults, skipped: fredSkipped } = await fetchFredYields(fredApiKey)
+  console.log(`FRED: ${fredResults.length} records`)
 
-    console.log('Fetching US + CN yields from FRED...')
-    const fredResults = await fetchFredYields(fredApiKey)
-    console.log(`FRED: ${fredResults.length} records`)
+  console.log('Fetching EU Bund yields from ECB...')
+  const { results: ecbResults, skipped: ecbSkipped } = await fetchECBYields()
+  console.log(`ECB: ${ecbResults.length} records`)
 
-    console.log('Fetching EU Bund yields from ECB...')
-    const ecbResults = await fetchECBYields()
-    console.log(`ECB: ${ecbResults.length} records`)
+  console.log('Fetching India yields (Direct RBI SDMX)...')
+  const { results: indiaResults, skipped: indiaSkipped } = await fetchIndiaYields()
+  console.log(`India: ${indiaResults.length} records`)
 
-    console.log('Fetching India yields (Direct RBI SDMX)...')
-    const indiaResults = await fetchIndiaYields()
-    console.log(`India: ${indiaResults.length} records`)
+  const allRecords = [...fredResults, ...ecbResults, ...indiaResults]
+    .filter(r => r.yield_pct != null && !isNaN(r.yield_pct))
+    .map(r => ({ ...r, updated_at: new Date().toISOString() }))
 
-    const allRecords = [...fredResults, ...ecbResults, ...indiaResults]
-      .filter(r => r.yield_pct != null && !isNaN(r.yield_pct))
-      .map(r => ({ ...r, updated_at: new Date().toISOString() }))
+  const totalSkipped = fredSkipped + ecbSkipped + indiaSkipped
+  console.log(`Total records to upsert: ${allRecords.length}, skipped: ${totalSkipped}`)
 
-    console.log(`Total records to upsert: ${allRecords.length}`)
+  if (allRecords.length > 0) {
+    const { error } = await supabase
+      .from('yield_curves')
+      .upsert(allRecords, {
+        onConflict: 'country,tenor,as_of_date',
+        ignoreDuplicates: false,
+      })
 
-    if (allRecords.length > 0) {
-      const { error } = await supabase
-        .from('yield_curves')
-        .upsert(allRecords, {
-          onConflict: 'country,tenor,as_of_date',
-          ignoreDuplicates: false,
-        })
+    if (error) throw error
+  }
 
-      if (error) {
-        console.error('Upsert error:', error)
-        throw error
-      }
-    }
-
-    const stats = {
-      success: true,
-      total: allRecords.length,
+  return {
+    ok: true,
+    counts: { upserted: allRecords.length, skipped: totalSkipped },
+    meta: {
       fred: fredResults.length,
       ecb: ecbResults.length,
       india: indiaResults.length,
       countries: [...new Set(allRecords.map(r => r.country))],
-    }
-
-    if (logId) {
-      await supabase.from('ingestion_logs').update({
-        completed_at: new Date().toISOString(),
-        status: 'success',
-        rows_inserted: allRecords.length,
-        metadata: stats,
-      }).eq('id', logId)
-    }
-
-    return new Response(JSON.stringify(stats), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
-
-  } catch (error: any) {
-    console.error('Fatal error:', error.message)
-    if (logId) {
-      await supabase.from('ingestion_logs').update({
-        completed_at: new Date().toISOString(),
-        status: 'failed',
-        error_message: error.message,
-      }).eq('id', logId)
-    }
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    },
   }
 })

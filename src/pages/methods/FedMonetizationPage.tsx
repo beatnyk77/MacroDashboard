@@ -3,7 +3,12 @@ import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/m
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedContent } from '@/components/RelatedContent';
 
 const monetizationData = [
     { year: '2000', ratio: 5.2 },
@@ -38,6 +43,8 @@ function AreaTooltip({ active, payload, label }: { active?: boolean; payload?: {
 }
 
 export const FedMonetizationPage: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.FED_BALANCE_SHEET);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
@@ -78,9 +85,12 @@ export const FedMonetizationPage: React.FC = () => {
                 <Box mb={8}>
                     <Chip label="Methods Article · Fiscal Dominance" variant="outlined"
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#6366f1', color: '#6366f1' }} />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
-                        Fed Monetization Monitor
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Typography variant="h2" component="h1" fontWeight={900}>
+                            Fed Monetization Monitor
+                        </Typography>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </Box>
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Tracks the Federal Reserve's balance sheet as a share of total US marketable debt — a direct measure of how much of the government's financing burden has been absorbed by monetary policy.
                     </Typography>
@@ -214,6 +224,7 @@ export const FedMonetizationPage: React.FC = () => {
                     <Button component={Link} to="/data-sources" variant="outlined" startIcon={<Link2 size={14} />} sx={{ borderColor: 'divider', color: 'text.secondary' }}>Data Sources</Button>
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
+                <RelatedContent />
             </Container>
         </Box>
     );

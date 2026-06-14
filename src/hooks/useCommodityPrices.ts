@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface CommodityPrice {
     symbol: string;
@@ -9,18 +10,18 @@ export interface CommodityPrice {
     z_score?: number;
 }
 
-const METRIC_IDS = [
-    'WTI_CRUDE_PRICE',
-    'BRENT_CRUDE_PRICE',
-    'COPPER_PRICE_USD',
-    'NICKEL_PRICE_USD',
+const COMMODITY_IDS = [
+    MID.WTI_CRUDE_PRICE,
+    MID.BRENT_CRUDE_PRICE,
+    MID.COPPER_PRICE_USD,
+    MID.NICKEL_PRICE_USD, // stub: 0 rows in DB until ingest-commodity-terminal backfill runs
 ] as const;
 
 const METRIC_LABELS: Record<string, string> = {
-    WTI_CRUDE_PRICE: 'WTI Crude',
-    BRENT_CRUDE_PRICE: 'Brent Crude',
-    COPPER_PRICE_USD: 'Copper ($/t)',
-    NICKEL_PRICE_USD: 'Nickel ($/t)',
+    [MID.WTI_CRUDE_PRICE]: 'WTI Crude',
+    [MID.BRENT_CRUDE_PRICE]: 'Brent Crude',
+    [MID.COPPER_PRICE_USD]: 'Copper ($/t)',
+    [MID.NICKEL_PRICE_USD]: 'Nickel ($/t)',
 };
 
 export const useCommodityPrices = () => {
@@ -30,7 +31,7 @@ export const useCommodityPrices = () => {
             const { data, error } = await supabase
                 .from('metric_observations')
                 .select('metric_id, as_of_date, value')
-                .in('metric_id', METRIC_IDS)
+                .in('metric_id', COMMODITY_IDS)
                 .order('as_of_date', { ascending: false })
                 .limit(40);
 

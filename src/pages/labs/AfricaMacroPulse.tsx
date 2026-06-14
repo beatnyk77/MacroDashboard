@@ -1,4 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
     ChevronRight,
     ArrowLeft,
@@ -11,6 +15,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
 import { AfricaMacroSnapshot } from '@/features/dashboard/components/sections/AfricaMacroSnapshot';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedContent } from '@/components/RelatedContent';
 
 // Lazy loaded components (to be implemented)
 const AfricaComparisonHeatmap = lazy(() => import('@/features/dashboard/components/sections/AfricaComparisonHeatmap').then(m => ({ default: m.AfricaComparisonHeatmap })));
@@ -23,6 +28,8 @@ const LoadingFallback = ({ label }: { label: string }) => (
 );
 
 export const AfricaMacroPulseLab: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.GOLD_PRICE_USD);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     const continentSchema = {
         "@context": "https://schema.org",
         "@type": "Place",
@@ -98,9 +105,12 @@ export const AfricaMacroPulseLab: React.FC = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <Globe size={12} /> Emerging Market Intelligence
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white mb-4">
-                    Africa <span className="text-blue-500">Macro</span> Pulse
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
+                        Africa <span className="text-blue-500">Macro</span> Pulse
+                    </h1>
+                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     Institutional-grade terminal for tracking sovereign debt sustainability, commodity exposure, and the shifting gravity of BRICS trade across the African continent.
                 </p>
@@ -174,6 +184,7 @@ export const AfricaMacroPulseLab: React.FC = () => {
                     </a>
                 </Button>
             </div>
+            <RelatedContent />
         </div>
     );
 };

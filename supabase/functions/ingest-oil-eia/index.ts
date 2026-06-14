@@ -1,20 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-// Use full ESM URLs to avoid Deno bundling issues
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 declare const Deno: any;
 
 // Parse EIA Weekly Petroleum Status Report CSV (table2.csv)
-// Returns { utilizationPct, capacityKbpd, reportDate }
 async function fetchEIAWeeklyStatus(): Promise<{
     utilizationPct: number;
     capacityKbpd: number;
-    reportDate: string; // YYYY-MM-DD
+    reportDate: string;
 } | null> {
     try {
         const res = await fetch('https://ir.eia.gov/wpsr/table2.csv', {
@@ -25,12 +19,10 @@ async function fetchEIAWeeklyStatus(): Promise<{
         const text = await res.text();
         const lines = text.split('\n').map(l => l.trim());
 
-        // First line has dates: "STUB_1","STUB_2","5/8/26","5/1/26",...
         const header = lines[0];
         const headerCols = header.split(',').map(c => c.replace(/"/g, '').trim());
 
-        // Parse the report date from column index 2 (most recent week)
-        const rawDate = headerCols[2]; // e.g. "5/8/26"
+        const rawDate = headerCols[2];
         let reportDate = '';
         if (rawDate) {
             const parts = rawDate.split('/');
@@ -49,16 +41,14 @@ async function fetchEIAWeeklyStatus(): Promise<{
             if (!line) continue;
             const cols = line.split(',').map(c => c.replace(/"/g, '').trim());
 
-            // Row with "Percent Utilization" — col[2] = latest week value
             if (cols[1]?.toLowerCase().includes('percent utilization') && cols[2]) {
                 const val = parseFloat(cols[2]);
                 if (!isNaN(val)) utilizationPct = val;
             }
 
-            // Row with "Operable Capacity" — col[2] = latest week value (kbpd)
             if (cols[1]?.toLowerCase().includes('operable capacity') && !cols[1].toLowerCase().includes('padd') && cols[2]) {
                 const val = parseFloat(cols[2].replace(/,/g, ''));
-                if (!isNaN(val) && val > 1000) capacityKbpd = val; // sanity check: should be ~18000 kbpd
+                if (!isNaN(val) && val > 1000) capacityKbpd = val;
             }
         }
 
@@ -91,15 +81,14 @@ async function safeYahoo(ticker: string, range = '3mo'): Promise<Array<{ date: s
     }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
+serveIngest('ingest-oil-eia', async (_req: Request): Promise<IngestResult> => {
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    const summary: Record<string, number> = { capacity: 0, utilization: 0, brent: 0 };
+    const counts: Record<string, number> = { capacity: 0, utilization: 0, brent: 0 };
+    let skipped = 0;
     const now = new Date().toISOString();
 
     // ── A. US Refinery Utilization & Capacity via EIA Weekly Status Report CSV
@@ -109,17 +98,19 @@ Deno.serve(async (req: Request) => {
     if (eiaStatus) {
         const { utilizationPct, capacityKbpd, reportDate } = eiaStatus;
 
-        // Upsert utilization
         const { error: utilErr } = await supabase.from('metric_observations').upsert({
             metric_id: 'OIL_REFINERY_UTILIZATION_US',
             as_of_date: reportDate,
             value: utilizationPct,
             last_updated_at: now,
         }, { onConflict: 'metric_id, as_of_date' });
-        if (utilErr) console.error('[ingest-oil-eia] utilization upsert error:', utilErr.message);
-        else summary.utilization = 1;
+        if (utilErr) {
+            console.error('[ingest-oil-eia] utilization upsert error:', utilErr.message);
+            skipped++;
+        } else {
+            counts.utilization = 1;
+        }
 
-        // Upsert capacity into oil_refining_capacity table
         const asOfYear = parseInt(reportDate.slice(0, 4));
         const capacityMbpd = Math.round((capacityKbpd / 1000) * 100) / 100;
         const { error: capErr } = await supabase.from('oil_refining_capacity').upsert({
@@ -129,12 +120,17 @@ Deno.serve(async (req: Request) => {
             as_of_year: asOfYear,
             last_updated_at: now,
         }, { onConflict: 'country_code, as_of_year' });
-        if (capErr) console.error('[ingest-oil-eia] capacity upsert error:', capErr.message);
-        else summary.capacity = 1;
+        if (capErr) {
+            console.error('[ingest-oil-eia] capacity upsert error:', capErr.message);
+            skipped++;
+        } else {
+            counts.capacity = 1;
+        }
 
         console.log(`[ingest-oil-eia] Stored: utilization=${utilizationPct}%, capacity=${capacityMbpd} MBPD for ${reportDate}`);
     } else {
         console.warn('[ingest-oil-eia] Could not fetch EIA Weekly Status Report');
+        skipped++;
     }
 
     // ── B. Brent Crude Price via Yahoo Finance (BZ=F) — 3 months
@@ -148,17 +144,22 @@ Deno.serve(async (req: Request) => {
             last_updated_at: now,
         }));
         const { error } = await supabase.from('metric_observations').upsert(rows, { onConflict: 'metric_id, as_of_date' });
-        if (error) console.error('[ingest-oil-eia] Brent upsert error:', error.message);
-        else summary.brent = rows.length;
+        if (error) {
+            console.error('[ingest-oil-eia] Brent upsert error:', error.message);
+            skipped++;
+        } else {
+            counts.brent = rows.length;
+        }
+    } else {
+        skipped++;
     }
 
-    console.log('[ingest-oil-eia] Done:', JSON.stringify(summary));
-    await supabase.from('ingestion_logs').insert({
-        function_name: 'ingest-oil-eia', status: 'success',
-        metadata: summary, start_time: now,
-    });
+    const totalUpserted = counts.utilization + counts.capacity + counts.brent;
+    console.log('[ingest-oil-eia] Done:', JSON.stringify(counts));
 
-    return new Response(JSON.stringify({ ok: true, ...summary, latest: eiaStatus }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-});
+    return {
+        ok: true,
+        counts: { upserted: totalUpserted, skipped, ...counts },
+        meta: { latest: eiaStatus as any },
+    };
+})

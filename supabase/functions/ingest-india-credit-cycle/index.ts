@@ -1,12 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 // Phase quadrant thresholds calibrated to 10-year RBI averages
 const CD_RATIO_MID = 77.0
@@ -170,27 +164,7 @@ function computeYoY(levels: MonthlyLevel[]): Array<{
     return results
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-india-credit-cycle', async (_ctx) => {
-        const result = await runWithRetry(
-            'ingest-india-credit-cycle',
-            () => doIngestIndiaCreditCycle(supabase),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    })
-})
-
-async function doIngestIndiaCreditCycle(supabase: any) {
+async function doIngestIndiaCreditCycle(supabase: any): Promise<IngestResult> {
     // Fetch 36 months of levels so we can compute 24 months of YoY after the 12-month
     // baseline window is consumed. RBI DBIE monthly data lags by ~4–6 weeks.
     const threeYearsAgo = new Date()
@@ -213,8 +187,9 @@ async function doIngestIndiaCreditCycle(supabase: any) {
     console.log(`Upserted ${rows.length} rows. Latest: ${latest.date} | Credit YoY: ${latest.credit_growth_yoy}% | CD Ratio: ${latest.cd_ratio}% | Phase: ${latest.phase}`)
 
     return {
-        rows_inserted: rows.length,
-        metadata: {
+        ok: true,
+        counts: { upserted: rows.length, skipped: 0 },
+        meta: {
             latest_date: latest.date,
             latest_credit_growth: latest.credit_growth_yoy,
             latest_deposit_growth: latest.deposit_growth_yoy,
@@ -224,3 +199,11 @@ async function doIngestIndiaCreditCycle(supabase: any) {
         },
     }
 }
+
+serveIngest('ingest-india-credit-cycle', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    return doIngestIndiaCreditCycle(supabase)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

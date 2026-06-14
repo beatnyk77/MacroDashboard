@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-cie-deals', async (req: Request) => {
+
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
         return new Response('Unauthorized', { status: 401 })
@@ -107,7 +109,5 @@ Deno.serve(async (req: Request) => {
         console.error('Failed to fetch NSE deals', e);
     }
 
-    return new Response(JSON.stringify({ success: true, dealsInserted }), {
-        headers: { 'Content-Type': 'application/json' }
-    });
+    return { ok: true, counts: {} };
 })

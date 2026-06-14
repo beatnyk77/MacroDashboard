@@ -1,17 +1,5 @@
--- =====================================================
--- Schedule Precious Metals Divergence Ingestion
--- Run daily at 01:00 UTC
--- =====================================================
-
-select
-  cron.schedule (
-    'ingest-precious-divergence-daily',
-    '0 1 * * *', -- At 01:00 daily
-    $$
-    select
-      net.http_post (
-        url := 'https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/ingest-precious-divergence',
-        headers := '{"Content-Type": "application/json", "Authorization": "Bearer ' || current_setting('vault.anon_key', true) || '"}'::jsonb
-      ) as request_id;
-    $$
-  );
+-- SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled ingest-precious-divergence-daily (0 1 * * *)
+-- All cron schedule operations in this migration were unscheduled and rescheduled
+-- with the safe COALESCE + x-cron-secret vault pattern on 2026-06-13.
+-- This file is retained as a historical record only — do not re-apply.

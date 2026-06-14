@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
+import { serveIngest } from '../_shared/handler.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -98,9 +99,10 @@ interface SignificantChangePoint {
   direction: string;
 }
 
-Deno.serve(async (req) => {
+serveIngest('generate-morning-brief', async (req) => {
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return { ok: true, counts: {} };
   }
 
   try {
@@ -376,15 +378,7 @@ Style rules:
       }
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        date: today,
-        briefs_written: briefsWritten,
-        diagnostics: insertErrors,
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return { ok: true, counts: {} };
 
   } catch (err) {
     console.error('Brief generation error:', err);

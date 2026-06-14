@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-
-declare const Deno: any;
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest } from '../_shared/handler.ts';
 
 // ── ISO3 → ISO2 for joining with country_metrics (which uses alpha-2) ──
 const ISO3_TO_ISO2: Record<string, string> = {
@@ -76,24 +70,11 @@ function computeCAGR(values: number[]): number | null {
 
 
 
-async function logIngestion(supabase: SupabaseClient, status: string, meta: object) {
-    try {
-        await supabase.from('ingestion_logs').insert({
-            function_name: 'compute-hs-opportunity-scores',
-            status,
-            metadata: meta,
-            start_time: new Date().toISOString(),
-        })
-    } catch (_) { /* non-blocking */ }
-}
-
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-
+serveIngest('compute-hs-opportunity-scores', async (req: Request) => {
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL')
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-        
+
         if (!supabaseUrl || !supabaseKey) {
             throw new Error("Missing Supabase configuration (URL/Key)")
         }
@@ -115,10 +96,7 @@ Deno.serve(async (req: Request) => {
         if (demandErr) throw demandErr
         if (!demandRows || demandRows.length === 0) {
             console.warn(`[compute-hs-opportunity-scores] No demand data found for HS ${hsCode}`)
-            return new Response(JSON.stringify({ ok: false, message: 'No demand data found. Run fetch-hs-demand first.' }), {
-                status: 200,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            })
+            return { ok: false, error: 'No demand data found. Run fetch-hs-demand first.' }
         }
 
         console.log(`[compute-hs-opportunity-scores] Found ${demandRows.length} demand rows`)
@@ -214,10 +192,7 @@ Deno.serve(async (req: Request) => {
 
         if (scoreRows.length === 0) {
             console.warn(`[compute-hs-opportunity-scores] No scorable markets for HS ${hsCode}`)
-            return new Response(JSON.stringify({ ok: false, message: 'No scorable markets found.' }), {
-                status: 200,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            })
+            return { ok: false, error: 'No scorable markets found.' }
         }
 
         console.log(`[compute-hs-opportunity-scores] Upserting ${scoreRows.length} scores`)
@@ -229,46 +204,19 @@ Deno.serve(async (req: Request) => {
 
         if (upsertErr) throw upsertErr
 
-        await logIngestion(supabase, 'success', { hsCode, scored: scoreRows.length })
-
-        return new Response(JSON.stringify({
+        return {
             ok: true,
-            hsCode,
-            scored: scoreRows.length,
-            topMarkets: scoreRows
-                .sort((a, b) => b.overall_score - a.overall_score)
-                .slice(0, 5)
-                .map(r => ({ country: r.reporter_iso3, score: r.overall_score, usd: r.latest_export_usd })),
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+            counts: { scored: scoreRows.length },
+            meta: {
+                hsCode,
+                topMarkets: scoreRows
+                    .sort((a, b) => b.overall_score - a.overall_score)
+                    .slice(0, 5)
+                    .map(r => ({ country: r.reporter_iso3, score: r.overall_score, usd: r.latest_export_usd })),
+            },
+        }
 
     } catch (err) {
-        console.error('[compute-hs-opportunity-scores] Global catch:', err)
-        
-        // Try to log failure
-        try {
-            const supabaseUrl = Deno.env.get('SUPABASE_URL')
-            const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-            if (supabaseUrl && supabaseKey) {
-                const supabase = createClient(supabaseUrl, supabaseKey)
-                const hsCode = new URL(req.url).searchParams.get('hsCode') || 'unknown'
-                await supabase.from('ingestion_logs').insert({
-                    function_name: 'compute-hs-opportunity-scores',
-                    status: 'failed',
-                    metadata: { hsCode, error: String(err) },
-                    start_time: new Date().toISOString()
-                })
-            }
-        } catch (_) { /* ignore */ }
-
-        return new Response(JSON.stringify({ 
-            ok: false, 
-            error: String(err),
-            details: "Critical failure in compute-hs-opportunity-scores."
-        }), {
-            status: 200, // Fail soft
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+        throw err
     }
 })

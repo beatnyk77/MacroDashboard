@@ -2,7 +2,12 @@ import React, { Suspense, lazy } from 'react';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedContent } from '@/components/RelatedContent';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
@@ -15,6 +20,8 @@ const LoadingFallback = () => (
 );
 
 export const CentralBankGoldPurchases: React.FC = () => {
+    const { data: primaryMetric } = useLatestMetric(MID.BRICS_GOLD_HOLDINGS_TONNES);
+    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>
             <SEOManager
@@ -43,9 +50,12 @@ export const CentralBankGoldPurchases: React.FC = () => {
                 </div>
 
                 <div className="mb-12">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
-                        Global Central Bank <span className="text-amber-500">Gold Purchases</span>
-                    </h1>
+                    <div className="flex items-center gap-3 mb-4">
+                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">
+                            Global Central Bank <span className="text-amber-500">Gold Purchases</span>
+                        </h1>
+                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    </div>
                     <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                         Real-time tracking of sovereign gold accumulation and the strategic pivot from Western ETFs to Eastern Central Banks.
                     </p>
@@ -102,6 +112,7 @@ export const CentralBankGoldPurchases: React.FC = () => {
                         </a>
                     </Button>
                 </div>
+                <RelatedContent />
             </div>
         </>
     );

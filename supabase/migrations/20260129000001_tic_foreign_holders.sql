@@ -61,13 +61,6 @@ SELECT
     END as pct_of_total_foreign
 FROM holdings_with_lags;
 
--- Register Cron Job (Scheduled for 16th of each month, 10:00 AM)
--- The TIC data is usually released around the 15th of the month.
-SELECT cron.schedule(
-    'ingest-tic-foreign-holders-monthly',
-    '0 10 16 * *',
-    $$ SELECT net.http_post(
-        url := 'https://debdriyzfcwvgrhzzzre.functions.supabase.co/ingest-tic-foreign-holders',
-        headers := '{"Content-Type": "application/json", "Authorization": "Bearer ' || current_setting('vault.anon_key') || '"}'::jsonb
-    ) $$
-);
+-- [cron.schedule omitted] SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled ingest-tic-foreign-holders-monthly (0 10 16 * *).
+-- Rescheduled with safe COALESCE + x-cron-secret vault pattern on 2026-06-13.

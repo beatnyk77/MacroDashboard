@@ -21,6 +21,8 @@ export type ChinaMacroPulseRow = {
     unit: string;
     label: string;
     source: string;
+    source_ref?: string | null;
+    is_provisional?: boolean;
 };
 
 export type ChinaEnergyGridRow = {

@@ -3,8 +3,10 @@ import { createAdminClient } from './utils/supabaseClient.ts'
 import { Logger } from './utils/logger.ts'
 import { ingestFred } from './sources/fred.ts'
 import { ingestFiscalData } from './sources/fiscalData.ts'
+import { serveIngest } from '../_shared/handler.ts';
 
-Deno.serve(async (req) => {
+serveIngest('ingest-daily', async (req) => {
+
     // 1. Basic Auth or Secret Check (Optional but recommended for Cron)
     // For now, we rely on Supabase's internal invoke protections or a shared secret header if needed.
     const authHeader = req.headers.get('Authorization')
@@ -36,20 +38,10 @@ Deno.serve(async (req) => {
         const totalDuration = Math.round(performance.now() - start)
         await logger.log('orchestrator', 'success', 0, 'Ingestion run complete', totalDuration)
 
-        return new Response(JSON.stringify({
-            message: 'Ingestion complete',
-            runId
-        }), {
-            headers: { 'Content-Type': 'application/json' }
-        })
-
-    } catch (err: any) {
+        return { ok: true, counts: {} };} catch (err: any) {
         console.error('Fatal orchestration error:', err)
         await logger.log('orchestrator', 'error', 0, `Fatal: ${err.message}`)
 
-        return new Response(JSON.stringify({ error: err.message }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        })
-    }
+        throw err;
+}
 })

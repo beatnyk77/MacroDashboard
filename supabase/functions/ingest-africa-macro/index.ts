@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from "@supabase/supabase-js"
+import { serveIngest } from '../_shared/handler.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-Deno.serve(async (req) => {
+serveIngest('ingest-africa-macro', async (req) => {
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+    return { ok: true, counts: {} };}
 
   try {
     const supabase = createClient(
@@ -91,11 +92,7 @@ Deno.serve(async (req) => {
       if (metricError) console.error(`Error upserting metric for ${metric.iso}:`, metricError)
     }
 
-    return new Response(JSON.stringify({ success: true, message: "Africa Macro Pulse ingested successfully" }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    })
-  } catch (error: unknown) {
+    return { ok: true, counts: {} };} catch (error: unknown) {
     return new Response(JSON.stringify({ error: (error as Error).message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,

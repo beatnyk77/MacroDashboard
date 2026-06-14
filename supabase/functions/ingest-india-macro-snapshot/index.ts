@@ -1,21 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from "@supabase/supabase-js"
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
-
-  try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+async function doIngestIndiaMacroSnapshot(supabase: any): Promise<IngestResult> {
 
     // Data for Apr'26 Dashboard as per the provided image
     const snapshotDate = '2026-04-01'
@@ -197,14 +184,17 @@ Deno.serve(async (req: Request) => {
 
     if (error) throw error
 
-    return new Response(JSON.stringify({ success: true, message: "Snapshot ingested successfully" }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    })
-  } catch (error: unknown) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400,
-    })
-  }
-})
+    return {
+      ok: true,
+      counts: { upserted: 1, skipped: 0 },
+      meta: { snapshot_date: snapshotDate }
+    }
+}
+
+serveIngest('ingest-india-macro-snapshot', async (_req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  )
+  return doIngestIndiaMacroSnapshot(supabase)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

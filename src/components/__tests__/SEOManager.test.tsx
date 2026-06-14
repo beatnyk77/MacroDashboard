@@ -3,6 +3,7 @@ import { render, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { SEOManager } from '@/components/SEOManager';
+import { DefaultSEO } from '@/components/DefaultSEO';
 
 // react-helmet-async defers DOM writes via requestAnimationFrame.
 // jsdom doesn't auto-advance rAF, so we replace it with a synchronous
@@ -86,5 +87,46 @@ describe('SEOManager canonical URL', () => {
         const link = await renderSEOManager('/tools/net-liquidity-gauge');
         expect(link).not.toBeNull();
         expect(link!.href).toBe('https://graphiquestor.com/tools/net-liquidity-gauge');
+    });
+});
+
+describe('DefaultSEO — router-level canonical fallback', () => {
+    it('(a) route with no SEOManager renders exactly one self-referencing canonical', async () => {
+        await act(async () => {
+            render(
+                <HelmetProvider>
+                    <MemoryRouter initialEntries={['/intel/india']}>
+                        <DefaultSEO />
+                        {/* No SEOManager — simulates the 39 pages that omit it */}
+                    </MemoryRouter>
+                </HelmetProvider>
+            );
+        });
+        const links = document.querySelectorAll('link[rel="canonical"]');
+        expect(links).toHaveLength(1);
+        expect((links[0] as HTMLLinkElement).href).toBe('https://graphiquestor.com/intel/india');
+    });
+
+    it('(b) route with SEOManager: page canonical wins, exactly one canonical tag', async () => {
+        // DefaultSEO is mounted first (layout level); SEOManager is mounted second
+        // (page level). react-helmet-async last-mounted-wins means SEOManager's
+        // canonical must be the one that survives.
+        await act(async () => {
+            render(
+                <HelmetProvider>
+                    <MemoryRouter initialEntries={['/intel/india']}>
+                        <DefaultSEO />
+                        <SEOManager
+                            title="India Macro"
+                            description="India macro intelligence"
+                            canonicalUrl="https://graphiquestor.com/intel/india"
+                        />
+                    </MemoryRouter>
+                </HelmetProvider>
+            );
+        });
+        const links = document.querySelectorAll('link[rel="canonical"]');
+        expect(links).toHaveLength(1);
+        expect((links[0] as HTMLLinkElement).href).toBe('https://graphiquestor.com/intel/india');
     });
 });

@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 const G20_COUNTRIES = [
     { code: 'US', fx: 'USD' },
@@ -23,17 +18,14 @@ const G20_COUNTRIES = [
     { code: 'AU', fx: 'DEXUSAL', invert: true },
     { code: 'KR', fx: 'DEXKOUS' },
     { code: 'MX', fx: 'DEXMXUS' },
-    { code: 'RU', fx: 'USD' }, // Fallback
-    { code: 'ID', fx: 'USD' }, // Fallback
-    { code: 'TR', fx: 'USD' }, // Fallback
-    { code: 'SA', fx: 'USD' }, // Fallback
-    { code: 'AR', fx: 'USD' }  // Fallback
+    { code: 'RU', fx: 'USD' },
+    { code: 'ID', fx: 'USD' },
+    { code: 'TR', fx: 'USD' },
+    { code: 'SA', fx: 'USD' },
+    { code: 'AR', fx: 'USD' }
 ];
 
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-async function doIngestGoldDebtCoverage(supabase: any, fredApiKey: string) {
-    // Fetch latest gold price
+async function doIngestGoldDebtCoverage(supabase: any, fredApiKey: string): Promise<IngestResult> {
     const { data: goldData } = await supabase
         .from('vw_latest_metrics')
         .select('value')
@@ -41,15 +33,12 @@ async function doIngestGoldDebtCoverage(supabase: any, fredApiKey: string) {
         .single();
     const goldPriceUsd = goldData?.value || 2650;
 
-    // Fetch gold reserves
     const { data: reserves } = await supabase
         .from('country_reserves')
         .select('country_code, gold_tonnes');
 
-    // Provide defaults if not found
     const safeReserves = reserves || [];
 
-    // Fetch metrics 
     const { data: metrics } = await supabase
         .from('vw_latest_metrics')
         .select('metric_id, value');
@@ -62,29 +51,23 @@ async function doIngestGoldDebtCoverage(supabase: any, fredApiKey: string) {
     for (const country of G20_COUNTRIES) {
         const code = country.code === 'GB' ? 'UK' : country.code;
 
-        // Debt % and Nominal GDP
         const debtPct = Number(metricMap.get(`${code}_DEBT_GDP_PCT`) || 0);
         const rawNomGdp = metricMap.get(`${code}_GDP_NOMINAL_TN`) ?? metricMap.get(`${code}_GDP_NOMINAL_USD`) ?? 0;
         const nomGdpTn = Number(rawNomGdp);
 
         let nominalGdpUsd = nomGdpTn;
         if (nomGdpTn > 0 && nomGdpTn < 1000) {
-            // Treat as trillions
             nominalGdpUsd = nomGdpTn * 1e12;
         } else if (nomGdpTn > 0 && nomGdpTn < 1e6) {
-            // Treat as billions
             nominalGdpUsd = nomGdpTn * 1e9;
         } else {
-            // Treat as raw actual USD
             nominalGdpUsd = nomGdpTn;
         }
 
-        // Find gold reserves
         const reserve = safeReserves.find((r: any) => r.country_code === country.code);
         const tonnes = reserve?.gold_tonnes || 0;
         const ounces = tonnes * 32150.7;
 
-        // Fetch FX rate
         let fxRate = 1;
         if (country.fx !== 'USD') {
             try {
@@ -108,7 +91,7 @@ async function doIngestGoldDebtCoverage(supabase: any, fredApiKey: string) {
             const goldValueUsd = ounces * goldPriceUsd;
 
             const debtPerOzLocal = totalDebtLocal / ounces;
-            const coverageRatio = (goldValueUsd / totalDebtUsd) * 100; // as percent
+            const coverageRatio = (goldValueUsd / totalDebtUsd) * 100;
             const inverseCoverageRatio = totalDebtUsd / goldValueUsd;
             const impliedGoldPriceUsd = totalDebtUsd / ounces;
 
@@ -136,27 +119,19 @@ async function doIngestGoldDebtCoverage(supabase: any, fredApiKey: string) {
         if (error) throw error;
     }
 
-    return { rows_inserted: results.length };
+    return {
+        ok: true,
+        counts: { upserted: results.length, skipped: 0 },
+        meta: { date, countries: results.length },
+    }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-gold-debt-coverage', async (ctx) => {
-        const fredApiKey = Deno.env.get('FRED_API_KEY');
-        if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
-
-        const result = await runWithRetry(
-            'ingest-gold-debt-coverage',
-            () => doIngestGoldDebtCoverage(ctx.supabase, fredApiKey),
-            { timeoutMs: 10 * 60 * 1000, maxRetries: 3 }
-        );
-
-        if (!result.ok) throw new Error(`Gold debt coverage ingestion failed: ${result.error}`);
-        return result.value!;
-    });
-});
+serveIngest('ingest-gold-debt-coverage', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
+    return doIngestGoldDebtCoverage(supabase, fredApiKey)
+}, { timeoutMs: 10 * 60 * 1000, retries: 3 })

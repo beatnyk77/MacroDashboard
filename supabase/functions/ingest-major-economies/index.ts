@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 /**
  * Ingest Major Economies Data (CN, IN, JP, EU, RU)
  * Uses high-signal, realistic latest values to ensure 100% population and stability.
  * Data updated as of Jan 2026.
  */
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-major-economies', async (req: Request) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+        return { ok: true, counts: {} };}
 
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -155,16 +152,11 @@ Deno.serve(async (req: Request) => {
             summary.reserves_upserted = reserveUpserts.length;
         }
 
-        return new Response(JSON.stringify(summary), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200
-        });
+        return { ok: true, counts: {} };
 
     } catch (error: any) {
         console.error('Major Economies Ingestion Error:', error);
-        return new Response(JSON.stringify({ error: error.message }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 500,
-        });
+        throw error;
+
     }
 });

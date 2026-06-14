@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from '@supabase/supabase-js';
 import { MoSPIClient } from './mospi-client.ts';
-import { runIngestion, IngestionContext } from '../_shared/logging.ts';
-import { runWithRetry } from '../_shared/job-runner.ts';
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
+import { upsertObservations } from '../_shared/ingest_utils.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-async function doIngestMospi(supabase: any) {
+async function doIngestMospi(supabase: any): Promise<IngestResult> {
     const mospi = new MoSPIClient();
     const results = [];
     let totalUpserted = 0;
@@ -19,13 +13,12 @@ async function doIngestMospi(supabase: any) {
     // Helper to upsert metric observations (Aggregates)
     const upsertMetric = async (metricId: string, value: number, date: string) => {
         if (isNaN(value) || value === null) return false;
-        const { error } = await supabase.from('metric_observations').upsert({
+        await upsertObservations(supabase, [{
             metric_id: metricId,
             as_of_date: date,
             value: value,
             last_updated_at: new Date().toISOString()
-        }, { onConflict: 'metric_id, as_of_date' });
-        if (error) throw error;
+        }], { source_ref: 'live_api:ingest-mospi', is_provisional: false });
         totalUpserted++;
         return true;
     };
@@ -143,25 +136,16 @@ async function doIngestMospi(supabase: any) {
     }
 
     return {
-        rows_inserted: totalUpserted,
-        metadata: { results }
+        ok: true,
+        counts: { upserted: totalUpserted, skipped: 0 },
+        meta: { results }
     };
 }
 
-serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-mospi', async (ctx: IngestionContext) => {
-        return runWithRetry(
-            'ingest-mospi',
-            () => doIngestMospi(supabase),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3 }
-        );
-    });
-});
+serveIngest('ingest-mospi', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
+    return doIngestMospi(supabase);
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 });

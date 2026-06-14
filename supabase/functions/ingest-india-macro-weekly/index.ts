@@ -1,13 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from "@supabase/supabase-js"
 import * as cheerio from "https://esm.sh/cheerio@1.0.0-rc.12"
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -238,27 +232,7 @@ function mergeIntoSnapshot(
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-  )
-  const fredKey = Deno.env.get('FRED_API_KEY') ?? ''
-
-  return runIngestion(supabase, 'ingest-india-macro-weekly', async () => {
-    const result = await runWithRetry(
-      'ingest-india-macro-weekly',
-      () => doIngest(supabase, fredKey),
-      { timeoutMs: 5 * 60 * 1000, maxRetries: 2, backoffMs: 15_000 },
-    )
-    if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-    return result.value!
-  })
-})
-
-async function doIngest(supabase: any, fredKey: string) {
+async function doIngest(supabase: any, fredKey: string): Promise<IngestResult> {
   console.log('[india-macro-weekly] Fetching 8 metrics in parallel...')
 
   const [cpiR, wpiR, mfgR, svcR, forexR, gstR, vahanR, naukriR] =
@@ -323,5 +297,18 @@ async function doIngest(supabase: any, fredKey: string) {
 
   const updated = settled.filter(r => r.status === 'fulfilled' && r.value.value !== null).length
   console.log(`[india-macro-weekly] Done. ${updated}/8 metrics updated.`)
-  return { metrics_updated: updated, snapshot_date: snapshotDate }
+  return {
+    ok: true,
+    counts: { upserted: updated, skipped: 0 },
+    meta: { snapshot_date: snapshotDate }
+  }
 }
+
+serveIngest('ingest-india-macro-weekly', async (_req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  )
+  const fredKey = Deno.env.get('FRED_API_KEY') ?? ''
+  return doIngest(supabase, fredKey)
+}, { timeoutMs: 5 * 60 * 1000, retries: 2 })

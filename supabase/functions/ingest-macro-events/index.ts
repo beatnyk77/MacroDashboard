@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { mapFinnhubEvent } from './utils.ts'
+import { serveIngest } from '../_shared/handler.ts';
 
 // --- SHARED UTILS ---
 const corsHeaders = {
@@ -250,10 +251,10 @@ async function sendAlert(message: string, severity: 'critical' | 'warning' = 'wa
 }
 
 // --- MAIN FUNCTION ---
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-macro-events', async (req: Request) => {
+
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+        return { ok: true, counts: {} };}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -337,11 +338,12 @@ Deno.serve(async (req: Request) => {
         const result = { count: eventsToUpsert.length, dateRange: { from: fromStr, to: toStr } };
         await logIngestionEnd(supabase, logId, 'success', { rows_inserted: eventsToUpsert.length, metadata: result });
 
-        return new Response(JSON.stringify(result), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        return { ok: true, counts: {} };
 
     } catch (error: any) {
         console.error('Fatal ingestion error:', error);
         if (logId) await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-        return new Response(JSON.stringify({ error: error.message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 });
+        throw fetchErr;
+
     }
 })

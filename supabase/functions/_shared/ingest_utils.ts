@@ -62,18 +62,39 @@ export function validateNumericData(data: any, keys: string[]): boolean {
   });
 }
 
+export interface ProvenanceDefaults {
+  /** e.g. 'live_api:fred' | 'fallback:china-macro-lpr-hardcoded' | 'seed:001_initial_schema' */
+  source_ref: string;
+  /** true when the row did not come from a live API call */
+  is_provisional?: boolean;
+}
+
 /**
- * Upserts observations to metric_observations table with standard columns
+ * Upserts observations to metric_observations table with standard columns.
+ *
+ * Pass `provenanceDefaults` to stamp source_ref / is_provisional on every row
+ * that does not already carry those fields.  Live-API callers pass
+ * { source_ref: 'live_api:<name>', is_provisional: false }; fallback callers
+ * pass { source_ref: 'fallback:<name>', is_provisional: true }.
  */
 export async function upsertObservations(
   supabase: SupabaseClient,
-  observations: any[]
+  observations: any[],
+  provenanceDefaults?: ProvenanceDefaults,
 ) {
   if (observations.length === 0) return { count: 0 };
 
+  const rows = provenanceDefaults
+    ? observations.map((o) => ({
+        ...o,
+        source_ref:     o.source_ref     ?? provenanceDefaults.source_ref,
+        is_provisional: o.is_provisional ?? (provenanceDefaults.is_provisional ?? false),
+      }))
+    : observations;
+
   const { error } = await supabase
     .from('metric_observations')
-    .upsert(observations, { onConflict: 'metric_id, as_of_date' });
+    .upsert(rows, { onConflict: 'metric_id, as_of_date' });
 
   if (error) throw error;
   

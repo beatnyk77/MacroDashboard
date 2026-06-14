@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface GoldRatioHistory {
     date: string;
@@ -18,7 +19,7 @@ export function useGoldRatioHistory(days: number = 90) {
             const { data, error } = await supabase
                 .from('metric_observations')
                 .select('metric_id, as_of_date, value')
-                .in('metric_id', ['GOLD_PRICE_USD', 'US_M2', 'SPX_INDEX', 'TOTAL_PUBLIC_DEBT', 'SILVER_PRICE_USD'])
+                .in('metric_id', [MID.GOLD_PRICE_USD, MID.US_M2, MID.SPX_INDEX, MID.TOTAL_PUBLIC_DEBT, MID.SILVER_PRICE_USD])
                 .gte('as_of_date', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
                 .order('as_of_date', { ascending: true });
 
@@ -33,11 +34,11 @@ export function useGoldRatioHistory(days: number = 90) {
 
             // Calculate ratios
             return Object.entries(byDate).map(([date, vals]) => {
-                const gold = vals['GOLD_PRICE_USD'];
-                const silver = vals['SILVER_PRICE_USD'];
-                const m2 = vals['US_M2'];
-                const spx = vals['SPX_INDEX'];
-                const debt = vals['TOTAL_PUBLIC_DEBT'];
+                const gold = vals[MID.GOLD_PRICE_USD];
+                const silver = vals[MID.SILVER_PRICE_USD];
+                const m2 = vals[MID.US_M2];
+                const spx = vals[MID.SPX_INDEX];
+                const debt = vals[MID.TOTAL_PUBLIC_DEBT];
 
                 const ratios = [];
                 if (gold && m2) ratios.push({ ratio_name: 'M2/Gold', value: m2 / gold });

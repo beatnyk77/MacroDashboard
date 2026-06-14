@@ -4,6 +4,7 @@ import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Link2, Users } f
 import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedContent } from '@/components/RelatedContent';
 
 // Illustrative dual-axis data: Credit Growth % vs EPFO new subscribers (thousands)
 const ljeData = [
@@ -180,6 +181,7 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                     <Button component={Link} to="/data-sources" variant="outlined" startIcon={<Link2 size={14} />} sx={{ borderColor: 'divider', color: 'text.secondary' }}>Data Sources</Button>
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
+                <RelatedContent />
             </Container>
         </Box>
     );

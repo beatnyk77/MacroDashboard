@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-Deno.serve(async (req: Request) => {
+serveIngest('compute-cie-macro-scores', async (req: Request) => {
+
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
         return new Response('Unauthorized', { status: 401 })
@@ -108,11 +110,7 @@ Deno.serve(async (req: Request) => {
             status_code: 200
         })
 
-        return new Response(JSON.stringify({ success: true, processed, results }), {
-            headers: { 'Content-Type': 'application/json' }
-        })
-
-    } catch (error: any) {
+        return { ok: true, counts: {} };} catch (error: any) {
         await supabase.from('ingestion_logs').insert({
             function_name: functionName,
             status: 'failed',
@@ -121,6 +119,6 @@ Deno.serve(async (req: Request) => {
             completed_at: new Date().toISOString(),
             status_code: 500
         })
-        return new Response(JSON.stringify({ error: error.message }), { status: 500 })
-    }
+        throw error;
+}
 })

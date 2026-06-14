@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface GoldOilPrices {
     goldPrice: number;
@@ -15,7 +16,7 @@ export function useGoldOilPrices() {
             const { data, error } = await supabase
                 .from('metric_observations')
                 .select('metric_id, value, as_of_date')
-                .in('metric_id', ['GOLD_PRICE_USD', 'OIL_BRENT_PRICE_USD'])
+                .in('metric_id', [MID.GOLD_PRICE_USD, MID.OIL_BRENT_PRICE_USD])
                 .order('as_of_date', { ascending: false });
 
             if (error) {
@@ -24,8 +25,8 @@ export function useGoldOilPrices() {
             }
 
             // Find the most recent observation for each metric
-            const goldObs = data?.find(d => d.metric_id === 'GOLD_PRICE_USD');
-            const oilObs = data?.find(d => d.metric_id === 'OIL_BRENT_PRICE_USD');
+            const goldObs = data?.find(d => d.metric_id === MID.GOLD_PRICE_USD);
+            const oilObs = data?.find(d => d.metric_id === MID.OIL_BRENT_PRICE_USD);
 
             return {
                 goldPrice: goldObs?.value ? Number(goldObs.value) : 2400,

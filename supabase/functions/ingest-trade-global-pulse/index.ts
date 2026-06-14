@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 declare const Deno: any;
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 const MAJOR_REPORTERS = [
     { code: "842", iso3: "USA" },
@@ -31,7 +27,6 @@ const MAJOR_REPORTERS = [
     { code: "360", iso3: "IDN" },
 ];
 
-// Comtrade reporter code → ISO3
 const COMTRADE_TO_ISO3: Record<string, string> = {
     "842": "USA", "699": "IND", "251": "FRA", "156": "CHN", "276": "DEU",
     "392": "JPN", "826": "GBR", "380": "ITA", "124": "CAN", "410": "KOR",
@@ -62,10 +57,6 @@ async function chunkedUpsert(supabase: SupabaseClient, table: string, rows: any[
     }
 }
 
-// ── Import Chapter Fetch (flowCode=M) ────────────────────────────────────────
-// Fetches 2-digit HS chapter import totals (partnerCode=0 = World aggregate)
-// and upserts import_value_usd into trade_global_aggregates.
-// Also fetches bilateral breakdown → trade_supplier_breakdown (for choropleth).
 async function fetchImportChapters(
     supabase: SupabaseClient,
     reporter: { code: string; iso3: string },
@@ -81,7 +72,6 @@ async function fetchImportChapters(
         return d.data || []
     }
 
-    // ── 1. Fetch world total for targetYear ──
     let records: any[] = await tryFetch(targetYear, '0')
     let effectiveYear = targetYear
 
@@ -92,7 +82,6 @@ async function fetchImportChapters(
 
     if (records.length === 0) return 0
 
-    // ── 2. Fetch prev year for YoY ──
     const prevRecords = await tryFetch(String(parseInt(effectiveYear) - 1), '0')
     const prevMap = new Map<string, number>()
     prevRecords.forEach((r: any) => {
@@ -132,7 +121,7 @@ async function fetchImportChapters(
         await chunkedUpsert(supabase, 'trade_global_aggregates', uniqueRows, 'reporter_iso3,hs_code,year')
     }
 
-    // ── 3. Bilateral breakdown (partnerCode=all) for choropleth map ──
+    // ── Bilateral breakdown for choropleth map ──
     await delay(300)
     try {
         const bilateralRaw: any[] = await tryFetch(effectiveYear, 'all')
@@ -176,217 +165,173 @@ async function fetchImportChapters(
             }
         }
     } catch (bilateralErr: any) {
+        // Intentional skip: bilateral breakdown is supplemental; don't fail the whole reporter
         console.warn(`[fetchImportChapters] Bilateral fetch failed for ${reporter.iso3}:`, bilateralErr.message)
     }
 
     return uniqueRows.length
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+serveIngest('ingest-trade-global-pulse', async (req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    )
+    const comtradeKey = Deno.env.get('COMTRADE_API_KEY')!
 
-    try {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-        const comtradeKey = Deno.env.get('COMTRADE_API_KEY')!
-        const supabase = createClient(supabaseUrl, supabaseKey)
+    const url = new URL(req.url)
+    const targetYear = url.searchParams.get('year') || '2023'
+    const prevYear = String(parseInt(targetYear) - 1)
+    const reporterISO = url.searchParams.get('reporterISO')
 
-        const url = new URL(req.url)
-        const targetYear = url.searchParams.get('year') || '2023'
-        const prevYear = String(parseInt(targetYear) - 1)
-        const reporterISO = url.searchParams.get('reporterISO')
+    console.log(`[ingest-trade-global-pulse] Starting for ${targetYear}`)
 
-        console.log(`[ingest-trade-global-pulse] Starting for ${targetYear}`)
+    let totalUpserted = 0;
+    let skipped = 0;
+    const reporters = reporterISO
+        ? MAJOR_REPORTERS.filter(r => r.iso3 === reporterISO)
+        : MAJOR_REPORTERS
 
-        let totalUpserted = 0;
-        const reporters = reporterISO
-            ? MAJOR_REPORTERS.filter(r => r.iso3 === reporterISO)
-            : MAJOR_REPORTERS
+    for (const reporter of reporters) {
+        console.log(`[ingest-trade-global-pulse] Processing ${reporter.iso3}...`)
+        let targetRecords: any[] = [];
+        let effectiveYear = targetYear;
 
-        for (const reporter of reporters) {
-            console.log(`[ingest-trade-global-pulse] Processing ${reporter.iso3}...`)
-            let targetRecords: any[] = [];
-            let effectiveYear = targetYear;
-
-            const tryFetch = async (y: string, p: string) => {
-                const url = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporter.code}&period=${y}&cmdCode=AG2&flowCode=X&partnerCode=${p}`
-                const res = await fetch(url, { headers: { 'Ocp-Apim-Subscription-Key': comtradeKey } })
-                if (!res.ok) return [];
-                const d = await res.json() as any;
-                return d.data || [];
-            }
-
-            targetRecords = await tryFetch(targetYear, '0');
-            
-            // Fallback 1: partner=all for targetYear
-            if (targetRecords.length === 0) {
-                const allPartners = await tryFetch(targetYear, 'all');
-                if (allPartners.length > 0) {
-                    const agg = new Map();
-                    allPartners.forEach((r: any) => {
-                        const cmd = r.CmdCode || r.cmdCode;
-                        const val = r.PrimaryValue || r.primaryValue || 0;
-                        agg.set(cmd, (agg.get(cmd) || 0) + val);
-                    });
-                    targetRecords = Array.from(agg.entries()).map(([code, val]) => ({
-                        CmdCode: code,
-                        PrimaryValue: val,
-                        ReporterCode: reporter.code,
-                        Period: targetYear
-                    }));
-                }
-            }
-
-            // Fallback 2: Previous Year World
-            if (targetRecords.length === 0) {
-                targetRecords = await tryFetch(prevYear, '0');
-                effectiveYear = prevYear;
-            }
-
-            // Fallback 3: Previous Year all
-            if (targetRecords.length === 0) {
-                const allPartners = await tryFetch(prevYear, 'all');
-                if (allPartners.length > 0) {
-                    const agg = new Map();
-                    allPartners.forEach((r: any) => {
-                        const cmd = r.CmdCode || r.cmdCode;
-                        const val = r.PrimaryValue || r.primaryValue || 0;
-                        agg.set(cmd, (agg.get(cmd) || 0) + val);
-                    });
-                    targetRecords = Array.from(agg.entries()).map(([code, val]) => ({
-                        CmdCode: code,
-                        PrimaryValue: val,
-                        ReporterCode: reporter.code,
-                        Period: prevYear
-                    }));
-                    effectiveYear = prevYear;
-                }
-            }
-
-            if (targetRecords.length === 0) {
-                console.error(`CRITICAL: No data found for ${reporter.iso3} after all fallbacks.`)
-                await supabase.from('ingestion_logs').insert({
-                    function_name: 'ingest-trade-global-pulse',
-                    status: 'failed',
-                    metadata: { 
-                        iso3: reporter.iso3, 
-                        year: effectiveYear, 
-                        records: 0,
-                        reason: 'No data after all fallbacks'
-                    },
-                    start_time: new Date().toISOString()
-                });
-                continue
-            }
-
-            console.log(`[ingest-trade-global-pulse] Found ${targetRecords.length} export records for ${reporter.iso3} in ${effectiveYear}`)
-
-            // Fetch previous year for growth calc (relative to effectiveYear)
-            const growthPrevYear = String(parseInt(effectiveYear) - 1)
-            let prevRecords = await tryFetch(growthPrevYear, '0');
-            
-            // Fallback: if no '0' partner for prev year, try 'all'
-            if (prevRecords.length === 0) {
-                const allPartnersPrev = await tryFetch(growthPrevYear, 'all');
-                if (allPartnersPrev.length > 0) {
-                    const agg = new Map();
-                    allPartnersPrev.forEach((r: any) => {
-                        const cmd = r.CmdCode || r.cmdCode;
-                        const val = r.PrimaryValue || r.primaryValue || 0;
-                        agg.set(cmd, (agg.get(cmd) || 0) + val);
-                    });
-                    prevRecords = Array.from(agg.entries()).map(([code, val]) => ({
-                        CmdCode: code,
-                        PrimaryValue: val,
-                        ReporterCode: reporter.code,
-                        Period: growthPrevYear
-                    }));
-                }
-            }
-
-            let prevMap = new Map();
-            prevRecords.forEach((r: any) => prevMap.set(r.CmdCode || r.cmdCode, r.PrimaryValue || r.primaryValue || 0));
-
-            const totalExportValue = targetRecords.reduce((sum: number, r: any) => sum + (r.PrimaryValue || r.primaryValue || 0), 0);
-
-            const rows = targetRecords.map((r: any, _idx: number) => {
-                const currentVal = r.PrimaryValue || r.primaryValue || 0;
-                const cmdCode = r.CmdCode || r.cmdCode;
-                const period = r.Period || r.period;
-                
-                const hasPrev = prevMap.has(cmdCode);
-                const prevVal = hasPrev ? prevMap.get(cmdCode) : 0;
-                const growth = (hasPrev && prevVal > 0) ? ((currentVal - prevVal) / prevVal) * 100 : null;
-                const share = totalExportValue > 0 ? (currentVal / totalExportValue) * 100 : 0;
-
-                // Simple untapped score
-                let untapped = 0;
-                if (growth !== null && growth > 10) untapped += 40;
-                if (growth !== null && growth > 25) untapped += 20;
-                if (share < 2) untapped += 20;
-
-                return {
-                    reporter_iso3: reporter.iso3,
-                    hs_code: cmdCode,
-                    year: parseInt(String(period).substring(0, 4)),
-                    export_value_usd: Math.round(currentVal),
-                    yoy_growth_pct: growth !== null ? parseFloat(growth.toFixed(2)) : null,
-                    share_of_total_pct: parseFloat(share.toFixed(3)),
-                    untapped_score: Math.min(100, untapped),
-                    fetched_at: new Date().toISOString()
-                }
-            })
-
-            const uniqueRows = Array.from(
-                rows.reduce((map, row) => {
-                    const key = `${row.reporter_iso3}-${row.hs_code}-${row.year}`;
-                    map.set(key, row);
-                    return map;
-                }, new Map()).values()
-            );
-
-            if (uniqueRows.length > 0) {
-                await chunkedUpsert(supabase, 'trade_global_aggregates', uniqueRows, 'reporter_iso3,hs_code,year')
-                totalUpserted += uniqueRows.length
-            }
-
-            // ── Imports: second pass (flowCode=M) ──────────────────────────
-            await delay(300) // brief back-off between export and import calls
-            try {
-                const importCount = await fetchImportChapters(supabase, reporter, effectiveYear, prevYear, comtradeKey)
-                console.log(`[ingest-trade-global-pulse] Import rows for ${reporter.iso3}: ${importCount}`)
-                totalUpserted += importCount
-            } catch (importErr: any) {
-                console.error(`[ingest-trade-global-pulse] Import fetch failed for ${reporter.iso3}:`, importErr.message)
-            }
-
-            // Log attempt
-            await supabase.from('ingestion_logs').insert({
-                function_name: 'ingest-trade-global-pulse',
-                status: targetRecords.length > 0 ? 'success' : 'failed',
-                metadata: { 
-                    iso3: reporter.iso3, 
-                    year: effectiveYear, 
-                    records: targetRecords.length 
-                },
-                start_time: new Date().toISOString()
-            });
-
-            await delay(500); 
+        const tryFetch = async (y: string, p: string) => {
+            const fetchUrl = `https://comtradeapi.un.org/data/v1/get/C/A/HS?reporterCode=${reporter.code}&period=${y}&cmdCode=AG2&flowCode=X&partnerCode=${p}`
+            const res = await fetch(fetchUrl, { headers: { 'Ocp-Apim-Subscription-Key': comtradeKey } })
+            if (!res.ok) return [];
+            const d = await res.json() as any;
+            return d.data || [];
         }
 
-        return new Response(JSON.stringify({
-            ok: true,
-            message: `Ingestion complete. Total rows: ${totalUpserted}`,
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        targetRecords = await tryFetch(targetYear, '0');
+
+        if (targetRecords.length === 0) {
+            const allPartners = await tryFetch(targetYear, 'all');
+            if (allPartners.length > 0) {
+                const agg = new Map();
+                allPartners.forEach((r: any) => {
+                    const cmd = r.CmdCode || r.cmdCode;
+                    const val = r.PrimaryValue || r.primaryValue || 0;
+                    agg.set(cmd, (agg.get(cmd) || 0) + val);
+                });
+                targetRecords = Array.from(agg.entries()).map(([code, val]) => ({
+                    CmdCode: code, PrimaryValue: val, ReporterCode: reporter.code, Period: targetYear
+                }));
+            }
+        }
+
+        if (targetRecords.length === 0) {
+            targetRecords = await tryFetch(prevYear, '0');
+            effectiveYear = prevYear;
+        }
+
+        if (targetRecords.length === 0) {
+            const allPartners = await tryFetch(prevYear, 'all');
+            if (allPartners.length > 0) {
+                const agg = new Map();
+                allPartners.forEach((r: any) => {
+                    const cmd = r.CmdCode || r.cmdCode;
+                    const val = r.PrimaryValue || r.primaryValue || 0;
+                    agg.set(cmd, (agg.get(cmd) || 0) + val);
+                });
+                targetRecords = Array.from(agg.entries()).map(([code, val]) => ({
+                    CmdCode: code, PrimaryValue: val, ReporterCode: reporter.code, Period: prevYear
+                }));
+                effectiveYear = prevYear;
+            }
+        }
+
+        if (targetRecords.length === 0) {
+            // Intentional skip: no data available for this reporter after all fallbacks
+            console.error(`CRITICAL: No data found for ${reporter.iso3} after all fallbacks.`)
+            skipped++
+            continue
+        }
+
+        console.log(`[ingest-trade-global-pulse] Found ${targetRecords.length} export records for ${reporter.iso3} in ${effectiveYear}`)
+
+        const growthPrevYear = String(parseInt(effectiveYear) - 1)
+        let prevRecords = await tryFetch(growthPrevYear, '0');
+
+        if (prevRecords.length === 0) {
+            const allPartnersPrev = await tryFetch(growthPrevYear, 'all');
+            if (allPartnersPrev.length > 0) {
+                const agg = new Map();
+                allPartnersPrev.forEach((r: any) => {
+                    const cmd = r.CmdCode || r.cmdCode;
+                    const val = r.PrimaryValue || r.primaryValue || 0;
+                    agg.set(cmd, (agg.get(cmd) || 0) + val);
+                });
+                prevRecords = Array.from(agg.entries()).map(([code, val]) => ({
+                    CmdCode: code, PrimaryValue: val, ReporterCode: reporter.code, Period: growthPrevYear
+                }));
+            }
+        }
+
+        const prevMap = new Map();
+        prevRecords.forEach((r: any) => prevMap.set(r.CmdCode || r.cmdCode, r.PrimaryValue || r.primaryValue || 0));
+
+        const totalExportValue = targetRecords.reduce((sum: number, r: any) => sum + (r.PrimaryValue || r.primaryValue || 0), 0);
+
+        const rows = targetRecords.map((r: any) => {
+            const currentVal = r.PrimaryValue || r.primaryValue || 0;
+            const cmdCode = r.CmdCode || r.cmdCode;
+            const period = r.Period || r.period;
+
+            const hasPrev = prevMap.has(cmdCode);
+            const prevVal = hasPrev ? prevMap.get(cmdCode) : 0;
+            const growth = (hasPrev && prevVal > 0) ? ((currentVal - prevVal) / prevVal) * 100 : null;
+            const share = totalExportValue > 0 ? (currentVal / totalExportValue) * 100 : 0;
+
+            let untapped = 0;
+            if (growth !== null && growth > 10) untapped += 40;
+            if (growth !== null && growth > 25) untapped += 20;
+            if (share < 2) untapped += 20;
+
+            return {
+                reporter_iso3: reporter.iso3,
+                hs_code: cmdCode,
+                year: parseInt(String(period).substring(0, 4)),
+                export_value_usd: Math.round(currentVal),
+                yoy_growth_pct: growth !== null ? parseFloat(growth.toFixed(2)) : null,
+                share_of_total_pct: parseFloat(share.toFixed(3)),
+                untapped_score: Math.min(100, untapped),
+                fetched_at: new Date().toISOString()
+            }
         })
 
-    } catch (err: any) {
-        console.error('[ingest-trade-global-pulse] Fatal:', err)
-        return new Response(JSON.stringify({ ok: false, error: err.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+        const uniqueRows = Array.from(
+            rows.reduce((map, row) => {
+                const key = `${row.reporter_iso3}-${row.hs_code}-${row.year}`;
+                map.set(key, row);
+                return map;
+            }, new Map()).values()
+        );
+
+        if (uniqueRows.length > 0) {
+            await chunkedUpsert(supabase, 'trade_global_aggregates', uniqueRows, 'reporter_iso3,hs_code,year')
+            totalUpserted += uniqueRows.length
+        }
+
+        // ── Imports: second pass (flowCode=M) ──────────────────────────
+        await delay(300)
+        try {
+            const importCount = await fetchImportChapters(supabase, reporter, effectiveYear, prevYear, comtradeKey)
+            console.log(`[ingest-trade-global-pulse] Import rows for ${reporter.iso3}: ${importCount}`)
+            totalUpserted += importCount
+        } catch (importErr: any) {
+            // Intentional skip: import fetch failure for one reporter should not block the rest
+            console.error(`[ingest-trade-global-pulse] Import fetch failed for ${reporter.iso3}:`, importErr.message)
+            skipped++
+        }
+
+        await delay(500);
+    }
+
+    return {
+        ok: true,
+        counts: { upserted: totalUpserted, skipped },
     }
 })

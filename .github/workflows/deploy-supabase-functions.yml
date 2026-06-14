@@ -1,170 +1,211 @@
-name: Deploy Supabase Edge Functions
+name: Deploy Supabase
+
+# Secrets expected in GitHub repo settings:
+#   SUPABASE_ACCESS_TOKEN  — personal access token with project deploy rights
+#   SUPABASE_PROJECT_ID    — project ref (e.g. debdriyzfcwvgrhzzzre)
+#
+# verify_jwt per-function overrides live in supabase/config.toml — do NOT
+# pass --no-verify-jwt in CI; config.toml is the single source of truth.
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'supabase/functions/**'
+      - 'supabase/migrations/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
   workflow_dispatch:
+    inputs:
+      deploy_all_functions:
+        description: 'Force-deploy all 105 functions (ignores change detection)'
+        type: boolean
+        default: false
+
+# Prevent overlapping Supabase deploys on the same branch.
+# cancel-in-progress: false because partial deploys leave the project in an
+# inconsistent state — queue instead.
+concurrency:
+  group: supabase-deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  # ─── 0. Detect what changed ─────────────────────────────────────────────────
+  detect:
+    name: Detect Changes
     runs-on: ubuntu-latest
-
+    outputs:
+      migrations_changed: ${{ steps.changes.outputs.migrations_changed }}
+      functions: ${{ steps.changes.outputs.functions }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed for three-dot PR diff
+
+      - name: Compute changed paths
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+          BASE_REF: ${{ github.base_ref }}
+          DEPLOY_ALL_INPUT: ${{ inputs.deploy_all_functions }}
+        run: |
+          set -euo pipefail
+
+          # ── Resolve the set of changed files ──────────────────────────────
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            # Three-dot diff: files changed relative to the PR base branch
+            CHANGED_FILES=$(git diff --name-only "origin/${BASE_REF}...HEAD" 2>/dev/null || echo "")
+          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            # Force-push or first push — treat as "everything changed"
+            CHANGED_FILES="ALL"
+          else
+            CHANGED_FILES=$(git diff --name-only "$BEFORE" "$SHA")
+          fi
+
+          # ── Migrations changed? ────────────────────────────────────────────
+          if echo "$CHANGED_FILES" | grep -q '^supabase/migrations/'; then
+            echo "migrations_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "migrations_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # ── Function list (only needed for push/dispatch, not PRs) ────────
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            echo 'functions=[]' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Determine whether to deploy all functions
+          SHOULD_DEPLOY_ALL="false"
+
+          if [ "${DEPLOY_ALL_INPUT:-false}" = "true" ] || \
+             [ "$EVENT_NAME" = "workflow_dispatch" ] || \
+             [ "$CHANGED_FILES" = "ALL" ]; then
+            SHOULD_DEPLOY_ALL="true"
+          fi
+
+          # _shared change → every function must be redeployed
+          if [ "$SHOULD_DEPLOY_ALL" = "false" ] && \
+             echo "$CHANGED_FILES" | grep -q '^supabase/functions/_shared/'; then
+            echo "::notice::_shared changed — deploying all 105 functions"
+            SHOULD_DEPLOY_ALL="true"
+          fi
+
+          if [ "$SHOULD_DEPLOY_ALL" = "true" ]; then
+            # All function directories that contain an index.ts (skip _shared,
+            # tsconfig.json, deno.json at the functions root)
+            FUNCS=$(find supabase/functions -maxdepth 2 -name 'index.ts' \
+              | sed 's|supabase/functions/||; s|/index.ts||' \
+              | grep -v '^_' \
+              | sort \
+              | jq -R . | jq -sc .)
+          else
+            # Only the directories that were actually touched
+            FUNCS=$(echo "$CHANGED_FILES" \
+              | grep '^supabase/functions/' \
+              | grep -v '^supabase/functions/_' \
+              | cut -d/ -f3 \
+              | grep -v '\.json$' \
+              | grep -v '\.ts$' \
+              | sort -u \
+              | while read -r dir; do
+                  [ -n "$dir" ] && [ -f "supabase/functions/$dir/index.ts" ] && echo "$dir"
+                done \
+              | jq -R . | jq -sc .)
+          fi
+
+          echo "functions=$FUNCS" >> "$GITHUB_OUTPUT"
+          echo "::notice::Functions queued for deploy: $FUNCS"
+
+  # ─── 1. Migrations (schema-first; PR → dry-run, main → apply) ──────────────
+  migrate:
+    name: ${{ github.event_name == 'pull_request' && 'Migrations Dry-Run' || 'Apply Migrations' }}
+    runs-on: ubuntu-latest
+    needs: detect
+    if: >-
+      needs.detect.outputs.migrations_changed == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
           version: latest
 
-      - name: Get changed functions
-        id: filter
-        uses: dorny/paths-filter@v3
+      - name: Verify secrets
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          [ -z "$SUPABASE_ACCESS_TOKEN" ] && echo "::error::SUPABASE_ACCESS_TOKEN is not set in repo secrets" && exit 1
+          [ -z "$SUPABASE_PROJECT_ID"    ] && echo "::error::SUPABASE_PROJECT_ID is not set in repo secrets"    && exit 1
+          echo "Secrets verified. Project ref length: ${#SUPABASE_PROJECT_ID}"
+
+      # PR guardrail: surface migration plan as a job summary (no apply)
+      - name: Dry-run migrations
+        if: github.event_name == 'pull_request'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Migration Dry-Run Plan"
+            echo "_Generated for PR \`${{ github.head_ref }}\` → \`${{ github.base_ref }}\`_"
+            echo ""
+            echo '```sql'
+            supabase db push --dry-run --project-ref "$SUPABASE_PROJECT_ID" 2>&1
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Main: apply migrations before any function deploy
+      - name: Apply migrations
+        if: github.event_name != 'pull_request'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          supabase db push --project-ref "$SUPABASE_PROJECT_ID"
+
+  # ─── 2. Deploy functions in parallel (matrix) ───────────────────────────────
+  deploy-functions:
+    name: fn/${{ matrix.function }}
+    runs-on: ubuntu-latest
+    needs: [detect, migrate]
+    # Run even when migrate was skipped (functions touched but no migrations)
+    # always() prevents automatic skip propagation from a skipped migrate job
+    if: >-
+      always() &&
+      github.event_name != 'pull_request' &&
+      needs.detect.result == 'success' &&
+      needs.detect.outputs.functions != '[]' &&
+      (needs.migrate.result == 'success' || needs.migrate.result == 'skipped')
+    strategy:
+      fail-fast: false      # one failure should not abort sibling deploys
+      max-parallel: 10      # cap runner usage; GitHub queues the rest
+      matrix:
+        function: ${{ fromJSON(needs.detect.outputs.functions) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
         with:
-          filters: |
-            ingest-macro-events: ['supabase/functions/ingest-macro-events/**']
-            ingest-commodity-reserves: ['supabase/functions/ingest-commodity-reserves/**']
-            ingest-mospi: ['supabase/functions/ingest-mospi/**']
+          version: latest
 
-            ingest-nyfed-markets: ['supabase/functions/ingest-nyfed-markets/**']
-            ingest-un-comtrade: ['supabase/functions/ingest-un-comtrade/**']
-            ingest-shadow-trade: ['supabase/functions/ingest-shadow-trade/**']
-            ingest-trade-gravity: ['supabase/functions/ingest-trade-gravity/**']
-            check-data-health: ['supabase/functions/check-data-health/**']
-            generate-weekly-regime-digest: ['supabase/functions/generate-weekly-regime-digest/**']
-            generate-monthly-regime-digest: ['supabase/functions/generate-monthly-regime-digest/**']
-
-            compute-cie-macro-scores: ['supabase/functions/compute-cie-macro-scores/**']
-            ingest-cie-ipos: ['supabase/functions/ingest-cie-ipos/**']
-            ingest-cie-short-selling: ['supabase/functions/ingest-cie-short-selling/**']
-            ingest-rbi-money-market: ['supabase/functions/ingest-rbi-money-market/**']
-            ingest-global-refining: ['supabase/functions/ingest-global-refining/**']
-            ingest-gold-debt-coverage: ['supabase/functions/ingest-gold-debt-coverage/**']
-            ingest-rbi-fx-defense: ['supabase/functions/ingest-rbi-fx-defense/**']
-            ingest-commodity-terminal: ['supabase/functions/ingest-commodity-terminal/**']
-            ingest-cie-deals: ['supabase/functions/ingest-cie-deals/**']
-            ingest-cie-promoters: ['supabase/functions/ingest-cie-promoters/**']
-
-            ingest-us-edgar-fundamentals: ['supabase/functions/ingest-us-edgar-fundamentals/**']
-            ingest-fuel-security-india: ['supabase/functions/ingest-fuel-security-india/**']
-            ingest-country-metrics: ['supabase/functions/ingest-country-metrics/**']
-
-            ingest-us-macro: ['supabase/functions/ingest-us-macro/**']
-            ingest-india-macro-snapshot: ['supabase/functions/ingest-india-macro-snapshot/**']
-            fetch-hs-demand: ['supabase/functions/fetch-hs-demand/**']
-            compute-hs-opportunity-scores: ['supabase/functions/compute-hs-opportunity-scores/**']
-
-            llm-knowledge: ['supabase/functions/llm-knowledge/**']
-            _shared: ['supabase/functions/_shared/**']
-            deno_json: ['supabase/functions/deno.json', 'deno.json']
-
-      - name: Verify Secrets
+      - name: Deploy ${{ matrix.function }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
-            echo "::error::SUPABASE_ACCESS_TOKEN is missing"
-            exit 1
-          fi
-          if [ -z "$SUPABASE_PROJECT_ID" ]; then
-            echo "::error::SUPABASE_PROJECT_ID is missing"
-            exit 1
-          fi
-          echo "SUPABASE_PROJECT_ID length: ${#SUPABASE_PROJECT_ID}"
-
-      - name: Deploy Changed Functions
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-          CHANGED_SHARED: ${{ steps.filter.outputs._shared }}
-          CHANGED_INGEST_MACRO_EVENTS: ${{ steps.filter.outputs['ingest-macro-events'] }}
-          CHANGED_INGEST_COMMODITY_RESERVES: ${{ steps.filter.outputs['ingest-commodity-reserves'] }}
-          CHANGED_INGEST_MOSPI: ${{ steps.filter.outputs['ingest-mospi'] }}
-
-          CHANGED_INGEST_NYFED_MARKETS: ${{ steps.filter.outputs['ingest-nyfed-markets'] }}
-          CHANGED_INGEST_UN_COMTRADE: ${{ steps.filter.outputs['ingest-un-comtrade'] }}
-          CHANGED_INGEST_SHADOW_TRADE: ${{ steps.filter.outputs['ingest-shadow-trade'] }}
-          CHANGED_INGEST_TRADE_GRAVITY: ${{ steps.filter.outputs['ingest-trade-gravity'] }}
-          CHANGED_CHECK_DATA_HEALTH: ${{ steps.filter.outputs['check-data-health'] }}
-          CHANGED_GENERATE_WEEKLY_REGIME_DIGEST: ${{ steps.filter.outputs['generate-weekly-regime-digest'] }}
-          CHANGED_GENERATE_MONTHLY_REGIME_DIGEST: ${{ steps.filter.outputs['generate-monthly-regime-digest'] }}
-
-          CHANGED_COMPUTE_CIE_MACRO_SCORES: ${{ steps.filter.outputs['compute-cie-macro-scores'] }}
-          CHANGED_INGEST_CIE_SHORT_SELLING: ${{ steps.filter.outputs['ingest-cie-short-selling'] }}
-          CHANGED_INGEST_CIE_IPOS: ${{ steps.filter.outputs['ingest-cie-ipos'] }}
-          CHANGED_INGEST_RBI_MONEY_MARKET: ${{ steps.filter.outputs['ingest-rbi-money-market'] }}
-          CHANGED_INGEST_GLOBAL_REFINING: ${{ steps.filter.outputs['ingest-global-refining'] }}
-          CHANGED_INGEST_GOLD_DEBT_COVERAGE: ${{ steps.filter.outputs['ingest-gold-debt-coverage'] }}
-          CHANGED_INGEST_RBI_FX_DEFENSE: ${{ steps.filter.outputs['ingest-rbi-fx-defense'] }}
-          CHANGED_INGEST_COMMODITY_TERMINAL: ${{ steps.filter.outputs['ingest-commodity-terminal'] }}
-          CHANGED_INGEST_CIE_DEALS: ${{ steps.filter.outputs['ingest-cie-deals'] }}
-          CHANGED_INGEST_CIE_PROMOTERS: ${{ steps.filter.outputs['ingest-cie-promoters'] }}
-
-          CHANGED_INGEST_US_EDGAR_FUNDAMENTALS: ${{ steps.filter.outputs['ingest-us-edgar-fundamentals'] }}
-          CHANGED_INGEST_FUEL_SECURITY_INDIA: ${{ steps.filter.outputs['ingest-fuel-security-india'] }}
-          CHANGED_INGEST_COUNTRY_METRICS: ${{ steps.filter.outputs['ingest-country-metrics'] }}
-
-          CHANGED_INGEST_US_MACRO: ${{ steps.filter.outputs['ingest-us-macro'] }}
-          CHANGED_INGEST_INDIA_MACRO_SNAPSHOT: ${{ steps.filter.outputs['ingest-india-macro-snapshot'] }}
-          CHANGED_FETCH_HS_DEMAND: ${{ steps.filter.outputs['fetch-hs-demand'] }}
-          CHANGED_COMPUTE_HS_OPPORTUNITY_SCORES_V2: ${{ steps.filter.outputs['compute-hs-opportunity-scores'] }}
-
-          CHANGED_LLM_KNOWLEDGE: ${{ steps.filter.outputs['llm-knowledge'] }}
-        run: |
-          deploy_func() {
-            local func_name="$1"
-            echo "Deploying $func_name..."
-            supabase functions deploy "$func_name" --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt --debug
-          }
-
-          # If _shared changed, redeploy all functions
-          if [ "$CHANGED_SHARED" = "true" ]; then
-            echo "Shared utils changed — deploying all functions..."
-            for func_dir in supabase/functions/*/; do
-              if [ -f "${func_dir}index.ts" ]; then
-                func_name=$(basename "$func_dir")
-                deploy_func "$func_name"
-              fi
-            done
-          else
-            # Deploy only changed functions using named env vars
-            [ "$CHANGED_INGEST_MACRO_EVENTS" = "true" ]        && deploy_func "ingest-macro-events"
-            [ "$CHANGED_INGEST_COMMODITY_RESERVES" = "true" ]  && deploy_func "ingest-commodity-reserves"
-            [ "$CHANGED_INGEST_MOSPI" = "true" ]               && deploy_func "ingest-mospi"
-
-            [ "$CHANGED_INGEST_NYFED_MARKETS" = "true" ]       && deploy_func "ingest-nyfed-markets"
-            [ "$CHANGED_INGEST_UN_COMTRADE" = "true" ]         && deploy_func "ingest-un-comtrade"
-            [ "$CHANGED_INGEST_SHADOW_TRADE" = "true" ]        && deploy_func "ingest-shadow-trade"
-            [ "$CHANGED_INGEST_TRADE_GRAVITY" = "true" ]       && deploy_func "ingest-trade-gravity"
-            [ "$CHANGED_CHECK_DATA_HEALTH" = "true" ]          && deploy_func "check-data-health"
-            [ "$CHANGED_GENERATE_WEEKLY_REGIME_DIGEST" = "true" ] && deploy_func "generate-weekly-regime-digest"
-            [ "$CHANGED_GENERATE_MONTHLY_REGIME_DIGEST" = "true" ] && deploy_func "generate-monthly-regime-digest"
-
-            [ "$CHANGED_COMPUTE_CIE_MACRO_SCORES" = "true" ]   && deploy_func "compute-cie-macro-scores"
-            [ "$CHANGED_INGEST_CIE_SHORT_SELLING" = "true" ]   && deploy_func "ingest-cie-short-selling"
-            [ "$CHANGED_INGEST_CIE_IPOS" = "true" ]            && deploy_func "ingest-cie-ipos"
-            [ "$CHANGED_INGEST_RBI_MONEY_MARKET" = "true" ]    && deploy_func "ingest-rbi-money-market"
-            [ "$CHANGED_INGEST_GLOBAL_REFINING" = "true" ]     && deploy_func "ingest-global-refining"
-            [ "$CHANGED_INGEST_GOLD_DEBT_COVERAGE" = "true" ]  && deploy_func "ingest-gold-debt-coverage"
-            [ "$CHANGED_INGEST_RBI_FX_DEFENSE" = "true" ]      && deploy_func "ingest-rbi-fx-defense"
-            [ "$CHANGED_INGEST_COMMODITY_TERMINAL" = "true" ]  && deploy_func "ingest-commodity-terminal"
-            [ "$CHANGED_INGEST_CIE_DEALS" = "true" ]           && deploy_func "ingest-cie-deals"
-            [ "$CHANGED_INGEST_CIE_PROMOTERS" = "true" ]       && deploy_func "ingest-cie-promoters"
-
-            [ "$CHANGED_INGEST_US_EDGAR_FUNDAMENTALS" = "true" ] && deploy_func "ingest-us-edgar-fundamentals"
-
-            [ "$CHANGED_INGEST_COUNTRY_METRICS" = "true" ]     && deploy_func "ingest-country-metrics"
-            [ "$CHANGED_INGEST_FUEL_SECURITY_INDIA" = "true" ] && deploy_func "ingest-fuel-security-india"
-            [ "$CHANGED_INGEST_US_MACRO" = "true" ]            && deploy_func "ingest-us-macro"
-
-            [ "$CHANGED_LLM_KNOWLEDGE" = "true" ]              && deploy_func "llm-knowledge"
-            [ "$CHANGED_INGEST_INDIA_MACRO_SNAPSHOT" = "true" ] && deploy_func "ingest-india-macro-snapshot"
-            [ "$CHANGED_FETCH_HS_DEMAND" = "true" ]            && deploy_func "fetch-hs-demand"
-            [ "$CHANGED_COMPUTE_HS_OPPORTUNITY_SCORES_V2" = "true" ] && deploy_func "compute-hs-opportunity-scores"
-            echo "Selective deployment complete."
-          fi
+          set -euo pipefail
+          # verify_jwt overrides are read from supabase/config.toml automatically;
+          # do NOT pass --no-verify-jwt here.
+          supabase functions deploy "${{ matrix.function }}" \
+            --project-ref "$SUPABASE_PROJECT_ID"

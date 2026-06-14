@@ -1,46 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-india-inflation', async (ctx) => {
-        const result = await runWithRetry(
-            'ingest-india-inflation',
-            () => doIngestIndiaInflation(supabase, fredApiKey),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    })
-})
-
-async function doIngestIndiaInflation(supabase: any, fredApiKey: string) {
+async function doIngestIndiaInflation(supabase: any, fredApiKey: string): Promise<IngestResult> {
     const telemetry = new IndiaTelemetry(fredApiKey);
-    
+
     // Fetch last 2 months to ensure we have recent data
     const now = new Date();
     const year = String(now.getFullYear());
     const month = String(now.getMonth() + 1);
-    
+
     console.log(`Fetching inflation for ${year}-${month}`);
     const liveData = await telemetry.getInflationCPI(year, month);
-    
+
     if (liveData.length === 0) {
         throw new Error(`No live inflation data found for ${year}-${month}`);
     }
@@ -62,7 +35,17 @@ async function doIngestIndiaInflation(supabase: any, fredApiKey: string) {
     if (upsertError) throw upsertError;
 
     return {
-        rows_inserted: results.length,
-        metadata: { latest_date: results[0].date }
+        ok: true,
+        counts: { upserted: results.length, skipped: 0 },
+        meta: { latest_date: results[0].date }
     };
 }
+
+serveIngest('ingest-india-inflation', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    return doIngestIndiaInflation(supabase, fredApiKey)
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 })

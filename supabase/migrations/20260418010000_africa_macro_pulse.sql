@@ -43,17 +43,6 @@ ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   description = EXCLUDED.description;
 
--- 4. Schedule the edge function via pg_cron
--- This job runs on the 5th of every month to ingest Africa Macro Data
-SELECT
-  cron.schedule(
-    'ingest-africa-macro-pulse-job',
-    '0 0 5 * *',
-    $$
-    SELECT
-      net.http_post(
-        url:='https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/ingest-africa-macro',
-        headers:='{"Content-Type": "application/json", "Authorization": "Bearer ' || current_setting('vault.service_role_key') || '"}'::jsonb
-      ) as request_id;
-    $$
-  );
+-- [cron.schedule omitted] SUPERSEDED BY 20260613000000_canonical_crons.sql
+-- Original: Scheduled ingest-africa-macro-pulse-job (0 0 5 * *).
+-- Rescheduled with safe COALESCE + x-cron-secret vault pattern on 2026-06-13.

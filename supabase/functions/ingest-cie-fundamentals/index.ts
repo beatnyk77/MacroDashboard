@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
+import { serveIngest } from '../_shared/handler.ts';
 
-Deno.serve(async (req: Request) => {
+serveIngest('ingest-cie-fundamentals', async (req: Request) => {
+
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
         return new Response('Unauthorized', { status: 401 })
@@ -47,8 +49,8 @@ Deno.serve(async (req: Request) => {
             completed_at: new Date().toISOString(),
             status_code: 500
         })
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 })
-    }
+        throw e;
+}
 })
 
 const baseHeaders = {

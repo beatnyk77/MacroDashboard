@@ -12,7 +12,13 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    include: [
+      'src/**/*.{test,spec}.{ts,tsx}',
+      'supabase/functions/_shared/__tests__/**/*.test.ts',
+    ],
+    environmentMatchGlobs: [
+      ['supabase/**', 'node'],
+    ],
     testTimeout: 30000,
     pool: 'forks',
   },
