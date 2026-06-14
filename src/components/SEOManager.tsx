@@ -4,8 +4,9 @@ import { useLocation } from 'react-router-dom';
 import { BrandConfig } from '@/config/brandConfig';
 
 interface SEOManagerProps {
-    title: string;
-    description: string;
+    /** Omit title + description for layout-level canonical-only mode; page-level mounts override. */
+    title?: string;
+    description?: string;
     keywords?: string[];
     ogImage?: string;
     ogType?: 'website' | 'article';
@@ -37,7 +38,10 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     targetCountry = 'GLOBAL',
 }) => {
     const location = useLocation();
-    const fullTitle = BrandConfig.seo.titleTemplate.replace('%s', title);
+    const isLayoutDefault = title === undefined && description === undefined;
+    const fullTitle = isLayoutDefault
+        ? undefined
+        : BrandConfig.seo.titleTemplate.replace('%s', title!);
 
     // Auto-generate canonical if not provided — self-referencing per Google best practice
     const canonicalPath = location.pathname === '/'
@@ -47,6 +51,9 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
 
     return (
         <Helmet>
+            {/* Layout-level default: canonical + robots only; page-level SEOManager overrides via last-mounted-wins */}
+            {!isLayoutDefault && (
+            <>
             {/* Structured Data (JSON-LD) */}
             {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((schema, index) => (
                 <script key={`json-ld-${index}`} type="application/ld+json">
@@ -85,23 +92,21 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             )}
 
             <title>{fullTitle}</title>
-            <meta name="description" content={description} />
+            <meta name="description" content={description!} />
             {keywords && <meta name="keywords" content={keywords.join(', ')} />}
-            <meta name="robots" content={robots} />
 
             {/* Open Graph */}
             <meta property="og:title" content={fullTitle} />
-            <meta property="og:description" content={description} />
+            <meta property="og:description" content={description!} />
             <meta property="og:type" content={ogType} />
             <meta property="og:image" content={ogImage} />
             <meta property="og:url" content={resolvedCanonical} />
             <meta property="og:site_name" content={BrandConfig.seo.siteName} />
             <meta property="og:locale" content={ogLocale} />
-            <link rel="canonical" href={resolvedCanonical} />
 
             {/* Twitter */}
             <meta name="twitter:title" content={fullTitle} />
-            <meta name="twitter:description" content={description} />
+            <meta name="twitter:description" content={description!} />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:image" content={ogImage} />
             <meta name="twitter:site" content={BrandConfig.twitter} />
@@ -114,6 +119,11 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             
             <meta name="geo.region" content={geoRegion} />
             <meta name="target_country" content={targetCountry} />
+            </>
+            )}
+
+            <link rel="canonical" href={resolvedCanonical} />
+            <meta name="robots" content={robots} />
         </Helmet>
     );
 };

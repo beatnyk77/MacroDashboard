@@ -1,8 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 import { writeFileSync } from 'fs';
 import { execSync } from 'child_process';
+import { blogArticles } from '../src/features/blog/blogData';
 
 const BASE_URL = 'https://graphiquestor.com';
+
+/**
+ * Priority heuristic (sitemap hints, not ranking signals):
+ *   1.0 — homepage
+ *   0.9 — primary intelligence hubs (macro-brief, intel/india)
+ *   0.8 — top-level sections (one path segment: /trade, /blog, /labs)
+ *   0.7 — deeper content (dated briefs, blog articles, regime-digest months, HS codes)
+ *   0.6 — archives and secondary indexes
+ */
+function routePriority(url: string): string {
+  if (url === '/') return '1.0';
+  if (url === '/macro-brief' || url === '/intel/india') return '0.9';
+  if (url === '/macro-brief/archive') return '0.6';
+  const depth = url.split('/').filter(Boolean).length;
+  if (depth >= 2) return '0.7';
+  return '0.8';
+}
 
 /**
  * Returns the date of the last git commit touching the given source file,
@@ -24,28 +42,45 @@ function gitLastmod(sourceFile: string): string {
 
 const BUILD_DATE = new Date().toISOString().split('T')[0];
 
+interface SitemapRoute {
+  url: string;
+  priority: string;
+  changefreq: string;
+  lastmod?: string;
+}
+
 async function generateSitemap() {
   // Static routes — lastmod strategy:
-  //   • Live-data pages (changefreq daily/weekly): data genuinely refreshes on
-  //     every ingestion run, so build date is the honest answer.
+  //   • Dynamic content (blog, briefs, narratives, regime-digest): publish date from content source.
+  //   • Live-data pages (intel, trade, countries): build date — data refreshes daily via crons.
   //   • Editorial/static pages: git log date of the owning component file.
-  const staticRoutes = [
+  //   • Unknown/new pages: today's build date (fallback only).
+  const staticRoutes: SitemapRoute[] = [
     // Live-data pages — lastmod = build date (data refreshes daily via crons)
-    { url: '/',                    priority: '1.0', changefreq: 'daily',   lastmod: BUILD_DATE },
-    { url: '/macro-brief',         priority: '0.9', changefreq: 'daily',   lastmod: BUILD_DATE },
-    { url: '/weekly-narrative',    priority: '0.8', changefreq: 'weekly',  lastmod: BUILD_DATE },
-    { url: '/regime-digest',       priority: '0.8', changefreq: 'monthly', lastmod: BUILD_DATE },
-    { url: '/intel/india',         priority: '0.9', changefreq: 'daily',   lastmod: BUILD_DATE },
-    { url: '/intel/china',         priority: '0.8', changefreq: 'daily',   lastmod: BUILD_DATE },
-    { url: '/trade',               priority: '0.8', changefreq: 'weekly',  lastmod: BUILD_DATE },
-    { url: '/countries',           priority: '0.7', changefreq: 'weekly',  lastmod: BUILD_DATE },
+    { url: '/',                    changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/macro-brief',         changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/weekly-narrative',    changefreq: 'weekly',  lastmod: BUILD_DATE },
+    { url: '/regime-digest',       changefreq: 'monthly', lastmod: BUILD_DATE },
+    { url: '/intel/india',         changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/intel/china',         changefreq: 'daily',   lastmod: BUILD_DATE },
+    { url: '/trade',               changefreq: 'weekly',  lastmod: BUILD_DATE },
+    { url: '/countries',           changefreq: 'weekly',  lastmod: BUILD_DATE },
     // Static/editorial pages — lastmod = git log date of owning component
-    { url: '/labs',                priority: '0.7', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/labs/ThematicLabsIndexPage.tsx') },
-    { url: '/api-docs',            priority: '0.8', changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIDocsPage.tsx') },
-    { url: '/glossary',            priority: '0.7', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/GlossaryIndexPage.tsx') },
-    { url: '/macro-brief/archive', priority: '0.6', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroBriefArchivePage.tsx') },
-    { url: '/demo',                priority: '0.7', changefreq: 'monthly', lastmod: BUILD_DATE },
-  ];
+    { url: '/blog',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/BlogPage.tsx') },
+    { url: '/labs',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/labs/ThematicLabsIndexPage.tsx') },
+    { url: '/api-docs',            changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIDocsPage.tsx') },
+    { url: '/glossary',            changefreq: 'weekly',  lastmod: gitLastmod('src/pages/GlossaryIndexPage.tsx') },
+    { url: '/macro-brief/archive', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroBriefArchivePage.tsx') },
+    { url: '/demo',                changefreq: 'monthly', lastmod: BUILD_DATE },
+  ].map(route => ({ ...route, priority: routePriority(route.url) }));
+
+  // Blog articles — lastmod = article publish date from blogData
+  const blogRoutes: SitemapRoute[] = blogArticles.map(article => ({
+    url: `/blog/${article.slug}`,
+    priority: routePriority(`/blog/${article.slug}`),
+    changefreq: 'never',
+    lastmod: article.date,
+  }));
 
   // Dynamic routes require Supabase — degrade gracefully if env vars unavailable (e.g. CI)
   let briefRoutes: SitemapRoute[] = [];
@@ -67,9 +102,9 @@ async function generateSitemap() {
 
     briefRoutes = (briefs ?? []).map(b => ({
       url: `/macro-brief/${b.brief_date}`,
-      priority: '0.8',
+      priority: routePriority(`/macro-brief/${b.brief_date}`),
       changefreq: 'never' as const,
-      lastmod: b.generated_at,
+      lastmod: b.generated_at ?? b.brief_date,
     }));
 
     // Dynamic: Weekly narrative pages
@@ -81,9 +116,9 @@ async function generateSitemap() {
 
     narrativeRoutes = (narratives ?? []).map(n => ({
       url: `/weekly-narrative/${n.week_start}`,
-      priority: '0.7',
+      priority: routePriority(`/weekly-narrative/${n.week_start}`),
       changefreq: 'never' as const,
-      lastmod: n.created_at,
+      lastmod: n.created_at ?? n.week_start,
     }));
 
     // Dynamic: Regime digest monthly pages
@@ -105,7 +140,7 @@ async function generateSitemap() {
     // honest bound and is always distinct per entry.
     digestRoutes = [...monthSet].map(ym => ({
       url: `/regime-digest/${ym}`,
-      priority: '0.7',
+      priority: routePriority(`/regime-digest/${ym}`),
       changefreq: 'never' as const,
       lastmod: `${ym.replace('/', '-')}-01`,
     }));
@@ -113,16 +148,10 @@ async function generateSitemap() {
     console.warn('⚠ VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set — generating sitemap with static routes only.');
   }
 
-interface SitemapRoute {
-  url: string;
-  priority: string;
-  changefreq: string;
-  lastmod?: string;
-}
-
   // Build XML
   const allRoutes: SitemapRoute[] = [
     ...staticRoutes,
+    ...blogRoutes,
     ...briefRoutes,
     ...narrativeRoutes,
     ...digestRoutes,

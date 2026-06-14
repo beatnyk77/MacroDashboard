@@ -29,9 +29,25 @@ while ((match = urlRegex.exec(sitemap)) !== null) {
     }
 }
 
+/** slug → YYYY-MM-DD from RSS pubDate for blog article lastmod */
+const BLOG_LASTMOD = new Map();
+
+function parseBlogLastmodFromRss(rss) {
+    const itemRegex = /<item>[\s\S]*?<link>https:\/\/graphiquestor\.com\/blog\/([^<]+)<\/link>[\s\S]*?<pubDate>([^<]+)<\/pubDate>/g;
+    let m;
+    while ((m = itemRegex.exec(rss)) !== null) {
+        const slug = m[1];
+        const pubDate = new Date(m[2]);
+        if (!Number.isNaN(pubDate.getTime())) {
+            BLOG_LASTMOD.set(slug, pubDate.toISOString().split('T')[0]);
+        }
+    }
+}
+
 const rssPath = path.resolve(__dirname, '../public/rss.xml');
 if (fs.existsSync(rssPath)) {
     const rss = fs.readFileSync(rssPath, 'utf8');
+    parseBlogLastmodFromRss(rss);
     const rssRegex = /<link>https:\/\/graphiquestor\.com([^<]+)<\/link>/g;
     while ((match = rssRegex.exec(rss)) !== null) {
         if (match[1] !== '') {
@@ -83,6 +99,7 @@ const STATIC_PAGE_FILES = {
     '/api-access':                        'src/pages/APIAccessPage.tsx',
     '/labs':                              'src/pages/labs/ThematicLabsIndexPage.tsx',
     '/macro-brief/archive':               'src/pages/MacroBriefArchivePage.tsx',
+    '/blog':                              'src/pages/BlogPage.tsx',
     '/methods/net-liquidity-z-score':     'src/pages/methods/NetLiquidityZScorePage.tsx',
     '/methods/debt-gold-z-score':         'src/pages/methods/DebtGoldZScorePage.tsx',
     '/methods/loan-to-job-efficiency':    'src/pages/methods/LoanToJobEfficiencyPage.tsx',
@@ -108,10 +125,10 @@ function gitLastmod(file) {
 /**
  * Per-route lastmod strategy:
  *  1. Dated-content URLs  (/macro-brief/YYYY-MM-DD, /weekly-narrative/YYYY-MM-DD,
- *     /regime-digest/YYYY/MM)  → parse date from path (each entry unique).
+ *     /regime-digest/YYYY/MM, /blog/:slug)  → publish date from path or RSS.
  *  2. Static/editorial pages → git log date of owning component file.
- *  3. Everything else (live-data pages, countries, trade, labs/*)
- *     → build date (data refreshes daily via scheduled cron jobs; honest).
+ *  3. Live-data pages (intel, trade, countries, labs/*) → build date (crons refresh daily).
+ *  4. Unknown/new pages → build date (fallback only).
  */
 function routeLastmod(route) {
     // 1a. Morning brief: /macro-brief/YYYY-MM-DD
@@ -125,6 +142,12 @@ function routeLastmod(route) {
     // 1c. Regime digest: /regime-digest/YYYY/MM
     const digestMatch = route.match(/^\/regime-digest\/(\d{4})\/(\d{2})$/);
     if (digestMatch) return `${digestMatch[1]}-${digestMatch[2]}-01`;
+
+    // 1d. Blog article: /blog/:slug — publish date from RSS feed
+    const blogMatch = route.match(/^\/blog\/([^/]+)$/);
+    if (blogMatch && BLOG_LASTMOD.has(blogMatch[1])) {
+        return BLOG_LASTMOD.get(blogMatch[1]);
+    }
 
     // 2. Static page with a known source file
     if (STATIC_PAGE_FILES[route]) return gitLastmod(STATIC_PAGE_FILES[route]);
@@ -144,8 +167,16 @@ function generateSitemap(routes) {
 
     for (const route of sortedRoutes) {
         const lastmod = routeLastmod(route);
-        // Basic priority logic
-        const priority = route === '/' ? '1.0' : route.split('/').length > 2 ? '0.7' : '0.8';
+        // Priority heuristic (sitemap hints, not ranking signals):
+        //   1.0 homepage | 0.9 macro-brief, intel/india | 0.8 top-level sections
+        //   0.7 deeper content | 0.6 archives
+        const segments = route.split('/').filter(Boolean).length;
+        const priority =
+            route === '/' ? '1.0'
+            : route === '/macro-brief' || route === '/intel/india' ? '0.9'
+            : route === '/macro-brief/archive' ? '0.6'
+            : segments >= 2 ? '0.7'
+            : '0.8';
         xml += `  <url>\n`;
         xml += `    <loc>https://graphiquestor.com${route}</loc>\n`;
         xml += `    <lastmod>${lastmod}</lastmod>\n`;
@@ -245,8 +276,9 @@ async function run() {
                     }
                 }
 
+                // documentElement.outerHTML already includes <html>…</html> — do not wrap again
                 const html = await page.evaluate(() => document.documentElement.outerHTML);
-                const finalHtml = `<!DOCTYPE html>\n<html>${html}</html>`;
+                const finalHtml = `<!DOCTYPE html>\n${html}`;
 
                 const routeDir = path.join(distDir, cleanRoute);
                 if (!fs.existsSync(routeDir)) {
