@@ -117,3 +117,6 @@ dist-ssr
 .DS_Store
 .agent/
 .gitmodules
+
+# Local Netlify folder
+.netlify
