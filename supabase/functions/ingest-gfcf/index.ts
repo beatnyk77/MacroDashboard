@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import { upsertObservations } from '../_shared/ingest_utils.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-// Data Source Config
 interface GfcfMetric {
     id: string;
     type: 'calculated' | 'direct';
@@ -16,41 +10,41 @@ interface GfcfMetric {
     numerator?: string;
     denominator?: string;
     denominator_candidates?: string[];
-    numerator_scale?: number; // Multiply by this to get to denominator units
+    numerator_scale?: number;
 }
 
 const METRICS: GfcfMetric[] = [
     {
         id: 'US_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'GPDIC1', // Real Gross Private Domestic Investment (Billions)
-        denominator: 'GDPC1', // Real GDP (Billions)
+        numerator: 'GPDIC1',
+        denominator: 'GDPC1',
         numerator_scale: 1
     },
     {
         id: 'US_PRIVATE_GFCF_GDP_PCT',
         type: 'direct',
-        series_id: 'A006RE1Q156NBEA', // Shares of gross domestic product: Gross private domestic investment
+        series_id: 'A006RE1Q156NBEA',
     },
     {
         id: 'JP_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'NAEXKP04JPQ189S', // GFCF (Billions of Yen)
-        denominator_candidates: ['JPNNGDP'], // GDP (Millions of Yen)
-        numerator_scale: 1000 // Convert Billions to Millions
+        numerator: 'NAEXKP04JPQ189S',
+        denominator_candidates: ['JPNNGDP'],
+        numerator_scale: 1000
     },
     {
         id: 'EU_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'NAEXCP04EZQ189S', // GFCF (Euros)
-        denominator: 'EUNNGDP', // GDP (Millions of Euros)
-        numerator_scale: 0.000001 // Convert Euros to Millions
+        numerator: 'NAEXCP04EZQ189S',
+        denominator: 'EUNNGDP',
+        numerator_scale: 0.000001
     },
     {
         id: 'IN_GFCF_GDP_PCT',
         type: 'calculated',
-        numerator: 'NAEXKP04INQ652S', // GFCF (Rupees, Current Prices)
-        denominator: 'INDGDPNQDSMEI', // Nominal GDP (Rupees, Quarterly, OECD)
+        numerator: 'NAEXKP04INQ652S',
+        denominator: 'INDGDPNQDSMEI',
         numerator_scale: 1
     }
 ];
@@ -69,9 +63,9 @@ async function fetchFredSeries(apiKey: string, seriesId: string) {
     };
 }
 
-async function doIngestGfcf(supabase: any, fredApiKey: string) {
-    const updates = [];
-    const errors = [];
+async function doIngestGfcf(supabase: ReturnType<typeof createClient>, fredApiKey: string): Promise<IngestResult> {
+    const updates: any[] = [];
+    const errors: string[] = [];
 
     for (const metric of METRICS) {
         try {
@@ -114,7 +108,6 @@ async function doIngestGfcf(supabase: any, fredApiKey: string) {
                     metric_id: metric.id,
                     as_of_date: date,
                     value: Number(value.toFixed(2)),
-                    last_updated_at: new Date().toISOString()
                 });
             } else {
                 errors.push(`No data for ${metric.id}`);
@@ -130,40 +123,30 @@ async function doIngestGfcf(supabase: any, fredApiKey: string) {
         metric_id: 'CN_GFCF_GDP_PCT',
         as_of_date: new Date().toISOString().split('T')[0],
         value: CHINA_GFCF_FIXED,
-        last_updated_at: new Date().toISOString()
     });
 
+    let upserted = 0;
     if (updates.length > 0) {
-        const { error } = await supabase
-            .from('metric_observations')
-            .upsert(updates, { onConflict: 'metric_id, as_of_date' });
-        if (error) throw error;
+        const { count } = await upsertObservations(supabase, updates, {
+            source_ref: 'live_api:ingest-gfcf',
+            is_provisional: false,
+        });
+        upserted = count;
     }
 
     return {
-        rows_inserted: updates.length,
-        metadata: { errors, update_ids: updates.map(u => u.metric_id) }
+        ok: true,
+        counts: { upserted, skipped: errors.length },
+        meta: { errors, update_ids: updates.map(u => u.metric_id) }
     };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const fredApiKey = Deno.env.get('FRED_API_KEY');
-
-    if (!fredApiKey) {
-        return new Response(JSON.stringify({ error: 'FRED_API_KEY is missing' }), { status: 500, headers: corsHeaders });
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-gfcf', async (ctx) => {
-        return runWithRetry(
-            'ingest-gfcf',
-            () => doIngestGfcf(ctx.supabase, fredApiKey),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
-});
+serveIngest('ingest-gfcf', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+    if (!fredApiKey) throw new Error('FRED_API_KEY is missing')
+    return doIngestGfcf(supabase, fredApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

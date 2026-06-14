@@ -1,30 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts';
-import { runWithRetry } from '../_shared/job-runner.ts';
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-// GDELT 2.0 Geo API with explicit 24-hour timespan
-// Documentation: https://blog.gdeltproject.org/gdelt-geo-2-0-api-debuts/
-
-async function doIngestEventsMarkers(supabase: any) {
+async function doIngestEventsMarkers(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
     let recordCount = 0;
     console.log("Fetching GDELT GeoJSON data with 24h timespan...");
 
-    // Construct query with proper encoding
     const query = '(protest OR conflict OR "civil unrest" OR attack OR strike OR sanction OR "trade war")';
     const geoApiUrl = `https://api.gdeltproject.org/api/v2/geo/geo?query=${encodeURIComponent(query)}&mode=artlist&format=geojson&timespan=24h`;
 
     console.log(`Requesting GDELT Geo: ${geoApiUrl}`);
 
     const geoRes = await fetch(geoApiUrl, {
-        headers: {
-            'User-Agent': 'GraphiQuestor-Sovereign-Console/1.1'
-        }
+        headers: { 'User-Agent': 'GraphiQuestor-Sovereign-Console/1.1' }
     });
 
     if (!geoRes.ok) {
@@ -40,7 +28,6 @@ async function doIngestEventsMarkers(supabase: any) {
         const props = f.properties || {};
         const coords = f.geometry?.coordinates || [0, 0];
 
-        // Normalize type inference
         const title = (props.name || props.html || '').toLowerCase();
 
         let type: 'conflict' | 'protest' | 'energy' | 'disruption' = 'protest';
@@ -69,8 +56,6 @@ async function doIngestEventsMarkers(supabase: any) {
     recordCount = rows.length;
 
     if (rows.length > 0) {
-        // Delete old auto-ingested records for today to avoid duplicates
-        // This ensures we always have the freshest 24h snapshot without accumulation
         const today = new Date().toISOString().split('T')[0];
         await supabase.from('events_markers')
             .delete()
@@ -84,26 +69,16 @@ async function doIngestEventsMarkers(supabase: any) {
     }
 
     return {
-        rows_inserted: recordCount,
-        metadata: { source: 'GDELT', timespan: '24h', api_url: geoApiUrl, count: recordCount, status: recordCount === 0 ? 'empty' : 'success' }
+        ok: true,
+        counts: { upserted: recordCount, skipped: 0 },
+        meta: { source: 'GDELT', timespan: '24h', api_url: geoApiUrl, count: recordCount, status: recordCount === 0 ? 'empty' : 'success' }
     };
 }
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    return runIngestion(supabase, 'ingest-events-markers', async (ctx) => {
-        return runWithRetry(
-            'ingest-events-markers',
-            () => doIngestEventsMarkers(supabase),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
-});
+serveIngest('ingest-events-markers', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    return doIngestEventsMarkers(supabase)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

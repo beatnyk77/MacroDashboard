@@ -1,70 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-
-Deno.serve(async (req: Request) => {
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-    const client = createClient(supabaseUrl, supabaseKey)
-
-    let mode = 'companies'; // Default mode
-    try {
-        const body = await req.json() as any;
-        if (body.mode) mode = body.mode;
-    } catch (e: any) {
-        // Fallback to URL params
-        const url = new URL(req.url);
-        mode = url.searchParams.get('mode') || mode;
-    }
-
-    const start = new Date().toISOString()
-    let result: any = { success: false }
-
-    try {
-        if (mode === 'companies') {
-            result = await syncCompanies(client);
-        } else if (mode === 'fundamentals') {
-            result = await syncFundamentals(client);
-        } else if (mode === 'daily') {
-            result = await syncDailyFilingsAndInsider(client);
-        } else {
-            throw new Error(`Unknown mode: ${mode}`);
-        }
-
-        await client.from('ingestion_logs').insert({
-            function_name: `ingest-us-edgar-fundamentals-${mode}`,
-            status: 'success',
-            rows_inserted: result.processed || result.inserted || 0,
-            start_time: start,
-            completed_at: new Date().toISOString(),
-            status_code: 200
-        })
-
-        // Register observation for health tracking
-        await client.from('metric_observations').insert({
-            metric_code: 'US_EDGAR_FUNDAMENTALS',
-            observation_date: new Date().toISOString().split('T')[0],
-            value: result.processed || result.inserted || 1
-        });
-
-        return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } })
-
-    } catch (e: any) {
-        await client.from('ingestion_logs').insert({
-            function_name: `ingest-us-edgar-fundamentals-${mode}`,
-            status: 'failed',
-            error_message: e.message,
-            start_time: start,
-            completed_at: new Date().toISOString(),
-            status_code: 500
-        })
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 })
-    }
-})
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 // SEC requires a specific User-Agent format: CompanyName ContactEmail
 const secHeaders = {
@@ -77,14 +13,12 @@ async function sleep(ms: number) {
 }
 
 async function syncCompanies(client: any) {
-    // 1. Fetch SEC Company Tickers
     const res = await fetch('https://www.sec.gov/files/company_tickers.json', { headers: secHeaders });
     if (!res.ok) throw new Error(`SEC API returned ${res.status}`);
 
     const data = await res.json() as any;
     const companies = Object.values(data) as any[];
 
-    // We'll process in batches to avoid overwhelming the database
     let inserted = 0;
     const batchSize = 1000;
 
@@ -101,18 +35,16 @@ async function syncCompanies(client: any) {
         else inserted += batch.length;
     }
 
-    return { success: true, processed: inserted, message: 'Companies synced' };
+    return { processed: inserted, message: 'Companies synced' };
 }
 
 async function syncFundamentals(client: any) {
-    // Get top 500 companies by market cap or a priority list to sync fundamentals
-    // For this example, fetching 50 to stay within limits
     const { data: companies } = await client
         .from('us_companies')
         .select('id, cik, ticker')
-        .limit(50); // In a real production environment, paginate through all.
+        .limit(50);
 
-    if (!companies) return { success: false, processed: 0 };
+    if (!companies) return { processed: 0 };
 
     let processed = 0;
 
@@ -122,7 +54,7 @@ async function syncFundamentals(client: any) {
             const res = await fetch(url, { headers: secHeaders });
 
             if (res.status === 403) {
-                await sleep(200); // Backoff
+                await sleep(200);
                 continue;
             }
             if (!res.ok) continue;
@@ -130,9 +62,8 @@ async function syncFundamentals(client: any) {
             const facts = await res.json() as any;
             const usGaap = facts.facts['us-gaap'];
 
-            if (!usGaap) continue; // No GAAP data available
+            if (!usGaap) continue;
 
-            // Helper to get latest annual (10-K) value
             const getLatest10K = (concept: string) => {
                 if (!usGaap[concept] || !usGaap[concept].units || !usGaap[concept].units.USD) return null;
                 const reports = usGaap[concept].units.USD.filter((r: any) => r.form === '10-K');
@@ -141,7 +72,6 @@ async function syncFundamentals(client: any) {
                 return reports[0];
             };
 
-            // Helper to get latest shares
             const getLatestShares = () => {
                 if (facts.facts['dei'] && facts.facts['dei']['EntityCommonStockSharesOutstanding']) {
                     const sharesArr = (facts as any).facts['dei']['EntityCommonStockSharesOutstanding'].units.shares;
@@ -160,26 +90,21 @@ async function syncFundamentals(client: any) {
             const cash = getLatest10K('CashAndCashEquivalentsAtCarryingValue');
             const sharesOut = getLatestShares();
 
-            if (!rev || !netInc) continue; // Skip if missing core data
+            if (!rev || !netInc) continue;
 
             const periodEnd = rev.end;
-
             const revenueVal = rev.val;
             const netIncomeVal = netInc.val;
             const opIncomeVal = opInc ? opInc.val : 0;
             const assetsVal = assets ? assets.val : 0;
             const debtVal = debt ? debt.val : 0;
             const equityVal = equity ? equity.val : 0;
-            const cashVal = cash ? cash.val : 0;
             const sharesVal = sharesOut ? sharesOut.val : 0;
 
-            // Derived
             const eps = sharesVal > 0 ? netIncomeVal / sharesVal : 0;
             const roe = equityVal > 0 ? netIncomeVal / equityVal : 0;
             const opMargin = revenueVal > 0 ? opIncomeVal / revenueVal : 0;
             const debtEquity = equityVal > 0 ? debtVal / equityVal : 0;
-            
-            // Placeholder for price-based metrics (to be updated by a separate price sync)
             const peRatio = 0;
             const pbRatio = 0;
             const evEbitda = 0;
@@ -188,7 +113,7 @@ async function syncFundamentals(client: any) {
                 company_id: company.id,
                 cik: company.cik,
                 period_end: periodEnd,
-                period_type: 'annual', // mapping 10-K to annual
+                period_type: 'annual',
                 revenue: revenueVal,
                 operating_income: opIncomeVal,
                 net_income: netIncomeVal,
@@ -206,29 +131,24 @@ async function syncFundamentals(client: any) {
             }, { onConflict: 'company_id, period_end' });
 
             processed++;
-            await sleep(200); // Protect rate limits (10 req/s max)
+            await sleep(200);
 
         } catch (e: any) {
             console.error(`Failed fundamentals for ${company.ticker}`, e);
         }
     }
 
-    // Update materialized view
     await client.rpc('refresh_us_sector_summary');
 
-    return { success: true, processed };
+    return { processed };
 }
 
 async function syncDailyFilingsAndInsider(client: any) {
-    // Scrape latest EDGAR RSS feed for 8-K and 4 (Insider) 
-    // This avoids the heavily restricted EFTS search endpoint
     const url = `https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=&company=&dateb=&owner=include&start=0&count=100&output=atom`;
     const res = await fetch(url, { headers: secHeaders });
     if (!res.ok) throw new Error(`RSS feed returned ${res.status}`);
 
     const xml = await res.text();
-
-    // Quick regex parsing for ATOM feed since Deno doesn't have native DOMParser without imports
     const entriesPattern = /<entry>([\s\S]*?)<\/entry>/g;
     let match;
     let processed = 0;
@@ -250,15 +170,12 @@ async function syncDailyFilingsAndInsider(client: any) {
             const accession = urnMatch ? urnMatch[1] : '';
             const summary = summaryMatch ? summaryMatch[1] : '';
 
-            // Extract CIK from summary (<b>CIK:</b> <a href="...">0001234567</a>)
             const cikMatch = summary.match(/<b>CIK:<\/b> <a[^>]*>([0-9]{10})<\/a>/);
             const cik = cikMatch ? cikMatch[1] : null;
 
             if (cik && accession) {
-                // Check if company exists to get company_id
                 const { data: company } = await client.from('us_companies').select('id').eq('cik', cik).single();
-
-                const filingDate = new Date().toISOString().split('T')[0]; // Using today as proxy since feed is "current"
+                const filingDate = new Date().toISOString().split('T')[0];
 
                 await client.from('us_filings').upsert({
                     company_id: company ? company.id : null,
@@ -275,5 +192,42 @@ async function syncDailyFilingsAndInsider(client: any) {
         }
     }
 
-    return { success: true, processed, message: 'Daily filings synced via RSS' };
+    return { processed, message: 'Daily filings synced via RSS' };
 }
+
+async function doIngest(supabase: ReturnType<typeof createClient>, mode: string): Promise<IngestResult> {
+    let result: any;
+    if (mode === 'companies') {
+        result = await syncCompanies(supabase);
+    } else if (mode === 'fundamentals') {
+        result = await syncFundamentals(supabase);
+    } else if (mode === 'daily') {
+        result = await syncDailyFilingsAndInsider(supabase);
+    } else {
+        throw new Error(`Unknown mode: ${mode}`);
+    }
+
+    return {
+        ok: true,
+        counts: { upserted: result.processed || 0, skipped: 0 },
+        meta: { mode, message: result.message }
+    };
+}
+
+serveIngest('ingest-us-edgar-fundamentals', async (req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    let mode = 'companies';
+    try {
+        const body = await req.json() as any;
+        if (body.mode) mode = body.mode;
+    } catch (_e: any) {
+        const url = new URL(req.url);
+        mode = url.searchParams.get('mode') || mode;
+    }
+
+    return doIngest(supabase, mode)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

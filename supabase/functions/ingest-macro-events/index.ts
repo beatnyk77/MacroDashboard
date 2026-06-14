@@ -1,31 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { mapFinnhubEvent } from './utils.ts'
-
-// --- SHARED UTILS ---
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-async function withTimeout<T>(
-    promise: Promise<T>,
-    timeoutMs: number,
-    taskName: string
-): Promise<T> {
-    let timeoutId: any;
-    const timeoutPromise = new Promise<T>((_, reject) => {
-        timeoutId = setTimeout(() => {
-            reject(new Error(`${taskName} timed out after ${timeoutMs}ms`));
-        }, timeoutMs);
-    });
-    try {
-        const result = await Promise.race([promise, timeoutPromise]);
-        return result;
-    } finally {
-        if (timeoutId) clearTimeout(timeoutId);
-    }
-}
 
 // Circuit breaker state (in-memory, resets on cold start)
 const circuitBreaker = {
@@ -34,7 +10,6 @@ const circuitBreaker = {
     isOpen: false,
     shouldAttempt(): boolean {
         if (!this.isOpen) return true;
-        // If circuit is open, allow retry after 10 minutes
         if (Date.now() - this.lastFailureTime > 10 * 60 * 1000) {
             this.isOpen = false;
             this.consecutiveFailures = 0;
@@ -56,13 +31,12 @@ const circuitBreaker = {
     }
 };
 
-// Check if API key is likely valid based on response
 function isAuthError(response: Response): boolean {
     return response.status === 401 || response.status === 403;
 }
 
 function isRateLimitError(response: Response): boolean {
-    return response.status === 429 || response.status === 402; // 402 = Payment Required
+    return response.status === 429 || response.status === 402;
 }
 
 async function fetchWithRetry(url: string, maxRetries: number = 2): Promise<Response> {
@@ -70,22 +44,19 @@ async function fetchWithRetry(url: string, maxRetries: number = 2): Promise<Resp
         try {
             const response = await fetch(url);
 
-            if (response.ok) {
-                return response;
-            }
+            if (response.ok) return response;
 
             if (isAuthError(response)) {
                 throw new Error(`Finnhub API authentication failed (${response.status}). Check API key validity and plan subscription.`);
             }
 
             if (isRateLimitError(response)) {
-                const waitMs = attempt * 5000; // 5s, 10s backoff
+                const waitMs = attempt * 5000;
                 console.warn(`Finnhub rate limited (attempt ${attempt}). Retrying in ${waitMs}ms...`);
                 await new Promise(resolve => setTimeout(resolve, waitMs));
                 continue;
             }
 
-            // Other HTTP errors - retry once
             if (attempt < maxRetries) {
                 console.warn(`Finnhub HTTP ${response.status} (attempt ${attempt}). Retrying...`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
@@ -103,66 +74,21 @@ async function fetchWithRetry(url: string, maxRetries: number = 2): Promise<Resp
     throw new Error('Max retries exceeded');
 }
 
-async function logIngestionStart(
-    supabase: SupabaseClient,
-    functionName: string,
-    metadata: any = {}
-): Promise<number | null> {
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, taskName: string): Promise<T> {
+    let timeoutId: any;
+    const timeoutPromise = new Promise<T>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(`${taskName} timed out after ${timeoutMs}ms`)), timeoutMs);
+    });
     try {
-        const { data, error } = await supabase
-            .from('ingestion_logs')
-            .insert({
-                function_name: functionName,
-                status: 'started',
-                metadata: metadata,
-                start_time: new Date().toISOString()
-            })
-            .select('id')
-            .single()
-
-        if (error) {
-            console.error('Failed to create ingestion log:', error)
-            return null
-        }
-        return data.id
-    } catch (err) {
-        console.error('Error creating ingestion log:', err)
-        return null
+        const result = await Promise.race([promise, timeoutPromise]);
+        return result;
+    } finally {
+        if (timeoutId) clearTimeout(timeoutId);
     }
 }
 
-async function logIngestionEnd(
-    supabase: SupabaseClient,
-    logId: number | null,
-    status: 'success' | 'failed' | 'timeout',
-    details: {
-        error_message?: string,
-        rows_inserted?: number,
-        rows_updated?: number,
-        metadata?: any
-    }
-) {
-    if (!logId) return
-    try {
-        const updateData: any = {
-            completed_at: new Date().toISOString(),
-            status: status,
-            ...details
-        }
-        const { error } = await supabase
-            .from('ingestion_logs')
-            .update(updateData)
-            .eq('id', logId)
-        if (error) {
-            console.error('Failed to update ingestion log:', error)
-        }
-    } catch (err) {
-        console.error('Error updating ingestion log:', err)
-    }
-}
-
-async function handleMockFallback(supabase: SupabaseClient, logId: number | null, reason: string = 'api_failure') {
-    console.log(`Using fallback data (reason: ${reason})...`);
+async function handleMockFallback(supabase: any): Promise<IngestResult> {
+    console.log('Using mock fallback data...');
     const mockEvents = [
         {
             event_date: new Date().toISOString(),
@@ -190,12 +116,10 @@ async function handleMockFallback(supabase: SupabaseClient, logId: number | null
     const { error: mockError } = await supabase.from('upcoming_events').upsert(mockEvents, { onConflict: 'event_date, event_name, country' });
     if (mockError) throw mockError;
 
-    await logIngestionEnd(supabase, logId, 'success', { rows_inserted: mockEvents.length, metadata: { status: 'mocked', reason } });
-    return new Response(JSON.stringify({ count: mockEvents.length, status: 'mocked', reason }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return { ok: true, counts: { upserted: mockEvents.length, skipped: 0 }, meta: { source: 'fallback' } };
 }
 
-// Alpha Vantage Fallback mechanism for key macro indicators
-async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: number | null, apiKey: string) {
+async function handleAlphaVantageFallback(supabase: any, apiKey: string): Promise<IngestResult> {
     console.log('Switching to Alpha Vantage for macro data...');
     const indicators = [
         { name: 'US GDP', function: 'REAL_GDP', country: 'USA' },
@@ -204,7 +128,6 @@ async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: numbe
         { name: 'Fed Funds Rate', function: 'FEDERAL_FUNDS_RATE', country: 'USA' }
     ];
 
-    let successCount = 0;
     const events = [];
 
     for (const indicator of indicators) {
@@ -225,7 +148,6 @@ async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: numbe
                         previous: data.data[1]?.value || null,
                         source_url: 'Alpha Vantage API'
                     });
-                    successCount++;
                 }
             }
         } catch (e: any) {
@@ -238,110 +160,76 @@ async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: numbe
         if (error) console.error('Failed to upsert Alpha Vantage events:', error);
     }
 
-    await logIngestionEnd(supabase, logId, 'success', { rows_inserted: events.length, metadata: { status: 'alpha_vantage_fallback', count: successCount } });
-    return new Response(JSON.stringify({ count: events.length, status: 'alpha_vantage_fallback' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return { ok: true, counts: { upserted: events.length, skipped: 0 }, meta: { source: 'alpha_vantage_fallback' } };
 }
 
-// Send alert to admin (via Supabase Edge Function or webhook)
-async function sendAlert(message: string, severity: 'critical' | 'warning' = 'warning') {
-    // TODO: Integrate with Slack/Discord/Email webhook when available
-    console.error(`[ALERT ${severity.toUpperCase()}] ${message}`);
-    // Future: await fetch(Deno.env.get('ALERT_WEBHOOK_URL') || '', { method: 'POST', body: JSON.stringify({ message, severity }) });
-}
-
-// --- MAIN FUNCTION ---
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
+async function doIngest(supabase: ReturnType<typeof createClient>, finnhubKey: string, avKey: string): Promise<IngestResult> {
+    if (!circuitBreaker.shouldAttempt()) {
+        console.warn('Circuit breaker is OPEN for Finnhub API. Skipping fetch, using fallback.');
+        return handleMockFallback(supabase);
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    console.log('Ingesting Live Macro Events from Finnhub...')
+    const today = new Date()
+    const fromDate = new Date(today)
+    fromDate.setDate(today.getDate() - 7)
+    const toDate = new Date(today)
+    toDate.setDate(today.getDate() + 30)
 
-    const logId = await logIngestionStart(supabase, 'ingest-macro-events');
+    const fromStr = fromDate.toISOString().split('T')[0]
+    const toStr = toDate.toISOString().split('T')[0]
 
+    const finnhubUrl = `https://finnhub.io/api/v1/calendar/economic?from=${fromStr}&to=${toStr}&token=${finnhubKey}`
+
+    let response: Response;
     try {
-        const finnhubKey = Deno.env.get('FINNHUB_API_KEY') ?? ''
-        if (!finnhubKey) {
-            const errMsg = 'FINNHUB_API_KEY is not set in environment variables';
-            console.error(errMsg);
-            await sendAlert(errMsg, 'critical');
-            throw new Error(errMsg);
-        }
-
-        // Check circuit breaker
-        if (!circuitBreaker.shouldAttempt()) {
-            const errMsg = 'Circuit breaker is OPEN for Finnhub API. Skipping fetch, using fallback.';
-            console.warn(errMsg);
-            await sendAlert(errMsg, 'warning');
-            return await handleMockFallback(supabase, logId, 'circuit_open');
-        }
-
-        console.log('Ingesting Live Macro Events from Finnhub...')
-        const today = new Date()
-        const fromDate = new Date(today)
-        fromDate.setDate(today.getDate() - 7)
-        const toDate = new Date(today)
-        toDate.setDate(today.getDate() + 30)
-
-        const fromStr = fromDate.toISOString().split('T')[0]
-        const toStr = toDate.toISOString().split('T')[0]
-
-        const finnhubUrl = `https://finnhub.io/api/v1/calendar/economic?from=${fromStr}&to=${toStr}&token=${finnhubKey}`
-
-        let response: Response;
-        try {
-            response = await withTimeout(fetchWithRetry(finnhubUrl), 30000, 'Finnhub API Fetch');
-        } catch (fetchErr: any) {
-            circuitBreaker.recordFailure();
-            console.warn(`Finnhub fetch error: ${fetchErr.message}. Falling back to mock data.`);
-            await sendAlert(`Finnhub fetch failed: ${fetchErr.message}`, 'warning');
-            return await handleMockFallback(supabase, logId, 'fetch_error');
-        }
-
-        if (!response.ok) {
-            circuitBreaker.recordFailure();
-            const errorText = await response.text();
-            console.warn(`Finnhub API error ${response.status}: ${errorText}. Falling back to Alpha Vantage.`);
-
-            if (isAuthError(response)) {
-                const avKey = Deno.env.get('ALPHA_VANTAGE_API_KEY') || '';
-                if (avKey) {
-                    await sendAlert('Finnhub 403 - Switching to Alpha Vantage Fallback', 'warning');
-                    return await handleAlphaVantageFallback(supabase, logId, avKey);
-                }
-                await sendAlert('Finnhub 403 and Alpha Vantage key missing. Using mock data.', 'critical');
-            } else if (isRateLimitError(response)) {
-                await sendAlert('Finnhub API rate limit exceeded.', 'warning');
-            }
-
-            return await handleMockFallback(supabase, logId, `http_${response.status}`);
-        }
-
-        // Success path
-        circuitBreaker.recordSuccess();
-        console.log('Finnhub API call successful');
-
-        const rawData: any = await response.json()
-        const events = rawData.economicCalendar || []
-        const eventsToUpsert = events.map(mapFinnhubEvent)
-
-        if (eventsToUpsert.length > 0) {
-            const { error: upsertError } = await supabase
-                .from('upcoming_events')
-                .upsert(eventsToUpsert, { onConflict: 'event_date, event_name, country' });
-            if (upsertError) throw upsertError;
-        }
-
-        const result = { count: eventsToUpsert.length, dateRange: { from: fromStr, to: toStr } };
-        await logIngestionEnd(supabase, logId, 'success', { rows_inserted: eventsToUpsert.length, metadata: result });
-
-        return new Response(JSON.stringify(result), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-
-    } catch (error: any) {
-        console.error('Fatal ingestion error:', error);
-        if (logId) await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-        return new Response(JSON.stringify({ error: error.message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 });
+        response = await withTimeout(fetchWithRetry(finnhubUrl), 30000, 'Finnhub API Fetch');
+    } catch (fetchErr: any) {
+        circuitBreaker.recordFailure();
+        console.warn(`Finnhub fetch error: ${fetchErr.message}. Falling back to mock data.`);
+        return handleMockFallback(supabase);
     }
-})
+
+    if (!response.ok) {
+        circuitBreaker.recordFailure();
+        const errorText = await response.text();
+        console.warn(`Finnhub API error ${response.status}: ${errorText}. Falling back.`);
+
+        if (isAuthError(response) && avKey) {
+            return handleAlphaVantageFallback(supabase, avKey);
+        }
+
+        return handleMockFallback(supabase);
+    }
+
+    circuitBreaker.recordSuccess();
+    console.log('Finnhub API call successful');
+
+    const rawData: any = await response.json()
+    const events = rawData.economicCalendar || []
+    const eventsToUpsert = events.map(mapFinnhubEvent)
+
+    if (eventsToUpsert.length > 0) {
+        const { error: upsertError } = await supabase
+            .from('upcoming_events')
+            .upsert(eventsToUpsert, { onConflict: 'event_date, event_name, country' });
+        if (upsertError) throw upsertError;
+    }
+
+    return {
+        ok: true,
+        counts: { upserted: eventsToUpsert.length, skipped: 0 },
+        meta: { dateRange: { from: fromStr, to: toStr } }
+    };
+}
+
+serveIngest('ingest-macro-events', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const finnhubKey = Deno.env.get('FINNHUB_API_KEY') ?? ''
+    if (!finnhubKey) throw new Error('FINNHUB_API_KEY is not set in environment variables')
+    const avKey = Deno.env.get('ALPHA_VANTAGE_API_KEY') || ''
+    return doIngest(supabase, finnhubKey, avKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-import { runIngestion } from '../_shared/logging.ts'
+import { createClient } from '@supabase/supabase-js'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 import { fetchWithRetry, upsertObservations } from '../_shared/ingest_utils.ts'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 const OUNCES_PER_TONNE = 32150.7466
 
@@ -35,9 +30,6 @@ async function fetchTipsYield(fredApiKey: string): Promise<{ date: string; value
 
 // ─── CB_GOLD_NET ──────────────────────────────────────────────────────────────
 // Source: IMF International Financial Statistics (IFS), indicator RAXG_FO
-// (Gold reserves, fine troy ounces, annual frequency).
-// We compute the most-recent-year net change across ALL reporting central banks
-// and write a single scalar (tonnes) as CB_GOLD_NET.
 // Frequency: Updated quarterly by IMF as annual revisions come in.
 async function fetchCbGoldNet(): Promise<{ date: string; value: number } | null> {
   const currentYear = new Date().getFullYear()
@@ -52,7 +44,6 @@ async function fetchCbGoldNet(): Promise<{ date: string; value: number } | null>
 
   if (!Array.isArray(series)) return null
 
-  // Build a map: country → year → tonnes
   const holdings: Record<string, Record<number, number>> = {}
   for (const s of series) {
     const area = s['@REF_AREA'] as string
@@ -68,7 +59,6 @@ async function fetchCbGoldNet(): Promise<{ date: string; value: number } | null>
     }
   }
 
-  // Find the latest year with broad coverage (>=20 countries reporting)
   let latestYear = currentYear
   for (let y = currentYear; y >= startPeriod; y--) {
     const coverage = Object.values(holdings).filter(h => h[y] !== undefined).length
@@ -93,73 +83,69 @@ async function fetchCbGoldNet(): Promise<{ date: string; value: number } | null>
   }
 }
 
-// ─── Main handler ─────────────────────────────────────────────────────────────
+async function doIngest(supabase: ReturnType<typeof createClient>, fredApiKey: string): Promise<IngestResult> {
+  const [tipsRows, cbGold] = await Promise.all([
+    fetchTipsYield(fredApiKey),
+    fetchCbGoldNet(),
+  ])
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const observations: any[] = []
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-  )
+  for (const row of tipsRows) {
+    observations.push({
+      metric_id: 'US_10Y_TIPS_YIELD',
+      as_of_date: row.date,
+      value: row.value,
+      metadata: {
+        source: 'FRED',
+        series_id: 'DFII10',
+        release: 'H.15 Selected Interest Rates',
+        unit: 'percent',
+        frequency: 'daily',
+      },
+    })
+  }
 
-  return runIngestion(supabase, 'ingest-fiscaldata', async () => {
-    const fredApiKey = Deno.env.get('FRED_API_KEY')
-    if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
+  if (cbGold) {
+    observations.push({
+      metric_id: 'CB_GOLD_NET',
+      as_of_date: cbGold.date,
+      value: cbGold.value,
+      metadata: {
+        source: 'IMF IFS',
+        indicator: 'RAXG_FO',
+        release: 'International Financial Statistics',
+        unit: 'tonnes_net',
+        frequency: 'annual',
+        note: 'Net change in global central bank gold holdings (buyers minus sellers)',
+      },
+    })
+  }
 
-    const [tipsRows, cbGold] = await Promise.all([
-      fetchTipsYield(fredApiKey),
-      fetchCbGoldNet(),
-    ])
+  if (observations.length === 0) throw new Error('No data fetched from FRED or IMF')
 
-    const observations: any[] = []
+  const { count } = await upsertObservations(supabase, observations, {
+    source_ref: 'live_api:ingest-fiscaldata',
+    is_provisional: false,
+  })
 
-    // US_10Y_TIPS_YIELD — backfill last 30 business days
-    for (const row of tipsRows) {
-      observations.push({
-        metric_id: 'US_10Y_TIPS_YIELD',
-        as_of_date: row.date,
-        value: row.value,
-        metadata: {
-          source: 'FRED',
-          series_id: 'DFII10',
-          release: 'H.15 Selected Interest Rates',
-          unit: 'percent',
-          frequency: 'daily',
-        },
-      })
-    }
-
-    // CB_GOLD_NET — latest IMF annual net tonnes
-    if (cbGold) {
-      observations.push({
-        metric_id: 'CB_GOLD_NET',
-        as_of_date: cbGold.date,
-        value: cbGold.value,
-        metadata: {
-          source: 'IMF IFS',
-          indicator: 'RAXG_FO',
-          release: 'International Financial Statistics',
-          unit: 'tonnes_net',
-          frequency: 'annual',
-          note: 'Net change in global central bank gold holdings (buyers minus sellers)',
-        },
-      })
-    }
-
-    if (observations.length === 0) throw new Error('No data fetched from FRED or IMF')
-
-    const { count } = await upsertObservations(supabase, observations)
-
-    return {
-      rows_inserted: count,
+  return {
+    ok: true,
+    counts: { upserted: count, skipped: 0 },
+    meta: {
       tips_days: tipsRows.length,
       cb_gold_net_tonnes: cbGold?.value ?? null,
       cb_gold_as_of: cbGold?.date ?? null,
-      metadata: {
-        tips_days: tipsRows.length,
-        cb_gold_net_tonnes: cbGold?.value ?? null,
-      },
-    }
-  }, corsHeaders)
-})
+    },
+  }
+}
+
+serveIngest('ingest-fiscaldata', async (_req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  )
+  const fredApiKey = Deno.env.get('FRED_API_KEY') ?? ''
+  if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
+  return doIngest(supabase, fredApiKey)
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })
