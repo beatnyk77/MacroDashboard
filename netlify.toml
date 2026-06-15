@@ -10,12 +10,8 @@
 [context.deploy-preview]
   command = "tsc && vite build"
 
-# 301: strip trailing slash from all non-root paths before the SPA catch-all
-[[redirects]]
-  from = "/*/"
-  to = "/:splat"
-  status = 301
-  force = true
+# Trailing-slash enforcement: client-side via TrailingSlashRedirect + prerender canonicals.
+# Netlify TOML does not support multi-path conditions in one redirect block.
 
 [[redirects]]
   from = "/*"

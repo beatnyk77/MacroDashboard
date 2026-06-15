@@ -12,6 +12,9 @@ export interface MetricData {
     zScore?: number;
     percentile?: number;
     source?: string;
+    sourceRef?: string | null;
+    provenance?: string | null;
+    isProvisional?: boolean;
     frequency?: string;
     methodology?: string;
 }
@@ -58,6 +61,9 @@ export function useLatestMetric(metricId: string) {
                 zScore: latest.z_score ?? undefined,
                 percentile: latest.percentile ?? undefined,
                 source: latest.source_name || 'Internal Analytics',
+                sourceRef: latest.source_ref ?? null,
+                provenance: latest.provenance ?? null,
+                isProvisional: latest.is_provisional === true,
                 frequency: latest.native_frequency ?? undefined,
                 methodology: 'Rolling 252-day Z-Score'
             };

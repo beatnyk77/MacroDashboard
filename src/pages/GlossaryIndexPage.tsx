@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box, Paper, TextField, InputAdornment, Chip, Grid } from '@mui/material';
 import { Search, Book, FlaskConical, FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink } from '@/components/TrailLink';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { glossaryData } from '@/features/glossary/glossaryData';
 import { SEOManager } from '@/components/SEOManager';
+import { toAbsoluteUrl } from '@/lib/urlPath';
 
 export const GlossaryIndexPage: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,13 +26,13 @@ export const GlossaryIndexPage: React.FC = () => {
         "@type": "DefinedTermSet",
         "name": "GraphiQuestor Macro Intelligence Glossary",
         "description": "A comprehensive institutional-grade dictionary of macro-economic, monetary policy, and geopolitical terminology used in global capital markets.",
-        "url": "https://graphiquestor.com/glossary",
+        "url": toAbsoluteUrl('/glossary'),
         "hasDefinedTerm": glossaryData.map(term => ({
             "@type": "DefinedTerm",
             "name": term.term,
             "description": term.definition,
-            "url": `https://graphiquestor.com/glossary/${term.slug}`,
-            "inDefinedTermSet": "https://graphiquestor.com/glossary",
+            "url": toAbsoluteUrl(`/glossary/${term.slug}`),
+            "inDefinedTermSet": toAbsoluteUrl('/glossary'),
             "category": term.category,
             "identifier": term.id,
             "termCode": term.slug,
@@ -122,7 +124,7 @@ export const GlossaryIndexPage: React.FC = () => {
                         filteredTerms.map(term => (
                             <Paper
                                 key={term.id}
-                                component={Link}
+                                component={TrailLink}
                                 to={`/glossary/${term.slug}`}
                                 elevation={0}
                                 sx={{
@@ -163,6 +165,8 @@ export const GlossaryIndexPage: React.FC = () => {
                         </Box>
                     )}
                 </Box>
+
+                <RelatedMetrics />
             </Container>
         </Box>
     );

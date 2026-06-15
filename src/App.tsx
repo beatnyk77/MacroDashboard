@@ -8,6 +8,8 @@ import { GlobalLayout } from '@/layout/GlobalLayout';
 import { ViewProvider } from '@/context/ViewContext';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { TrailingSlashRedirect } from '@/components/TrailingSlashRedirect';
+import { trailRoute } from '@/lib/urlPath';
 
 // Build Version: 1.0.1 - Cleanup Pass
 // Force fresh bundle generation
@@ -89,78 +91,79 @@ function App() {
                     <ThemeProvider theme={theme}>
                         <CssBaseline />
                         <BrowserRouter>
+                            <TrailingSlashRedirect />
                             <GlobalLayout>
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
-                                        <Route path="/" element={<Terminal />} />
-                                        <Route path="/methodology" element={<MetricsMethodologyPage />} />
-                                        <Route path="/data-sources" element={<DataSourcesPage />} />
-                                        <Route path="/blog" element={<BlogPage />} />
-                                        <Route path="/blog/:slug" element={<ArticlePage />} />
-                                        <Route path="/regime-digest" element={<RegimeDigestArchivePage />} />
-                                        <Route path="/regime-digest/:year/:month" element={<RegimeDigestPage />} />
-                                        <Route path="/admin" element={<AdminDashboard />} />
-                                        <Route path="/admin/data-health" element={<DataHealthDashboard />} />
-                                        <Route path="/data-health" element={<DataHealthPublic />} />
-                                        <Route path="/subscribe/confirm" element={<SubscribeConfirm />} />
-                                        <Route path="/api-access" element={<APIAccessPage />} />
-                                        <Route path="/api-docs" element={<APIDocsPage />} />
-                                        <Route path="/terms" element={<TermsOfService />} />
-                                        <Route path="/privacy" element={<PrivacyPolicy />} />
-                                        <Route path="/about" element={<About />} />
-                                        <Route path="/glossary" element={<GlossaryIndexPage />} />
-                                        <Route path="/glossary/:slug" element={<GlossaryTermPage />} />
+                                        <Route path={trailRoute('/')} element={<Terminal />} />
+                                        <Route path={trailRoute('/methodology')} element={<MetricsMethodologyPage />} />
+                                        <Route path={trailRoute('/data-sources')} element={<DataSourcesPage />} />
+                                        <Route path={trailRoute('/blog')} element={<BlogPage />} />
+                                        <Route path={trailRoute('/blog/:slug')} element={<ArticlePage />} />
+                                        <Route path={trailRoute('/regime-digest')} element={<RegimeDigestArchivePage />} />
+                                        <Route path={trailRoute('/regime-digest/:year/:month')} element={<RegimeDigestPage />} />
+                                        <Route path={trailRoute('/admin')} element={<AdminDashboard />} />
+                                        <Route path={trailRoute('/admin/data-health')} element={<DataHealthDashboard />} />
+                                        <Route path={trailRoute('/data-health')} element={<DataHealthPublic />} />
+                                        <Route path={trailRoute('/subscribe/confirm')} element={<SubscribeConfirm />} />
+                                        <Route path={trailRoute('/api-access')} element={<APIAccessPage />} />
+                                        <Route path={trailRoute('/api-docs')} element={<APIDocsPage />} />
+                                        <Route path={trailRoute('/terms')} element={<TermsOfService />} />
+                                        <Route path={trailRoute('/privacy')} element={<PrivacyPolicy />} />
+                                        <Route path={trailRoute('/about')} element={<About />} />
+                                        <Route path={trailRoute('/glossary')} element={<GlossaryIndexPage />} />
+                                        <Route path={trailRoute('/glossary/:slug')} element={<GlossaryTermPage />} />
                                         {/* Methods Articles */}
-                                        <Route path="/methods/net-liquidity-z-score" element={<NetLiquidityZScorePage />} />
-                                        <Route path="/methods/debt-gold-z-score" element={<DebtGoldZScorePage />} />
-                                        <Route path="/methods/loan-to-job-efficiency" element={<LoanToJobEfficiencyPage />} />
-                                        <Route path="/methods/energy-dependency-ratio" element={<EnergyDependencyRatioPage />} />
-                                        <Route path="/methods/fiscal-dominance-meter" element={<FiscalDominanceMeterPage />} />
-                                        <Route path="/methods/m2-gold-ratio" element={<M2GoldRatioPage />} />
-                                        <Route path="/methods/de-dollarization-guide" element={<DeDollarizationGuide />} />
-                                        <Route path="/methods/fed-monetization-monitor" element={<FedMonetizationPage />} />
-                                        <Route path="/methods/india-credit-cycle-clock" element={<IndiaCreditCyclePage />} />
-                                        <Route path="/intel/india" element={<IntelIndiaPage />} />
-                                        <Route path="/intel/china" element={<IntelChinaPage />} />
-                                        <Route path="/macro-observatory" element={<MacroObservatory />} />
-                                        <Route path="/institutional" element={<ForInstitutional />} />
-                                        <Route path="/weekly-narrative" element={<WeeklyNarrativeArchive />} />
-                                        <Route path="/weekly-narrative/:date" element={<WeeklyNarrativePage />} />
+                                        <Route path={trailRoute('/methods/net-liquidity-z-score')} element={<NetLiquidityZScorePage />} />
+                                        <Route path={trailRoute('/methods/debt-gold-z-score')} element={<DebtGoldZScorePage />} />
+                                        <Route path={trailRoute('/methods/loan-to-job-efficiency')} element={<LoanToJobEfficiencyPage />} />
+                                        <Route path={trailRoute('/methods/energy-dependency-ratio')} element={<EnergyDependencyRatioPage />} />
+                                        <Route path={trailRoute('/methods/fiscal-dominance-meter')} element={<FiscalDominanceMeterPage />} />
+                                        <Route path={trailRoute('/methods/m2-gold-ratio')} element={<M2GoldRatioPage />} />
+                                        <Route path={trailRoute('/methods/de-dollarization-guide')} element={<DeDollarizationGuide />} />
+                                        <Route path={trailRoute('/methods/fed-monetization-monitor')} element={<FedMonetizationPage />} />
+                                        <Route path={trailRoute('/methods/india-credit-cycle-clock')} element={<IndiaCreditCyclePage />} />
+                                        <Route path={trailRoute('/intel/india')} element={<IntelIndiaPage />} />
+                                        <Route path={trailRoute('/intel/china')} element={<IntelChinaPage />} />
+                                        <Route path={trailRoute('/macro-observatory')} element={<MacroObservatory />} />
+                                        <Route path={trailRoute('/institutional')} element={<ForInstitutional />} />
+                                        <Route path={trailRoute('/weekly-narrative')} element={<WeeklyNarrativeArchive />} />
+                                        <Route path={trailRoute('/weekly-narrative/:date')} element={<WeeklyNarrativePage />} />
 
                                         {/* Trade Intelligence */}
-                                        <Route path="/trade" element={<TradeIntelligencePage />} />
-                                        <Route path="/trade/hs/:code" element={<HSCodeOverviewPage />} />
-                                        <Route path="/trade/playbook/:code" element={<ExportScoutPlaybookPage />} />
-                                        <Route path="/trade/hs/:code/market/:iso" element={<MarketDeepDivePage />} />
+                                        <Route path={trailRoute('/trade')} element={<TradeIntelligencePage />} />
+                                        <Route path={trailRoute('/trade/hs/:code')} element={<HSCodeOverviewPage />} />
+                                        <Route path={trailRoute('/trade/playbook/:code')} element={<ExportScoutPlaybookPage />} />
+                                        <Route path={trailRoute('/trade/hs/:code/market/:iso')} element={<MarketDeepDivePage />} />
 
                                         {/* Tools & Embeds */}
-                                        <Route path="/tools/net-liquidity-gauge" element={<NetLiquidityGauge />} />
+                                        <Route path={trailRoute('/tools/net-liquidity-gauge')} element={<NetLiquidityGauge />} />
 
                                         {/* Countries */}
-                                        <Route path="/countries" element={<CountriesIndexPage />} />
-                                        <Route path="/countries/:iso" element={<CountryProfilePage />} />
+                                        <Route path={trailRoute('/countries')} element={<CountriesIndexPage />} />
+                                        <Route path={trailRoute('/countries/:iso')} element={<CountryProfilePage />} />
 
                                         {/* Labs */}
-                                        <Route path="/labs/us-macro-fiscal" element={<USMacroFiscalLab />} />
-                                        <Route path="/labs/india" element={<Navigate to="/intel/india" replace />} />
-                                        <Route path="/labs/china" element={<Navigate to="/intel/china" replace />} />
-                                        <Route path="/labs/de-dollarization-gold" element={<DeDollarizationGoldLab />} />
-                                        <Route path="/labs/central-bank-gold-purchases" element={<CentralBankGoldPurchases />} />
-                                        <Route path="/labs/brics-trade-settlement" element={<BricsTradeSettlement />} />
-                                        <Route path="/labs/us-treasury-foreign-holdings" element={<USTreasuryForeignHoldings />} />
-                                        <Route path="/labs/petrodollar-decay-indicators" element={<PetrodollarDecay />} />
-                                        <Route path="/labs/energy-commodities" element={<EnergyCommoditiesLab />} />
-                                        <Route path="/labs/sovereign-stress" element={<SovereignStressLab />} />
-                                        <Route path="/labs/shadow-system" element={<ShadowSystemLab />} />
-                                        <Route path="/labs/china-15th-fyp" element={<China15thFYPLab />} />
-                                        <Route path="/labs/africa-macro" element={<AfricaMacroPulseLab />} />
+                                        <Route path={trailRoute('/labs/us-macro-fiscal')} element={<USMacroFiscalLab />} />
+                                        <Route path={trailRoute('/labs/india')} element={<Navigate to={trailRoute('/intel/india')} replace />} />
+                                        <Route path={trailRoute('/labs/china')} element={<Navigate to={trailRoute('/intel/china')} replace />} />
+                                        <Route path={trailRoute('/labs/de-dollarization-gold')} element={<DeDollarizationGoldLab />} />
+                                        <Route path={trailRoute('/labs/central-bank-gold-purchases')} element={<CentralBankGoldPurchases />} />
+                                        <Route path={trailRoute('/labs/brics-trade-settlement')} element={<BricsTradeSettlement />} />
+                                        <Route path={trailRoute('/labs/us-treasury-foreign-holdings')} element={<USTreasuryForeignHoldings />} />
+                                        <Route path={trailRoute('/labs/petrodollar-decay-indicators')} element={<PetrodollarDecay />} />
+                                        <Route path={trailRoute('/labs/energy-commodities')} element={<EnergyCommoditiesLab />} />
+                                        <Route path={trailRoute('/labs/sovereign-stress')} element={<SovereignStressLab />} />
+                                        <Route path={trailRoute('/labs/shadow-system')} element={<ShadowSystemLab />} />
+                                        <Route path={trailRoute('/labs/china-15th-fyp')} element={<China15thFYPLab />} />
+                                        <Route path={trailRoute('/labs/africa-macro')} element={<AfricaMacroPulseLab />} />
                                         {/* Labs Index & Thematic redirects */}
-                                        <Route path="/labs" element={<ThematicLabsIndexPage />} />
-                                        <Route path="/thematics" element={<Navigate to="/labs" replace />} />
+                                        <Route path={trailRoute('/labs')} element={<ThematicLabsIndexPage />} />
+                                        <Route path={trailRoute('/thematics')} element={<Navigate to={trailRoute('/labs')} replace />} />
                                         {/* Morning Macro Brief */}
-                                         <Route path="/macro-brief" element={<MacroBriefPage />} />
-                                         <Route path="/macro-brief/:date" element={<MacroBriefPage />} />
-                                         <Route path="/macro-brief/archive" element={<MacroBriefArchivePage />} />
+                                        <Route path={trailRoute('/macro-brief')} element={<MacroBriefPage />} />
+                                        <Route path={trailRoute('/macro-brief/:date')} element={<MacroBriefPage />} />
+                                        <Route path={trailRoute('/macro-brief/archive')} element={<MacroBriefArchivePage />} />
                                         {/* Catch-all 404 */}
                                         <Route path="*" element={<NotFound />} />
                                     </Routes>

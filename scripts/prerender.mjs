@@ -18,15 +18,29 @@ try {
     process.exit(1);
 }
 
+function withoutTrailingSlash(route) {
+    if (!route || route === '/') return '/';
+    const pathname = route.split(/[?#]/)[0].replace(/\/+$/, '');
+    return pathname || '/';
+}
+
+function normalizeVisitedRoute(route) {
+    const clean = route.split('#')[0].split('?')[0];
+    if (clean === '/') return '/';
+    return clean.endsWith('/') ? clean : `${clean}/`;
+}
+
+function sitemapLoc(route) {
+    const base = withoutTrailingSlash(route);
+    if (base === '/') return 'https://graphiquestor.com/';
+    return `https://graphiquestor.com${base}/`;
+}
+
 const urlRegex = /<loc>https:\/\/graphiquestor\.com([^<]+)<\/loc>/g;
 const seedRoutes = new Set();
 let match;
 while ((match = urlRegex.exec(sitemap)) !== null) {
-    if (match[1] === '/') {
-        seedRoutes.add('/');
-    } else {
-        seedRoutes.add(match[1]);
-    }
+    seedRoutes.add(normalizeVisitedRoute(match[1] === '' ? '/' : match[1]));
 }
 
 /** slug → YYYY-MM-DD from RSS pubDate for blog article lastmod */
@@ -51,7 +65,7 @@ if (fs.existsSync(rssPath)) {
     const rssRegex = /<link>https:\/\/graphiquestor\.com([^<]+)<\/link>/g;
     while ((match = rssRegex.exec(rss)) !== null) {
         if (match[1] !== '') {
-            seedRoutes.add(match[1]);
+            seedRoutes.add(normalizeVisitedRoute(match[1]));
         }
     }
 }
@@ -131,26 +145,30 @@ function gitLastmod(file) {
  *  4. Unknown/new pages → build date (fallback only).
  */
 function routeLastmod(route) {
+    const path = withoutTrailingSlash(route);
     // 1a. Morning brief: /macro-brief/YYYY-MM-DD
-    const briefMatch = route.match(/^\/macro-brief\/(\d{4}-\d{2}-\d{2})$/);
+    const briefMatch = path.match(/^\/macro-brief\/(\d{4}-\d{2}-\d{2})$/);
     if (briefMatch) return briefMatch[1];
 
     // 1b. Weekly narrative: /weekly-narrative/YYYY-MM-DD
-    const narrativeMatch = route.match(/^\/weekly-narrative\/(\d{4}-\d{2}-\d{2})$/);
+    const briefSlashMatch = path.match(/^\/macro-brief\/(\d{4})\/(\d{2})\/(\d{2})$/);
+    if (briefSlashMatch) return `${briefSlashMatch[1]}-${briefSlashMatch[2]}-${briefSlashMatch[3]}`;
+
+    const narrativeMatch = path.match(/^\/weekly-narrative\/(\d{4}-\d{2}-\d{2})$/);
     if (narrativeMatch) return narrativeMatch[1];
 
     // 1c. Regime digest: /regime-digest/YYYY/MM
-    const digestMatch = route.match(/^\/regime-digest\/(\d{4})\/(\d{2})$/);
+    const digestMatch = path.match(/^\/regime-digest\/(\d{4})\/(\d{2})$/);
     if (digestMatch) return `${digestMatch[1]}-${digestMatch[2]}-01`;
 
     // 1d. Blog article: /blog/:slug — publish date from RSS feed
-    const blogMatch = route.match(/^\/blog\/([^/]+)$/);
+    const blogMatch = path.match(/^\/blog\/([^/]+)$/);
     if (blogMatch && BLOG_LASTMOD.has(blogMatch[1])) {
         return BLOG_LASTMOD.get(blogMatch[1]);
     }
 
     // 2. Static page with a known source file
-    if (STATIC_PAGE_FILES[route]) return gitLastmod(STATIC_PAGE_FILES[route]);
+    if (STATIC_PAGE_FILES[path]) return gitLastmod(STATIC_PAGE_FILES[path]);
 
     // 3. Live-data page — build date is the honest lastmod
     return BUILD_DATE;
@@ -166,19 +184,20 @@ function generateSitemap(routes) {
     const sortedRoutes = Array.from(routes).sort();
 
     for (const route of sortedRoutes) {
+        const path = withoutTrailingSlash(route);
         const lastmod = routeLastmod(route);
         // Priority heuristic (sitemap hints, not ranking signals):
         //   1.0 homepage | 0.9 macro-brief, intel/india | 0.8 top-level sections
         //   0.7 deeper content | 0.6 archives
-        const segments = route.split('/').filter(Boolean).length;
+        const segments = path.split('/').filter(Boolean).length;
         const priority =
-            route === '/' ? '1.0'
-            : route === '/macro-brief' || route === '/intel/india' ? '0.9'
-            : route === '/macro-brief/archive' ? '0.6'
+            path === '/' ? '1.0'
+            : path === '/macro-brief' || path === '/intel/india' ? '0.9'
+            : path === '/macro-brief/archive' ? '0.6'
             : segments >= 2 ? '0.7'
             : '0.8';
         xml += `  <url>\n`;
-        xml += `    <loc>https://graphiquestor.com${route}</loc>\n`;
+        xml += `    <loc>${sitemapLoc(route)}</loc>\n`;
         xml += `    <lastmod>${lastmod}</lastmod>\n`;
         xml += `    <priority>${priority}</priority>\n`;
         xml += `  </url>\n`;
@@ -221,7 +240,7 @@ async function run() {
             const route = Array.from(routesToVisit)[0];
             routesToVisit.delete(route);
             
-            const cleanRoute = route.split('#')[0].split('?')[0];
+            const cleanRoute = normalizeVisitedRoute(route);
             
             if (visitedRoutes.has(cleanRoute)) continue;
             visitedRoutes.add(cleanRoute);
@@ -270,8 +289,8 @@ async function run() {
 
                 // Add valid discovered links to the queue
                 for (const href of newLinks) {
-                    const cleanedHref = href ? href.split('#')[0].split('?')[0] : '';
-                    if (isRoutable(cleanedHref) && !visitedRoutes.has(cleanedHref)) {
+                    const cleanedHref = href ? normalizeVisitedRoute(href.split('#')[0].split('?')[0]) : '';
+                    if (isRoutable(withoutTrailingSlash(cleanedHref)) && !visitedRoutes.has(cleanedHref)) {
                         routesToVisit.add(cleanedHref);
                     }
                 }

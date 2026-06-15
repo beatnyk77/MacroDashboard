@@ -80,6 +80,51 @@ describe('upsertObservations', () => {
 
     await expect(upsertObservations(supabase, rows)).rejects.toThrow('DB constraint violation');
   });
+
+  it('stamps source_ref and is_provisional from provenanceDefaults', async () => {
+    const { supabase, upsertSpy } = makeSupabaseMock({ error: null });
+    const rows = [{ metric_id: 'CN_POLICY_RATE', as_of_date: '2025-10-01', value: 3.1 }];
+
+    await upsertObservations(supabase, rows, {
+      source_ref: 'fallback:china-macro-lpr-hardcoded',
+      is_provisional: true,
+    });
+
+    expect(upsertSpy).toHaveBeenCalledWith(
+      [{
+        metric_id: 'CN_POLICY_RATE',
+        as_of_date: '2025-10-01',
+        value: 3.1,
+        source_ref: 'fallback:china-macro-lpr-hardcoded',
+        is_provisional: true,
+      }],
+      expect.objectContaining({ onConflict: 'metric_id, as_of_date' }),
+    );
+  });
+
+  it('does not override per-row source_ref when already set', async () => {
+    const { supabase, upsertSpy } = makeSupabaseMock({ error: null });
+    const rows = [{
+      metric_id: 'GOLD_PRICE_USD',
+      as_of_date: '2024-01-01',
+      value: 2000,
+      source_ref: 'live_api:ingest-gold',
+      is_provisional: false,
+    }];
+
+    await upsertObservations(supabase, rows, {
+      source_ref: 'fallback:should-not-apply',
+      is_provisional: true,
+    });
+
+    expect(upsertSpy).toHaveBeenCalledWith(
+      [expect.objectContaining({
+        source_ref: 'live_api:ingest-gold',
+        is_provisional: false,
+      })],
+      expect.any(Object),
+    );
+  });
 });
 
 // ─── validateNumericData ──────────────────────────────────────────────────────

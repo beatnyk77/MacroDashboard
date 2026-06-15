@@ -50,6 +50,7 @@ ALTER TABLE public.cusip_ticker_cache ENABLE ROW LEVEL SECURITY;
 -- No frontend hook queries this table. Anon access is a data-integrity risk.
 REVOKE ALL ON public.comtrade_cache FROM anon;
 
+DROP POLICY IF EXISTS "Service role only access to comtrade_cache" ON public.comtrade_cache;
 CREATE POLICY "Service role only access to comtrade_cache"
   ON public.comtrade_cache
   FOR ALL
@@ -61,6 +62,7 @@ CREATE POLICY "Service role only access to comtrade_cache"
 -- No frontend hook queries this table.
 REVOKE ALL ON public.cusip_ticker_cache FROM anon;
 
+DROP POLICY IF EXISTS "Service role only access to cusip_ticker_cache" ON public.cusip_ticker_cache;
 CREATE POLICY "Service role only access to cusip_ticker_cache"
   ON public.cusip_ticker_cache
   FOR ALL
@@ -76,12 +78,14 @@ CREATE POLICY "Service role only access to cusip_ticker_cache"
 -- latest_metrics: RLS was OFF — critical anon-write risk.
 -- Anon SELECT needed by: vw_sovereign_solvency, vw_data_staleness_monitor_v2,
 -- vw_authenticity_percentage_v2 (all SECURITY INVOKER views).
+DROP POLICY IF EXISTS "Allow public read access to latest_metrics" ON public.latest_metrics;
 CREATE POLICY "Allow public read access to latest_metrics"
   ON public.latest_metrics
   FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role write access to latest_metrics" ON public.latest_metrics;
 CREATE POLICY "Service role write access to latest_metrics"
   ON public.latest_metrics
   FOR ALL
@@ -91,12 +95,14 @@ CREATE POLICY "Service role write access to latest_metrics"
 
 -- ingestion_runs: RLS was OFF.
 -- Anon SELECT needed by: useIngestionHealth, useUSTreasuryAuctions, AdminDashboard.
+DROP POLICY IF EXISTS "Allow public read access to ingestion_runs" ON public.ingestion_runs;
 CREATE POLICY "Allow public read access to ingestion_runs"
   ON public.ingestion_runs
   FOR SELECT
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Service role write access to ingestion_runs" ON public.ingestion_runs;
 CREATE POLICY "Service role write access to ingestion_runs"
   ON public.ingestion_runs
   FOR ALL
@@ -111,6 +117,7 @@ CREATE POLICY "Service role write access to ingestion_runs"
 
 -- ingestion_logs
 -- Existing policy: "Public Read Access" (SELECT, TO public)
+DROP POLICY IF EXISTS "Service role write access to ingestion_logs" ON public.ingestion_logs;
 CREATE POLICY "Service role write access to ingestion_logs"
   ON public.ingestion_logs
   FOR ALL
@@ -120,6 +127,7 @@ CREATE POLICY "Service role write access to ingestion_logs"
 
 -- upcoming_events
 -- Existing policy: "Public Read Access" (SELECT, TO public)
+DROP POLICY IF EXISTS "Service role write access to upcoming_events" ON public.upcoming_events;
 CREATE POLICY "Service role write access to upcoming_events"
   ON public.upcoming_events
   FOR ALL
@@ -129,6 +137,7 @@ CREATE POLICY "Service role write access to upcoming_events"
 
 -- tic_foreign_holders
 -- Existing policy: "Public Read Access" (SELECT, TO public)
+DROP POLICY IF EXISTS "Service role write access to tic_foreign_holders" ON public.tic_foreign_holders;
 CREATE POLICY "Service role write access to tic_foreign_holders"
   ON public.tic_foreign_holders
   FOR ALL
@@ -139,6 +148,7 @@ CREATE POLICY "Service role write access to tic_foreign_holders"
 -- gold_historical_shocks
 -- Existing policy: "Public Read Access" (SELECT, TO public)
 -- No direct frontend hook found; retaining SELECT access conservatively.
+DROP POLICY IF EXISTS "Service role write access to gold_historical_shocks" ON public.gold_historical_shocks;
 CREATE POLICY "Service role write access to gold_historical_shocks"
   ON public.gold_historical_shocks
   FOR ALL
@@ -148,6 +158,7 @@ CREATE POLICY "Service role write access to gold_historical_shocks"
 
 -- india_asi
 -- Existing policy: "Public Read Access" (SELECT, TO public)
+DROP POLICY IF EXISTS "Service role write access to india_asi" ON public.india_asi;
 CREATE POLICY "Service role write access to india_asi"
   ON public.india_asi
   FOR ALL

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { X, Info, Clock, Layers } from 'lucide-react';
 import { Sparkline } from '@/components/Sparkline';
-import { BarChart as ReBarChart, Bar, XAxis, Tooltip as ReTooltip, ResponsiveContainer } from 'recharts';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 import { cn } from '@/lib/utils';
 
 interface HoverDetailProps {
     title: string;
     subtitle?: string;
-    children: React.ReactElement; // The card/row to wrap
+    children: React.ReactElement;
     detailContent: {
         description?: string | React.ReactNode;
         stats?: { label: string; value: string | number; color?: string }[];
@@ -17,6 +17,10 @@ interface HoverDetailProps {
         chartType?: 'line' | 'bar';
     };
 }
+
+const HoverDetailBarChart = lazy(() =>
+    import('./HoverDetailBarChart').then(m => ({ default: m.HoverDetailBarChart }))
+);
 
 export const HoverDetail: React.FC<HoverDetailProps> = ({
     title,
@@ -32,22 +36,17 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
         setOpen(false);
     };
 
-    // clone children to attach click handler without adding a wrapper div
-    // this keeps the DOM structure valid (e.g. valid tr inside tbody)
     const trigger = React.cloneElement(children, {
         onClick: (e: React.MouseEvent) => {
-            // Call original onClick if it exists
             if (children.props.onClick) {
                 children.props.onClick(e);
             }
             handleOpen();
         },
         onKeyDown: (e: React.KeyboardEvent) => {
-            // Call original onKeyDown if it exists
             if (children.props.onKeyDown) {
                 children.props.onKeyDown(e);
             }
-            // Open modal on Enter or Space
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 handleOpen();
@@ -63,14 +62,11 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
     return (
         <>
             {trigger}
-            {/* Modal Overlay */}
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={handleClose}>
-                {/* Modal Content */}
                 <div
                     className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950 border border-white/12 rounded-xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {/* Header */}
                     <div className="flex justify-between items-start mb-6">
                         <div>
                             <h2 className="text-xl font-extrabold text-primary mb-1">
@@ -90,7 +86,6 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Left Column: Stats & Description */}
                         <div>
                             <div className="mb-8">
                                 <div className="flex items-center gap-2 mb-2">
@@ -123,7 +118,6 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                             </div>
                         </div>
 
-                        {/* Right Column: Mini Chart & Context */}
                         <div>
                             <div className="mb-8">
                                 <div className="flex items-center gap-2 mb-2">
@@ -133,17 +127,9 @@ export const HoverDetail: React.FC<HoverDetailProps> = ({
                                 <div className="h-[200px] w-full mt-2 p-3 bg-white/[0.01] rounded border border-white/5">
                                     {detailContent.history && detailContent.history.length > 0 ? (
                                         detailContent.chartType === 'bar' ? (
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <ReBarChart data={detailContent.history}>
-                                                    <XAxis dataKey="date" hide />
-                                                    <ReTooltip
-                                                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '4px', fontSize: '12px' }}
-                                                        itemStyle={{ color: '#3b82f6', fontWeight: 700 }}
-                                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                                    />
-                                                    <Bar dataKey="value" fill="#3b82f6" radius={[2, 2, 0, 0]} />
-                                                </ReBarChart>
-                                            </ResponsiveContainer>
+                                            <Suspense fallback={<ChartSkeleton height={160} />}>
+                                                <HoverDetailBarChart data={detailContent.history} />
+                                            </Suspense>
                                         ) : (
                                             <Sparkline data={detailContent.history} height={160} />
                                         )

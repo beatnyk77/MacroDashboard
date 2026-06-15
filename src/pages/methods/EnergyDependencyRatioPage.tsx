@@ -1,25 +1,17 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
-// Illustrative energy dependency data
-const edrData = [
-    { country: 'India', edr: 88, oilCADImpact: 15 },
-    { country: 'Japan', edr: 92, oilCADImpact: 22 },
-    { country: 'Germany', edr: 65, oilCADImpact: 9 },
-    { country: 'China', edr: 18, oilCADImpact: 4 },
-    { country: 'USA', edr: -3, oilCADImpact: -1 },
-    { country: 'Russia', edr: -180, oilCADImpact: -40 },
-    { country: 'Saudi', edr: -210, oilCADImpact: -55 },
-];
+const EnergyDependencyRatioChart = lazy(() => import('./EnergyDependencyRatioChart').then(m => ({ default: m.EnergyDependencyRatioChart })));
 
 const oilSensData = [
     { oil: '$60', cadIndia: '-1.8%', inrImpact: '-0.5%', rbiRoom: 'High' },
@@ -29,22 +21,6 @@ const oilSensData = [
     { oil: '$120', cadIndia: '-4.1%', inrImpact: '-5.5%', rbiRoom: 'Constrained' },
     { oil: '$140', cadIndia: '-5.3%', inrImpact: '-8.2%', rbiRoom: 'Critical' },
 ];
-
-function EdrTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number; name: string }[]; label?: string }) {
-    if (active && payload && payload.length) {
-        return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>{label}</Typography>
-                {payload.map(p => (
-                    <Typography key={p.name} variant="caption" display="block" sx={{ color: p.value < 0 ? '#22c55e' : '#f87171' }}>
-                        EDR: {p.value}%
-                    </Typography>
-                ))}
-            </Box>
-        );
-    }
-    return null;
-}
 
 export const EnergyDependencyRatioPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
@@ -153,16 +129,9 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
                         Negative = net energy exporter (self-sufficient). Positive = net importer (vulnerable to price shocks).
                     </Typography>
-                    <ResponsiveContainer width="100%" height={260}>
-                        <ComposedChart data={edrData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-                            <XAxis type="number" tick={{ fontSize: 10, fill: '#64748b' }} domain={[-250, 100]} unit="%" />
-                            <YAxis type="category" dataKey="country" tick={{ fontSize: 11, fill: '#94a3b8' }} width={55} />
-                            <Tooltip content={<EdrTooltip />} />
-                            <Bar dataKey="edr" fill="#10b981" radius={[0, 3, 3, 0]}
-                                label={{ position: 'right', fontSize: 10, fill: '#94a3b8', formatter: (v: number) => `${v}%` }} />
-                        </ComposedChart>
-                    </ResponsiveContainer>
+                    <Suspense fallback={<ChartSkeleton height={260} />}>
+                        <EnergyDependencyRatioChart />
+                    </Suspense>
                 </Paper>
 
                 {/* Oil Price Sensitivity Table */}
@@ -232,6 +201,7 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
                 <RelatedContent />
+                <RelatedMetrics />
             </Container>
         </Box>
     );

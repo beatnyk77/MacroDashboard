@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       africa_macro_snapshots: {
@@ -262,30 +237,36 @@ export type Database = {
         Row: {
           date: string
           id: string
+          is_provisional: boolean
           label: string | null
           last_updated_at: string | null
           metric_id: string
           source: string | null
+          source_ref: string | null
           unit: string | null
           value: number | null
         }
         Insert: {
           date: string
           id?: string
+          is_provisional?: boolean
           label?: string | null
           last_updated_at?: string | null
           metric_id: string
           source?: string | null
+          source_ref?: string | null
           unit?: string | null
           value?: number | null
         }
         Update: {
           date?: string
           id?: string
+          is_provisional?: boolean
           label?: string | null
           last_updated_at?: string | null
           metric_id?: string
           source?: string | null
+          source_ref?: string | null
           unit?: string | null
           value?: number | null
         }
@@ -824,6 +805,42 @@ export type Database = {
           name?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      client_error_reports: {
+        Row: {
+          boundary: string | null
+          component_stack: string | null
+          error_hash: string
+          id: number
+          message: string
+          reported_at: string
+          route: string | null
+          stack: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          boundary?: string | null
+          component_stack?: string | null
+          error_hash: string
+          id?: number
+          message: string
+          reported_at?: string
+          route?: string | null
+          stack?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          boundary?: string | null
+          component_stack?: string | null
+          error_hash?: string
+          id?: number
+          message?: string
+          reported_at?: string
+          route?: string | null
+          stack?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
@@ -3426,11 +3443,13 @@ export type Database = {
           composite_version: number | null
           delta_mom: number | null
           delta_wow: number | null
+          is_provisional: boolean
           last_updated_at: string | null
           metadata: Json | null
           metric_id: string
           percentile: number | null
           provenance: string | null
+          source_ref: string | null
           staleness_flag: string | null
           value: number
           z_score: number | null
@@ -3440,11 +3459,13 @@ export type Database = {
           composite_version?: number | null
           delta_mom?: number | null
           delta_wow?: number | null
+          is_provisional?: boolean
           last_updated_at?: string | null
           metadata?: Json | null
           metric_id: string
           percentile?: number | null
           provenance?: string | null
+          source_ref?: string | null
           staleness_flag?: string | null
           value: number
           z_score?: number | null
@@ -3454,11 +3475,13 @@ export type Database = {
           composite_version?: number | null
           delta_mom?: number | null
           delta_wow?: number | null
+          is_provisional?: boolean
           last_updated_at?: string | null
           metadata?: Json | null
           metric_id?: string
           percentile?: number | null
           provenance?: string | null
+          source_ref?: string | null
           staleness_flag?: string | null
           value?: number
           z_score?: number | null
@@ -3489,6 +3512,13 @@ export type Database = {
             foreignKeyName: "metric_observations_metric_id_fkey"
             columns: ["metric_id"]
             isOneToOne: false
+            referencedRelation: "vw_data_staleness_monitor_v2"
+            referencedColumns: ["metric_id"]
+          },
+          {
+            foreignKeyName: "metric_observations_metric_id_fkey"
+            columns: ["metric_id"]
+            isOneToOne: false
             referencedRelation: "vw_india_macro"
             referencedColumns: ["metric_id"]
           },
@@ -3512,6 +3542,7 @@ export type Database = {
           frequency_type: string | null
           id: string
           is_active: boolean | null
+          last_attempt_at: string | null
           metadata: Json | null
           methodology_note: string | null
           name: string
@@ -3533,6 +3564,7 @@ export type Database = {
           frequency_type?: string | null
           id: string
           is_active?: boolean | null
+          last_attempt_at?: string | null
           metadata?: Json | null
           methodology_note?: string | null
           name: string
@@ -3554,6 +3586,7 @@ export type Database = {
           frequency_type?: string | null
           id?: string
           is_active?: boolean | null
+          last_attempt_at?: string | null
           metadata?: Json | null
           methodology_note?: string | null
           name?: string
@@ -4214,7 +4247,9 @@ export type Database = {
         Row: {
           bloc: string
           created_at: string | null
+          is_provisional: boolean
           period: string
+          source_ref: string | null
           swing_state_code: string
           swing_state_name: string
           trade_share_pct: number
@@ -4224,7 +4259,9 @@ export type Database = {
         Insert: {
           bloc: string
           created_at?: string | null
+          is_provisional?: boolean
           period: string
+          source_ref?: string | null
           swing_state_code: string
           swing_state_name: string
           trade_share_pct: number
@@ -4234,7 +4271,9 @@ export type Database = {
         Update: {
           bloc?: string
           created_at?: string | null
+          is_provisional?: boolean
           period?: string
+          source_ref?: string | null
           swing_state_code?: string
           swing_state_name?: string
           trade_share_pct?: number
@@ -5210,6 +5249,7 @@ export type Database = {
         Row: {
           authenticity_score: number | null
           live_metrics: number | null
+          provisional_metrics: number | null
           total_metrics: number | null
         }
         Relationships: []
@@ -5217,20 +5257,13 @@ export type Database = {
       vw_brics_tracker: {
         Row: {
           as_of_date: string | null
-          category: string | null
-          days_since_update: number | null
-          delta_mom: number | null
-          delta_wow: number | null
-          display_frequency: string | null
-          expected_interval_days: number | null
+          delta_qoq: number | null
+          delta_yoy_pct: number | null
           last_updated_at: string | null
           metric_id: string | null
           metric_name: string | null
-          native_frequency: string | null
           percentile: number | null
-          source_name: string | null
           staleness_flag: string | null
-          tier: string | null
           unit: string | null
           unit_label: string | null
           value: number | null
@@ -5350,6 +5383,13 @@ export type Database = {
             foreignKeyName: "metric_observations_metric_id_fkey"
             columns: ["fred_metric"]
             isOneToOne: false
+            referencedRelation: "vw_data_staleness_monitor_v2"
+            referencedColumns: ["metric_id"]
+          },
+          {
+            foreignKeyName: "metric_observations_metric_id_fkey"
+            columns: ["fred_metric"]
+            isOneToOne: false
             referencedRelation: "vw_india_macro"
             referencedColumns: ["metric_id"]
           },
@@ -5367,7 +5407,6 @@ export type Database = {
           days_since_update: number | null
           expected_interval_days: number | null
           frequency_type: string | null
-          last_updated: string | null
           metric_id: string | null
           metric_name: string | null
           provenance: string | null
@@ -5380,9 +5419,12 @@ export type Database = {
           days_since_update: number | null
           expected_interval_days: number | null
           frequency_type: string | null
+          is_provisional: boolean | null
           metric_id: string | null
           metric_name: string | null
           provenance: string | null
+          source_ref: string | null
+          status: string | null
         }
         Relationships: []
       }
@@ -5415,6 +5457,13 @@ export type Database = {
             columns: ["metric_id"]
             isOneToOne: false
             referencedRelation: "vw_data_staleness_monitor"
+            referencedColumns: ["metric_id"]
+          },
+          {
+            foreignKeyName: "metric_observations_metric_id_fkey"
+            columns: ["metric_id"]
+            isOneToOne: false
+            referencedRelation: "vw_data_staleness_monitor_v2"
             referencedColumns: ["metric_id"]
           },
           {
@@ -5539,17 +5588,22 @@ export type Database = {
         Row: {
           as_of_date: string | null
           category: string | null
+          composite_version: number | null
           days_since_update: number | null
           delta_mom: number | null
           delta_wow: number | null
           display_frequency: string | null
           expected_interval_days: number | null
+          frequency_type: string | null
+          is_provisional: boolean | null
           last_updated_at: string | null
           metric_id: string | null
           metric_name: string | null
           native_frequency: string | null
           percentile: number | null
+          provenance: string | null
           source_name: string | null
+          source_ref: string | null
           staleness_flag: string | null
           tier: string | null
           unit: string | null
@@ -5627,6 +5681,7 @@ export type Database = {
           display_frequency: string | null
           expected_interval_days: number | null
           frequency_type: string | null
+          is_provisional: boolean | null
           last_updated_at: string | null
           metric_id: string | null
           metric_name: string | null
@@ -5634,6 +5689,7 @@ export type Database = {
           percentile: number | null
           provenance: string | null
           source_name: string | null
+          source_ref: string | null
           staleness_flag: string | null
           tier: string | null
           unit: string | null
@@ -5999,9 +6055,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       fyp_section: ["pillar", "target", "milestone", "correlation"],

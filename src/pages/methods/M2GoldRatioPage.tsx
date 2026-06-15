@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, TrendingUp } from 'lucide-react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
@@ -6,34 +6,12 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { Link } from 'react-router-dom';
-import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-    ResponsiveContainer, ReferenceLine, ReferenceArea
-} from 'recharts';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
-// Illustrative M2/Gold ratio indexed to 100 at 2000
-const ratioData = [
-    { year: '2000', ratio: 100, label: 'Gold $279' },
-    { year: '2001', ratio: 93,  label: 'Bull begins' },
-    { year: '2003', ratio: 84 },
-    { year: '2005', ratio: 78 },
-    { year: '2007', ratio: 82 },
-    { year: '2008', ratio: 98,  label: 'GFC QE' },
-    { year: '2009', ratio: 88 },
-    { year: '2011', ratio: 72,  label: 'Gold $1,900' },
-    { year: '2013', ratio: 88 },
-    { year: '2015', ratio: 102, label: 'Gold $1,050' },
-    { year: '2017', ratio: 108 },
-    { year: '2019', ratio: 112 },
-    { year: '2020', ratio: 148, label: 'COVID surge' },
-    { year: '2021', ratio: 138 },
-    { year: '2022', ratio: 128, label: 'Fed QT' },
-    { year: '2023', ratio: 124 },
-    { year: '2024', ratio: 118, label: 'Gold $2,400+' },
-    { year: '2025', ratio: 108, label: 'Gold $3,000+' },
-];
+const M2GoldRatioChart = lazy(() => import('./M2GoldRatioChart').then(m => ({ default: m.M2GoldRatioChart })));
 
 const episodes = [
     {
@@ -85,25 +63,6 @@ const interpretationRows = [
     { signal: 'Ratio at cycle low (<−1σ)', regime: 'Gold Overvalued vs M2', implication: 'Caution — potential consolidation; reduce tactical exposure', color: '#64748b' },
     { signal: 'Ratio flat, M2 contracting', regime: 'QT / Deflationary Risk', implication: 'Gold may underperform; monitor for demand signals from central banks', color: '#3b82f6' },
 ];
-
-function RatioTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
-    if (active && payload && payload.length) {
-        const val = payload[0].value;
-        const entry = ratioData.find(d => d.year === label);
-        return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 1, minWidth: 160 }}>
-                <Typography variant="caption" color="text.secondary" display="block">{label}</Typography>
-                <Typography variant="body2" fontWeight={700} color={val > 130 ? '#ef4444' : val < 85 ? '#22c55e' : '#f59e0b'}>
-                    Index: {val}
-                </Typography>
-                {entry?.label && (
-                    <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', mt: 0.5 }}>{entry.label}</Typography>
-                )}
-            </Box>
-        );
-    }
-    return null;
-}
 
 export const M2GoldRatioPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.RATIO_M2_GOLD);
@@ -233,29 +192,9 @@ export const M2GoldRatioPage: React.FC = () => {
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
                         Indexed to 100 at year-2000. Rising = gold undervalued vs M2. Falling = gold reration phase. Amber band = historical extreme zone (&gt;130).
                     </Typography>
-                    <ResponsiveContainer width="100%" height={280}>
-                        <LineChart data={ratioData} margin={{ top: 5, right: 15, left: -15, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                            <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-                            <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[60, 160]} />
-                            <Tooltip content={<RatioTooltip />} />
-                            <ReferenceArea y1={130} y2={160} fill="rgba(245,158,11,0.06)" />
-                            <ReferenceLine y={130} stroke="#f59e0b" strokeDasharray="5 5" strokeOpacity={0.5}
-                                label={{ value: 'Extreme zone', position: 'insideTopRight', fontSize: 10, fill: '#f59e0b' }} />
-                            <ReferenceLine y={100} stroke="rgba(255,255,255,0.15)" strokeDasharray="3 3" />
-                            <Line
-                                type="monotone"
-                                dataKey="ratio"
-                                stroke="#f59e0b"
-                                strokeWidth={2.5}
-                                dot={false}
-                                activeDot={{ r: 5, fill: '#f59e0b' }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                    <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 2, fontStyle: 'italic' }}>
-                        Note: Illustrative reconstruction using publicly available M2 and gold price data. Live readings available on the GraphiQuestor M2/Gold Ratio glossary page.
-                    </Typography>
+                    <Suspense fallback={<ChartSkeleton height={280} />}>
+                        <M2GoldRatioChart />
+                    </Suspense>
                 </Paper>
 
                 {/* Interpretation Framework */}
@@ -378,6 +317,7 @@ export const M2GoldRatioPage: React.FC = () => {
                     </Button>
                 </Box>
                 <RelatedContent />
+                <RelatedMetrics />
             </Container>
         </Box>
     );

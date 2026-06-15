@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { AfricaMacroSnapshot } from '@/features/dashboard/components/sections/AfricaMacroSnapshot';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 // Lazy loaded components (to be implemented)
 const AfricaComparisonHeatmap = lazy(() => import('@/features/dashboard/components/sections/AfricaComparisonHeatmap').then(m => ({ default: m.AfricaComparisonHeatmap })));
@@ -185,6 +186,7 @@ export const AfricaMacroPulseLab: React.FC = () => {
                 </Button>
             </div>
             <RelatedContent />
+            <RelatedMetrics />
         </div>
     );
 };

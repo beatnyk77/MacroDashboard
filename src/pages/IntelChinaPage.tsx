@@ -10,6 +10,7 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { RelatedContent } from '@/components/RelatedContent';
+import { LazyRender } from '@/components/LazyRender';
 
 // Lazy-load all sections
 const ChinaMacroPulseSection = lazy(() =>
@@ -230,66 +231,78 @@ export const IntelChinaPage: React.FC = () => {
 
                 {/* China Macro Pulse (existing) */}
                 <section id="macro">
-                    <SectionErrorBoundary name="China Macro Pulse">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <ChinaMacroPulseSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="China Macro Pulse">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <ChinaMacroPulseSection />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* PBOC Liquidity Monitor */}
                 <section id="pboc">
-                    <SectionErrorBoundary name="PBOC Liquidity Monitor">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <ChinaPBOCLiquidityMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="PBOC Liquidity Monitor">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <ChinaPBOCLiquidityMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Real Economy */}
                 <section id="real-economy">
-                    <SectionErrorBoundary name="China Real Economy Panel">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <ChinaRealEconomyPanel />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="China Real Economy Panel">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <ChinaRealEconomyPanel />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* External Sector */}
                 <section id="external">
-                    <SectionErrorBoundary name="China External Sector Panel">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <ChinaExternalSectorPanel />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="China External Sector Panel">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <ChinaExternalSectorPanel />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Energy & Transition */}
                 <section id="energy">
-                    <SectionErrorBoundary name="China Energy Grid Panel">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <ChinaEnergyGridPanel />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="China Energy Grid Panel">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <ChinaEnergyGridPanel />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Proprietary Alpha Signals */}
                 <section id="signals">
-                    <SectionErrorBoundary name="China Proprietary Signals">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <ChinaProprietarySignals />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="China Proprietary Signals">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <ChinaProprietarySignals />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
@@ -354,11 +367,13 @@ export const IntelChinaPage: React.FC = () => {
                             <div className="flex items-center gap-3 mb-10">
                                 <h2 className="text-xl font-black uppercase tracking-heading text-white">Spheres of Institutional Influence</h2>
                             </div>
-                            <SectionErrorBoundary name="Institutional Influence">
-                                <Suspense fallback={<SectionSkeleton />}>
-                                    <InstitutionalInfluenceSection />
-                                </Suspense>
-                            </SectionErrorBoundary>
+                            <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                                <SectionErrorBoundary name="Institutional Influence">
+                                    <Suspense fallback={<SectionSkeleton />}>
+                                        <InstitutionalInfluenceSection />
+                                    </Suspense>
+                                </SectionErrorBoundary>
+                            </LazyRender>
                         </div>
                     </div>
                 </section>

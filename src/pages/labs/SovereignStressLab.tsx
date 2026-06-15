@@ -11,10 +11,12 @@ import {
     Activity
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { LazyRender } from '@/components/LazyRender';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -100,9 +102,11 @@ export const SovereignStressLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">Sovereign Risk Matrix</h2>
                     </div>
                     <SectionErrorBoundary name="Sovereign Risk">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <SovereignRiskMatrix />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <SovereignRiskMatrix />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-sovereign-risk" insight="The G20 Risk Matrix scores nations on debt/GDP, CDS spreads, and refinancing pressure. Current readings highlight Japan and Italy as structural outliers in the developed market universe." />
                 </section>
@@ -115,9 +119,11 @@ export const SovereignStressLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">BoJ Monetary Dominance</h2>
                     </div>
                     <SectionErrorBoundary name="BoJ Stress Monitor">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <BoJStressMonitor />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <BoJStressMonitor />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-boj-stress" insight="Bank of Japan balance sheet tracking reveals divergence between Total Assets and Monetary Base. High intervention periods indicate significant policy pressure points." />
                 </section>
@@ -152,6 +158,7 @@ export const SovereignStressLab: React.FC = () => {
                 </Button>
             </div>
             <RelatedContent />
+            <RelatedMetrics />
         </div>
         </>
     );

@@ -51,7 +51,7 @@ interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	isStale?: boolean;
 }
 
-export const MetricCard: React.FC<MetricCardProps> = (props) => {
+const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 	const {
 		metric,
 		label: propLabel,
@@ -348,3 +348,16 @@ export const MetricCard: React.FC<MetricCardProps> = (props) => {
 		</HoverDetail>
 	);
 };
+
+function metricCardPropsAreEqual(prev: MetricCardProps, next: MetricCardProps): boolean {
+	if (prev.isLoading !== next.isLoading) return false;
+	if (prev.metric?.id !== next.metric?.id) return false;
+	if (prev.metric?.value !== next.metric?.value) return false;
+	if (prev.value !== next.value) return false;
+	if (prev.history?.length !== next.history?.length) return false;
+	if (prev.lastUpdated !== next.lastUpdated) return false;
+	if (prev.isStale !== next.isStale) return false;
+	return true;
+}
+
+export const MetricCard = React.memo(MetricCardInner, metricCardPropsAreEqual);

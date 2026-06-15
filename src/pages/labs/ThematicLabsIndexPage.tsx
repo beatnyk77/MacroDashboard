@@ -1,11 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
 import { 
     Globe, TrendingUp, Anchor,
     ShieldAlert, Database,
     Zap, Cpu, BarChart3, Compass, Library
 } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { TrailLink } from '@/components/TrailLink';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -283,15 +285,17 @@ export const ThematicLabsIndexPage: React.FC = () => {
                                         Source: {lab.dataSource}
                                     </span>
                                     <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-wider px-3 h-8">
-                                        <Link to={lab.path}>
+                                        <TrailLink to={lab.path}>
                                             Enter Lab →
-                                        </Link>
+                                        </TrailLink>
                                     </Button>
                                 </div>
                             </CardContent>
                         </Card>
                     ))}
                 </div>
+
+                <RelatedMetrics />
             </div>
         </div>
     );

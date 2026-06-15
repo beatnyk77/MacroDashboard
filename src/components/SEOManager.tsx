@@ -2,17 +2,23 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { BrandConfig } from '@/config/brandConfig';
+import { toAbsoluteUrl, toCanonicalPath } from '@/lib/urlPath';
+
+export type SEOManagerMode = 'layout' | 'page';
 
 interface SEOManagerProps {
-    /** Omit title + description for layout-level canonical-only mode; page-level mounts override. */
+    /** `layout` = canonical + robots only; `page` = full meta (default when title set). */
+    mode?: SEOManagerMode;
     title?: string;
     description?: string;
     keywords?: string[];
     ogImage?: string;
     ogType?: 'website' | 'article';
     ogLocale?: string;
-    canonicalUrl?: string;
+    /** Explicit canonical override — full URL or path. Wins over auto-generated. */
     canonical?: string;
+    /** @deprecated Use `canonical` */
+    canonicalUrl?: string;
     publishedTime?: string;
     jsonLd?: Record<string, any> | any[];
     robots?: string;
@@ -22,14 +28,15 @@ interface SEOManagerProps {
 }
 
 export const SEOManager: React.FC<SEOManagerProps> = ({
+    mode,
     title,
     description,
     keywords,
     ogImage = BrandConfig.seo.ogImage,
     ogType = 'website',
     ogLocale = 'en_US',
-    canonicalUrl,
     canonical,
+    canonicalUrl,
     publishedTime,
     jsonLd,
     robots = 'index, follow',
@@ -38,23 +45,20 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     targetCountry = 'GLOBAL',
 }) => {
     const location = useLocation();
-    const isLayoutDefault = title === undefined && description === undefined;
-    const fullTitle = isLayoutDefault
+    const isLayoutMode = mode === 'layout' || (title === undefined && description === undefined);
+    const fullTitle = isLayoutMode
         ? undefined
         : BrandConfig.seo.titleTemplate.replace('%s', title!);
 
-    // Auto-generate canonical if not provided — self-referencing per Google best practice
-    const canonicalPath = location.pathname === '/'
-        ? '/'
-        : location.pathname.replace(/\/$/, '');
-    const resolvedCanonical = canonical || canonicalUrl || `${BrandConfig.baseUrl}${canonicalPath}`;
+    const explicitCanonical = canonical ?? canonicalUrl;
+    const resolvedCanonical = explicitCanonical
+        ? toAbsoluteUrl(explicitCanonical)
+        : toAbsoluteUrl(toCanonicalPath(location.pathname));
 
     return (
         <Helmet>
-            {/* Layout-level default: canonical + robots only; page-level SEOManager overrides via last-mounted-wins */}
-            {!isLayoutDefault && (
+            {!isLayoutMode && (
             <>
-            {/* Structured Data (JSON-LD) */}
             {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((schema, index) => (
                 <script key={`json-ld-${index}`} type="application/ld+json">
                     {JSON.stringify(schema)}
@@ -95,7 +99,6 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta name="description" content={description!} />
             {keywords && <meta name="keywords" content={keywords.join(', ')} />}
 
-            {/* Open Graph */}
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={description!} />
             <meta property="og:type" content={ogType} />
@@ -104,7 +107,6 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta property="og:site_name" content={BrandConfig.seo.siteName} />
             <meta property="og:locale" content={ogLocale} />
 
-            {/* Twitter */}
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={description!} />
             <meta name="twitter:card" content="summary_large_image" />
@@ -112,11 +114,10 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             <meta name="twitter:site" content={BrandConfig.twitter} />
             <meta name="twitter:creator" content={BrandConfig.twitter} />
 
-            {/* Article Schema */}
             {ogType === 'article' && publishedTime && (
                 <meta property="article:published_time" content={publishedTime} />
             )}
-            
+
             <meta name="geo.region" content={geoRegion} />
             <meta name="target_country" content={targetCountry} />
             </>
@@ -127,4 +128,3 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
         </Helmet>
     );
 };
-

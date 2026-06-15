@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 // Lazy loaded components for heavy charts
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
@@ -189,6 +190,7 @@ export const DeDollarizationGuide: React.FC = () => {
                     </Button>
                 </div>
                 <RelatedContent />
+                <RelatedMetrics />
             </div>
         </>
     );

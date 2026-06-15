@@ -1,15 +1,17 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { TrailLink } from '@/components/TrailLink';
 import { contentRelations, RelatedLink } from '@/config/contentRelations';
+import { withoutTrailingSlash, withTrailingSlash } from '@/lib/urlPath';
 
 function matchRoute(pathname: string): RelatedLink[] | null {
-  // Exact match first
-  if (contentRelations[pathname]) return contentRelations[pathname];
+  const key = withoutTrailingSlash(pathname);
+  if (contentRelations[key]) return contentRelations[key];
   // Pattern match: replace dynamic segments in keys with regex
   for (const pattern of Object.keys(contentRelations)) {
     if (!pattern.includes(':')) continue;
     const regex = new RegExp('^' + pattern.replace(/:[^/]+/g, '[^/]+') + '$');
-    if (regex.test(pathname)) return contentRelations[pattern];
+    if (regex.test(key)) return contentRelations[pattern];
   }
   return null;
 }
@@ -35,9 +37,9 @@ export const RelatedContent: React.FC = () => {
         {links.map((link) => {
           const cfg = kindConfig[link.kind];
           return (
-            <Link
+            <TrailLink
               key={link.to}
-              to={link.to}
+              to={withTrailingSlash(link.to)}
               className="group flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] transition-colors no-underline"
             >
               <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${cfg.color}`}>
@@ -46,7 +48,7 @@ export const RelatedContent: React.FC = () => {
               <span className="text-xs font-semibold text-white/70 group-hover:text-white transition-colors">
                 {link.label}
               </span>
-            </Link>
+            </TrailLink>
           );
         })}
       </div>

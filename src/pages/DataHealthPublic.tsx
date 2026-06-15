@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
@@ -12,8 +12,6 @@ interface IngestionRow {
     start_time: string;
 }
 
-// Friendlier labels for well-known pipelines; everything else falls back to the
-// cleaned function name. Purely cosmetic — the data below is live.
 const SOURCE_META: Record<string, { name: string; sub: string }> = {
     'ingest-fred': { name: 'FRED', sub: 'Federal Reserve · US Macro' },
     'ingest-cofer': { name: 'IMF COFER', sub: 'Reserve Composition' },
@@ -50,6 +48,41 @@ const relativeTime = (iso: string, now: number): string => {
     return `updated ${days}d ago`;
 };
 
+interface PipelineStatusCardProps {
+    row: IngestionRow;
+    now: number;
+}
+
+const PipelineStatusCard = React.memo<PipelineStatusCardProps>(({ row, now }) => {
+    const meta = SOURCE_META[row.function_name];
+    const status = freshnessFor(row, now);
+    const live = row.status_code === 200;
+
+    return (
+        <div className="rounded-[14px] border border-white/[0.08] bg-white/[0.02] p-4">
+            <div className="mb-3 flex items-center justify-between gap-2.5">
+                <div>
+                    <div className="text-[14px] font-extrabold text-white">
+                        {meta?.name ?? prettify(row.function_name)}
+                    </div>
+                    <div className="mt-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-white/40">
+                        {meta?.sub ?? row.function_name}
+                    </div>
+                </div>
+                <FreshnessChip status={status} lastUpdated={row.start_time} />
+            </div>
+            <div className="flex justify-between font-mono text-[11px] text-white/50">
+                <span>{relativeTime(row.start_time, now)}</span>
+                <span className={live ? 'text-emerald-400' : 'text-amber-400'}>
+                    {live ? `api_live · ${row.status_code}` : (row.status_code ?? '—')}
+                </span>
+            </div>
+        </div>
+    );
+});
+
+PipelineStatusCard.displayName = 'PipelineStatusCard';
+
 export const DataHealthPublic: React.FC = () => {
     const [now] = React.useState(() => Date.now());
 
@@ -63,7 +96,7 @@ export const DataHealthPublic: React.FC = () => {
             if (error) throw error;
             return (data ?? []) as IngestionRow[];
         },
-        refetchInterval: 300000, // 5 min
+        refetchInterval: 300000,
     });
 
     const { data: authenticity } = useQuery({
@@ -74,16 +107,25 @@ export const DataHealthPublic: React.FC = () => {
                 .select('*')
                 .single();
             if (error && error.code !== 'PGRST116') throw error;
-            return data as { authenticity_score: number } | null;
+            return data as {
+                authenticity_score: number;
+                provisional_metrics?: number;
+                live_metrics?: number;
+                total_metrics?: number;
+            } | null;
         },
         refetchInterval: 300000,
     });
 
-    const rows = ingestions ?? [];
+    const rows = useMemo(() => ingestions ?? [], [ingestions]);
     const total = rows.length;
-    const freshCount = rows.filter((r) => freshnessFor(r, now) === 'fresh').length;
+    const freshCount = useMemo(
+        () => rows.filter((r) => freshnessFor(r, now) === 'fresh').length,
+        [rows, now]
+    );
     const lastSweep = rows[0]?.start_time;
     const authScore = authenticity?.authenticity_score;
+    const provisionalCount = authenticity?.provisional_metrics;
 
     return (
         <div className="mx-auto w-full max-w-[1080px] px-4 py-20 sm:px-6 lg:px-12">
@@ -99,49 +141,25 @@ export const DataHealthPublic: React.FC = () => {
                 Every metric on GraphiQuestor traces to an official source, ingested on a schedule, with an authenticity score. This board is live.
             </p>
 
-            {/* Summary stats */}
             <div className="my-6 flex flex-wrap gap-2.5">
                 <Stat label="Live Pipelines" value={total ? `${total} ✓` : '—'} accent />
                 <Stat label="Fresh (<7d)" value={total ? `${freshCount} / ${total}` : '—'} />
                 <Stat
-                    label="Avg Authenticity"
+                    label="Live Coverage"
                     value={authScore != null ? `${authScore}%` : '—'}
                     accent
+                />
+                <Stat
+                    label="Provisional"
+                    value={provisionalCount != null ? String(provisionalCount) : '—'}
                 />
                 <Stat label="Last Sweep" value={lastSweep ? relativeTime(lastSweep, now).replace('updated ', '') : '—'} small />
             </div>
 
-            {/* Status-board card grid (D10) */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {rows.map((row) => {
-                    const meta = SOURCE_META[row.function_name];
-                    const status = freshnessFor(row, now);
-                    const live = row.status_code === 200;
-                    return (
-                        <div
-                            key={row.function_name}
-                            className="rounded-[14px] border border-white/[0.08] bg-white/[0.02] p-4"
-                        >
-                            <div className="mb-3 flex items-center justify-between gap-2.5">
-                                <div>
-                                    <div className="text-[14px] font-extrabold text-white">
-                                        {meta?.name ?? prettify(row.function_name)}
-                                    </div>
-                                    <div className="mt-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-white/40">
-                                        {meta?.sub ?? row.function_name}
-                                    </div>
-                                </div>
-                                <FreshnessChip status={status} lastUpdated={row.start_time} />
-                            </div>
-                            <div className="flex justify-between font-mono text-[11px] text-white/50">
-                                <span>{relativeTime(row.start_time, now)}</span>
-                                <span className={live ? 'text-emerald-400' : 'text-amber-400'}>
-                                    {live ? `api_live · ${row.status_code}` : (row.status_code ?? '—')}
-                                </span>
-                            </div>
-                        </div>
-                    );
-                })}
+                {rows.map((row) => (
+                    <PipelineStatusCard key={row.function_name} row={row} now={now} />
+                ))}
             </div>
 
             {total === 0 && (

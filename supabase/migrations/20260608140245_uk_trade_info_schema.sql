@@ -70,9 +70,11 @@ INNER JOIN
 ALTER TABLE public.uk_trader_intelligence ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.uk_ots_flows ENABLE ROW LEVEL SECURITY;
 
--- Create Policies (allow read access)
-CREATE POLICY "Allow read access to all users for uk_trader_intelligence" 
+-- Create Policies (allow read access) — idempotent for re-apply
+DROP POLICY IF EXISTS "Allow read access to all users for uk_trader_intelligence" ON public.uk_trader_intelligence;
+CREATE POLICY "Allow read access to all users for uk_trader_intelligence"
     ON public.uk_trader_intelligence FOR SELECT USING (true);
 
-CREATE POLICY "Allow read access to all users for uk_ots_flows" 
+DROP POLICY IF EXISTS "Allow read access to all users for uk_ots_flows" ON public.uk_ots_flows;
+CREATE POLICY "Allow read access to all users for uk_ots_flows"
     ON public.uk_ots_flows FOR SELECT USING (true);

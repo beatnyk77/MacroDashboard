@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/run-with-flags.mjs vite",
     "generate-sitemap": "npx tsx scripts/generate-sitemap.ts",
-    "build": "npm run generate-sitemap && tsc && vite build && npm run prerender",
+    "build": "node scripts/run-with-flags.mjs npm run generate-sitemap && tsc && vite build && npm run prerender",
     "prerender": "node scripts/prerender.mjs",
     "lint": "eslint src --max-warnings 0",
     "ci-guards": "node scripts/ci-guards.mjs",

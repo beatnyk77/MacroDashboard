@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 export const China15thFYPLab: React.FC = () => {
     useEffect(() => {
@@ -179,6 +180,7 @@ export const China15thFYPLab: React.FC = () => {
                     </p>
                 </div>
                 <RelatedContent />
+                <RelatedMetrics />
             </div>
         </div>
         </>

@@ -1,7 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { useIndiaFiscalAllocation } from '@/hooks/useIndiaFiscalAllocation';
 import { SectionHeader } from '@/components/SectionHeader';
-import { IndiaLeafletMap } from '../maps/IndiaLeafletMap';
+
+const IndiaLeafletMap = lazy(() =>
+    import('../maps/IndiaLeafletMap').then(m => ({ default: m.IndiaLeafletMap }))
+);
 import {
     ResponsiveContainer,
     ComposedChart,
@@ -161,6 +164,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                         </div>
 
                         <div className="h-[550px] w-full rounded-[2.5rem] bg-white/[0.01] border border-white/5 p-4 relative overflow-hidden group">
+                            <Suspense fallback={<div className="h-full w-full animate-pulse rounded-2xl bg-white/5" />}>
                             <IndiaLeafletMap
                                 data={stateData}
                                 metric="capex_pct_gdp"
@@ -182,6 +186,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                     </div>
                                 `}
                             />
+                            </Suspense>
 
                             {/* Legends */}
                             <div className="absolute bottom-8 right-8 z-[1000] p-4 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-white/12 flex flex-col gap-3">

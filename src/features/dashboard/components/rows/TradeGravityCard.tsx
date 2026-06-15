@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
+import React, { useState, Suspense, lazy } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Globe, AlertTriangle, Loader2, Zap } from 'lucide-react';
 import { useTradeGravityData, SwingStateData } from '@/hooks/useTradeGravityData';
 import { cn } from '@/lib/utils';
-import 'leaflet/dist/leaflet.css';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+
+const TradeGravityMap = lazy(() =>
+    import('./TradeGravityMap').then(m => ({ default: m.TradeGravityMap }))
+);
 
 interface TradeGravityCardProps {
     className?: string;
@@ -80,43 +83,13 @@ export const TradeGravityCard: React.FC<TradeGravityCardProps> = ({ className })
 
                         {/* LEFT: World Map */}
                         <div className="flex flex-col gap-4">
-                            <div className="rounded-xl overflow-hidden border border-white/12 h-[300px] bg-[#0a0a1a]">
-                                <MapContainer
-                                    center={[20, 20]}
-                                    zoom={2}
-                                    scrollWheelZoom={false}
-                                    style={{ height: '100%', width: '100%', background: '#0a0a1a' }}
-                                    zoomControl={false}
-                                    attributionControl={false}
-                                >
-                                    <TileLayer
-                                        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                                    />
-                                    {swingStates.map(state => (
-                                        <CircleMarker
-                                            key={state.code}
-                                            center={[state.lat, state.lng]}
-                                            radius={selected?.code === state.code ? 18 : 12}
-                                            pathOptions={{
-                                                color: state.hasShifted ? BRICS_COLOR : G7_COLOR,
-                                                fillColor: state.hasShifted ? BRICS_COLOR : G7_COLOR,
-                                                fillOpacity: selected?.code === state.code ? 0.9 : 0.5,
-                                                weight: selected?.code === state.code ? 3 : 1,
-                                            }}
-                                            eventHandlers={{ click: () => setSelected(state) }}
-                                        >
-                                            <Tooltip direction="top" permanent={false} offset={[0, -8]}>
-                                                <div className="bg-black/90 text-white font-mono text-xs px-2 py-1 rounded">
-                                                    <strong>{state.name}</strong><br />
-                                                    BRICS+: {state.currentBricsShare.toFixed(1)}%<br />
-                                                    G7: {state.currentG7Share.toFixed(1)}%<br />
-                                                    {state.hasShifted && '⚡ Gravity Shifted'}
-                                                </div>
-                                            </Tooltip>
-                                        </CircleMarker>
-                                    ))}
-                                </MapContainer>
-                            </div>
+                            <Suspense fallback={<ChartSkeleton height={300} className="rounded-xl border border-white/12" />}>
+                                <TradeGravityMap
+                                    swingStates={swingStates}
+                                    selected={selected}
+                                    onSelect={setSelected}
+                                />
+                            </Suspense>
 
                             {/* Tug-of-War Progress Bars */}
                             <div className="space-y-2">

@@ -10,6 +10,7 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { RelatedContent } from '@/components/RelatedContent';
+import { LazyRender } from '@/components/LazyRender';
 
 // Lazy-load heavy sub-sections
 const IndiaMacroPulseSection = lazy(() =>
@@ -253,22 +254,26 @@ export const IntelIndiaPage: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
                 {/* Monthly Snapshot Dashboard */}
                 <section id="snapshot">
-                    <SectionErrorBoundary name="India Macro Dashboard">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaMacroDashboard />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Macro Dashboard">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaMacroDashboard />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* India Macro Pulse */}
                 <section id="macro">
-                    <SectionErrorBoundary name="India Macro Pulse">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaMacroPulseSection />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Macro Pulse">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaMacroPulseSection />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
@@ -277,104 +282,124 @@ export const IntelIndiaPage: React.FC = () => {
 
                 {/* India Inflation */}
                 <section id="inflation">
-                    <SectionErrorBoundary name="India Inflation Pulse">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaInflationPulseMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Inflation Pulse">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaInflationPulseMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Fiscal Stress */}
                 <section id="fiscal">
-                    <SectionErrorBoundary name="India Fiscal Stress Monitor">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaFiscalStressMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Fiscal Stress Monitor">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaFiscalStressMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Liquidity */}
                 <section id="liquidity">
-                    <SectionErrorBoundary name="India Liquidity Stress Monitor">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaLiquidityStressMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Liquidity Stress Monitor">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaLiquidityStressMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Credit Cycle */}
                 <section id="credit">
-                    <SectionErrorBoundary name="India Credit Cycle Clock">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaCreditCycleClock />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Credit Cycle Clock">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaCreditCycleClock />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* Debt Maturity Wall */}
                 <section id="debt">
-                    <SectionErrorBoundary name="India Debt Maturity Wall">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaDebtMaturityWall />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Debt Maturity Wall">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaDebtMaturityWall />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* RBI Monetary & FX Defense (from Lab) */}
                 <section id="monetary">
-                    <div className="space-y-16">
-                        <div>
-                            <div className="flex items-center gap-3 mb-10">
-                                <BarChart3 className="text-emerald-500" size={24} />
-                                <h2 className="text-xl font-black uppercase tracking-heading text-white">RBI FX Defense Monitor</h2>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <div className="space-y-16">
+                            <div>
+                                <div className="flex items-center gap-3 mb-10">
+                                    <BarChart3 className="text-emerald-500" size={24} />
+                                    <h2 className="text-xl font-black uppercase tracking-heading text-white">RBI FX Defense Monitor</h2>
+                                </div>
+                                <SectionErrorBoundary name="RBI FX Defense">
+                                    <Suspense fallback={<SectionSkeleton />}>
+                                        <RBIFXDefenseMonitor />
+                                    </Suspense>
+                                </SectionErrorBoundary>
                             </div>
-                            <SectionErrorBoundary name="RBI FX Defense">
-                                <Suspense fallback={<SectionSkeleton />}>
-                                    <RBIFXDefenseMonitor />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-                        <div className="pt-12 border-t border-white/5">
-                            <div className="flex items-center gap-3 mb-10">
-                                <Landmark className="text-blue-500" size={24} />
-                                <h2 className="text-xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
+                            <div className="pt-12 border-t border-white/5">
+                                <div className="flex items-center gap-3 mb-10">
+                                    <Landmark className="text-blue-500" size={24} />
+                                    <h2 className="text-xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
+                                </div>
+                                <SectionErrorBoundary name="India Money Market">
+                                    <Suspense fallback={<SectionSkeleton />}>
+                                        <RBIMoneyMarketMonitor />
+                                    </Suspense>
+                                </SectionErrorBoundary>
                             </div>
-                            <SectionErrorBoundary name="India Money Market">
-                                <Suspense fallback={<SectionSkeleton />}>
-                                    <RBIMoneyMarketMonitor />
-                                </Suspense>
-                            </SectionErrorBoundary>
                         </div>
-                    </div>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* India External Sector */}
-                <SectionErrorBoundary name="India External Sector">
-                    <Suspense fallback={<SectionSkeleton />}>
-                        <IndiaExternalSectorPanel />
-                    </Suspense>
-                </SectionErrorBoundary>
+                <section id="external-sector">
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India External Sector">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaExternalSectorPanel />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
+                </section>
 
                 <div className="border-t border-white/5" />
 
                 {/* India FII Flows */}
-                <SectionErrorBoundary name="India FII Flows">
-                    <Suspense fallback={<SectionSkeleton />}>
-                        <IndiaFIIFlowsMonitor />
-                    </Suspense>
-                </SectionErrorBoundary>
+                <section id="fii-flows">
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India FII Flows">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaFIIFlowsMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
+                </section>
 
                 <div className="border-t border-white/5" />
 
@@ -384,14 +409,16 @@ export const IntelIndiaPage: React.FC = () => {
                         <MapPin className="text-blue-500" size={24} />
                         <h2 className="text-xl font-black uppercase tracking-heading text-white">State-Level Fiscal Intelligence</h2>
                     </div>
-                    <SectionErrorBoundary name="State Fiscal">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <div className="space-y-16">
-                                <IndiaFiscalAllocationTracker />
-                                <StateFiscalHeatmap />
-                            </div>
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="State Fiscal">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <div className="space-y-16">
+                                    <IndiaFiscalAllocationTracker />
+                                    <StateFiscalHeatmap />
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />
@@ -402,11 +429,13 @@ export const IntelIndiaPage: React.FC = () => {
                         <Zap className="text-blue-400" size={24} />
                         <h2 className="text-xl font-black uppercase tracking-heading text-white">India Stack — Digitization Premium</h2>
                     </div>
-                    <SectionErrorBoundary name="India Digitization Premium">
-                        <Suspense fallback={<SectionSkeleton />}>
-                            <IndiaDigitizationPremiumMonitor />
-                        </Suspense>
-                    </SectionErrorBoundary>
+                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Digitization Premium">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaDigitizationPremiumMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
                 </section>
 
                 <div className="border-t border-white/5" />

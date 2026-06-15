@@ -3,6 +3,7 @@ import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
@@ -98,6 +99,7 @@ export const USTreasuryForeignHoldings: React.FC = () => {
                     </Button>
                 </div>
                 <RelatedContent />
+                <RelatedMetrics />
             </div>
         </>
     );

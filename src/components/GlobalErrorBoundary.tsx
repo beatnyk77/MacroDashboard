@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RotateCcw } from 'lucide-react';
+import { reportClientError } from '@/lib/errorReporting';
 
 interface Props {
     children: ReactNode;
@@ -22,7 +23,13 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     }
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error('Uncaught error:', error, errorInfo);
+        void reportClientError({
+            message: error.message,
+            stack: error.stack,
+            componentStack: errorInfo.componentStack ?? undefined,
+            route: typeof window !== 'undefined' ? window.location.pathname : undefined,
+            boundary: 'GlobalErrorBoundary',
+        });
     }
 
     private handleReload = () => {

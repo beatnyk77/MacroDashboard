@@ -16,6 +16,7 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 
 // Components
@@ -269,6 +270,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 </Button>
             </div>
             <RelatedContent />
+            <RelatedMetrics />
         </div>
         </>
     );

@@ -47,13 +47,23 @@ END $$;
 
 -- 2. Drop old monthly cron and reschedule as weekly ---------------------------
 
-SELECT cron.unschedule('ingest-india-credit-cycle-monthly');
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ingest-india-credit-cycle-monthly') THEN
+        PERFORM cron.unschedule('ingest-india-credit-cycle-monthly');
+    END IF;
+END $$;
 
 -- Every Sunday at 05:30 UTC — well clear of weekend maintenance windows and
 -- before European open. RBI typically publishes monthly SCB data mid-month,
 -- so a weekly sweep guarantees pickup within 7 days of release.
-SELECT public.schedule_standard_cron(
-    'ingest-india-credit-cycle-weekly',
-    '30 5 * * 0',
-    'ingest-india-credit-cycle'
-);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ingest-india-credit-cycle-weekly') THEN
+        PERFORM public.schedule_standard_cron(
+            'ingest-india-credit-cycle-weekly',
+            '30 5 * * 0',
+            'ingest-india-credit-cycle'
+        );
+    END IF;
+END $$;

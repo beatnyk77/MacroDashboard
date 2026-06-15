@@ -49,8 +49,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, dataUrl, 
                     <DialogTitle className="text-sm font-black uppercase tracking-widest">Share Chart</DialogTitle>
                 </DialogHeader>
 
-                <div className="rounded-lg overflow-hidden border border-white/10 bg-black/40">
-                    <img src={dataUrl} alt={title} className="w-full object-contain max-h-64" />
+                <div className="rounded-lg overflow-hidden border border-white/10 bg-black/40" style={{ aspectRatio: '2/1' }}>
+                    <img
+                        src={dataUrl}
+                        alt={title}
+                        width={512}
+                        height={256}
+                        className="w-full h-full object-contain max-h-64"
+                    />
                 </div>
 
                 <div className="flex flex-wrap gap-2 pt-2">

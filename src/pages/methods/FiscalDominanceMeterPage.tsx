@@ -1,46 +1,17 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
-// Illustrative Fiscal Dominance Meter data: interest/tax ratio for US, Japan, India
-const fdmData = [
-    { year: '2000', us: 12.1, japan: 21.3, india: 30.2 },
-    { year: '2003', us: 10.8, japan: 23.1, india: 28.5 },
-    { year: '2006', us: 11.4, japan: 25.0, india: 23.1 },
-    { year: '2009', us: 12.3, japan: 28.4, india: 20.1 },
-    { year: '2012', us: 11.2, japan: 31.2, india: 22.0 },
-    { year: '2015', us: 8.3, japan: 30.8, india: 19.5 },
-    { year: '2018', us: 9.0, japan: 29.1, india: 18.2 },
-    { year: '2020', us: 10.1, japan: 26.5, india: 17.8 },
-    { year: '2022', us: 12.5, japan: 25.2, india: 19.8 },
-    { year: '2023', us: 17.8, japan: 26.0, india: 20.4 },
-    { year: '2024', us: 21.3, japan: 25.8, india: 19.1 },
-];
-
-function FdmTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
-    if (active && payload && payload.length) {
-        return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1}>{label}</Typography>
-                {payload.map(p => (
-                    <Typography key={p.name} variant="caption" display="block" sx={{ color: p.color }}>
-                        {p.name}: {p.value.toFixed(1)}%
-                        {p.value > 20 ? ' ⚠️' : ''}
-                    </Typography>
-                ))}
-            </Box>
-        );
-    }
-    return null;
-}
+const FiscalDominanceMeterChart = lazy(() => import('./FiscalDominanceMeterChart').then(m => ({ default: m.FiscalDominanceMeterChart })));
 
 export const FiscalDominanceMeterPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
@@ -170,19 +141,9 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
                         Above 20% = fiscal dominance warning zone. Japan breached this in 2001 and has remained above it.
                     </Typography>
-                    <ResponsiveContainer width="100%" height={280}>
-                        <LineChart data={fdmData} margin={{ top: 5, right: 20, left: -5, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                            <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-                            <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[5, 40]} unit="%" />
-                            <Tooltip content={<FdmTooltip />} />
-                            <Legend wrapperStyle={{ fontSize: '0.75rem', color: '#94a3b8' }} />
-                            <ReferenceLine y={20} stroke="#ef4444" strokeDasharray="5 5" strokeOpacity={0.6} label={{ value: 'Fiscal Dominance Zone', fill: '#ef4444', fontSize: 10, position: 'insideTopRight' }} />
-                            <Line type="monotone" dataKey="us" name="United States" stroke="#ef4444" strokeWidth={2.5} dot={false} />
-                            <Line type="monotone" dataKey="japan" name="Japan" stroke="#f59e0b" strokeWidth={2} dot={false} strokeDasharray="6 3" />
-                            <Line type="monotone" dataKey="india" name="India" stroke="#818cf8" strokeWidth={2} dot={false} strokeDasharray="3 3" />
-                        </LineChart>
-                    </ResponsiveContainer>
+                    <Suspense fallback={<ChartSkeleton height={280} />}>
+                        <FiscalDominanceMeterChart />
+                    </Suspense>
                     <Box sx={{ mt: 3, p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
                         <Typography variant="caption" color="text.secondary">
                             <strong style={{ color: '#ef4444' }}>Key Observation:</strong> The US crossed the 20% fiscal dominance threshold in 2024 for the first time since the mid-1990s. Japan has remained well above this level continuously since 2001, forcing the Bank of Japan into Yield Curve Control. India peaked at ~30% in the early 2000s and has since reduced through fiscal consolidation.
@@ -237,6 +198,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
                 <RelatedContent />
+                <RelatedMetrics />
             </Container>
         </Box>
     );

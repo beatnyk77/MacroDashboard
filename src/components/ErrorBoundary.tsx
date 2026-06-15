@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import { reportClientError } from '@/lib/errorReporting';
 
 interface Props {
     children?: ReactNode;
@@ -22,7 +23,13 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error('Uncaught error:', error, errorInfo);
+        void reportClientError({
+            message: error.message,
+            stack: error.stack,
+            componentStack: errorInfo.componentStack ?? undefined,
+            route: typeof window !== 'undefined' ? window.location.pathname : undefined,
+            boundary: 'ErrorBoundary',
+        });
     }
 
     public render() {
@@ -56,7 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
                                 Something went wrong
                             </Typography>
                             <Typography color="text.secondary" sx={{ mb: 4 }}>
-                                The application encountered an unexpected error. This has been logged and we'll look into it.
+                                The application encountered an unexpected error. Diagnostic output is written to the browser console.
                             </Typography>
                             {this.state.error && (
                                 <Typography

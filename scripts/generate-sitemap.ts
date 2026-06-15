@@ -5,6 +5,13 @@ import { blogArticles } from '../src/features/blog/blogData';
 
 const BASE_URL = 'https://graphiquestor.com';
 
+/** Sitemap URLs use trailing slashes (except root). */
+function sitemapLoc(path: string): string {
+  if (path === '/') return `${BASE_URL}/`;
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return `${BASE_URL}${normalized.endsWith('/') ? normalized : `${normalized}/`}`;
+}
+
 /**
  * Priority heuristic (sitemap hints, not ranking signals):
  *   1.0 — homepage
@@ -160,7 +167,7 @@ async function generateSitemap() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allRoutes.map(route => `  <url>
-    <loc>${BASE_URL}${route.url}</loc>
+    <loc>${sitemapLoc(route.url)}</loc>
     <changefreq>${route.changefreq}</changefreq>
     <priority>${route.priority}</priority>
     ${route.lastmod ? `<lastmod>${new Date(route.lastmod).toISOString().split('T')[0]}</lastmod>` : ''}

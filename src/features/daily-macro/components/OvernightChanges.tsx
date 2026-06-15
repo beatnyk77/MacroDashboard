@@ -75,7 +75,7 @@ export const OvernightChanges: React.FC<OvernightChangesProps> = ({
   );
 };
 
-const ChangeRow: React.FC<{ change: DailyChange; muted?: boolean }> = ({
+const ChangeRow: React.FC<{ change: DailyChange; muted?: boolean }> = React.memo(({
   change,
   muted,
 }) => {
@@ -123,4 +123,6 @@ const ChangeRow: React.FC<{ change: DailyChange; muted?: boolean }> = ({
       </div>
     </div>
   );
-};
+});
+
+ChangeRow.displayName = 'ChangeRow';

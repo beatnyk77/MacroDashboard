@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { ensureLeafletStyles } from '@/lib/leafletStyles';
 
 interface IndiaLeafletMapProps {
     data: any[];
@@ -32,6 +32,10 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
     selectedStateCode
 }) => {
     const [geoJsonData, setGeoJsonData] = useState<any>(null);
+
+    useEffect(() => {
+        ensureLeafletStyles();
+    }, []);
 
     useEffect(() => {
         fetch('/india-states.geojson')

@@ -123,7 +123,7 @@ function sitemapBriefPlugin(): Plugin {
                     const day = String(d.getUTCDate()).padStart(2, '0');
                     const dateStr = `${y}-${m}-${day}`;
                     briefUrls.push(`  <url>
-    <loc>https://graphiquestor.com/macro-brief/${y}/${m}/${day}</loc>
+    <loc>https://graphiquestor.com/macro-brief/${y}/${m}/${day}/</loc>
     <lastmod>${dateStr}</lastmod>
     <changefreq>never</changefreq>
     <priority>0.7</priority>

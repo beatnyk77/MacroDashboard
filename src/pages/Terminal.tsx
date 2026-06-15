@@ -12,13 +12,17 @@ import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPan
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
 import { ModuleRow } from '@/components/layout/ModuleRow';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
-import { RegimeAnchor } from '@/features/dashboard/components/RegimeAnchor';
+import { LazyRender } from '@/components/LazyRender';
 import { ShareButton } from '@/components/ShareButton';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { RelatedContent } from '@/components/RelatedContent';
+
+const RegimeAnchor = lazy(() =>
+    import('@/features/dashboard/components/RegimeAnchor').then(m => ({ default: m.RegimeAnchor }))
+);
 
 // Components — below-fold, lazy-loaded
 const NetLiquidityRow = lazy(() => import('@/features/dashboard/components/rows/NetLiquidityRow').then(m => ({ default: m.NetLiquidityRow })));
@@ -101,7 +105,13 @@ export const Terminal: React.FC = () => {
                         <h1 className="text-3xl font-black text-white uppercase tracking-heading leading-tight">
                             Macro Observatory
                         </h1>
-                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                        <FreshnessChip
+                            status={dataFreshness.state}
+                            lastUpdated={primaryMetric?.lastUpdated}
+                            isProvisional={primaryMetric?.isProvisional}
+                            sourceRef={primaryMetric?.sourceRef}
+                            provenance={primaryMetric?.provenance}
+                        />
                     </div>
                     <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase">
                         High-Frequency Liquidity & Sovereign Stress Telemetry
@@ -127,7 +137,9 @@ export const Terminal: React.FC = () => {
             {/* ── REGIME ANCHOR — position 0, above-fold interpretive frame ── */}
             {/* Full-bleed: uses negative margins to break out of px-4 sm:px-6 lg:px-8 */}
             <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] -mx-4 sm:-mx-6 lg:-mx-8 mb-0">
-                <RegimeAnchor />
+                <Suspense fallback={<LoadingFallback />}>
+                    <RegimeAnchor />
+                </Suspense>
             </div>
 
             <div className="flex flex-col pb-32">
@@ -163,6 +175,7 @@ export const Terminal: React.FC = () => {
                     badge={<GQSignalBadge href="/methods/net-liquidity-z-score" />}
                     alternateBg
                 >
+                    <LazyRender minHeight="200px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Net Liquidity">
                         <Suspense fallback={<LoadingFallback />}>
                             <div ref={netLiquidityRef} className="relative group">
@@ -185,10 +198,12 @@ export const Terminal: React.FC = () => {
                             </div>
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 5: FED MONETIZATION MONITOR */}
                 <ModuleRow label="FED MONETIZATION" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
+                    <LazyRender minHeight="200px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Fed Monetization Monitor">
                         <Suspense fallback={<LoadingFallback />}>
                             <div ref={fedMonetizationRef} className="relative group">
@@ -208,10 +223,12 @@ export const Terminal: React.FC = () => {
                             </div>
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 6: TREASURY AUCTION DEMAND */}
                 <ModuleRow label="AUCTION DEMAND" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80" alternateBg>
+                    <LazyRender minHeight="200px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Auction Demand Gauge">
                         <Suspense fallback={<LoadingFallback />}>
                             <Card variant="elevated">
@@ -233,10 +250,12 @@ export const Terminal: React.FC = () => {
                             </Card>
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 7: US DEBT MATURITY WALL */}
                 <ModuleRow label="US DEBT WALL" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
+                    <LazyRender minHeight="250px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <Suspense fallback={<LoadingFallback />}>
                             <div ref={usDebtRef} className="relative group">
@@ -245,19 +264,23 @@ export const Terminal: React.FC = () => {
                             </div>
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 8: CORPORATE DEBT MATURITY WALL */}
                 <ModuleRow label="CORP DEBT WALL" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80" alternateBg>
+                    <LazyRender minHeight="250px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Corporate Debt Maturity Wall">
                         <Suspense fallback={<LoadingFallback />}>
                             <CorporateDebtMaturityWall />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 9: TREASURY YIELD SNAPSHOT */}
                 <ModuleRow label="TREASURY YIELD" href="/labs/us-macro-fiscal" labelColor="text-rose-500/80">
+                    <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Treasury Snapshot">
                         <Suspense fallback={<LoadingFallback />}>
                             <Card variant="elevated">
@@ -267,24 +290,29 @@ export const Terminal: React.FC = () => {
                             </Card>
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 10: ENERGY MARKETS */}
                 <ModuleRow label="ENERGY MARKETS" href="/labs/energy-commodities" labelColor="text-orange-500/80" alternateBg>
+                    <LazyRender minHeight="400px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Energy & Commodities">
                         <Suspense fallback={<LoadingFallback />}>
                             <EnergySection />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 11: TRADE INTELLIGENCE */}
                 <ModuleRow label="TRADE INTEL" href="/trade" labelColor="text-emerald-500/80">
+                    <LazyRender minHeight="200px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Trade Intelligence">
                         <Suspense fallback={<LoadingFallback />}>
                             <TradeEntryBanner />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 12: INDIA MACRO SUMMARY */}
@@ -294,11 +322,13 @@ export const Terminal: React.FC = () => {
                     labelColor="text-amber-500/80"
                     alternateBg
                 >
+                    <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="India Macro Snapshot">
                         <Suspense fallback={<LoadingFallback />}>
                             <IndiaMacroDashboard />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 13: INDIA CREDIT CYCLE */}
@@ -308,15 +338,18 @@ export const Terminal: React.FC = () => {
                     badge={<GQSignalBadge href="/methods/india-credit-cycle-clock" />}
                     labelColor="text-amber-500/80"
                 >
+                    <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="India Credit Cycle">
                         <Suspense fallback={<LoadingFallback />}>
                             <IndiaCreditCycleClock />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 14: CHINA MACRO PULSE */}
                 <ModuleRow label="CHINA PULSE" href="/intel/china" labelColor="text-red-500/80" alternateBg>
+                    <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="China Macro Pulse">
                         <Suspense fallback={<LoadingFallback />}>
                             <Card variant="elevated">
@@ -326,28 +359,34 @@ export const Terminal: React.FC = () => {
                             </Card>
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 15: AFRICA MACRO */}
                 <ModuleRow label="AFRICA MACRO" href="/labs/africa-macro" labelColor="text-amber-500/80">
+                    <LazyRender minHeight="250px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Africa Macro Snapshot">
                         <Suspense fallback={<LoadingFallback />}>
                             <AfricaMacroSnapshot />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 16: SOVEREIGN RISK MATRIX */}
                 <ModuleRow label="SOVEREIGN RISK" href="/countries" labelColor="text-blue-500/80" alternateBg>
+                    <LazyRender minHeight="400px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Sovereign Risk Matrix">
                         <Suspense fallback={<LoadingFallback />}>
                             <SovereignRiskMatrix />
                         </Suspense>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
 
                 {/* Row 17: COUNTRY PORTALS */}
                 <ModuleRow label="COUNTRY PORTALS" href="/countries" labelColor="text-blue-500/80">
+                    <LazyRender minHeight="200px" fallback={<LoadingFallback />}>
                     <SectionErrorBoundary name="Country Intelligence">
                         <Card variant="elevated" className="relative overflow-hidden">
                             <CardHeader>
@@ -381,6 +420,7 @@ export const Terminal: React.FC = () => {
                             </CardContent>
                         </Card>
                     </SectionErrorBoundary>
+                    </LazyRender>
                 </ModuleRow>
             </div>
             <RelatedContent />

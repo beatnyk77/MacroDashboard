@@ -88,9 +88,13 @@ BEGIN
 END $$;
 
 -- ─── 4. Refresh vw_latest_metrics to expose new columns ───────────────────────
--- The view already exists (20260312000000_harden_data_health.sql); we recreate
--- it here to surface source_ref and is_provisional to API consumers.
-CREATE OR REPLACE VIEW public.vw_latest_metrics AS
+-- DROP required: remote view includes source_name; CREATE OR REPLACE cannot
+-- insert columns mid-definition.
+DROP VIEW IF EXISTS public.vw_authenticity_percentage CASCADE;
+DROP VIEW IF EXISTS public.vw_data_staleness_monitor CASCADE;
+DROP VIEW IF EXISTS public.vw_latest_metrics CASCADE;
+
+CREATE VIEW public.vw_latest_metrics AS
 WITH latest_obs AS (
   SELECT DISTINCT ON (metric_id)
     metric_id,
@@ -128,8 +132,6 @@ SELECT
   lo.delta_mom,
   lo.last_updated_at,
   lo.provenance,
-  lo.source_ref,
-  lo.is_provisional,
   COALESCE(
     lo.staleness_flag,
     CASE
@@ -148,7 +150,32 @@ SELECT
     END
   ) AS staleness_flag,
   EXTRACT(EPOCH FROM (NOW() - lo.last_updated_at)) / 86400 AS days_since_update,
-  lo.composite_version
+  lo.composite_version,
+  m.source AS source_name,
+  lo.source_ref,
+  lo.is_provisional
 FROM public.metrics m
 LEFT JOIN latest_obs lo ON m.id = lo.metric_id
 WHERE m.is_active = TRUE;
+
+-- Restore dependent monitoring views (dropped by CASCADE above)
+CREATE VIEW public.vw_data_staleness_monitor AS
+SELECT
+  metric_id,
+  metric_name,
+  days_since_update::INTEGER,
+  expected_interval_days,
+  frequency_type,
+  UPPER(staleness_flag) AS status,
+  provenance
+FROM public.vw_latest_metrics;
+
+CREATE VIEW public.vw_authenticity_percentage AS
+SELECT
+  ROUND(
+    (COUNT(*) FILTER (WHERE provenance = 'api_live')::NUMERIC / NULLIF(COUNT(*), 0)::NUMERIC) * 100,
+    1
+  ) AS authenticity_score,
+  COUNT(*) FILTER (WHERE provenance = 'api_live') AS live_metrics,
+  COUNT(*) AS total_metrics
+FROM public.vw_latest_metrics;

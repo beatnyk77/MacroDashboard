@@ -1,11 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { Suspense, lazy, useMemo } from 'react';
 import { Box, Typography, Container, Paper, Button } from '@mui/material';
 import { m } from 'framer-motion';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { SEOManager } from '@/components/SEOManager';
 import { ExternalLink, ArrowUpRight, ArrowDownRight, Code } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+
+const NetLiquidityGaugeChart = lazy(() => import('./NetLiquidityGaugeChart').then(m => ({ default: m.NetLiquidityGaugeChart })));
 
 /**
  * Premium standalone tool for Net Liquidity Z-Score visualisation.
@@ -187,18 +189,9 @@ export const NetLiquidityGauge: React.FC = () => {
 
                     {/* Mini Sparkline */}
                     <Box sx={{ height: 60, width: '100%', opacity: 0.6 }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={history?.slice(-60)}>
-                                <defs>
-                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor={regime.color} stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor={regime.color} stopOpacity={0}/>
-                                    </linearGradient>
-                                </defs>
-                                <Area type="monotone" dataKey="value" stroke={regime.color} fillOpacity={1} fill="url(#colorValue)" strokeWidth={2} isAnimationActive={false} />
-                                <YAxis hide domain={['auto', 'auto']} />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        <Suspense fallback={<ChartSkeleton height={60} />}>
+                            <NetLiquidityGaugeChart history={history?.slice(-60)} color={regime.color} />
+                        </Suspense>
                     </Box>
 
                     {/* Footer / CTA */}

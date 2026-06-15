@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react';
-import { useParams, Link as RouterLink, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import { TrailLink } from '@/components/TrailLink';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { toAbsoluteUrl, trailRoute } from '@/lib/urlPath';
 import { Container, Typography, Box, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, BookOpen, Activity, FlaskConical, Lightbulb, ArrowRight } from 'lucide-react';
 import { glossaryData } from '@/features/glossary/glossaryData';
@@ -55,7 +58,7 @@ export const GlossaryTermPage: React.FC = () => {
     }, [liveResult, termData?.term, termData?.definition]);
 
     if (!termData) {
-        return <Navigate to="/glossary" replace />;
+        return <Navigate to={trailRoute('/glossary')} replace />;
     }
 
     // Related terms (same category, exclude self)
@@ -67,14 +70,14 @@ export const GlossaryTermPage: React.FC = () => {
     const termJsonLd = {
         "@context": "https://schema.org",
         "@type": "DefinedTerm",
-        "@id": `https://graphiquestor.com/glossary/${termData.slug}#definedterm`,
+        "@id": `${toAbsoluteUrl(`/glossary/${termData.slug}`)}#definedterm`,
         "name": termData.term,
         "description": termData.definition,
-        "url": `https://graphiquestor.com/glossary/${termData.slug}`,
+        "url": toAbsoluteUrl(`/glossary/${termData.slug}`),
         "inDefinedTermSet": {
             "@type": "DefinedTermSet",
             "name": "GraphiQuestor Macro Intelligence Glossary",
-            "url": "https://graphiquestor.com/glossary"
+            "url": toAbsoluteUrl('/glossary')
         },
         "category": termData.category,
         "identifier": termData.id,
@@ -93,17 +96,17 @@ export const GlossaryTermPage: React.FC = () => {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://graphiquestor.com"
+            "item": toAbsoluteUrl('/')
         }, {
             "@type": "ListItem",
             "position": 2,
             "name": "Glossary",
-            "item": "https://graphiquestor.com/glossary"
+            "item": toAbsoluteUrl('/glossary')
         }, {
             "@type": "ListItem",
             "position": 3,
             "name": termData.term,
-            "item": `https://graphiquestor.com/glossary/${termData.slug}`
+            "item": toAbsoluteUrl(`/glossary/${termData.slug}`)
         }]
     };
 
@@ -173,7 +176,7 @@ export const GlossaryTermPage: React.FC = () => {
             <Container maxWidth="md">
                 <Box sx={{ mb: 6 }}>
                     <Button 
-                        component={RouterLink} 
+                        component={TrailLink} 
                         to="/glossary" 
                         startIcon={<ArrowLeft size={18} />}
                         sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' }, mb: 4 }}
@@ -257,7 +260,7 @@ export const GlossaryTermPage: React.FC = () => {
                                 This metric has a detailed methodology article covering its formula, data sources, and institutional use cases.
                             </Typography>
                             <Button
-                                component={RouterLink}
+                                component={TrailLink}
                                 to={termData.methodsPage}
                                 endIcon={<ArrowRight size={15} />}
                                 variant="outlined"
@@ -277,7 +280,7 @@ export const GlossaryTermPage: React.FC = () => {
                             {related.map(term => (
                                 <Paper 
                                     key={term.id}
-                                    component={RouterLink}
+                                    component={TrailLink}
                                     to={`/glossary/${term.slug}`}
                                     variant="outlined"
                                     sx={{ 
@@ -308,7 +311,7 @@ export const GlossaryTermPage: React.FC = () => {
                             Join institutional allocators using GraphiQuestor to track these signals in real-time across global markets.
                         </Typography>
                         <Button 
-                            component={RouterLink}
+                            component={TrailLink}
                             to="/"
                             variant="contained" 
                             color="primary" 
@@ -318,6 +321,8 @@ export const GlossaryTermPage: React.FC = () => {
                             Open Terminal
                         </Button>
                     </Paper>
+
+                    <RelatedMetrics glossarySlug={slug} />
                 </Box>
             </Container>
         </Box>

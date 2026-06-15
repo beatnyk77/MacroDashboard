@@ -1,46 +1,17 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
-const monetizationData = [
-    { year: '2000', ratio: 5.2 },
-    { year: '2002', ratio: 6.1 },
-    { year: '2004', ratio: 6.8 },
-    { year: '2006', ratio: 6.3 },
-    { year: '2008', ratio: 7.4 },
-    { year: '2010', ratio: 12.6 },
-    { year: '2012', ratio: 16.1 },
-    { year: '2014', ratio: 18.7 },
-    { year: '2016', ratio: 17.2 },
-    { year: '2018', ratio: 15.8 },
-    { year: '2020', ratio: 22.4 },
-    { year: '2022', ratio: 19.3 },
-    { year: '2024', ratio: 17.1 },
-    { year: '2026', ratio: 16.4 },
-];
-
-function AreaTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
-    if (active && payload && payload.length) {
-        const v = payload[0].value;
-        return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary">{label}</Typography>
-                <Typography variant="body2" fontWeight={700} color={v > 20 ? '#f59e0b' : v > 15 ? '#fb923c' : '#94a3b8'}>
-                    {v.toFixed(1)}%
-                </Typography>
-            </Box>
-        );
-    }
-    return null;
-}
+const FedMonetizationChart = lazy(() => import('./FedMonetizationChart').then(m => ({ default: m.FedMonetizationChart })));
 
 export const FedMonetizationPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.FED_BALANCE_SHEET);
@@ -148,22 +119,9 @@ export const FedMonetizationPage: React.FC = () => {
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
                         Monetization Ratio (%) = WALCL ÷ GFDEBTN × 100. Dashed line at 20% marks historical threshold preceding yield curve control discussions.
                     </Typography>
-                    <ResponsiveContainer width="100%" height={240}>
-                        <AreaChart data={monetizationData} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="monetGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.02} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                            <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-                            <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[0, 28]} unit="%" />
-                            <Tooltip content={<AreaTooltip />} />
-                            <ReferenceLine y={20} stroke="#f59e0b" strokeDasharray="5 5" strokeOpacity={0.7} label={{ value: 'YCC threshold', fill: '#f59e0b', fontSize: 10, position: 'insideTopRight' }} />
-                            <Area type="monotone" dataKey="ratio" stroke="#6366f1" strokeWidth={2} fill="url(#monetGrad)" dot={false} />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                    <Suspense fallback={<ChartSkeleton height={240} />}>
+                        <FedMonetizationChart />
+                    </Suspense>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={2} mt={3}>
                         {[
                             { label: '2008 Baseline', value: '~7%', note: 'Pre-QE1; Fed held only direct credit market obligations' },
@@ -225,6 +183,7 @@ export const FedMonetizationPage: React.FC = () => {
                     <Button component={Link} to="/" variant="contained" color="primary">View Live Dashboard →</Button>
                 </Box>
                 <RelatedContent />
+                <RelatedMetrics />
             </Container>
         </Box>
     );

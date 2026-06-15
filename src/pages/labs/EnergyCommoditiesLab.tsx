@@ -15,9 +15,11 @@ import {
     BarChart2,
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { LazyRender } from '@/components/LazyRender';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { CurrentEnergyRegimeCard } from '@/features/energy/components/CurrentEnergyRegimeCard';
 import { EnergyLabNav } from '@/features/energy/components/EnergyLabNav';
 
@@ -146,9 +148,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 {/* 1. WTI CALENDAR SPREAD */}
                 <div id="wti-spread" className="mb-32">
                     <SectionErrorBoundary name="WTI Calendar Spread">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <WTICalendarSpread />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <WTICalendarSpread />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </div>
 
@@ -160,9 +164,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             <h2 className="text-2xl font-black uppercase tracking-heading text-white">Live Commodity Prices</h2>
                         </div>
                         <SectionErrorBoundary name="Commodity Prices">
-                            <Suspense fallback={<SmallLoadingFallback />}>
-                                <PriceTerminalCard />
-                            </Suspense>
+                            <LazyRender minHeight="192px" fallback={<SmallLoadingFallback />}>
+                                <Suspense fallback={<SmallLoadingFallback />}>
+                                    <PriceTerminalCard />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                     </section>
 
@@ -174,9 +180,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Sovereign Energy Security">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <SovereignEnergySecuritySection />
-                                </Suspense>
+                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <SovereignEnergySecuritySection />
+                                    </Suspense>
+                                </LazyRender>
                             </SectionErrorBoundary>
                         </div>
                         <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
@@ -195,9 +203,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Asia Commodity Flows">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <AsiaCommodityFlowsSection />
-                                </Suspense>
+                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <AsiaCommodityFlowsSection />
+                                    </Suspense>
+                                </LazyRender>
                             </SectionErrorBoundary>
                         </div>
                         <div className="mt-8 p-8 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-[2rem] max-w-4xl">
@@ -216,9 +226,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Global Refining Monitor">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GlobalRefiningMonitorSection />
-                                </Suspense>
+                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <GlobalRefiningMonitorSection />
+                                    </Suspense>
+                                </LazyRender>
                             </SectionErrorBoundary>
                         </div>
                         <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
@@ -237,9 +249,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Fuel Security Clock India">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <FuelSecurityClockIndia />
-                                </Suspense>
+                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <FuelSecurityClockIndia />
+                                    </Suspense>
+                                </LazyRender>
                             </SectionErrorBoundary>
                         </div>
                         <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
@@ -258,9 +272,11 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Commodity Terminal">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <CommodityTerminalRow />
-                                </Suspense>
+                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <CommodityTerminalRow />
+                                    </Suspense>
+                                </LazyRender>
                             </SectionErrorBoundary>
                         </div>
                         <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
@@ -300,6 +316,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </Button>
                 </div>
                 <RelatedContent />
+                <RelatedMetrics />
             </div>
         </>
     );

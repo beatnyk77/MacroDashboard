@@ -57,6 +57,16 @@ Deno.serve(async (req: Request) => {
 
         if (cronError) throw cronError
 
+        // 4. Provisional metrics (is_provisional=true on latest observation)
+        const { data: provisionalMetrics, error: provisionalError } = await supabaseClient
+            .from('vw_data_staleness_monitor_v2')
+            .select('metric_id, metric_name, source_ref')
+            .eq('is_provisional', true)
+
+        if (provisionalError) throw provisionalError
+
+        const provisionalCount = provisionalMetrics?.length ?? 0
+
         const totalIssues = (staleMetrics?.length ?? 0) + (failedIngestions?.length ?? 0) + (failedCrons?.length ?? 0)
         let message = 'All systems healthy'
         let status = 200
@@ -123,8 +133,14 @@ Deno.serve(async (req: Request) => {
             issues: {
                 stale_count: staleMetrics?.length ?? 0,
                 failure_count: failedIngestions?.length ?? 0,
+                provisional_count: provisionalCount,
                 total: totalIssues
-            }
+            },
+            provisional_metrics: (provisionalMetrics ?? []).slice(0, 10).map((m: { metric_id: string; metric_name: string; source_ref: string | null }) => ({
+                metric_id: m.metric_id,
+                metric_name: m.metric_name,
+                source_ref: m.source_ref,
+            })),
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,

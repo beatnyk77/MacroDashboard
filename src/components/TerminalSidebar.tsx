@@ -1,5 +1,7 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { TrailNavLink } from '@/components/TrailLink';
+import { withoutTrailingSlash } from '@/lib/urlPath';
 import {
     Activity, Globe, TrendingUp, Anchor,
     ShieldAlert, Database, Radio, FileText, Library, Newspaper
@@ -46,11 +48,13 @@ export const TerminalSidebar: React.FC = () => {
             <nav className="flex-1 px-3" aria-label="Main terminal navigation">
                 <ul className="space-y-1">
                     {terminalNavItems.map((item) => {
-                        const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
+                        const normPath = withoutTrailingSlash(location.pathname);
+                        const normItem = withoutTrailingSlash(item.path);
+                        const isActive = normPath === normItem || (normPath.startsWith(`${normItem}/`) && normItem !== '/');
 
                         return (
                             <li key={item.id}>
-                                <NavLink
+                                <TrailNavLink
                                     to={item.path}
                                     title={`Navigate to ${item.label}`}
                                     aria-label={`View ${item.label}`}
@@ -71,7 +75,7 @@ export const TerminalSidebar: React.FC = () => {
                                     {isActive && (
                                         <div className="ml-auto w-1 h-3 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
                                     )}
-                                </NavLink>
+                                </TrailNavLink>
                             </li>
                         );
                     })}

@@ -13,10 +13,12 @@ import {
     Lock
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { LazyRender } from '@/components/LazyRender';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 // Lazy loaded components
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
@@ -125,28 +127,36 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     </div>
                     <div className="space-y-16">
                         <SectionErrorBoundary name="US Debt Gold Backing">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <USDebtGoldBackingCard />
-                            </Suspense>
+                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <USDebtGoldBackingCard />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                         <SectionErrorBoundary name="Gold Ratio Ribbon">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GoldRatioRibbon />
-                            </Suspense>
+                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GoldRatioRibbon />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                         <div id="gold-oil-revaluation" />
                         <SectionErrorBoundary name="Gold Oil Revaluation Scenario">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GoldOilRevaluationScenario />
-                            </Suspense>
+                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <GoldOilRevaluationScenario />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                     </div>
 
                     <div className="mt-16">
                         <SectionErrorBoundary name="G20 Gold Debt Coverage">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <G20GoldDebtCoveragePanel />
-                            </Suspense>
+                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <G20GoldDebtCoveragePanel />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                     </div>
 
@@ -160,16 +170,20 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Reserve Composition</h2>
                     </div>
                     <SectionErrorBoundary name="Global Reserve Tracker">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GlobalReserveTracker />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GlobalReserveTracker />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
 
                     <div className="mt-8">
                         <SectionErrorBoundary name="Reserve-Seller Tracker">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <ReserveSellerTracker />
-                            </Suspense>
+                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <ReserveSellerTracker />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                     </div>
                     <div className="mt-6 flex justify-end">
@@ -186,9 +200,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <h2 className="text-3xl font-black uppercase tracking-heading text-white">Central Bank Gold Net Purchases</h2>
                     </div>
                     <SectionErrorBoundary name="Gold Net Purchases">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <CentralBankGoldNet />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <CentralBankGoldNet />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     
                     <div className="mt-6 flex justify-end">
@@ -205,9 +221,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Financial Hubs & Gold Gateways</h2>
                     </div>
                     <SectionErrorBoundary name="Financial Hubs">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GlobalFinancialHubsGoldGateways />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GlobalFinancialHubsGoldGateways />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                 </section>
 
@@ -220,9 +238,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     <div className="space-y-16">
                         <div className="space-y-6">
                             <SectionErrorBoundary name="Petrodollar vs Petroyuan">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <PetrodollarVsPetroyuan />
-                                </Suspense>
+                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                    <Suspense fallback={<LoadingFallback />}>
+                                        <PetrodollarVsPetroyuan />
+                                    </Suspense>
+                                </LazyRender>
                             </SectionErrorBoundary>
                             <div className="flex justify-end">
                                 <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
@@ -231,9 +251,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             </div>
                         </div>
                         <SectionErrorBoundary name="Trade Flows">
-                            <Suspense fallback={<LoadingFallback />}>
-                                <TradeFlowsCard />
-                            </Suspense>
+                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                                <Suspense fallback={<LoadingFallback />}>
+                                    <TradeFlowsCard />
+                                </Suspense>
+                            </LazyRender>
                         </SectionErrorBoundary>
                     </div>
                     <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
@@ -246,9 +268,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">Trade Gravity: BRICS+ vs G7</h2>
                     </div>
                     <SectionErrorBoundary name="Trade Gravity">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <TradeGravityCard />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <TradeGravityCard />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     
                     <div className="mt-6 flex justify-end">
@@ -266,9 +290,11 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <h2 className="text-3xl font-black uppercase tracking-heading text-white">Gold Derivatives & Physical Arbitrage Monitor</h2>
                     </div>
                     <SectionErrorBoundary name="Gold Positioning">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <GoldPositioningMonitor />
-                        </Suspense>
+                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <GoldPositioningMonitor />
+                            </Suspense>
+                        </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-gold-positioning" insight="The divergence between paper gold positioning (futures/options) and physical demand is a primary indicator of institutional hedging velocity and sovereign 'price discovery' outside Western exchanges." />
                 </section>
@@ -302,6 +328,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 </Button>
             </div>
             <RelatedContent />
+            <RelatedMetrics />
         </div>
         </>
     );

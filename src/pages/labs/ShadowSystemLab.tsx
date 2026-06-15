@@ -14,6 +14,7 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
 
 // Lazy loaded components
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
@@ -136,6 +137,7 @@ export const ShadowSystemLab: React.FC = () => {
                 </Button>
             </div>
             <RelatedContent />
+            <RelatedMetrics />
         </div>
         </>
     );

@@ -307,10 +307,15 @@ export const DataHealthDashboard: React.FC = () => {
                     <Grid item>
                         <Paper sx={{ p: 2, px: 4, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>Authenticity Status</Typography>
+                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>Live Coverage</Typography>
                                 <Typography variant="h5" sx={{ fontWeight: 900, color: 'white' }}>
-                                    {authenticity ? `${authenticity.authenticity_score}% Real` : 'Calculating...'}
+                                    {authenticity ? `${authenticity.authenticity_score}% live` : 'Calculating...'}
                                 </Typography>
+                                {authenticity?.provisional_metrics != null && (
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
+                                        {authenticity.provisional_metrics} provisional metric{authenticity.provisional_metrics === 1 ? '' : 's'}
+                                    </Typography>
+                                )}
                             </Box>
                             <CheckCircle size={24} color="#10b981" />
                         </Paper>
@@ -623,6 +628,7 @@ export const DataHealthDashboard: React.FC = () => {
                                     <TableRow>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Metric</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Lag</TableCell>
+                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Pipeline</TableCell>
                                         <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Status</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -632,6 +638,13 @@ export const DataHealthDashboard: React.FC = () => {
                                             <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.metric_id}</TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
                                                 {Math.round(row.days_since_update)}d <span style={{ opacity: 0.4 }}>/ {row.expected_interval_days}d</span>
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+                                                {row.is_provisional ? (
+                                                    <Chip label={row.source_ref ?? 'provisional'} size="small" sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 700, fontSize: '0.65rem' }} />
+                                                ) : (
+                                                    row.source_ref ?? row.provenance ?? 'live'
+                                                )}
                                             </TableCell>
                                             <TableCell>{renderStalenessStatus(row.status)}</TableCell>
                                         </TableRow>

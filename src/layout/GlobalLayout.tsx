@@ -1,7 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
-import { useLocation, NavLink, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { TrailNavLink } from '@/components/TrailLink';
+import { withoutTrailingSlash } from '@/lib/urlPath';
 import { SEOManager } from '@/components/SEOManager';
 import { useRegime } from '@/hooks/useRegime';
 import { SocialShareMode } from '@/components/SocialShareMode';
@@ -71,8 +73,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
         <div
             className="flex flex-col min-h-screen w-full bg-background transition-colors duration-500 ease-in-out"
         >
-            {/* Default canonical + robots for every route; page-level SEOManager overrides via last-mounted-wins */}
-            <SEOManager />
+            {/* Layout-level canonical (trailing slash); page SEOManager overrides title/description/canonical */}
+            <SEOManager mode="layout" />
             {/* Skip to main content for keyboard navigation */}
             <a
                 href="#main-content"
@@ -202,13 +204,15 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 <Box component="nav" sx={{ p: 2 }}>
                     <List dense>
                         {terminalNavItems.map((item) => {
-                            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
+                            const normPath = withoutTrailingSlash(location.pathname);
+                            const normItem = withoutTrailingSlash(item.path);
+                            const isActive = normPath === normItem || (normPath.startsWith(`${normItem}/`) && normItem !== '/');
                             return (
                                 <ListItem
                                     button
                                     key={item.id}
                                     onClick={() => setMobileDrawerOpen(false)}
-                                    component={NavLink}
+                                    component={TrailNavLink}
                                     to={item.path}
                                     sx={{
                                         borderRadius: 1,
