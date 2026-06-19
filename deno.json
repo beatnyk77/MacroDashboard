@@ -3,7 +3,7 @@
         "./supabase/functions"
     ],
     "imports": {
-        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.8",
+        "@supabase/supabase-js": "npm:@supabase/supabase-js@2.39.8",
         "@std/assert": "https://deno.land/std@0.211.0/assert/mod.ts",
         "@shared/": "./supabase/functions/_shared/",
         "openai": "npm:openai@^4.104.0",
