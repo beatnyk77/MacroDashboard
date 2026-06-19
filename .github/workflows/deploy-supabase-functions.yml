@@ -13,6 +13,7 @@ on:
     paths:
       - 'supabase/functions/**'
       - 'supabase/migrations/**'
+      - '.github/workflows/deploy-supabase-functions.yml'
   pull_request:
     branches: [main]
     paths:
@@ -67,7 +68,7 @@ jobs:
           fi
 
           # ── Migrations changed? ────────────────────────────────────────────
-          if echo "$CHANGED_FILES" | grep -q '^supabase/migrations/'; then
+          if [ "$CHANGED_FILES" = "ALL" ] || echo "$CHANGED_FILES" | grep -q '^supabase/migrations/'; then
             echo "migrations_changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "migrations_changed=false" >> "$GITHUB_OUTPUT"
@@ -104,18 +105,49 @@ jobs:
               | sort \
               | jq -R . | jq -sc .)
           else
-            # Only the directories that were actually touched
-            FUNCS=$(echo "$CHANGED_FILES" \
-              | grep '^supabase/functions/' \
+            FUNC_LIST="$(mktemp)"
+            trap 'rm -f "$FUNC_LIST"' EXIT
+
+            # 1) Direct edits under supabase/functions/<slug>/
+            echo "$CHANGED_FILES" \
+              | { grep '^supabase/functions/' || true; } \
               | grep -v '^supabase/functions/_' \
               | cut -d/ -f3 \
               | grep -v '\.json$' \
               | grep -v '\.ts$' \
               | sort -u \
               | while read -r dir; do
-                  [ -n "$dir" ] && [ -f "supabase/functions/$dir/index.ts" ] && echo "$dir"
-                done \
-              | jq -R . | jq -sc .)
+                  if [ -n "$dir" ] && [ -f "supabase/functions/$dir/index.ts" ]; then
+                    echo "$dir"
+                  fi
+                done >> "$FUNC_LIST"
+
+            # 2) Migration-only pushes: deploy slugs referenced by changed SQL
+            #    (cron schedules, vault callbacks, etc.)
+            if [ "$CHANGED_FILES" = "ALL" ]; then
+              grep -rhoE 'functions/v1/[a-z0-9_-]+' supabase/migrations/*.sql 2>/dev/null \
+                | sed 's|functions/v1/||' \
+                | sort -u >> "$FUNC_LIST" || true
+            else
+              echo "$CHANGED_FILES" \
+                | { grep '^supabase/migrations/.*\.sql$' || true; } \
+                | while read -r migration; do
+                    [ -n "$migration" ] || continue
+                    grep -hoE 'functions/v1/[a-z0-9_-]+' "$migration" 2>/dev/null \
+                      | sed 's|functions/v1/||' || true
+                  done \
+                | sort -u >> "$FUNC_LIST" || true
+            fi
+
+            if [ -s "$FUNC_LIST" ]; then
+              FUNCS=$(sort -u "$FUNC_LIST" \
+                | while read -r slug; do
+                    [ -n "$slug" ] && [ -f "supabase/functions/$slug/index.ts" ] && echo "$slug"
+                  done \
+                | jq -R . | jq -sc .)
+            else
+              FUNCS='[]'
+            fi
           fi
 
           echo "functions=$FUNCS" >> "$GITHUB_OUTPUT"
