@@ -23,12 +23,14 @@ CREATE INDEX IF NOT EXISTS idx_site_analytics_events_session_created
 ALTER TABLE public.site_analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- Client beacon: insert only (no raw event reads for anon)
+DROP POLICY IF EXISTS "Allow anon insert site_analytics_events" ON public.site_analytics_events;
 CREATE POLICY "Allow anon insert site_analytics_events"
     ON public.site_analytics_events
     FOR INSERT
     TO anon, authenticated
     WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow service role full access site_analytics_events" ON public.site_analytics_events;
 CREATE POLICY "Allow service role full access site_analytics_events"
     ON public.site_analytics_events
     FOR ALL

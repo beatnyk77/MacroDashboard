@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       africa_macro_snapshots: {
@@ -210,6 +185,72 @@ export type Database = {
           section?: Database["public"]["Enums"]["fyp_section"]
           value_baseline?: string | null
           value_target?: string | null
+        }
+        Relationships: []
+      }
+      china_debt_composites: {
+        Row: {
+          as_of_date: string
+          components: Json | null
+          composite_id: string
+          formula: string | null
+          updated_at: string | null
+          value: number
+        }
+        Insert: {
+          as_of_date: string
+          components?: Json | null
+          composite_id: string
+          formula?: string | null
+          updated_at?: string | null
+          value: number
+        }
+        Update: {
+          as_of_date?: string
+          components?: Json | null
+          composite_id?: string
+          formula?: string | null
+          updated_at?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
+      china_debt_layers: {
+        Row: {
+          as_of_date: string
+          is_provisional: boolean | null
+          layer_code: string
+          provenance: Json | null
+          source: string
+          source_ref: string | null
+          updated_at: string | null
+          value_high_pct_gdp: number | null
+          value_low_pct_gdp: number | null
+          value_pct_gdp: number | null
+        }
+        Insert: {
+          as_of_date: string
+          is_provisional?: boolean | null
+          layer_code: string
+          provenance?: Json | null
+          source: string
+          source_ref?: string | null
+          updated_at?: string | null
+          value_high_pct_gdp?: number | null
+          value_low_pct_gdp?: number | null
+          value_pct_gdp?: number | null
+        }
+        Update: {
+          as_of_date?: string
+          is_provisional?: boolean | null
+          layer_code?: string
+          provenance?: Json | null
+          source?: string
+          source_ref?: string | null
+          updated_at?: string | null
+          value_high_pct_gdp?: number | null
+          value_low_pct_gdp?: number | null
+          value_pct_gdp?: number | null
         }
         Relationships: []
       }
@@ -6114,9 +6155,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       fyp_section: ["pillar", "target", "milestone", "correlation"],

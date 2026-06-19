@@ -4,7 +4,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { m } from 'framer-motion';
-import { Globe, TrendingDown, ArrowRight, Package2, Leaf, Cpu } from 'lucide-react';
+import { Globe, TrendingDown, ArrowRight, Package2, Leaf, Cpu, Landmark } from 'lucide-react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -39,12 +39,25 @@ const InstitutionalInfluenceSection = lazy(() =>
 const China15thFYPTeaserRow = lazy(() =>
     import('@/features/dashboard/components/rows/China15thFYP/China15thFYPTeaserRow').then(m => ({ default: m.China15thFYPTeaserRow }))
 );
+const ChinaDebtIcebergHero = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaDebtIcebergHero').then(m => ({ default: m.ChinaDebtIcebergHero }))
+);
+const ChinaCentralDebtMonitor = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaCentralDebtMonitor').then(m => ({ default: m.ChinaCentralDebtMonitor }))
+);
+const ChinaMonetizationWatch = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaMonetizationWatch').then(m => ({ default: m.ChinaMonetizationWatch }))
+);
+const ChinaDebtCompositeStrip = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaDebtCompositeStrip').then(m => ({ default: m.ChinaDebtCompositeStrip }))
+);
 
 const SectionSkeleton = () => (
     <div className="h-[300px] w-full rounded-3xl bg-white/[0.02] animate-pulse" />
 );
 
 const SIGNAL_CARDS = [
+    { icon: Landmark, label: 'Public Debt',      desc: 'Iceberg ratio, LGFV stress & monetization', color: 'rose',   anchor: '#debt' },
     { icon: Globe,    label: 'PBOC Liquidity',   desc: 'MLF, reverse repo, M2 & regime',         color: 'red',    anchor: '#pboc' },
     { icon: TrendingDown, label: 'Real Economy', desc: 'NBS vs Caixin PMI, IP & retail',          color: 'orange', anchor: '#real-economy' },
     { icon: Package2, label: 'External Sector',  desc: 'Trade balance, FX reserves & exports',   color: 'blue',   anchor: '#external' },
@@ -55,6 +68,7 @@ const SIGNAL_CARDS = [
 const colorMap: Record<string, string> = {
     red:    'text-red-500 bg-red-500/10 border-red-500/20',
     rose:   'text-rose-500 bg-rose-500/10 border-rose-500/20',
+    emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     amber:  'text-amber-500 bg-amber-500/10 border-amber-500/20',
     orange: 'text-orange-500 bg-orange-500/10 border-orange-500/20',
     yellow: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
@@ -88,6 +102,7 @@ export const IntelChinaPage: React.FC = () => {
             { "@type": "WebPage", "name": "External Sector & Trade",  "url": "https://graphiquestor.com/intel/china#external" },
             { "@type": "WebPage", "name": "Energy & Transition Risk", "url": "https://graphiquestor.com/intel/china#energy" },
             { "@type": "WebPage", "name": "Proprietary Alpha Signals","url": "https://graphiquestor.com/intel/china#signals" },
+            { "@type": "WebPage", "name": "China Public Sector Debt","url": "https://graphiquestor.com/intel/china#debt" },
         ]
     };
 
@@ -180,7 +195,8 @@ export const IntelChinaPage: React.FC = () => {
                             {/* Nav Pills */}
                             <div className="flex flex-wrap gap-2 mt-6">
                                 {[
-                                    { href: '#macro',       label: 'Macro Pulse',     active: true },
+                                    { href: '#debt',        label: 'Public Debt',     active: true },
+                                    { href: '#macro',       label: 'Macro Pulse' },
                                     { href: '#pboc',        label: 'PBOC Liquidity' },
                                     { href: '#real-economy',label: 'Real Economy' },
                                     { href: '#external',    label: 'External Sector' },
@@ -208,7 +224,7 @@ export const IntelChinaPage: React.FC = () => {
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.2 }}
-                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
+                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"
                     >
                         {SIGNAL_CARDS.map(({ icon: Icon, label, desc, color, anchor }) => (
                             <a
@@ -222,6 +238,15 @@ export const IntelChinaPage: React.FC = () => {
                             </a>
                         ))}
                     </m.div>
+                    {/* Debt Iceberg Hero */}
+                    <div className="mt-10">
+                        <SectionErrorBoundary name="China Debt Iceberg">
+                            <Suspense fallback={<div className="h-[420px] rounded-[2rem] bg-white/[0.02] animate-pulse" />}>
+                                <ChinaDebtIcebergHero />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </div>
+
                     {/* FYP Teaser Row */}
                     <div className="mt-12">
                         <SectionErrorBoundary name="China 15th FYP Teaser">
@@ -235,6 +260,25 @@ export const IntelChinaPage: React.FC = () => {
 
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
+
+                {/* China Public Sector Debt */}
+                <section id="debt">
+                    <LazyRender minHeight="600px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="China Public Sector Debt">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <div className="space-y-16">
+                                    <ChinaCentralDebtMonitor />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaMonetizationWatch />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaDebtCompositeStrip />
+                                </div>
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
+                </section>
+
+                <div className="border-t border-white/5" />
 
                 {/* China Macro Pulse (existing) */}
                 <section id="macro">
