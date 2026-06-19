@@ -6,6 +6,8 @@ import { OpportunityScoreBadge } from './OpportunityScoreBadge'
 import type { TradeMarket } from '../types/trade'
 import { formatTradeValue } from '../types/trade'
 import { TradeRankerSkeleton } from './TradeRankerSkeleton'
+import { ExportCSVButton } from '@/components/ExportCSVButton'
+import { formatMarketsForCsv } from '../utils/formatMarketsForCsv'
 
 interface GlobalDemandRankerProps {
     markets: TradeMarket[]
@@ -78,8 +80,19 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
         )
     }
 
+    const csvRows = formatMarketsForCsv(sorted)
+
     return (
         <div className="space-y-4">
+            <div className="flex items-center justify-end">
+                <ExportCSVButton
+                    data={csvRows}
+                    filename={`hs_${hsCode}_demand_ranking`}
+                    label="Export CSV"
+                    className="text-[10px] uppercase tracking-widest"
+                />
+            </div>
+
             {/* Summary stat row */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {[
