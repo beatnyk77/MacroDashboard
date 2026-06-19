@@ -116,6 +116,7 @@ dist-ssr
 # OS
 .DS_Store
 .agent/
+.claude/worktrees/
 .gitmodules
 
 # Local Netlify folder
