@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.china_debt_layers (
 
 ALTER TABLE public.china_debt_layers ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access" ON public.china_debt_layers;
 CREATE POLICY "Allow public read access" ON public.china_debt_layers
     FOR SELECT USING (true);
 
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS public.china_debt_composites (
 
 ALTER TABLE public.china_debt_composites ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access" ON public.china_debt_composites;
 CREATE POLICY "Allow public read access" ON public.china_debt_composites
     FOR SELECT USING (true);
 
