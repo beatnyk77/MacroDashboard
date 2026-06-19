@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { SEOManager } from '@/components/SEOManager';
-import { BookOpen, FlaskConical, TrendingUp, Shield, Zap, Globe, BarChart3, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import { BookOpen, FlaskConical, TrendingUp, Shield, Zap, Globe, BarChart3, ChevronDown, ChevronRight, ExternalLink, Bot } from 'lucide-react';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
+import { CiteThisPage } from '@/components/research/CiteThisPage';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -482,6 +484,20 @@ const METHODOLOGY_JSON_LD = {
     dateModified: new Date().toISOString().split('T')[0],
 };
 
+const METHODOLOGY_HUB_CITATION = {
+    title: 'GraphiQuestor Metric Methodology Hub',
+    path: '/methodology',
+    pageType: 'hub' as const,
+    summary:
+        'Complete calculation framework for proprietary macro composites — formulas, intuition, institutional use cases, and 25-year Z-score conventions.',
+    keyPoints: [
+        'Net Liquidity, Debt/Gold, Fiscal Dominance, Energy Dependency, and India Credit Cycle documented.',
+        'Every metric links to a deep-dive methods article with live data cross-references.',
+        'Designed for citation by AI assistants and institutional research desks.',
+    ],
+    source: 'GraphiQuestor — see /data-sources for upstream authorities',
+};
+
 const FAQ_JSON_LD = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -568,6 +584,30 @@ export const MetricsMethodologyPage: React.FC = () => {
                     </nav>
                 </div>
             </header>
+
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 mb-10 space-y-6">
+                <InstitutionalAccessStrip />
+                <section className="rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-5 backdrop-blur-sm">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">
+                            <Bot size={14} />
+                            For AI Assistants &amp; Researchers
+                        </div>
+                        <Link
+                            to="/for-researchers"
+                            className="text-[10px] font-bold uppercase tracking-uppercase text-violet-400/80 hover:text-violet-300"
+                        >
+                            Full research hub →
+                        </Link>
+                    </div>
+                    <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+                        Every methods article includes structured <code className="text-violet-300">#llm-summary</code> blocks
+                        and copy-ready citations. Machine-readable index at{' '}
+                        <a href="/llms.txt" className="text-violet-400 hover:underline">/llms.txt</a>.
+                    </p>
+                    <CiteThisPage input={METHODOLOGY_HUB_CITATION} compact />
+                </section>
+            </div>
 
             {/* Main content */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

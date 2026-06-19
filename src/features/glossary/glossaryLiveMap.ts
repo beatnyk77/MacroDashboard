@@ -205,6 +205,19 @@ export const GLOSSARY_LIVE_CONFIG: Record<string, GlossaryLiveConfig> = {
             return { label, color, text, displayValue: val.toFixed(4) };
         }
     },
+    'breakeven-inflation-rate': {
+        faqQuestion: 'What is the current 10-year breakeven inflation rate?',
+        linkTo: '/labs/us-macro-fiscal',
+        unit: '%',
+        interpret: (data) => {
+            const val = data?.value || 0;
+            let label: string, color: LiveMetricColor, text: string;
+            if (val > 2.5) { label = 'Above Target'; color = 'rose'; text = 'Breakevens above 2.5% signal markets expect the Fed to miss its 2% inflation anchor — historically precedes additional tightening or credibility risk.'; }
+            else if (val < 1.8) { label = 'Disinflationary'; color = 'emerald'; text = 'Breakevens below 1.8% signal disinflation risk — supportive for duration and gold if real rates compress.'; }
+            else { label = 'Anchored'; color = 'blue'; text = 'Breakevens near the Fed\'s 2% target suggest inflation expectations remain well-anchored.'; }
+            return { label, color, text, displayValue: val.toFixed(2) };
+        }
+    },
     'real-interest-rates': {
         faqQuestion: 'What are the current US 10-Year Real Interest Rates?',
         linkTo: '/',

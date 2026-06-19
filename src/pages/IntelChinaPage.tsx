@@ -11,6 +11,8 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { RelatedContent } from '@/components/RelatedContent';
 import { LazyRender } from '@/components/LazyRender';
+import { ChinaLocaleHint } from '@/components/growth/ChinaLocaleHint';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 
 // Lazy-load all sections
 const ChinaMacroPulseSection = lazy(() =>
@@ -129,8 +131,13 @@ export const IntelChinaPage: React.FC = () => {
                 ]}
             />
 
+            <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8 space-y-4">
+                <ChinaLocaleHint />
+                <InstitutionalAccessStrip variant="compact" />
+            </div>
+
             {/* Hero */}
-            <section className="relative overflow-hidden pt-24 pb-16 border-b border-white/5">
+            <section className="relative overflow-hidden pt-16 pb-16 border-b border-white/5">
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-red-600/8 rounded-full blur-[140px]" />
                     <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-amber-500/5 rounded-full blur-[100px]" />

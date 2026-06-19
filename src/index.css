@@ -155,6 +155,11 @@
 
     body {
       overflow-y: auto;
+      font-family: 'Inter', 'Fira Sans', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    }
+
+    html[data-locale-hint='zh'] body {
+      font-family: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Inter', sans-serif;
     }
     
     html {

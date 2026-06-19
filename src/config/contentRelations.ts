@@ -8,12 +8,14 @@ export interface RelatedLink {
 
 export const contentRelations: Record<string, RelatedLink[]> = {
   '/': [
-    { to: '/labs/shadow-system', label: 'Shadow System Lab', kind: 'lab' },
-    { to: '/labs/us-macro-fiscal', label: 'US Fiscal Lab', kind: 'lab' },
-    { to: '/methods/net-liquidity-z-score', label: 'Net Liquidity Methodology', kind: 'brief' },
-    { to: '/glossary/net-liquidity-z-score', label: 'Net Liquidity Z-Score', kind: 'glossary' },
+    { to: '/glossary/breakeven-inflation-rate', label: 'Breakeven Inflation', kind: 'glossary' },
+    { to: '/glossary/foreign-exchange-reserves', label: 'Foreign Exchange Reserves', kind: 'glossary' },
+    { to: '/glossary/fiscal-dominance', label: 'Fiscal Dominance', kind: 'glossary' },
     { to: '/glossary/tga', label: 'Treasury General Account', kind: 'glossary' },
-    { to: '/glossary/macro-regime-classification', label: 'Regime Classification', kind: 'glossary' },
+    { to: '/methods/m2-gold-ratio', label: 'M2/Gold Ratio Methodology', kind: 'brief' },
+    { to: '/labs/us-macro-fiscal', label: 'US Macro & Fiscal Lab', kind: 'lab' },
+    { to: '/intel/india', label: 'India Macro Pulse', kind: 'data' },
+    { to: '/intel/china', label: 'China Macro Pulse', kind: 'data' },
   ],
   '/intel/india': [
     { to: '/trade', label: 'India Trade Pulse', kind: 'data' },
@@ -126,6 +128,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/foreign-exchange-reserves', label: 'FX Reserve Framework', kind: 'glossary' },
   ],
   '/methods/net-liquidity-z-score': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/shadow-system', label: 'Shadow System Lab', kind: 'lab' },
     { to: '/labs/us-macro-fiscal', label: 'US Fiscal Lab', kind: 'lab' },
     { to: '/glossary/net-liquidity-z-score', label: 'Net Liquidity Z-Score', kind: 'glossary' },
@@ -133,6 +136,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/reverse-repo-facility-rrp', label: 'Reverse Repo Facility', kind: 'glossary' },
   ],
   '/methods/fiscal-dominance-meter': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/us-macro-fiscal', label: 'US Fiscal Lab', kind: 'lab' },
     { to: '/labs/sovereign-stress', label: 'Sovereign Stress Lab', kind: 'lab' },
     { to: '/methods/net-liquidity-z-score', label: 'Net Liquidity Methodology', kind: 'brief' },
@@ -140,6 +144,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/interest-expense-to-tax-revenue', label: 'Interest/Tax Revenue', kind: 'glossary' },
   ],
   '/methods/m2-gold-ratio': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/de-dollarization-gold', label: 'Gold & Reserve Lab', kind: 'lab' },
     { to: '/labs/central-bank-gold-purchases', label: 'Central Bank Gold', kind: 'lab' },
     { to: '/methods/debt-gold-z-score', label: 'Debt/Gold Z-Score', kind: 'brief' },
@@ -147,6 +152,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/de-dollarization', label: 'Fiat Debasement', kind: 'glossary' },
   ],
   '/methods/debt-gold-z-score': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/de-dollarization-gold', label: 'Gold & Reserve Lab', kind: 'lab' },
     { to: '/labs/us-macro-fiscal', label: 'US Debt Lab', kind: 'lab' },
     { to: '/methods/m2-gold-ratio', label: 'M2/Gold Ratio', kind: 'brief' },
@@ -154,6 +160,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/real-interest-rates', label: 'Real Interest Rates', kind: 'glossary' },
   ],
   '/methods/de-dollarization-guide': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/de-dollarization-gold', label: 'Gold Reserve Lab', kind: 'lab' },
     { to: '/labs/central-bank-gold-purchases', label: 'Central Bank Gold', kind: 'lab' },
     { to: '/labs/petrodollar-decay-indicators', label: 'Petrodollar Decay', kind: 'lab' },
@@ -162,13 +169,16 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/reserve-currency-composition', label: 'Reserve Composition', kind: 'glossary' },
   ],
   '/methods/fed-monetization-monitor': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/us-macro-fiscal', label: 'US Fiscal Lab', kind: 'lab' },
     { to: '/labs/shadow-system', label: 'Fed Balance Sheet Lab', kind: 'lab' },
     { to: '/methods/net-liquidity-z-score', label: 'Net Liquidity Methodology', kind: 'brief' },
     { to: '/glossary/fiscal-dominance', label: 'Fiscal Dominance', kind: 'glossary' },
+    { to: '/glossary/breakeven-inflation-rate', label: 'Breakeven Inflation', kind: 'glossary' },
     { to: '/glossary/federal-debt-monetisation', label: 'Debt Monetisation', kind: 'glossary' },
   ],
   '/methods/india-credit-cycle-clock': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/intel/india', label: 'India Macro Intel', kind: 'data' },
     { to: '/methods/loan-to-job-efficiency', label: 'Loan-to-Job Efficiency', kind: 'brief' },
     { to: '/trade', label: 'India Trade Flows', kind: 'data' },
@@ -176,6 +186,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/current-account-balance', label: 'Current Account', kind: 'glossary' },
   ],
   '/methods/energy-dependency-ratio': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/labs/energy-commodities', label: 'Energy Commodities Lab', kind: 'lab' },
     { to: '/labs/petrodollar-decay-indicators', label: 'Petrodollar Decay Lab', kind: 'lab' },
     { to: '/intel/india', label: 'India Energy Exposure', kind: 'data' },
@@ -183,6 +194,7 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/gold-oil-ratio', label: 'Gold/Oil Ratio', kind: 'glossary' },
   ],
   '/methods/loan-to-job-efficiency': [
+    { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/intel/india', label: 'India Employment Data', kind: 'data' },
     { to: '/methods/india-credit-cycle-clock', label: 'India Credit Cycle', kind: 'brief' },
     { to: '/glossary/loan-to-job-efficiency', label: 'Loan-to-Job Efficiency', kind: 'glossary' },

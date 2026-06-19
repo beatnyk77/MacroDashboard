@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState, useRef } from 'react';
+import React, { Suspense, lazy, useRef } from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { BrandConfig } from '@/config/brandConfig';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
@@ -14,11 +14,21 @@ import { ModuleRow } from '@/components/layout/ModuleRow';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { LazyRender } from '@/components/LazyRender';
 import { ShareButton } from '@/components/ShareButton';
-import { useLatestMetric } from '@/hooks/useLatestMetric';
-import { getStaleness } from '@/hooks/useStaleness';
-import { FreshnessChip } from '@/components/FreshnessChip';
-import { METRIC_IDS as MID } from '@/constants/metricIds';
+
+
 import { RelatedContent } from '@/components/RelatedContent';
+import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { SubscribeCard } from '@/components/SubscribeCard';
+import { TerminalHero } from '@/features/dashboard/components/TerminalHero';
+import { StartExploringSection } from '@/features/dashboard/components/StartExploringSection';
+import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
+import { ValueProgressionPath } from '@/components/engagement/ValueProgressionPath';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
+import { ChinaLocaleHint } from '@/components/growth/ChinaLocaleHint';
+
+const M2GoldRatioExplorer = lazy(() =>
+    import('@/components/engagement/M2GoldRatioExplorer').then((m) => ({ default: m.M2GoldRatioExplorer }))
+);
 
 const RegimeAnchor = lazy(() =>
     import('@/features/dashboard/components/RegimeAnchor').then(m => ({ default: m.RegimeAnchor }))
@@ -52,23 +62,10 @@ const LoadingFallback = () => (
     </div>
 );
 
-const ORIENTING_DISMISSED_KEY = 'gq_orienting_dismissed';
-
 export const Terminal: React.FC = () => {
-    const [orientingDismissed, setOrientingDismissed] = useState(
-        () => typeof window !== 'undefined' && localStorage.getItem(ORIENTING_DISMISSED_KEY) === '1'
-    );
-    const { data: primaryMetric } = useLatestMetric(MID.FED_BALANCE_SHEET);
-    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
-
     const netLiquidityRef = useRef<HTMLDivElement>(null);
     const fedMonetizationRef = useRef<HTMLDivElement>(null);
     const usDebtRef = useRef<HTMLDivElement>(null);
-
-    const dismissOrienting = () => {
-        localStorage.setItem(ORIENTING_DISMISSED_KEY, '1');
-        setOrientingDismissed(true);
-    };
 
     return (
         <div className="w-full min-h-screen py-6">
@@ -99,40 +96,25 @@ export const Terminal: React.FC = () => {
                 ]}
             />
 
-            <header className="mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <h1 className="text-3xl font-black text-white uppercase tracking-heading leading-tight">
-                            Macro Observatory
-                        </h1>
-                        <FreshnessChip
-                            status={dataFreshness.state}
-                            lastUpdated={primaryMetric?.lastUpdated}
-                            isProvisional={primaryMetric?.isProvisional}
-                            sourceRef={primaryMetric?.sourceRef}
-                            provenance={primaryMetric?.provenance}
-                        />
-                    </div>
-                    <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase">
-                        High-Frequency Liquidity & Sovereign Stress Telemetry
-                    </p>
-                </div>
-            </header>
+            <TerminalHero />
 
-            {!orientingDismissed && (
-                <div className="relative mb-8 -mt-4 flex items-start justify-between gap-4">
-                    <p className="text-sm text-white/50 font-light italic max-w-2xl">
-                        {BrandConfig.name} tracks the macro variables that matter in a multipolar world — sovereign stress, de-dollarization momentum, fiscal dominance, and gold&apos;s return as monetary anchor.
-                    </p>
-                    <button
-                        onClick={dismissOrienting}
-                        className="shrink-0 text-white/20 hover:text-white/50 transition-colors text-xs font-mono uppercase tracking-widest mt-0.5"
-                        aria-label="Dismiss"
-                    >
-                        ✕
-                    </button>
-                </div>
-            )}
+            <InstitutionalAccessStrip className="mb-8" />
+
+            <ChinaLocaleHint className="mb-8" />
+
+            <StartExploringSection />
+
+            <PremiumActionBar className="mb-8" />
+
+            <Suspense fallback={<LoadingFallback />}>
+                <M2GoldRatioExplorer className="mb-8" />
+            </Suspense>
+
+            <ValueProgressionPath className="mb-10" />
+
+            <div id="weekly-narrative" className="mb-10">
+                <SubscribeCard source="homepage-hero" />
+            </div>
 
             {/* ── REGIME ANCHOR — position 0, above-fold interpretive frame ── */}
             {/* Full-bleed: uses negative margins to break out of px-4 sm:px-6 lg:px-8 */}
@@ -156,6 +138,10 @@ export const Terminal: React.FC = () => {
                         <TodaysBriefPanel />
                     </SectionErrorBoundary>
                 </ModuleRow>
+
+                <div className="mb-8 px-1">
+                    <SubscribeCard source="homepage-midfold" />
+                </div>
 
                 {/* Row 3: GLOBAL LIQUIDITY COMPOSITE */}
                 <ModuleRow
@@ -423,7 +409,13 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
             </div>
-            <RelatedContent />
+            <div className="mb-10">
+                <SubscribeCard source="homepage-prefooter" />
+            </div>
+
+            <RelatedMetrics minLinks={2} />
+
+            <RelatedContent variant="grid" className="mt-8" />
         </div>
     );
 };

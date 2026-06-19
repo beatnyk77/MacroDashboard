@@ -100,6 +100,24 @@ ${hubItems}
     };
 }
 
+// ── LLM context files ─────────────────────────────────────────────────────
+function llmsGeneratorPlugin(): Plugin {
+    return {
+        name: 'llms-generator',
+        async buildStart() {
+            try {
+                const { execSync } = await import('child_process');
+                execSync('npx tsx scripts/generate-llms-txt.ts', {
+                    cwd: __dirname,
+                    stdio: 'inherit',
+                });
+            } catch (err) {
+                console.warn('⚠️  llms.txt generation failed (non-fatal):', err);
+            }
+        },
+    };
+}
+
 // ── Sitemap Brief Plugin ──────────────────────────────────────────────────
 // Injects the last 30 days of brief URLs into the sitemap at build time.
 function sitemapBriefPlugin(): Plugin {
@@ -151,7 +169,7 @@ function sitemapBriefPlugin(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), rssGeneratorPlugin(), sitemapBriefPlugin()],
+    plugins: [react(), rssGeneratorPlugin(), llmsGeneratorPlugin(), sitemapBriefPlugin()],
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),

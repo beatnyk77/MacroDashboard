@@ -4049,6 +4049,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_analytics_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          metadata: Json
+          page_path: string | null
+          session_id: string
+          value_numeric: number | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          metadata?: Json
+          page_path?: string | null
+          session_id: string
+          value_numeric?: number | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          metadata?: Json
+          page_path?: string | null
+          session_id?: string
+          value_numeric?: number | null
+        }
+        Relationships: []
+      }
       smart_money_flow: {
         Row: {
           as_of_date: string
@@ -5939,6 +5969,10 @@ export type Database = {
         }
       }
       get_subscriber_stats: { Args: never; Returns: Json }
+      get_traffic_intelligence_summary: {
+        Args: { p_days?: number }
+        Returns: Json
+      }
       increment_api_usage: { Args: { key_id: string }; Returns: undefined }
       populate_gold_ratios: { Args: never; Returns: undefined }
       refresh_market_pulse_stats: { Args: never; Returns: undefined }

@@ -25,4 +25,9 @@ Allow: /
 
 # Sitemaps
 Sitemap: https://graphiquestor.com/sitemap.xml
+
+# LLM / AI assistant context files
 X-LLM-Context: https://graphiquestor.com/llm.txt
+X-LLM-Index: https://graphiquestor.com/llms.txt
+X-LLM-Research-Hub: https://graphiquestor.com/for-researchers/
+X-China-Macro-Hub: https://graphiquestor.com/intel/china/

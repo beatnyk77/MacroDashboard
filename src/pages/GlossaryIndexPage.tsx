@@ -3,6 +3,9 @@ import { Container, Typography, Box, Paper, TextField, InputAdornment, Chip, Gri
 import { Search, Book, FlaskConical, FileText } from 'lucide-react';
 import { TrailLink } from '@/components/TrailLink';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
+import { ValueProgressionPath } from '@/components/engagement/ValueProgressionPath';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 import { glossaryData } from '@/features/glossary/glossaryData';
 import { SEOManager } from '@/components/SEOManager';
 import { toAbsoluteUrl } from '@/lib/urlPath';
@@ -74,6 +77,10 @@ export const GlossaryIndexPage: React.FC = () => {
                             <Typography variant="caption" color="text.disabled">Deep Dives</Typography>
                         </Box>
                     </Box>
+                </Box>
+
+                <Box mb={4}>
+                    <InstitutionalAccessStrip variant="compact" />
                 </Box>
 
                 <Paper elevation={0} sx={{ p: 4, bgcolor: 'background.paper', borderRadius: 3, border: '1px solid', borderColor: 'divider', mb: 6 }}>
@@ -164,6 +171,14 @@ export const GlossaryIndexPage: React.FC = () => {
                             <Typography color="text.secondary">No concepts found matching your criteria.</Typography>
                         </Box>
                     )}
+                </Box>
+
+                <Box sx={{ mt: 6, mb: 4 }}>
+                    <PremiumActionBar />
+                </Box>
+
+                <Box sx={{ mb: 4 }}>
+                    <ValueProgressionPath />
                 </Box>
 
                 <RelatedMetrics />

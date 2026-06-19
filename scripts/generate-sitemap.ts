@@ -77,6 +77,10 @@ async function generateSitemap() {
     { url: '/labs',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/labs/ThematicLabsIndexPage.tsx') },
     { url: '/api-docs',            changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIDocsPage.tsx') },
     { url: '/glossary',            changefreq: 'weekly',  lastmod: gitLastmod('src/pages/GlossaryIndexPage.tsx') },
+    { url: '/methodology',         changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MetricsMethodologyPage.tsx') },
+    { url: '/for-researchers',     changefreq: 'weekly',  lastmod: gitLastmod('src/pages/ForResearchersPage.tsx') },
+    { url: '/institutional',       changefreq: 'monthly', lastmod: gitLastmod('src/pages/ForInstitutional.tsx') },
+    { url: '/api-access',          changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIAccessPage.tsx') },
     { url: '/macro-brief/archive', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroBriefArchivePage.tsx') },
     { url: '/demo',                changefreq: 'monthly', lastmod: BUILD_DATE },
   ].map(route => ({ ...route, priority: routePriority(route.url) }));

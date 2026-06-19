@@ -10,6 +10,8 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { M2GoldRatioExplorer } from '@/components/engagement/M2GoldRatioExplorer';
+import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
 
 const M2GoldRatioChart = lazy(() => import('./M2GoldRatioChart').then(m => ({ default: m.M2GoldRatioChart })));
 
@@ -125,6 +127,14 @@ export const M2GoldRatioPage: React.FC = () => {
                     <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A structural debasement gauge: how much global M2 money supply is "covered" by the world's above-ground gold supply at current spot prices. When M2 expands faster than gold, the ratio rises — historically a leading indicator for structural gold re-ratings.
                     </Typography>
+                </Box>
+
+                <Box sx={{ mb: 4 }}>
+                    <PremiumActionBar />
+                </Box>
+
+                <Box sx={{ mb: 4 }}>
+                    <M2GoldRatioExplorer />
                 </Box>
 
                 {/* TL;DR */}

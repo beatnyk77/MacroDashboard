@@ -12,6 +12,8 @@ import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { TerminalSidebar } from '@/components/TerminalSidebar';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner } from '@/components/DataHealthBanner';
+import { EngagementLayer } from '@/components/engagement/EngagementLayer';
+import { AnalyticsBeacon } from '@/components/AnalyticsBeacon';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import { Button } from '@/components/ui/button';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
@@ -250,6 +252,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 <main id="main-content" className="min-w-0">
                     <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
                         {children}
+                        {!isEmbedded && <AnalyticsBeacon />}
+                        <EngagementLayer embedded={isEmbedded} />
                     </div>
                     {!isEmbedded && <InstitutionalFooter />}
                 </main>

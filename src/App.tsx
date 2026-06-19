@@ -34,6 +34,7 @@ const IntelIndiaPage = lazy(() => import('@/pages/IntelIndiaPage').then(module =
 const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module => ({ default: module.IntelChinaPage })));
 const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
 const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
+const ForResearchersPage = lazy(() => import('@/pages/ForResearchersPage').then(module => ({ default: module.ForResearchersPage })));
 const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
 const WeeklyNarrativePage = lazy(() => import('@/pages/WeeklyNarrativePage').then(module => ({ default: module.WeeklyNarrativePage })));
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
@@ -127,6 +128,7 @@ function App() {
                                         <Route path={trailRoute('/intel/china')} element={<IntelChinaPage />} />
                                         <Route path={trailRoute('/macro-observatory')} element={<MacroObservatory />} />
                                         <Route path={trailRoute('/institutional')} element={<ForInstitutional />} />
+                                        <Route path={trailRoute('/for-researchers')} element={<ForResearchersPage />} />
                                         <Route path={trailRoute('/weekly-narrative')} element={<WeeklyNarrativeArchive />} />
                                         <Route path={trailRoute('/weekly-narrative/:date')} element={<WeeklyNarrativePage />} />
 

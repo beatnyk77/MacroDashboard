@@ -32,6 +32,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { SubscriberTractionCard } from '@/components/admin/SubscriberTractionCard';
+import { TrafficIntelligencePanel } from '@/components/admin/TrafficIntelligencePanel';
 
 // --- STYLING CONSTANTS ---
 const BLOOMBERG_ORANGE = '#f59e0b';
@@ -219,6 +220,8 @@ export const AdminDashboard = () => {
             <Box sx={{ mb: 4 }}>
                 <SubscriberTractionCard />
             </Box>
+
+            <TrafficIntelligencePanel />
 
             <Grid container spacing={3}>
                 {/* Stats Summary */}
