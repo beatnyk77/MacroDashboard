@@ -111,16 +111,16 @@ jobs:
             # 1) Direct edits under supabase/functions/<slug>/
             echo "$CHANGED_FILES" \
               | { grep '^supabase/functions/' || true; } \
-              | grep -v '^supabase/functions/_' \
+              | { grep -v '^supabase/functions/_' || true; } \
               | cut -d/ -f3 \
-              | grep -v '\.json$' \
-              | grep -v '\.ts$' \
+              | { grep -v '\.json$' || true; } \
+              | { grep -v '\.ts$' || true; } \
               | sort -u \
               | while read -r dir; do
                   if [ -n "$dir" ] && [ -f "supabase/functions/$dir/index.ts" ]; then
                     echo "$dir"
                   fi
-                done >> "$FUNC_LIST"
+                done >> "$FUNC_LIST" || true
 
             # 2) Migration-only pushes: deploy slugs referenced by changed SQL
             #    (cron schedules, vault callbacks, etc.)
@@ -144,7 +144,9 @@ jobs:
                 | while read -r slug; do
                     [ -n "$slug" ] && [ -f "supabase/functions/$slug/index.ts" ] && echo "$slug"
                   done \
-                | jq -R . | jq -sc .)
+                | { jq -R . | jq -sc .; })
+              # while-read + jq on empty input yields nothing — normalise to JSON array
+              FUNCS="${FUNCS:-[]}"
             else
               FUNCS='[]'
             fi

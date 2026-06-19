@@ -1,4 +1,5 @@
--- Cron schedules for China debt ingestion and composite computation
+-- Cron schedules for China debt ingestion and composite computation.
+-- CI detect-changes deploys slugs referenced here on migration-only pushes.
 
 SELECT cron.unschedule('ingest-china-debt-quarterly')
 WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ingest-china-debt-quarterly');
