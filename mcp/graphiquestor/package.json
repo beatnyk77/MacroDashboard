@@ -1,0 +1,43 @@
+{
+  "name": "@graphiquestor/macro-intelligence",
+  "version": "1.0.0",
+  "description": "GraphiQuestor MCP server — institutional macro intelligence for AI agents",
+  "type": "module",
+  "bin": {
+    "graphiquestor-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "smithery.yaml",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "tsc --noEmit",
+    "dev:worker": "wrangler dev --config worker/wrangler.toml",
+    "deploy:worker": "wrangler deploy --config worker/wrangler.toml"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2",
+    "wrangler": "^4.103.0"
+  },
+  "keywords": [
+    "mcp",
+    "graphiquestor",
+    "macro",
+    "finance",
+    "institutional"
+  ],
+  "license": "MIT"
+}

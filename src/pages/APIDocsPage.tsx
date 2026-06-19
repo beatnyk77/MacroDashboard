@@ -729,7 +729,30 @@ export const APIDocsPage = () => {
                         </a>
                     </div>
 
-                    {/* 4c: Python */}
+                    {/* 4c: MCP */}
+                    <div className="mb-10 p-5 rounded-lg bg-cyan-500/5 border border-cyan-500/15">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-300 mb-2">AI agent integration (MCP)</h3>
+                        <p className="text-sm text-slate-400 leading-relaxed mb-4">
+                            The <strong className="text-slate-300">@graphiquestor/macro-intelligence</strong> MCP server
+                            mirrors these REST endpoints as typed tools for Cursor, Claude Desktop, and Smithery.
+                            Every response includes institutional commentary and dashboard deep links.
+                        </p>
+                        <CodeBlock lang="bash" code={`# Smithery one-command install (Cursor)
+npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client cursor
+
+# Local build (from repo mcp/graphiquestor/)
+npm install && npm run build
+export SUPABASE_URL="..." SUPABASE_ANON_KEY="..."
+node dist/index.js`} />
+                        <p className="mt-3 text-xs text-slate-500">
+                            Tools: <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#67e8f9' }}>get_regime_current</code>,{' '}
+                            <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#67e8f9' }}>get_composite_scores</code>,{' '}
+                            <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#67e8f9' }}>get_india_summary</code>, and 5 more.{' '}
+                            <Link to="/for-researchers" className="text-cyan-400 hover:underline">Full MCP docs →</Link>
+                        </p>
+                    </div>
+
+                    {/* 4d: Python */}
                     <div className="mb-12">
                         <h3 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-1">Data science / quant integration</h3>
                         <p className="text-slate-500 text-sm mb-4">

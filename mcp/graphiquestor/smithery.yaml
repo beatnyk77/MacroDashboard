@@ -1,0 +1,35 @@
+# Smithery registry metadata for @graphiquestor/macro-intelligence
+# https://smithery.ai/docs/build/publish
+
+name: "@graphiquestor/macro-intelligence"
+version: "1.0.0"
+description: >
+  Institutional macro intelligence terminal for AI agents. Live regime signals,
+  liquidity telemetry, India macro pulse, composite scores, and research narratives
+  from GraphiQuestor.com — with methodology links and dashboard recommendations.
+
+runtime: node
+startCommand:
+  type: stdio
+  command: node
+  args:
+    - dist/index.js
+
+configSchema:
+  type: object
+  properties:
+    supabaseUrl:
+      type: string
+      title: Supabase URL
+      description: GraphiQuestor Supabase project URL (same as VITE_SUPABASE_URL)
+      x-from:
+        query: supabaseUrl
+    supabaseAnonKey:
+      type: string
+      title: Supabase Anon Key
+      description: Read-only anon key for vw_latest_metrics and related views
+      x-from:
+        header: x-supabase-anon-key
+  required:
+    - supabaseUrl
+    - supabaseAnonKey

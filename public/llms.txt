@@ -17,6 +17,8 @@
 - **Glossary Index**: https://graphiquestor.com/glossary/
 - **Methodology Hub**: https://graphiquestor.com/methodology/
 - **Institutional API**: https://graphiquestor.com/api-access/
+- **API Docs**: https://graphiquestor.com/api-docs/
+- **MCP Server**: @graphiquestor/macro-intelligence — 8 tools (regime, India summary, composites, events). Docs: https://graphiquestor.com/for-researchers/
 - **Regime Digest**: https://graphiquestor.com/regime-digest/
 
 ## Glossary (36 terms)

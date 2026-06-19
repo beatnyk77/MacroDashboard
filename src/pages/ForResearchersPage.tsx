@@ -6,7 +6,7 @@ import { CiteThisPage } from '@/components/research/CiteThisPage';
 import { glossaryData } from '@/features/glossary/glossaryData';
 import { METHOD_CITATIONS } from '@/config/methodCitations';
 import { toAbsoluteUrl } from '@/lib/urlPath';
-import { Bot, BookOpen, ExternalLink, FileText, Globe2 } from 'lucide-react';
+import { Bot, BookOpen, ExternalLink, FileText, Globe2, Terminal } from 'lucide-react';
 
 const HUB_CITATION = {
     title: 'GraphiQuestor — For AI Assistants & Researchers',
@@ -19,6 +19,7 @@ const HUB_CITATION = {
         'Glossary: 37+ institutional definitions with formulas and live cross-links.',
         'Methodology articles document every proprietary composite with data provenance.',
         'Machine-readable context: /llms.txt and /llm.txt updated at build time.',
+        'MCP server (@graphiquestor/macro-intelligence): 8 tools for live regime, India summary, composites, and dashboard recommendations.',
     ],
     source: 'FRED, BIS, IMF, MoSPI, RBI, NBS, EIA — see /data-sources',
 };
@@ -74,6 +75,61 @@ export const ForResearchersPage: React.FC = () => {
             <InstitutionalAccessStrip className="mb-10" />
 
             <CiteThisPage input={HUB_CITATION} className="mb-10" />
+
+            <section className="mb-10 rounded-xl border border-cyan-500/15 bg-cyan-500/[0.04] p-6 backdrop-blur-xl">
+                <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">
+                    <Terminal size={16} className="text-cyan-400" />
+                    MCP Server — Model Context Protocol
+                </h2>
+                <p className="mb-4 text-sm leading-relaxed text-white/55">
+                    <strong className="text-white/75">@graphiquestor/macro-intelligence</strong> exposes live macro
+                    telemetry to AI agents (Cursor, Claude Desktop, Smithery). Each tool returns structured data,
+                    institutional commentary, and deep links back to GraphiQuestor dashboards — never fabricated values.
+                </p>
+                <div className="mb-4 grid gap-2 sm:grid-cols-2">
+                    {[
+                        'list_metrics',
+                        'get_observations',
+                        'get_regime_current',
+                        'get_composite_scores',
+                        'get_india_summary',
+                        'get_macro_events',
+                        'discover_graphiquestor',
+                        'get_research_narrative',
+                    ].map((tool) => (
+                        <div
+                            key={tool}
+                            className="rounded-lg border border-white/[0.06] bg-black/20 px-3 py-2 font-mono text-[11px] text-cyan-300/90"
+                        >
+                            {tool}
+                        </div>
+                    ))}
+                </div>
+                <div className="space-y-3 rounded-lg border border-white/10 bg-black/30 p-4 font-mono text-[11px] leading-relaxed text-white/60">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Smithery (one command)</p>
+                    <code className="block whitespace-pre-wrap text-emerald-300/90">
+                        npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client cursor
+                    </code>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Cursor / Claude Desktop</p>
+                    <code className="block whitespace-pre-wrap text-white/50">
+                        {`"mcpServers": {
+  "graphiquestor": {
+    "command": "node",
+    "args": ["…/mcp/graphiquestor/dist/index.js"],
+    "env": { "SUPABASE_URL": "…", "SUPABASE_ANON_KEY": "…" }
+  }
+}`}
+                    </code>
+                </div>
+                <p className="mt-4 text-xs leading-relaxed text-white/40">
+                    Package source: <code className="text-cyan-300/80">mcp/graphiquestor/</code> in the GraphiQuestor repo.
+                    Requires Supabase anon credentials (same as the public terminal). REST API docs:{' '}
+                    <TrailLink to="/api-docs" className="text-cyan-400/80 no-underline hover:text-cyan-300">
+                        /api-docs
+                    </TrailLink>
+                    .
+                </p>
+            </section>
 
             <section className="mb-10 rounded-xl border border-white/[0.08] bg-slate-900/40 p-6 backdrop-blur-xl">
                 <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">

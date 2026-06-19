@@ -1,0 +1,10 @@
+name = "graphiquestor-mcp"
+main = "index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+GQ_BASE_URL = "https://graphiquestor.com"
+
+# Set secrets via: wrangler secret put SUPABASE_URL
+#                  wrangler secret put SUPABASE_ANON_KEY

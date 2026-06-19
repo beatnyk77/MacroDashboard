@@ -44,6 +44,8 @@ function llmsTxt(): string {
 - **Glossary Index**: ${BASE}/glossary/
 - **Methodology Hub**: ${BASE}/methodology/
 - **Institutional API**: ${BASE}/api-access/
+- **API Docs**: ${BASE}/api-docs/
+- **MCP Server**: @graphiquestor/macro-intelligence — 8 tools (regime, India summary, composites, events). Docs: ${BASE}/for-researchers/
 - **Regime Digest**: ${BASE}/regime-digest/
 
 ## Glossary (${glossaryData.length} terms)
@@ -89,6 +91,8 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - ${BASE}/glossary/ — ${glossaryData.length} institutional definitions
 - ${BASE}/methodology/ — Full metric calculation framework
 - ${BASE}/api-access/ — Commercial API ($299/mo)
+- ${BASE}/api-docs/ — REST API reference (metrics, regime, composites)
+- ${BASE}/for-researchers/ — MCP server install (Cursor, Claude, Smithery)
 - ${BASE}/regime-digest/ — Weekly regime synthesis
 
 ## Structured Summary Convention
