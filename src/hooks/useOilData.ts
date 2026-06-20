@@ -13,14 +13,14 @@ export interface OilRefiningCapacity {
 export interface OilImport {
     importer_country_code: string;
     exporter_country_code: string;
-    exporter_country_name?: string;
+    exporter_country_name: string | null;
     import_volume_mbbl: number;
     as_of_date: string;
     frequency: string;
-    import_cost_usd?: number;
-    import_cost_local_currency?: number;
-    exchange_rate?: number;
-    brent_price_usd?: number;
+    import_cost_usd: number | null;
+    import_cost_local_currency: number | null;
+    exchange_rate: number | null;
+    brent_price_usd: number | null;
 }
 
 export interface MetricDefinition {
@@ -147,9 +147,17 @@ export const useOilData = () => {
                     ...d,
                     capacity_mbpd: Number(d.capacity_mbpd)
                 })),
-                importData: (impData || []).map((d: OilImport) => ({
-                    ...d,
+                importData: (impData || []).map((d) => ({
+                    importer_country_code: d.importer_country_code,
+                    exporter_country_code: d.exporter_country_code,
+                    exporter_country_name: d.exporter_country_name,
                     import_volume_mbbl: Number(d.import_volume_mbbl),
+                    as_of_date: d.as_of_date,
+                    frequency: d.frequency,
+                    import_cost_usd: d.import_cost_usd,
+                    import_cost_local_currency: d.import_cost_local_currency,
+                    exchange_rate: d.exchange_rate,
+                    brent_price_usd: d.brent_price_usd,
                 })),
                 importLastUpdated,
                 sprData: (sprObs || []).map((d: any) => ({

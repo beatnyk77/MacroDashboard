@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       africa_macro_snapshots: {
@@ -3779,6 +3804,62 @@ export type Database = {
           },
         ]
       }
+      oil_imports_by_origin: {
+        Row: {
+          as_of_date: string
+          brent_price_usd: number | null
+          exchange_rate: number | null
+          exporter_country_code: string
+          exporter_country_name: string | null
+          frequency: string
+          id: string
+          import_cost_local_currency: number | null
+          import_cost_usd: number | null
+          import_volume_mbbl: number
+          importer_country_code: string
+          last_updated_at: string | null
+          source_id: number | null
+        }
+        Insert: {
+          as_of_date: string
+          brent_price_usd?: number | null
+          exchange_rate?: number | null
+          exporter_country_code: string
+          exporter_country_name?: string | null
+          frequency: string
+          id?: string
+          import_cost_local_currency?: number | null
+          import_cost_usd?: number | null
+          import_volume_mbbl: number
+          importer_country_code: string
+          last_updated_at?: string | null
+          source_id?: number | null
+        }
+        Update: {
+          as_of_date?: string
+          brent_price_usd?: number | null
+          exchange_rate?: number | null
+          exporter_country_code?: string
+          exporter_country_name?: string | null
+          frequency?: string
+          id?: string
+          import_cost_local_currency?: number | null
+          import_cost_usd?: number | null
+          import_volume_mbbl?: number
+          importer_country_code?: string
+          last_updated_at?: string | null
+          source_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "oil_imports_by_origin_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oil_market_spread: {
         Row: {
           change_1d: number | null
@@ -6155,6 +6236,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       fyp_section: ["pillar", "target", "milestone", "correlation"],

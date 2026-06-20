@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 interface OilFlow {
     importer_country_code: string;
     exporter_country_code: string;
-    exporter_country_name?: string;
+    exporter_country_name?: string | null;
     import_volume_mbbl: number;
     as_of_date: string;
 }
