@@ -1,7 +1,7 @@
 # Smithery registry metadata for @graphiquestor/macro-intelligence
 # https://smithery.ai/docs/build/publish
 
-name: "@graphiquestor/macro-intelligence"
+name: "graphiquestor/macro-intelligence"
 version: "1.0.0"
 description: >
   Institutional macro intelligence terminal for AI agents. Live regime signals,

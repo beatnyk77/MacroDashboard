@@ -733,12 +733,15 @@ export const APIDocsPage = () => {
                     <div className="mb-10 p-5 rounded-lg bg-cyan-500/5 border border-cyan-500/15">
                         <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-300 mb-2">AI agent integration (MCP)</h3>
                         <p className="text-sm text-slate-400 leading-relaxed mb-4">
-                            The <strong className="text-slate-300">@graphiquestor/macro-intelligence</strong> MCP server
+                            The <strong className="text-slate-300">graphiquestor/macro-intelligence</strong> MCP server
                             mirrors these REST endpoints as typed tools for Cursor, Claude Desktop, and Smithery.
                             Every response includes institutional commentary and dashboard deep links.
                         </p>
                         <CodeBlock lang="bash" code={`# Smithery one-command install (Cursor)
-npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client cursor
+npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor
+
+# Smithery MCP URL (remote)
+# https://macro-intelligence--graphiquestor.run.tools
 
 # Local build (from repo mcp/graphiquestor/)
 npm install && npm run build

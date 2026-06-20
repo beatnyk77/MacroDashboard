@@ -45,7 +45,7 @@ function llmsTxt(): string {
 - **Methodology Hub**: ${BASE}/methodology/
 - **Institutional API**: ${BASE}/api-access/
 - **API Docs**: ${BASE}/api-docs/
-- **MCP Server**: @graphiquestor/macro-intelligence — 8 tools (regime, India summary, composites, events). Docs: ${BASE}/for-researchers/
+- **MCP Server**: graphiquestor/macro-intelligence (Smithery) — 8 tools. Install: npx @smithery/cli mcp add graphiquestor/macro-intelligence --client cursor. Docs: ${BASE}/for-researchers/
 - **Regime Digest**: ${BASE}/regime-digest/
 
 ## Glossary (${glossaryData.length} terms)

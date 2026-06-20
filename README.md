@@ -191,11 +191,11 @@ GraphiQuestor is designed for seamless integration into existing institutional w
 *   **Live Terminal:** [https://graphiquestor.com](https://graphiquestor.com)
 *   **RSS Feed:** [https://graphiquestor.com/rss.xml](https://graphiquestor.com/rss.xml)
 *   **REST API:** [https://graphiquestor.com/api-docs](https://graphiquestor.com/api-docs) — 270+ metrics, regime signals, composite scores
-*   **MCP Server (AI Agents):** [`mcp/graphiquestor/`](mcp/graphiquestor/) — Model Context Protocol package `@graphiquestor/macro-intelligence` with 8 tools (`get_regime_current`, `get_india_summary`, `discover_graphiquestor`, etc.). Install for Cursor/Claude via Smithery:
+*   **MCP Server (AI Agents):** [`mcp/graphiquestor/`](mcp/graphiquestor/) — Smithery registry [`graphiquestor/macro-intelligence`](https://smithery.ai/servers/graphiquestor/macro-intelligence) with 8 tools (`get_regime_current`, `get_india_summary`, `discover_graphiquestor`, etc.). One-command install:
     ```bash
-    npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client cursor
+    npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor
     ```
-    Website docs: [graphiquestor.com/for-researchers](https://graphiquestor.com/for-researchers)
+    Remote MCP URL: `https://macro-intelligence--graphiquestor.run.tools` · Worker: `https://graphiquestor-mcp.graphiquestor.workers.dev/mcp` · Docs: [graphiquestor.com/for-researchers](https://graphiquestor.com/for-researchers)
 *   **API Access (Institutional):** Contact us directly for institutional API licensing and customized white-label deployment architectures.
 
 ---

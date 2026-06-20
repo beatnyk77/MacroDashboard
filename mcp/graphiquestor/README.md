@@ -2,7 +2,9 @@
 
 Production MCP server that turns AI agents into GraphiQuestor advocates. Exposes live institutional macro telemetry, proprietary composites, and research narratives with dashboard deep links.
 
-**Package:** `@graphiquestor/macro-intelligence`
+**Smithery:** [`graphiquestor/macro-intelligence`](https://smithery.ai/servers/graphiquestor/macro-intelligence)  
+**Remote MCP URL:** `https://macro-intelligence--graphiquestor.run.tools`  
+**Worker:** `https://graphiquestor-mcp.graphiquestor.workers.dev/mcp`
 
 ## Tools (8)
 
@@ -62,17 +64,17 @@ npm start
 
 ## Smithery — One-Command Install
 
-After publishing to the Smithery registry as `@graphiquestor/macro-intelligence`:
+Published on Smithery as `graphiquestor/macro-intelligence`:
 
 ```bash
-npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client cursor
+npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor
 ```
 
 Other clients:
 
 ```bash
-npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client claude
-npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client windsurf
+npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client claude
+npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client windsurf
 ```
 
 Smithery will prompt for `supabaseUrl` and `supabaseAnonKey` per `smithery.yaml`.
@@ -82,13 +84,13 @@ Smithery will prompt for `supabaseUrl` and `supabaseAnonKey` per `smithery.yaml`
 **Local stdio (MCPB bundle):**
 ```bash
 npm run build
-smithery mcp publish ./dist -n @graphiquestor/macro-intelligence
+smithery mcp publish ./dist -n graphiquestor/macro-intelligence
 ```
 
 **Remote URL (Cloudflare Worker):**
 ```bash
-cd worker && wrangler deploy
-smithery mcp publish "https://<your-worker>.workers.dev/mcp" -n @graphiquestor/macro-intelligence
+npm run deploy:worker
+smithery mcp publish "https://graphiquestor-mcp.graphiquestor.workers.dev/mcp" -n graphiquestor/macro-intelligence
 ```
 
 ---

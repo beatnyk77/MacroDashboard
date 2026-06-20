@@ -19,7 +19,7 @@ const HUB_CITATION = {
         'Glossary: 37+ institutional definitions with formulas and live cross-links.',
         'Methodology articles document every proprietary composite with data provenance.',
         'Machine-readable context: /llms.txt and /llm.txt updated at build time.',
-        'MCP server (@graphiquestor/macro-intelligence): 8 tools for live regime, India summary, composites, and dashboard recommendations.',
+        'MCP server (graphiquestor/macro-intelligence on Smithery): 8 tools for live regime, India summary, composites, and dashboard recommendations.',
     ],
     source: 'FRED, BIS, IMF, MoSPI, RBI, NBS, EIA — see /data-sources',
 };
@@ -82,7 +82,7 @@ export const ForResearchersPage: React.FC = () => {
                     MCP Server — Model Context Protocol
                 </h2>
                 <p className="mb-4 text-sm leading-relaxed text-white/55">
-                    <strong className="text-white/75">@graphiquestor/macro-intelligence</strong> exposes live macro
+                    <strong className="text-white/75">graphiquestor/macro-intelligence</strong> exposes live macro
                     telemetry to AI agents (Cursor, Claude Desktop, Smithery). Each tool returns structured data,
                     institutional commentary, and deep links back to GraphiQuestor dashboards — never fabricated values.
                 </p>
@@ -108,7 +108,7 @@ export const ForResearchersPage: React.FC = () => {
                 <div className="space-y-3 rounded-lg border border-white/10 bg-black/30 p-4 font-mono text-[11px] leading-relaxed text-white/60">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Smithery (one command)</p>
                     <code className="block whitespace-pre-wrap text-emerald-300/90">
-                        npx -y @smithery/cli@latest install @graphiquestor/macro-intelligence --client cursor
+                        npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor
                     </code>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Cursor / Claude Desktop</p>
                     <code className="block whitespace-pre-wrap text-white/50">
@@ -122,12 +122,19 @@ export const ForResearchersPage: React.FC = () => {
                     </code>
                 </div>
                 <p className="mt-4 text-xs leading-relaxed text-white/40">
-                    Package source: <code className="text-cyan-300/80">mcp/graphiquestor/</code> in the GraphiQuestor repo.
-                    Requires Supabase anon credentials (same as the public terminal). REST API docs:{' '}
+                    Registry:{' '}
+                    <a
+                        href="https://smithery.ai/servers/graphiquestor/macro-intelligence"
+                        className="text-cyan-400/80 no-underline hover:text-cyan-300"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        smithery.ai/servers/graphiquestor/macro-intelligence
+                    </a>
+                    {' '}· Package: <code className="text-cyan-300/80">mcp/graphiquestor/</code> · REST API:{' '}
                     <TrailLink to="/api-docs" className="text-cyan-400/80 no-underline hover:text-cyan-300">
                         /api-docs
                     </TrailLink>
-                    .
                 </p>
             </section>
 
