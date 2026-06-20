@@ -34,6 +34,7 @@ export interface MetricDefinition {
 export interface OilData {
     capacityData: OilRefiningCapacity[];
     importData: OilImport[];
+    importLastUpdated?: string;
     sprData: { date: string; value: number }[];
     utilizationData: { date: string; value: number }[];
     euGasData: { date: string; value: number }[];
@@ -55,8 +56,17 @@ export const useOilData = () => {
 
             if (capError) console.warn('Refining Capacity fetch error:', capError);
 
-            // 2. oil_imports_by_origin table does not exist in schema; stub as empty
-            const impData: OilImport[] = [];
+            // 2. Fetch Oil Import Flows
+            const { data: impData, error: impError } = await supabase
+                .from('oil_imports_by_origin')
+                .select('*')
+                .order('as_of_date', { ascending: false });
+
+            if (impError) console.warn('Oil Import Flows fetch error:', impError);
+
+            const importLastUpdated = impData && impData.length > 0
+                ? String(impData[0].as_of_date)
+                : undefined;
 
             // 3. Fetch SPR Levels (Metric: OIL_SPR_LEVEL_US)
             const { data: sprObs, error: sprError } = await supabase
@@ -115,11 +125,11 @@ export const useOilData = () => {
 
             if (gasError) console.warn('EU Gas fetch error:', gasError);
 
-            // 6.5. Fetch Brent Price (Metric: OIL_BRENT_PRICE_USD)
+            // 6.5. Fetch Brent Price (Metric: BRENT_CRUDE_PRICE)
             const { data: brentObs, error: brentError } = await supabase
                 .from('metric_observations')
                 .select('as_of_date, value')
-                .eq('metric_id', MID.OIL_BRENT_PRICE_USD)
+                .eq('metric_id', MID.BRENT_CRUDE_PRICE)
                 .order('as_of_date', { ascending: true });
 
             if (brentError) console.warn('Brent Price fetch error:', brentError);
@@ -137,7 +147,11 @@ export const useOilData = () => {
                     ...d,
                     capacity_mbpd: Number(d.capacity_mbpd)
                 })),
-                importData: impData,
+                importData: (impData || []).map((d: OilImport) => ({
+                    ...d,
+                    import_volume_mbbl: Number(d.import_volume_mbbl),
+                })),
+                importLastUpdated,
                 sprData: (sprObs || []).map((d: any) => ({
                     date: String(d.as_of_date),
                     value: Number(d.value)

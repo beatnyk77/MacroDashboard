@@ -64,9 +64,9 @@ const CustomTooltip = ({ active, payload }: any) => {
 export const GoldOilRevaluationScenario: React.FC = () => {
     const { data: currentPrices } = useGoldOilPrices();
 
-    // Default fallbacks: $2400 Gold, $80 Oil (ratio: 30)
-    const initialGold = currentPrices?.goldPrice ?? 2400;
+    const historicalAnchor = HISTORICAL_DATA[HISTORICAL_DATA.length - 1];
     const initialOil = currentPrices?.oilPrice ?? 80;
+    const initialGold = currentPrices?.goldPrice ?? (initialOil * (historicalAnchor?.ratio ?? 30));
 
     // Interactive slider custom states
     const [customGoldPrice, setCustomGoldPrice] = useState<number | null>(null);

@@ -1,17 +1,25 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useIndiaEnergy, StateEnergyStats } from '@/hooks/useIndiaEnergy';
-import { Activity, Zap, Flame, Lightbulb, ChevronRight } from 'lucide-react';
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { getStaleness } from '@/hooks/useStaleness';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { Activity, Zap, Flame, Lightbulb, ChevronRight, Fuel, ArrowRight } from 'lucide-react';
 import { scaleQuantile } from 'd3-scale';
 import { StateMacroInsights } from '../StateMacroInsights';
 import { OilSpreadChart } from '../energy/OilSpreadChart';
 import { OilStressSignal } from '../energy/OilStressSignal';
+import { FreshnessChip } from '@/components/FreshnessChip';
 import React, { Suspense } from 'react';
 
 const IndiaLeafletMap = React.lazy(() => import('../maps/IndiaLeafletMap').then(m => ({ default: m.IndiaLeafletMap })));
 
 export const EnergySection: React.FC = () => {
     const { data, isLoading, error } = useIndiaEnergy();
+    const { data: brentMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
+    const brentFreshness = getStaleness(brentMetric?.lastUpdated, brentMetric?.frequency);
+
     const [selectedMetric, setSelectedMetric] = useState<keyof StateEnergyStats>('coal_production');
     const [selectedState, setSelectedState] = useState<StateEnergyStats | null>(null);
     const [isInfrared, setIsInfrared] = useState(false);
@@ -42,7 +50,6 @@ export const EnergySection: React.FC = () => {
     }, [data, selectedMetric, isInfrared]);
 
     const getInfraredValue = (s: StateEnergyStats) => {
-        // Higher value = higher transition risk (more coal relative to RE)
         return (100 - s.renewable_share);
     };
 
@@ -51,7 +58,6 @@ export const EnergySection: React.FC = () => {
     const sortedData = hasIndiaData ? [...data].sort((a, b) => Number(b[selectedMetric]) - Number(a[selectedMetric])) : [];
     const topStates = sortedData.slice(0, 5);
 
-    // Calculate aggregates
     const totalCoal = hasIndiaData ? data.reduce((sum, s) => sum + s.coal_production, 0) : 0;
     const avgRenewableShare = hasIndiaData ? data.reduce((sum, s) => sum + s.renewable_share, 0) / data.length : 0;
     const totalElectricity = hasIndiaData ? data.reduce((sum, s) => sum + (s.electricity_consumption || 0), 0) : 0;
@@ -60,14 +66,14 @@ export const EnergySection: React.FC = () => {
     const metricTabs = [
         { id: 'coal_production', label: 'Coal production', icon: Flame, unit: 'KToE' },
         { id: 'renewable_share', label: 'Renewables %', icon: Zap, unit: '%' },
-        { id: 'electricity_consumption', label: 'Grid Demand', icon: Lightbulb, unit: 'KToE' }
+        { id: 'electricity_consumption', label: 'Grid Demand', icon: Lightbulb, unit: 'KToE' },
     ];
 
     const currentTab = metricTabs.find(t => t.id === selectedMetric)!;
 
     return (
         <div className="space-y-10">
-            {/* Global Energy Macro Signal */}
+            {/* Global Energy Market Pulse */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 <div className="md:col-span-4">
                     <OilStressSignal />
@@ -77,9 +83,41 @@ export const EnergySection: React.FC = () => {
                 </div>
             </div>
 
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl bg-amber-500/[0.03] border border-amber-500/10">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                        <Fuel className="w-5 h-5 text-amber-500" />
+                    </div>
+                    <div>
+                        <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest block">Brent Crude</span>
+                        <div className="flex items-center gap-3 mt-1">
+                            {brentMetric?.value != null ? (
+                                <span className="text-2xl font-black text-white font-mono tracking-heading">
+                                    ${Number(brentMetric.value).toFixed(2)}
+                                </span>
+                            ) : (
+                                <span className="text-sm font-black text-muted-foreground/30 uppercase">Unavailable</span>
+                            )}
+                            <FreshnessChip status={brentFreshness.state} lastUpdated={brentMetric?.lastUpdated} />
+                        </div>
+                    </div>
+                </div>
+                <Link
+                    to="/labs/energy-commodities"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest text-white/70 hover:text-white hover:border-amber-500/30 transition-colors"
+                >
+                    Open Energy Lab
+                    <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+            </div>
+
             {hasIndiaData && (
                 <>
-                    {/* National Aggregates Header */}
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                        <h3 className="text-sm font-black text-white/50 uppercase tracking-widest">India State Energy Matrix</h3>
+                        <span className="text-[10px] font-bold text-muted-foreground/30 uppercase">Weekly · MoSPI</span>
+                    </div>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent pointer-events-none" />
 
@@ -119,22 +157,21 @@ export const EnergySection: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                        {/* Geospatial Terminal */}
                         <div className="lg:col-span-8 space-y-6">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                                 <div className="space-y-1">
                                     <h3 className="text-lg font-black text-white italic tracking-heading uppercase">Sub-National Energy Matrix</h3>
-                                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase">Interactive choropleth • High-fidelity telemetry</p>
+                                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase">Interactive choropleth · High-fidelity telemetry</p>
                                 </div>
 
                                 <div className="flex p-1 rounded-xl bg-white/5 border border-white/5 gap-1">
                                     <button
                                         onClick={() => setIsInfrared(!isInfrared)}
                                         className={cn(
-                                            "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all",
+                                            'flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all',
                                             isInfrared
-                                                ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20 animate-pulse"
-                                                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                                ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20 animate-pulse'
+                                                : 'text-muted-foreground hover:text-white hover:bg-white/5',
                                         )}
                                     >
                                         <Zap className="w-3.5 h-3.5" />
@@ -149,10 +186,10 @@ export const EnergySection: React.FC = () => {
                                                 setIsInfrared(false);
                                             }}
                                             className={cn(
-                                                "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all",
+                                                'flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all',
                                                 !isInfrared && selectedMetric === tab.id
-                                                    ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
-                                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                                                    : 'text-muted-foreground hover:text-white hover:bg-white/5',
                                             )}
                                         >
                                             <tab.icon className="w-3.5 h-3.5" />
@@ -168,7 +205,7 @@ export const EnergySection: React.FC = () => {
                                         <Activity className="w-6 h-6 text-blue-500 animate-spin" />
                                         <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Initializing Geospatial Environment...</span>
                                     </div>
-                                } >
+                                }>
                                     <IndiaLeafletMap
                                         data={data}
                                         metric={isInfrared ? 'transition_intensity' : selectedMetric}
@@ -200,7 +237,6 @@ export const EnergySection: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Vertical Rankings & Context */}
                         <div className="lg:col-span-4 space-y-10">
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center">
@@ -213,10 +249,10 @@ export const EnergySection: React.FC = () => {
                                             key={state.state_code}
                                             onClick={() => setSelectedState(state)}
                                             className={cn(
-                                                "w-full flex justify-between items-center p-4 rounded-2xl border transition-all group text-left",
+                                                'w-full flex justify-between items-center p-4 rounded-2xl border transition-all group text-left',
                                                 selectedState?.state_code === state.state_code
-                                                    ? "bg-blue-500/10 border-blue-500/20 shadow-lg shadow-blue-500/5"
-                                                    : "bg-white/[0.02] border-white/5 hover:border-white/12"
+                                                    ? 'bg-blue-500/10 border-blue-500/20 shadow-lg shadow-blue-500/5'
+                                                    : 'bg-white/[0.02] border-white/5 hover:border-white/12',
                                             )}
                                         >
                                             <div className="flex items-center gap-4">
@@ -228,8 +264,8 @@ export const EnergySection: React.FC = () => {
                                                     {Number(state[selectedMetric]).toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                 </span>
                                                 <ChevronRight className={cn(
-                                                    "w-3 h-3 transition-colors",
-                                                    selectedState?.state_code === state.state_code ? "text-blue-500" : "text-white/10 group-hover:text-blue-500"
+                                                    'w-3 h-3 transition-colors',
+                                                    selectedState?.state_code === state.state_code ? 'text-blue-500' : 'text-white/10 group-hover:text-blue-500',
                                                 )} />
                                             </div>
                                         </button>

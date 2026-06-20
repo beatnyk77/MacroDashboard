@@ -157,12 +157,15 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 </div>
 
                 <div className="space-y-32">
-                    {/* 2. Live Commodity Prices — promoted from accordion */}
+                    {/* 2. Commodity Price Terminal */}
                     <section id="commodity-prices">
-                        <div className="flex items-center gap-3 mb-10">
+                        <div className="flex items-center gap-3 mb-4">
                             <BarChart2 className="text-amber-500" size={28} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Live Commodity Prices</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Commodity Price Terminal</h2>
                         </div>
+                        <p className="text-xs text-muted-foreground/50 uppercase tracking-wide mb-10 max-w-2xl">
+                            WTI, Brent, Copper, Nickel — FRED daily cadence via ingest-fred
+                        </p>
                         <SectionErrorBoundary name="Commodity Prices">
                             <LazyRender minHeight="192px" fallback={<SmallLoadingFallback />}>
                                 <Suspense fallback={<SmallLoadingFallback />}>
@@ -170,6 +173,12 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                 </Suspense>
                             </LazyRender>
                         </SectionErrorBoundary>
+                        <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
+                            <span className="text-xs font-black uppercase tracking-widest text-amber-400 block mb-4">So What? — Market Pulse</span>
+                            <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
+                                Start here: WTI calendar spread regime frames physical stress; Brent and cross-asset commodity Z-scores anchor whether energy inflation is transmitting into industrial metals. When spread is STRESSED and Brent Z-score is elevated, front-load chokepoint and refining utilization reads before regional flow analysis.
+                            </p>
+                        </div>
                     </section>
 
                     {/* 3. Sovereign Energy Security */}
@@ -186,12 +195,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                     </Suspense>
                                 </LazyRender>
                             </SectionErrorBoundary>
-                        </div>
-                        <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
-                            <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
-                            <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                National security is inextricably linked to refining elasticity. The depletion of the SPR combined with aging infrastructure leaves Western economies highly vulnerable to supply shocks. EU gas storage levels dictate winter industrial shutdown probabilities, actively altering core inflation forecasts.
-                            </p>
                         </div>
                     </section>
 
@@ -210,12 +213,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                 </LazyRender>
                             </SectionErrorBoundary>
                         </div>
-                        <div className="mt-8 p-8 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-[2rem] max-w-4xl">
-                            <span className="text-xs font-black uppercase tracking-widest text-emerald-400 block mb-4">So What? — Institutional Insight</span>
-                            <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                The shadow fleet and redirection of sanctioned crude have created a structural cost advantage for Indian refiners and Chinese industrials. By tracking import pain points (FX vs. Brent correlation), we can identify early capitulation risks in emerging markets dependent on dollar-priced energy.
-                            </p>
-                        </div>
                     </section>
 
                     {/* 5. Global Refining Imbalance */}
@@ -232,12 +229,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                     </Suspense>
                                 </LazyRender>
                             </SectionErrorBoundary>
-                        </div>
-                        <div className="mt-8 p-8 bg-blue-500/5 border-l-4 border-blue-500 rounded-r-[2rem] max-w-4xl">
-                            <span className="text-xs font-black uppercase tracking-widest text-blue-400 block mb-4">So What? — Institutional Insight</span>
-                            <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                Refining capacity is the ultimate bottleneck in the energy transition. The migration of complex refining clusters from West to East represents a fundamental shift in geopolitical leverage, as refined product arbitrage now dictates regional inflation trajectories more than crude price itself.
-                            </p>
                         </div>
                     </section>
 
@@ -256,12 +247,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                 </LazyRender>
                             </SectionErrorBoundary>
                         </div>
-                        <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
-                            <span className="text-xs font-black uppercase tracking-widest text-amber-400 block mb-4">So What? — Institutional Insight</span>
-                            <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                India's ~85% maritime import dependency makes Hormuz closure the single highest-impact tail risk for sovereign fiscal stability — no overland substitution exists at scale. Track the INR/barrel cost metric against the INR 7,000+ threshold: sustained breach signals elevated current account deterioration and imported inflation pass-through into CPI. A geopolitical risk score above 70 combined with reserves coverage below 15 days constitutes the dual-trigger for immediate fiscal stress, requiring intervention in either foreign exchange reserves or domestic price controls. Monitor both simultaneously — each metric alone is insufficient for actionable positioning.
-                            </p>
-                        </div>
                     </section>
 
                     {/* 7. Physical Flows Terminal */}
@@ -278,12 +263,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                     </Suspense>
                                 </LazyRender>
                             </SectionErrorBoundary>
-                        </div>
-                        <div className="mt-8 p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-[2rem] max-w-4xl">
-                            <span className="text-xs font-black uppercase tracking-widest text-amber-500 block mb-4">So What? — Institutional Insight</span>
-                            <p className="text-sm text-white/80 leading-relaxed font-medium uppercase tracking-wide">
-                                Copper inventory at LME/SHFE below 5-day consumption is the canonical leading indicator of Chinese industrial re-stocking cycles, signaling demand inflection 4–6 weeks ahead of futures price confirmation. REM supply concentration — China controls ~85% of global processing capacity — means any export restriction creates immediate aerospace and defense procurement risk with no short-run substitution available. For structural demand reads, the physical premium versus spot (the basis) is materially more informative than headline futures prices, as it reflects actual delivery urgency rather than financial positioning. Watch warehouse cancellations and load-out rates alongside inventory levels for the highest-conviction entry signals.
-                            </p>
                         </div>
                     </section>
                 </div>

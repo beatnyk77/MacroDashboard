@@ -15,8 +15,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
     const { data: apiData } = useOilData();
     const queryClient = useQueryClient();
 
-    // oil_imports_by_origin table not yet in schema; freshness derived from apiData instead
-    const importFreshness: string | null = null;
+    const importFreshness = apiData?.importLastUpdated ?? null;
     const importStaleness = useStaleness(importFreshness ?? undefined, 'weekly');
 
     const hasNoData = !apiData?.importData?.length;

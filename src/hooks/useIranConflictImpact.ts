@@ -31,7 +31,7 @@ export function useIranConflictImpact() {
             const { data: brentData } = await supabase
                 .from('metric_observations')
                 .select('value')
-                .eq('metric_id', MID.OIL_BRENT_PRICE_USD)
+                .eq('metric_id', MID.BRENT_CRUDE_PRICE)
                 .order('as_of_date', { ascending: false })
                 .limit(1);
 
@@ -117,8 +117,10 @@ export function useIranConflictImpact() {
             });
 
             return {
-                brentPrice: Number(brentData?.[0]?.value || 82.5),
-                fxReserves: Number(fxData?.[fxData.length - 1]?.value || 680),
+                brentPrice: brentData?.[0]?.value != null ? Number(brentData[0].value) : 0,
+                fxReserves: fxData?.[fxData.length - 1]?.value != null
+                    ? Number(fxData[fxData.length - 1].value)
+                    : 0,
                 remittanceFlows: remittanceTrend,
                 resilienceMetrics,
                 stateRisks

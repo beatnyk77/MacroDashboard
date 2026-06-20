@@ -28,6 +28,12 @@ export function useDataIntegrity() {
                 'GOLD_PRICE',
                 'COPPER_PRICE',
                 'OIL_PRICE',
+                'OIL_BRENT_',
+                'BRENT_CRUDE_',
+                'WTI_CRUDE_',
+                'EU_GAS_',
+                'OIL_REFINERY_',
+                'OIL_SPR_',
                 'USD_',
                 'CNY_',
             ];

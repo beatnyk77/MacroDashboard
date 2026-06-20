@@ -246,6 +246,56 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000
     });
 
+    // 20. Oil Spread (WTI calendar)
+    const { data: oilSpreadStatus } = useQuery({
+        queryKey: ['oil-spread-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('oil_market_spread').select('computed_at').order('computed_at', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 21. Oil Import Flows
+    const { data: oilImportsStatus } = useQuery({
+        queryKey: ['oil-imports-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('oil_imports_by_origin').select('as_of_date').order('as_of_date', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 22. Fuel Security India
+    const { data: fuelSecurityStatus } = useQuery({
+        queryKey: ['fuel-security-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('fuel_security_clock_india').select('last_updated_at').order('last_updated_at', { ascending: false }).limit(1).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
+    // 23. EU Gas / Power Mix
+    const { data: energyGlobalStatus } = useQuery({
+        queryKey: ['energy-global-status'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('metric_observations')
+                .select('as_of_date')
+                .eq('metric_id', 'EU_GAS_STORAGE_PCT')
+                .order('as_of_date', { ascending: false })
+                .limit(1)
+                .single();
+            if (error && error.code !== 'PGRST116') throw error;
+            return data;
+        },
+        refetchInterval: 300000
+    });
+
 
 
     // 10. Data Authenticity Score
@@ -550,6 +600,71 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="warning" onClick={() => handleForceRefresh('ingest-commodity-terminal')} disabled={refreshing === 'ingest-commodity-terminal'}>
                                 {refreshing === 'ingest-commodity-terminal' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>WTI Spread</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {oilSpreadStatus?.computed_at ? new Date(oilSpreadStatus.computed_at).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-oil-spread')} disabled={refreshing === 'ingest-oil-spread'}>
+                                {refreshing === 'ingest-oil-spread' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Oil Import Flows</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {oilImportsStatus ? new Date(oilImportsStatus.as_of_date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-oil-india-china')} disabled={refreshing === 'ingest-oil-india-china'}>
+                                {refreshing === 'ingest-oil-india-china' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Fuel Security IN</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {fuelSecurityStatus?.last_updated_at ? new Date(fuelSecurityStatus.last_updated_at).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-fuel-security-india')} disabled={refreshing === 'ingest-fuel-security-india'}>
+                                {refreshing === 'ingest-fuel-security-india' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>EU Gas / Power</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    {energyGlobalStatus ? new Date(energyGlobalStatus.as_of_date).toLocaleDateString() : 'Pending'}
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-energy-global')} disabled={refreshing === 'ingest-energy-global'}>
+                                {refreshing === 'ingest-energy-global' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                    <Grid item>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box>
+                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Oil EIA Weekly</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                    Refinery Util
+                                </Typography>
+                            </Box>
+                            <IconButton color="warning" onClick={() => handleForceRefresh('ingest-oil-eia')} disabled={refreshing === 'ingest-oil-eia'}>
+                                {refreshing === 'ingest-oil-eia' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>

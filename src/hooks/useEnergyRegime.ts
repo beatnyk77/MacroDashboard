@@ -36,7 +36,7 @@ export function buildNarrative(regime: string, refineryUtil: number): string {
 }
 
 const REGIME_METRICS = [
-    MID.OIL_BRENT_PRICE_USD,
+    MID.BRENT_CRUDE_PRICE,
     MID.OIL_REFINERY_UTILIZATION_US,
     MID.EU_GAS_STORAGE_PCT,
 ] as const;
@@ -65,7 +65,7 @@ export const useEnergyRegime = (): EnergyRegime => {
     const byMetric = (id: string) =>
         (metrics ?? []).filter(m => m.metric_id === id);
 
-    const brentRows = byMetric(MID.OIL_BRENT_PRICE_USD);
+    const brentRows = byMetric(MID.BRENT_CRUDE_PRICE);
     const utilRows = byMetric(MID.OIL_REFINERY_UTILIZATION_US);
     const gasRows = byMetric(MID.EU_GAS_STORAGE_PCT);
 

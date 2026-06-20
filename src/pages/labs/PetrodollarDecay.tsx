@@ -20,7 +20,7 @@ const LoadingFallback = () => (
 );
 
 export const PetrodollarDecay: React.FC = () => {
-    const { data: primaryMetric } = useLatestMetric(MID.OIL_BRENT_PRICE_USD);
+    const { data: primaryMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
     return (
         <>

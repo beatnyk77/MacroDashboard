@@ -1,11 +1,8 @@
 import React, { Suspense, lazy } from 'react';
-import { Fuel } from 'lucide-react';
-import { SPAAccordion } from '@/components/spa';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { useCommodityImports } from '@/hooks/useCommodityImports';
 
-const PriceTerminalCard = lazy(() => import('./components/PriceTerminalCard').then(m => ({ default: m.PriceTerminalCard })));
 const PhysicalFlowNetwork = lazy(() => import('./components/PhysicalFlowNetwork').then(m => ({ default: m.PhysicalFlowNetwork })));
-
 const MetalImportCard = lazy(() => import('./components/MetalImportCard').then(m => ({ default: m.MetalImportCard })));
 
 const LoadingFallback = () => (
@@ -14,81 +11,54 @@ const LoadingFallback = () => (
     </div>
 );
 
-import { useCommodityImports } from '@/hooks/useCommodityImports';
-
 export const CommodityTerminalRow: React.FC = () => {
     const { data: importData } = useCommodityImports();
 
     return (
-        <SPAAccordion
-            id="commodity-terminal"
-            title="Commodity Terminal"
-            subtitle="Institutional macro observatory for physical flows, reserves, and disruptions"
-            icon={<Fuel />}
-            accentColor="emerald"
-            interpretations={[
-                "Gold Imports: India/China Parity Rising",
-                "REM Dependency: India Critical (98%)",
-                "Silver Flows: Industrial Demand Spike",
-                "Copper/Gold Ratio: Bottoming"
-            ]}
-        >
-            <div className="flex flex-col gap-12">
-                <SectionErrorBoundary name="Price Terminal & Forward Signals">
-                    <div className="w-full">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <PriceTerminalCard />
-                        </Suspense>
-                    </div>
-                </SectionErrorBoundary>
+        <div className="flex flex-col gap-12">
+            <SectionErrorBoundary name="Physical Flow Network">
+                <div className="w-full">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <PhysicalFlowNetwork />
+                    </Suspense>
+                </div>
+            </SectionErrorBoundary>
 
-                <SectionErrorBoundary name="Physical Flow Network">
-                    <div className="w-full">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <PhysicalFlowNetwork />
-                        </Suspense>
-                    </div>
-                </SectionErrorBoundary>
+            <SectionErrorBoundary name="Gold Import Terminal">
+                <div className="w-full">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <MetalImportCard
+                            metal="Gold"
+                            data={importData || []}
+                            accentColor="gold"
+                        />
+                    </Suspense>
+                </div>
+            </SectionErrorBoundary>
 
-                {/* NEW ROWS: Gold, Silver, REM Imports */}
-                <SectionErrorBoundary name="Gold Import Terminal">
-                    <div className="w-full">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <MetalImportCard
-                                metal="Gold"
-                                data={importData || []}
-                                accentColor="gold"
-                            />
-                        </Suspense>
-                    </div>
-                </SectionErrorBoundary>
+            <SectionErrorBoundary name="Silver Import Terminal">
+                <div className="w-full">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <MetalImportCard
+                            metal="Silver"
+                            data={importData || []}
+                            accentColor="slate"
+                        />
+                    </Suspense>
+                </div>
+            </SectionErrorBoundary>
 
-                <SectionErrorBoundary name="Silver Import Terminal">
-                    <div className="w-full">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <MetalImportCard
-                                metal="Silver"
-                                data={importData || []}
-                                accentColor="slate"
-                            />
-                        </Suspense>
-                    </div>
-                </SectionErrorBoundary>
-
-                <SectionErrorBoundary name="REM Import Terminal">
-                    <div className="w-full">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <MetalImportCard
-                                metal="Rare Earth Metals"
-                                data={importData || []}
-                                accentColor="emerald"
-                            />
-                        </Suspense>
-                    </div>
-                </SectionErrorBoundary>
-
-
-            </div>
-        </SPAAccordion>
+            <SectionErrorBoundary name="REM Import Terminal">
+                <div className="w-full">
+                    <Suspense fallback={<LoadingFallback />}>
+                        <MetalImportCard
+                            metal="Rare Earth Metals"
+                            data={importData || []}
+                            accentColor="emerald"
+                        />
+                    </Suspense>
+                </div>
+            </SectionErrorBoundary>
+        </div>
     );
 };

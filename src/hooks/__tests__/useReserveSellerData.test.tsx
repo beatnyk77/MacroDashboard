@@ -48,7 +48,7 @@ describe('useReserveSellerData', () => {
       { country_code: 'JP', as_of_date: '2024-01-01', fx_reserves_usd: 1300e9 },
     ];
     const mockOil = [
-      { as_of_date: '2024-01-01', price: 80 },
+      { as_of_date: '2024-01-01', value: 80 },
     ];
 
     (supabase.from as any).mockImplementation((table: string) => ({
@@ -58,7 +58,7 @@ describe('useReserveSellerData', () => {
       order: vi.fn().mockImplementation(() => {
         if (table === 'tic_foreign_holders') return Promise.resolve({ data: mockTic, error: null });
         if (table === 'country_reserves') return Promise.resolve({ data: mockFx, error: null });
-        if (table === 'commodity_prices') return Promise.resolve({ data: mockOil, error: null });
+        if (table === 'metric_observations') return Promise.resolve({ data: mockOil, error: null });
         return Promise.resolve({ data: [], error: null });
       }),
     }));

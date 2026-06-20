@@ -3,10 +3,8 @@ import { supabase } from '@/lib/supabase';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface GoldOilPrices {
-    goldPrice: number;
-    oilPrice: number;
-    isLoading: boolean;
-    isError: boolean;
+    goldPrice: number | null;
+    oilPrice: number | null;
 }
 
 export function useGoldOilPrices() {
@@ -16,7 +14,7 @@ export function useGoldOilPrices() {
             const { data, error } = await supabase
                 .from('metric_observations')
                 .select('metric_id, value, as_of_date')
-                .in('metric_id', [MID.GOLD_PRICE_USD, MID.OIL_BRENT_PRICE_USD])
+                .in('metric_id', [MID.GOLD_PRICE_USD, MID.BRENT_CRUDE_PRICE])
                 .order('as_of_date', { ascending: false });
 
             if (error) {
@@ -26,11 +24,11 @@ export function useGoldOilPrices() {
 
             // Find the most recent observation for each metric
             const goldObs = data?.find(d => d.metric_id === MID.GOLD_PRICE_USD);
-            const oilObs = data?.find(d => d.metric_id === MID.OIL_BRENT_PRICE_USD);
+            const oilObs = data?.find(d => d.metric_id === MID.BRENT_CRUDE_PRICE);
 
             return {
-                goldPrice: goldObs?.value ? Number(goldObs.value) : 2400,
-                oilPrice: oilObs?.value ? Number(oilObs.value) : 80,
+                goldPrice: goldObs?.value != null ? Number(goldObs.value) : null,
+                oilPrice: oilObs?.value != null ? Number(oilObs.value) : null,
             };
         },
         staleTime: 1000 * 60 * 30, // Cache for 30 minutes

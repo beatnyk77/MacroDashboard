@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface ReserveSellerCountry {
     country_name: string;
@@ -64,9 +65,9 @@ export function useReserveSellerData() {
 
             // 3. Fetch Brent oil price history
             const { data: oilHistory, error: oilError } = await supabase
-                .from('commodity_prices')
-                .select('as_of_date, price')
-                .eq('symbol', 'Brent')
+                .from('metric_observations')
+                .select('as_of_date, value')
+                .eq('metric_id', MID.BRENT_CRUDE_PRICE)
                 .order('as_of_date', { ascending: true });
 
             if (oilError) throw oilError;
@@ -108,8 +109,8 @@ export function useReserveSellerData() {
             });
 
             const processedOil = (oilHistory ?? []).map(o => ({
-                date:  o.as_of_date,
-                value: Number(o.price),
+                date:  String(o.as_of_date),
+                value: Number(o.value),
             }));
 
             return {
