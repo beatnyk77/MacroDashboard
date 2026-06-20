@@ -52,6 +52,9 @@ export async function listMetrics(config: ServerConfig, params: ListMetricsParam
 }
 
 function methodologyForMetric(metricId: string): string | undefined {
+  if (metricId.startsWith('CN_') && (metricId.includes('DEBT') || metricId.includes('ICEBERG') || metricId.includes('LGFV') || metricId.includes('MONETIZATION') || metricId.includes('LAND_FISCAL'))) {
+    return '/methods/china-debt-iceberg';
+  }
   if (metricId.startsWith('IN_')) return '/methods/india-credit-cycle-clock';
   if (metricId.includes('LIQUIDITY') || metricId.startsWith('RRP_') || metricId.startsWith('TGA_')) {
     return '/methods/global-net-liquidity';

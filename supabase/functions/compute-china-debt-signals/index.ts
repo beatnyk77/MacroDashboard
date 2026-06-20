@@ -43,6 +43,17 @@ async function layerHistory(supabase: any, layerCode: string, limit = 5) {
     return data ?? [];
 }
 
+async function latestFiscalSignal(supabase: any, signalKey: string) {
+    const { data } = await supabase
+        .from('china_fiscal_signals')
+        .select('value, as_of_date')
+        .eq('signal_key', signalKey)
+        .order('as_of_date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+    return data;
+}
+
 serveIngest('compute-china-debt-signals', async (_req: Request): Promise<IngestResult> => {
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -61,6 +72,8 @@ serveIngest('compute-china-debt-signals', async (_req: Request): Promise<IngestR
     const gdpGrowth = await latestMetric(supabase, 'CN_GDP_GROWTH_YOY');
     const fiscalBalance = await latestMetric(supabase, 'CN_FISCAL_BALANCE_GDP_PCT');
     const creditGdp = await latestMetric(supabase, 'CN_CREDIT_GDP_PCT');
+    const yield10y = await latestMetric(supabase, 'CN_CGB_YIELD_10Y');
+    const landDependence = await latestFiscalSignal(supabase, 'land_revenue_pct_lg');
 
     const composites: Array<{
         composite_id: string;
@@ -134,6 +147,31 @@ serveIngest('compute-china-debt-signals', async (_req: Request): Promise<IngestR
             value: Math.round(proximity * 10) / 10,
             components: { lgfv_high: lgfvHigh, credit_gdp: creditGdp, refinancing_proxy: refinancingCapacity },
             formula: 'LGFV_high / (0.3 × credit/GDP) × 50',
+            updated_at: now,
+        });
+    }
+
+    // ── Land Fiscal Dependence (% of LG revenue) ────────────────────────────────
+    if (landDependence?.value != null) {
+        composites.push({
+            composite_id: 'CN_LAND_FISCAL_DEPENDENCE',
+            as_of_date: landDependence.as_of_date?.slice(0, 10) ?? today,
+            value: landDependence.value,
+            components: { land_revenue_pct_lg: landDependence.value },
+            formula: 'Land sale revenue / total local government revenue',
+            updated_at: now,
+        });
+    }
+
+    // ── r-g Differential (10Y yield − GDP growth) ───────────────────────────────
+    if (yield10y !== null && gdpGrowth !== null) {
+        const rgDiff = Math.round((yield10y - gdpGrowth) * 100) / 100;
+        composites.push({
+            composite_id: 'CN_RG_DIFFERENTIAL',
+            as_of_date: today,
+            value: rgDiff,
+            components: { yield_10y: yield10y, gdp_growth: gdpGrowth },
+            formula: 'CGB 10Y yield − nominal GDP growth',
             updated_at: now,
         });
     }

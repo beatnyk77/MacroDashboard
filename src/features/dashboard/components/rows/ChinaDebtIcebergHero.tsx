@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { m } from 'framer-motion';
-import { Layers, TrendingUp, Info } from 'lucide-react';
+import { Layers, TrendingUp, Info, BookOpen } from 'lucide-react';
 import {
     ResponsiveContainer,
     AreaChart,
@@ -276,11 +277,20 @@ export const ChinaDebtIcebergHero: React.FC = () => {
                         </ResponsiveContainer>
                     </div>
 
-                    <DataProvenanceBadge
-                        source="IMF WEO + Article IV"
-                        methodology="GGXWDG_NGDP live; shadow layers from Article IV staff estimates"
-                        size="sm"
-                    />
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                        <DataProvenanceBadge
+                            source="IMF WEO + Article IV"
+                            methodology="GGXWDG_NGDP live; shadow layers from Article IV staff estimates"
+                            size="sm"
+                        />
+                        <Link
+                            to="/methods/china-debt-iceberg"
+                            className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-400/60 hover:text-amber-300"
+                        >
+                            <BookOpen size={11} />
+                            Full Methodology
+                        </Link>
+                    </div>
                 </div>
             </div>
         </m.div>

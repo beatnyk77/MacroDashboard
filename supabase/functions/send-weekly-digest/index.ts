@@ -15,11 +15,17 @@ const corsHeaders = {
  * re-run; it will no-op once an edition has gone out.
  */
 
+interface ChinaDebtSection {
+    headline?: string;
+    summary?: string;
+}
+
 interface WeeklyDigest {
     week_ending_date: string;
     executive_summary: string;
     holistic_narrative: string;
     what_to_watch: string[];
+    china_debt_section?: ChinaDebtSection;
 }
 
 function buildHtml(digest: WeeklyDigest): string {
@@ -32,6 +38,7 @@ function buildHtml(digest: WeeklyDigest): string {
             <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 16px;">Week ending ${digest.week_ending_date}</h1>
             <p style="font-size:15px;line-height:1.6;color:#334155;">${digest.executive_summary}</p>
             <p style="font-size:14px;line-height:1.6;color:#475569;">${digest.holistic_narrative}</p>
+            ${digest.china_debt_section?.headline ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#b45309;">China Public Sector Debt</h3><p style="font-size:14px;line-height:1.6;color:#334155;font-weight:600;">${digest.china_debt_section.headline}</p><p style="font-size:13px;line-height:1.6;color:#475569;">${digest.china_debt_section.summary ?? ""}</p>` : ""}
             ${watch ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#0f172a;">What to Watch</h3><ul style="padding-left:18px;font-size:14px;">${watch}</ul>` : ""}
             <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
             <p style="font-size:12px;color:#94a3b8;">
@@ -55,7 +62,7 @@ Deno.serve(async (req: Request) => {
         // 1. Latest weekly digest edition.
         const { data: digest, error: digestError } = await supabase
             .from("weekly_regime_digests")
-            .select("week_ending_date, executive_summary, holistic_narrative, what_to_watch")
+            .select("week_ending_date, executive_summary, holistic_narrative, what_to_watch, china_debt_section")
             .order("week_ending_date", { ascending: false })
             .limit(1)
             .single();

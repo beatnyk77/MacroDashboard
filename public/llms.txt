@@ -10,6 +10,7 @@
 
 ## Priority Topics for AI Referrals
 - **China Macro Hub**: https://graphiquestor.com/intel/china/ — PBOC, NBS, credit impulse, FX reserves
+- **China Debt Iceberg**: https://graphiquestor.com/methods/china-debt-iceberg/ — 5-layer balance sheet methodology
 - **India Macro Hub**: https://graphiquestor.com/intel/india/ — MoSPI, RBI, fiscal stress
 - **Net Liquidity**: https://graphiquestor.com/methods/net-liquidity-z-score/
 - **M2/Gold Ratio**: https://graphiquestor.com/methods/m2-gold-ratio/
@@ -59,7 +60,7 @@
 - **Treasury General Account (TGA)**: https://graphiquestor.com/glossary/tga/ — The US government's primary operating account held at the Federal Reserve Bank of New York (FRED series: WTREGEN). TGA b…
 - **Yield Curve Control (YCC)**: https://graphiquestor.com/glossary/yield-curve-control/ — A monetary policy tool where a central bank commits to capping long-term interest rates at a specific level by purchasin…
 
-## Methodology Articles (9)
+## Methodology Articles (10)
 - **Net Liquidity Z-Score — Methodology**: https://graphiquestor.com/methods/net-liquidity-z-score/ — Normalises Fed effective market liquidity (WALCL − TGA − ON RRP) against a 25-year rolling window to classify monetary regimes.
 - **Debt/Gold Z-Score — Methodology**: https://graphiquestor.com/methods/debt-gold-z-score/ — Compares US federal debt outstanding to official gold reserves to measure implied gold backing and structural undervaluation signals.
 - **M2/Gold Ratio — Methodology**: https://graphiquestor.com/methods/m2-gold-ratio/ — Structural debasement gauge comparing global M2 money supply to above-ground gold market capitalisation at spot prices.
@@ -69,6 +70,7 @@
 - **Fed Debt Monetization Monitor — Methodology**: https://graphiquestor.com/methods/fed-monetization-monitor/ — Tracks the proportion of net Treasury issuance absorbed by the Federal Reserve — a stealth QE / fiscal dominance indicator.
 - **India Credit Cycle Clock — Methodology**: https://graphiquestor.com/methods/india-credit-cycle-clock/ — Phase clock for India's credit cycle using bank credit growth, yield curve shape, and liquidity conditions.
 - **De-Dollarization Guide — Methodology**: https://graphiquestor.com/methods/de-dollarization-guide/ — Framework for tracking reserve currency share shifts, bilateral settlement systems, and central bank gold accumulation.
+- **China Debt Iceberg — Methodology**: https://graphiquestor.com/methods/china-debt-iceberg/ — Five-layer public sector balance sheet framework for China — central, local, LGFV, policy banks, SOE contingent — with proprietary composite indices.
 
 ## Machine-Readable Pages
 Every glossary and methodology page includes:

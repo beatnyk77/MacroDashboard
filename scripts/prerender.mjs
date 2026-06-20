@@ -123,6 +123,7 @@ const STATIC_PAGE_FILES = {
     '/methods/de-dollarization-guide':    'src/pages/methods/DeDollarizationGuide.tsx',
     '/methods/fed-monetization-monitor':  'src/pages/methods/FedMonetizationPage.tsx',
     '/methods/india-credit-cycle-clock':  'src/pages/methods/IndiaCreditCyclePage.tsx',
+    '/methods/china-debt-iceberg':        'src/pages/methods/ChinaDebtIcebergPage.tsx',
 };
 
 /** Run git log for one file; return YYYY-MM-DD or fall back to build date. */

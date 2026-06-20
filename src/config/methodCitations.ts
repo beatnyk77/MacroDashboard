@@ -130,6 +130,21 @@ export const METHOD_CITATIONS: Record<string, ResearchCitationInput> = {
         ],
         source: 'IMF COFER, BIS, World Gold Council',
     },
+    'china-debt-iceberg': {
+        title: 'China Debt Iceberg — Methodology',
+        path: '/methods/china-debt-iceberg',
+        pageType: 'methodology',
+        category: 'Sovereign Debt',
+        summary:
+            'Five-layer public sector balance sheet framework for China — central, local, LGFV, policy banks, SOE contingent — with proprietary composite indices.',
+        keyPoints: [
+            'Iceberg Ratio = consolidated debt (high) / official central government debt.',
+            'Five weekly composites: LGFV stress, monetization pressure, debt wall proximity, land fiscal dependence.',
+            'Opaque layers use IMF Article IV range estimates with full provenance — no fabricated point values.',
+        ],
+        formula: 'Iceberg = Consolidated_high / Central_official',
+        source: 'IMF Article IV, IMF DataMapper, BIS, PBOC, MoF',
+    },
 };
 
 export function getMethodCitation(pathname: string): ResearchCitationInput | null {

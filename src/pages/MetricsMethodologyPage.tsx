@@ -238,6 +238,35 @@ const METRICS: MetricEntry[] = [
         sources: ['IMF COFER', 'BIS Statistics Portal'],
     },
 
+    // ── China Debt Iceberg Block ──────────────────────────────────────────────
+    {
+        id: 'china-iceberg-ratio',
+        name: 'China Iceberg Ratio',
+        category: 'Sovereign Risk',
+        formula: 'Iceberg Ratio = Consolidated Public Sector Debt (high) / Central Government Debt (official)',
+        components: [
+            'Consolidated High – IMF Article IV upper-bound estimate of total public sector leverage',
+            'Central Official – MoF-reported on-budget central government debt (IMF GGXWDG / World Bank)',
+            'Five-layer stack: central, local gov, LGFV, policy banks, SOE contingent',
+        ],
+        intuition: `China's MoF-reported central government debt (~25% GDP) dramatically understates the 
+        consolidated public sector balance sheet. The Iceberg Ratio operationalises this divergence: 
+        values above 2.0× indicate the shadow stack (LGFV + policy banks + SOE guarantees) exceeds 
+        official debt by a factor that historically precedes fiscal stress episodes in other EM economies.`,
+        institutionalUse: `Used alongside IMF Article IV surveillance and BIS credit-to-GDP data by 
+        EM sovereign desks monitoring China LG bond rollover risk. Pairs with four additional composites 
+        (LGFV stress, monetization pressure, debt wall proximity, land fiscal dependence) on the 
+        Intel China debt terminal.`,
+        interpretation: [
+            { label: 'Shadow Debt Critical', condition: 'Ratio > 2.5×', color: 'text-terminal-rose' },
+            { label: 'Elevated Hidden Leverage', condition: '2.0× < Ratio ≤ 2.5×', color: 'text-orange-400' },
+            { label: 'Contained', condition: 'Ratio ≤ 2.0×', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/methods/china-debt-iceberg',
+        relatedPageLabel: 'Deep Dive: China Debt Iceberg',
+        sources: ['IMF Article IV', 'IMF DataMapper', 'BIS', 'World Bank'],
+    },
+
     // ── Sovereign Stress Block ────────────────────────────────────────────────
     {
         id: 'sovereign-stress-index',

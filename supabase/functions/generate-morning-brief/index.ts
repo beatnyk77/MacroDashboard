@@ -40,7 +40,10 @@ const FOCUS_AREA_CONFIGS = {
     label: 'China Macro',
     metric_ids: [
       'china_gdp_yoy', 'china_cpi_yoy',
-      'china_credit_impulse', 'china_fx_reserves'
+      'china_credit_impulse', 'china_fx_reserves',
+      'CN_GDP_GROWTH_YOY', 'CN_DEBT_CENTRAL_GDP_PCT',
+      'CN_ICEBERG_RATIO', 'CN_LGFV_STRESS_INDEX',
+      'CN_MONETIZATION_PRESSURE', 'CN_M2_GROWTH',
     ]
   },
   energy: {
@@ -249,6 +252,21 @@ serveIngest('generate-morning-brief', async (req) => {
         .filter((m: LatestMetricPoint) => focusMetricIds.includes(m.metric_id))
         .map((m: LatestMetricPoint) => `${m.label}: ${m.value}${m.unit}`);
 
+      let chinaDebtContext = '';
+      if (focusCombo.includes('china')) {
+        const debtIds = [
+          'CN_ICEBERG_RATIO', 'CN_LGFV_STRESS_INDEX',
+          'CN_MONETIZATION_PRESSURE', 'CN_DEBT_WALL_PROXIMITY',
+          'CN_LAND_FISCAL_DEPENDENCE',
+        ];
+        const debtReadings = latestMetrics
+          .filter((m: LatestMetricPoint) => debtIds.includes(m.metric_id))
+          .map((m: LatestMetricPoint) => `${m.metric_id}: ${m.value}${m.unit}`);
+        if (debtReadings.length > 0) {
+          chinaDebtContext = `\nChina Public Sector Debt composites (Iceberg framework):\n${debtReadings.join('\n')}\nInclude at least one china_debt observation in focus_observations when China is a focus area.`;
+        }
+      }
+
       const focusLabels = focusCombo.map(
         area => FOCUS_AREA_CONFIGS[
           area as keyof typeof FOCUS_AREA_CONFIGS
@@ -265,7 +283,7 @@ Metrics that changed significantly in the last 24 hours:
 ${significantChanges.map((m: SignificantChangePoint) => `- ${m.label}: ${m.value}${m.unit} (${m.direction === 'up' ? '↑' : '↓'} from ${m.prev_value}${m.unit})`).join('\n')}
 
 Focus area metrics (current readings):
-${focusMetrics.join('\n')}
+${focusMetrics.join('\n')}${chinaDebtContext}
 
 Generate a morning macro brief. Return ONLY valid JSON, no markdown, no explanation:
 {

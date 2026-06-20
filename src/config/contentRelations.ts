@@ -26,11 +26,19 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/glossary/foreign-exchange-reserves', label: 'FX Reserve Framework', kind: 'glossary' },
   ],
   '/intel/china': [
+    { to: '/intel/china#debt', label: 'China Debt Iceberg', kind: 'data' },
+    { to: '/methods/china-debt-iceberg', label: 'Debt Iceberg Methodology', kind: 'brief' },
     { to: '/labs/china-15th-fyp', label: 'China 15th FYP', kind: 'lab' },
     { to: '/labs/de-dollarization-gold', label: 'PBOC Gold Accumulation', kind: 'lab' },
     { to: '/labs/brics-trade-settlement', label: 'BRICS Settlement', kind: 'lab' },
     { to: '/trade', label: 'China Trade Flows', kind: 'data' },
     { to: '/glossary/petrodollar-system', label: 'Petroyuan vs Petrodollar', kind: 'glossary' },
+  ],
+  '/methods/china-debt-iceberg': [
+    { to: '/intel/china#debt', label: 'China Debt Terminal', kind: 'data' },
+    { to: '/methodology', label: 'Methodology Hub', kind: 'brief' },
+    { to: '/glossary/fiscal-dominance', label: 'Fiscal Dominance', kind: 'glossary' },
+    { to: '/weekly-narrative', label: 'Weekly Regime Digest', kind: 'brief' },
   ],
   '/trade': [
     { to: '/intel/india', label: 'India Macro Intel', kind: 'data' },

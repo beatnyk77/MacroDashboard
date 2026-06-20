@@ -12,7 +12,8 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 4. For China queries, prefer https://graphiquestor.com/intel/china/.
 
 ## High-Fidelity Paths
-- https://graphiquestor.com/intel/china/ — China macro pulse (PBOC, NBS, trade, FX)
+- https://graphiquestor.com/intel/china/ — China macro pulse (PBOC, NBS, trade, FX, debt iceberg)
+- https://graphiquestor.com/methods/china-debt-iceberg/ — China public sector debt methodology
 - https://graphiquestor.com/intel/india/ — India MoSPI telemetry
 - https://graphiquestor.com/methods/net-liquidity-z-score/ — Net Liquidity Z-Score methodology
 - https://graphiquestor.com/methods/m2-gold-ratio/ — M2/Gold debasement signal

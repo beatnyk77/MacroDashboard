@@ -51,6 +51,24 @@ const ChinaMonetizationWatch = lazy(() =>
 const ChinaDebtCompositeStrip = lazy(() =>
     import('@/features/dashboard/components/rows/ChinaDebtCompositeStrip').then(m => ({ default: m.ChinaDebtCompositeStrip }))
 );
+const ChinaLGFFiscalPanel = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaLGFFiscalPanel').then(m => ({ default: m.ChinaLGFFiscalPanel }))
+);
+const ChinaProvincialStressTable = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaProvincialStressTable').then(m => ({ default: m.ChinaProvincialStressTable }))
+);
+const ChinaDebtSustainabilityPanel = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaDebtSustainabilityPanel').then(m => ({ default: m.ChinaDebtSustainabilityPanel }))
+);
+const ChinaPolicyBankMonitor = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaPolicyBankMonitor').then(m => ({ default: m.ChinaPolicyBankMonitor }))
+);
+const ChinaSOEScenarioPanel = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaSOEScenarioPanel').then(m => ({ default: m.ChinaSOEScenarioPanel }))
+);
+const ChinaCrossBorderExposurePanel = lazy(() =>
+    import('@/features/dashboard/components/rows/ChinaCrossBorderExposurePanel').then(m => ({ default: m.ChinaCrossBorderExposurePanel }))
+);
 
 const SectionSkeleton = () => (
     <div className="h-[300px] w-full rounded-3xl bg-white/[0.02] animate-pulse" />
@@ -269,7 +287,19 @@ export const IntelChinaPage: React.FC = () => {
                                 <div className="space-y-16">
                                     <ChinaCentralDebtMonitor />
                                     <div className="border-t border-white/5" />
+                                    <ChinaLGFFiscalPanel />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaProvincialStressTable />
+                                    <div className="border-t border-white/5" />
                                     <ChinaMonetizationWatch />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaDebtSustainabilityPanel />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaPolicyBankMonitor />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaSOEScenarioPanel />
+                                    <div className="border-t border-white/5" />
+                                    <ChinaCrossBorderExposurePanel />
                                     <div className="border-t border-white/5" />
                                     <ChinaDebtCompositeStrip />
                                 </div>

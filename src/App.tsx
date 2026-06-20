@@ -50,6 +50,7 @@ const M2GoldRatioPage = lazy(() => import('@/pages/methods/M2GoldRatioPage').the
 const DeDollarizationGuide = lazy(() => import('@/pages/methods/DeDollarizationGuide').then(module => ({ default: module.DeDollarizationGuide })));
 const FedMonetizationPage = lazy(() => import('@/pages/methods/FedMonetizationPage').then(module => ({ default: module.FedMonetizationPage })));
 const IndiaCreditCyclePage = lazy(() => import('@/pages/methods/IndiaCreditCyclePage').then(module => ({ default: module.IndiaCreditCyclePage })));
+const ChinaDebtIcebergPage = lazy(() => import('@/pages/methods/ChinaDebtIcebergPage').then(module => ({ default: module.ChinaDebtIcebergPage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 const NotFound = lazy(() => import('@/pages/NotFound').then(module => ({ default: module.NotFound })));
 const MacroBriefPage = lazy(() => import('@/pages/MacroBriefPage').then(module => ({ default: module.MacroBriefPage })));
@@ -127,6 +128,7 @@ function App() {
                                         <Route path={trailRoute('/methods/de-dollarization-guide')} element={<DeDollarizationGuide />} />
                                         <Route path={trailRoute('/methods/fed-monetization-monitor')} element={<FedMonetizationPage />} />
                                         <Route path={trailRoute('/methods/india-credit-cycle-clock')} element={<IndiaCreditCyclePage />} />
+                                        <Route path={trailRoute('/methods/china-debt-iceberg')} element={<ChinaDebtIcebergPage />} />
                                         <Route path={trailRoute('/intel/india')} element={<IntelIndiaPage />} />
                                         <Route path={trailRoute('/intel/china')} element={<IntelChinaPage />} />
                                         <Route path={trailRoute('/macro-observatory')} element={<MacroObservatory />} />

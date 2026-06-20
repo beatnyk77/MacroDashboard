@@ -198,7 +198,7 @@ jobs:
             echo "_Generated for PR \`${{ github.head_ref }}\` → \`${{ github.base_ref }}\`_"
             echo ""
             echo '```sql'
-            supabase db push --dry-run 2>&1
+            supabase db push --dry-run --include-all 2>&1
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -209,7 +209,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           set -euo pipefail
-          supabase db push --yes
+          supabase db push --include-all --yes
 
   # ─── 2. Deploy functions in parallel (matrix) ───────────────────────────────
   deploy-functions:

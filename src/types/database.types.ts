@@ -188,6 +188,51 @@ export type Database = {
         }
         Relationships: []
       }
+      china_bri_exposure: {
+        Row: {
+          as_of_date: string
+          country_or_region: string
+          distress_flag: boolean | null
+          iso3: string | null
+          lending_high_bn: number | null
+          lending_low_bn: number | null
+          lending_outstanding_bn: number | null
+          restructuring_status: string | null
+          sector: string | null
+          source: string
+          source_ref: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          as_of_date: string
+          country_or_region: string
+          distress_flag?: boolean | null
+          iso3?: string | null
+          lending_high_bn?: number | null
+          lending_low_bn?: number | null
+          lending_outstanding_bn?: number | null
+          restructuring_status?: string | null
+          sector?: string | null
+          source: string
+          source_ref?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          as_of_date?: string
+          country_or_region?: string
+          distress_flag?: boolean | null
+          iso3?: string | null
+          lending_high_bn?: number | null
+          lending_low_bn?: number | null
+          lending_outstanding_bn?: number | null
+          restructuring_status?: string | null
+          sector?: string | null
+          source?: string
+          source_ref?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       china_debt_composites: {
         Row: {
           as_of_date: string
@@ -299,6 +344,45 @@ export type Database = {
         }
         Relationships: []
       }
+      china_fiscal_signals: {
+        Row: {
+          as_of_date: string
+          is_provisional: boolean | null
+          signal_key: string
+          source: string
+          source_ref: string | null
+          unit: string | null
+          updated_at: string | null
+          value: number
+          value_high: number | null
+          value_low: number | null
+        }
+        Insert: {
+          as_of_date: string
+          is_provisional?: boolean | null
+          signal_key: string
+          source: string
+          source_ref?: string | null
+          unit?: string | null
+          updated_at?: string | null
+          value: number
+          value_high?: number | null
+          value_low?: number | null
+        }
+        Update: {
+          as_of_date?: string
+          is_provisional?: boolean | null
+          signal_key?: string
+          source?: string
+          source_ref?: string | null
+          unit?: string | null
+          updated_at?: string | null
+          value?: number
+          value_high?: number | null
+          value_low?: number | null
+        }
+        Relationships: []
+      }
       china_macro_pulse: {
         Row: {
           date: string
@@ -380,6 +464,150 @@ export type Database = {
           rrr_rate_large?: number | null
           source?: string | null
           tss_growth_yoy?: number | null
+        }
+        Relationships: []
+      }
+      china_policy_banks: {
+        Row: {
+          as_of_date: string
+          bonds_high_cny_tn: number | null
+          bonds_low_cny_tn: number | null
+          bonds_outstanding_cny_tn: number | null
+          institution_code: string
+          institution_name: string
+          is_provisional: boolean | null
+          pct_total_bond_market: number | null
+          source: string
+          source_ref: string | null
+          spread_vs_cgb_bps: number | null
+          updated_at: string | null
+          yoy_growth_pct: number | null
+        }
+        Insert: {
+          as_of_date: string
+          bonds_high_cny_tn?: number | null
+          bonds_low_cny_tn?: number | null
+          bonds_outstanding_cny_tn?: number | null
+          institution_code: string
+          institution_name: string
+          is_provisional?: boolean | null
+          pct_total_bond_market?: number | null
+          source: string
+          source_ref?: string | null
+          spread_vs_cgb_bps?: number | null
+          updated_at?: string | null
+          yoy_growth_pct?: number | null
+        }
+        Update: {
+          as_of_date?: string
+          bonds_high_cny_tn?: number | null
+          bonds_low_cny_tn?: number | null
+          bonds_outstanding_cny_tn?: number | null
+          institution_code?: string
+          institution_name?: string
+          is_provisional?: boolean | null
+          pct_total_bond_market?: number | null
+          source?: string
+          source_ref?: string | null
+          spread_vs_cgb_bps?: number | null
+          updated_at?: string | null
+          yoy_growth_pct?: number | null
+        }
+        Relationships: []
+      }
+      china_provincial_fiscal_stress: {
+        Row: {
+          as_of_date: string
+          composite_stress_score: number | null
+          debt_to_fiscal_revenue_pct: number | null
+          gdp_growth_deviation_pp: number | null
+          land_revenue_decline_pct: number | null
+          lgfv_concentration_score: number | null
+          province_code: string
+          province_name: string
+          risk_profile: string | null
+          source: string
+          source_ref: string | null
+          special_bond_accel_score: number | null
+          updated_at: string | null
+          watchlist_flag: boolean | null
+        }
+        Insert: {
+          as_of_date: string
+          composite_stress_score?: number | null
+          debt_to_fiscal_revenue_pct?: number | null
+          gdp_growth_deviation_pp?: number | null
+          land_revenue_decline_pct?: number | null
+          lgfv_concentration_score?: number | null
+          province_code: string
+          province_name: string
+          risk_profile?: string | null
+          source: string
+          source_ref?: string | null
+          special_bond_accel_score?: number | null
+          updated_at?: string | null
+          watchlist_flag?: boolean | null
+        }
+        Update: {
+          as_of_date?: string
+          composite_stress_score?: number | null
+          debt_to_fiscal_revenue_pct?: number | null
+          gdp_growth_deviation_pp?: number | null
+          land_revenue_decline_pct?: number | null
+          lgfv_concentration_score?: number | null
+          province_code?: string
+          province_name?: string
+          risk_profile?: string | null
+          source?: string
+          source_ref?: string | null
+          special_bond_accel_score?: number | null
+          updated_at?: string | null
+          watchlist_flag?: boolean | null
+        }
+        Relationships: []
+      }
+      china_soe_scenarios: {
+        Row: {
+          as_of_date: string
+          assumptions: string | null
+          consolidated_debt_outcome_pct: number | null
+          contingent_liability_pct_gdp: number | null
+          crystallization_rate_pct: number | null
+          probability_weight_pct: number | null
+          scenario_code: string
+          scenario_label: string
+          soe_debt_pct_gdp: number | null
+          source: string
+          source_ref: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          as_of_date: string
+          assumptions?: string | null
+          consolidated_debt_outcome_pct?: number | null
+          contingent_liability_pct_gdp?: number | null
+          crystallization_rate_pct?: number | null
+          probability_weight_pct?: number | null
+          scenario_code: string
+          scenario_label: string
+          soe_debt_pct_gdp?: number | null
+          source: string
+          source_ref?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          as_of_date?: string
+          assumptions?: string | null
+          consolidated_debt_outcome_pct?: number | null
+          contingent_liability_pct_gdp?: number | null
+          crystallization_rate_pct?: number | null
+          probability_weight_pct?: number | null
+          scenario_code?: string
+          scenario_label?: string
+          soe_debt_pct_gdp?: number | null
+          source?: string
+          source_ref?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -5238,6 +5466,7 @@ export type Database = {
       }
       weekly_regime_digests: {
         Row: {
+          china_debt_section: Json
           created_at: string | null
           executive_summary: string
           holistic_narrative: string
@@ -5249,6 +5478,7 @@ export type Database = {
           what_to_watch: Json
         }
         Insert: {
+          china_debt_section?: Json
           created_at?: string | null
           executive_summary: string
           holistic_narrative: string
@@ -5260,6 +5490,7 @@ export type Database = {
           what_to_watch?: Json
         }
         Update: {
+          china_debt_section?: Json
           created_at?: string | null
           executive_summary?: string
           holistic_narrative?: string
@@ -6217,3 +6448,5 @@ export const Constants = {
     },
   },
 } as const
+A new version of Supabase CLI is available: v2.107.0 (currently installed v2.98.2)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

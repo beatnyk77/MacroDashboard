@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { ShieldCheck, Zap, Activity, Eye, TrendingUp, Globe, Info } from 'lucide-react';
+import { ChinaDebtDigestCard, type ChinaDebtDigestSection } from '@/features/dashboard/components/sections/ChinaDebtDigestCard';
 
 interface Digest {
     week_ending_date: string;
@@ -11,6 +12,7 @@ interface Digest {
     what_changed: Array<{ pillar: string; change: string }>;
     what_to_watch: string[];
     holistic_narrative: string;
+    china_debt_section?: ChinaDebtDigestSection;
 }
 
 export const WeeklyRegimeDigest: React.FC = () => {
@@ -40,6 +42,8 @@ export const WeeklyRegimeDigest: React.FC = () => {
 
     return (
         <div className="w-full space-y-6">
+            <ChinaDebtDigestCard section={latestDigest.china_debt_section} compact />
+
             {/* Main Narrative Card */}
             <Card variant="elevated" className="overflow-hidden border-blue-500/20 bg-slate-950/80 backdrop-blur-xl relative group">
                 <div className="absolute top-0 right-0 p-8 opacity-5">

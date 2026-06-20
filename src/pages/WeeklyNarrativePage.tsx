@@ -14,6 +14,7 @@ import {
     Info,
     Calendar,
 } from 'lucide-react';
+import { ChinaDebtDigestCard, type ChinaDebtDigestSection } from '@/features/dashboard/components/sections/ChinaDebtDigestCard';
 
 interface WeeklyRegimeDigest {
     id: string;
@@ -23,6 +24,7 @@ interface WeeklyRegimeDigest {
     what_changed: Array<{ pillar: string; change: string }>;
     what_to_watch: string[];
     holistic_narrative: string;
+    china_debt_section?: ChinaDebtDigestSection;
     created_at: string;
 }
 
@@ -170,6 +172,9 @@ const WeeklyNarrativeContent: React.FC = () => {
                     })}
                 </p>
             </div>
+
+            {/* China Debt Section */}
+            <ChinaDebtDigestCard section={digest.china_debt_section} />
 
             {/* Executive Summary */}
             <Card className="bg-blue-500/5 border-blue-500/20 relative overflow-hidden group hover:bg-blue-500/10 transition-all duration-500">
