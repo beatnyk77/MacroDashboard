@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, RefreshCw, AlertTriangle, Calendar, MapPin, ExternalLink } from 'lucide-react'
+import { RefreshCw, AlertTriangle, Calendar, MapPin, ExternalLink } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useMarketDrilldown } from '../features/trade/hooks/useMarketDrilldown'
 import { MarketOpportunityCard } from '../features/trade/components/MarketOpportunityCard'
@@ -13,9 +13,16 @@ import { DrilldownSkeleton } from '../features/trade/components/DrilldownSkeleto
 import { cn } from '../lib/utils'
 import { SEOManager } from '@/components/SEOManager'
 import { RelatedContent } from '@/components/RelatedContent'
+import { RelatedMetrics } from '@/components/RelatedMetrics'
+import { ShareButton } from '@/components/ShareButton'
+import { SectionErrorBoundary } from '@/components/SectionErrorBoundary'
+import { DataProvenanceBadge } from '@/components/DataProvenanceBadge'
+import { TradeBreadcrumbs } from '@/features/trade/components/TradeBreadcrumbs'
+import { COMTRADE_PROVENANCE } from '@/features/trade/constants'
 
 const MarketDeepDivePage: React.FC = () => {
     const { code, iso } = useParams<{ code: string; iso: string }>()
+    const drilldownRef = useRef<HTMLDivElement>(null)
     // We need iso2 for macro overlay. The demand hook holds this in the list.
     const demandState = useHSDemand(code || null)
     const state = demandState as any
@@ -83,37 +90,52 @@ const MarketDeepDivePage: React.FC = () => {
                     }
                 ]}
             />
+
+            <div className="px-4 sm:px-6">
+                <TradeBreadcrumbs
+                    crumbs={[
+                        { label: 'Trade Intelligence', to: '/trade' },
+                        { label: `HS ${code}`, to: `/trade/hs/${code}` },
+                        { label: marketScore?.reporter_name || iso },
+                    ]}
+                />
+            </div>
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 sm:px-6">
-                <div className="flex items-center gap-4">
-                    <Link 
-                        to={`/trade/hs/${code}`}
-                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center shrink-0"
-                        title="Back to HS Code Overview"
-                        aria-label="Back to HS Code Overview"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-white/60" />
-                    </Link>
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-xl sm:text-2xl font-black text-white italic tracking-heading uppercase flex items-center gap-3">
-                                <span className="text-2xl sm:text-3xl leading-none shrink-0">{isoToFlag(marketScore?.reporter_iso2 || null)}</span>
-                                {marketScore?.reporter_name || iso}
-                            </h1>
-                            {state.status === 'success' && (
-                                <FreshnessChip 
-                                    status={freshnessStatus} 
-                                    lastUpdated={state.cachedAt}
-                                />
-                            )}
-                        </div>
-                        <p className="text-xs sm:text-sm font-bold text-white/40 font-mono mt-1">
-                            Market Drilldown for HS {code}
-                        </p>
+                <div>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-xl sm:text-2xl font-black text-white italic tracking-heading uppercase flex items-center gap-3">
+                            <span className="text-2xl sm:text-3xl leading-none shrink-0">{isoToFlag(marketScore?.reporter_iso2 || null)}</span>
+                            {marketScore?.reporter_name || iso}
+                        </h1>
+                        {state.status === 'success' && (
+                            <FreshnessChip
+                                status={freshnessStatus}
+                                lastUpdated={state.cachedAt}
+                            />
+                        )}
                     </div>
+                    <p className="text-xs sm:text-sm font-bold text-white/40 font-mono mt-1">
+                        Market Drilldown for HS {code}
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                    <DataProvenanceBadge
+                        source={COMTRADE_PROVENANCE.source}
+                        methodology={COMTRADE_PROVENANCE.methodology}
+                        lastVerified={cachedAt}
+                        size="sm"
+                    />
+                    {iso === 'GBR' && (
+                        <Link
+                            to={`/trade/uk/${code}`}
+                            className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500/25 transition-colors"
+                        >
+                            UK Entity Intel
+                        </Link>
+                    )}
                     <button
                         onClick={() => state.refresh()}
                         disabled={isLoading}
@@ -178,6 +200,14 @@ const MarketDeepDivePage: React.FC = () => {
             )}
 
             <div className="px-4 sm:px-6">
+                <SectionErrorBoundary name="Market Drilldown">
+                <div ref={drilldownRef} className="relative group">
+                    <ShareButton
+                        targetRef={drilldownRef}
+                        title={`${countryName} Market Drilldown — HS ${code}`}
+                        dataSource="UN Comtrade"
+                        href={`/trade/hs/${code}/market/${iso}`}
+                    />
                 {isLoading && state.status !== 'refreshing' ? (
                     <DrilldownSkeleton />
                 ) : (
@@ -219,7 +249,10 @@ const MarketDeepDivePage: React.FC = () => {
                         </div>
                     </div>
                 )}
+                </div>
+                </SectionErrorBoundary>
             </div>
+            <RelatedMetrics path={`/trade/hs/${code}/market/${iso}`} />
             <RelatedContent />
         </div>
     )

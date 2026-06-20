@@ -1,6 +1,6 @@
-import React from 'react'
-import { useParams, useSearchParams, Link } from 'react-router-dom'
-import { RefreshCw, ArrowLeft, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
+import React, { useRef } from 'react'
+import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
+import { RefreshCw, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
 import { GlobalDemandRanker } from '../features/trade/components/GlobalDemandRanker'
@@ -8,25 +8,21 @@ import { FreshnessChip } from '../components/FreshnessChip'
 import { TradeRankerSkeleton } from '../features/trade/components/TradeRankerSkeleton'
 import { SEOManager } from '@/components/SEOManager'
 import { RelatedContent } from '@/components/RelatedContent'
+import { RelatedMetrics } from '@/components/RelatedMetrics'
+import { ShareButton } from '@/components/ShareButton'
+import { SectionErrorBoundary } from '@/components/SectionErrorBoundary'
+import { DataProvenanceBadge } from '@/components/DataProvenanceBadge'
+import { TradeBreadcrumbs } from '@/features/trade/components/TradeBreadcrumbs'
 import { useRecentHSCodes } from '../features/trade/hooks/useRecentHSCodes'
+import { COMTRADE_PROVENANCE } from '../features/trade/constants'
 
 const HSCodeOverviewPage: React.FC = () => {
     const { code } = useParams<{ code: string }>()
     const [searchParams] = useSearchParams()
     const isEmbedded = searchParams.get('embed') === 'true'
+    const navigate = useNavigate()
+    const rankerRef = useRef<HTMLDivElement>(null)
     const { push: pushRecent } = useRecentHSCodes()
-
-    const handleGeneratePlaybook = () => {
-        console.log('[HSCodeOverview] Export Playbook Clicked. Code:', code, 'Description:', hsDescription);
-        if (!code) {
-            console.error('[HSCodeOverview] Missing code, cannot open playbook');
-            return;
-        }
-        // Force opening in a new tab for a clean "Document" experience and to bypass SPA layout constraints
-        const targetUrl = `/trade/playbook/${code}?description=${encodeURIComponent(hsDescription || '')}`;
-        console.log('[HSCodeOverview] Opening playbook in new tab:', targetUrl);
-        window.open(targetUrl, '_blank');
-    }
 
     const demandState = useHSDemand(code || null)
     const { refresh } = demandState
@@ -39,6 +35,13 @@ const HSCodeOverviewPage: React.FC = () => {
     React.useEffect(() => {
         if (code && hsDescription) pushRecent(code, hsDescription)
     }, [code, hsDescription, pushRecent])
+
+    const handleGeneratePlaybook = () => {
+        if (!code) return
+        navigate(`/trade/playbook/${code}`, {
+            state: { description: hsDescription || '' },
+        })
+    }
 
     const [now] = React.useState(() => Date.now())
     const cachedAt = state.status === 'success' ? state.cachedAt : null
@@ -85,37 +88,47 @@ const HSCodeOverviewPage: React.FC = () => {
                     "spatialCoverage": "Worldwide"
                 }}
             />
+
+            <TradeBreadcrumbs
+                crumbs={[
+                    { label: 'Trade Intelligence', to: '/trade' },
+                    { label: `HS ${code}` },
+                ]}
+            />
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <Link 
-                        to="/trade"
-                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center shrink-0"
-                        title="Back to Trade Intelligence"
-                        aria-label="Back to Trade Intelligence"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-white/60" />
-                    </Link>
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-xl sm:text-2xl font-black text-white italic tracking-heading uppercase flex items-center gap-3">
-                                <Globe2 className="w-6 h-6 text-emerald-500" />
-                                Global Demand Ranking
-                            </h1>
-                            {state.status === 'success' && (
-                                <FreshnessChip 
-                                    status={freshnessStatus} 
-                                    lastUpdated={state.cachedAt}
-                                />
-                            )}
-                        </div>
-                        <p className="text-xs sm:text-sm font-bold text-white/40 font-mono mt-1">
-                            HS {code} {hsDescription ? `— ${hsDescription}` : ''}
-                        </p>
+                <div>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-xl sm:text-2xl font-black text-white italic tracking-heading uppercase flex items-center gap-3">
+                            <Globe2 className="w-6 h-6 text-emerald-500" />
+                            Global Demand Ranking
+                        </h1>
+                        {state.status === 'success' && (
+                            <FreshnessChip
+                                status={freshnessStatus}
+                                lastUpdated={state.cachedAt}
+                            />
+                        )}
                     </div>
+                    <p className="text-xs sm:text-sm font-bold text-white/40 font-mono mt-1">
+                        HS {code} {hsDescription ? `— ${hsDescription}` : ''}
+                    </p>
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
+                    <DataProvenanceBadge
+                        source={COMTRADE_PROVENANCE.source}
+                        methodology={COMTRADE_PROVENANCE.methodology}
+                        lastVerified={state.status === 'success' ? state.cachedAt : null}
+                        size="sm"
+                    />
+                    <Link
+                        to={`/trade/uk/${code}`}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30"
+                    >
+                        UK Intel
+                    </Link>
                     <button
                         onClick={handleGeneratePlaybook}
                         className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-500/50"
@@ -192,16 +205,28 @@ const HSCodeOverviewPage: React.FC = () => {
             )}
 
             {/* Ranker Table */}
-            {isLoading && state.status !== 'refreshing' ? (
-                <TradeRankerSkeleton />
-            ) : (
-                <GlobalDemandRanker 
-                    markets={state.status === 'success' ? state.markets : []} 
-                    hsCode={code || ''} 
-                    loading={isLoading && state.status !== 'refreshing'} 
-                    refreshing={state.status === 'refreshing'}
-                />
-            )}
+            <SectionErrorBoundary name="Global Demand Ranker">
+                <div ref={rankerRef} className="relative group">
+                    <ShareButton
+                        targetRef={rankerRef}
+                        title={`Global Demand Ranking — HS ${code}`}
+                        dataSource="UN Comtrade"
+                        href={`/trade/hs/${code}`}
+                    />
+                    {isLoading && state.status !== 'refreshing' ? (
+                        <TradeRankerSkeleton />
+                    ) : (
+                        <GlobalDemandRanker
+                            markets={state.status === 'success' ? state.markets : []}
+                            hsCode={code || ''}
+                            loading={isLoading && state.status !== 'refreshing'}
+                            refreshing={state.status === 'refreshing'}
+                        />
+                    )}
+                </div>
+            </SectionErrorBoundary>
+
+            <RelatedMetrics path={`/trade/hs/${code}`} />
             <RelatedContent />
         </div>
     )

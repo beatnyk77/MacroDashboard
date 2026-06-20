@@ -52,6 +52,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const isEmbedded = searchParams.get('embed') === 'true';
+    const isPlaybookDoc = location.pathname.includes('/trade/playbook');
+    const isChromeless = isEmbedded || isPlaybookDoc;
     const isObservatory = location.pathname.includes('/macro-observatory');
 
 
@@ -99,7 +101,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             </a>
 
             {isObservatory && !isEmbedded && <DataHealthBanner />}
-            {!isEmbedded && (
+            {!isChromeless && (
                 <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/90 backdrop-blur-md">
                 <div className="flex h-16 items-center justify-between px-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-6">
@@ -246,23 +248,23 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             {/* Main Layout - Clean Grid */}
             <div className="grid grid-cols-1 md:grid-cols-[260px_1fr]">
                 {/* Left Sidebar */}
-                {!isEmbedded && <TerminalSidebar />}
+                {!isChromeless && <TerminalSidebar />}
 
                 {/* Main Content Area */}
                 <main id="main-content" className="min-w-0">
                     <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
                         {children}
-                        {!isEmbedded && <AnalyticsBeacon />}
-                        <EngagementLayer embedded={isEmbedded} />
+                        {!isChromeless && <AnalyticsBeacon />}
+                        <EngagementLayer embedded={isChromeless} />
                     </div>
-                    {!isEmbedded && <InstitutionalFooter />}
+                    {!isChromeless && <InstitutionalFooter />}
                 </main>
             </div>
 
 
             <CommandPalette open={cmdKOpen} setOpen={setCmdKOpen} />
-            {!isEmbedded && <SocialShareMode />}
-            {!isEmbedded && <MobileNav />}
+            {!isChromeless && <SocialShareMode />}
+            {!isChromeless && <MobileNav />}
         </div>
     );
 };

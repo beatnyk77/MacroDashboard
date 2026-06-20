@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
@@ -71,7 +71,9 @@ interface PlaybookData {
 export const ExportScoutPlaybookPage: React.FC = () => {
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
-  const description = searchParams.get('description') || '';
+  const location = useLocation();
+  const routeDescription = (location.state as { description?: string } | null)?.description;
+  const description = routeDescription || searchParams.get('description') || '';
   const navigate = useNavigate();
 
   const { data: dataPlaybook, isLoading: isDataLoading, error: dataError, refetch: refetchData } = useQuery<PlaybookData>({
@@ -204,10 +206,12 @@ export const ExportScoutPlaybookPage: React.FC = () => {
             variant="ghost"
             size="sm"
             className="text-white/30 hover:text-white text-xs px-2"
-            onClick={() => navigate(-1)}
+            asChild
           >
-            <ChevronLeft className="w-3.5 h-3.5 mr-1" />
-            Back
+            <Link to={code ? `/trade/hs/${code}` : '/trade'}>
+              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+              Back
+            </Link>
           </Button>
           <div className="h-3.5 w-px bg-white/10 hidden sm:block" />
           <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.25em] hidden sm:inline">
@@ -245,10 +249,7 @@ export const ExportScoutPlaybookPage: React.FC = () => {
                 <div className="text-xs text-white/50">Analyzing market context and building execution strategy</div>
               </div>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.05] rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-[10px] text-white/40 font-mono uppercase tracking-widest">Nemotron 120B</span>
-            </div>
+            <span className="text-[10px] text-white/30 font-mono uppercase tracking-widest">AI synthesis in progress</span>
           </div>
         )}
 

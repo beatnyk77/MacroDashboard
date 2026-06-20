@@ -16,7 +16,7 @@ interface GlobalDemandRankerProps {
     refreshing?: boolean
 }
 
-type SortKey = 'overall_score' | 'latest_import_usd' | 'cagr_5yr_pct' | 'hhi' | 'macro_score'
+type SortKey = 'overall_score' | 'latest_export_usd' | 'cagr_5yr_pct' | 'hhi' | 'macro_score'
 type SortDir = 'asc' | 'desc'
 
 const SortIcon = ({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) => {
@@ -59,8 +59,8 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
     }
 
     const sorted = [...markets].sort((a, b) => {
-        const av = (a as any)[sortKey] ?? -Infinity
-        const bv = (b as any)[sortKey] ?? -Infinity
+        const av = a[sortKey] ?? -Infinity
+        const bv = b[sortKey] ?? -Infinity
         return sortDir === 'desc' ? bv - av : av - bv
     })
 
@@ -122,7 +122,7 @@ export const GlobalDemandRanker: React.FC<GlobalDemandRankerProps> = ({
                                 <ColHeader col="overall_score" label="Score" sortKey={sortKey} sortDir={sortDir} handleSort={handleSort} />
                             </th>
                             <th className="px-4 py-3 text-right font-black text-white/25 uppercase tracking-[0.15em]">
-                                <ColHeader col="latest_import_usd" label="Import Value" sortKey={sortKey} sortDir={sortDir} handleSort={handleSort} />
+                                <ColHeader col="latest_export_usd" label="Import Value" sortKey={sortKey} sortDir={sortDir} handleSort={handleSort} />
                             </th>
                             <th className="px-4 py-3 text-right font-black text-white/25 uppercase tracking-[0.15em]">
                                 <ColHeader col="cagr_5yr_pct" label="5yr Growth" sortKey={sortKey} sortDir={sortDir} handleSort={handleSort} />

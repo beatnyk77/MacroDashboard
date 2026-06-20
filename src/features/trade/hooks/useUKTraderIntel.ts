@@ -18,11 +18,11 @@ export interface UKTraderIntelligence {
  * Fetches the specific UK traders importing or exporting the given HS code.
  * Optionally triggers the ingestion edge function if data is missing or very stale.
  */
-export function useUKTraderIntel(hsCode: string, isPremium: boolean = false) {
+export function useUKTraderIntel(hsCode: string | null) {
     return useQuery({
         queryKey: ['uk_trader_intel', hsCode],
         queryFn: async () => {
-            if (!hsCode || !isPremium) return [];
+            if (!hsCode) return [];
 
             // 1. Try to fetch from our database (vw_latest_uk_traders)
             const { data, error } = await supabase
@@ -68,6 +68,6 @@ export function useUKTraderIntel(hsCode: string, isPremium: boolean = false) {
             return data as UKTraderIntelligence[];
         },
         staleTime: 1000 * 60 * 60 * 24, // 24 hours
-        enabled: !!hsCode && isPremium,
+        enabled: !!hsCode,
     });
 }

@@ -162,7 +162,7 @@ import { China15thFYPLab } from '@/pages/labs/China15thFYP';
 import SovereignStressLab from '@/pages/labs/SovereignStressLab';
 
 import { About } from '@/pages/About';
-import TradeIntelligencePage from '@/pages/TradeIntelligencePage';
+import TradeDashboard from '@/pages/TradeDashboard';
 
 const theme = createTheme();
 const queryClient = new QueryClient({
@@ -294,12 +294,12 @@ describe('Smoke Tests', () => {
         expect(await screen.findByText(/The Surveillance Mandate/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
-    it('renders TradeIntelligencePage page without crashing', async () => {
+    it('renders TradeDashboard page without crashing', async () => {
         render(
             <TestWrapper route="/trade">
-                <TradeIntelligencePage />
+                <TradeDashboard />
             </TestWrapper>
         );
-        expect(await screen.findByText(/Trade Intelligence/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByRole('button', { name: /Export Markets/i }, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });

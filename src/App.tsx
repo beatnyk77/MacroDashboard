@@ -68,7 +68,8 @@ const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(m
 const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(module => ({ default: module.China15thFYPLab })));
 const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
 
-const TradeIntelligencePage = lazy(() => import('@/pages/TradeIntelligencePage').then(module => ({ default: module.default })));
+const TradeDashboard = lazy(() => import('@/pages/TradeDashboard').then(module => ({ default: module.default })));
+const UKTradeIntelPage = lazy(() => import('@/pages/UKTradeIntelPage').then(module => ({ default: module.default })));
 const HSCodeOverviewPage = lazy(() => import('@/pages/HSCodeOverviewPage').then(module => ({ default: module.default })));
 const MarketDeepDivePage = lazy(() => import('@/pages/MarketDeepDivePage').then(module => ({ default: module.default })));
 const ExportScoutPlaybookPage = lazy(() => import('@/pages/ExportScoutPlaybookPage').then(module => ({ default: module.ExportScoutPlaybookPage })));
@@ -133,10 +134,11 @@ function App() {
                                         <Route path={trailRoute('/weekly-narrative/:date')} element={<WeeklyNarrativePage />} />
 
                                         {/* Trade Intelligence */}
-                                        <Route path={trailRoute('/trade')} element={<TradeIntelligencePage />} />
+                                        <Route path={trailRoute('/trade')} element={<TradeDashboard />} />
                                         <Route path={trailRoute('/trade/hs/:code')} element={<HSCodeOverviewPage />} />
                                         <Route path={trailRoute('/trade/playbook/:code')} element={<ExportScoutPlaybookPage />} />
                                         <Route path={trailRoute('/trade/hs/:code/market/:iso')} element={<MarketDeepDivePage />} />
+                                        <Route path={trailRoute('/trade/uk/:code')} element={<UKTradeIntelPage />} />
 
                                         {/* Tools & Embeds */}
                                         <Route path={trailRoute('/tools/net-liquidity-gauge')} element={<NetLiquidityGauge />} />

@@ -212,6 +212,12 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/intel/china', label: 'China Macro Intel', kind: 'data' },
     { to: '/glossary/foreign-exchange-reserves', label: 'FX Reserve Context', kind: 'glossary' },
   ],
+  '/trade/uk/:code': [
+    { to: '/trade', label: 'Trade Intelligence Hub', kind: 'data' },
+    { to: '/countries/GB', label: 'UK Macro Profile', kind: 'data' },
+    { to: '/trade?view=exports', label: 'Global HS Demand Ranking', kind: 'data' },
+    { to: '/glossary/current-account-balance', label: 'Current Account', kind: 'glossary' },
+  ],
   '/regime-digest/:year/:month': [
     { to: '/', label: 'Live Terminal', kind: 'data' },
     { to: '/macro-observatory', label: 'Observatory', kind: 'data' },

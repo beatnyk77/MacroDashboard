@@ -57,7 +57,7 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
                         .select('hs_code, reporter_iso3, partner_iso3, partner_name, year, import_value_usd, market_share_pct')
                         .eq('hs_code', hsCode)
                         .eq('reporter_iso3', reporterIso3)
-                        .order('export_value_usd', { ascending: false })
+                        .order('import_value_usd', { ascending: false })
                         .limit(20),
 
                     // Macro metrics from country_metrics (using iso2)
@@ -84,7 +84,15 @@ export function useMarketDrilldown(hsCode: string | null, reporterIso3: string |
                     import_value_usd: r.export_value_usd || 0,
                 }))
 
-                const suppliers: SupplierBreakdown[] = (supplierRes.data || []) as unknown as SupplierBreakdown[] // TODO(types)
+                const suppliers: SupplierBreakdown[] = (supplierRes.data || []).map(row => ({
+                    hs_code: row.hs_code,
+                    reporter_iso3: row.reporter_iso3,
+                    partner_iso3: row.partner_iso3,
+                    partner_name: row.partner_name,
+                    year: row.year,
+                    export_value_usd: row.import_value_usd,
+                    market_share_pct: row.market_share_pct,
+                }))
 
                 const macroMetrics = (macroRes.data || []).map(r => ({
                     metric_key: r.metric_key,
