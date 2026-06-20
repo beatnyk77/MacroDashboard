@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildRateChartData, filterHistoryByHorizon } from '../chartUtils';
+import {
+    buildIllustrativeRateChartData,
+    buildRateChartData,
+    filterHistoryByHorizon,
+} from '../chartUtils';
 
 const SAMPLE_HISTORY = [
     { date: '2026-01-01', value: 84 },
@@ -24,6 +28,19 @@ describe('filterHistoryByHorizon', () => {
         ];
         const result = filterHistoryByHorizon(extended, '1M');
         expect(result.every((p) => p.date >= '2026-05-01')).toBe(true);
+    });
+});
+
+describe('buildIllustrativeRateChartData', () => {
+    it('uses volProxy for band width around illustrative spot', () => {
+        const result = buildIllustrativeRateChartData([
+            { date: '2025-06', spot: 84.1, volProxy: 0.6 },
+        ]);
+        expect(result).toHaveLength(1);
+        expect(result[0].spot).toBe(84.1);
+        expect(result[0].bandWidth).toBeCloseTo(0.5046, 3);
+        expect(result[0].volLower).toBeCloseTo(83.5954, 3);
+        expect(result[0].volUpper).toBeCloseTo(84.6046, 3);
     });
 });
 

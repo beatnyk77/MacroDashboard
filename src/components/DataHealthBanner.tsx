@@ -3,45 +3,11 @@ import { Link } from 'react-router-dom';
 import { AlertCircle, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
-
-// ---------------------------------------------------------------------------
-// Helpers — weekend / business-hours awareness
-// ---------------------------------------------------------------------------
-
-/** Returns true on UTC Saturday (6) or Sunday (0). */
-function isMarketWeekend(): boolean {
-    const day = new Date().getUTCDay();
-    return day === 0 || day === 6;
-}
-
-/**
- * Returns the "expected" maximum lag in hours before we should consider
- * a staleness event genuinely alarming.
- *
- * - Weekend:           72 h (Sat/Sun — most macro feeds are silent)
- * - Weekday pre-10 UTC: 14 h (overnight batch hasn't settled)
- * - Weekday business:    8 h (flag anything older than a workday)
- */
-function getExpectedLagHours(): number {
-    if (isMarketWeekend()) return 72;
-    const hour = new Date().getUTCHours();
-    if (hour < 10) return 14;
-    return 8;
-}
-
-/**
- * Returns the next Monday at 02:30 UTC as a compact string,
- * e.g. "Mon 02:30 UTC".
- */
-function nextMondayRefreshLabel(): string {
-    const now = new Date();
-    const day = now.getUTCDay(); // 0=Sun, 6=Sat
-    const daysUntilMon = day === 0 ? 1 : 7 - day + 1; // Sun→1, Sat→2
-    const mon = new Date(now);
-    mon.setUTCDate(now.getUTCDate() + daysUntilMon);
-    mon.setUTCHours(2, 30, 0, 0);
-    return `Mon ${mon.getUTCHours().toString().padStart(2, '0')}:${mon.getUTCMinutes().toString().padStart(2, '0')} UTC`;
-}
+import {
+    getExpectedLagHours,
+    isMarketWeekend,
+    nextMondayRefreshLabel,
+} from '@/lib/marketFreshness';
 
 // ---------------------------------------------------------------------------
 // DataHealthBanner — sticky top banner for genuine failures only

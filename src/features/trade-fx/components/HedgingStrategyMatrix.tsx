@@ -7,13 +7,17 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { JargonTooltip } from './JargonTooltip';
 import {
     getArchetypeFitLevel,
     scrollToAffiliateCta,
+    scrollToArchetypeCard,
     sortArchetypesByFit,
     type ArchetypeFitLevel,
 } from '../lib/hedgingArchetypes';
 import type { HedgingArchetype, Role, VolatilityRegime } from '../lib/tradeFxTypes';
+
+const MATRIX_COLUMNS = ['Strategy', 'Protection', 'Cost', 'Upside', 'Regime Fit'] as const;
 
 const FIT_BADGE_STYLES: Record<ArchetypeFitLevel, string> = {
     high: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
@@ -77,6 +81,67 @@ function formatRegimeLabel(regime: VolatilityRegime): string {
     return 'high-volatility';
 }
 
+function ProtectionBadge({ level }: { level: HedgingArchetype['protectionLevel'] }) {
+    return (
+        <span className={cn('text-[10px] font-black uppercase', PROTECTION_STYLES[level])}>
+            {level}
+        </span>
+    );
+}
+
+function RegimeFitBadge({ fit }: { fit: ArchetypeFitLevel }) {
+    return (
+        <span
+            className={cn(
+                'text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded border',
+                FIT_BADGE_STYLES[fit],
+            )}
+        >
+            {fit}
+        </span>
+    );
+}
+
+function renderMacroTrigger(trigger: string, archetypeId: string): React.ReactNode {
+    if (archetypeId === 'full_forward') {
+        return (
+            <>
+                India Pulse + RBI intervention bias +{' '}
+                <JargonTooltip term="volatility regime">low-vol regime</JargonTooltip>
+            </>
+        );
+    }
+    if (archetypeId === 'zero_collar') {
+        return (
+            <>
+                Rising <JargonTooltip term="volatility regime">volatility regime</JargonTooltip> +
+                exporter-favorable macro
+            </>
+        );
+    }
+    if (trigger.includes('hedging windows') || trigger.includes('hedging window')) {
+        return trigger.replace(
+            /hedging windows?/i,
+            (match) => `<hedging>${match}</hedging>`,
+        ) === trigger ? (
+            trigger
+        ) : (
+            <>
+                {trigger.split(/(hedging windows?)/i).map((part, i) =>
+                    /^hedging windows?$/i.test(part) ? (
+                        <JargonTooltip key={i} term="hedging window">
+                            {part}
+                        </JargonTooltip>
+                    ) : (
+                        <React.Fragment key={i}>{part}</React.Fragment>
+                    ),
+                )}
+            </>
+        );
+    }
+    return trigger;
+}
+
 interface HedgingStrategyMatrixProps {
     role: Role;
     volatilityRegime: VolatilityRegime;
@@ -100,14 +165,19 @@ const ArchetypeCard: React.FC<ArchetypeCardProps> = ({
 
     const card = (
         <article
+            id={`archetype-${archetype.id}`}
             className={cn(
-                'relative flex flex-col rounded-xl border border-white/10 bg-white/[0.02] p-4 md:p-5 transition-opacity',
+                'relative flex flex-col rounded-xl border border-white/10 bg-white/[0.02] p-4 md:p-5 transition-opacity scroll-mt-28',
                 isLowFit && 'opacity-50',
             )}
         >
             <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                 <h3 className="text-sm font-black text-white/90 m-0 leading-snug pr-2">
-                    {archetype.name}
+                    {archetype.id === 'zero_collar' ? (
+                        <JargonTooltip term="zero-cost collar">{archetype.name}</JargonTooltip>
+                    ) : (
+                        archetype.name
+                    )}
                 </h3>
                 <span
                     className={cn(
@@ -146,19 +216,36 @@ const ArchetypeCard: React.FC<ArchetypeCardProps> = ({
                 <span className="text-white/35 font-bold uppercase tracking-wider text-[9px] mr-1">
                     Macro trigger:
                 </span>
-                {archetype.keyMacroTrigger}
+                {renderMacroTrigger(archetype.keyMacroTrigger, archetype.id)}
             </p>
 
             <p className="text-[11px] text-white/45 leading-relaxed m-0 mb-2">
                 <span className="text-white/35 font-bold uppercase tracking-wider text-[9px] mr-1">
-                    Commonly considered when:
+                    Typically used when:
                 </span>
                 {archetype.typicalRegimeFit}
             </p>
 
-            <p className="text-[11px] text-white/50 leading-relaxed m-0 mb-4 flex-1">
+            <p className="text-[11px] text-white/50 leading-relaxed m-0 mb-3 flex-1">
                 {roleContext}
             </p>
+
+            <details className="mt-2 mb-4">
+                <summary className="text-xs text-white/40 cursor-pointer hover:text-white/60">
+                    Notes for treasury teams ↓
+                </summary>
+                <p className="text-xs text-white/40 mt-2 pl-2 border-l border-white/10 m-0 leading-relaxed">
+                    {archetype.id === 'full_forward' ? (
+                        <>
+                            Pricing uses <JargonTooltip term="forward rate">forward points</JargonTooltip>{' '}
+                            based on interest rate differential (India vs US). Monitor forward premium
+                            erosion on longer tenors.
+                        </>
+                    ) : (
+                        archetype.treasuryNote
+                    )}
+                </p>
+            </details>
 
             <button
                 type="button"
@@ -205,8 +292,61 @@ export const HedgingStrategyMatrix: React.FC<HedgingStrategyMatrixProps> = ({
                 </h2>
                 <p className="text-[11px] text-white/40 m-0 leading-relaxed">
                     Archetypes commonly considered by market participants in a{' '}
-                    <span className="text-white/55">{formatRegimeLabel(volatilityRegime)}</span>{' '}
+                    <JargonTooltip term="volatility regime">
+                        <span className="text-white/55">{formatRegimeLabel(volatilityRegime)}</span>
+                    </JargonTooltip>{' '}
                     regime — ordered by illustrative fit, not recommendation.
+                </p>
+            </div>
+
+            <div className="overflow-x-auto mb-6">
+                <table className="w-full text-xs">
+                    <thead>
+                        <tr className="border-b border-white/10 text-white/40 text-left">
+                            {MATRIX_COLUMNS.map((col) => (
+                                <th
+                                    key={col}
+                                    className="py-2 pr-4 font-medium uppercase tracking-wider"
+                                >
+                                    {col}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sortedArchetypes.map((archetype) => {
+                            const fitLevel = getArchetypeFitLevel(
+                                archetype,
+                                volatilityRegime,
+                                role,
+                            );
+                            return (
+                                <tr
+                                    key={archetype.id}
+                                    className="border-b border-white/5 hover:bg-white/[0.02] cursor-pointer"
+                                    onClick={() => scrollToArchetypeCard(archetype.id)}
+                                >
+                                    <td className="py-2 pr-4 text-white font-medium">
+                                        {archetype.name}
+                                    </td>
+                                    <td className="py-2 pr-4">
+                                        <ProtectionBadge level={archetype.protectionLevel} />
+                                    </td>
+                                    <td className="py-2 pr-4 text-white/45">{archetype.costDrag}</td>
+                                    <td className="py-2 pr-4 text-white/45">
+                                        {archetype.upsideParticipation}
+                                    </td>
+                                    <td className="py-2 pr-4">
+                                        <RegimeFitBadge fit={fitLevel} />
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                <p className="text-xs text-white/30 mt-2 m-0">
+                    Click any row to see detailed context. Ordered by illustrative regime fit — not
+                    a recommendation.
                 </p>
             </div>
 

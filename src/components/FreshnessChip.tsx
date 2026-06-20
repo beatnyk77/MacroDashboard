@@ -3,7 +3,13 @@ import { Chip, Tooltip } from '@mui/material';
 import { CheckCircle, Clock, AlertTriangle, AlertCircle, HelpCircle } from 'lucide-react';
 import { formatProvenanceTag, formatSourceRef } from '@/lib/formatProvenance';
 
-export type FreshnessStatus = 'fresh' | 'lagged' | 'stale' | 'overdue' | 'no_data';
+export type FreshnessStatus =
+    | 'fresh'
+    | 'lagged'
+    | 'stale'
+    | 'overdue'
+    | 'weekend'
+    | 'no_data';
 
 interface FreshnessChipProps {
     status: FreshnessStatus;
@@ -41,6 +47,12 @@ const STATUS_CONFIG = {
         color: 'error',
         icon: <AlertCircle size={10} />,
         bgcolor: 'rgba(239, 68, 68, 0.2)'
+    },
+    weekend: {
+        text: 'WEEKEND',
+        color: 'default',
+        icon: <Clock size={10} />,
+        bgcolor: 'rgba(148, 163, 184, 0.12)'
     },
     no_data: {
         text: 'NO DATA',

@@ -93,15 +93,14 @@ const TradeDashboard: React.FC = () => {
                         Currency Intelligence
                     </span>
                     <h2 className="text-lg font-black text-white m-0">
-                        TradeFx — USD/INR Hedging Analysis
+                        TradeFx — Currency Intelligence
                     </h2>
                     <p className="text-xs text-white/45 leading-relaxed m-0 max-w-2xl">
-                        Regime-aware collar payoff diagrams, exposure simulator, and hedging archetype
-                        framework for Indian exporters and importers.
+                        Regime-aware hedging analysis for Indian exporters &amp; importers.
                     </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#B8860B] shrink-0">
-                    Open TradeFx
+                    Explore Currency Intelligence
                     <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
                 </span>
             </TrailNavLink>

@@ -1,31 +1,31 @@
-const TRADE_FX_URL = 'https://graphiquestor.com/trade-fx';
+const TRADE_FX_URL = 'https://graphiquestor.com/trade-fx/';
 
 export const TRADE_FX_FAQ_ENTRIES = [
     {
-        question: 'What is a zero-cost collar for USD/INR?',
+        question: 'What is a zero-cost collar for USD/INR hedging?',
         answer:
-            'A zero-cost collar is an options structure that combines a protective strike (typically a put for USD/INR exporters) with an upside cap (call) arranged so net premium is approximately zero. Below the floor strike, the exporter receives a minimum INR rate; between floor and cap, the effective rate follows spot; above the cap, upside is limited. TradeFx renders illustrative payoff diagrams — actual structures involve bid/offer spreads and bank-specific terms.',
+            'A zero-cost collar is a hedging structure where an Indian exporter buys a put option (setting a floor on the INR rate they receive for USD) and simultaneously sells a call option (capping their upside). The premium from selling the call offsets the cost of buying the put, resulting in zero net premium outlay. The exporter is protected below the floor strike but cannot benefit above the cap strike. Indicative terms vary by bank — request pricing from an authorised forex dealer.',
     },
     {
-        question: 'How do Indian exporters hedge USD receivables?',
+        question: 'How can Indian exporters hedge USD/INR exposure?',
         answer:
-            'Indian exporters with USD receivables commonly use forward contracts to lock conversion rates, partial hedges to retain spot participation, zero-cost collars when premium outlay is constrained, or natural hedges via INR invoicing where structurally viable. GraphiQuestor\'s TradeFx framework maps these archetypes to the prevailing volatility regime using live India Pulse, US Pulse, and RBI FX defense telemetry — as educational context, not advice.',
+            'Indian exporters holding USD receivables can hedge using several instruments: forward contracts (lock a rate now for future delivery), zero-cost collars (floor protection with capped upside, zero net premium), partial hedges (hedge a portion of exposure), or natural hedges (match USD receivables with USD payables). The right approach depends on the current volatility regime, RBI intervention bias, and the exporter\'s risk tolerance. This tool illustrates the trade-offs — consult your bank\'s treasury desk for execution.',
     },
     {
         question:
             'What is the difference between a forward contract and a currency option for importers?',
         answer:
-            'A forward contract fixes the USD/INR payable rate at inception, eliminating spot uncertainty but forfeiting savings if INR appreciates. A currency option (typically a call for importers) provides a ceiling on payables while preserving downside savings, at the cost of premium. Importers with committed payables often prefer forwards for budget certainty; options suit uncertain timing or asymmetric payoff preferences.',
+            'A forward contract locks in an exchange rate today for a future date — the importer knows exactly how many rupees they will pay per USD, eliminating uncertainty but also giving up any potential benefit if the INR strengthens. A currency option (such as a call option on USD) gives the importer the right but not the obligation to buy USD at a set rate, preserving the benefit if INR strengthens while providing protection if it weakens. Options require an upfront premium; forwards typically do not. Both are executed through authorised dealers — indicative pricing depends on tenor, notional, and market conditions.',
     },
     {
         question: 'How does RBI intervention affect USD/INR for exporters?',
         answer:
-            'When RBI sells USD from forex reserves to dampen INR depreciation, spot USD/INR volatility may compress in the short run — potentially improving forward pricing windows for exporters. Sustained intervention with declining reserve buffers can signal tighter RBI tolerance bands. TradeFx surfaces RBI FX defense posture and reserve levels via India Pulse to contextualize hedging entry timing.',
+            'The Reserve Bank of India intervenes in the currency market to manage excessive INR volatility — typically selling USD from its forex reserves to prevent sharp INR depreciation or buying USD to prevent sharp appreciation. For exporters with USD receivables, RBI intervention that supports the INR (appreciation bias) compresses the INR value of future receipts. Conversely, when RBI allows INR depreciation, exporters benefit. GraphiQuestor\'s India Macro Pulse tracks RBI intervention signals, reserve levels, and policy bias to contextualise the hedging environment.',
     },
     {
-        question: 'What is the current USD/INR hedging regime in June 2026?',
+        question: 'What is the current USD/INR macro regime for exporters in June 2026?',
         answer:
-            'As of June 2026, TradeFx classifies the USD/INR environment using realized volatility, composite macro pressure, and signals from India Pulse, US Pulse, De-Dollarization Lab, and commodities telemetry. The live regime label (low, moderate, elevated, or high volatility) updates with each data refresh on graphiquestor.com/trade-fx. Consult the Current Regime strip and Macro Drivers panel for the latest deterministic classification.',
+            'As of June 2026, the USD/INR regime signal from GraphiQuestor\'s macro framework shows a low-volatility environment with India forex reserves at approximately $585B, providing an RBI intervention buffer. The de-dollarisation composite signals emerging INR settlement corridors on key trade routes. For exporters, this regime is typically associated with tactical forward booking or zero-cost collar structures — the low implied volatility makes collar premium dynamics favourable. This is illustrative context only — not a forecast or recommendation.',
     },
 ] as const;
 
@@ -34,76 +34,23 @@ export function buildTradeFxJsonLd(): Record<string, unknown>[] {
         {
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
-            '@id': `${TRADE_FX_URL}#application`,
             name: 'TradeFx — Currency Intelligence',
-            description:
-                'Institutional-grade USD/INR hedging analysis, zero-cost collar payoff diagrams, and regime-aware currency strategy for Indian exporters and importers.',
             url: TRADE_FX_URL,
+            description:
+                'Institutional-grade USD/INR hedging analysis, zero-cost collar payoff diagrams, and regime-aware currency strategy frameworks for Indian exporters and importers.',
             applicationCategory: 'FinanceApplication',
-            operatingSystem: 'All',
+            operatingSystem: 'Web',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
             featureList: [
-                'Zero-cost collar payoff diagrams',
+                'Zero-cost collar payoff diagram',
                 'USD/INR exposure impact simulator',
-                'Regime-aware hedging strategy framework',
-                'Macro driver context from India, US, China pulses',
+                'Regime-aware hedging strategy matrix',
+                'Macro driver context from India, US, China, De-Dol pulses',
             ],
-            creator: { '@id': 'https://graphiquestor.com/#organization' },
-        },
-        {
-            '@context': 'https://schema.org',
-            '@type': 'WebPage',
-            '@id': `${TRADE_FX_URL}#webpage`,
-            name: 'TradeFx — Currency Intelligence',
-            description:
-                'Regime-aware USD/INR hedging analysis, collar payoff diagrams, and macro driver context for Indian exporters and importers.',
-            url: TRADE_FX_URL,
-            isPartOf: { '@id': 'https://graphiquestor.com/#website' },
-            speakable: {
-                '@type': 'SpeakableSpecification',
-                cssSelector: ['.trade-fx-speakable'],
-            },
-        },
-        {
-            '@context': 'https://schema.org',
-            '@type': 'BreadcrumbList',
-            itemListElement: [
-                {
-                    '@type': 'ListItem',
-                    position: 1,
-                    name: 'Home',
-                    item: 'https://graphiquestor.com/',
-                },
-                {
-                    '@type': 'ListItem',
-                    position: 2,
-                    name: 'Trade Intelligence',
-                    item: 'https://graphiquestor.com/trade',
-                },
-                {
-                    '@type': 'ListItem',
-                    position: 3,
-                    name: 'TradeFx',
-                    item: TRADE_FX_URL,
-                },
-            ],
-        },
-        {
-            '@context': 'https://schema.org',
-            '@type': 'Dataset',
-            '@id': `${TRADE_FX_URL}#dataset`,
-            name: 'USD/INR Currency Intelligence Telemetry',
-            description:
-                'Spot rate, volatility regime, and macro driver signals for Indian exporter/importer hedging analysis.',
-            url: TRADE_FX_URL,
-            creator: { '@id': 'https://graphiquestor.com/#organization' },
-            temporalCoverage: '2020-01-01/2026-06-20',
-            spatialCoverage: 'India',
         },
         {
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
-            '@id': `${TRADE_FX_URL}#faq`,
             mainEntity: TRADE_FX_FAQ_ENTRIES.map((entry) => ({
                 '@type': 'Question',
                 name: entry.question,

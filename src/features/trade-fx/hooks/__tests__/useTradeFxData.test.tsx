@@ -101,6 +101,7 @@ describe('useTradeFxData', () => {
             expect(result.current.regimeNote).toContain('volatility regime');
             expect(result.current.isLoading).toBe(false);
             expect(result.current.hasError).toBe(false);
+            expect(result.current.isIllustrativeRates).toBe(false);
         });
     });
 });

@@ -12,13 +12,19 @@ describe('tradeFxSeo', () => {
         expect(faq).toBeDefined();
         const mainEntity = faq?.mainEntity as { name: string }[];
         expect(mainEntity).toHaveLength(5);
-        expect(mainEntity[0].name).toContain('zero-cost collar');
+        expect(mainEntity[0].name).toContain('USD/INR hedging');
     });
 
-    it('includes WebApplication and BreadcrumbList schemas', () => {
+    it('includes WebApplication and FAQPage schemas', () => {
         const types = buildTradeFxJsonLd().map((s) => s['@type']);
         expect(types).toContain('WebApplication');
-        expect(types).toContain('BreadcrumbList');
         expect(types).toContain('FAQPage');
+        expect(types).not.toContain('BreadcrumbList');
+    });
+
+    it('uses audit-spec WebApplication fields', () => {
+        const app = buildTradeFxJsonLd().find((s) => s['@type'] === 'WebApplication');
+        expect(app?.operatingSystem).toBe('Web');
+        expect(app?.url).toBe('https://graphiquestor.com/trade-fx/');
     });
 });

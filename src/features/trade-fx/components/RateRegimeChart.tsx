@@ -9,10 +9,16 @@ import {
     CartesianGrid,
     Tooltip,
     ReferenceLine,
+    Legend,
 } from 'recharts';
 import { MACRO_EVENTS } from '../constants/macroEvents';
 import { getPairConfig } from '../constants/currencyPairs';
-import { buildRateChartData, filterHistoryByHorizon } from '../lib/chartUtils';
+import { ILLUSTRATIVE_USD_INR_RATES } from '../constants/illustrativeRateData';
+import {
+    buildIllustrativeRateChartData,
+    buildRateChartData,
+    filterHistoryByHorizon,
+} from '../lib/chartUtils';
 import type { CurrencyPair, TimeHorizon } from '../lib/tradeFxTypes';
 
 type RateRegimeChartProps = {
@@ -22,6 +28,7 @@ type RateRegimeChartProps = {
     regimeNote: string;
     volatilityRegime: string;
     isLoading?: boolean;
+    isIllustrative?: boolean;
 };
 
 type ChartRow = {
@@ -72,13 +79,17 @@ export const RateRegimeChart: React.FC<RateRegimeChartProps> = ({
     regimeNote,
     volatilityRegime,
     isLoading = false,
+    isIllustrative = false,
 }) => {
     const pairConfig = getPairConfig(pair);
 
     const chartData = useMemo(() => {
+        if (isIllustrative) {
+            return buildIllustrativeRateChartData(ILLUSTRATIVE_USD_INR_RATES);
+        }
         const filtered = filterHistoryByHorizon(spotHistory, horizon);
         return buildRateChartData(filtered);
-    }, [spotHistory, horizon]);
+    }, [spotHistory, horizon, isIllustrative]);
 
     const visibleEvents = useMemo(() => {
         if (chartData.length === 0) return [];
@@ -94,6 +105,20 @@ export const RateRegimeChart: React.FC<RateRegimeChartProps> = ({
         const max = Math.max(...highs);
         const pad = Math.max((max - min) * 0.08, 0.5);
         return [min - pad, max + pad];
+    }, [chartData]);
+
+    const interpretation = useMemo(() => {
+        if (chartData.length === 0) return null;
+        const spots = chartData.map((d) => d.spot);
+        const spotMin = Math.min(...spots);
+        const spotMax = Math.max(...spots);
+        const range = (spotMax - spotMin).toFixed(1);
+        const formatMonth = (date: string) =>
+            new Date(date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        const startLabel = formatMonth(chartData[0].date);
+        const endLabel = formatMonth(chartData[chartData.length - 1].date);
+
+        return { range, startLabel, endLabel };
     }, [chartData]);
 
     if (!pairConfig.hasLiveTelemetry) {
@@ -131,13 +156,22 @@ export const RateRegimeChart: React.FC<RateRegimeChartProps> = ({
                     Spot Rate &amp; Volatility Context
                 </h2>
                 <span className="text-[9px] font-black uppercase tracking-wider text-white/25">
-                    Live — RBI / FRED pipeline
+                    {isIllustrative
+                        ? 'Illustrative — live feed integration in progress'
+                        : 'Live — RBI / FRED pipeline'}
                 </span>
             </div>
 
-            <div className="h-[320px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={chartData} margin={{ top: 16, right: 12, left: 0, bottom: 0 }}>
+            <div className="relative pl-6">
+                <span
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 text-[11px] text-white/40 whitespace-nowrap origin-center"
+                    aria-hidden
+                >
+                    USD/INR (₹ per USD)
+                </span>
+                <div className="h-[320px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart data={chartData} margin={{ top: 24, right: 12, left: 4, bottom: 4 }}>
                         <CartesianGrid
                             strokeDasharray="3 3"
                             stroke="rgba(255,255,255,0.05)"
@@ -173,10 +207,12 @@ export const RateRegimeChart: React.FC<RateRegimeChartProps> = ({
                                 />
                             }
                         />
+                        <Legend verticalAlign="top" align="right" iconType="plainline" />
 
                         <Area
                             type="monotone"
                             dataKey="volLower"
+                            name="Volatility band (±1 std dev, illustrative)"
                             stackId="volBand"
                             stroke="none"
                             fill="transparent"
@@ -194,7 +230,7 @@ export const RateRegimeChart: React.FC<RateRegimeChartProps> = ({
                         <Line
                             type="monotone"
                             dataKey="spot"
-                            name="Spot"
+                            name="Spot USD/INR"
                             stroke="#B8860B"
                             strokeWidth={2}
                             dot={false}
@@ -216,9 +252,26 @@ export const RateRegimeChart: React.FC<RateRegimeChartProps> = ({
                                 }}
                             />
                         ))}
-                    </ComposedChart>
-                </ResponsiveContainer>
+                        </ComposedChart>
+                    </ResponsiveContainer>
+                </div>
+                <p className="text-center text-[11px] text-white/40 mt-1 m-0">Date</p>
             </div>
+
+            {interpretation ? (
+                <p className="text-xs text-white/40 mt-3 px-1 m-0 leading-relaxed">
+                    USD/INR has traded within a ₹{interpretation.range} band over the illustrated
+                    period ({interpretation.startLabel}–{interpretation.endLabel}). FOMC decision
+                    dates have not triggered sustained regime breaks under current RBI reserve
+                    conditions.
+                    {isIllustrative ? (
+                        <span className="text-white/30">
+                            {' '}
+                            Illustrative — live feed integration in progress.
+                        </span>
+                    ) : null}
+                </p>
+            ) : null}
 
             {visibleEvents.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2 border-t border-white/5 pt-3">

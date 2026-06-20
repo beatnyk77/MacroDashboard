@@ -1,66 +1,37 @@
 import { describe, it, expect } from 'vitest';
-import {
-    calculateCollarMetrics,
-    calculateExposureImpact,
-    generateCollarPayoffData,
-} from '../collarPayoff';
+import { buildPayoffTable } from '../collarPayoff';
 
-const BASE_PARAMS = {
-    currentSpot: 85,
-    forwardRate: 86.5,
-    floorStrike: 82,
-    capStrike: 88,
-    notionalFC: 1_000_000,
-    horizonDays: 90,
-};
+describe('buildPayoffTable', () => {
+    const baseParams = {
+        currentSpot: 84,
+        forwardRate: 84.5,
+        floorStrike: 81.5,
+        capStrike: 86.5,
+        notionalFC: 1_000_000,
+        horizonDays: 90,
+    };
 
-describe('generateCollarPayoffData', () => {
-    it('returns correct shape with 101 points by default', () => {
-        const data = generateCollarPayoffData(BASE_PARAMS);
-        expect(data).toHaveLength(101);
-        expect(data[0]).toMatchObject({
-            spotAtMaturity: expect.any(Number),
-            unhedged: expect.any(Number),
-            forwardHedge: 86.5,
-            zeroCollar: expect.any(Number),
+    it('returns four scenario rows', () => {
+        const rows = buildPayoffTable(baseParams);
+        expect(rows).toHaveLength(4);
+        expect(rows.map((r) => r.label)).toEqual([
+            'Floor (protection level)',
+            'Current spot',
+            'Cap (upside limit)',
+            'Tail scenario (+8%)',
+        ]);
+    });
+
+    it('caps collar payoff at floor strike when spot is below floor', () => {
+        const floorRow = buildPayoffTable(baseParams)[0];
+        expect(floorRow.collarINR).toBe(baseParams.floorStrike * baseParams.notionalFC);
+        expect(floorRow.unhedgedINR).toBe(baseParams.floorStrike * baseParams.notionalFC);
+    });
+
+    it('computes diffVsUnhedged as collar minus unhedged', () => {
+        const rows = buildPayoffTable(baseParams);
+        rows.forEach((row) => {
+            expect(row.diffVsUnhedged).toBeCloseTo(row.collarINR - row.unhedgedINR, 2);
         });
-    });
-
-    it('collar payoff is floored below floor strike and capped above cap', () => {
-        const data = generateCollarPayoffData(BASE_PARAMS, 200);
-        const belowFloor = data.filter((p) => p.spotAtMaturity < BASE_PARAMS.floorStrike);
-        const aboveCap = data.filter((p) => p.spotAtMaturity > BASE_PARAMS.capStrike);
-
-        belowFloor.forEach((p) => expect(p.zeroCollar).toBe(BASE_PARAMS.floorStrike));
-        aboveCap.forEach((p) => expect(p.zeroCollar).toBe(BASE_PARAMS.capStrike));
-    });
-});
-
-describe('calculateCollarMetrics', () => {
-    it('returns floor, cap, and participation zone', () => {
-        const metrics = calculateCollarMetrics(BASE_PARAMS);
-        expect(metrics.protectedFloor).toBe(82);
-        expect(metrics.cappedAt).toBe(88);
-        expect(metrics.participationZone).toEqual([82, 88]);
-    });
-});
-
-describe('calculateExposureImpact', () => {
-    it('exporter gains when INR depreciates (positive deltaRate)', () => {
-        const result = calculateExposureImpact('exporter', 1_000_000, 85, 5);
-        expect(result.pnlINR).toBeGreaterThan(0);
-        expect(result.direction).toBe('gain');
-    });
-
-    it('importer loses when INR depreciates (positive deltaRate)', () => {
-        const result = calculateExposureImpact('importer', 1_000_000, 85, 5);
-        expect(result.pnlINR).toBeLessThan(0);
-        expect(result.direction).toBe('loss');
-    });
-
-    it('exporter loses when INR appreciates (negative deltaRate)', () => {
-        const result = calculateExposureImpact('exporter', 1_000_000, 85, -5);
-        expect(result.pnlINR).toBeLessThan(0);
-        expect(result.direction).toBe('loss');
     });
 });

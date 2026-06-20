@@ -1,8 +1,11 @@
 import React from 'react';
 import { TrailNavLink } from '@/components/TrailLink';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { resolveWeekendFreshness } from '@/lib/marketFreshness';
 import { cn } from '@/lib/utils';
-import type { MacroRegimeSignal } from '../lib/tradeFxTypes';
+import { JargonTooltip } from './JargonTooltip';
+import { MACRO_HEDGING_IMPLICATIONS } from '../constants/macroHedgingImplications';
+import type { MacroRegimeSignal, Role, TimeHorizon } from '../lib/tradeFxTypes';
 
 const SOURCE_LABELS: Record<MacroRegimeSignal['source'], string> = {
     india_pulse: 'India Pulse',
@@ -30,13 +33,52 @@ const SENTIMENT_STYLES: Record<
     },
 };
 
+function renderDetailWithJargon(detail: string, source: MacroRegimeSignal['source']): React.ReactNode {
+    if (source === 'india_pulse' && /reserves/i.test(detail)) {
+        const parts = detail.split(/(reserves)/i);
+        return parts.map((part, i) =>
+            part.toLowerCase() === 'reserves' ? (
+                <JargonTooltip key={i} term="reserves buffer">
+                    {part}
+                </JargonTooltip>
+            ) : (
+                <React.Fragment key={i}>{part}</React.Fragment>
+            ),
+        );
+    }
+    if (source === 'dedol_lab' && /corridor/i.test(detail)) {
+        const parts = detail.split(/(corridors?)/i);
+        return parts.map((part, i) =>
+            /^corridors?$/i.test(part) ? (
+                <JargonTooltip key={i} term="de-dollarisation corridor">
+                    {part}
+                </JargonTooltip>
+            ) : (
+                <React.Fragment key={i}>{part}</React.Fragment>
+            ),
+        );
+    }
+    return detail;
+}
+
+function handleCtaClick(scrollTarget: string, onHorizonChange?: (h: TimeHorizon) => void, horizon?: TimeHorizon) {
+    if (horizon && onHorizonChange) {
+        onHorizonChange(horizon);
+    }
+    document.getElementById(scrollTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 interface MacroDriversPanelProps {
     signals: MacroRegimeSignal[];
+    role: Role;
+    onHorizonChange?: (horizon: TimeHorizon) => void;
     className?: string;
 }
 
 export const MacroDriversPanel: React.FC<MacroDriversPanelProps> = ({
     signals,
+    role,
+    onHorizonChange,
     className,
 }) => (
     <aside className={cn('space-y-3', className)}>
@@ -45,6 +87,9 @@ export const MacroDriversPanel: React.FC<MacroDriversPanelProps> = ({
         </h2>
         {signals.map((signal) => {
             const styles = SENTIMENT_STYLES[signal.sentiment];
+            const freshness = resolveWeekendFreshness(signal.staleness, signal.freshness);
+            const implication = MACRO_HEDGING_IMPLICATIONS[signal.source];
+
             return (
                 <article
                     key={signal.source}
@@ -58,8 +103,9 @@ export const MacroDriversPanel: React.FC<MacroDriversPanelProps> = ({
                             {SOURCE_LABELS[signal.source]}
                         </span>
                         <FreshnessChip
-                            status={signal.staleness}
+                            status={freshness.status}
                             lastUpdated={signal.freshness}
+                            label={freshness.label}
                         />
                     </div>
 
@@ -77,12 +123,32 @@ export const MacroDriversPanel: React.FC<MacroDriversPanelProps> = ({
                     </span>
 
                     <p className="text-[11px] text-white/50 leading-relaxed m-0 mb-2">
-                        {signal.detail}
+                        {renderDetailWithJargon(signal.detail, signal.source)}
                     </p>
+
+                    <p className="text-xs text-amber-400/80 mt-2 italic border-t border-white/5 pt-2 m-0 leading-relaxed">
+                        {implication.hedgingImplication[role]}
+                    </p>
+
+                    {implication.collarCTA ? (
+                        <button
+                            type="button"
+                            onClick={() =>
+                                handleCtaClick(
+                                    implication.collarCTA!.scrollTarget,
+                                    onHorizonChange,
+                                    implication.collarCTA!.horizon,
+                                )
+                            }
+                            className="text-xs text-[#B8860B] underline mt-1 block text-left hover:text-[#D4A017] transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                        >
+                            {implication.collarCTA.label}
+                        </button>
+                    ) : null}
 
                     <TrailNavLink
                         to={signal.link}
-                        className="text-[10px] font-black uppercase tracking-wider text-[#B8860B]/80 hover:text-[#B8860B] transition-colors"
+                        className="text-[10px] font-black uppercase tracking-wider text-[#B8860B]/80 hover:text-[#B8860B] transition-colors mt-2 inline-block"
                     >
                         View pulse →
                     </TrailNavLink>

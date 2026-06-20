@@ -22,52 +22,59 @@ export const CurrencyPairSelector: React.FC<CurrencyPairSelectorProps> = ({
 
     return (
         <div className={cn('flex flex-col gap-3', className)}>
-            <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-white/30 mr-1">
-                    Pair
+            <div className="space-y-2">
+                <span className="text-[9px] font-black uppercase tracking-widest text-white/30">
+                    Focus pair
                 </span>
-                {CURRENCY_PAIRS.map((p) => {
-                    const active = pair === p.pair;
-                    return (
-                        <button
-                            key={p.pair}
-                            type="button"
-                            onClick={() => onPairChange(p.pair)}
-                            className={cn(
-                                'px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all border',
-                                active
-                                    ? 'bg-[#B8860B]/15 text-[#B8860B] border-[#B8860B]/35'
-                                    : 'text-white/40 border-white/5 hover:text-white/60 hover:bg-white/5',
-                            )}
-                        >
-                            {p.label}
-                        </button>
-                    );
-                })}
+                <div className="flex flex-wrap items-center gap-2">
+                    {CURRENCY_PAIRS.map((p) => {
+                        const active = pair === p.pair;
+                        return (
+                            <button
+                                key={p.pair}
+                                type="button"
+                                onClick={() => onPairChange(p.pair)}
+                                className={cn(
+                                    'px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all border',
+                                    active
+                                        ? 'bg-[#B8860B]/15 text-[#B8860B] border-[#B8860B]/35'
+                                        : 'text-white/40 border-white/5 hover:text-white/60 hover:bg-white/5',
+                                )}
+                            >
+                                {p.label}
+                            </button>
+                        );
+                    })}
+                </div>
+                <p className="text-[10px] text-white/35 m-0 leading-relaxed">
+                    Primary: USD/INR. EUR/INR and CNY/INR data in progress.
+                </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-white/30 mr-1">
-                    Horizon
+            <div className="space-y-2">
+                <span className="text-[9px] font-black uppercase tracking-widest text-white/30">
+                    Planning horizon
                 </span>
-                {TIME_HORIZONS.map((h) => {
-                    const active = horizon === h.id;
-                    return (
-                        <button
-                            key={h.id}
-                            type="button"
-                            onClick={() => onHorizonChange(h.id)}
-                            className={cn(
-                                'px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all border',
-                                active
-                                    ? 'bg-white/10 text-white border-white/20'
-                                    : 'text-white/40 border-transparent hover:text-white/60 hover:bg-white/5',
-                            )}
-                        >
-                            {h.label}
-                        </button>
-                    );
-                })}
+                <div className="flex flex-wrap items-center gap-2">
+                    {TIME_HORIZONS.map((h) => {
+                        const active = horizon === h.id;
+                        return (
+                            <button
+                                key={h.id}
+                                type="button"
+                                onClick={() => onHorizonChange(h.id)}
+                                className={cn(
+                                    'px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all border',
+                                    active
+                                        ? 'bg-white/10 text-white border-white/20'
+                                        : 'text-white/40 border-transparent hover:text-white/60 hover:bg-white/5',
+                                )}
+                            >
+                                {h.label}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             {pairConfig && !pairConfig.hasLiveTelemetry && pairConfig.dataNote && (

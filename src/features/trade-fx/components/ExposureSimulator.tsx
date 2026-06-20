@@ -12,9 +12,41 @@ interface ExposureSimulatorProps {
     horizon: TimeHorizon;
     spot: number | null;
     regimeNote: string;
+    onCollarNotionalSync?: (notional: number) => void;
 }
 
-const DEFAULT_NOTIONAL = 1_000_000;
+const DEFAULT_NOTIONAL = 100_000;
+
+function formatUsdNotional(amount: number): string {
+    return amount.toLocaleString('en-US');
+}
+
+function buildSummary(
+    role: Role,
+    notionalFC: number,
+    deltaRatePct: number,
+    pnlINR: number,
+    horizon: TimeHorizon,
+    baseCurrency: string,
+): string {
+    if (notionalFC === 0 || deltaRatePct === 0) return '';
+
+    const direction = deltaRatePct > 0 ? 'depreciates' : 'appreciates';
+    const absMove = Math.abs(deltaRatePct).toFixed(1);
+    const formatted = formatInrIndian(Math.abs(pnlINR), false);
+    const notionalLabel = `${baseCurrency} ${formatUsdNotional(notionalFC)}`;
+
+    if (role === 'exporter') {
+        const gain = deltaRatePct > 0;
+        return `A ${absMove}% INR ${direction} would ${gain ? 'increase' : 'reduce'} your USD receivables value by ${formatted} on ${notionalLabel} exposure over ${horizon}.`;
+    }
+    if (role === 'importer') {
+        const gain = deltaRatePct < 0;
+        return `A ${absMove}% INR ${direction} would ${gain ? 'reduce' : 'increase'} your USD payable cost by ${formatted} on ${notionalLabel} exposure over ${horizon}.`;
+    }
+
+    return `A ${absMove}% INR ${direction}: exporters gain/lose ${formatted}; importers see the opposite impact on ${notionalLabel} notional.`;
+}
 
 function PnlCard({
     title,
@@ -78,10 +110,11 @@ export const ExposureSimulator: React.FC<ExposureSimulatorProps> = ({
     horizon,
     spot,
     regimeNote,
+    onCollarNotionalSync,
 }) => {
     const pairConfig = getPairConfig(pair);
     const [notionalFC, setNotionalFC] = useState(DEFAULT_NOTIONAL);
-    const [deltaRatePct, setDeltaRatePct] = useState(0);
+    const [deltaRatePct, setDeltaRatePct] = useState(2.0);
 
     const moveLabel = describeInrMove(deltaRatePct);
 
@@ -94,6 +127,30 @@ export const ExposureSimulator: React.FC<ExposureSimulatorProps> = ({
         if (spot === null) return null;
         return calculateExposureImpact('importer', notionalFC, spot, deltaRatePct, regimeNote);
     }, [notionalFC, spot, deltaRatePct, regimeNote]);
+
+    const summary = useMemo(() => {
+        if (spot === null) return '';
+        const activeResult =
+            role === 'exporter'
+                ? exporterResult
+                : role === 'importer'
+                  ? importerResult
+                  : exporterResult;
+        if (!activeResult) return '';
+        return buildSummary(
+            role,
+            notionalFC,
+            deltaRatePct,
+            activeResult.pnlINR,
+            horizon,
+            pairConfig.baseCurrency,
+        );
+    }, [role, notionalFC, deltaRatePct, horizon, pairConfig.baseCurrency, exporterResult, importerResult, spot]);
+
+    const handleCollarCta = () => {
+        onCollarNotionalSync?.(notionalFC);
+        document.getElementById('collar-payoff')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
     if (spot === null) {
         return (
@@ -160,6 +217,12 @@ export const ExposureSimulator: React.FC<ExposureSimulatorProps> = ({
                 </div>
             </div>
 
+            {summary ? (
+                <div className="text-sm font-medium text-white/90 bg-white/5 border border-white/10 rounded px-4 py-3">
+                    {summary}
+                </div>
+            ) : null}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {exporterResult && (
                     <PnlCard
@@ -181,15 +244,18 @@ export const ExposureSimulator: React.FC<ExposureSimulatorProps> = ({
                 )}
             </div>
 
+            <div className="flex items-center gap-3">
+                <button
+                    type="button"
+                    onClick={handleCollarCta}
+                    className="text-sm text-amber-400 underline hover:text-amber-300 transition-colors bg-transparent border-0 p-0 cursor-pointer text-left"
+                >
+                    See how a forward vs zero-cost collar changes this outcome →
+                </button>
+            </div>
+
             <p className="text-[11px] text-white/45 leading-relaxed m-0 border-t border-white/5 pt-3">
                 {regimeNote}
-            </p>
-
-            <p className="text-[10px] text-amber-400/70 m-0 italic">
-                Illustrative calculation only. Not a forecast or advice. Consult your bank or
-                treasury advisor before acting on any{' '}
-                <dfn title="Managing currency risk via forwards, options, or natural offsets">hedging</dfn>{' '}
-                decision.
             </p>
         </section>
     );

@@ -1,3 +1,4 @@
+import type { IllustrativeRatePoint } from '../constants/illustrativeRateData';
 import type { TimeHorizon } from './tradeFxTypes';
 import { TIME_HORIZONS } from '../constants/currencyPairs';
 
@@ -46,6 +47,22 @@ export function filterHistoryByHorizon(
     const cutoff = new Date(latestDate);
     cutoff.setDate(cutoff.getDate() - days);
     return sorted.filter((p) => new Date(p.date) >= cutoff);
+}
+
+/** Builds chart rows using illustrative volProxy (±1σ band as % of spot). */
+export function buildIllustrativeRateChartData(
+    points: IllustrativeRatePoint[],
+): RateChartPoint[] {
+    return points.map((point) => {
+        const bandWidth = point.spot * (point.volProxy / 100);
+        return {
+            date: point.date,
+            spot: point.spot,
+            volLower: point.spot - bandWidth,
+            volUpper: point.spot + bandWidth,
+            bandWidth,
+        };
+    });
 }
 
 /** Builds chart rows with ±1 rolling std-dev band around spot. */

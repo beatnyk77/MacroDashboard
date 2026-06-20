@@ -111,3 +111,40 @@ export function calculateExposureImpact(
         regimeNote,
     };
 }
+
+export type PayoffTableRow = {
+    label: string;
+    spotAtMaturity: number;
+    unhedgedINR: number;
+    forwardINR: number;
+    collarINR: number;
+    diffVsUnhedged: number;
+};
+
+export function buildPayoffTable(params: CollarParams): PayoffTableRow[] {
+    const { floorStrike, capStrike, currentSpot, forwardRate, notionalFC } = params;
+
+    const scenarios = [
+        { label: 'Floor (protection level)', spot: floorStrike },
+        { label: 'Current spot', spot: currentSpot },
+        { label: 'Cap (upside limit)', spot: capStrike },
+        { label: 'Tail scenario (+8%)', spot: currentSpot * 1.08 },
+    ];
+
+    return scenarios.map(({ label, spot }) => {
+        const collarRate =
+            spot < floorStrike ? floorStrike : spot > capStrike ? capStrike : spot;
+        const unhedgedINR = spot * notionalFC;
+        const forwardINR = forwardRate * notionalFC;
+        const collarINR = collarRate * notionalFC;
+
+        return {
+            label,
+            spotAtMaturity: spot,
+            unhedgedINR,
+            forwardINR,
+            collarINR,
+            diffVsUnhedged: collarINR - unhedgedINR,
+        };
+    });
+}

@@ -2,17 +2,26 @@ import React, { useCallback, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import type { Role } from '../lib/tradeFxTypes';
 
-const ROLES: { id: Role; label: string }[] = [
-    { id: 'exporter', label: 'Exporter' },
-    { id: 'importer', label: 'Importer' },
-    { id: 'balanced', label: 'Balanced' },
-];
-
-const ACTIVE_STYLES: Record<Role, string> = {
-    exporter: 'bg-[#B8860B]/20 text-[#B8860B] border-[#B8860B]/40',
-    importer: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
-    balanced: 'bg-white/10 text-white border-white/20',
-};
+const ROLES = [
+    {
+        id: 'exporter' as Role,
+        label: 'Exporter',
+        caption: 'You receive USD/EUR/CNY against INR.',
+        icon: '↑',
+    },
+    {
+        id: 'balanced' as Role,
+        label: 'Balanced',
+        caption: 'You have both receivables and payables.',
+        icon: '⇄',
+    },
+    {
+        id: 'importer' as Role,
+        label: 'Importer',
+        caption: 'You pay USD/EUR/CNY from INR.',
+        icon: '↓',
+    },
+] as const;
 
 interface RoleToggleProps {
     value: Role;
@@ -49,14 +58,16 @@ export const RoleToggle: React.FC<RoleToggleProps> = ({ value, onChange, classNa
         <div
             role="radiogroup"
             aria-label="Trade exposure role"
-            className={cn('flex flex-wrap gap-2', className)}
+            className={cn('grid grid-cols-1 sm:grid-cols-3 gap-2', className)}
         >
             {ROLES.map((role, index) => {
                 const active = value === role.id;
                 return (
                     <button
                         key={role.id}
-                        ref={(el) => { buttonRefs.current[index] = el; }}
+                        ref={(el) => {
+                            buttonRefs.current[index] = el;
+                        }}
                         type="button"
                         role="radio"
                         aria-checked={active}
@@ -64,13 +75,26 @@ export const RoleToggle: React.FC<RoleToggleProps> = ({ value, onChange, classNa
                         onClick={() => onChange(role.id)}
                         onKeyDown={(e) => handleKeyDown(e, index)}
                         className={cn(
-                            'px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all border',
+                            'flex flex-col items-start rounded-xl px-4 py-3 transition-all border text-left',
                             active
-                                ? ACTIVE_STYLES[role.id]
-                                : 'text-white/40 border-transparent hover:text-white/70 hover:bg-white/5',
+                                ? 'bg-[#B8860B]/15 text-[#B8860B] border-[#B8860B]/40'
+                                : 'text-white/40 border-white/10 hover:text-white/70 hover:bg-white/5',
                         )}
                     >
-                        {role.label}
+                        <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider">
+                            <span aria-hidden className="text-sm leading-none">
+                                {role.icon}
+                            </span>
+                            {role.label}
+                        </span>
+                        <span
+                            className={cn(
+                                'text-[10px] mt-1 leading-snug',
+                                active ? 'text-[#B8860B]/70' : 'text-white/35',
+                            )}
+                        >
+                            {role.caption}
+                        </span>
                     </button>
                 );
             })}

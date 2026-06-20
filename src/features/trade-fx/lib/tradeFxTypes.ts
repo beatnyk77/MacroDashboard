@@ -52,6 +52,7 @@ export type HedgingArchetype = {
     id: string;
     name: string;
     typicalRegimeFit: string;
+    treasuryNote: string;
     protectionLevel: 'high' | 'medium' | 'low';
     costDrag: 'lowest' | 'low' | 'moderate' | 'premium';
     upsideParticipation: 'full' | 'partial' | 'capped' | 'none';
@@ -82,6 +83,7 @@ export type TradeFxData = {
     regimeNote: string;
     isLoading: boolean;
     hasError: boolean;
+    isIllustrativeRates: boolean;
 };
 
 export type TradeFxLeadPayload = {

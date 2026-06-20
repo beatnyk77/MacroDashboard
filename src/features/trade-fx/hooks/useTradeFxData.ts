@@ -8,7 +8,24 @@ import { useRBIFXDefense } from '@/hooks/useRBIFXDefense';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { classifyRegime } from '../lib/regimeEngine';
 import { estimateForwardRate } from '../constants/currencyPairs';
+import {
+    ILLUSTRATIVE_USD_INR_RATES,
+    ILLUSTRATIVE_USD_INR_SPOT,
+} from '../constants/illustrativeRateData';
 import type { CurrencyPair, TimeHorizon, TradeFxData } from '../lib/tradeFxTypes';
+
+const MIN_SANE_USD_INR = 50;
+
+function isSaneUsdInrSpot(value: number | null | undefined): value is number {
+    return value != null && value >= MIN_SANE_USD_INR;
+}
+
+function toIllustrativeSpotHistory() {
+    return ILLUSTRATIVE_USD_INR_RATES.map((row) => ({
+        date: row.date,
+        value: row.spot,
+    }));
+}
 
 type UseTradeFxDataOptions = {
     pair?: CurrencyPair;
@@ -50,16 +67,29 @@ export function useTradeFxData({
 
     const latestCurrencyWars = currencyWars?.[currencyWars.length - 1];
     const spotFromWars = latestCurrencyWars?.usd_inr ?? null;
-    const spot = usdInrMetric?.value ?? spotFromWars;
+    const liveSpot = usdInrMetric?.value ?? spotFromWars;
 
     const spotHistoryFromWars = (currencyWars ?? [])
-        .filter((row) => row.usd_inr != null)
+        .filter((row) => row.usd_inr != null && isSaneUsdInrSpot(row.usd_inr))
         .map((row) => ({ date: row.date, value: row.usd_inr as number }));
 
-    const spotHistory =
+    const liveSpotHistory =
         spotHistoryFromWars.length > 0
             ? spotHistoryFromWars
-            : (usdInrMetric?.history ?? []);
+            : (usdInrMetric?.history ?? []).filter((row) => isSaneUsdInrSpot(row.value));
+
+    const latestLiveHistorySpot = liveSpotHistory[liveSpotHistory.length - 1]?.value ?? null;
+    const useIllustrativeRates =
+        liveSpotHistory.length === 0 ||
+        !isSaneUsdInrSpot(liveSpot) ||
+        !isSaneUsdInrSpot(latestLiveHistorySpot);
+
+    const spotHistory = useIllustrativeRates ? toIllustrativeSpotHistory() : liveSpotHistory;
+    const spot = useIllustrativeRates
+        ? ILLUSTRATIVE_USD_INR_SPOT
+        : isSaneUsdInrSpot(liveSpot)
+          ? liveSpot
+          : latestLiveHistorySpot;
 
     const latestRbi = rbiFx[rbiFx.length - 1];
     const fxReservesBn = latestRbi?.fx_reserves_bn ?? null;
@@ -115,5 +145,6 @@ export function useTradeFxData({
         regimeNote: regimeResult.regimeNote,
         isLoading,
         hasError,
+        isIllustrativeRates: useIllustrativeRates,
     };
 }

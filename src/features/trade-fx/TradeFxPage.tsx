@@ -6,6 +6,7 @@ import { TrailNavLink } from '@/components/TrailLink';
 import { ModuleRow } from '@/components/layout/ModuleRow';
 import { getStaleness } from '@/hooks/useStaleness';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
+import { CompactDisclaimer } from './components/CompactDisclaimer';
 import { RoleToggle } from './components/RoleToggle';
 import { CurrencyPairSelector } from './components/CurrencyPairSelector';
 import { RateRegimeChart } from './components/RateRegimeChart';
@@ -15,6 +16,7 @@ import { CollarPayoffDiagram } from './components/CollarPayoffDiagram';
 import { HedgingStrategyMatrix } from './components/HedgingStrategyMatrix';
 import { RiskOpportunityFlags } from './components/RiskOpportunityFlags';
 import { AffiliateCTA } from './components/AffiliateCTA';
+import { TradeFxFaqSection } from './components/TradeFxFaqSection';
 import { RelatedContent } from '@/components/RelatedContent';
 import { useTradeFxData } from './hooks/useTradeFxData';
 import { buildTradeFxJsonLd } from './lib/tradeFxSeo';
@@ -34,9 +36,19 @@ type TradeFxWorkspaceProps = {
     role: Role;
     pair: CurrencyPair;
     horizon: TimeHorizon;
+    collarNotional: number;
+    onHorizonChange: (horizon: TimeHorizon) => void;
+    onCollarNotionalSync: (notional: number) => void;
 };
 
-const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({ role, pair, horizon }) => {
+const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({
+    role,
+    pair,
+    horizon,
+    collarNotional,
+    onHorizonChange,
+    onCollarNotionalSync,
+}) => {
     const data = useTradeFxData({ pair, horizon });
 
     const spotFreshness = getStaleness(
@@ -85,7 +97,11 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({ role, pair, horizon
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
                 <aside className="space-y-4 order-1 lg:order-none lg:col-start-2 lg:row-start-1 lg:sticky lg:top-32">
-                    <MacroDriversPanel signals={data.macroSignals} />
+                    <MacroDriversPanel
+                        signals={data.macroSignals}
+                        role={role}
+                        onHorizonChange={onHorizonChange}
+                    />
                     <RiskOpportunityFlags
                         role={role}
                         volatilityRegime={data.volatilityRegime}
@@ -101,6 +117,7 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({ role, pair, horizon
                         regimeNote={data.regimeNote}
                         volatilityRegime={data.volatilityRegime}
                         isLoading={data.isLoading}
+                        isIllustrative={data.isIllustrativeRates}
                     />
                     <ExposureSimulator
                         role={role}
@@ -108,8 +125,10 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({ role, pair, horizon
                         horizon={horizon}
                         spot={data.spot}
                         regimeNote={data.regimeNote}
+                        onCollarNotionalSync={onCollarNotionalSync}
                     />
-                    <DisclaimerBanner compact />
+                    <CompactDisclaimer context="simulator" />
+                    <CompactDisclaimer context="collar" />
                     <CollarPayoffDiagram
                         role={role}
                         pair={pair}
@@ -117,11 +136,13 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({ role, pair, horizon
                         spot={data.spot}
                         forwardRate={data.forwardRate}
                         regimeNote={data.regimeNote}
+                        externalNotional={collarNotional}
                     />
                     <HedgingStrategyMatrix
                         role={role}
                         volatilityRegime={data.volatilityRegime}
                     />
+                    <CompactDisclaimer context="matrix" />
                 </div>
             </div>
         </div>
@@ -132,11 +153,12 @@ export const TradeFxPage: React.FC = () => {
     const [role, setRole] = useState<Role>('balanced');
     const [pair, setPair] = useState<CurrencyPair>('USD/INR');
     const [horizon, setHorizon] = useState<TimeHorizon>('3M');
+    const [collarNotional, setCollarNotional] = useState(1_000_000);
 
     return (
         <div className="w-full max-w-[1400px] mx-auto pb-28 lg:pb-24">
             <SEOManager
-                title="USD/INR Currency Intelligence for Exporters & Importers | GraphiQuestor"
+                title="USD/INR Currency Intelligence for Exporters & Importers"
                 description="Real-time USD/INR hedging analysis, zero-cost collar payoff diagrams, and regime-aware currency strategy frameworks for Indian exporters and importers."
                 canonical="https://graphiquestor.com/trade-fx"
                 keywords={[
@@ -189,9 +211,18 @@ export const TradeFxPage: React.FC = () => {
 
             <ModuleRow label="CURRENCY INTELLIGENCE" labelColor="text-[#B8860B]/60">
                 <Suspense fallback={<DataFallback />}>
-                    <TradeFxWorkspace role={role} pair={pair} horizon={horizon} />
+                    <TradeFxWorkspace
+                        role={role}
+                        pair={pair}
+                        horizon={horizon}
+                        collarNotional={collarNotional}
+                        onHorizonChange={setHorizon}
+                        onCollarNotionalSync={setCollarNotional}
+                    />
                 </Suspense>
             </ModuleRow>
+
+            <TradeFxFaqSection className="mt-8" />
 
             <AffiliateCTA role={role} pair={pair} className="mt-8" />
 

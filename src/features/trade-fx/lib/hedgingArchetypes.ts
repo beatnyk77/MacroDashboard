@@ -5,6 +5,8 @@ export const HEDGING_ARCHETYPES: HedgingArchetype[] = [
         id: 'natural',
         name: 'Natural / Structural Hedge',
         typicalRegimeFit: 'Strong when INR invoicing or matching payables possible',
+        treasuryNote:
+            'Requires invoicing flexibility and counterparty acceptance of INR settlement.',
         protectionLevel: 'high',
         costDrag: 'lowest',
         upsideParticipation: 'full',
@@ -17,6 +19,8 @@ export const HEDGING_ARCHETYPES: HedgingArchetype[] = [
         id: 'full_forward',
         name: 'Full Forward Contract',
         typicalRegimeFit: 'Elevated volatility or clear directional pressure',
+        treasuryNote:
+            'Pricing uses forward points based on interest rate differential (India vs US). Monitor forward premium erosion on longer tenors.',
         protectionLevel: 'high',
         costDrag: 'moderate',
         upsideParticipation: 'none',
@@ -29,6 +33,8 @@ export const HEDGING_ARCHETYPES: HedgingArchetype[] = [
         id: 'partial_hedge',
         name: 'Partial Hedge + Active Monitor',
         typicalRegimeFit: 'Balanced regime or uncertain outlook',
+        treasuryNote:
+            'Hedge ratio decision (30%/50%/70%) depends on budget rate and board-approved risk parameters.',
         protectionLevel: 'medium',
         costDrag: 'low',
         upsideParticipation: 'partial',
@@ -41,6 +47,8 @@ export const HEDGING_ARCHETYPES: HedgingArchetype[] = [
         id: 'zero_collar',
         name: 'Zero-Cost Collar / Put Spread',
         typicalRegimeFit: 'Want downside protection without full premium outlay',
+        treasuryNote:
+            'Zero net premium is theoretical; actual collars carry small residual premium or debit depending on skew and bank margin.',
         protectionLevel: 'high',
         costDrag: 'lowest',
         upsideParticipation: 'capped',
@@ -53,6 +61,8 @@ export const HEDGING_ARCHETYPES: HedgingArchetype[] = [
         id: 'standalone_put',
         name: 'Standalone Put Option',
         typicalRegimeFit: 'High-conviction protection needed; willing to pay premium',
+        treasuryNote:
+            'Delta-hedging by bank may cause additional forward flows near option expiry — coordinate with your dealer.',
         protectionLevel: 'high',
         costDrag: 'premium',
         upsideParticipation: 'full',
@@ -104,6 +114,13 @@ export const TRADE_FX_AFFILIATE_CTA_ID = 'trade-fx-affiliate-cta';
 
 export function scrollToAffiliateCta(): void {
     document.getElementById(TRADE_FX_AFFILIATE_CTA_ID)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+    });
+}
+
+export function scrollToArchetypeCard(archetypeId: string): void {
+    document.getElementById(`archetype-${archetypeId}`)?.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
     });

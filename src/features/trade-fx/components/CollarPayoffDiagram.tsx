@@ -13,14 +13,30 @@ import {
 } from 'recharts';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
-import { DisclaimerBanner } from './DisclaimerBanner';
-import { calculateCollarMetrics, generateCollarPayoffData } from '../lib/collarPayoff';
+import { JargonTooltip } from './JargonTooltip';
+import {
+    buildPayoffTable,
+    calculateCollarMetrics,
+    generateCollarPayoffData,
+} from '../lib/collarPayoff';
 import { estimateForwardRate, getPairConfig, TIME_HORIZONS } from '../constants/currencyPairs';
 import { formatInrIndian } from '../lib/formatInr';
 import type { CollarPayoffPoint, Role, TimeHorizon, CurrencyPair } from '../lib/tradeFxTypes';
 
-const COLLAR_DISCLAIMER =
-    'Payoff diagrams are illustrative only. Actual collar structures involve bid/offer spreads, credit considerations, and bank-specific terms. Request indicative pricing from a licensed dealer.';
+const ONBOARDING_STEPS = [
+    {
+        step: '1',
+        text: 'Set your USD notional and comfort zone (floor and cap strikes below).',
+    },
+    {
+        step: '2',
+        text: 'We overlay current spot and an illustrative forward rate for your horizon.',
+    },
+    {
+        step: '3',
+        text: 'Compare your effective INR rate if USD/INR ends anywhere in this range.',
+    },
+] as const;
 
 const NOTIONAL_MIN = 100_000;
 const NOTIONAL_MAX = 10_000_000;
@@ -36,6 +52,7 @@ interface CollarPayoffDiagramProps {
     spot: number | null;
     forwardRate: number | null;
     regimeNote: string;
+    externalNotional?: number;
 }
 
 const CollarTooltip: React.FC<{
@@ -87,7 +104,20 @@ interface CollarPayoffChartProps {
     resolvedForward: number;
     regimeNote: string;
     showPerspectiveToggle: boolean;
+    initialNotional: number;
     onDiagramRoleChange: (role: DiagramRole) => void;
+}
+
+function buildRoleTableNote(
+    diagramRole: DiagramRole,
+    floorStrike: number,
+    notionalFC: number,
+): string {
+    const floorReceipt = formatInrIndian(floorStrike * notionalFC, false);
+    if (diagramRole === 'exporter') {
+        return `For exporters: collar guarantees minimum ${floorReceipt} receipt even if USD/INR falls to floor.`;
+    }
+    return `For importers (call ceiling structure): collar caps maximum ${floorReceipt} payable cost.`;
 }
 
 const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
@@ -98,14 +128,17 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
     resolvedForward,
     regimeNote,
     showPerspectiveToggle,
+    initialNotional,
     onDiagramRoleChange,
 }) => {
     const pairConfig = getPairConfig(pair);
     const horizonDays = TIME_HORIZONS.find((h) => h.id === horizon)?.days ?? 90;
 
-    const [floorStrike, setFloorStrike] = useState(() => Number((spot * 0.96).toFixed(2)));
-    const [capStrike, setCapStrike] = useState(() => Number((spot * 1.04).toFixed(2)));
-    const [notionalFC, setNotionalFC] = useState(1_000_000);
+    const [floorStrike, setFloorStrike] = useState(() => Number((spot * 0.97).toFixed(2)));
+    const [capStrike, setCapStrike] = useState(() => Number((spot * 1.03).toFixed(2)));
+    const [notionalFC, setNotionalFC] = useState(
+        Math.min(Math.max(initialNotional, NOTIONAL_MIN), NOTIONAL_MAX),
+    );
 
     const collarParams = useMemo(
         () => ({
@@ -121,13 +154,23 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
 
     const chartData = useMemo(() => generateCollarPayoffData(collarParams), [collarParams]);
     const metrics = useMemo(() => calculateCollarMetrics(collarParams), [collarParams]);
+    const payoffTable = useMemo(() => buildPayoffTable(collarParams), [collarParams]);
 
     const floorBounds = { min: spot * 0.92, max: spot * 0.99 };
     const capBounds = { min: spot * 1.01, max: spot * 1.12 };
 
     return (
         <>
-            <p className="text-[11px] text-amber-400/70 m-0 italic">{COLLAR_DISCLAIMER}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                {ONBOARDING_STEPS.map(({ step, text }) => (
+                    <div key={step} className="flex gap-2 items-start">
+                        <span className="text-xs font-mono text-amber-400/60 border border-amber-400/20 rounded-full w-5 h-5 flex items-center justify-center shrink-0 mt-0.5">
+                            {step}
+                        </span>
+                        <p className="text-xs text-white/40 leading-relaxed m-0">{text}</p>
+                    </div>
+                ))}
+            </div>
 
             {showPerspectiveToggle ? (
                 <div className="flex flex-wrap items-center gap-3">
@@ -188,12 +231,7 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
                                 />
                             }
                         />
-                        <Legend
-                            verticalAlign="top"
-                            align="right"
-                            iconType="line"
-                            wrapperStyle={{ fontSize: '9px', textTransform: 'uppercase' }}
-                        />
+                        <Legend verticalAlign="top" align="right" iconType="line" />
 
                         <ReferenceArea
                             x1={floorStrike}
@@ -291,7 +329,11 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
                     sub={formatInrIndian(metrics.cappedAt * notionalFC, false)}
                 />
                 <MetricTile
-                    label="Participation zone"
+                    label={
+                        <>
+                            <JargonTooltip term="participation zone">Participation zone</JargonTooltip>
+                        </>
+                    }
                     value={`₹${metrics.participationZone[0].toFixed(2)} – ₹${metrics.participationZone[1].toFixed(2)}`}
                     sub="Spot range with full participation"
                 />
@@ -300,6 +342,66 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
                     value={`${metrics.breakEvenVsForward >= 0 ? '+' : ''}${metrics.breakEvenVsForward.toFixed(2)} INR`}
                     sub="Zero net premium target"
                 />
+            </div>
+
+            <div className="mt-6">
+                <h4 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3 m-0">
+                    Payoff at Key Spot Levels — Illustrative
+                </h4>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                        <thead>
+                            <tr className="border-b border-white/10 text-white/40">
+                                <th className="text-left py-2 pr-4 font-medium">Scenario</th>
+                                <th className="text-right py-2 pr-4 font-medium">Spot at Maturity</th>
+                                <th className="text-right py-2 pr-4 font-medium">Unhedged (₹)</th>
+                                <th className="text-right py-2 pr-4 font-medium">Forward (₹)</th>
+                                <th className="text-right py-2 pr-4 font-medium">Collar (₹)</th>
+                                <th className="text-right py-2 font-medium">vs Unhedged</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {payoffTable.map((row) => (
+                                <tr
+                                    key={row.label}
+                                    className="border-b border-white/5 hover:bg-white/[0.02]"
+                                >
+                                    <td className="py-2 pr-4 text-white/70">{row.label}</td>
+                                    <td className="py-2 pr-4 text-right font-mono">
+                                        ₹{row.spotAtMaturity.toFixed(2)}
+                                    </td>
+                                    <td className="py-2 pr-4 text-right font-mono text-white/45">
+                                        {formatInrIndian(row.unhedgedINR, false)}
+                                    </td>
+                                    <td className="py-2 pr-4 text-right font-mono text-blue-400">
+                                        {formatInrIndian(row.forwardINR, false)}
+                                    </td>
+                                    <td className="py-2 pr-4 text-right font-mono text-[#B8860B]">
+                                        {formatInrIndian(row.collarINR, false)}
+                                    </td>
+                                    <td
+                                        className={cn(
+                                            'py-2 text-right font-mono',
+                                            row.diffVsUnhedged >= 0
+                                                ? 'text-emerald-400'
+                                                : 'text-rose-400',
+                                        )}
+                                    >
+                                        {row.diffVsUnhedged >= 0 ? '+' : ''}
+                                        {formatInrIndian(row.diffVsUnhedged, false)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <p className="text-xs text-white/30 mt-2 m-0">
+                    All figures illustrative. INR based on USD {(notionalFC / 1_000_000).toFixed(2)}M
+                    notional. Collar payoff excludes bid/offer spread and credit terms.
+                </p>
+                <p className="text-xs text-white/40 mt-2 m-0">
+                    {buildRoleTableNote(diagramRole, floorStrike, notionalFC)}
+                </p>
             </div>
 
             <p className="text-[10px] text-white/35 m-0 leading-relaxed">{regimeNote}</p>
@@ -314,6 +416,7 @@ export const CollarPayoffDiagram: React.FC<CollarPayoffDiagramProps> = ({
     spot,
     forwardRate,
     regimeNote,
+    externalNotional,
 }) => {
     const pairConfig = getPairConfig(pair);
     const resolvedForward = forwardRate ?? (spot !== null ? estimateForwardRate(spot, horizon) : null);
@@ -337,24 +440,23 @@ export const CollarPayoffDiagram: React.FC<CollarPayoffDiagramProps> = ({
     }
 
     return (
-        <section className="border border-white/10 bg-white/[0.02] rounded-2xl p-4 md:p-6 space-y-5">
+        <section
+            id="collar-payoff"
+            className="border border-white/10 bg-white/[0.02] rounded-2xl p-4 md:p-6 space-y-5"
+        >
             <div>
                 <h2 className="text-[10px] font-black uppercase tracking-widest text-white/40 m-0 mb-1">
                     Zero-Cost Collar Payoff Analysis
                 </h2>
                 <p className="text-[11px] text-white/40 m-0 leading-relaxed">
                     Illustrative{' '}
-                    <dfn title="Options structure combining a protective strike and upside cap with net zero premium">
-                        zero-cost collar
-                    </dfn>{' '}
-                    — effective INR/{pairConfig.baseCurrency} rate at maturity.
+                    <JargonTooltip term="zero-cost collar">zero-cost collar</JargonTooltip> —
+                    effective INR/{pairConfig.baseCurrency} rate at maturity.
                 </p>
             </div>
 
-            <DisclaimerBanner compact />
-
             <CollarPayoffChart
-                key={`${spot}-${horizon}`}
+                key={`${spot}-${horizon}-${externalNotional ?? 1_000_000}`}
                 diagramRole={diagramRole}
                 pair={pair}
                 horizon={horizon}
@@ -362,6 +464,7 @@ export const CollarPayoffDiagram: React.FC<CollarPayoffDiagramProps> = ({
                 resolvedForward={resolvedForward}
                 regimeNote={regimeNote}
                 showPerspectiveToggle={role === 'balanced'}
+                initialNotional={externalNotional ?? 1_000_000}
                 onDiagramRoleChange={setBalancedPerspective}
             />
         </section>
@@ -396,7 +499,7 @@ const SliderControl: React.FC<{
 );
 
 const MetricTile: React.FC<{
-    label: string;
+    label: React.ReactNode;
     value: string;
     sub: string;
     className?: string;
