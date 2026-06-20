@@ -84,6 +84,7 @@ export const InstitutionalFooter: React.FC = () => {
                         <div className="flex items-center gap-4 border-r border-white/5 pr-6">
                             <Link to="/api-access" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Access</Link>
                             <Link to="/api-docs" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Docs</Link>
+                            <Link to="/mcp" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-cyan-400/80 transition-colors">MCP Server</Link>
                             <Link to="/for-researchers" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-violet-400/80 transition-colors">AI &amp; Research</Link>
                         </div>
                         <div className="flex items-center gap-4 border-r border-white/5 pr-6">

@@ -19,7 +19,7 @@ const HUB_CITATION = {
         'Glossary: 37+ institutional definitions with formulas and live cross-links.',
         'Methodology articles document every proprietary composite with data provenance.',
         'Machine-readable context: /llms.txt and /llm.txt updated at build time.',
-        'MCP server (graphiquestor/macro-intelligence on Smithery): 8 tools for live regime, India summary, composites, and dashboard recommendations.',
+        'MCP server (graphiquestor/macro-intelligence on Smithery): 8 tools — full protocol at /mcp.',
     ],
     source: 'FRED, BIS, IMF, MoSPI, RBI, NBS, EIA — see /data-sources',
 };
@@ -76,67 +76,31 @@ export const ForResearchersPage: React.FC = () => {
 
             <CiteThisPage input={HUB_CITATION} className="mb-10" />
 
-            <section className="mb-10 rounded-xl border border-cyan-500/15 bg-cyan-500/[0.04] p-6 backdrop-blur-xl">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">
-                    <Terminal size={16} className="text-cyan-400" />
-                    MCP Server — Model Context Protocol
-                </h2>
-                <p className="mb-4 text-sm leading-relaxed text-white/55">
-                    <strong className="text-white/75">graphiquestor/macro-intelligence</strong> exposes live macro
-                    telemetry to AI agents (Cursor, Claude Desktop, Smithery). Each tool returns structured data,
-                    institutional commentary, and deep links back to GraphiQuestor dashboards — never fabricated values.
-                </p>
-                <div className="mb-4 grid gap-2 sm:grid-cols-2">
-                    {[
-                        'list_metrics',
-                        'get_observations',
-                        'get_regime_current',
-                        'get_composite_scores',
-                        'get_india_summary',
-                        'get_macro_events',
-                        'discover_graphiquestor',
-                        'get_research_narrative',
-                    ].map((tool) => (
-                        <div
-                            key={tool}
-                            className="rounded-lg border border-white/[0.06] bg-black/20 px-3 py-2 font-mono text-[11px] text-cyan-300/90"
-                        >
-                            {tool}
+            <TrailLink
+                to="/mcp"
+                className="group mb-10 flex items-center justify-between gap-4 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 no-underline backdrop-blur-xl transition-all hover:border-cyan-500/35 hover:shadow-lg hover:shadow-cyan-500/5"
+            >
+                <div className="flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-cyan-500/25 bg-cyan-500/10">
+                        <Terminal size={20} className="text-cyan-400" />
+                    </div>
+                    <div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-400/70">
+                            Agent Integration Protocol
                         </div>
-                    ))}
+                        <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
+                            MCP Server — macro-intelligence
+                        </div>
+                        <p className="mt-1 max-w-xl text-xs leading-relaxed text-white/45">
+                            8 typed tools for Cursor, Claude, and Smithery. Structured data, institutional commentary,
+                            dashboard deep links — never fabricated values.
+                        </p>
+                    </div>
                 </div>
-                <div className="space-y-3 rounded-lg border border-white/10 bg-black/30 p-4 font-mono text-[11px] leading-relaxed text-white/60">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Smithery (one command)</p>
-                    <code className="block whitespace-pre-wrap text-emerald-300/90">
-                        npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor
-                    </code>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">Cursor / Claude Desktop</p>
-                    <code className="block whitespace-pre-wrap text-white/50">
-                        {`"mcpServers": {
-  "graphiquestor": {
-    "command": "node",
-    "args": ["…/mcp/graphiquestor/dist/index.js"],
-    "env": { "SUPABASE_URL": "…", "SUPABASE_ANON_KEY": "…" }
-  }
-}`}
-                    </code>
-                </div>
-                <p className="mt-4 text-xs leading-relaxed text-white/40">
-                    Registry:{' '}
-                    <a
-                        href="https://smithery.ai/servers/graphiquestor/macro-intelligence"
-                        className="text-cyan-400/80 no-underline hover:text-cyan-300"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        smithery.ai/servers/graphiquestor/macro-intelligence
-                    </a>
-                    {' '}· Package: <code className="text-cyan-300/80">mcp/graphiquestor/</code> · REST API:{' '}
-                    <TrailLink to="/api-docs" className="text-cyan-400/80 no-underline hover:text-cyan-300">
-                        /api-docs
-                    </TrailLink>
-                </p>
-            </section>
+                <span className="shrink-0 text-xs font-black uppercase tracking-uppercase text-cyan-400/80 group-hover:text-cyan-300">
+                    View MCP Protocol →
+                </span>
+            </TrailLink>
 
             <section className="mb-10 rounded-xl border border-white/[0.08] bg-slate-900/40 p-6 backdrop-blur-xl">
                 <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">

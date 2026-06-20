@@ -35,6 +35,7 @@ const IntelChinaPage = lazy(() => import('@/pages/IntelChinaPage').then(module =
 const MacroObservatory = lazy(() => import('@/pages/MacroObservatory').then(module => ({ default: module.MacroObservatory })));
 const ForInstitutional = lazy(() => import('@/pages/ForInstitutional').then(module => ({ default: module.ForInstitutional })));
 const ForResearchersPage = lazy(() => import('@/pages/ForResearchersPage').then(module => ({ default: module.ForResearchersPage })));
+const MCPIntelligencePage = lazy(() => import('@/pages/MCPIntelligencePage').then(module => ({ default: module.MCPIntelligencePage })));
 const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
 const WeeklyNarrativePage = lazy(() => import('@/pages/WeeklyNarrativePage').then(module => ({ default: module.WeeklyNarrativePage })));
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
@@ -110,6 +111,7 @@ function App() {
                                         <Route path={trailRoute('/subscribe/confirm')} element={<SubscribeConfirm />} />
                                         <Route path={trailRoute('/api-access')} element={<APIAccessPage />} />
                                         <Route path={trailRoute('/api-docs')} element={<APIDocsPage />} />
+                                        <Route path={trailRoute('/mcp')} element={<MCPIntelligencePage />} />
                                         <Route path={trailRoute('/terms')} element={<TermsOfService />} />
                                         <Route path={trailRoute('/privacy')} element={<PrivacyPolicy />} />
                                         <Route path={trailRoute('/about')} element={<About />} />

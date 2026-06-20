@@ -195,7 +195,7 @@ GraphiQuestor is designed for seamless integration into existing institutional w
     ```bash
     npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor
     ```
-    Remote MCP URL: `https://macro-intelligence--graphiquestor.run.tools` · Worker: `https://graphiquestor-mcp.graphiquestor.workers.dev/mcp` · Docs: [graphiquestor.com/for-researchers](https://graphiquestor.com/for-researchers)
+    Remote MCP URL: `https://macro-intelligence--graphiquestor.run.tools` · Worker: `https://graphiquestor-mcp.graphiquestor.workers.dev/mcp` · Docs: [graphiquestor.com/mcp](https://graphiquestor.com/mcp)
 *   **API Access (Institutional):** Contact us directly for institutional API licensing and customized white-label deployment architectures.
 
 ---

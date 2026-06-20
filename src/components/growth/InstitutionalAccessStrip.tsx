@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrailLink } from '@/components/TrailLink';
-import { ArrowRight, Code2, Mail, Shield } from 'lucide-react';
+import { ArrowRight, Bot, Code2, Mail, Shield } from 'lucide-react';
 import { trackClick } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 
@@ -35,7 +35,7 @@ export const InstitutionalAccessStrip: React.FC<InstitutionalAccessStripProps> =
                 </p>
             )}
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <TrailLink
                     to="/api-access"
                     onClick={() => trackClick('institutional_api', 'access_strip')}
@@ -82,6 +82,30 @@ export const InstitutionalAccessStrip: React.FC<InstitutionalAccessStripProps> =
                         </div>
                     </div>
                     <ArrowRight size={16} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-amber-400" />
+                </TrailLink>
+
+                <TrailLink
+                    to="/mcp"
+                    onClick={() => trackClick('mcp_server', 'access_strip')}
+                    className="group flex flex-1 items-center justify-between gap-3 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.06] px-5 py-4 no-underline transition-all hover:border-cyan-500/35 hover:shadow-lg hover:shadow-cyan-500/5 sm:min-w-[calc(50%-0.375rem)]"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-500/25 bg-cyan-500/10">
+                            <Bot size={18} className="text-cyan-400" />
+                        </div>
+                        <div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-400/70">
+                                Agent Integration
+                            </div>
+                            <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
+                                MCP Server
+                            </div>
+                            {variant === 'full' && (
+                                <div className="text-[11px] text-white/40">8 tools · Smithery · Cursor</div>
+                            )}
+                        </div>
+                    </div>
+                    <ArrowRight size={16} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-cyan-400" />
                 </TrailLink>
             </div>
         </section>

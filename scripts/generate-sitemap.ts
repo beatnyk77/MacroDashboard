@@ -76,6 +76,7 @@ async function generateSitemap() {
     { url: '/blog',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/BlogPage.tsx') },
     { url: '/labs',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/labs/ThematicLabsIndexPage.tsx') },
     { url: '/api-docs',            changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIDocsPage.tsx') },
+    { url: '/mcp',                 changefreq: 'monthly', lastmod: gitLastmod('src/pages/MCPIntelligencePage.tsx') },
     { url: '/glossary',            changefreq: 'weekly',  lastmod: gitLastmod('src/pages/GlossaryIndexPage.tsx') },
     { url: '/methodology',         changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MetricsMethodologyPage.tsx') },
     { url: '/for-researchers',     changefreq: 'weekly',  lastmod: gitLastmod('src/pages/ForResearchersPage.tsx') },

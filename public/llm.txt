@@ -1,5 +1,5 @@
 # GraphiQuestor — Institutional Context for LLMs
-# Build: 2026-06-19
+# Build: 2026-06-20
 # Full index: https://graphiquestor.com/llms.txt
 # Research hub: https://graphiquestor.com/for-researchers/
 
@@ -20,7 +20,8 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - https://graphiquestor.com/methodology/ — Full metric calculation framework
 - https://graphiquestor.com/api-access/ — Commercial API ($299/mo)
 - https://graphiquestor.com/api-docs/ — REST API reference (metrics, regime, composites)
-- https://graphiquestor.com/for-researchers/ — MCP server install (Cursor, Claude, Smithery)
+- https://graphiquestor.com/mcp/ — MCP server protocol (8 tools, Smithery install, Cursor, Claude)
+- https://graphiquestor.com/for-researchers/ — AI citation guidelines and research hub
 - https://graphiquestor.com/regime-digest/ — Weekly regime synthesis
 
 ## Structured Summary Convention

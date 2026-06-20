@@ -18,6 +18,7 @@ import {
     ShieldAlert,
     AlertTriangle,
     FileText,
+    Terminal,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './command-palette.css';
@@ -191,10 +192,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
 
                     <Command.Group heading="External & API" className="px-2 py-3 text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase border-t border-white/5 mt-1">
                         <Item
-                            onSelect={() => runCommand(() => navigate('/api-access'))}
+                            onSelect={() => runCommand(() => navigate('/api-docs'))}
                             icon={<Settings className="h-4 w-4" />}
                         >
                             API Documentation
+                        </Item>
+                        <Item
+                            onSelect={() => runCommand(() => navigate('/mcp'))}
+                            icon={<Terminal className="h-4 w-4 text-cyan-400" />}
+                        >
+                            MCP Server
                         </Item>
                         <Item
                             onSelect={() => runCommand(() => navigate('/institutional'))}

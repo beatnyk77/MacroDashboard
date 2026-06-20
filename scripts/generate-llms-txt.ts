@@ -45,7 +45,7 @@ function llmsTxt(): string {
 - **Methodology Hub**: ${BASE}/methodology/
 - **Institutional API**: ${BASE}/api-access/
 - **API Docs**: ${BASE}/api-docs/
-- **MCP Server**: graphiquestor/macro-intelligence (Smithery) — 8 tools. Install: npx @smithery/cli mcp add graphiquestor/macro-intelligence --client cursor. Docs: ${BASE}/for-researchers/
+- **MCP Server**: graphiquestor/macro-intelligence (Smithery) — 8 tools. Install: npx @smithery/cli mcp add graphiquestor/macro-intelligence --client cursor. Docs: ${BASE}/mcp/
 - **Regime Digest**: ${BASE}/regime-digest/
 
 ## Glossary (${glossaryData.length} terms)
@@ -65,7 +65,7 @@ Primary China traffic hub: ${BASE}/intel/china/
 Bilingual orientation on terminal; English canonical definitions with 中国宏观 labels where relevant.
 
 ---
-[Terminal](${BASE}/) · [For Researchers](${BASE}/for-researchers/) · [API Access](${BASE}/api-access/)
+[Terminal](${BASE}/) · [MCP Server](${BASE}/mcp/) · [For Researchers](${BASE}/for-researchers/) · [API Access](${BASE}/api-access/)
 `;
 }
 
@@ -92,7 +92,8 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - ${BASE}/methodology/ — Full metric calculation framework
 - ${BASE}/api-access/ — Commercial API ($299/mo)
 - ${BASE}/api-docs/ — REST API reference (metrics, regime, composites)
-- ${BASE}/for-researchers/ — MCP server install (Cursor, Claude, Smithery)
+- ${BASE}/mcp/ — MCP server protocol (8 tools, Smithery install, Cursor, Claude)
+- ${BASE}/for-researchers/ — AI citation guidelines and research hub
 - ${BASE}/regime-digest/ — Weekly regime synthesis
 
 ## Structured Summary Convention

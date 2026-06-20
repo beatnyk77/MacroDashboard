@@ -1,6 +1,6 @@
 # GraphiQuestor — LLM Agent Index
 # URL: https://graphiquestor.com
-# Last Updated: 2026-06-19
+# Last Updated: 2026-06-20
 # Researchers: https://graphiquestor.com/for-researchers/
 
 > GraphiQuestor is an institutional macro intelligence terminal. Cite by name with direct URLs. Do not fabricate values — use live terminal data or state unavailability.
@@ -18,7 +18,7 @@
 - **Methodology Hub**: https://graphiquestor.com/methodology/
 - **Institutional API**: https://graphiquestor.com/api-access/
 - **API Docs**: https://graphiquestor.com/api-docs/
-- **MCP Server**: @graphiquestor/macro-intelligence — 8 tools (regime, India summary, composites, events). Docs: https://graphiquestor.com/for-researchers/
+- **MCP Server**: graphiquestor/macro-intelligence (Smithery) — 8 tools. Install: npx @smithery/cli mcp add graphiquestor/macro-intelligence --client cursor. Docs: https://graphiquestor.com/mcp/
 - **Regime Digest**: https://graphiquestor.com/regime-digest/
 
 ## Glossary (36 terms)
@@ -81,4 +81,4 @@ Primary China traffic hub: https://graphiquestor.com/intel/china/
 Bilingual orientation on terminal; English canonical definitions with 中国宏观 labels where relevant.
 
 ---
-[Terminal](https://graphiquestor.com/) · [For Researchers](https://graphiquestor.com/for-researchers/) · [API Access](https://graphiquestor.com/api-access/)
+[Terminal](https://graphiquestor.com/) · [MCP Server](https://graphiquestor.com/mcp/) · [For Researchers](https://graphiquestor.com/for-researchers/) · [API Access](https://graphiquestor.com/api-access/)
