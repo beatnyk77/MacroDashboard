@@ -228,6 +228,12 @@ export const IntelIndiaPage: React.FC = () => {
                                 {label} <ArrowRight size={10} />
                             </a>
                         ))}
+                        <Link
+                            to="/trade-fx"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors bg-[#B8860B]/10 border border-[#B8860B]/25 text-[#B8860B] hover:bg-[#B8860B]/20"
+                        >
+                            Currency Intelligence <ArrowRight size={10} />
+                        </Link>
                     </div>
                 </div>
             </section>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { TrailLink } from '@/components/TrailLink';
 import { withTrailingSlash } from '@/lib/urlPath';
-import { ArrowRight, BookOpen, FlaskConical, Globe, TrendingUp } from 'lucide-react';
+import { ArrowRight, ArrowRightLeft, BookOpen, FlaskConical, Globe, TrendingUp } from 'lucide-react';
 
-type ExploreKind = 'glossary' | 'method' | 'lab' | 'intel';
+type ExploreKind = 'glossary' | 'method' | 'lab' | 'intel' | 'trade';
 
 interface ExploreCard {
     to: string;
@@ -18,6 +18,7 @@ const kindStyles: Record<ExploreKind, { label: string; color: string }> = {
     method: { label: 'Methodology', color: 'text-blue-400 border-blue-400/30 bg-blue-400/5' },
     lab: { label: 'Lab', color: 'text-purple-400 border-purple-400/30 bg-purple-400/5' },
     intel: { label: 'Intel Pulse', color: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/5' },
+    trade: { label: 'Currency Intel', color: 'text-[#B8860B] border-[#B8860B]/30 bg-[#B8860B]/5' },
 };
 
 const exploreCards: ExploreCard[] = [
@@ -76,6 +77,13 @@ const exploreCards: ExploreCard[] = [
         description: 'PBOC liquidity, property sector stress, BRICS settlement dynamics, and petroyuan transition signals.',
         kind: 'intel',
         icon: <Globe size={16} />,
+    },
+    {
+        to: '/trade-fx',
+        title: 'TradeFx — Currency Intelligence',
+        description: 'USD/INR regime telemetry, zero-cost collar payoff diagrams, and hedging archetype frameworks for Indian exporters and importers.',
+        kind: 'trade',
+        icon: <ArrowRightLeft size={16} />,
     },
 ];
 

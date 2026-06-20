@@ -16,8 +16,10 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/labs/us-macro-fiscal', label: 'US Macro & Fiscal Lab', kind: 'lab' },
     { to: '/intel/india', label: 'India Macro Pulse', kind: 'data' },
     { to: '/intel/china', label: 'China Macro Pulse', kind: 'data' },
+    { to: '/trade-fx', label: 'TradeFx Currency Intelligence', kind: 'data' },
   ],
   '/intel/india': [
+    { to: '/trade-fx', label: 'Currency Intelligence', kind: 'data' },
     { to: '/trade', label: 'India Trade Pulse', kind: 'data' },
     { to: '/labs/de-dollarization-gold', label: 'RBI Gold Accumulation', kind: 'lab' },
     { to: '/methods/india-credit-cycle-clock', label: 'Credit Cycle Methodology', kind: 'brief' },
@@ -41,11 +43,20 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/weekly-narrative', label: 'Weekly Regime Digest', kind: 'brief' },
   ],
   '/trade': [
+    { to: '/trade-fx', label: 'TradeFx — Currency Intelligence', kind: 'data' },
     { to: '/intel/india', label: 'India Macro Intel', kind: 'data' },
     { to: '/intel/china', label: 'China Macro Intel', kind: 'data' },
     { to: '/labs/brics-trade-settlement', label: 'BRICS Trade Settlement', kind: 'lab' },
     { to: '/glossary/current-account-balance', label: 'Current Account', kind: 'glossary' },
     { to: '/glossary/energy-dependency-ratio', label: 'Energy Dependency', kind: 'glossary' },
+  ],
+  '/trade-fx': [
+    { to: '/trade', label: 'Trade Intelligence Terminal', kind: 'data' },
+    { to: '/intel/india', label: 'India Macro Pulse', kind: 'data' },
+    { to: '/labs/us-macro-fiscal', label: 'US Macro & Fiscal Lab', kind: 'lab' },
+    { to: '/labs/de-dollarization-gold', label: 'De-Dollarization Lab', kind: 'lab' },
+    { to: '/glossary/foreign-exchange-reserves', label: 'Foreign Exchange Reserves', kind: 'glossary' },
+    { to: '/glossary/current-account-balance', label: 'Current Account Balance', kind: 'glossary' },
   ],
   '/macro-observatory': [
     { to: '/', label: 'Main Terminal', kind: 'data' },

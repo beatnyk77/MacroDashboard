@@ -71,6 +71,7 @@ async function generateSitemap() {
     { url: '/intel/india',         changefreq: 'daily',   lastmod: BUILD_DATE },
     { url: '/intel/china',         changefreq: 'daily',   lastmod: BUILD_DATE },
     { url: '/trade',               changefreq: 'weekly',  lastmod: BUILD_DATE },
+    { url: '/trade-fx',            changefreq: 'daily',   lastmod: gitLastmod('src/features/trade-fx/TradeFxPage.tsx') },
     { url: '/countries',           changefreq: 'weekly',  lastmod: BUILD_DATE },
     // Static/editorial pages — lastmod = git log date of owning component
     { url: '/blog',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/BlogPage.tsx') },
@@ -84,6 +85,29 @@ async function generateSitemap() {
     { url: '/api-access',          changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIAccessPage.tsx') },
     { url: '/macro-brief/archive', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroBriefArchivePage.tsx') },
     { url: '/demo',                changefreq: 'monthly', lastmod: BUILD_DATE },
+    // Additional static pages (labs, methods, tools) — lastmod = build date (data refreshes daily via crons)
+    { url: '/labs/us-macro-fiscal', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/de-dollarization-gold', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/central-bank-gold-purchases', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/brics-trade-settlement', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/us-treasury-foreign-holdings', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/petrodollar-decay-indicators', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/energy-commodities', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/sovereign-stress', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/shadow-system', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/china-15th-fyp', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/africa-macro', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/net-liquidity-z-score', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/debt-gold-z-score', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/loan-to-job-efficiency', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/energy-dependency-ratio', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/fiscal-dominance-meter', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/m2-gold-ratio', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/de-dollarization-guide', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/fed-monetization-monitor', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/india-credit-cycle-clock', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/methods/china-debt-iceberg', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/tools/net-liquidity-gauge', changefreq: 'weekly', lastmod: BUILD_DATE },
   ].map(route => ({ ...route, priority: routePriority(route.url) }));
 
   // Blog articles — lastmod = article publish date from blogData

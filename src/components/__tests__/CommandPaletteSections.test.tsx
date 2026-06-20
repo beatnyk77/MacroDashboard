@@ -30,7 +30,12 @@ describe('CommandPalette — Terminal Sections', () => {
     it('renders all 12 terminal section jump entries when open', () => {
         renderPalette();
         for (const label of EXPECTED_LABELS) {
-            expect(screen.getByText(label)).toBeInTheDocument();
+            expect(screen.getAllByText(label).length).toBeGreaterThanOrEqual(1);
         }
+    });
+
+    it('renders TradeFx navigation entry', () => {
+        renderPalette();
+        expect(screen.getByText('TradeFx — Currency Intelligence')).toBeInTheDocument();
     });
 });

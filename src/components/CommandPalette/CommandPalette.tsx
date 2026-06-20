@@ -19,6 +19,7 @@ import {
     AlertTriangle,
     FileText,
     Terminal,
+    ArrowRightLeft,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './command-palette.css';
@@ -121,6 +122,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             icon={<Zap className="h-4 w-4" />}
                         >
                             Metrics Methodology
+                        </Item>
+                        <Item
+                            onSelect={() => runCommand(() => navigate('/trade'))}
+                            icon={<Globe className="h-4 w-4 text-emerald-400" />}
+                        >
+                            Trade Intelligence
+                        </Item>
+                        <Item
+                            onSelect={() => runCommand(() => navigate('/trade-fx'))}
+                            icon={<ArrowRightLeft className="h-4 w-4 text-amber-500" />}
+                        >
+                            TradeFx — Currency Intelligence
                         </Item>
                     </Command.Group>
 

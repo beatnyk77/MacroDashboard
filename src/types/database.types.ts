@@ -4444,29 +4444,50 @@ export type Database = {
         Row: {
           confirm_token: string
           confirmed_at: string | null
+          contact_name: string | null
           created_at: string
+          currency_pair: string | null
           email: string
           id: string
+          interest_type: string | null
+          lead_type: string | null
+          notional_range: string | null
+          partner_preference: string | null
           source: string | null
           status: string
+          trade_role: string | null
         }
         Insert: {
           confirm_token: string
           confirmed_at?: string | null
+          contact_name?: string | null
           created_at?: string
+          currency_pair?: string | null
           email: string
           id?: string
+          interest_type?: string | null
+          lead_type?: string | null
+          notional_range?: string | null
+          partner_preference?: string | null
           source?: string | null
           status?: string
+          trade_role?: string | null
         }
         Update: {
           confirm_token?: string
           confirmed_at?: string | null
+          contact_name?: string | null
           created_at?: string
+          currency_pair?: string | null
           email?: string
           id?: string
+          interest_type?: string | null
+          lead_type?: string | null
+          notional_range?: string | null
+          partner_preference?: string | null
           source?: string | null
           status?: string
+          trade_role?: string | null
         }
         Relationships: []
       }

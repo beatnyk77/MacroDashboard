@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, ArrowRightLeft } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -33,6 +33,7 @@ const terminalNavItems = [
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
     { id: 'trade-intelligence', label: 'Trade Intelligence', path: '/trade', icon: <Globe size={18} /> },
+    { id: 'trade-fx', label: 'TradeFx', path: '/trade-fx', icon: <ArrowRightLeft size={18} /> },
     { id: 'sovereign-compass', label: 'Sovereign Compass', path: '/countries', icon: <Globe size={18} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
     { id: 'de-dollarization-guide', label: 'De-Dollarization Guide', path: '/methods/de-dollarization-guide', icon: <FileText size={18} /> },

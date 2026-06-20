@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
+import { ArrowRight, ChevronRight } from 'lucide-react'
 import { SEOManager } from '@/components/SEOManager'
 import { FreshnessChip } from '@/components/FreshnessChip'
 import { RelatedContent } from '@/components/RelatedContent'
@@ -83,6 +83,28 @@ const TradeDashboard: React.FC = () => {
                     UN Comtrade {TRADE_DATA_YEAR} bilateral telemetry — global demand ranking, supplier concentration, and country-level import/export pulse.
                 </p>
             </div>
+
+            <TrailNavLink
+                to="/trade-fx"
+                className="group mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-2xl border border-[#B8860B]/25 bg-[#B8860B]/[0.04] p-5 no-underline transition-colors hover:border-[#B8860B]/40 hover:bg-[#B8860B]/[0.07]"
+            >
+                <div className="space-y-1.5">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-[#B8860B]/70">
+                        Currency Intelligence
+                    </span>
+                    <h2 className="text-lg font-black text-white m-0">
+                        TradeFx — USD/INR Hedging Analysis
+                    </h2>
+                    <p className="text-xs text-white/45 leading-relaxed m-0 max-w-2xl">
+                        Regime-aware collar payoff diagrams, exposure simulator, and hedging archetype
+                        framework for Indian exporters and importers.
+                    </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#B8860B] shrink-0">
+                    Open TradeFx
+                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                </span>
+            </TrailNavLink>
 
             <ModuleRow label="TRADE INTELLIGENCE TERMINAL" labelColor="text-emerald-400/60">
                 <div className="space-y-6">

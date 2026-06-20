@@ -13,6 +13,7 @@
     "ci-guards": "node scripts/ci-guards.mjs",
     "ingest:energy": "bash scripts/invoke-energy-ingestions.sh",
     "deploy:china-debt": "bash scripts/deploy-china-debt.sh",
+    "deploy:migrations": "bash scripts/deploy-db-migrations.sh",
     "test": "vitest run",
     "preview": "vite preview"
   },
