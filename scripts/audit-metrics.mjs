@@ -16,13 +16,13 @@
  *   1  — env vars missing or DB query failed
  *
  * Required env vars (do NOT commit values):
- *   SUPABASE_URL        — e.g. https://<ref>.supabase.co
- *   SUPABASE_ANON_KEY   — project anon key
+ *   SUPABASE_URL / VITE_SUPABASE_URL        — e.g. https://<ref>.supabase.co
+ *   SUPABASE_ANON_KEY / VITE_SUPABASE_ANON_KEY — project anon key
  */
 
 import https from 'https';
 import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
@@ -31,13 +31,13 @@ const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 // Env validation
 // ---------------------------------------------------------------------------
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error('ERROR: SUPABASE_URL and SUPABASE_ANON_KEY env vars must be set.');
-  console.error('  export SUPABASE_URL=https://<ref>.supabase.co');
-  console.error('  export SUPABASE_ANON_KEY=<anon-key>');
+  console.error('ERROR: Supabase URL and anon key env vars must be set.');
+  console.error('  export SUPABASE_URL=https://<ref>.supabase.co  (or VITE_SUPABASE_URL)');
+  console.error('  export SUPABASE_ANON_KEY=<anon-key>            (or VITE_SUPABASE_ANON_KEY)');
   process.exit(1);
 }
 
