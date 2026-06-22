@@ -31,9 +31,10 @@ type Props = {
 };
 
 function formatAxisMonth(month: string): string {
-    const [, m] = month.split('-');
+    const [year, m] = month.split('-');
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[Number(m) - 1] ?? month;
+    const label = months[Number(m) - 1] ?? m;
+    return year ? `${label} '${year.slice(2)}` : label;
 }
 
 const ChartTooltip: React.FC<{
@@ -91,6 +92,9 @@ export const HistoricalCostComparator: React.FC<Props> = ({
     );
 
     const divergenceMonth = findDivergenceMonth(monthlyRates);
+    const divergenceInWindow = divergenceMonth
+        ? result.dataPoints.some((d) => d.month === divergenceMonth)
+        : false;
     const cnyAppreciation = computeCnyInrAppreciation(monthlyRates, '2025-05', monthlyRates[monthlyRates.length - 1]?.month ?? '2026-06');
 
     if (fxMeta.isLoading) {
@@ -206,7 +210,7 @@ export const HistoricalCostComparator: React.FC<Props> = ({
                             strokeWidth={2}
                             dot={false}
                         />
-                        {divergenceMonth ? (
+                        {divergenceMonth && divergenceInWindow ? (
                             <ReferenceLine
                                 x={formatAxisMonth(divergenceMonth)}
                                 stroke="rgba(255,255,255,0.35)"

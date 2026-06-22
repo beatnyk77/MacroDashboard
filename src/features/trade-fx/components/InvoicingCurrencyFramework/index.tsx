@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
 import { useInvoicingFxRates } from '../../hooks/useInvoicingFxRates';
 import type { CollarHandoffParams } from '../../lib/invoicingTypes';
 import type { Role, TradeFxData } from '../../lib/tradeFxTypes';
@@ -77,13 +76,8 @@ export const InvoicingCurrencyFramework: React.FC<Props> = ({
                 </div>
             </button>
 
-            <div
-                className={cn(
-                    'transition-all duration-500 ease-in-out border-t border-white/5',
-                    expanded ? 'max-h-[8000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden',
-                )}
-            >
-                <div className="px-5 py-6 md:px-6 space-y-5">
+            {expanded ? (
+                <div className="border-t border-white/5 px-5 py-6 md:px-6 space-y-5">
                     {role === 'exporter' ? (
                         <p className="text-[11px] text-amber-400/80 m-0 border border-amber-500/20 rounded-lg px-3 py-2 bg-amber-500/[0.04]">
                             This framework is primarily relevant for importers. Exporters: see the
@@ -155,7 +149,7 @@ export const InvoicingCurrencyFramework: React.FC<Props> = ({
                         </TabsContent>
                     </Tabs>
                 </div>
-            </div>
+            ) : null}
         </section>
     );
 };
