@@ -5886,6 +5886,16 @@ export type Database = {
           },
         ]
       }
+      vw_fx_monthly_cross_rates: {
+        Row: {
+          cny_inr: number | null
+          month: string | null
+          observation_count: number | null
+          usd_cny: number | null
+          usd_inr: number | null
+        }
+        Relationships: []
+      }
       vw_g20_reserves_gold: {
         Row: {
           as_of_date: string | null
