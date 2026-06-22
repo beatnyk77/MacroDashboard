@@ -46,9 +46,24 @@ jobs:
     - name: Schema drift check
       run: |
         set -euo pipefail
-        supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD" --yes
-        supabase gen types --linked --lang=typescript 2>/dev/null > src/types/database.types.ts
-        git diff --exit-code src/types/database.types.ts || (echo "DB schema drift detected — regenerate types and commit." && exit 1)
+        ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
+        DB_URL="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+        GEN_ERR=$(mktemp)
+        if ! supabase gen types --lang=typescript --db-url "$DB_URL" > src/types/database.types.ts 2>"$GEN_ERR"; then
+          echo "::error::supabase gen types failed"
+          cat "$GEN_ERR"
+          exit 1
+        fi
+        if [ ! -s src/types/database.types.ts ]; then
+          echo "::error::Generated types file is empty"
+          cat "$GEN_ERR"
+          exit 1
+        fi
+        git diff --exit-code src/types/database.types.ts || (
+          echo "DB schema drift detected — regenerate types and commit."
+          git diff --stat src/types/database.types.ts
+          exit 1
+        )
       env:
         SUPABASE_DB_PASSWORD: "${{ secrets.SUPABASE_DB_PASSWORD }}"
         SUPABASE_PROJECT_ID: "${{ secrets.SUPABASE_PROJECT_ID }}"
