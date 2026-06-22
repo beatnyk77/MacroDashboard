@@ -146,6 +146,15 @@ export const MacroDriversPanel: React.FC<MacroDriversPanelProps> = ({
                         </button>
                     ) : null}
 
+                    {signal.source === 'dedol_lab' ? (
+                        <a
+                            href="#invoicing-framework"
+                            className="text-xs text-[#B8860B]/90 underline mt-1 block hover:text-[#D4A017] transition-colors"
+                        >
+                            China importers: see Invoicing Currency Decision Framework ↓
+                        </a>
+                    ) : null}
+
                     <TrailNavLink
                         to={signal.link}
                         className="text-[10px] font-black uppercase tracking-wider text-[#B8860B]/80 hover:text-[#B8860B] transition-colors mt-2 inline-block"

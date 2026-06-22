@@ -44,8 +44,19 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
   throw lastError || new Error(`Failed to fetch ${url}`);
 }
 
+interface IngestFredOptions {
+  /** When set, only ingest these metric IDs (must have metadata.fred_id). */
+  metricIds?: string[];
+  /** FRED observations per series. Default 100; use 2000 for invoicing FX backfill. */
+  limit?: number;
+}
+
 // ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestFred(supabase: any, fredApiKey: string): Promise<IngestResult> {
+async function doIngestFred(
+  supabase: any,
+  fredApiKey: string,
+  options: IngestFredOptions = {},
+): Promise<IngestResult> {
     const startTime = Date.now();
     // 25 minute budget — stays under the 28 minute global safety timeout in serveIngest.
     const runtimeBudget = 25 * 60 * 1000;
@@ -62,7 +73,13 @@ async function doIngestFred(supabase: any, fredApiKey: string): Promise<IngestRe
       .eq('is_active', true)
       .order('updated_at', { ascending: true, nullsFirst: true });
 
-    const targetMetrics = metrics?.filter((m: any) => (m.metadata as any)?.fred_id) || [];
+    const fredLimit = Math.min(Math.max(options.limit ?? 100, 1), 2000);
+    const metricIdFilter = options.metricIds?.length ? new Set(options.metricIds) : null;
+
+    let targetMetrics = metrics?.filter((m: any) => (m.metadata as any)?.fred_id) || [];
+    if (metricIdFilter) {
+      targetMetrics = targetMetrics.filter((m: any) => metricIdFilter.has(m.id));
+    }
 
     let successCount = 0;
     let totalRows = 0;
@@ -128,7 +145,7 @@ async function doIngestFred(supabase: any, fredApiKey: string): Promise<IngestRe
 
         const fredUnits = (metric.metadata as any)?.fred_units;
         const unitsParam = fredUnits ? `&units=${fredUnits}` : '';
-        const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100${unitsParam}`;
+        const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=${fredLimit}${unitsParam}`;
 
         try {
           const response = await withTimeout(fetchWithRetry(url), 10000, `FRED Fetch ${fredId}`);
@@ -188,7 +205,7 @@ async function doIngestFred(supabase: any, fredApiKey: string): Promise<IngestRe
     };
 }
 
-serveIngest('ingest-fred', async (_req: Request): Promise<IngestResult> => {
+serveIngest('ingest-fred', async (req: Request): Promise<IngestResult> => {
   const fredApiKey = Deno.env.get('FRED_API_KEY');
   if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
@@ -197,5 +214,14 @@ serveIngest('ingest-fred', async (_req: Request): Promise<IngestResult> => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
   );
 
-  return doIngestFred(supabase, fredApiKey);
+  let options: IngestFredOptions = {};
+  try {
+    const body = await req.json() as { metric_ids?: string[]; limit?: number };
+    if (body?.metric_ids?.length) options.metricIds = body.metric_ids;
+    if (typeof body?.limit === 'number' && body.limit > 0) options.limit = body.limit;
+  } catch {
+    // Empty body — default scheduled ingest behaviour
+  }
+
+  return doIngestFred(supabase, fredApiKey, options);
 }, { timeoutMs: 25 * 60 * 1000, retries: 3 });

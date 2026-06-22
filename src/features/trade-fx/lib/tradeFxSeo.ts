@@ -27,6 +27,16 @@ export const TRADE_FX_FAQ_ENTRIES = [
         answer:
             'As of June 2026, the USD/INR regime signal from GraphiQuestor\'s macro framework shows a low-volatility environment with India forex reserves at approximately $585B, providing an RBI intervention buffer. The de-dollarisation composite signals emerging INR settlement corridors on key trade routes. For exporters, this regime is typically associated with tactical forward booking or zero-cost collar structures — the low implied volatility makes collar premium dynamics favourable. This is illustrative context only — not a forecast or recommendation.',
     },
+    {
+        question: 'Should Indian importers invoice China imports in USD or Chinese Yuan?',
+        answer:
+            'For most Indian importers, USD invoicing has been significantly more cost-effective than CNY invoicing since mid-2025. The Chinese Yuan appreciated approximately 23% against the Indian Rupee between May 2025 and June 2026, compared to approximately 0% for USD/INR over the same period. This means CNY-invoiced imports became substantially more expensive in INR terms. USD invoicing also offers better hedging instrument availability, more competitive forward rates, and simpler accounting treatment. The right choice depends on individual business factors including supplier pricing, hedging ability, and strategic considerations — consult your bank\'s treasury desk for specific guidance.',
+    },
+    {
+        question: 'What is the CNY/INR exchange rate trend in 2025–2026?',
+        answer:
+            'The Chinese Yuan (CNY) appreciated approximately 23% against the Indian Rupee (INR) between May 2025 and June 2026, rising from approximately ₹11.58 per CNY to ₹14.31 per CNY. Over the same period, the US Dollar (USD) showed relatively smaller movement against INR. This divergence means that Indian companies invoicing China imports in CNY faced significantly higher INR costs during this period compared to USD-invoiced importers. GraphiQuestor\'s TradeFx tool tracks this historical divergence and provides a forward-looking regime view based on current macro signals.',
+    },
 ] as const;
 
 export function buildTradeFxJsonLd(): Record<string, unknown>[] {
@@ -46,6 +56,7 @@ export function buildTradeFxJsonLd(): Record<string, unknown>[] {
                 'USD/INR exposure impact simulator',
                 'Regime-aware hedging strategy matrix',
                 'Macro driver context from India, US, China, De-Dol pulses',
+                'Invoicing currency decision framework for China imports',
             ],
         },
         {

@@ -21,6 +21,7 @@ import {
 } from '../lib/collarPayoff';
 import { estimateForwardRate, getPairConfig, TIME_HORIZONS } from '../constants/currencyPairs';
 import { formatInrIndian } from '../lib/formatInr';
+import type { CollarHandoffParams } from '../lib/invoicingTypes';
 import type { CollarPayoffPoint, Role, TimeHorizon, CurrencyPair } from '../lib/tradeFxTypes';
 
 const ONBOARDING_STEPS = [
@@ -53,6 +54,8 @@ interface CollarPayoffDiagramProps {
     forwardRate: number | null;
     regimeNote: string;
     externalNotional?: number;
+    externalPreFill?: CollarHandoffParams | null;
+    preFillNonce?: number;
 }
 
 const CollarTooltip: React.FC<{
@@ -105,6 +108,9 @@ interface CollarPayoffChartProps {
     regimeNote: string;
     showPerspectiveToggle: boolean;
     initialNotional: number;
+    initialFloor?: number;
+    initialCap?: number;
+    showPreFillHighlight?: boolean;
     onDiagramRoleChange: (role: DiagramRole) => void;
 }
 
@@ -129,14 +135,21 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
     regimeNote,
     showPerspectiveToggle,
     initialNotional,
+    initialFloor,
+    initialCap,
+    showPreFillHighlight = false,
     onDiagramRoleChange,
 }) => {
     const pairConfig = getPairConfig(pair);
     const horizonDays = TIME_HORIZONS.find((h) => h.id === horizon)?.days ?? 90;
 
-    const [floorStrike, setFloorStrike] = useState(() => Number((spot * 0.97).toFixed(2)));
-    const [capStrike, setCapStrike] = useState(() => Number((spot * 1.03).toFixed(2)));
-    const [notionalFC, setNotionalFC] = useState(
+    const [floorStrike, setFloorStrike] = useState(() =>
+        Number((initialFloor ?? spot * 0.97).toFixed(2)),
+    );
+    const [capStrike, setCapStrike] = useState(() =>
+        Number((initialCap ?? spot * 1.03).toFixed(2)),
+    );
+    const [notionalFC, setNotionalFC] = useState(() =>
         Math.min(Math.max(initialNotional, NOTIONAL_MIN), NOTIONAL_MAX),
     );
 
@@ -160,7 +173,7 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
     const capBounds = { min: spot * 1.01, max: spot * 1.12 };
 
     return (
-        <>
+        <div className={cn(showPreFillHighlight && 'ring-2 ring-amber-400/50 rounded-xl transition-shadow duration-500')}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                 {ONBOARDING_STEPS.map(({ step, text }) => (
                     <div key={step} className="flex gap-2 items-start">
@@ -405,7 +418,7 @@ const CollarPayoffChart: React.FC<CollarPayoffChartProps> = ({
             </div>
 
             <p className="text-[10px] text-white/35 m-0 leading-relaxed">{regimeNote}</p>
-        </>
+        </div>
     );
 };
 
@@ -417,6 +430,8 @@ export const CollarPayoffDiagram: React.FC<CollarPayoffDiagramProps> = ({
     forwardRate,
     regimeNote,
     externalNotional,
+    externalPreFill,
+    preFillNonce,
 }) => {
     const pairConfig = getPairConfig(pair);
     const resolvedForward = forwardRate ?? (spot !== null ? estimateForwardRate(spot, horizon) : null);
@@ -456,7 +471,7 @@ export const CollarPayoffDiagram: React.FC<CollarPayoffDiagramProps> = ({
             </div>
 
             <CollarPayoffChart
-                key={`${spot}-${horizon}-${externalNotional ?? 1_000_000}`}
+                key={`${spot}-${horizon}-${externalNotional ?? 1_000_000}-${preFillNonce ?? 0}`}
                 diagramRole={diagramRole}
                 pair={pair}
                 horizon={horizon}
@@ -464,7 +479,12 @@ export const CollarPayoffDiagram: React.FC<CollarPayoffDiagramProps> = ({
                 resolvedForward={resolvedForward}
                 regimeNote={regimeNote}
                 showPerspectiveToggle={role === 'balanced'}
-                initialNotional={externalNotional ?? 1_000_000}
+                initialNotional={
+                    externalPreFill?.notionalFC ?? externalNotional ?? 1_000_000
+                }
+                initialFloor={externalPreFill?.suggestedFloor}
+                initialCap={externalPreFill?.suggestedCap}
+                showPreFillHighlight={(preFillNonce ?? 0) > 0}
                 onDiagramRoleChange={setBalancedPerspective}
             />
         </section>

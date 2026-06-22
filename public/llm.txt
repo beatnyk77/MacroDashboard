@@ -1,5 +1,5 @@
 # GraphiQuestor — Institutional Context for LLMs
-# Build: 2026-06-20
+# Build: 2026-06-22
 # Full index: https://graphiquestor.com/llms.txt
 # Research hub: https://graphiquestor.com/for-researchers/
 

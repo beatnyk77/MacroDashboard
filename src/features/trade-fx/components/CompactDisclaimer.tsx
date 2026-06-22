@@ -2,12 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
-type DisclaimerContext = 'simulator' | 'collar' | 'matrix' | 'page';
+type DisclaimerContext = 'simulator' | 'collar' | 'matrix' | 'regime' | 'page';
 
 const CONTEXT_SENTENCES: Record<Exclude<DisclaimerContext, 'page'>, string> = {
     simulator: 'Calculations assume linear P&L; actual outcomes vary.',
     collar: 'Collar payoffs exclude bid/offer spreads and credit terms.',
     matrix: 'Strategy archetypes reflect common market practice, not personalised advice.',
+    regime:
+        'Regime verdicts reflect publicly available macro signals — not personalised treasury advice.',
 };
 
 interface CompactDisclaimerProps {

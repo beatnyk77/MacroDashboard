@@ -50,15 +50,22 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
         { id: 'DEXTWUS', metricId: 'USD_TWD_RATE', alias: null }
     ];
 
-    const fetchPromises = seriesToFetch.map(series => fetchFRED(series.id, fredApiKey));
-    const results = await Promise.all(fetchPromises);
+    const fetchResults = await Promise.allSettled(
+        seriesToFetch.map((series) => fetchFRED(series.id, fredApiKey))
+    );
 
     const observations: MetricObservation[] = [];
     const seriesDataMap: Record<string, FredObservation[]> = {};
 
-    // Process each series
+    // Process each series (skip failed FRED fetches — e.g. discontinued DEXTWUS)
     seriesToFetch.forEach((series, idx) => {
-        const data = results[idx];
+        const result = fetchResults[idx];
+        if (result.status === 'rejected') {
+            console.warn(`Skipping ${series.id} → ${series.metricId}: ${result.reason}`);
+            seriesDataMap[series.metricId] = [];
+            return;
+        }
+        const data = result.value;
         seriesDataMap[series.metricId] = data;
         data.forEach(d => {
             observations.push({
@@ -108,6 +115,32 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
     if (divergenceData.length > 0) {
         await supabase.from('metric_observations').upsert(divergenceData, { onConflict: 'metric_id, as_of_date' });
         rowsUpdated += divergenceData.length;
+    }
+
+    // 4b. CNY/INR cross-rate: USD/INR ÷ USD/CNY (institutional convention)
+    const usdCny = seriesDataMap['USD_CNY_RATE'] || [];
+    const cnyMap = new Map(usdCny.map((r) => [r.date, r.value]));
+    const cnyInrData: MetricObservation[] = usdInr
+        .map((row) => {
+            const usdCnyVal = cnyMap.get(row.date);
+            if (usdCnyVal === undefined || usdCnyVal <= 0) return null;
+            return {
+                metric_id: 'CNY_INR_RATE',
+                as_of_date: row.date,
+                value: row.value / usdCnyVal,
+                last_updated_at: new Date().toISOString(),
+            };
+        })
+        .filter((d): d is MetricObservation => d !== null);
+
+    if (cnyInrData.length > 0) {
+        for (let i = 0; i < cnyInrData.length; i += batchSize) {
+            const { error: cnyError } = await supabase
+                .from('metric_observations')
+                .upsert(cnyInrData.slice(i, i + batchSize), { onConflict: 'metric_id, as_of_date' });
+            if (cnyError) throw cnyError;
+        }
+        rowsUpdated += cnyInrData.length;
     }
 
     // 5. Calculate Enhanced Rupee Pressure Score (Composite Index)
@@ -223,7 +256,11 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
 
     return {
         rows_inserted: rowsUpdated,
-        metadata: { fed_funds_count: fedFunds.length, usd_inr_count: usdInr.length }
+        metadata: {
+            fed_funds_count: fedFunds.length,
+            usd_inr_count: usdInr.length,
+            cny_inr_count: cnyInrData.length,
+        }
     };
 }
 

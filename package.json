@@ -14,6 +14,7 @@
     "ingest:energy": "bash scripts/invoke-energy-ingestions.sh",
     "deploy:china-debt": "bash scripts/deploy-china-debt.sh",
     "deploy:migrations": "bash scripts/deploy-db-migrations.sh",
+    "deploy:invoicing-fx": "bash scripts/deploy-invoicing-fx.sh",
     "test": "vitest run",
     "preview": "vite preview"
   },

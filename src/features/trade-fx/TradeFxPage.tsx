@@ -14,12 +14,14 @@ import { MacroDriversPanel } from './components/MacroDriversPanel';
 import { ExposureSimulator } from './components/ExposureSimulator';
 import { CollarPayoffDiagram } from './components/CollarPayoffDiagram';
 import { HedgingStrategyMatrix } from './components/HedgingStrategyMatrix';
+import { InvoicingCurrencyFramework } from './components/InvoicingCurrencyFramework';
 import { RiskOpportunityFlags } from './components/RiskOpportunityFlags';
 import { AffiliateCTA } from './components/AffiliateCTA';
 import { TradeFxFaqSection } from './components/TradeFxFaqSection';
 import { RelatedContent } from '@/components/RelatedContent';
 import { useTradeFxData } from './hooks/useTradeFxData';
 import { buildTradeFxJsonLd } from './lib/tradeFxSeo';
+import type { CollarHandoffParams } from './lib/invoicingTypes';
 import type { CurrencyPair, Role, TimeHorizon } from './lib/tradeFxTypes';
 
 const TRADE_FX_JSON_LD = buildTradeFxJsonLd();
@@ -37,8 +39,11 @@ type TradeFxWorkspaceProps = {
     pair: CurrencyPair;
     horizon: TimeHorizon;
     collarNotional: number;
+    collarPreFill: CollarHandoffParams | null;
+    collarPreFillNonce: number;
     onHorizonChange: (horizon: TimeHorizon) => void;
     onCollarNotionalSync: (notional: number) => void;
+    onCollarHandoff: (params: CollarHandoffParams) => void;
 };
 
 const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({
@@ -46,8 +51,11 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({
     pair,
     horizon,
     collarNotional,
+    collarPreFill,
+    collarPreFillNonce,
     onHorizonChange,
     onCollarNotionalSync,
+    onCollarHandoff,
 }) => {
     const data = useTradeFxData({ pair, horizon });
 
@@ -137,6 +145,8 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({
                         forwardRate={data.forwardRate}
                         regimeNote={data.regimeNote}
                         externalNotional={collarNotional}
+                        externalPreFill={collarPreFill}
+                        preFillNonce={collarPreFillNonce}
                     />
                     <HedgingStrategyMatrix
                         role={role}
@@ -145,6 +155,12 @@ const TradeFxWorkspace: React.FC<TradeFxWorkspaceProps> = ({
                     <CompactDisclaimer context="matrix" />
                 </div>
             </div>
+
+            <InvoicingCurrencyFramework
+                role={role}
+                tradeFxData={data}
+                onCollarHandoff={onCollarHandoff}
+            />
         </div>
     );
 };
@@ -154,6 +170,14 @@ export const TradeFxPage: React.FC = () => {
     const [pair, setPair] = useState<CurrencyPair>('USD/INR');
     const [horizon, setHorizon] = useState<TimeHorizon>('3M');
     const [collarNotional, setCollarNotional] = useState(1_000_000);
+    const [collarPreFill, setCollarPreFill] = useState<CollarHandoffParams | null>(null);
+    const [collarPreFillNonce, setCollarPreFillNonce] = useState(0);
+
+    const handleCollarHandoff = (params: CollarHandoffParams) => {
+        setCollarPreFill(params);
+        setCollarPreFillNonce((n) => n + 1);
+        setCollarNotional(params.notionalFC);
+    };
 
     return (
         <div className="w-full max-w-[1400px] mx-auto pb-28 lg:pb-24">
@@ -216,8 +240,11 @@ export const TradeFxPage: React.FC = () => {
                         pair={pair}
                         horizon={horizon}
                         collarNotional={collarNotional}
+                        collarPreFill={collarPreFill}
+                        collarPreFillNonce={collarPreFillNonce}
                         onHorizonChange={setHorizon}
                         onCollarNotionalSync={setCollarNotional}
+                        onCollarHandoff={handleCollarHandoff}
                     />
                 </Suspense>
             </ModuleRow>

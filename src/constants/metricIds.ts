@@ -400,6 +400,8 @@ export const CURRENCY_METRICS = {
    * TODO: add ingest-currency-wars EM FX ingestion.
    */
   USD_CNY_RATE:                            'USD_CNY_RATE',
+  /** Derived daily cross-rate: USD_INR_RATE ÷ USD_CNY_RATE (ingest-currency-wars) */
+  CNY_INR_RATE:                            'CNY_INR_RATE',
   USD_BRL_RATE:                            'USD_BRL_RATE',
   USD_MXN_RATE:                            'USD_MXN_RATE',
   USD_TWD_RATE:                            'USD_TWD_RATE',
