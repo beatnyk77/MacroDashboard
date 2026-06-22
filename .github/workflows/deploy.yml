@@ -46,7 +46,7 @@ jobs:
     - name: Schema drift check
       run: |
         DB_URL="postgresql://postgres:${SUPABASE_DB_PASSWORD}@db.${SUPABASE_PROJECT_ID}.supabase.co:5432/postgres"
-        supabase gen types --lang=typescript --db-url "$DB_URL" > src/types/database.types.ts
+        supabase gen types --lang=typescript --db-url "$DB_URL" 2>/dev/null > src/types/database.types.ts
         git diff --exit-code src/types/database.types.ts || (echo "DB schema drift detected — regenerate types and commit." && exit 1)
       env:
         SUPABASE_DB_PASSWORD: "${{ secrets.SUPABASE_DB_PASSWORD }}"
