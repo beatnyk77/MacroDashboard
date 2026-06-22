@@ -35,22 +35,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
-            echo "::error::SUPABASE_ACCESS_TOKEN is not set in repo secrets"
-            exit 1
-          fi
-          if [ -z "${SUPABASE_PROJECT_ID:-}" ]; then
-            echo "::error::SUPABASE_PROJECT_ID is not set in repo secrets"
-            exit 1
-          fi
-
           export SUPABASE_URL="${VITE_SUPABASE_URL:-https://${SUPABASE_PROJECT_ID}.supabase.co}"
-
-          SUPABASE_ANON_KEY=$(supabase projects api-keys --project-ref "$SUPABASE_PROJECT_ID" --output json \
-            | node -e "const j=JSON.parse(require('fs').readFileSync(0,'utf8')); const ak=j.find(k=>k.name==='anon'); console.log(ak?.api_key || '')")
+          SUPABASE_ANON_KEY="${VITE_SUPABASE_ANON_KEY:-}"
 
           if [ -z "$SUPABASE_ANON_KEY" ]; then
-            SUPABASE_ANON_KEY="${VITE_SUPABASE_ANON_KEY:-}"
+            SUPABASE_ANON_KEY=$(supabase projects api-keys --project-ref "$SUPABASE_PROJECT_ID" --output json 2>/dev/null \
+              | node -e "let s='';process.stdin.on('data',d=>s+=d);process.stdin.on('end',()=>{try{const j=JSON.parse(s);const ak=j.find(k=>k.name==='anon');console.log(ak?.api_key||'')}catch{console.log('')}})" || true)
           fi
 
           if [ -z "$SUPABASE_ANON_KEY" ]; then
