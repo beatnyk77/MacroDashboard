@@ -192,20 +192,19 @@ export const FuelSecurityClockIndia: React.FC = () => {
                                 Official vs Independent Estimate
                             </h4>
                             <MacroChartContainer height={CHART_HEIGHTS.standard}>
-                                    <BarChart data={[
-                                        { name: 'Official (PPAC)', value: data.reserves_days_official },
-                                        { name: 'Actual (Est.)', value: data.reserves_days_actual },
-                                    ]}>
-                                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                                            <Cell fill="#3b82f6" />
-                                            <Cell fill="#f59e0b" />
-                                        </Bar>
-                                        <XAxis dataKey="name" tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit="d" />
-                                        <Tooltip contentStyle={{ background: '#000000e0', border: '1px solid #ffffff10', borderRadius: 12, fontSize: 10 }} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
+                                <BarChart data={[
+                                    { name: 'Official (PPAC)', value: data.reserves_days_official },
+                                    { name: 'Actual (Est.)', value: data.reserves_days_actual },
+                                ]}>
+                                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                                        <Cell fill="#3b82f6" />
+                                        <Cell fill="#f59e0b" />
+                                    </Bar>
+                                    <XAxis dataKey="name" tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                    <YAxis tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit="d" />
+                                    <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} />
+                                </BarChart>
+                            </MacroChartContainer>
                             {data.deviation_pct !== null && (
                                 <p className="text-xs text-muted-foreground/60 mt-4 text-center">
                                     Deviation:{' '}
@@ -228,17 +227,15 @@ export const FuelSecurityClockIndia: React.FC = () => {
                         Import Origin Breakdown (Top 8 Suppliers)
                     </h4>
                     {importOrigins.length > 0 ? (
-                        <div className="h-[260px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={importOrigins} layout="vertical" margin={{ left: 100, right: 24 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-                                    <XAxis type="number" tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit=" Mbbl" />
-                                    <YAxis type="category" dataKey="origin" tick={{ fill: '#ffffff60', fontSize: 10 }} axisLine={false} tickLine={false} width={96} />
-                                    <Tooltip contentStyle={{ background: '#000000e0', border: '1px solid #ffffff10', borderRadius: 12, fontSize: 10 }} />
-                                    <Bar dataKey="volume" name="Volume (Mbbl)" radius={[0, 6, 6, 0]} fill="#f59e0b" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                        <MacroChartContainer height={260}>
+                            <BarChart data={importOrigins} layout="vertical" margin={{ left: 100, right: 24 }}>
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
+                                <XAxis type="number" tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit=" Mbbl" />
+                                <YAxis type="category" dataKey="origin" tick={{ fill: '#ffffff60', fontSize: 10 }} axisLine={false} tickLine={false} width={96} />
+                                <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} />
+                                <Bar dataKey="volume" name="Volume (Mbbl)" radius={[0, 6, 6, 0]} fill="#f59e0b" />
+                            </BarChart>
+                        </MacroChartContainer>
                     ) : (
                         <div className="h-[200px] flex items-center justify-center bg-white/[0.02] border border-white/5 rounded-2xl">
                             <span className="text-xs text-muted-foreground/40 uppercase tracking-wide">
@@ -324,31 +321,29 @@ export const FuelSecurityClockIndia: React.FC = () => {
                     <h4 className="text-sm font-black uppercase tracking-widest text-white mb-4">
                         Consumption Trajectory & Stress Scenarios
                     </h4>
-                    <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={projData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                                <XAxis
-                                    dataKey="date"
-                                    stroke="rgba(255,255,255,0.3)"
-                                    fontSize={10}
-                                    tickFormatter={d => {
-                                        const date = new Date(d);
-                                        return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}`;
-                                    }}
-                                />
-                                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} unit=" d" />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                    labelFormatter={label => new Date(label).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                />
-                                <Legend wrapperStyle={{ fontSize: '10px' }} />
-                                <Line type="monotone" dataKey="baseline" stroke="#3b82f6" strokeWidth={3} dot={false} name="Baseline" />
-                                <Line type="monotone" dataKey="disruption" stroke="#f59e0b" strokeWidth={3} dot={false} name="Disruption (−30% imports)" />
-                                <Line type="monotone" dataKey="rationing" stroke="#ef4444" strokeWidth={3} dot={false} name="Rationing (−50% consumption)" />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
+                    <MacroChartContainer height={300}>
+                        <LineChart data={projData}>
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                            <XAxis
+                                dataKey="date"
+                                stroke="rgba(255,255,255,0.3)"
+                                fontSize={10}
+                                tickFormatter={d => {
+                                    const date = new Date(d);
+                                    return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}`;
+                                }}
+                            />
+                            <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} unit=" d" />
+                            <Tooltip
+                                contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                labelFormatter={label => new Date(label).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            />
+                            <Legend wrapperStyle={{ fontSize: '10px' }} />
+                            <Line type="monotone" dataKey="baseline" stroke="#3b82f6" strokeWidth={3} dot={false} name="Baseline" />
+                            <Line type="monotone" dataKey="disruption" stroke="#f59e0b" strokeWidth={3} dot={false} name="Disruption (−30% imports)" />
+                            <Line type="monotone" dataKey="rationing" stroke="#ef4444" strokeWidth={3} dot={false} name="Rationing (−50% consumption)" />
+                        </LineChart>
+                    </MacroChartContainer>
                 </div>
             </div>
         </MotionCard>
