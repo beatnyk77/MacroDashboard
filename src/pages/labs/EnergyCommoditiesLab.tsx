@@ -15,6 +15,7 @@ import {
     BarChart2,
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { SectionLoadingFallback } from '@/components/SectionLoadingFallback';
 import { LazyRender } from '@/components/LazyRender';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
@@ -30,16 +31,6 @@ const CommodityTerminalRow = lazy(() => import('@/features/commodities/Commodity
 const FuelSecurityClockIndia = lazy(() => import('@/features/energy/components/FuelSecurityClockIndia'));
 const WTICalendarSpread = lazy(() => import('@/features/energy/components/WTICalendarSpread').then(m => ({ default: m.WTICalendarSpread })));
 const PriceTerminalCard = lazy(() => import('@/features/commodities/components/PriceTerminalCard').then(m => ({ default: m.PriceTerminalCard })));
-
-const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Energy Signal...</span>
-    </div>
-);
-
-const SmallLoadingFallback = () => (
-    <div className="w-full h-48 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse" />
-);
 
 export const EnergyCommoditiesLab: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
@@ -148,8 +139,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 {/* 1. WTI CALENDAR SPREAD */}
                 <div id="wti-spread" className="mb-32">
                     <SectionErrorBoundary name="WTI Calendar Spread">
-                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                            <Suspense fallback={<LoadingFallback />}>
+                        <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                 <WTICalendarSpread />
                             </Suspense>
                         </LazyRender>
@@ -167,8 +158,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             WTI, Brent, Copper, Nickel — FRED daily cadence via ingest-fred
                         </p>
                         <SectionErrorBoundary name="Commodity Prices">
-                            <LazyRender minHeight="192px" fallback={<SmallLoadingFallback />}>
-                                <Suspense fallback={<SmallLoadingFallback />}>
+                            <LazyRender minHeight="192px" fallback={<SectionLoadingFallback minHeight={192} label="Loading module" />}>
+                                <Suspense fallback={<SectionLoadingFallback minHeight={192} label="Loading module" />}>
                                     <PriceTerminalCard />
                                 </Suspense>
                             </LazyRender>
@@ -189,8 +180,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Sovereign Energy Security">
-                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                    <Suspense fallback={<LoadingFallback />}>
+                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                         <SovereignEnergySecuritySection />
                                     </Suspense>
                                 </LazyRender>
@@ -206,8 +197,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Asia Commodity Flows">
-                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                    <Suspense fallback={<LoadingFallback />}>
+                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                         <AsiaCommodityFlowsSection />
                                     </Suspense>
                                 </LazyRender>
@@ -223,8 +214,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Global Refining Monitor">
-                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                    <Suspense fallback={<LoadingFallback />}>
+                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                         <GlobalRefiningMonitorSection />
                                     </Suspense>
                                 </LazyRender>
@@ -240,8 +231,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Fuel Security Clock India">
-                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                    <Suspense fallback={<LoadingFallback />}>
+                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                         <FuelSecurityClockIndia />
                                     </Suspense>
                                 </LazyRender>
@@ -257,8 +248,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </div>
                         <div className="w-full">
                             <SectionErrorBoundary name="Commodity Terminal">
-                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                    <Suspense fallback={<LoadingFallback />}>
+                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                         <CommodityTerminalRow />
                                     </Suspense>
                                 </LazyRender>

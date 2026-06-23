@@ -282,6 +282,19 @@ async function run() {
                 // Wait an extra second for dynamic charts/components to finish rendering
                 await new Promise(resolve => setTimeout(resolve, 1500));
 
+                // react-helmet-async defers meta/og tag writes via requestAnimationFrame
+                await page.evaluate(() => new Promise((resolve) => {
+                    requestAnimationFrame(() => requestAnimationFrame(resolve));
+                }));
+                try {
+                    await page.waitForFunction(
+                        () => document.querySelector('meta[name="description"]'),
+                        { timeout: 10000 }
+                    );
+                } catch {
+                    console.warn(`⚠ No meta description on ${cleanRoute} — capturing HTML anyway`);
+                }
+
                 // Extract internal links from the rendered DOM
                 const newLinks = await page.evaluate(() => {
                     const anchors = Array.from(document.querySelectorAll('a'));

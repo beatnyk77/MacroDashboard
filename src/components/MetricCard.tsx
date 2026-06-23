@@ -9,6 +9,7 @@ import { useViewContext } from '@/context/ViewContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils';
 import { getStaleness } from '@/hooks/useStaleness';
+import { DataStatePanel } from '@/components/DataStatePanel';
 import type { MetricData } from '@/types/metric';
 
 interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -186,7 +187,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 								</div>
 							)}
 							{isStaleEffective && (
-								<div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-xs font-bold tracking-heading animate-pulse border border-amber-500/20">
+								<div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-xs font-semibold tracking-heading border border-amber-500/20">
 									OFFLINE
 								</div>
 							)}
@@ -207,10 +208,12 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 							<Skeleton className="w-[30%] h-3 rounded-md opacity-10" />
 						</div>
 					) : isNullValue ? (
-						<div className="flex items-center gap-2 opacity-50">
-							<div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-							<span className="text-sm font-medium text-muted-foreground italic">No Data</span>
-						</div>
+						<DataStatePanel
+							variant="empty"
+							title="No data available"
+							description="Awaiting next observation from source"
+							compact
+						/>
 					) : (
 						<div className="space-y-3">
 							<div className="flex items-baseline gap-1">

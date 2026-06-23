@@ -2,7 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OilRefiningCapacity } from '@/hooks/useOilData';
 import { Factory, TrendingDown, TrendingUp } from 'lucide-react';
-import { Area, AreaChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Area, AreaChart, Tooltip } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, DEFAULT_TOOLTIP_STYLE } from '@/constants/chartDefaults';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface RefiningCapacityCardProps {
@@ -77,10 +80,22 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
 
     if (isLoading) {
         return (
-            <Card className="h-[400px] animate-pulse bg-white/5 border-white/12">
-                <CardHeader><div className="h-6 w-1/2 bg-white/10 rounded" /></CardHeader>
-                <CardContent><div className="h-24 bg-white/5 rounded mt-4" /></CardContent>
-            </Card>
+            <DataStatePanel
+                variant="pending"
+                title="Loading refining capacity data"
+                height={400}
+            />
+        );
+    }
+
+    if (data.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No refining capacity data"
+                description="Atmospheric distillation capacity observations are not yet available."
+                height={400}
+            />
         );
     }
 
@@ -135,8 +150,8 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                         )}
                     </div>
 
-                    <div className="h-[240px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="w-full">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <AreaChart data={combinedData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="capGradient" x1="0" y1="0" x2="0" y2="1">
@@ -149,7 +164,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                     </linearGradient>
                                 </defs>
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#f4f4f5', fontSize: '12px' }}
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
                                     itemStyle={{ padding: '2px 0' }}
                                     formatter={(value: number, name: string) => [
                                         name === 'utilization' ? `${value.toFixed(1)}%` : `${value.toFixed(2)} mbpd`,
@@ -179,7 +194,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                     />
                                 )}
                             </AreaChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                 </div>
             </CardContent>

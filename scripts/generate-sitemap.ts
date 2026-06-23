@@ -2,15 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { blogArticles } from '../src/features/blog/blogData';
-
-const BASE_URL = 'https://graphiquestor.com';
-
-/** Sitemap URLs use trailing slashes (except root). */
-function sitemapLoc(path: string): string {
-  if (path === '/') return `${BASE_URL}/`;
-  const normalized = path.startsWith('/') ? path : `/${path}`;
-  return `${BASE_URL}${normalized.endsWith('/') ? normalized : `${normalized}/`}`;
-}
+import { glossaryData } from '../src/features/glossary/glossaryData';
+import { dedupeSitemapRoutes, sitemapLoc } from '../src/lib/sitemapHelpers';
 
 /**
  * Priority heuristic (sitemap hints, not ranking signals):
@@ -84,6 +77,11 @@ async function generateSitemap() {
     { url: '/institutional',       changefreq: 'monthly', lastmod: gitLastmod('src/pages/ForInstitutional.tsx') },
     { url: '/api-access',          changefreq: 'monthly', lastmod: gitLastmod('src/pages/APIAccessPage.tsx') },
     { url: '/macro-brief/archive', changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroBriefArchivePage.tsx') },
+    { url: '/about',               changefreq: 'monthly', lastmod: gitLastmod('src/pages/About.tsx') },
+    { url: '/privacy',             changefreq: 'yearly',  lastmod: gitLastmod('src/pages/PrivacyPolicy.tsx') },
+    { url: '/terms',               changefreq: 'yearly',  lastmod: gitLastmod('src/pages/TermsOfService.tsx') },
+    { url: '/data-sources',        changefreq: 'monthly', lastmod: gitLastmod('src/pages/DataSourcesPage.tsx') },
+    { url: '/macro-observatory',   changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroObservatory.tsx') },
     { url: '/demo',                changefreq: 'monthly', lastmod: BUILD_DATE },
     // Additional static pages (labs, methods, tools) — lastmod = build date (data refreshes daily via crons)
     { url: '/labs/us-macro-fiscal', changefreq: 'weekly', lastmod: BUILD_DATE },
@@ -116,6 +114,13 @@ async function generateSitemap() {
     priority: routePriority(`/blog/${article.slug}`),
     changefreq: 'never',
     lastmod: article.date,
+  }));
+
+  const glossaryRoutes: SitemapRoute[] = glossaryData.map(term => ({
+    url: `/glossary/${term.slug}`,
+    priority: routePriority(`/glossary/${term.slug}`),
+    changefreq: 'monthly',
+    lastmod: gitLastmod('src/pages/GlossaryTermPage.tsx'),
   }));
 
   // Dynamic routes require Supabase — degrade gracefully if env vars unavailable (e.g. CI)
@@ -184,14 +189,14 @@ async function generateSitemap() {
     console.warn('⚠ VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set — generating sitemap with static routes only.');
   }
 
-  // Build XML
-  const allRoutes: SitemapRoute[] = [
+  const allRoutes: SitemapRoute[] = dedupeSitemapRoutes([
     ...staticRoutes,
     ...blogRoutes,
+    ...glossaryRoutes,
     ...briefRoutes,
     ...narrativeRoutes,
     ...digestRoutes,
-  ];
+  ]);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

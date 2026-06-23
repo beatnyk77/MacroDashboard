@@ -6,9 +6,11 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
     Cell
 } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { DEFAULT_CARTESIAN_GRID_PROPS } from '@/constants/chartDefaults';
 import { formatCurrency, formatPercentage } from '@/utils/formatNumber';
 import { cn } from '@/lib/utils';
 import { TreasuryHolder } from '@/hooks/useTreasuryHolders';
@@ -18,6 +20,8 @@ interface TreasuryHoldersChartProps {
     height?: number;
     className?: string;
 }
+
+const CHART_INNER_MIN = 200;
 
 const COUNTRY_FLAGS: Record<string, string> = {
     'Japan': '🇯🇵',
@@ -82,18 +86,30 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const TreasuryHoldersChart: React.FC<TreasuryHoldersChartProps> = ({ data, height = 500, className }) => {
-    // Determine max value for domain to add some headroom
+    if (!data || data.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No holder data"
+                description="Treasury foreign holdings are not available for charting."
+                height={height}
+                className={className}
+            />
+        );
+    }
+
     const maxVal = Math.max(...data.map(d => d.holdings_usd_bn || 0));
+    const chartHeight = Math.max(height - 32, CHART_INNER_MIN);
 
     return (
-        <div className={cn("w-full bg-slate-950/30 rounded-xl border border-white/5 p-4", className)} style={{ height }}>
-            <ResponsiveContainer width="100%" height="100%">
+        <div className={cn("w-full bg-slate-950/30 rounded-xl border border-white/5 p-4", className)}>
+            <MacroChartContainer height={chartHeight}>
                 <BarChart
                     data={data}
                     layout="vertical"
                     margin={{ top: 20, right: 30, left: 40, bottom: 5 }}
                 >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                     <XAxis
                         type="number"
                         hide
@@ -131,7 +147,7 @@ export const TreasuryHoldersChart: React.FC<TreasuryHoldersChartProps> = ({ data
                         ))}
                     </Bar>
                 </BarChart>
-            </ResponsiveContainer>
+            </MacroChartContainer>
         </div>
     );
 };

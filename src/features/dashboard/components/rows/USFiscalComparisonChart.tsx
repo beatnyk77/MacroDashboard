@@ -6,15 +6,22 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
     Legend,
     ReferenceArea
 } from 'recharts';
 import { format } from 'date-fns';
-import { useUSMacroPulse } from '../../../../hooks/useUSMacroPulse';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import {
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_LEGEND_PROPS,
+    DEFAULT_TOOLTIP_STYLE,
+    CHART_HEIGHTS,
+} from '@/constants/chartDefaults';
+import { useUSMacroPulse } from '@/hooks/useUSMacroPulse';
 
 const USFiscalComparisonChart: React.FC = () => {
-    const { data: pulseData, isLoading } = useUSMacroPulse();
+    const { data: pulseData, isError, refetch } = useUSMacroPulse();
 
     const chartData = useMemo(() => {
         if (!pulseData) return [];
@@ -78,11 +85,26 @@ const USFiscalComparisonChart: React.FC = () => {
         };
     }, [chartData]);
 
-    if (isLoading) {
+    if (isError) {
         return (
-            <div className="flex items-center justify-center h-80 bg-black/20 animate-pulse rounded-xl border border-white/5">
-                <span className="text-white/40 font-mono text-sm">Loading Fiscal Telemetry...</span>
-            </div>
+            <DataStatePanel
+                variant="error"
+                title="Fiscal comparison unavailable"
+                description="Unable to load defense spending and interest payment telemetry."
+                onRetry={() => refetch()}
+                height={320}
+            />
+        );
+    }
+
+    if (chartData.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No fiscal comparison data"
+                description="Defense spending and federal interest payment series are not yet available."
+                height={320}
+            />
         );
     }
 
@@ -133,10 +155,10 @@ const USFiscalComparisonChart: React.FC = () => {
                 )}
             </div>
 
-            <div className="h-[400px] w-full mt-4">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full mt-4">
+                <MacroChartContainer height={CHART_HEIGHTS.tall}>
                     <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                         <XAxis
                             dataKey="date"
                             tickFormatter={(str: string) => format(new Date(str), 'yyyy')}
@@ -165,7 +187,7 @@ const USFiscalComparisonChart: React.FC = () => {
                             axisLine={false}
                         />
                         <Tooltip
-                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
+                            contentStyle={DEFAULT_TOOLTIP_STYLE}
                             itemStyle={{ fontSize: '12px' }}
                             labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
                             labelFormatter={(label: string) => {
@@ -182,9 +204,9 @@ const USFiscalComparisonChart: React.FC = () => {
                             height={36}
                             iconType="circle"
                             wrapperStyle={{
-                                fontSize: '12px',
+                                ...DEFAULT_LEGEND_PROPS.wrapperStyle,
                                 color: '#ffffff80',
-                                textAlign: 'right'
+                                textAlign: 'right',
                             }}
                         />
 
@@ -220,7 +242,7 @@ const USFiscalComparisonChart: React.FC = () => {
                             activeDot={{ r: 4, stroke: '#f43f5e', strokeWidth: 2, fill: '#0f172a' }}
                         />
                     </LineChart>
-                </ResponsiveContainer>
+                </MacroChartContainer>
             </div>
 
             <div className="mt-6 flex flex-wrap gap-6 border-t border-white/5 pt-6">

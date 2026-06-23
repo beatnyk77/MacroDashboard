@@ -11,6 +11,7 @@ import { COUNTRY_METRIC_GROUPS } from '@/lib/macro-metrics';
 import { CountryNarrativeBlock } from '@/components/CountryNarrativeBlock';
 import { COUNTRY_NARRATIVES } from '@/data/countryNarratives';
 import { ALL_COUNTRIES } from '@/lib/countries';
+import { BrandConfig } from '@/config/brandConfig';
 
 // High-level grouping for the country terminal layout
 const TERMINAL_SECTIONS = [
@@ -61,7 +62,7 @@ export const CountryProfilePage: React.FC = () => {
             "name": "GraphiQuestor",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://graphiquestor.com/logo.png"
+                "url": BrandConfig.seo.logoImage
             }
         },
         "about": {

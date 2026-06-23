@@ -36,10 +36,10 @@ function rssGeneratorPlugin(): Plugin {
                     .map(article => `
   <item>
     <title>${escapeXml(article.title)}</title>
-    <link>https://graphiquestor.com/blog/${article.slug}</link>
+    <link>https://graphiquestor.com/blog/${article.slug}/</link>
     <description>${escapeXml(article.description)}</description>
     <pubDate>${formatPubDate(article.date)}</pubDate>
-    <guid isPermaLink="true">https://graphiquestor.com/blog/${article.slug}</guid>
+    <guid isPermaLink="true">https://graphiquestor.com/blog/${article.slug}/</guid>
     <category>${escapeXml(article.category)}</category>
     <author>research@graphiquestor.com (${escapeXml(article.author)})</author>
   </item>`).join('');
@@ -48,26 +48,26 @@ function rssGeneratorPlugin(): Plugin {
                 const hubItems = `
   <item>
     <title>India Macro Intelligence Hub — Live Dashboard</title>
-    <link>https://graphiquestor.com/intel/india</link>
+    <link>https://graphiquestor.com/intel/india/</link>
     <description>Institutional-grade macro telemetry for India: credit cycle, fiscal stress, sovereign debt maturity wall, RBI liquidity dynamics, and de-dollarisation strategy.</description>
     <pubDate>${buildDate}</pubDate>
-    <guid isPermaLink="true">https://graphiquestor.com/intel/india</guid>
+    <guid isPermaLink="true">https://graphiquestor.com/intel/india/</guid>
     <category>India Macro</category>
   </item>
   <item>
     <title>China Macro Intelligence Hub — Live Dashboard</title>
-    <link>https://graphiquestor.com/intel/china</link>
+    <link>https://graphiquestor.com/intel/china/</link>
     <description>High-frequency activity monitor tracking China's credit impulse, deflation risk, industrial velocity, PBoC monetary stance, FX reserves, and de-dollarization momentum.</description>
     <pubDate>${buildDate}</pubDate>
-    <guid isPermaLink="true">https://graphiquestor.com/intel/china</guid>
+    <guid isPermaLink="true">https://graphiquestor.com/intel/china/</guid>
     <category>China Macro</category>
   </item>
   <item>
     <title>Macro Concepts Glossary — Institutional Definitions</title>
-    <link>https://graphiquestor.com/glossary</link>
+    <link>https://graphiquestor.com/glossary/</link>
     <description>Institutional definitions for macro liquidity, sovereign debt risk, and geo-economic terminology — TGA, RRP, Net Liquidity Z-Score, Term Premium, Stealth QE, and more.</description>
     <pubDate>${buildDate}</pubDate>
-    <guid isPermaLink="true">https://graphiquestor.com/glossary</guid>
+    <guid isPermaLink="true">https://graphiquestor.com/glossary/</guid>
     <category>Glossary</category>
   </item>`;
 
@@ -81,7 +81,7 @@ function rssGeneratorPlugin(): Plugin {
   <lastBuildDate>${buildDate}</lastBuildDate>
   <atom:link href="https://graphiquestor.com/rss.xml" rel="self" type="application/rss+xml" />
   <image>
-    <url>https://graphiquestor.com/og-image.png</url>
+    <url>https://graphiquestor.com/hero-preview.jpg</url>
     <title>GraphiQuestor</title>
     <link>https://graphiquestor.com</link>
   </image>
@@ -118,58 +118,9 @@ function llmsGeneratorPlugin(): Plugin {
     };
 }
 
-// ── Sitemap Brief Plugin ──────────────────────────────────────────────────
-// Injects the last 30 days of brief URLs into the sitemap at build time.
-function sitemapBriefPlugin(): Plugin {
-    return {
-        name: 'sitemap-brief-injector',
-        closeBundle() {
-            try {
-                const sitemapPath = path.resolve(__dirname, 'public/sitemap.xml');
-                if (!fs.existsSync(sitemapPath)) return;
-
-                let sitemap = fs.readFileSync(sitemapPath, 'utf-8');
-
-                // Generate last 30 days of brief URLs
-                const today = new Date();
-                const briefUrls: string[] = [];
-                for (let i = 0; i < 30; i++) {
-                    const d = new Date(today);
-                    d.setDate(d.getDate() - i);
-                    const y = d.getUTCFullYear();
-                    const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-                    const day = String(d.getUTCDate()).padStart(2, '0');
-                    const dateStr = `${y}-${m}-${day}`;
-                    briefUrls.push(`  <url>
-    <loc>https://graphiquestor.com/macro-brief/${y}/${m}/${day}/</loc>
-    <lastmod>${dateStr}</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-  </url>`);
-                }
-
-                // Remove any previously injected brief URLs (idempotent builds)
-                sitemap = sitemap.replace(
-                    /\s*<!-- AUTO:BRIEF_URLS -->[\s\S]*?<!-- \/AUTO:BRIEF_URLS -->/,
-                    ''
-                );
-
-                // Inject before closing tag
-                const injection = `\n  <!-- AUTO:BRIEF_URLS -->\n${briefUrls.join('\n')}\n  <!-- /AUTO:BRIEF_URLS -->`;
-                sitemap = sitemap.replace('</urlset>', `${injection}\n</urlset>`);
-
-                fs.writeFileSync(sitemapPath, sitemap, 'utf-8');
-                console.log(`✅ Sitemap brief URLs injected: last 30 days → public/sitemap.xml`);
-            } catch (err) {
-                console.warn('⚠️  Sitemap brief injection failed (non-fatal):', err);
-            }
-        },
-    };
-}
-
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), rssGeneratorPlugin(), llmsGeneratorPlugin(), sitemapBriefPlugin()],
+    plugins: [react(), rssGeneratorPlugin(), llmsGeneratorPlugin()],
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),

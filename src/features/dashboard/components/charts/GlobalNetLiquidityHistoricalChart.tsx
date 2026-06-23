@@ -1,8 +1,14 @@
 import React, { useMemo } from 'react';
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ChartSkeleton } from "@/components/ui/skeleton";
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 import {
-    ResponsiveContainer,
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_XAXIS_PROPS,
+    DEFAULT_YAXIS_PROPS,
+} from '@/constants/chartDefaults';
+import {
     AreaChart,
     Area,
     XAxis,
@@ -65,7 +71,18 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
     }, [history]);
 
     if (!history) {
-        return <Skeleton className="h-[600px] w-full rounded-[2.5rem] bg-white/5" />;
+        return <ChartSkeleton height={500} className="w-full rounded-[2.5rem]" />;
+    }
+
+    if (history.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No liquidity history available"
+                description="Historical net liquidity observations are not yet populated for this range."
+                height={400}
+            />
+        );
     }
 
     const latest = history[history.length - 1];
@@ -94,7 +111,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                     <div className="bg-white/5 border border-white/12 rounded-3xl p-5 flex flex-col justify-center">
                         <div className="flex items-center justify-between mb-1">
                             <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Current Outstanding</span>
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <div className="w-2 h-2 rounded-full bg-emerald-500/80" />
                         </div>
                         <div className="text-4xl font-black text-white tracking-heading tabular-nums">
                             ${latest?.value.toFixed(2)}<span className="textxl text-muted-foreground/60 ml-1">T</span>
@@ -109,8 +126,8 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                 </div>
 
                 {/* Main Chart Area */}
-                <div className="h-[500px] w-full relative">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="w-full relative">
+                    <MacroChartContainer height={500}>
                         <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="liquidityGradient" x1="0" y1="0" x2="0" y2="1">
@@ -118,25 +135,17 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                             <XAxis
+                                {...DEFAULT_XAXIS_PROPS}
                                 dataKey="date"
-                                stroke="rgba(255,255,255,0.15)"
-                                fontSize={10}
                                 tickFormatter={(v) => new Date(v).getFullYear().toString()}
-                                tick={{ fill: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
-                                axisLine={false}
-                                tickLine={false}
                                 dy={10}
-                                interval={window.innerWidth < 768 ? 150 : 80}
+                                interval={typeof window !== 'undefined' && window.innerWidth < 768 ? 150 : 80}
                             />
                             <YAxis
-                                stroke="rgba(255,255,255,0.15)"
-                                fontSize={10}
+                                {...DEFAULT_YAXIS_PROPS}
                                 tickFormatter={(v) => `$${v}T`}
-                                tick={{ fill: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
-                                axisLine={false}
-                                tickLine={false}
                             />
                             <Tooltip content={<CustomTooltip />} />
 
@@ -178,7 +187,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 fill="transparent"
                             />
                         </AreaChart>
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 </div>
 
                 {/* Analysis Grid */}

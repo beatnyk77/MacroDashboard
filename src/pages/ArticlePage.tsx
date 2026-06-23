@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { Box, Typography, Container, Button, Stack, Chip, Divider, Avatar, IconButton, Tooltip } from '@mui/material';
 import { blogArticles } from '@/features/blog/blogData';
 import { SEOManager } from '@/components/SEOManager';
+import { BrandConfig } from '@/config/brandConfig';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Calendar, User, Clock, Twitter, Linkedin, LinkIcon, BookOpen, ChevronRight } from 'lucide-react';
@@ -63,7 +64,7 @@ export const ArticlePage: React.FC = () => {
                     "@type": "BlogPosting",
                     "headline": article.title,
                     "description": article.description,
-                    "image": "https://graphiquestor.com/og-preview.png",
+                    "image": BrandConfig.seo.ogImage,
                     "datePublished": article.date,
                     "wordCount": article.content.trim().split(/\s+/).length,
                     "author": {
@@ -82,7 +83,7 @@ export const ArticlePage: React.FC = () => {
                         "name": "GraphiQuestor",
                         "logo": {
                             "@type": "ImageObject",
-                            "url": "https://graphiquestor.com/logo.png"
+                            "url": BrandConfig.seo.logoImage
                         }
                     },
                     "mainEntityOfPage": {

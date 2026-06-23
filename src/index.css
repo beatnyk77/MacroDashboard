@@ -181,14 +181,26 @@
 
     /* SPA Layout Utilities */
     .spa-row {
-        @apply w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12;
+        @apply w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8;
     }
 
     .spa-card {
         @apply bg-card/40 border border-border/50 rounded-3xl p-6 lg:p-10;
-        @apply shadow-xl transition-all duration-500;
+        @apply shadow-xl transition-colors duration-300;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        @apply hover:border-blue-500/30 hover:shadow-2xl hover:scale-[1.05] hover:-translate-y-2;
+        @apply hover:border-blue-500/30;
+    }
+
+    .label-mono {
+        @apply font-mono text-[10px] font-medium tracking-[0.15em] uppercase text-muted-foreground/60;
+    }
+
+    .section-label {
+        @apply text-xs font-semibold tracking-uppercase text-muted-foreground/70;
+    }
+
+    .caption-muted {
+        @apply text-xs font-medium text-muted-foreground/55;
     }
 
     .spa-hero-value {
@@ -205,6 +217,10 @@
         .spa-card,
         .spa-fade-in {
             @apply transition-none;
+            animation: none !important;
+        }
+
+        .animate-ping {
             animation: none !important;
         }
     }

@@ -13,6 +13,7 @@ import {
     Activity
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { SectionLoadingFallback } from '@/components/SectionLoadingFallback';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
@@ -32,12 +33,6 @@ const USFiscalComparisonChart = lazy(() => import('@/features/dashboard/componen
 const FedMonetizationMonitor = lazy(() => import('@/components/labs/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 const FundingPlumbingStress = lazy(() => import('@/components/labs/FundingPlumbingStress').then(m => ({ default: m.FundingPlumbingStress })));
 const FOMCMinutesAnalysisCard = lazy(() => import('@/components/labs/FOMCMinutesAnalysisCard').then(m => ({ default: m.FOMCMinutesAnalysisCard })));
-
-const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Signal...</span>
-    </div>
-);
 
 export const USMacroFiscalLab: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
@@ -111,7 +106,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <section>
                     <SectionErrorBoundary name="FOMC Minutes Intelligence">
                         <LazyRender minHeight="300px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                 <FOMCMinutesAnalysisCard />
                             </Suspense>
                         </LazyRender>
@@ -126,7 +121,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <LazyRender minHeight="500px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={500} label="Loading module" />}>
                                 <USDebtMaturityWall />
                             </Suspense>
                         </LazyRender>
@@ -138,7 +133,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <section>
                     <SectionErrorBoundary name="FED Debt Monetization & Yield Control Monitor">
                         <LazyRender minHeight="500px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={500} label="Loading module" />}>
                                 <FedMonetizationMonitor />
                             </Suspense>
                         </LazyRender>
@@ -154,7 +149,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="US Fiscal Dominance Meter">
                         <LazyRender minHeight="500px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={500} label="Loading module" />}>
                                 <USFiscalDominanceMeter />
                             </Suspense>
                         </LazyRender>
@@ -166,7 +161,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <section>
                     <SectionErrorBoundary name="Funding Plumbing Stress">
                         <LazyRender minHeight="300px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                 <FundingPlumbingStress />
                             </Suspense>
                         </LazyRender>
@@ -181,7 +176,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="Treasury Demand Gauge">
                         <LazyRender minHeight="300px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                 <USTreasuryDemandGauge />
                             </Suspense>
                         </LazyRender>
@@ -196,7 +191,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="Offshore Dollar Stress">
                         <LazyRender minHeight="300px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
                                 <OffshoreDollarStressCard />
                             </Suspense>
                         </LazyRender>
@@ -211,7 +206,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="Top Treasury Holders">
                         <LazyRender minHeight="700px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={700} label="Loading module" />}>
                                 <TreasuryHoldersSection />
                             </Suspense>
                         </LazyRender>
@@ -232,7 +227,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     </div>
                     <SectionErrorBoundary name="US Fiscal Comparison">
                         <LazyRender minHeight="400px">
-                            <Suspense fallback={<LoadingFallback />}>
+                            <Suspense fallback={<SectionLoadingFallback minHeight={400} label="Loading module" />}>
                                 <USFiscalComparisonChart />
                             </Suspense>
                         </LazyRender>

@@ -18,6 +18,7 @@ export const BrandConfig = {
     defaultTitle: 'GraphiQuestor — Global Macro Intelligence Terminal | Fiscal Dominance, Sovereign Stress & De-Dollarization',
     defaultDescription: 'Institutional macro intelligence terminal tracking global liquidity, sovereign stress, fiscal dominance, and de-dollarization. Free institutional-grade macro data for India, China, US, Africa and G20.',
     ogImage: 'https://graphiquestor.com/hero-preview.jpg',
+    logoImage: 'https://graphiquestor.com/hero-preview.jpg',
   },
   features: {
     showSubscribeCTA: true,

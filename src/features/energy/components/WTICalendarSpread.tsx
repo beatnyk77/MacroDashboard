@@ -1,16 +1,22 @@
 import React from 'react';
-import { 
-    Line, 
-    XAxis, 
-    YAxis, 
-    CartesianGrid, 
-    Tooltip, 
-    ResponsiveContainer, 
-    Area, 
+import {
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Area,
     ComposedChart,
     ReferenceLine,
     ReferenceArea
 } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import {
+    CHART_HEIGHTS,
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_TOOLTIP_STYLE,
+} from '@/constants/chartDefaults';
 import { useOilSpread } from '@/hooks/useOilSpread';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Fuel, AlertTriangle, RefreshCw, Activity } from 'lucide-react';
@@ -22,8 +28,6 @@ import { supabase } from '@/lib/supabase';
 import { SectionErrorBoundary } from '@/features/daily-macro/components/SectionErrorBoundary';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { useStaleness } from '@/hooks/useStaleness';
-import { WTICalendarSpreadSkeleton } from './WTICalendarSpreadSkeleton';
-
 const WTICalendarSpreadInner: React.FC = () => {
     const { data: spreadData, isLoading, error, refetch } = useOilSpread();
     const { data: health = [] } = useIngestionHealth();
@@ -59,31 +63,38 @@ const WTICalendarSpreadInner: React.FC = () => {
     const regime = latest ? getRegimeDetails(latest.spread) : null;
 
     if (isLoading && !spreadData) {
-        return <WTICalendarSpreadSkeleton />;
+        return (
+            <DataStatePanel
+                variant="pending"
+                title="Loading WTI calendar spread"
+                height={400}
+            />
+        );
     }
 
     if (error && !spreadData) {
         return (
-            <div className="w-full h-[500px] bg-rose-500/5 border border-rose-500/10 rounded-[2rem] flex items-center justify-center text-center p-8">
-                <div className="max-w-md space-y-4">
-                    <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto" />
-                    <h3 className="text-lg font-black text-white uppercase tracking-heading">Data Ingestion Failure</h3>
-                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wide">
-                        Unable to synchronize WTI CL1/CL2 series. Ensure EIA API connectivity is active.
-                    </p>
-                    <button 
-                        onClick={handleRefresh}
-                        className="px-6 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all"
-                    >
-                        Retry Connection
-                    </button>
-                </div>
-            </div>
+            <DataStatePanel
+                variant="error"
+                title="WTI spread unavailable"
+                description="Unable to synchronize WTI CL1/CL2 series. Ensure EIA API connectivity is active."
+                onRetry={handleRefresh}
+                height={400}
+                accentColor="rose"
+            />
         );
     }
 
-    // Graceful degradation: If no data at all (rare)
-    if (!latest) return <WTICalendarSpreadSkeleton />;
+    if (!latest || chartData.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No WTI spread data"
+                description="Calendar spread observations are not yet populated for this range."
+                height={400}
+            />
+        );
+    }
 
     return (
         <Card className="bg-black/40 border-white/10 backdrop-blur-xl overflow-hidden rounded-[2rem]">
@@ -225,8 +236,8 @@ const WTICalendarSpreadInner: React.FC = () => {
                         </div>
 
                         {/* Chart Area */}
-                        <div className="lg:col-span-3 h-[400px] relative">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <div className="lg:col-span-3 relative">
+                            <MacroChartContainer height={CHART_HEIGHTS.tall}>
                                 <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                                     <defs>
                                         <linearGradient id="spreadGradient" x1="0" y1="0" x2="0" y2="1">
@@ -234,7 +245,7 @@ const WTICalendarSpreadInner: React.FC = () => {
                                             <stop offset="95%" stopColor={latest.spread >= 0 ? "#10b981" : "#f43f5e"} stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                     <XAxis 
                                         dataKey="formattedDate" 
                                         axisLine={false}
@@ -260,14 +271,12 @@ const WTICalendarSpreadInner: React.FC = () => {
                                         tick={{ fill: '#ffffff30', fontSize: 10, fontWeight: 900 }}
                                     />
                                     <Tooltip
-                                        contentStyle={{ 
-                                            backgroundColor: '#000000e0', 
-                                            borderColor: '#ffffff10', 
-                                            borderRadius: '12px',
+                                        contentStyle={{
+                                            ...DEFAULT_TOOLTIP_STYLE,
                                             fontSize: '10px',
                                             fontWeight: 900,
                                             textTransform: 'uppercase',
-                                            letterSpacing: '1px'
+                                            letterSpacing: '1px',
                                         }}
                                         itemStyle={{ padding: '2px 0' }}
                                     />
@@ -312,7 +321,7 @@ const WTICalendarSpreadInner: React.FC = () => {
                                         dot={false}
                                     />
                                 </ComposedChart>
-                            </ResponsiveContainer>
+                            </MacroChartContainer>
                         </div>
 
                         {/* Custom Legend */}

@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import { useUSTreasuryAuctions, USTreasuryAuction, useAuctionHealth, useAuctionSync } from '@/hooks/useUSTreasuryAuctions';
-import { AreaChart, Area, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
+import { AreaChart, Area, Tooltip, ReferenceLine, ReferenceArea } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS } from '@/constants/chartDefaults';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Info, TrendingUp, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/utils/formatNumber';
 import { m, AnimatePresence } from 'framer-motion';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -36,29 +38,6 @@ const isTailAlert = (auction: USTreasuryAuction | undefined) => {
 };
 
 // ── Components ──────────────────────────────────────────────────────
-
-const InstitutionalSkeleton: React.FC = () => (
-  <div className="w-full bg-slate-900 rounded-3xl border border-slate-800 p-8 space-y-8 animate-in fade-in duration-500">
-    <div className="flex justify-between items-start">
-      <div className="space-y-3">
-        <Skeleton className="h-10 w-64 bg-white/5" />
-        <Skeleton className="h-4 w-48 bg-white/5" />
-      </div>
-      <div className="flex gap-2">
-        <Skeleton className="h-8 w-24 rounded-full bg-white/5" />
-        <Skeleton className="h-8 w-32 rounded-full bg-white/5" />
-      </div>
-    </div>
-    <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
-      <div className="lg:col-span-6 h-80 rounded-3xl bg-white/[0.02] border border-white/5 p-8">
-        <Skeleton className="h-full w-full bg-white/5" />
-      </div>
-      <div className="lg:col-span-4 h-80 rounded-3xl bg-white/[0.02] border border-white/5 p-8">
-        <Skeleton className="h-full w-full bg-white/5" />
-      </div>
-    </div>
-  </div>
-);
 
 const MicroSparkline: React.FC<{ data: number[]; color: string }> = ({ data, color }) => {
   if (data.length < 2) return null;
@@ -125,8 +104,8 @@ const TailStatusInfo: React.FC = () => (
 // ── Main Component ──────────────────────────────────────────────────
 
 export const USTreasuryDemandGauge: React.FC = () => {
-  const { data: auctions, isLoading: isDataLoading } = useUSTreasuryAuctions();
-  const { data: health, isLoading: isHealthLoading } = useAuctionHealth();
+  const { data: auctions, isLoading: isDataLoading, isError: isAuctionsError, refetch: refetchAuctions } = useUSTreasuryAuctions();
+  const { data: health, isLoading: isHealthLoading, isError: isHealthError, refetch: refetchHealth } = useAuctionHealth();
   const { mutate: sync, isPending: isSyncing } = useAuctionSync();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -174,7 +153,41 @@ export const USTreasuryDemandGauge: React.FC = () => {
     return (now.getTime() - lastRun.getTime()) > 1000 * 60 * 60 * 24; // 24h
   }, [health]);
 
-  if (isDataLoading || isHealthLoading) return <InstitutionalSkeleton />;
+  if (isDataLoading || isHealthLoading) {
+    return (
+      <DataStatePanel
+        variant="pending"
+        title="Loading auction demand telemetry"
+        height={320}
+      />
+    );
+  }
+
+  if (isAuctionsError || isHealthError) {
+    return (
+      <DataStatePanel
+        variant="error"
+        title="Auction demand unavailable"
+        description="Unable to load Treasury auction demand scores or ingestion health."
+        onRetry={() => {
+          refetchAuctions();
+          refetchHealth();
+        }}
+        height={320}
+      />
+    );
+  }
+
+  if (!auctions || auctions.length === 0) {
+    return (
+      <DataStatePanel
+        variant="empty"
+        title="No auction data"
+        description="Treasury auction observations are not yet available. Run ingest-us-macro-auctions to populate."
+        height={320}
+      />
+    );
+  }
 
   const current = processedData.current;
   const currentScore = current?.demand_strength_score || 0;
@@ -338,8 +351,8 @@ export const USTreasuryDemandGauge: React.FC = () => {
               <p className="text-[10px] font-bold text-muted-foreground uppercase">10-Year Auction Record</p>
             </div>
 
-            <div className="flex-1 min-h-[160px]">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="flex-1">
+              <MacroChartContainer height={CHART_HEIGHTS.compact}>
                 <AreaChart data={processedData.history} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
@@ -385,7 +398,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     animationDuration={1500}
                   />
                 </AreaChart>
-              </ResponsiveContainer>
+              </MacroChartContainer>
             </div>
             
             <div className="flex items-center justify-between pt-4 border-t border-white/5">

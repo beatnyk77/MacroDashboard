@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
 import { Card } from "@/components/ui/card";
-import { 
-    ResponsiveContainer, 
-    AreaChart, 
-    Area
-} from 'recharts';
+import { AreaChart, Area } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 import { useUSMacroPulse, USMacroPulseData } from '@/hooks/useUSMacroPulse';
 import { cn } from '@/lib/utils';
 import { 
@@ -97,8 +95,8 @@ const MetricModule: React.FC<MetricModuleProps> = ({
             </div>
 
             {/* Sparkline Context */}
-            <div className="h-16 relative">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="relative">
+                <MacroChartContainer height={64}>
                     <AreaChart data={data.history}>
                         <defs>
                             <linearGradient id={`grad-${data.metric_id}`} x1="0" y1="0" x2="0" y2="1">
@@ -116,7 +114,7 @@ const MetricModule: React.FC<MetricModuleProps> = ({
                             animationDuration={2000}
                         />
                     </AreaChart>
-                </ResponsiveContainer>
+                </MacroChartContainer>
                 <div className="absolute -bottom-2 right-0 text-[8px] font-black text-white/5 uppercase tracking-widest pointer-events-none">Liquidity Context</div>
             </div>
         </div>
@@ -124,7 +122,7 @@ const MetricModule: React.FC<MetricModuleProps> = ({
 };
 
 export const FundingPlumbingStress: React.FC = () => {
-    const { data: pulseData } = useUSMacroPulse();
+    const { data: pulseData, isError, refetch } = useUSMacroPulse();
 
     const metrics = useMemo(() => {
         if (!pulseData) return null;
@@ -136,11 +134,26 @@ export const FundingPlumbingStress: React.FC = () => {
         };
     }, [pulseData]);
 
+    if (isError) {
+        return (
+            <DataStatePanel
+                variant="error"
+                title="Funding telemetry unavailable"
+                description="Unable to load Federal Reserve liquidity facility data."
+                onRetry={() => refetch()}
+                height={192}
+            />
+        );
+    }
+
     if (!metrics || !metrics.rrp || !metrics.tga || !metrics.srf || !metrics.swaps) {
         return (
-            <div className="w-full h-48 bg-white/5 rounded-[2.5rem] animate-pulse flex items-center justify-center">
-                <p className="text-xs font-black text-white/20 uppercase tracking-widest">Initializing Funding Telemetry...</p>
-            </div>
+            <DataStatePanel
+                variant="empty"
+                title="Funding metrics not yet available"
+                description="RRP, TGA, SRF, and FX swap line observations are pending ingestion."
+                height={192}
+            />
         );
     }
 

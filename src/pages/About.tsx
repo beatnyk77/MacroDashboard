@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Container, Typography, Avatar, Stack, Divider, Button } from '@mui/material';
 import { SEOManager } from '@/components/SEOManager';
+import { BrandConfig } from '@/config/brandConfig';
 import { Linkedin, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
@@ -33,7 +34,7 @@ export const About: React.FC = () => {
                         "@type": "Organization",
                         "name": "GraphiQuestor",
                         "url": "https://graphiquestor.com",
-                        "logo": "https://graphiquestor.com/logo.png"
+                        "logo": BrandConfig.seo.logoImage
                     }
                 ]}
             />

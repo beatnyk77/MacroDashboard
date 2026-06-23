@@ -13,6 +13,11 @@ import {
     ReferenceLine
 } from 'recharts';
 import { useG20SovereignMatrix, G20Region } from '@/hooks/useG20SovereignMatrix';
+import {
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_XAXIS_PROPS,
+    DEFAULT_YAXIS_PROPS,
+} from '@/constants/chartDefaults';
 import { cn } from '@/lib/utils';
 import { ArrowDown, ShieldAlert, TrendingUp, Anchor, Activity, Info } from 'lucide-react';
 
@@ -215,7 +220,7 @@ export const SovereignRiskMatrix = React.memo(() => {
 
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart margin={{ top: 30, right: 30, bottom: isExpanded ? 40 : 30, left: 30 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} horizontal={false} />
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
 
                             <ReferenceLine x={xMedian} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
                             <ReferenceLine y={yMedian} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
@@ -228,9 +233,9 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 domain={[0, 'auto']}
                                 stroke="rgba(255,255,255,0.1)"
                                 fontSize={10}
-                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
-                                tickLine={false}
-                                axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                tick={DEFAULT_XAXIS_PROPS.tick}
+                                tickLine={DEFAULT_XAXIS_PROPS.tickLine}
+                                axisLine={DEFAULT_XAXIS_PROPS.axisLine}
                                 label={{
                                     value: 'Government Debt / GDP (%)',
                                     position: 'insideBottom',
@@ -249,9 +254,9 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 domain={['auto', 'auto']}
                                 stroke="rgba(255,255,255,0.1)"
                                 fontSize={10}
-                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
-                                tickLine={false}
-                                axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                tick={DEFAULT_YAXIS_PROPS.tick}
+                                tickLine={DEFAULT_YAXIS_PROPS.tickLine}
+                                axisLine={DEFAULT_YAXIS_PROPS.axisLine}
                                 label={{
                                     value: 'Real GDP Growth %',
                                     angle: -90,

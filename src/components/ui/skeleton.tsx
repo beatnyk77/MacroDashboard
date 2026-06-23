@@ -44,8 +44,14 @@ export function MetricCardSkeleton() {
 	)
 }
 
-export function ChartSkeleton({ height = 300 }: { height?: number | string }) {
-	return <Skeleton variant="chart" height={height} className="w-full" />
+export function ChartSkeleton({
+	height = 300,
+	className,
+}: {
+	height?: number | string;
+	className?: string;
+}) {
+	return <Skeleton variant="chart" height={height} className={cn('w-full', className)} />
 }
 
 export function CardSkeleton({ lines = 3 }: { lines?: number }) {

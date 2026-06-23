@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { BrandConfig } from '@/config/brandConfig';
 import { toAbsoluteUrl, toCanonicalPath } from '@/lib/urlPath';
 
@@ -45,18 +45,30 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     targetCountry = 'GLOBAL',
 }) => {
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const isEmbedded = searchParams.get('embed') === 'true';
     const isLayoutMode = mode === 'layout' || (title === undefined && description === undefined);
+    const shouldApplyTitleTemplate =
+        !!title &&
+        title !== BrandConfig.seo.defaultTitle &&
+        !title.includes(BrandConfig.name);
     const fullTitle = isLayoutMode
         ? undefined
-        : BrandConfig.seo.titleTemplate.replace('%s', title!);
+        : shouldApplyTitleTemplate
+            ? BrandConfig.seo.titleTemplate.replace('%s', title!)
+            : title!;
 
     const explicitCanonical = canonical ?? canonicalUrl;
     const resolvedCanonical = explicitCanonical
         ? toAbsoluteUrl(explicitCanonical)
         : toAbsoluteUrl(toCanonicalPath(location.pathname));
 
+    const resolvedRobots = isEmbedded && !robots.includes('noindex')
+        ? 'noindex, follow'
+        : robots;
+
     return (
-        <Helmet>
+        <Helmet defer={false}>
             {!isLayoutMode && (
             <>
             {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((schema, index) => (
@@ -124,7 +136,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
             )}
 
             <link rel="canonical" href={resolvedCanonical} />
-            <meta name="robots" content={robots} />
+            <meta name="robots" content={resolvedRobots} />
         </Helmet>
     );
 };

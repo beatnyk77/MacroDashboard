@@ -4,12 +4,13 @@ import { useCommodityPrices } from '@/hooks/useCommodityPrices';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { DataStatePanel } from '@/components/DataStatePanel';
 import { getStaleness } from '@/hooks/useStaleness';
 
 const EXPECTED_SYMBOLS = ['WTI Crude', 'Brent Crude', 'Copper ($/t)', 'Nickel ($/t)'] as const;
 
 export const PriceTerminalCard: React.FC = () => {
-    const { data: prices, isLoading } = useCommodityPrices();
+    const { data: prices, isLoading, isError, refetch } = useCommodityPrices();
 
     const latestPrices = React.useMemo(() => {
         if (!prices) return [];
@@ -39,7 +40,38 @@ export const PriceTerminalCard: React.FC = () => {
         return { ...getStaleness(oldestDate, 'daily'), lastUpdated: oldestDate };
     }, [latestPrices]);
 
-    if (isLoading) return <div className="h-48 animate-pulse bg-white/5 rounded-2xl" />;
+    if (isLoading) {
+        return (
+            <DataStatePanel
+                variant="pending"
+                title="Loading commodity prices"
+                height={192}
+            />
+        );
+    }
+
+    if (isError) {
+        return (
+            <DataStatePanel
+                variant="error"
+                title="Commodity prices unavailable"
+                description="Unable to load FRED commodity price telemetry."
+                onRetry={() => refetch()}
+                height={192}
+            />
+        );
+    }
+
+    if (!prices || prices.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No commodity price data"
+                description="WTI, Brent, and metals price observations are pending ingestion."
+                height={192}
+            />
+        );
+    }
 
     return (
         <Card className="bg-black/40 border-white/12 backdrop-blur-md">

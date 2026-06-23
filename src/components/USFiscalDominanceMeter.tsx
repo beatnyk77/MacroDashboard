@@ -8,7 +8,15 @@ import {
     Percent
 } from 'lucide-react';
 import { m } from 'framer-motion';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import {
+    CHART_HEIGHTS,
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_XAXIS_PROPS,
+    DEFAULT_YAXIS_PROPS,
+} from '@/constants/chartDefaults';
 
 /**
  * US Fiscal Dominance Meter
@@ -99,22 +107,23 @@ export const USFiscalDominanceMeter: React.FC = () => {
         asOfDate: ''
     });
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchFiscalDominanceData = async () => {
-        try {
-            setLoading(true);
+        setLoading(true);
+        setError(null);
 
+        try {
             const since = new Date();
             since.setFullYear(since.getFullYear() - 20);
 
-            // Query us_fiscal_stress directly — this is where real FRED data lives
-            const { data, error } = await supabase
+            const { data, error: fetchError } = await supabase
                 .from('us_fiscal_stress')
                 .select('date, interest_expense, entitlements, total_receipts, fiscal_dominance_ratio, insolvency_ratio')
                 .gte('date', since.toISOString().split('T')[0])
                 .order('date', { ascending: true });
 
-            if (error) throw error;
+            if (fetchError) throw fetchError;
 
             if (data && data.length > 0) {
                 const points: RatioHistoryPoint[] = data
@@ -124,14 +133,12 @@ export const USFiscalDominanceMeter: React.FC = () => {
                         const receipts = Number(row.total_receipts);
                         const entitlements = row.entitlements != null ? Number(row.entitlements) : null;
 
-                        // Prefer precomputed ratio, fall back to computing it here
                         let ratio: number;
                         if (row.fiscal_dominance_ratio != null) {
                             ratio = Number(row.fiscal_dominance_ratio);
                         } else if (entitlements != null) {
                             ratio = ((interest + entitlements) / receipts) * 100;
                         } else {
-                            // Legacy: interest-only ratio (insolvency_ratio) until entitlements column populates
                             ratio = row.insolvency_ratio != null
                                 ? Number(row.insolvency_ratio) * 100
                                 : (interest / receipts) * 100;
@@ -155,20 +162,89 @@ export const USFiscalDominanceMeter: React.FC = () => {
             }
         } catch (err) {
             console.error('Error fetching fiscal dominance data:', err);
+            setError('Unable to load fiscal dominance telemetry.');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        (async () => { await fetchFiscalDominanceData(); })();
+        (async () => {
+            try {
+                const since = new Date();
+                since.setFullYear(since.getFullYear() - 20);
+
+                const { data, error: fetchError } = await supabase
+                    .from('us_fiscal_stress')
+                    .select('date, interest_expense, entitlements, total_receipts, fiscal_dominance_ratio, insolvency_ratio')
+                    .gte('date', since.toISOString().split('T')[0])
+                    .order('date', { ascending: true });
+
+                if (fetchError) throw fetchError;
+
+                if (data && data.length > 0) {
+                    const points: RatioHistoryPoint[] = data
+                        .filter(row => row.interest_expense != null && row.total_receipts != null && row.total_receipts > 0)
+                        .map(row => {
+                            const interest = Number(row.interest_expense);
+                            const receipts = Number(row.total_receipts);
+                            const entitlements = row.entitlements != null ? Number(row.entitlements) : null;
+
+                            let ratio: number;
+                            if (row.fiscal_dominance_ratio != null) {
+                                ratio = Number(row.fiscal_dominance_ratio);
+                            } else if (entitlements != null) {
+                                ratio = ((interest + entitlements) / receipts) * 100;
+                            } else {
+                                ratio = row.insolvency_ratio != null
+                                    ? Number(row.insolvency_ratio) * 100
+                                    : (interest / receipts) * 100;
+                            }
+
+                            return { date: row.date, ratio, interest, entitlements, receipts };
+                        });
+
+                    setHistory(points);
+
+                    if (points.length > 0) {
+                        const latestPoint = points[points.length - 1];
+                        setLatest({
+                            interest: latestPoint.interest,
+                            entitlements: latestPoint.entitlements,
+                            receipts: latestPoint.receipts,
+                            ratio: latestPoint.ratio,
+                            asOfDate: latestPoint.date
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching fiscal dominance data:', err);
+                setError('Unable to load fiscal dominance telemetry.');
+            } finally {
+                setLoading(false);
+            }
+        })();
     }, []);
 
     if (loading) {
         return (
-            <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl">
-                <div className="animate-pulse text-slate-400">Loading Fiscal Dominance data...</div>
-            </div>
+            <DataStatePanel
+                variant="pending"
+                title="Loading fiscal dominance data"
+                height={384}
+            />
+        );
+    }
+
+    if (error) {
+        return (
+            <DataStatePanel
+                variant="error"
+                title="Fiscal dominance feed unavailable"
+                description={error}
+                onRetry={fetchFiscalDominanceData}
+                height={384}
+            />
         );
     }
 
@@ -300,33 +376,29 @@ export const USFiscalDominanceMeter: React.FC = () => {
             {/* Main Chart */}
             <div className="p-6 md:p-8">
                 {history.length === 0 ? (
-                    <div className="h-[400px] w-full bg-slate-800/50 rounded-xl flex items-center justify-center border border-slate-700/30">
-                        <div className="text-center text-slate-500">
-                            <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-amber-500/60" />
-                            <p className="text-sm font-medium">No data available</p>
-                            <p className="text-xs mt-1 text-slate-600">Run the ingest-us-macro edge function to populate data</p>
-                        </div>
-                    </div>
+                    <DataStatePanel
+                        variant="empty"
+                        title="No fiscal dominance data"
+                        description="Run the ingest-us-macro edge function to populate us_fiscal_stress observations."
+                        height={CHART_HEIGHTS.tall}
+                    />
                 ) : (
-                    <div className="h-[400px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+                        <MacroChartContainer height={CHART_HEIGHTS.tall}>
                             <LineChart data={chartData} margin={{ top: 20, right: 60, left: 10, bottom: 20 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                 <XAxis
+                                    {...DEFAULT_XAXIS_PROPS}
                                     dataKey="date"
-                                    stroke="#94a3b8"
-                                    tick={{ fill: '#64748b', fontSize: 11 }}
                                     tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { year: '2-digit', month: 'short' })}
                                     interval="preserveStartEnd"
                                 />
                                 <YAxis
-                                    stroke="#94a3b8"
-                                    tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                    {...DEFAULT_YAXIS_PROPS}
                                     tickFormatter={(v) => `${v}%`}
                                     domain={['auto', 'auto']}
                                 />
                                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#475569', strokeWidth: 1, strokeDasharray: '3 3' }} />
-                                {/* 100% fiscal dominance threshold */}
                                 <ReferenceLine
                                     y={100}
                                     stroke="#ef4444"
@@ -350,7 +422,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                                     activeDot={{ r: 5, stroke: isAboveThreshold ? '#ef4444' : '#22c55e', fill: '#1e293b', strokeWidth: 2 }}
                                 />
                             </LineChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                 )}
             </div>

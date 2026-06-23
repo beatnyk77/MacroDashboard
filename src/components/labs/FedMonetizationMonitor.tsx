@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, AreaChart, Area, ReferenceArea } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, AreaChart, Area, ReferenceArea } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import {
+    CHART_HEIGHTS,
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_LEGEND_PROPS,
+    DEFAULT_XAXIS_PROPS,
+    DEFAULT_YAXIS_PROPS,
+} from '@/constants/chartDefaults';
 import { Activity, Zap, TrendingDown, TrendingUp, AlertTriangle } from 'lucide-react';
 
 // Types
@@ -54,9 +63,9 @@ export const FedMonetizationMonitor: React.FC = () => {
     const [data, setData] = useState<CombinedDataPoint[]>([]);
     const [latestGauge, setLatestGauge] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const calculateYoY = (tsData: TimeSeriesPoint[]) => {
+    const calculateYoY = (tsData: TimeSeriesPoint[]) => {
             // Sort descending
             const sorted = [...tsData].sort((a, b) => new Date(b.as_of_date).getTime() - new Date(a.as_of_date).getTime());
             return sorted.map((point) => {
@@ -75,10 +84,11 @@ export const FedMonetizationMonitor: React.FC = () => {
                     : null;
                 return { as_of_date: point.as_of_date, value };
             }).filter(p => p.value !== null) as TimeSeriesPoint[];
-        };
+    };
 
-        const fetchData = async () => {
+    const fetchData = async () => {
             setLoading(true);
+            setError(null);
             try {
                 // Fetch relevant metrics
                 const metricsToFetch = [
@@ -202,21 +212,167 @@ export const FedMonetizationMonitor: React.FC = () => {
                     setLatestGauge(latest.monetizationPct);
                 }
 
-            } catch (error) {
-                console.error('Error fetching monetization data:', error);
+            } catch (err) {
+                console.error('Error fetching monetization data:', err);
+                setError('Unable to load Federal Reserve monetization telemetry.');
             } finally {
                 setLoading(false);
             }
-        };
+    };
 
-        fetchData();
+    useEffect(() => {
+        (async () => {
+            try {
+                const metricsToFetch = [
+                    'FED_TREASURY_HOLDINGS',
+                    'US_DEBT_HELD_BY_PUBLIC',
+                    'US_TIPS_10Y_YIELD',
+                    'US_CPI_INDEX',
+                    'US_M2',
+                ];
+
+                const promises = metricsToFetch.map(metric_id =>
+                    supabase
+                        .from('metric_observations')
+                        .select('as_of_date, value')
+                        .eq('metric_id', metric_id)
+                        .gte('as_of_date', '2005-01-01')
+                        .order('as_of_date', { ascending: true })
+                );
+
+                const dgs10Promise = supabase
+                    .from('metric_observations')
+                    .select('as_of_date, value')
+                    .eq('metric_id', 'US_DGS10')
+                    .gte('as_of_date', '2005-01-01')
+                    .order('as_of_date', { ascending: true });
+
+                const results = await Promise.all([...promises, dgs10Promise]);
+
+                const [
+                    { data: treastData },
+                    { data: fdhbpinData },
+                    { data: tipsData },
+                    { data: cpiData },
+                    { data: m2Data },
+                    { data: dgs10Data }
+                ] = results;
+
+                const cpiYoyData = cpiData ? calculateYoY(cpiData) : [];
+                const m2YoyData = m2Data ? calculateYoY(m2Data) : [];
+                const datemap = new Map<string, CombinedDataPoint>();
+                const getMonthKey = (dateStr: string) => dateStr.substring(0, 7);
+                const allDatasets = [treastData, fdhbpinData, tipsData, cpiYoyData, m2YoyData, dgs10Data];
+
+                allDatasets.forEach(dataset => {
+                    dataset?.forEach(d => {
+                        const mk = getMonthKey(d.as_of_date);
+                        if (!datemap.has(mk)) {
+                            datemap.set(mk, {
+                                date: mk + '-01',
+                                holdings: null,
+                                debt: null,
+                                monetizationPct: null,
+                                yield10y: null,
+                                tips10y: null,
+                                cpiYoy: null,
+                                m2Yoy: null,
+                                m2YoyLagged: null
+                            });
+                        }
+                    });
+                });
+
+                treastData?.forEach(d => {
+                    const mk = getMonthKey(d.as_of_date);
+                    if (datemap.has(mk)) datemap.get(mk)!.holdings = d.value / 1_000_000;
+                });
+                fdhbpinData?.forEach(d => {
+                    const mk = getMonthKey(d.as_of_date);
+                    if (datemap.has(mk)) datemap.get(mk)!.debt = d.value / 1_000;
+                });
+                tipsData?.forEach(d => {
+                    const mk = getMonthKey(d.as_of_date);
+                    if (datemap.has(mk)) datemap.get(mk)!.tips10y = d.value;
+                });
+                dgs10Data?.forEach(d => {
+                    const mk = getMonthKey(d.as_of_date);
+                    if (datemap.has(mk)) datemap.get(mk)!.yield10y = d.value;
+                });
+                cpiYoyData?.forEach(d => {
+                    const mk = getMonthKey(d.as_of_date);
+                    if (datemap.has(mk)) datemap.get(mk)!.cpiYoy = d.value;
+                });
+                m2YoyData?.forEach(d => {
+                    const mk = getMonthKey(d.as_of_date);
+                    if (datemap.has(mk)) datemap.get(mk)!.m2Yoy = d.value;
+                });
+
+                const combinedArray = Array.from(datemap.values()).sort((a, b) => a.date.localeCompare(b.date));
+                let lastHoldings = 0, lastDebt = 0, lastYield = 0, lastTips = 0, lastCpi = 0, lastM2 = 0;
+
+                combinedArray.forEach(d => {
+                    if (d.holdings !== null) lastHoldings = d.holdings; else d.holdings = lastHoldings || null;
+                    if (d.debt !== null) lastDebt = d.debt; else d.debt = lastDebt || null;
+                    if (d.yield10y !== null) lastYield = d.yield10y; else d.yield10y = lastYield || null;
+                    if (d.tips10y !== null) lastTips = d.tips10y; else d.tips10y = lastTips || null;
+                    if (d.cpiYoy !== null) lastCpi = d.cpiYoy; else d.cpiYoy = lastCpi || null;
+                    if (d.m2Yoy !== null) lastM2 = d.m2Yoy; else d.m2Yoy = lastM2 || null;
+
+                    if (d.holdings && d.debt && d.debt > 0) {
+                        d.monetizationPct = (d.holdings / d.debt) * 100;
+                    }
+                });
+
+                for (let i = 18; i < combinedArray.length; i++) {
+                    combinedArray[i].m2YoyLagged = combinedArray[i - 18].m2Yoy;
+                }
+
+                setData(combinedArray);
+
+                if (combinedArray.length > 0) {
+                    const latest = combinedArray[combinedArray.length - 1];
+                    setLatestGauge(latest.monetizationPct);
+                }
+            } catch (err) {
+                console.error('Error fetching monetization data:', err);
+                setError('Unable to load Federal Reserve monetization telemetry.');
+            } finally {
+                setLoading(false);
+            }
+        })();
     }, []);
 
     if (loading) {
         return (
-            <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl">
-                <div className="animate-pulse text-slate-400">Loading Fed Monetization Data...</div>
-            </div>
+            <DataStatePanel
+                variant="pending"
+                title="Loading Fed monetization data"
+                height={384}
+            />
+        );
+    }
+
+    if (error) {
+        return (
+            <DataStatePanel
+                variant="error"
+                title="Monetization feed unavailable"
+                description={error}
+                onRetry={fetchData}
+                height={384}
+            />
+        );
+    }
+
+    if (data.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No monetization data"
+                description="Federal Reserve balance sheet and debt observations are not yet populated."
+                height={384}
+            />
         );
     }
 
@@ -255,8 +411,8 @@ export const FedMonetizationMonitor: React.FC = () => {
                         <TrendingUp className="text-blue-400 w-5 h-5" />
                         <h3 className="text-white font-bold uppercase tracking-wider text-sm">Monetization Trend</h3>
                     </div>
-                    <div className="h-64 mt-auto">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="mt-auto">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorMonetization" x1="0" y1="0" x2="0" y2="1">
@@ -264,13 +420,13 @@ export const FedMonetizationMonitor: React.FC = () => {
                                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                                <XAxis dataKey="date" stroke="#64748b" tickFormatter={formatXAxis} minTickGap={30} tick={{ fontSize: 11 }} />
-                                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} tickFormatter={(val) => `${val}%`} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} tickFormatter={(val) => `${val}%`} />
                                 <RechartsTooltip content={<CustomTooltip />} />
                                 <Area type="monotone" dataKey="monetizationPct" name="Debt Monetized" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMonetization)" strokeWidth={2} />
                             </AreaChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                     <p className="text-xs text-slate-500 mt-4 h-8">
                         The percentage of US marketable debt held directly on the Federal Reserve balance sheet. Growth indicates structural monetization.
@@ -283,19 +439,19 @@ export const FedMonetizationMonitor: React.FC = () => {
                         <TrendingDown className="text-emerald-400 w-5 h-5" />
                         <h3 className="text-white font-bold uppercase tracking-wider text-sm">Yield Suppression Mechanism</h3>
                     </div>
-                    <div className="h-64 mt-auto">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="mt-auto">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <LineChart data={data.filter(d => d.yield10y !== null && d.holdings !== null)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                                <XAxis dataKey="date" stroke="#64748b" tickFormatter={formatXAxis} minTickGap={30} tick={{ fontSize: 11 }} />
-                                <YAxis yAxisId="left" stroke="#3b82f6" tick={{ fill: '#3b82f6', fontSize: 11 }} tickFormatter={(val) => `$${val}T`} />
-                                <YAxis yAxisId="right" orientation="right" stroke="#10b981" tick={{ fill: '#10b981', fontSize: 11 }} tickFormatter={(val) => `${val}%`} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
+                                <YAxis yAxisId="left" {...DEFAULT_YAXIS_PROPS} tick={{ fill: '#3b82f6', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={(val) => `$${val}T`} />
+                                <YAxis yAxisId="right" orientation="right" {...DEFAULT_YAXIS_PROPS} tick={{ fill: '#10b981', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={(val) => `${val}%`} />
                                 <RechartsTooltip content={<CustomTooltip />} />
-                                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                                <Legend {...DEFAULT_LEGEND_PROPS} />
                                 <Line yAxisId="left" type="monotone" dataKey="holdings" name="Fed Holdings" stroke="#3b82f6" dot={false} strokeWidth={2} />
                                 <Line yAxisId="right" type="stepAfter" dataKey="yield10y" name="10Y Yield" stroke="#10b981" dot={false} strokeWidth={2} />
                             </LineChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                     <p className="text-xs text-slate-500 mt-4 h-8">
                         Demonstrates the inverse relationship between Central Bank asset purchases (balance sheet expansion) and sovereign bond yields.
@@ -308,18 +464,18 @@ export const FedMonetizationMonitor: React.FC = () => {
                         <AlertTriangle className="text-amber-400 w-5 h-5" />
                         <h3 className="text-white font-bold uppercase tracking-wider text-sm">Inflation Transmission (18m Lag)</h3>
                     </div>
-                    <div className="h-64 mt-auto">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="mt-auto">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <LineChart data={data.filter(d => d.cpiYoy !== null && d.m2YoyLagged !== null)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                                <XAxis dataKey="date" stroke="#64748b" tickFormatter={formatXAxis} minTickGap={30} tick={{ fontSize: 11 }} />
-                                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} tickFormatter={(val) => `${val}%`} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} tickFormatter={(val) => `${val}%`} />
                                 <RechartsTooltip content={<CustomTooltip />} />
-                                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                                <Legend {...DEFAULT_LEGEND_PROPS} />
                                 <Line type="monotone" dataKey="cpiYoy" name="CPI YoY" stroke="#ef4444" dot={false} strokeWidth={2} />
                                 <Line type="monotone" dataKey="m2YoyLagged" name="M2 YoY (18m Lead)" stroke="#f59e0b" dot={false} strokeWidth={2} strokeDasharray="5 5" />
                             </LineChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                     <p className="text-xs text-slate-500 mt-4 h-8">
                         The delayed transmission of broad money creation (M2) into consumer price inflation. M2 growth is shifted forward 18 months.
@@ -332,12 +488,12 @@ export const FedMonetizationMonitor: React.FC = () => {
                         <Zap className="text-cyan-400 w-5 h-5" />
                         <h3 className="text-white font-bold uppercase tracking-wider text-sm">Real Yields vs QE Regimes</h3>
                     </div>
-                    <div className="h-64 mt-auto">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="mt-auto">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <AreaChart data={data.filter(d => d.tips10y !== null)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                                <XAxis dataKey="date" stroke="#64748b" tickFormatter={formatXAxis} minTickGap={30} tick={{ fontSize: 11 }} />
-                                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} tickFormatter={(val) => `${val}%`} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} tickFormatter={(val) => `${val}%`} />
                                 <RechartsTooltip content={<CustomTooltip />} />
                                 {QE_PERIODS.map(period => (
                                     <ReferenceArea 
@@ -352,7 +508,7 @@ export const FedMonetizationMonitor: React.FC = () => {
                                 <ReferenceArea y1={0} y2={-5} fill="rgba(239, 68, 68, 0.1)" />
                                 <Area type="stepAfter" dataKey="tips10y" name="10Y TIPS (Real Yield)" stroke="#06b6d4" fillOpacity={0} strokeWidth={2} />
                             </AreaChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                     <p className="text-xs text-slate-500 mt-4 h-8">
                         10-Year TIPS reveals the true cost of sovereign debt. Shaded regions denote major Quantitative Easing periods driving yields deeply negative.

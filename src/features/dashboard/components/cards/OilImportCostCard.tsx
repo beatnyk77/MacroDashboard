@@ -1,7 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
-import { ResponsiveContainer, ComposedChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Area } from 'recharts';
+import { ComposedChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Area } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, DEFAULT_CARTESIAN_GRID_PROPS } from '@/constants/chartDefaults';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { m } from 'framer-motion';
 
@@ -72,7 +75,26 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
         };
     }, [chartData, activeCountry]);
 
-    if (isLoading) return <div className="h-[480px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
+    if (isLoading) {
+        return (
+            <DataStatePanel
+                variant="pending"
+                title="Loading import cost telemetry"
+                height={400}
+            />
+        );
+    }
+
+    if (chartData.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No import cost data"
+                description="Local currency oil import cost series are not yet available."
+                height={400}
+            />
+        );
+    }
 
     return (
         <m.div
@@ -184,9 +206,8 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                             </div>
                         </div>
 
-                        <div className="lg:col-span-7 lg:pl-6 relative min-h-[350px] lg:min-h-[400px] h-full">
-                            {chartData.length > 0 ? (
-                                <ResponsiveContainer width="100%" height="100%">
+                        <div className="lg:col-span-7 lg:pl-6 relative h-full">
+                            <MacroChartContainer height={CHART_HEIGHTS.tall}>
                                     <ComposedChart data={chartData} margin={{ top: 40, right: 10, left: -20, bottom: 20 }}>
                                         <defs>
                                             <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
@@ -201,7 +222,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                                 </feMerge>
                                             </filter>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
+                                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                         <XAxis
                                             dataKey="date"
                                             axisLine={false}
@@ -280,13 +301,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             animationDuration={1500}
                                         />
                                     </ComposedChart>
-                                </ResponsiveContainer>
-                            ) : (
-                                <div className="h-full flex flex-col items-center justify-center text-center gap-6 py-12">
-                                    <div className="w-12 h-12 rounded-full border-[3px] border-white/5 border-t-blue-500 animate-spin" />
-                                    <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase tracking-uppercase">Synchronizing Institutional Feeds...</p>
-                                </div>
-                            )}
+                            </MacroChartContainer>
                         </div>
                     </div>
                 </CardContent>

@@ -46,7 +46,7 @@
     <loc>https://graphiquestor.com/trade-fx/</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-06-21</lastmod>
+    <lastmod>2026-06-22</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/countries/</loc>
@@ -113,6 +113,36 @@
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <lastmod>2026-06-07</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-06-07</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/privacy/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-04-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/terms/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-04-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/data-sources/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-06-08</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/macro-observatory/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-06-14</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/demo/</loc>
@@ -306,187 +336,220 @@
     <priority>0.7</priority>
     <lastmod>2026-02-07</lastmod>
   </url>
-
-  <!-- AUTO:BRIEF_URLS -->
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/22/</loc>
-    <lastmod>2026-06-22</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/net-liquidity-z-score/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/21/</loc>
-    <lastmod>2026-06-21</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/20/</loc>
-    <lastmod>2026-06-20</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/19/</loc>
     <lastmod>2026-06-19</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/18/</loc>
-    <lastmod>2026-06-18</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/tga/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/17/</loc>
-    <lastmod>2026-06-17</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/reverse-repo-facility-rrp/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/16/</loc>
-    <lastmod>2026-06-16</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/carry-trade/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/15/</loc>
-    <lastmod>2026-06-15</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/stealth-qe/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/14/</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/sofr/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/13/</loc>
-    <lastmod>2026-06-13</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/yield-curve-control/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/12/</loc>
-    <lastmod>2026-06-12</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/breakeven-inflation-rate/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/11/</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/sovereign-rollover-risk/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/10/</loc>
-    <lastmod>2026-06-10</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/term-premium/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/09/</loc>
-    <lastmod>2026-06-09</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/fiscal-dominance/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/08/</loc>
-    <lastmod>2026-06-08</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/fiscal-dominance-meter/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/07/</loc>
-    <lastmod>2026-06-07</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/bid-to-cover-ratio/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/06/</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/federal-debt-monetisation/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/05/</loc>
-    <lastmod>2026-06-05</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/de-dollarization/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/04/</loc>
-    <lastmod>2026-06-04</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/mospi/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/03/</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/mbridge/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/02/</loc>
-    <lastmod>2026-06-02</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/petrodollar-system/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/06/01/</loc>
-    <lastmod>2026-06-01</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/reserve-currency-composition/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/31/</loc>
-    <lastmod>2026-05-31</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/foreign-exchange-reserves/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/30/</loc>
-    <lastmod>2026-05-30</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/m2-gold-ratio/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/29/</loc>
-    <lastmod>2026-05-29</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/debt-gold-z-score/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/28/</loc>
-    <lastmod>2026-05-28</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/gold-silver-ratio/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/27/</loc>
-    <lastmod>2026-05-27</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/loan-to-job-efficiency/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/26/</loc>
-    <lastmod>2026-05-26</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/energy-dependency-ratio/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/25/</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/current-account-balance/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
   <url>
-    <loc>https://graphiquestor.com/macro-brief/2026/05/24/</loc>
-    <lastmod>2026-05-24</lastmod>
-    <changefreq>never</changefreq>
+    <loc>https://graphiquestor.com/glossary/macro-regime-classification/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
   </url>
-  <!-- /AUTO:BRIEF_URLS -->
+  <url>
+    <loc>https://graphiquestor.com/glossary/standing-repo-facility-srf/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/bank-term-funding-program-btfp/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/excess-reserves/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/gold-oil-ratio/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/copper-gold-ratio/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/real-interest-rates/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/interest-expense-to-tax-revenue/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/public-debt-to-gdp/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/glossary/central-bank-gold-purchases/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-19</lastmod>
+  </url>
 </urlset>

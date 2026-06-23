@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { blogArticles } from '@/features/blog/blogData';
 import { SEOManager } from '@/components/SEOManager';
+import { BrandConfig } from '@/config/brandConfig';
 import { Calendar, User } from 'lucide-react';
 
 export const BlogPage: React.FC = () => {
@@ -22,7 +23,7 @@ export const BlogPage: React.FC = () => {
                     "publisher": {
                         "@type": "Organization",
                         "name": "GraphiQuestor",
-                        "logo": "https://graphiquestor.com/logo.png"
+                        "logo": BrandConfig.seo.logoImage
                     },
                     "mainEntity": {
                         "@type": "ItemList",

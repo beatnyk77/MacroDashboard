@@ -27,6 +27,7 @@ afterEach(() => {
     cleanup();
     document.querySelectorAll('link[rel="canonical"]').forEach(el => el.remove());
     document.querySelectorAll('title').forEach(el => el.remove());
+    document.querySelectorAll('meta[name="description"], meta[name="robots"], meta[property^="og:"], meta[name^="twitter:"]').forEach(el => el.remove());
 });
 
 async function renderSEOManager(path: string, canonicalUrl?: string) {
@@ -99,6 +100,41 @@ describe('SEOManager canonical URL', () => {
         const link = await renderSEOManager('/tools/net-liquidity-gauge');
         expect(link).not.toBeNull();
         expect(link!.href).toBe('https://graphiquestor.com/tools/net-liquidity-gauge/');
+    });
+});
+
+describe('SEOManager metadata output', () => {
+    it('skips title template when title already contains brand name', async () => {
+        await act(async () => {
+            render(
+                <HelmetProvider>
+                    <MemoryRouter initialEntries={['/']}>
+                        <SEOManager
+                            title="Privacy Policy | GraphiQuestor"
+                            description="Privacy policy"
+                        />
+                    </MemoryRouter>
+                </HelmetProvider>
+            );
+        });
+        expect(document.querySelector('title')?.textContent).toBe('Privacy Policy | GraphiQuestor');
+    });
+
+    it('sets noindex for embed=true query routes', async () => {
+        await act(async () => {
+            render(
+                <HelmetProvider>
+                    <MemoryRouter initialEntries={['/tools/net-liquidity-gauge/?embed=true']}>
+                        <SEOManager
+                            title="Net Liquidity Gauge"
+                            description="Embed tool"
+                        />
+                    </MemoryRouter>
+                </HelmetProvider>
+            );
+        });
+        expect(document.querySelector('meta[name="robots"]')?.getAttribute('content'))
+            .toBe('noindex, follow');
     });
 });
 

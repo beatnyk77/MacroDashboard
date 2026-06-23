@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import {
+    CHART_HEIGHTS,
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_XAXIS_PROPS,
+    DEFAULT_YAXIS_PROPS,
+} from '@/constants/chartDefaults';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from 'recharts';
 import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity, BookOpen } from 'lucide-react';
 import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -79,6 +86,7 @@ export const USDebtMaturityWall: React.FC = () => {
     const [maturityData, setMaturityData] = useState<MaturityBucket[]>([]);
     const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [latestDate, setLatestDate] = useState<string>('');
     const [latestTotalDebt, setLatestTotalDebt] = useState<number | null>(null);
     const [lastDebtDate, setLastDebtDate] = useState<string>('');
@@ -103,86 +111,125 @@ export const USDebtMaturityWall: React.FC = () => {
     };
 
     const fetchMaturityData = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('us_debt_maturities')
-                .select('*')
-                .order('date', { ascending: false })
-                .limit(8);
+        const { data, error: fetchError } = await supabase
+            .from('us_debt_maturities')
+            .select('*')
+            .order('date', { ascending: false })
+            .limit(8);
 
-            if (error) throw error;
+        if (fetchError) throw fetchError;
 
-            if (data && data.length > 0) {
-                setLatestDate(data[0].date);
-                // Sort by bucket order
-                const sorted = [...data].sort((a, b) =>
-                    BUCKET_ORDER.indexOf(a.bucket) - BUCKET_ORDER.indexOf(b.bucket)
-                );
-                setMaturityData(sorted as unknown as MaturityBucket[]); // TODO(types): DB has nullable optional cost fields; interface expects non-null
-            }
-        } catch (error) {
-            console.error('Error fetching maturity data:', error);
-        } finally {
-            setLoading(false);
+        if (data && data.length > 0) {
+            setLatestDate(data[0].date);
+            const sorted = [...data].sort((a, b) =>
+                BUCKET_ORDER.indexOf(a.bucket) - BUCKET_ORDER.indexOf(b.bucket)
+            );
+            setMaturityData(sorted as unknown as MaturityBucket[]);
+        } else {
+            setMaturityData([]);
         }
     };
 
     const fetchHistoricalData = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('us_debt_maturities')
-                .select('date, bucket, amount, total_debt')
-                .order('date', { ascending: true });
+        const { data, error: fetchError } = await supabase
+            .from('us_debt_maturities')
+            .select('date, bucket, amount, total_debt')
+            .order('date', { ascending: true });
 
-            if (error) throw error;
+        if (fetchError) throw fetchError;
 
-            if (data) {
-                // Group by date and calculate short/medium/long term
-                const grouped = (data as any[]).reduce((acc: Record<string, any>, row: any) => {
-                    if (!acc[row.date]) {
-                        acc[row.date] = {
-                            date: row.date,
-                            total_debt: row.total_debt,
-                            short_term: 0,
-                            medium_term: 0,
-                            long_term: 0
-                        };
-                    }
+        if (data) {
+            const grouped = (data as any[]).reduce((acc: Record<string, any>, row: any) => {
+                if (!acc[row.date]) {
+                    acc[row.date] = {
+                        date: row.date,
+                        total_debt: row.total_debt,
+                        short_term: 0,
+                        medium_term: 0,
+                        long_term: 0
+                    };
+                }
 
-                    const amount = parseFloat(row.amount);
-                    if (['<1M', '1-3M', '3-6M', '6-12M'].includes(row.bucket)) {
-                        acc[row.date].short_term += amount;
-                    } else if (['1-2Y', '2-5Y'].includes(row.bucket)) {
-                        acc[row.date].medium_term += amount;
-                    } else {
-                        acc[row.date].long_term += amount;
-                    }
+                const amount = parseFloat(row.amount);
+                if (['<1M', '1-3M', '3-6M', '6-12M'].includes(row.bucket)) {
+                    acc[row.date].short_term += amount;
+                } else if (['1-2Y', '2-5Y'].includes(row.bucket)) {
+                    acc[row.date].medium_term += amount;
+                } else {
+                    acc[row.date].long_term += amount;
+                }
 
-                    return acc;
-                }, {});
+                return acc;
+            }, {});
 
-                setHistoricalData(Object.values(grouped));
-            }
-        } catch (error) {
-            console.error('Error fetching historical data:', error);
+            setHistoricalData(Object.values(grouped));
         }
     };
 
-    useEffect(() => {
-        (async () => {
+    const loadData = async () => {
+        setLoading(true);
+        setError(null);
+        try {
             await Promise.all([
                 fetchMaturityData(),
                 fetchHistoricalData(),
                 fetchLatestTotalDebt(),
             ]);
+        } catch (err) {
+            console.error('Error loading maturity wall data:', err);
+            setError('Unable to load US debt maturity wall telemetry.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        (async () => {
+            try {
+                await Promise.all([
+                    fetchMaturityData(),
+                    fetchHistoricalData(),
+                    fetchLatestTotalDebt(),
+                ]);
+            } catch (err) {
+                console.error('Error loading maturity wall data:', err);
+                setError('Unable to load US debt maturity wall telemetry.');
+            } finally {
+                setLoading(false);
+            }
         })();
     }, []);
 
     if (loading) {
         return (
-            <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl">
-                <div className="animate-pulse text-slate-400">Loading maturity data...</div>
-            </div>
+            <DataStatePanel
+                variant="pending"
+                title="Loading maturity wall data"
+                height={384}
+            />
+        );
+    }
+
+    if (error) {
+        return (
+            <DataStatePanel
+                variant="error"
+                title="Maturity wall unavailable"
+                description={error}
+                onRetry={loadData}
+                height={384}
+            />
+        );
+    }
+
+    if (maturityData.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No maturity wall data"
+                description="Treasury MSPD maturity observations are not yet populated."
+                height={384}
+            />
         );
     }
 
@@ -350,21 +397,19 @@ export const USDebtMaturityWall: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="h-[400px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+                        <MacroChartContainer height={CHART_HEIGHTS.tall}>
                             <BarChart data={chartData} layout="vertical" margin={{ top: 10, right: 30, left: 40, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} horizontal={false} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
                                 <XAxis
                                     type="number"
-                                    stroke="#94a3b8"
-                                    tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                    {...DEFAULT_XAXIS_PROPS}
                                     tickFormatter={(value) => `$${value}T`}
                                 />
                                 <YAxis
                                     type="category"
                                     dataKey="bucket"
-                                    stroke="#94a3b8"
-                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }}
+                                    {...DEFAULT_YAXIS_PROPS}
                                     width={50}
                                 />
                                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }} />
@@ -374,7 +419,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                 <Bar dataKey="medium" name="Medium Cost" stackId="a" fill={COST_COLORS.medium} />
                                 <Bar dataKey="high" name="High Cost" stackId="a" fill={COST_COLORS.high} radius={[0, 4, 4, 0]} />
                             </BarChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                     <p className="text-slate-500 text-xs italic mt-2 text-center">
                         Low-cost = effective yield at issuance (&lt;2%). T-bills use discount rate/yield at auction, not coupon.
@@ -432,19 +477,17 @@ export const USDebtMaturityWall: React.FC = () => {
                         <span className="w-1 h-6 bg-cyan-400 rounded-full"></span>
                         Historical Maturity Profile
                     </h3>
-                    <div className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="w-full">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <LineChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                 <XAxis
+                                    {...DEFAULT_XAXIS_PROPS}
                                     dataKey="date"
-                                    stroke="#94a3b8"
-                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
                                     tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
                                 />
                                 <YAxis
-                                    stroke="#94a3b8"
-                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    {...DEFAULT_YAXIS_PROPS}
                                     tickFormatter={(value) => `$${(value / 1_000_000).toFixed(0)}T`}
                                 />
                                 <Tooltip
@@ -482,7 +525,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                     name="5Y+"
                                 />
                             </LineChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                     <div className="flex justify-center gap-6 mt-4">
                         <div className="flex items-center gap-2">

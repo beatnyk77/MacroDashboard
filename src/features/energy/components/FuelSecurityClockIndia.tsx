@@ -1,9 +1,14 @@
 // src/features/energy/components/FuelSecurityClockIndia.tsx
 import React, { useMemo } from 'react';
 import { MotionCard } from '@/components/MotionCard';
-import { PendingDataState } from '@/components/PendingDataState';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 import {
-    ResponsiveContainer,
+    CHART_HEIGHTS,
+    DEFAULT_CARTESIAN_GRID_PROPS,
+    DEFAULT_TOOLTIP_STYLE,
+} from '@/constants/chartDefaults';
+import {
     BarChart,
     Bar,
     XAxis,
@@ -126,11 +131,13 @@ export const FuelSecurityClockIndia: React.FC = () => {
     if (isError || !apiData) {
         return (
             <MotionCard className="w-full" delay={0.35}>
-                <PendingDataState
+                <DataStatePanel
+                    variant={isError ? 'error' : 'empty'}
+                    title={isError ? 'Fuel security feed unavailable' : 'Fuel security data pending'}
+                    description="EIA International Energy Statistics / PPAC coverage data updates bi-weekly."
+                    onRetry={isError ? () => refetch() : undefined}
                     height={400}
                     accentColor="amber"
-                    statusText="PIPELINE INITIALIZING — EIA International Energy Statistics / PPAC data sync in progress. Coverage data updates bi-weekly."
-                    onRetry={() => refetch()}
                 />
             </MotionCard>
         );
@@ -184,8 +191,7 @@ export const FuelSecurityClockIndia: React.FC = () => {
                             <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-4">
                                 Official vs Independent Estimate
                             </h4>
-                            <div className="h-[200px]">
-                                <ResponsiveContainer width="100%" height="100%">
+                            <MacroChartContainer height={CHART_HEIGHTS.standard}>
                                     <BarChart data={[
                                         { name: 'Official (PPAC)', value: data.reserves_days_official },
                                         { name: 'Actual (Est.)', value: data.reserves_days_actual },

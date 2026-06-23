@@ -11,7 +11,7 @@ import { MobileNav } from '@/components/MobileNav';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { TerminalSidebar } from '@/components/TerminalSidebar';
 import { cn } from '@/lib/utils';
-import { DataHealthBanner } from '@/components/DataHealthBanner';
+import { DataHealthBanner, DataHealthHeaderChip } from '@/components/DataHealthBanner';
 import { EngagementLayer } from '@/components/engagement/EngagementLayer';
 import { AnalyticsBeacon } from '@/components/AnalyticsBeacon';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
@@ -79,7 +79,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
             className="flex flex-col min-h-screen w-full bg-background transition-colors duration-500 ease-in-out"
         >
             {/* Layout-level canonical (trailing slash); page SEOManager overrides title/description/canonical */}
-            <SEOManager mode="layout" />
+            <SEOManager
+                mode="layout"
+                robots={isChromeless ? 'noindex, follow' : 'index, follow'}
+            />
             {/* Skip to main content for keyboard navigation */}
             <a
                 href="#main-content"
@@ -151,6 +154,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                         >
                             <Menu size={24} />
                         </button>
+
+                        <div className="hidden md:block">
+                            <DataHealthHeaderChip />
+                        </div>
 
                         {regime && (
                             <div className={cn(

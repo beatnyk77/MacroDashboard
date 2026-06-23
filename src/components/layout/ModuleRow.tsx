@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { MotionCard } from '@/components/MotionCard';
 
 interface ModuleRowProps {
   label: string;
@@ -53,7 +54,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
         <div className={cn("absolute right-0 top-0 bottom-0 w-[2px]", barColorClass)} />
         
         {/* Rotated text label: reading bottom-to-top */}
-        <div className="transform -rotate-90 whitespace-nowrap font-mono text-[10px] tracking-[0.2em] uppercase font-bold">
+        <div className="transform -rotate-90 whitespace-nowrap label-mono">
           <span className={textColorClass}>{label}</span>
         </div>
       </div>
@@ -63,7 +64,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
         {/* Top: thin horizontal rule (which is the parent border-t) with module label and links */}
         <div className="flex items-center justify-between py-3 px-4 sm:px-6 lg:px-8 border-b border-white/5 bg-black/10">
           <div className="flex items-center gap-3">
-            <span className={cn("font-mono text-[10px] tracking-[0.2em] uppercase font-bold", textColorClass)}>
+            <span className={cn('label-mono', textColorClass)}>
               {label}
             </span>
             {badge}
@@ -71,7 +72,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
           {href && (
             <Link
               to={href}
-              className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground/60 hover:text-white transition-colors"
+              className="label-mono hover:text-white transition-colors duration-200"
             >
               Full Analysis &rarr;
             </Link>
@@ -79,8 +80,8 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
         </div>
 
         {/* Children content area */}
-        <div className="px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
-          {children}
+        <div className="px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-[var(--card-gap)]">
+          <MotionCard delay={0}>{children}</MotionCard>
         </div>
       </div>
     </div>

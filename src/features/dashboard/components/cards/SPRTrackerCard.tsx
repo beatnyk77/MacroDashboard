@@ -1,7 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Database, TrendingDown, TrendingUp } from 'lucide-react';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
+import { Area, AreaChart, Tooltip, YAxis } from 'recharts';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, DEFAULT_TOOLTIP_STYLE } from '@/constants/chartDefaults';
 
 interface SPRTrackerCardProps {
     data: { date: string; value: number }[];
@@ -23,10 +26,22 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
 
     if (isLoading) {
         return (
-            <Card className="h-[400px] animate-pulse bg-white/5 border-white/12">
-                <CardHeader><div className="h-6 w-1/2 bg-white/10 rounded" /></CardHeader>
-                <CardContent><div className="h-24 bg-white/5 rounded mt-4" /></CardContent>
-            </Card>
+            <DataStatePanel
+                variant="pending"
+                title="Loading SPR inventory data"
+                height={400}
+            />
+        );
+    }
+
+    if (!data || data.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="No SPR data"
+                description="Strategic Petroleum Reserve observations are not yet populated."
+                height={400}
+            />
         );
     }
 
@@ -74,8 +89,8 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                     </div>
                 </div>
 
-                <div className="h-[240px] w-full mt-2">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="w-full mt-2">
+                    <MacroChartContainer height={CHART_HEIGHTS.standard}>
                         <AreaChart data={data}>
                             <defs>
                                 <linearGradient id="sprGradient" x1="0" y1="0" x2="0" y2="1">
@@ -88,7 +103,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                                 hide
                             />
                             <Tooltip
-                                contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#f4f4f5', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}
+                                contentStyle={DEFAULT_TOOLTIP_STYLE}
                                 itemStyle={{ color: '#fb923c' }}
                                 formatter={(value: number) => [`${value.toFixed(1)} M bbl`, 'SPR Level']}
                                 labelFormatter={(label) => `Date: ${label}`}
@@ -104,7 +119,7 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                                 activeDot={{ r: 4, fill: '#fb923c', stroke: '#fff', strokeWidth: 2 }}
                             />
                         </AreaChart>
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 </div>
             </CardContent>
         </Card>
