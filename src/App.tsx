@@ -23,6 +23,7 @@ const AdminDashboard = lazy(() => import('@/pages/AdminDashboard').then(module =
 const DataHealthDashboard = lazy(() => import('@/pages/DataHealthDashboard').then(module => ({ default: module.DataHealthDashboard })));
 const DataHealthPublic = lazy(() => import('@/pages/DataHealthPublic').then(module => ({ default: module.DataHealthPublic })));
 const SubscribeConfirm = lazy(() => import('@/pages/SubscribeConfirm').then(module => ({ default: module.SubscribeConfirm })));
+const ManageSubscription = lazy(() => import('@/pages/ManageSubscription').then(module => ({ default: module.ManageSubscription })));
 const APIAccessPage = lazy(() => import('@/pages/APIAccessPage').then(module => ({ default: module.APIAccessPage })));
 const APIDocsPage = lazy(() => import('@/pages/APIDocsPage').then(module => ({ default: module.APIDocsPage })));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService').then(module => ({ default: module.TermsOfService })));
@@ -52,9 +53,14 @@ const FedMonetizationPage = lazy(() => import('@/pages/methods/FedMonetizationPa
 const IndiaCreditCyclePage = lazy(() => import('@/pages/methods/IndiaCreditCyclePage').then(module => ({ default: module.IndiaCreditCyclePage })));
 const ChinaDebtIcebergPage = lazy(() => import('@/pages/methods/ChinaDebtIcebergPage').then(module => ({ default: module.ChinaDebtIcebergPage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
+const DailyRegimeSignal = lazy(() => import('@/pages/tools/DailyRegimeSignal').then(module => ({ default: module.DailyRegimeSignal })));
+const GoldRatiosWidget = lazy(() => import('@/pages/tools/GoldRatiosWidget').then(module => ({ default: module.GoldRatiosWidget })));
+const ToolsIndexPage = lazy(() => import('@/pages/tools/ToolsIndexPage').then(module => ({ default: module.ToolsIndexPage })));
 const NotFound = lazy(() => import('@/pages/NotFound').then(module => ({ default: module.NotFound })));
 const MacroBriefPage = lazy(() => import('@/pages/MacroBriefPage').then(module => ({ default: module.MacroBriefPage })));
 const MacroBriefArchivePage = lazy(() => import('@/pages/MacroBriefArchivePage').then(module => ({ default: module.MacroBriefArchivePage })));
+const OgCardPage = lazy(() => import('@/pages/OgCardPage').then(module => ({ default: module.OgCardPage })));
+const MetricPage = lazy(() => import('@/pages/MetricPage').then(module => ({ default: module.MetricPage })));
 
 const ThematicLabsIndexPage = lazy(() => import('@/pages/labs/ThematicLabsIndexPage').then(module => ({ default: module.ThematicLabsIndexPage })));
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
@@ -102,6 +108,7 @@ function App() {
                                     <Routes>
                                         <Route path={trailRoute('/')} element={<Terminal />} />
                                         <Route path={trailRoute('/methodology')} element={<MetricsMethodologyPage />} />
+                                        <Route path={trailRoute('/metrics/:id')} element={<MetricPage />} />
                                         <Route path={trailRoute('/data-sources')} element={<DataSourcesPage />} />
                                         <Route path={trailRoute('/blog')} element={<BlogPage />} />
                                         <Route path={trailRoute('/blog/:slug')} element={<ArticlePage />} />
@@ -111,6 +118,7 @@ function App() {
                                         <Route path={trailRoute('/admin/data-health')} element={<DataHealthDashboard />} />
                                         <Route path={trailRoute('/data-health')} element={<DataHealthPublic />} />
                                         <Route path={trailRoute('/subscribe/confirm')} element={<SubscribeConfirm />} />
+                                        <Route path={trailRoute('/subscribe/manage')} element={<ManageSubscription />} />
                                         <Route path={trailRoute('/api-access')} element={<APIAccessPage />} />
                                         <Route path={trailRoute('/api-docs')} element={<APIDocsPage />} />
                                         <Route path={trailRoute('/mcp')} element={<MCPIntelligencePage />} />
@@ -147,7 +155,10 @@ function App() {
                                         <Route path={trailRoute('/trade/uk/:code')} element={<UKTradeIntelPage />} />
 
                                         {/* Tools & Embeds */}
+                                        <Route path={trailRoute('/tools')} element={<ToolsIndexPage />} />
                                         <Route path={trailRoute('/tools/net-liquidity-gauge')} element={<NetLiquidityGauge />} />
+                                        <Route path={trailRoute('/tools/daily-regime-signal')} element={<DailyRegimeSignal />} />
+                                        <Route path={trailRoute('/tools/gold-ratios')} element={<GoldRatiosWidget />} />
 
                                         {/* Countries */}
                                         <Route path={trailRoute('/countries')} element={<CountriesIndexPage />} />
@@ -174,6 +185,8 @@ function App() {
                                         <Route path={trailRoute('/macro-brief')} element={<MacroBriefPage />} />
                                         <Route path={trailRoute('/macro-brief/:date')} element={<MacroBriefPage />} />
                                         <Route path={trailRoute('/macro-brief/archive')} element={<MacroBriefArchivePage />} />
+                                        {/* Internal render target for scripts/prerender.mjs OG screenshots — noindex, not in sitemap */}
+                                        <Route path={trailRoute('/og-card/:kind/:slug')} element={<OgCardPage />} />
                                         {/* Catch-all 404 */}
                                         <Route path="*" element={<NotFound />} />
                                     </Routes>

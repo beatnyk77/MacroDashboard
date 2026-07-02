@@ -4,12 +4,16 @@ import { trackEvent } from '@/lib/analytics';
 
 export type SubscribeStatus = 'idle' | 'submitting' | 'success' | 'error';
 
+export type SubscribeCadence = 'weekly' | 'daily' | 'both';
+
 export interface SubscribeArgs {
     email: string;
     /** Hidden honeypot field value — if populated, the submission is a bot and is silently dropped. */
     honeypot?: string;
     /** Where the capture happened (e.g. 'investor-page', 'footer'). */
     source?: string;
+    /** Email cadence: weekly digest (default), daily brief, or both. */
+    cadence?: SubscribeCadence;
 }
 
 export interface SubscribeResult {
@@ -48,7 +52,7 @@ export function useSubscribe() {
         setError(null);
     }, []);
 
-    const subscribe = useCallback(async ({ email, honeypot, source }: SubscribeArgs): Promise<SubscribeResult> => {
+    const subscribe = useCallback(async ({ email, honeypot, source, cadence }: SubscribeArgs): Promise<SubscribeResult> => {
         // 1. Honeypot — a filled hidden field means a bot; silently succeed without writing.
         if (honeypot && honeypot.trim().length > 0) {
             return { ok: true, outcome: 'bot' };
@@ -74,6 +78,7 @@ export function useSubscribe() {
                 status: 'pending',
                 confirm_token: confirmToken,
                 source: source ?? 'unknown',
+                cadence: cadence ?? 'weekly',
             });
 
         if (insertError) {

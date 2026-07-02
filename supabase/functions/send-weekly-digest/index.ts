@@ -28,7 +28,14 @@ interface WeeklyDigest {
     china_debt_section?: ChinaDebtSection;
 }
 
-function buildHtml(digest: WeeklyDigest): string {
+const BASE_URL = "https://graphiquestor.com";
+const UTM = "utm_source=newsletter&utm_medium=email&utm_campaign=weekly-digest";
+
+function buildHtml(digest: WeeklyDigest, manageToken: string): string {
+    const narrativeUrl = `${BASE_URL}/weekly-narrative/${digest.week_ending_date}?${UTM}`;
+    const shareText = encodeURIComponent(`Weekly Macro Regime Digest — week ending ${digest.week_ending_date}`);
+    const shareUrl = encodeURIComponent(`${BASE_URL}/weekly-narrative/${digest.week_ending_date}?utm_source=share&utm_medium=email`);
+    const manageBase = `${BASE_URL}/subscribe/manage?token=${encodeURIComponent(manageToken)}`;
     const watch = (digest.what_to_watch ?? [])
         .map((w) => `<li style="margin-bottom:8px;color:#475569;">${w}</li>`)
         .join("");
@@ -40,9 +47,18 @@ function buildHtml(digest: WeeklyDigest): string {
             <p style="font-size:14px;line-height:1.6;color:#475569;">${digest.holistic_narrative}</p>
             ${digest.china_debt_section?.headline ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#b45309;">China Public Sector Debt</h3><p style="font-size:14px;line-height:1.6;color:#334155;font-weight:600;">${digest.china_debt_section.headline}</p><p style="font-size:13px;line-height:1.6;color:#475569;">${digest.china_debt_section.summary ?? ""}</p>` : ""}
             ${watch ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#0f172a;">What to Watch</h3><ul style="padding-left:18px;font-size:14px;">${watch}</ul>` : ""}
+            <p style="margin:24px 0;">
+                <a href="${narrativeUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;font-size:13px;font-weight:800;text-decoration:none;padding:10px 20px;border-radius:8px;">Read on the terminal →</a>
+            </p>
+            <p style="font-size:12px;color:#64748b;">
+                Useful? <a href="https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}" style="color:#2563eb;font-weight:700;">Share on X</a>
+                · Forwarded this? <a href="${BASE_URL}/?utm_source=newsletter&utm_medium=email&utm_campaign=forward#newsletter" style="color:#2563eb;font-weight:700;">Subscribe free</a>
+            </p>
             <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
             <p style="font-size:12px;color:#94a3b8;">
                 You're receiving this because you confirmed your subscription at graphiquestor.com.
+                <a href="${manageBase}&action=cadence_both" style="color:#64748b;">Also get the daily brief</a>
+                · <a href="${manageBase}&action=unsubscribe" style="color:#64748b;">Unsubscribe</a>
             </p>
         </div>
     `;
@@ -88,15 +104,16 @@ Deno.serve(async (req: Request) => {
             );
         }
 
-        // 3. Confirmed subscribers.
+        // 3. Confirmed weekly-cadence subscribers (tokens needed for manage links).
         const { data: subscribers, error: subError } = await supabase
             .from("subscribers")
-            .select("email")
-            .eq("status", "confirmed");
+            .select("email, confirm_token")
+            .eq("status", "confirmed")
+            .in("cadence", ["weekly", "both"]);
 
         if (subError) throw subError;
 
-        const recipients = (subscribers ?? []).map((s: { email: string }) => s.email);
+        const recipients = (subscribers ?? []) as { email: string; confirm_token: string }[];
         if (recipients.length === 0) {
             return new Response(JSON.stringify({ success: true, message: "No confirmed subscribers yet." }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -112,34 +129,34 @@ Deno.serve(async (req: Request) => {
             });
         }
 
-        const html = buildHtml(digest as WeeklyDigest);
         const subject = `Weekly Regime Digest — week ending ${digest.week_ending_date}`;
 
-        // Send in chunks to keep each request small; BCC the list per chunk.
-        const CHUNK = 50;
+        // Per-recipient batch sends (Resend /emails/batch, 100 per call) so each
+        // email carries a personal unsubscribe / cadence-management link.
+        const CHUNK = 100;
         let sent = 0;
         let failed = 0;
         for (let i = 0; i < recipients.length; i += CHUNK) {
             const chunk = recipients.slice(i, i + CHUNK);
-            const res = await fetch("https://api.resend.com/emails", {
+            const payload = chunk.map((r) => ({
+                from: "GraphiQuestor <digest@graphiquestor.com>",
+                to: [r.email],
+                subject,
+                html: buildHtml(digest as WeeklyDigest, r.confirm_token),
+            }));
+            const res = await fetch("https://api.resend.com/emails/batch", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${resendApiKey}`,
                 },
-                body: JSON.stringify({
-                    from: "GraphiQuestor <digest@graphiquestor.com>",
-                    to: "digest@resend.dev",
-                    bcc: chunk,
-                    subject,
-                    html,
-                }),
+                body: JSON.stringify(payload),
             });
             if (res.ok) {
                 sent += chunk.length;
             } else {
                 failed += chunk.length;
-                console.error("Resend send failed:", await res.text());
+                console.error("Resend batch send failed:", await res.text());
             }
         }
 

@@ -1,9 +1,10 @@
 import React, { Suspense, lazy, useMemo } from 'react';
-import { Box, Typography, Container, Paper, Button } from '@mui/material';
+import { Box, Typography, Container, Paper } from '@mui/material';
 import { m } from 'framer-motion';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { SEOManager } from '@/components/SEOManager';
-import { ExternalLink, ArrowUpRight, ArrowDownRight, Code } from 'lucide-react';
+import { EmbedCodeBlock } from '@/components/EmbedCodeBlock';
+import { ExternalLink, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
@@ -17,7 +18,6 @@ export const NetLiquidityGauge: React.FC = () => {
     const { data } = useNetLiquidity();
     const [searchParams] = useSearchParams();
     const isEmbedded = searchParams.get('embed') === 'true';
-    const [showEmbed, setShowEmbed] = React.useState(false);
 
     const { z_score, percentile, current_value, history, as_of_date } = data;
 
@@ -206,30 +206,11 @@ export const NetLiquidityGauge: React.FC = () => {
 
                 {!isEmbedded && (
                     <Box sx={{ mt: 4, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                         <Button 
-                            variant="outlined" 
-                            size="small" 
-                            startIcon={<Code size={14} />}
-                            onClick={() => setShowEmbed(!showEmbed)}
-                            sx={{ color: 'white/40', borderColor: 'white/10', textTransform: 'none', borderRadius: 2 }}
-                         >
-                            {showEmbed ? 'Hide Embed Code' : 'Get Embed Code'}
-                         </Button>
+                         <EmbedCodeBlock path="/tools/net-liquidity-gauge" height={500} />
 
-                         {showEmbed && (
-                            <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'black', border: '1px solid white/10', width: '100%', maxWidth: '400px' }}>
-                                <Typography variant="caption" sx={{ color: 'white/40', display: 'block', mb: 1, textAlign: 'left', fontWeight: 'bold' }}>
-                                    IFRAME EMBED SNIPPET
-                                </Typography>
-                                <Box component="pre" sx={{ m: 0, p: 1, fontSize: '10px', color: '#10b981', overflowX: 'auto', textAlign: 'left' }}>
-                                    {`<iframe src="https://graphiquestor.com/tools/net-liquidity-gauge?embed=true" width="100%" height="500" frameborder="0"></iframe>`}
-                                </Box>
-                            </Box>
-                         )}
-
-                         <Link to="/" style={{ textDecoration: 'none' }}>
+                         <Link to="/tools" style={{ textDecoration: 'none' }}>
                             <Typography sx={{ color: '#3b82f6', fontSize: '0.8rem', fontWeight: 900, '&:hover': { textDecoration: 'underline' } }}>
-                                ← RETURN TO MACRO TERMINAL
+                                ← ALL EMBEDDABLE TOOLS
                             </Typography>
                          </Link>
                     </Box>

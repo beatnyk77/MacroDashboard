@@ -468,10 +468,21 @@ const JOBS = [
     flags: ['ran 4x/7d — likely deployed; not in parsed deploy list (parse gap)'] },
 
   // ── Send ──────────────────────────────────────────────────────────────
+  { name: 'send-daily-brief-job',
+    schedule: '45 7 * * *',
+    fn: 'send-daily-brief',
+    flags: ['fires 1h after generate-morning-brief (45 6) and 30 min after trigger-site-rebuild so emailed URLs are prerendered; no-ops when no brief exists for today'] },
+
   { name: 'send-weekly-digest-job',
     schedule: '0 1 * * 1',
     fn: 'send-weekly-digest',
     flags: ['ORPHAN? function not in deployed list; was SERVICE_ROLE_KEY-only — normalised to COALESCE'] },
+
+  // ── Trigger ───────────────────────────────────────────────────────────
+  { name: 'trigger-site-rebuild-daily',
+    schedule: '15 7 * * *',
+    fn: 'trigger-site-rebuild',
+    flags: ['fires 30 min after generate-morning-brief (45 6) so the fresh brief gets prerendered; function skips when no brief exists for today'] },
 ];
 
 // ── Validate no duplicate job names ───────────────────────────────────────

@@ -3,7 +3,7 @@
 -- amending and re-running this pattern, never in ad-hoc migrations.
 -- ============================================================
 -- Migration  : 20260613000000_canonical_crons.sql
--- Generated  : 2026-06-13 via scripts/generate-canonical-crons.mjs
+-- Generated  : 2026-07-02 via scripts/generate-canonical-crons.mjs
 -- Project    : debdriyzfcwvgrhzzzre  (MacroIntelligence_GraphiQuestor)
 -- Source     : docs/live-state-2026-06.md — 101 active jobs as of 2026-06-12
 --
@@ -87,7 +87,7 @@ BEGIN
 END $$;
 
 
--- ── STEP B ── Reschedule all 101 jobs ─────────────────────────────────────
+-- ── STEP B ── Reschedule all 103 jobs ─────────────────────────────────────
 -- Auth    : COALESCE vault subselect (safe — no string concatenation into ::jsonb)
 -- Headers : x-cron-secret for future enforcement (currently inert if blank)
 -- Slots   : Exactly as in live snapshot — do not adjust without upstream consent.
@@ -2110,6 +2110,27 @@ SELECT cron.schedule(
   $job$
 );
 
+-- fires 1h after generate-morning-brief (45 6) and 30 min after trigger-site-rebuild so emailed URLs are prerendered; no-ops when no brief exists for today
+SELECT cron.schedule(
+  'send-daily-brief-job',
+  '45 7 * * *',
+  $job$
+  SELECT net.http_post(
+    url     := 'https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/send-daily-brief',
+    headers := jsonb_build_object(
+      'Content-Type',  'application/json',
+      'Authorization', 'Bearer ' || COALESCE(
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SUPABASE_SERVICE_ROLE_KEY' LIMIT 1),
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY'          LIMIT 1)
+      ),
+      'x-cron-secret', (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1)
+    ),
+    body    := '{}'::jsonb,
+    timeout_milliseconds := 120000
+  );
+  $job$
+);
+
 -- ORPHAN? function not in deployed list; was SERVICE_ROLE_KEY-only — normalised to COALESCE
 SELECT cron.schedule(
   'send-weekly-digest-job',
@@ -2131,12 +2152,33 @@ SELECT cron.schedule(
   $job$
 );
 
+-- fires 30 min after generate-morning-brief (45 6) so the fresh brief gets prerendered; function skips when no brief exists for today
+SELECT cron.schedule(
+  'trigger-site-rebuild-daily',
+  '15 7 * * *',
+  $job$
+  SELECT net.http_post(
+    url     := 'https://debdriyzfcwvgrhzzzre.supabase.co/functions/v1/trigger-site-rebuild',
+    headers := jsonb_build_object(
+      'Content-Type',  'application/json',
+      'Authorization', 'Bearer ' || COALESCE(
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SUPABASE_SERVICE_ROLE_KEY' LIMIT 1),
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY'          LIMIT 1)
+      ),
+      'x-cron-secret', (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1)
+    ),
+    body    := '{}'::jsonb,
+    timeout_milliseconds := 120000
+  );
+  $job$
+);
+
 
 -- ── Verification ─────────────────────────────────────────────────────
 -- Run after applying this migration:
 --
 --   SELECT COUNT(*) FROM cron.job;
---   -- Expected: 101
+--   -- Expected: 103
 --
 --   SELECT jobname, schedule FROM cron.job ORDER BY jobname;
 --   -- Diff against JOBS array in scripts/generate-canonical-crons.mjs

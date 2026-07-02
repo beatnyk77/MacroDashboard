@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check } from 'lucide-react';
-import { useSubscribe } from '@/hooks/useSubscribe';
+import { useSubscribe, type SubscribeCadence } from '@/hooks/useSubscribe';
 
 interface SubscribeCardProps {
     /** Records where the capture happened, for the traction breakdown. */
@@ -20,10 +20,17 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
     const [email, setEmail] = useState('');
     const [honeypot, setHoneypot] = useState('');
     const [done, setDone] = useState(false);
+    const [cadence, setCadence] = useState<SubscribeCadence>('weekly');
+
+    const confirmationCopy = {
+        weekly: 'Next regime digest lands this Sunday. Check your inbox to confirm your subscription.',
+        daily: "Tomorrow's Morning Macro Brief arrives before the US open. Check your inbox to confirm.",
+        both: 'Weekly digest + daily brief — both on your cadence. Check your inbox to confirm.',
+    } as const;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const result = await subscribe({ email, honeypot, source });
+        const result = await subscribe({ email, honeypot, source, cadence });
         if (result.ok) {
             // Confirmation swap covers genuine, duplicate and bot-trapped submissions alike.
             setDone(true);
@@ -86,7 +93,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                     <div>
                         <div className="mb-0.5 text-[15px] font-extrabold text-white">You&apos;re on the list.</div>
                         <div className="text-[13px] text-white/50">
-                            Next regime digest lands this Sunday. Check your inbox to confirm your subscription.
+                            {confirmationCopy[cadence]}
                         </div>
                     </div>
                 </div>
@@ -125,6 +132,33 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                     {status === 'submitting' ? 'Joining…' : 'Subscribe'}
                 </button>
             </div>
+            <fieldset className="mt-4 space-y-2">
+                <legend className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35">
+                    Email cadence
+                </legend>
+                {([
+                    { value: 'weekly' as const, label: 'Weekly Regime Digest', hint: 'Sundays — regime synthesis' },
+                    { value: 'daily' as const, label: 'Daily Morning Brief', hint: 'Weekdays — overnight signal' },
+                    { value: 'both' as const, label: 'Both', hint: 'Full macro coverage' },
+                ]).map((opt) => (
+                    <label
+                        key={opt.value}
+                        className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-[12px] text-white/60 transition-colors hover:border-white/12"
+                    >
+                        <input
+                            type="radio"
+                            name={`cadence-${source}`}
+                            checked={cadence === opt.value}
+                            onChange={() => setCadence(opt.value)}
+                            className="mt-0.5 accent-blue-600"
+                        />
+                        <span>
+                            <span className="block font-bold text-white/80">{opt.label}</span>
+                            <span className="text-[11px] text-white/40">{opt.hint}</span>
+                        </span>
+                    </label>
+                ))}
+            </fieldset>
             {/* Honeypot — hidden from humans, traps bots */}
             <input
                 type="text"

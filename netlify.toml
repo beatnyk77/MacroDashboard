@@ -21,12 +21,19 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Frame policy: X-Frame-Options and CSP frame-ancestors are intentionally ABSENT.
+# The embeddable-widget program (/tools/* with ?embed=true) requires third-party
+# sites to iframe us, and Netlify header rules cannot loosen per-path — multiple
+# matching CSP rules intersect (most restrictive wins), so the directives must
+# stay out of this catch-all. Accepted clickjacking tradeoff: the site has no
+# auth, no user sessions, and no state-changing forms, so framing carries no
+# credential/action risk. Revisit if auth is ever added (use a Netlify Edge
+# Function to inject frame-ancestors 'none' on non-/tools paths).
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer-when-downgrade"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.analytics.google.com https://*.clarity.ms https://cdn.jsdelivr.net https://static.cloudflareinsights.com; frame-src 'none'; frame-ancestors 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.analytics.google.com https://*.clarity.ms https://cdn.jsdelivr.net https://static.cloudflareinsights.com; frame-src 'none';"

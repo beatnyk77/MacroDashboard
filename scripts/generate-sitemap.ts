@@ -3,6 +3,7 @@ import { writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { blogArticles } from '../src/features/blog/blogData';
 import { glossaryData } from '../src/features/glossary/glossaryData';
+import { METRICS_CATALOG } from '../src/features/metrics/metricsCatalog';
 import { dedupeSitemapRoutes, sitemapLoc } from '../src/lib/sitemapHelpers';
 
 /**
@@ -105,7 +106,10 @@ async function generateSitemap() {
     { url: '/methods/fed-monetization-monitor', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/methods/india-credit-cycle-clock', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/methods/china-debt-iceberg', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/tools', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/tools/net-liquidity-gauge', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/tools/daily-regime-signal', changefreq: 'daily', lastmod: BUILD_DATE },
+    { url: '/tools/gold-ratios', changefreq: 'daily', lastmod: BUILD_DATE },
   ].map(route => ({ ...route, priority: routePriority(route.url) }));
 
   // Blog articles — lastmod = article publish date from blogData
@@ -121,6 +125,14 @@ async function generateSitemap() {
     priority: routePriority(`/glossary/${term.slug}`),
     changefreq: 'monthly',
     lastmod: gitLastmod('src/pages/GlossaryTermPage.tsx'),
+  }));
+
+  // Programmatic metric pages — content lives in the shared catalog
+  const metricRoutes: SitemapRoute[] = METRICS_CATALOG.map(metric => ({
+    url: `/metrics/${metric.id}`,
+    priority: routePriority(`/metrics/${metric.id}`),
+    changefreq: 'weekly',
+    lastmod: gitLastmod('src/features/metrics/metricsCatalog.ts'),
   }));
 
   // Dynamic routes require Supabase — degrade gracefully if env vars unavailable (e.g. CI)
@@ -193,6 +205,7 @@ async function generateSitemap() {
     ...staticRoutes,
     ...blogRoutes,
     ...glossaryRoutes,
+    ...metricRoutes,
     ...briefRoutes,
     ...narrativeRoutes,
     ...digestRoutes,

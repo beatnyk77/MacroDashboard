@@ -84,7 +84,8 @@ app.use((req, res) => {
 });
 
 // Routes to completely ignore from crawling and sitemap
-const ignorePrefixes = ['/admin', '/api'];
+// /og-card is the internal 1200×630 social-card render target (screenshotted below)
+const ignorePrefixes = ['/admin', '/api', '/og-card', '/subscribe'];
 
 function isRoutable(href) {
     if (!href) return false;
@@ -124,6 +125,7 @@ const STATIC_PAGE_FILES = {
     '/methods/fed-monetization-monitor':  'src/pages/methods/FedMonetizationPage.tsx',
     '/methods/india-credit-cycle-clock':  'src/pages/methods/IndiaCreditCyclePage.tsx',
     '/methods/china-debt-iceberg':        'src/pages/methods/ChinaDebtIcebergPage.tsx',
+    '/tools':                             'src/pages/tools/ToolsIndexPage.tsx',
 };
 
 /** Run git log for one file; return YYYY-MM-DD or fall back to build date. */
@@ -176,6 +178,181 @@ function routeLastmod(route) {
 }
 
 const BUILD_DATE = new Date().toISOString().split('T')[0];
+
+// ── IndexNow ────────────────────────────────────────────────────────────────
+// After each build, ping IndexNow (Bing/Seznam/Yandex) with dated-content URLs
+// published in the last 2 days, so daily briefs/digests are indexed within
+// hours of the cron-triggered rebuild. Google ignores IndexNow — it relies on
+// sitemap lastmod, which generateSitemap already keeps honest.
+// Requires INDEXNOW_KEY env var (any 8-128 char hex/alphanumeric string);
+// silently skipped when unset (e.g. local builds, deploy previews).
+
+/** Only dated-content routes — live-data pages carry BUILD_DATE as lastmod
+ *  and would flood IndexNow with hundreds of unchanged URLs every build. */
+function isDatedContentRoute(route) {
+    const p = withoutTrailingSlash(route);
+    return (
+        /^\/macro-brief\/\d{4}-\d{2}-\d{2}$/.test(p) ||
+        /^\/weekly-narrative\/\d{4}-\d{2}-\d{2}$/.test(p) ||
+        /^\/regime-digest\/\d{4}\/\d{2}$/.test(p) ||
+        /^\/blog\/[^/]+$/.test(p)
+    );
+}
+
+// ── OG social cards ─────────────────────────────────────────────────────────
+// Screenshot /og-card/:kind/:slug (a fixed 1200×630 render target, see
+// src/pages/OgCardPage.tsx) into dist/og/<kind>-<slug>.png for the dated
+// content pages that reference them via SEOManager's ogImage prop.
+// Scope is bounded to keep build minutes flat: last 14 days of briefs,
+// last 4 weekly narratives, last 2 monthly digests.
+
+function ogCardJobs(routes) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 14);
+    const cutoffStr = cutoff.toISOString().split('T')[0];
+
+    const briefs = [];
+    const narratives = [];
+    const digests = [];
+
+    for (const route of routes) {
+        const p = withoutTrailingSlash(route);
+        let m;
+        if ((m = p.match(/^\/macro-brief\/(\d{4}-\d{2}-\d{2})$/)) && m[1] >= cutoffStr) {
+            briefs.push({ kind: 'brief', slug: m[1], file: `brief-${m[1]}.png` });
+        } else if ((m = p.match(/^\/weekly-narrative\/(\d{4}-\d{2}-\d{2})$/))) {
+            narratives.push({ kind: 'narrative', slug: m[1], file: `narrative-${m[1]}.png` });
+        } else if ((m = p.match(/^\/regime-digest\/(\d{4})\/(\d{2})$/))) {
+            digests.push({ kind: 'digest', slug: `${m[1]}-${m[2]}`, file: `digest-${m[1]}-${m[2]}.png` });
+        }
+    }
+
+    const bySlugDesc = (a, b) => b.slug.localeCompare(a.slug);
+    return [
+        ...briefs.sort(bySlugDesc),
+        ...narratives.sort(bySlugDesc).slice(0, 4),
+        ...digests.sort(bySlugDesc).slice(0, 2),
+    ];
+}
+
+async function captureOgCards(browser, routes, port) {
+    const jobs = ogCardJobs(routes);
+    if (jobs.length === 0) {
+        console.log('OG cards: no dated-content routes discovered — skipping.');
+        return;
+    }
+
+    const ogDir = path.join(distDir, 'og');
+    fs.mkdirSync(ogDir, { recursive: true });
+
+    let page;
+    try {
+        page = await browser.newPage();
+        await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
+    } catch (err) {
+        console.warn('OG cards: could not open page — skipping:', err?.message ?? err);
+        return;
+    }
+
+    let captured = 0;
+    for (const job of jobs) {
+        const url = `http://localhost:${port}/og-card/${job.kind}/${job.slug}?embed=true`;
+        try {
+            await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
+            // Card flags data-og-ready once its Supabase query settles
+            await page.waitForFunction(
+                () => document.querySelector('[data-og-ready="true"]'),
+                { timeout: 15000 }
+            ).catch(() => console.warn(`OG cards: ${job.kind}/${job.slug} never signalled ready — capturing anyway`));
+            // Let fonts settle before capture
+            await page.evaluate(() => document.fonts?.ready ?? Promise.resolve());
+            await page.screenshot({ path: path.join(ogDir, job.file) });
+            captured++;
+        } catch (err) {
+            console.warn(`OG cards: failed to capture ${job.kind}/${job.slug}:`, err?.message ?? err);
+        }
+    }
+    await page.close().catch(() => {});
+    console.log(`OG cards: captured ${captured}/${jobs.length} card(s) into dist/og/`);
+}
+
+// Prerendered HTML may reference /og/<file>.png cards that were not generated
+// (capture failure, page outside the bounded scope). Rewrite those references
+// to the default brand image so og:image never 404s.
+const DEFAULT_OG_IMAGE = 'https://graphiquestor.com/hero-preview.jpg';
+
+function fixupMissingOgImages() {
+    const ogDir = path.join(distDir, 'og');
+    let rewritten = 0;
+
+    function walk(dir) {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                walk(full);
+            } else if (entry.name === 'index.html') {
+                let html = fs.readFileSync(full, 'utf8');
+                let changed = false;
+                html = html.replace(/https:\/\/graphiquestor\.com\/og\/([A-Za-z0-9._-]+\.png)/g, (match, file) => {
+                    if (fs.existsSync(path.join(ogDir, file))) return match;
+                    changed = true;
+                    return DEFAULT_OG_IMAGE;
+                });
+                if (changed) {
+                    fs.writeFileSync(full, html);
+                    rewritten++;
+                }
+            }
+        }
+    }
+
+    walk(distDir);
+    if (rewritten > 0) {
+        console.log(`OG cards: rewrote missing og:image references in ${rewritten} page(s) to default.`);
+    }
+}
+
+async function pingIndexNow(routes) {
+    const key = process.env.INDEXNOW_KEY;
+    if (!key) {
+        console.log('IndexNow: INDEXNOW_KEY not set — skipping ping.');
+        return;
+    }
+
+    // Key file must be served from the site root for IndexNow verification
+    fs.writeFileSync(path.join(distDir, `${key}.txt`), key);
+
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 2);
+    const cutoffStr = cutoff.toISOString().split('T')[0];
+
+    const urlList = Array.from(routes)
+        .filter(isDatedContentRoute)
+        .filter(route => routeLastmod(route) >= cutoffStr)
+        .map(sitemapLoc);
+
+    if (urlList.length === 0) {
+        console.log('IndexNow: no dated-content URLs newer than 2 days — nothing to ping.');
+        return;
+    }
+
+    try {
+        const resp = await fetch('https://api.indexnow.org/indexnow', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            body: JSON.stringify({
+                host: 'graphiquestor.com',
+                key,
+                keyLocation: `https://graphiquestor.com/${key}.txt`,
+                urlList,
+            }),
+        });
+        console.log(`IndexNow: pinged ${urlList.length} URL(s) — HTTP ${resp.status}`);
+    } catch (err) {
+        // Never fail the build over an indexing ping
+        console.warn('IndexNow: ping failed (non-fatal):', err?.message ?? err);
+    }
+}
 
 // Function to generate the new exhaustive sitemap.xml
 function generateSitemap(routes) {
@@ -256,6 +433,10 @@ async function run() {
                 try {
                     page = await browser.newPage();
                     pagesRenderedWithCurrentTab = 0;
+
+                    page.on('pageerror', (err) => {
+                        console.error(`[prerender:pageerror] ${err.message}`);
+                    });
                     
                     // Block analytics/ads during prerendering
                     await page.setRequestInterception(true);
@@ -276,23 +457,51 @@ async function run() {
             }
 
             try {
-                await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 30000 });
+                await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 60000 });
                 pagesRenderedWithCurrentTab++;
-                
-                // Wait an extra second for dynamic charts/components to finish rendering
-                await new Promise(resolve => setTimeout(resolve, 1500));
 
-                // react-helmet-async defers meta/og tag writes via requestAnimationFrame
+                // ES modules can finish downloading before React hydrates #root — an empty
+                // root means we'd capture the static index.html shell (wrong canonicals).
+                const appMounted = await page.waitForFunction(
+                    () => {
+                        const root = document.querySelector('#root');
+                        return !!(root && root.childElementCount > 0);
+                    },
+                    { timeout: 60000 }
+                ).catch(() => null);
+
+                if (!appMounted) {
+                    console.warn(`⚠ React never mounted on ${cleanRoute} — page may capture static shell only.`);
+                }
+
+                // Beat for lazy routes, Suspense, and chart paint
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // react-helmet-async may flush via requestAnimationFrame after paint
                 await page.evaluate(() => new Promise((resolve) => {
                     requestAnimationFrame(() => requestAnimationFrame(resolve));
                 }));
-                try {
-                    await page.waitForFunction(
-                        () => document.querySelector('meta[name="description"]'),
-                        { timeout: 10000 }
-                    );
-                } catch {
-                    console.warn(`⚠ No meta description on ${cleanRoute} — capturing HTML anyway`);
+
+                const DEFAULT_TITLE = 'Global Macro Intelligence Terminal | GraphiQuestor';
+                const DEFAULT_DESC_PREFIX = 'Institutional macro intelligence terminal tracking global liquidity';
+                const helmetReady = await page.waitForFunction(
+                    (defaultTitle, defaultDescPrefix) => {
+                        const helmetMeta = document.head.querySelector(
+                            'meta[name="description"][data-rh], link[rel="canonical"][data-rh], meta[property="og:title"][data-rh]'
+                        );
+                        if (helmetMeta) return true;
+                        const title = document.querySelector('title')?.textContent?.trim() ?? '';
+                        if (title.length > 0 && title !== defaultTitle) return true;
+                        const desc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
+                        return desc.length > 0 && !desc.startsWith(defaultDescPrefix);
+                    },
+                    { timeout: 30000 },
+                    DEFAULT_TITLE,
+                    DEFAULT_DESC_PREFIX
+                ).catch(() => null);
+
+                if (!helmetReady) {
+                    console.warn(`⚠ Helmet tags never appeared on ${cleanRoute} — skipping static-tag dedup for this page.`);
                 }
 
                 // Extract internal links from the rendered DOM
@@ -307,6 +516,32 @@ async function run() {
                     if (isRoutable(withoutTrailingSlash(cleanedHref)) && !visitedRoutes.has(cleanedHref)) {
                         routesToVisit.add(cleanedHref);
                     }
+                }
+
+                // index.html ships static homepage meta (canonical, og:*, twitter:*,
+                // title, description) as an SPA fallback. When react-helmet has
+                // rendered a page-specific equivalent (data-rh="true"), the static
+                // twin is a DUPLICATE — conflicting canonicals/og:url confuse
+                // crawlers and social scrapers pick og tags unpredictably. Strip
+                // static tags that have a helmet-managed counterpart before capture.
+                if (helmetReady) {
+                    await page.evaluate(() => {
+                        const hasHelmet = (selector) =>
+                            !!document.head.querySelector(`${selector}[data-rh]`);
+                        const dropStatic = (selector) => {
+                            if (!hasHelmet(selector)) return;
+                            document.head
+                                .querySelectorAll(`${selector}:not([data-rh])`)
+                                .forEach((el) => el.remove());
+                        };
+                        dropStatic('link[rel="canonical"]');
+                        dropStatic('meta[name="description"]');
+                        ['og:title', 'og:description', 'og:type', 'og:url', 'og:image', 'og:site_name', 'og:locale']
+                            .forEach((p) => dropStatic(`meta[property="${p}"]`));
+                        ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:site', 'twitter:creator']
+                            .forEach((n) => dropStatic(`meta[name="${n}"]`));
+                        // Helmet manages <title> directly (no duplicate), leave it alone.
+                    });
                 }
 
                 // documentElement.outerHTML already includes <html>…</html> — do not wrap again
@@ -344,6 +579,11 @@ async function run() {
         const outSitemapPath = path.join(distDir, 'sitemap.xml');
         fs.writeFileSync(outSitemapPath, sitemapXml);
         console.log(`Successfully generated dynamic sitemap at ${outSitemapPath}`);
+
+        await captureOgCards(browser, visitedRoutes, port);
+        fixupMissingOgImages();
+
+        await pingIndexNow(visitedRoutes);
 
         await browser.close();
         server.close();

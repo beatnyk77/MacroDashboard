@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
+import { ShareButton } from '@/components/ShareButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -352,16 +353,30 @@ const WeeklyNarrativeContent: React.FC = () => {
 
 export const WeeklyNarrativePage: React.FC = () => {
     const { date } = useParams<{ date: string }>();
+    const shareRef = React.useRef<HTMLDivElement>(null);
 
     return (
         <div className="w-full max-w-5xl mx-auto py-12 px-4 sm:px-6">
             <SEOManager
                 title={`Weekly Macro Narrative · ${date ?? ''} | GraphiQuestor`}
                 description="Institutional-grade weekly macro regime intelligence covering global liquidity, sovereign risk, and de-dollarization dynamics."
+                ogImage={date ? `https://graphiquestor.com/og/narrative-${date}.png` : undefined}
             />
-            <SectionErrorBoundary name="Weekly Narrative">
-                <WeeklyNarrativeContent />
-            </SectionErrorBoundary>
+            <div ref={shareRef} className="relative group">
+                {date && (
+                    <div className="absolute right-0 top-0 z-10">
+                        <ShareButton
+                            targetRef={shareRef}
+                            title={`Weekly Macro Narrative — ${date}`}
+                            dataSource="GraphiQuestor Regime Engine"
+                            href={`/weekly-narrative/${date}`}
+                        />
+                    </div>
+                )}
+                <SectionErrorBoundary name="Weekly Narrative">
+                    <WeeklyNarrativeContent />
+                </SectionErrorBoundary>
+            </div>
         </div>
     );
 };

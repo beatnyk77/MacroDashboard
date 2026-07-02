@@ -22,6 +22,7 @@ export interface MetricData {
 export function useLatestMetric(metricId: string) {
     return useQuery({
         queryKey: ['metric', metricId],
+        enabled: !!metricId,
         queryFn: async (): Promise<MetricData | null> => {
             // 1. Fetch latest state from view
             const { data: latest, error: latestError } = await supabase

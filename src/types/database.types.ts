@@ -136,6 +136,24 @@ export type Database = {
         }
         Relationships: []
       }
+      brief_sends: {
+        Row: {
+          brief_date: string
+          recipient_count: number
+          sent_at: string
+        }
+        Insert: {
+          brief_date: string
+          recipient_count?: number
+          sent_at?: string
+        }
+        Update: {
+          brief_date?: string
+          recipient_count?: number
+          sent_at?: string
+        }
+        Relationships: []
+      }
       cb_gold_net: {
         Row: {
           buyers_tonnes: number | null
@@ -4462,6 +4480,7 @@ export type Database = {
       }
       subscribers: {
         Row: {
+          cadence: string
           confirm_token: string
           confirmed_at: string | null
           contact_name: string | null
@@ -4478,6 +4497,7 @@ export type Database = {
           trade_role: string | null
         }
         Insert: {
+          cadence?: string
           confirm_token: string
           confirmed_at?: string | null
           contact_name?: string | null
@@ -4494,6 +4514,7 @@ export type Database = {
           trade_role?: string | null
         }
         Update: {
+          cadence?: string
           confirm_token?: string
           confirmed_at?: string | null
           contact_name?: string | null
@@ -6353,6 +6374,10 @@ export type Database = {
         Returns: Json
       }
       increment_api_usage: { Args: { key_id: string }; Returns: undefined }
+      manage_subscription: {
+        Args: { p_action: string; p_token: string }
+        Returns: string
+      }
       populate_gold_ratios: { Args: never; Returns: undefined }
       refresh_market_pulse_stats: { Args: never; Returns: undefined }
       refresh_us_sector_summary: { Args: never; Returns: undefined }

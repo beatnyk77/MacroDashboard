@@ -7,6 +7,7 @@ import { useMacroBrief } from '@/hooks/useMacroBrief';
 import type { FocusArea } from '@/types/brief';
 import { FOCUS_AREA_LABELS } from '@/types/brief';
 import { FocusAreaSelector } from '@/components/brief/FocusAreaSelector';
+import { ShareButton } from '@/components/ShareButton';
 import { getRegimeColors } from '@/constants/semanticColors';
 import { format, subDays, addDays, parseISO, isValid } from 'date-fns';
 import { Clock, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -108,6 +109,7 @@ const BriefSkeleton: React.FC = () => (
 const MacroBriefInner: React.FC = () => {
   const { date } = useParams<{ date?: string }>();
   const navigate = useNavigate();
+  const shareRef = React.useRef<HTMLDivElement>(null);
   const todayStr = todayISO();
   const targetDate = date || todayStr;
 
@@ -236,13 +238,22 @@ const MacroBriefInner: React.FC = () => {
         title={`Morning Macro Brief — ${format(parsedDate, 'd MMMM yyyy')}`}
         description={seoDescription}
         ogType="article"
+        ogImage={`https://graphiquestor.com/og/brief-${activeBrief.brief_date}.png`}
         publishedTime={activeBrief.generated_at}
         canonical={`https://graphiquestor.com/macro-brief/${activeBrief.brief_date}`}
         robots="index, follow"
         jsonLd={structuredData}
       />
 
-      <div className="space-y-8">
+      <div ref={shareRef} className="space-y-8 relative group">
+        <div className="absolute right-0 -top-2 z-10">
+          <ShareButton
+            targetRef={shareRef}
+            title={`Morning Macro Brief — ${formattedDayLabel}`}
+            dataSource="GraphiQuestor Daily Signal"
+            href={`/macro-brief/${activeBrief.brief_date}`}
+          />
+        </div>
         {/* Fallback Banner */}
         {isFallback && (
           <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">

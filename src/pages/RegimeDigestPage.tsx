@@ -10,6 +10,7 @@ import { useRegimeDigest, MetricsSnapshot } from '@/features/regime-digest/hooks
 import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
 import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip';
 import { RelatedContent } from '@/components/RelatedContent';
+import { ShareButton } from '@/components/ShareButton';
 import { format } from 'date-fns';
 
 // ── Metric pill ──────────────────────────────────────────────────────────────
@@ -302,17 +303,29 @@ const RegimeDigestContent: React.FC = () => {
 
 export const RegimeDigestPage: React.FC = () => {
     const { year, month } = useParams<{ year: string; month: string }>();
+    const shareRef = React.useRef<HTMLDivElement>(null);
 
     return (
         <div className="w-full max-w-5xl mx-auto py-12 px-4 sm:px-6">
             <SEOManager
                 title={`${year}-${month} Macro Regime Digest | GraphiQuestor`}
                 description="Institutional-grade monthly macro intelligence on Global Liquidity, Sovereign Stress, and De-Dollarization."
+                ogImage={`https://graphiquestor.com/og/digest-${year}-${month}.png`}
             />
 
-            <SectionErrorBoundary name="Regime Digest">
-                <RegimeDigestContent />
-            </SectionErrorBoundary>
+            <div ref={shareRef} className="relative group">
+                <div className="absolute right-0 top-0 z-10">
+                    <ShareButton
+                        targetRef={shareRef}
+                        title={`Macro Regime Digest — ${year}-${month}`}
+                        dataSource="GraphiQuestor Regime Engine"
+                        href={`/regime-digest/${year}/${month}`}
+                    />
+                </div>
+                <SectionErrorBoundary name="Regime Digest">
+                    <RegimeDigestContent />
+                </SectionErrorBoundary>
+            </div>
 
             <div className="mt-20 p-10 sm:p-14 rounded-2xl bg-gradient-to-br from-blue-950/60 to-slate-950 border border-blue-500/10 text-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_70%)]" />
