@@ -258,7 +258,7 @@ async function captureOgCards(browser, routes, port) {
     for (const job of jobs) {
         const url = `http://localhost:${port}/og-card/${job.kind}/${job.slug}?embed=true`;
         try {
-            await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
+            await page.goto(url, GOTO_OPTS);
             // Card flags data-og-ready once its Supabase query settles
             await page.waitForFunction(
                 () => document.querySelector('[data-og-ready="true"]'),
@@ -384,6 +384,59 @@ function generateSitemap(routes) {
     return xml;
 }
 
+const PUPPETEER_ARGS = [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+];
+
+const PAGE_TIMEOUT_MS = 30_000;
+
+function isBrowserDead(err) {
+    const msg = String(err?.message ?? err);
+    return /Connection closed|Target closed|Session closed|Browser has disconnected|ProtocolError.*timed out/i.test(msg);
+}
+
+async function launchBrowser() {
+    return puppeteer.launch({
+        headless: true,
+        args: PUPPETEER_ARGS,
+        protocolTimeout: 120_000,
+    });
+}
+
+const GOTO_OPTS = { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS };
+
+async function capturePageHtml(page) {
+    try {
+        return await page.content();
+    } catch {
+        return null;
+    }
+}
+
+function prerenderedFilePath(cleanRoute) {
+    if (cleanRoute === '/') return path.join(distDir, 'index.html');
+    const rel = cleanRoute.replace(/^\//, '').replace(/\/$/, '');
+    return path.join(distDir, rel, 'index.html');
+}
+
+function routeHasPrerender(cleanRoute) {
+    const fp = prerenderedFilePath(cleanRoute);
+    return fs.existsSync(fp) && fs.statSync(fp).size > 5000;
+}
+
+async function setupPage(browser) {
+    const page = await browser.newPage();
+    page.setDefaultTimeout(PAGE_TIMEOUT_MS);
+    page.setDefaultNavigationTimeout(PAGE_TIMEOUT_MS);
+    page.on('pageerror', (err) => {
+        console.error(`[prerender:pageerror] ${err.message}`);
+    });
+    return page;
+}
+
 async function run() {
     const port = Number(process.env.PRERENDER_PORT || process.env.PORT || 4173);
     const server = app.listen(port, '127.0.0.1', async () => {
@@ -391,14 +444,7 @@ async function run() {
         
         let browser;
         try {
-            browser = await puppeteer.launch({
-                headless: true,
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage'
-                ]
-            });
+            browser = await launchBrowser();
         } catch (launchErr) {
             console.warn('⚠️  Puppeteer browser unavailable; skipping prerender step:', launchErr);
             const sitemapXml = generateSitemap(seedRoutes);
@@ -425,39 +471,30 @@ async function run() {
             
             console.log(`Prerendering [${visitedRoutes.size}] ${cleanRoute}...`);
             
-            // Recreate page every 15 renders or if it is currently null to avoid CDP bottlenecks & memory issues
-            if (!page || pagesRenderedWithCurrentTab >= 15) {
+            // Recreate tab every 5 renders to limit CDP/memory pressure
+            if (!page || pagesRenderedWithCurrentTab >= 5) {
                 if (page) {
                     await page.close().catch(() => {});
                 }
                 try {
-                    page = await browser.newPage();
+                    page = await setupPage(browser);
                     pagesRenderedWithCurrentTab = 0;
-
-                    page.on('pageerror', (err) => {
-                        console.error(`[prerender:pageerror] ${err.message}`);
-                    });
-                    
-                    // Block analytics/ads during prerendering
-                    await page.setRequestInterception(true);
-                    page.on('request', (req) => {
-                        if (req.url().includes('google-analytics') || req.url().includes('googletagmanager')) {
-                            req.abort();
-                        } else {
-                            req.continue();
-                        }
-                    });
                 } catch (pageInitErr) {
-                    console.error('Failed to create new page context, forcing page recreate on next loop:', pageInitErr);
+                    console.error('Failed to create new page context:', pageInitErr);
                     page = null;
-                    // Push route back to routesToVisit to retry
+                    if (isBrowserDead(pageInitErr)) {
+                        console.warn('Browser connection lost — relaunching Chrome...');
+                        try { await browser.close(); } catch { /* ignore */ }
+                        browser = await launchBrowser();
+                    }
+                    visitedRoutes.delete(cleanRoute);
                     routesToVisit.add(route);
                     continue;
                 }
             }
 
             try {
-                await page.goto(`http://localhost:${port}${cleanRoute}`, { waitUntil: 'networkidle0', timeout: 60000 });
+                await page.goto(`http://localhost:${port}${cleanRoute}`, GOTO_OPTS);
                 pagesRenderedWithCurrentTab++;
 
                 // ES modules can finish downloading before React hydrates #root — an empty
@@ -467,20 +504,15 @@ async function run() {
                         const root = document.querySelector('#root');
                         return !!(root && root.childElementCount > 0);
                     },
-                    { timeout: 60000 }
+                    { timeout: 20_000 }
                 ).catch(() => null);
 
                 if (!appMounted) {
                     console.warn(`⚠ React never mounted on ${cleanRoute} — page may capture static shell only.`);
                 }
 
-                // Beat for lazy routes, Suspense, and chart paint
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                // react-helmet-async may flush via requestAnimationFrame after paint
-                await page.evaluate(() => new Promise((resolve) => {
-                    requestAnimationFrame(() => requestAnimationFrame(resolve));
-                }));
+                // Beat for lazy routes, Suspense, and helmet flush
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
                 const DEFAULT_TITLE = 'Global Macro Intelligence Terminal | GraphiQuestor';
                 const DEFAULT_DESC_PREFIX = 'Institutional macro intelligence terminal tracking global liquidity';
@@ -495,7 +527,7 @@ async function run() {
                         const desc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
                         return desc.length > 0 && !desc.startsWith(defaultDescPrefix);
                     },
-                    { timeout: 30000 },
+                    { timeout: 15_000 },
                     DEFAULT_TITLE,
                     DEFAULT_DESC_PREFIX
                 ).catch(() => null);
@@ -508,7 +540,7 @@ async function run() {
                 const newLinks = await page.evaluate(() => {
                     const anchors = Array.from(document.querySelectorAll('a'));
                     return anchors.map(a => a.getAttribute('href'));
-                });
+                }).catch(() => []);
 
                 // Add valid discovered links to the queue
                 for (const href of newLinks) {
@@ -540,13 +572,14 @@ async function run() {
                             .forEach((p) => dropStatic(`meta[property="${p}"]`));
                         ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:site', 'twitter:creator']
                             .forEach((n) => dropStatic(`meta[name="${n}"]`));
-                        // Helmet manages <title> directly (no duplicate), leave it alone.
-                    });
+                    }).catch(() => {});
                 }
 
-                // documentElement.outerHTML already includes <html>…</html> — do not wrap again
-                const html = await page.evaluate(() => document.documentElement.outerHTML);
-                const finalHtml = `<!DOCTYPE html>\n${html}`;
+                const html = await capturePageHtml(page);
+                if (!html) {
+                    throw new Error('Failed to capture page HTML');
+                }
+                const finalHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
 
                 const routeDir = path.join(distDir, cleanRoute);
                 if (!fs.existsSync(routeDir)) {
@@ -557,15 +590,51 @@ async function run() {
                 fs.writeFileSync(filePath, finalHtml);
             } catch (err) {
                 console.error(`Failed to prerender ${cleanRoute}:`, err);
-                // If it failed because of a connection issue or page crash, discard page to force recreate
                 try {
                     await page.close();
-                } catch (e) {}
+                } catch (e) { /* ignore */ }
                 page = null;
-                // Retry this route next time
+                if (isBrowserDead(err)) {
+                    console.warn('Browser connection lost during render — relaunching Chrome...');
+                    try { await browser.close(); } catch { /* ignore */ }
+                    browser = await launchBrowser();
+                }
                 visitedRoutes.delete(cleanRoute);
                 routesToVisit.add(route);
             }
+        }
+
+        // Retry any seed-route that never got a real prerender (browser crash mid-run)
+        const missingSeeds = [...seedRoutes]
+            .map(normalizeVisitedRoute)
+            .filter((r) => !routeHasPrerender(r));
+        if (missingSeeds.length > 0) {
+            console.log(`\nRetrying ${missingSeeds.length} seed routes missing prerendered HTML...`);
+            try { await browser.close(); } catch { /* ignore */ }
+            browser = await launchBrowser();
+            page = await setupPage(browser);
+            pagesRenderedWithCurrentTab = 0;
+            for (const cleanRoute of missingSeeds) {
+                console.log(`Retry prerender ${cleanRoute}...`);
+                try {
+                    await page.goto(`http://localhost:${port}${cleanRoute}`, GOTO_OPTS);
+                    await page.waitForFunction(
+                        () => document.querySelector('#root')?.childElementCount > 0,
+                        { timeout: 20_000 }
+                    ).catch(() => null);
+                    await new Promise((resolve) => setTimeout(resolve, 1500));
+                    const html = await capturePageHtml(page);
+                    if (!html) throw new Error('Failed to capture page HTML on retry');
+                    const outPath = prerenderedFilePath(cleanRoute);
+                    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+                    fs.writeFileSync(outPath, html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`);
+                    visitedRoutes.add(cleanRoute);
+                } catch (retryErr) {
+                    console.error(`Retry failed for ${cleanRoute}:`, retryErr);
+                }
+            }
+            await page.close().catch(() => {});
+            page = null;
         }
 
         // Clean up final page tab if still active
