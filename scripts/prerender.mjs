@@ -581,13 +581,23 @@ async function run() {
                 }
                 const finalHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
 
-                const routeDir = path.join(distDir, cleanRoute);
-                if (!fs.existsSync(routeDir)) {
-                    fs.mkdirSync(routeDir, { recursive: true });
-                }
-                
-                const filePath = path.join(routeDir, 'index.html');
+                // Always use prerenderedFilePath — never path.join(distDir, cleanRoute)
+                // when cleanRoute has a leading slash (POSIX path.join treats it as absolute).
+                const filePath = prerenderedFilePath(cleanRoute);
+                fs.mkdirSync(path.dirname(filePath), { recursive: true });
                 fs.writeFileSync(filePath, finalHtml);
+
+                // Guard: non-homepage routes must not ship homepage canonical (SPA shell capture).
+                if (cleanRoute !== '/') {
+                    const canonMatch = finalHtml.match(/rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)
+                        || finalHtml.match(/href=["']([^"']+)["'][^>]*rel=["']canonical["']/i);
+                    const canon = canonMatch?.[1] ?? '';
+                    if (canon === 'https://graphiquestor.com/' || canon === 'https://graphiquestor.com') {
+                        console.warn(`⚠ ${cleanRoute}: captured homepage canonical — deleting bad prerender so SPA shell is not preferred over retry`);
+                        try { fs.unlinkSync(filePath); } catch { /* ignore */ }
+                        throw new Error(`Homepage canonical on ${cleanRoute}`);
+                    }
+                }
             } catch (err) {
                 console.error(`Failed to prerender ${cleanRoute}:`, err);
                 try {

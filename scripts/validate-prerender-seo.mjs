@@ -7,8 +7,10 @@ const distDir = path.resolve(__dirname, '../dist');
 
 // Static pages that must always validate
 const CHECKS = [
-    { file: 'index.html', label: 'homepage' },
-    { file: 'intel/india/index.html', label: 'intel/india' },
+    { file: 'index.html', label: 'homepage', expectCanonicalIncludes: 'https://graphiquestor.com/' },
+    { file: 'intel/india/index.html', label: 'intel/india', expectCanonicalIncludes: '/intel/india' },
+    // Hub route was live-verified serving homepage shell + homepage canonical — hard-fail that regression.
+    { file: 'macro-brief/index.html', label: 'macro-brief hub', expectCanonicalIncludes: '/macro-brief' },
 ];
 
 // Dynamically add the LATEST dated-content page of each type from the
@@ -62,7 +64,8 @@ function readHtml(relPath) {
 
 let failed = 0;
 
-for (const { file, label } of ALL_CHECKS) {
+for (const check of ALL_CHECKS) {
+    const { file, label, expectCanonicalIncludes } = check;
     let html;
     try {
         html = readHtml(file);
@@ -94,6 +97,20 @@ for (const { file, label } of ALL_CHECKS) {
     if (canonicalCount > 1) {
         console.error(`✗ ${label}: ${canonicalCount} canonical tags (expected 1 — static fallback not stripped)`);
         failed++;
+    }
+
+    if (expectCanonicalIncludes) {
+        const canonMatch = html.match(/rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)
+            || html.match(/href=["']([^"']+)["'][^>]*rel=["']canonical["']/i);
+        const canon = canonMatch?.[1] ?? '';
+        if (!canon.includes(expectCanonicalIncludes)) {
+            console.error(`✗ ${label}: canonical "${canon}" does not include "${expectCanonicalIncludes}"`);
+            failed++;
+        }
+        if (file !== 'index.html' && (canon === 'https://graphiquestor.com/' || canon === 'https://graphiquestor.com')) {
+            console.error(`✗ ${label}: homepage canonical on non-home route`);
+            failed++;
+        }
     }
 
     // Any /og/<file>.png referenced by a prerendered page must exist on disk —

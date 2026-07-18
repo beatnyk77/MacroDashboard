@@ -181,10 +181,10 @@ function App() {
                                         {/* Labs Index & Thematic redirects */}
                                         <Route path={trailRoute('/labs')} element={<ThematicLabsIndexPage />} />
                                         <Route path={trailRoute('/thematics')} element={<Navigate to={trailRoute('/labs')} replace />} />
-                                        {/* Morning Macro Brief */}
+                                        {/* Morning Macro Brief — static archive before :date param */}
                                         <Route path={trailRoute('/macro-brief')} element={<MacroBriefPage />} />
-                                        <Route path={trailRoute('/macro-brief/:date')} element={<MacroBriefPage />} />
                                         <Route path={trailRoute('/macro-brief/archive')} element={<MacroBriefArchivePage />} />
+                                        <Route path={trailRoute('/macro-brief/:date')} element={<MacroBriefPage />} />
                                         {/* Internal render target for scripts/prerender.mjs OG screenshots — noindex, not in sitemap */}
                                         <Route path={trailRoute('/og-card/:kind/:slug')} element={<OgCardPage />} />
                                         {/* Catch-all 404 */}
