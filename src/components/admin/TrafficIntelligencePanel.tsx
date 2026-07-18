@@ -157,12 +157,11 @@ export const TrafficIntelligencePanel: React.FC = () => {
                 <Box sx={{ py: 6, textAlign: 'center' }}>
                     <CircularProgress size={28} sx={{ color: AMBER }} />
                 </Box>
-            ) : error ? (
+            ) : error || !data ? (
                 <Box sx={{ p: 3, border: GLASS_BORDER, borderRadius: 2, bgcolor: CARD_BG }}>
-                    <Typography variant="body2" sx={{ color: '#f87171' }}>
-                        Traffic summary unavailable. Apply migration{' '}
-                        <code>20260619000000_site_analytics.sql</code> and deploy{' '}
-                        <code>get_traffic_intelligence_summary</code>.
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.55)' }}>
+                        Traffic summary is service-role only (public EXECUTE revoked 2026-07-19). Use SQL
+                        dashboard or an authenticated edge proxy — not the public anon key.
                     </Typography>
                 </Box>
             ) : data ? (

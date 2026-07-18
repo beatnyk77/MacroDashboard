@@ -61,11 +61,15 @@ export interface TrafficIntelligenceSummary {
 export function useTrafficIntelligence(days = 28, enabled = true) {
     return useQuery({
         queryKey: ['admin', 'traffic_intelligence', days],
-        queryFn: async (): Promise<TrafficIntelligenceSummary> => {
+        queryFn: async (): Promise<TrafficIntelligenceSummary | null> => {
             const { data, error } = await supabase.rpc('get_traffic_intelligence_summary', {
                 p_days: days,
             });
-            if (error) throw error;
+            // RPC is service_role-only (2026-07-19); client anon key cannot call it.
+            if (error) {
+                console.warn('[useTrafficIntelligence] RPC unavailable:', error.message);
+                return null;
+            }
             return data as unknown as TrafficIntelligenceSummary;
         },
         enabled,

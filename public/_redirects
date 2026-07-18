@@ -1,7 +1,14 @@
-# Legacy Redirects for SEO
-/thematics /#thematic-labs 301
+# Legacy / SPA route redirects — force 301 at the edge (not client Navigate)
+# so GSC does not score them as "Page with redirect" / soft chains.
+/thematics /labs/ 301
+/thematics/ /labs/ 301
+/labs/india /intel/india/ 301
+/labs/india/ /intel/india/ 301
+/labs/china /intel/china/ 301
+/labs/china/ /intel/china/ 301
 
-# Trailing-slash enforcement is handled in netlify.toml (conditional 301)
+# Trailing-slash enforcement is handled client-side (TrailingSlashRedirect)
+# + prerender canonicals. Netlify TOML multi-path conditions are limited.
 
-# SPA Fallback (Netlify/Vercel/others)
+# SPA Fallback (Netlify/Vercel/others) — last rule wins for unmatched paths
 /* /index.html 200

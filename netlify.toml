@@ -12,6 +12,43 @@
 
 # Trailing-slash enforcement: client-side via TrailingSlashRedirect + prerender canonicals.
 # Netlify TOML does not support multi-path conditions in one redirect block.
+# Explicit SEO 301s (also in public/_redirects) — keep both in sync.
+
+[[redirects]]
+  from = "/thematics"
+  to = "/labs/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/thematics/"
+  to = "/labs/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/labs/india"
+  to = "/intel/india/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/labs/india/"
+  to = "/intel/india/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/labs/china"
+  to = "/intel/china/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/labs/china/"
+  to = "/intel/china/"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/*"

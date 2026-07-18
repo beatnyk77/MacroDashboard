@@ -5,12 +5,19 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.resolve(__dirname, '../dist');
 
-// Static pages that must always validate
+// Static pages that must always validate (self-canonical hubs).
+// Homepage shell capture is the historical failure mode — never allow bare origin
+// on non-home routes.
 const CHECKS = [
     { file: 'index.html', label: 'homepage', expectCanonicalIncludes: 'https://graphiquestor.com/' },
     { file: 'intel/india/index.html', label: 'intel/india', expectCanonicalIncludes: '/intel/india' },
+    { file: 'intel/china/index.html', label: 'intel/china', expectCanonicalIncludes: '/intel/china' },
+    { file: 'labs/index.html', label: 'labs index', expectCanonicalIncludes: '/labs' },
+    { file: 'blog/index.html', label: 'blog index', expectCanonicalIncludes: '/blog' },
+    { file: 'glossary/index.html', label: 'glossary index', expectCanonicalIncludes: '/glossary' },
     // Hub route was live-verified serving homepage shell + homepage canonical — hard-fail that regression.
     { file: 'macro-brief/index.html', label: 'macro-brief hub', expectCanonicalIncludes: '/macro-brief' },
+    { file: 'macro-brief/archive/index.html', label: 'macro-brief archive', expectCanonicalIncludes: '/macro-brief/archive' },
 ];
 
 // Dynamically add the LATEST dated-content page of each type from the

@@ -91,13 +91,23 @@ jobs:
             supabase link --project-ref "$SUPABASE_PROJECT_ID"
             supabase db push --include-all --yes
           else
-            echo "::notice::Falling back to direct pooler SQL apply for latest heartbeat migration"
+            echo "::notice::Falling back to direct pooler SQL apply for heartbeat security migrations"
             ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
             DB_URL="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
-            # Apply only the heartbeat security migration if full push unavailable
-            psql "$DB_URL" -v ON_ERROR_STOP=1 \
-              -f supabase/migrations/20260719000000_daily_macro_briefs_service_write_only.sql
-            echo "Applied 20260719000000_daily_macro_briefs_service_write_only.sql via pooler"
+            # Apply all Heartbeat-session security migrations in order (idempotent enough for re-runs)
+            for f in \
+              supabase/migrations/20260719000000_daily_macro_briefs_service_write_only.sql \
+              supabase/migrations/20260719000010_rls_harden_exposed_tables.sql \
+              supabase/migrations/20260719000020_revoke_public_analytics_rpcs.sql \
+              supabase/migrations/20260719000030_consolidate_duplicate_rls_policies.sql \
+              supabase/migrations/20260719000040_security_invoker_public_views.sql
+            do
+              if [ -f "$f" ]; then
+                echo "Applying $f ..."
+                psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+                echo "Applied $f"
+              fi
+            done
           fi
 
       - name: Deploy generate-morning-brief
@@ -151,6 +161,30 @@ jobs:
             SELECT policyname || ' | ' || cmd || ' | ' || roles::text
             FROM pg_policies WHERE tablename='daily_macro_briefs'
             ORDER BY policyname;
+          """))
+
+          print("=== RLS enabled? (protocol tables) ===")
+          print(psql("""
+            SELECT c.relname || ' | rls=' || c.relrowsecurity::text
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'public'
+              AND c.relname = ANY (ARRAY[
+                'shadow_trade_anomalies','ai_compute_energy','cie_promoter_history',
+                'us_companies','cie_price_history','us_fundamentals','china_15th_fyp',
+                'ingestion_payload_hashes','us_insider_trades','us_13f_holdings',
+                'us_filings','treasury_hedging_metrics','cb_gold_net','fomc_minutes_analysis'
+              ])
+            ORDER BY 1;
+          """))
+
+          print("=== Analytics RPC execute grants ===")
+          print(psql("""
+            SELECT routine_name || ' | ' || grantee || ' | ' || privilege_type
+            FROM information_schema.routine_privileges
+            WHERE routine_schema = 'public'
+              AND routine_name IN ('get_subscriber_stats','get_traffic_intelligence_summary')
+            ORDER BY 1, 2;
           """))
 
           print("=== Latest briefs ===")

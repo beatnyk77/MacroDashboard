@@ -23,11 +23,15 @@ interface SubscriberStats {
  * get_subscriber_stats RPC (raw emails stay sealed behind insert-only RLS).
  */
 export const SubscriberTractionCard: React.FC = () => {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['admin', 'subscriber_stats'],
         queryFn: async (): Promise<SubscriberStats | null> => {
             const { data, error } = await supabase.rpc('get_subscriber_stats');
-            if (error) throw error;
+            // RPC is service_role-only (2026-07-19); client anon cannot call it.
+            if (error) {
+                console.warn('[SubscriberTractionCard] RPC unavailable:', error.message);
+                return null;
+            }
             return data as unknown as SubscriberStats; // TODO(types): RPC returns Json — shape validated at runtime
         },
     });
@@ -58,6 +62,10 @@ export const SubscriberTractionCard: React.FC = () => {
 
             {isLoading ? (
                 <CircularProgress size={28} sx={{ my: 3 }} />
+            ) : !data || isError ? (
+                <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, lineHeight: 1.5 }}>
+                    Subscriber stats require a service-role path (RPC revoked from public anon). Query Supabase SQL or rewire via an authenticated edge proxy.
+                </Typography>
             ) : (
                 <>
                     <Typography sx={{ fontSize: 46, fontWeight: 900, fontFamily: 'monospace', lineHeight: 1, color: '#fff' }}>
