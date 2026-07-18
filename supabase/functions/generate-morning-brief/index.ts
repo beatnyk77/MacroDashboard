@@ -1,11 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
 import { serveIngest } from '../_shared/handler.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
 // NOTE: client must be created inside the handler — env vars are only
 // injected by the Supabase runtime at request time, not at module load.
 const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
@@ -102,6 +97,16 @@ interface SignificantChangePoint {
   direction: string;
 }
 
+/** YYYY-MM-DD in America/New_York — matches client marketDateISO(). */
+function marketDateISO(now = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now);
+}
+
 serveIngest('generate-morning-brief', async (req) => {
 
   if (req.method === 'OPTIONS') {
@@ -114,7 +119,8 @@ serveIngest('generate-morning-brief', async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const today = new Date().toISOString().split('T')[0];
+    // Must match frontend marketDateISO (ET trading day), not UTC.
+    const today = marketDateISO();
     const insertErrors: string[] = [];
 
     // 1. Get current regime
@@ -396,13 +402,36 @@ Style rules:
       }
     }
 
-    return { ok: true, counts: {} };
+    const skipped = insertErrors.filter((e) => e.startsWith('skipped[')).length;
+    const hardErrors = insertErrors.filter((e) => !e.startsWith('skipped[')).length;
+
+    // Soft success only when we wrote at least one brief OR every combo was already present.
+    if (briefsWritten === 0 && hardErrors > 0) {
+      return {
+        ok: false,
+        error: `No briefs written for ${today}. errors=${hardErrors} detail=${insertErrors.slice(0, 5).join(' | ')}`,
+        counts: { upserted: 0, skipped, errors: hardErrors },
+        meta: { brief_date: today, insertErrors },
+      };
+    }
+
+    if (briefsWritten === 0 && skipped === 0) {
+      return {
+        ok: false,
+        error: `No briefs written for ${today} and nothing was skipped — check focus combos / data`,
+        counts: { upserted: 0, skipped: 0, errors: hardErrors },
+        meta: { brief_date: today, insertErrors },
+      };
+    }
+
+    return {
+      ok: true,
+      counts: { upserted: briefsWritten, skipped, errors: hardErrors },
+      meta: { brief_date: today, insertErrors: insertErrors.length ? insertErrors : undefined },
+    };
 
   } catch (err) {
     console.error('Brief generation error:', err);
-    return new Response(
-      JSON.stringify({ error: String(err) }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return { ok: false, error: String(err) };
   }
 });

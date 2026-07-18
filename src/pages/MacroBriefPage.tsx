@@ -12,6 +12,8 @@ import { getRegimeColors } from '@/constants/semanticColors';
 import { format, subDays, addDays, parseISO, isValid } from 'date-fns';
 import { Clock, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { marketDateISO } from '@/lib/marketDate';
+import { withTrailingSlash } from '@/lib/urlPath';
 
 const STORAGE_KEY = 'gq_focus_areas';
 const DEFAULT_AREAS: FocusArea[] = ['india', 'us_macro', 'gold_dedollarization'];
@@ -84,15 +86,6 @@ function useMarketCountdown(): string {
   return status;
 }
 
-function todayISO(): string {
-  // Returns local date YYYY-MM-DD
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const dy = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${dy}`;
-}
-
 const BriefSkeleton: React.FC = () => (
   <div className="space-y-6">
     <Skeleton className="h-20 w-full bg-white/5 rounded-2xl" />
@@ -110,12 +103,13 @@ const MacroBriefInner: React.FC = () => {
   const { date } = useParams<{ date?: string }>();
   const navigate = useNavigate();
   const shareRef = React.useRef<HTMLDivElement>(null);
-  const todayStr = todayISO();
+  // Morning brief is an ET-session product — align with generate-morning-brief.
+  const todayStr = marketDateISO();
   const targetDate = date || todayStr;
 
   useEffect(() => {
     if (!date) {
-      navigate(`/macro-brief/${todayStr}`, { replace: true });
+      navigate(withTrailingSlash(`/macro-brief/${todayStr}`), { replace: true });
     }
   }, [date, todayStr, navigate]);
 
@@ -142,8 +136,27 @@ const MacroBriefInner: React.FC = () => {
   const { data: brief, isLoading, error } = useMacroBrief(targetDate, selectedAreas);
   const countdown = useMarketCountdown();
 
+  // Always emit self-canonical SEO — even while loading or unavailable.
+  // Without this, crawlers that hit the SPA shell (or capture mid-load) inherit
+  // the homepage canonical from index.html static tags.
+  const pageCanonical = `https://graphiquestor.com/macro-brief/${targetDate}`;
+  const pageSeo = (
+    <SEOManager
+      title={`Morning Macro Brief — ${targetDate}`}
+      description={`GraphiQuestor daily institutional macro brief for ${targetDate}. Regime signals across India, US, and global macro.`}
+      ogType="article"
+      canonical={pageCanonical}
+      robots="index, follow"
+    />
+  );
+
   if (isLoading) {
-    return <BriefSkeleton />;
+    return (
+      <>
+        {pageSeo}
+        <BriefSkeleton />
+      </>
+    );
   }
 
   // Handle fallback / warning banner
@@ -152,19 +165,22 @@ const MacroBriefInner: React.FC = () => {
 
   if (error || !activeBrief) {
     return (
-      <div className="py-16 text-center space-y-4">
-        <AlertTriangle size={36} className="text-rose-500 mx-auto" />
-        <h2 className="text-lg font-black text-white uppercase tracking-tight">{TEXTS.briefUnavailable}</h2>
-        <p className="text-sm text-white/40 max-w-md mx-auto">
-          {TEXTS.couldNotRetrieve}
-        </p>
-        <Link
-          to="/macro-brief"
-          className="inline-block text-xs font-mono font-black uppercase tracking-widest text-blue-400 hover:text-blue-300"
-        >
-          {TEXTS.latestBrief}
-        </Link>
-      </div>
+      <>
+        {pageSeo}
+        <div className="py-16 text-center space-y-4">
+          <AlertTriangle size={36} className="text-rose-500 mx-auto" />
+          <h2 className="text-lg font-black text-white uppercase tracking-tight">{TEXTS.briefUnavailable}</h2>
+          <p className="text-sm text-white/40 max-w-md mx-auto">
+            {TEXTS.couldNotRetrieve}
+          </p>
+          <Link
+            to={withTrailingSlash('/macro-brief')}
+            className="inline-block text-xs font-mono font-black uppercase tracking-widest text-blue-400 hover:text-blue-300"
+          >
+            {TEXTS.latestBrief}
+          </Link>
+        </div>
+      </>
     );
   }
 
