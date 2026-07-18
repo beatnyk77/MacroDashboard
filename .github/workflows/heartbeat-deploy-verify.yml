@@ -178,14 +178,17 @@ jobs:
             ORDER BY 1;
           """))
 
-          print("=== Analytics RPC execute grants ===")
-          print(psql("""
-            SELECT routine_name || ' | ' || grantee || ' | ' || privilege_type
-            FROM information_schema.routine_privileges
-            WHERE routine_schema = 'public'
-              AND routine_name IN ('get_subscriber_stats','get_traffic_intelligence_summary')
-            ORDER BY 1, 2;
-          """))
+          print("=== Analytics RPC execute grants (best-effort) ===")
+          try:
+              print(psql("""
+                SELECT grantee || ' | ' || privilege_type || ' | ' || routine_name
+                FROM information_schema.role_routine_grants
+                WHERE routine_schema = 'public'
+                  AND routine_name IN ('get_subscriber_stats','get_traffic_intelligence_summary')
+                ORDER BY 3, 1;
+              """))
+          except Exception as e:
+              print(f"(grant listing skipped: {e})")
 
           print("=== Latest briefs ===")
           print(psql("""

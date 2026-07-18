@@ -75,3 +75,19 @@ Source archives (historical only): `docs/archive/`
   4. Reconnect Netlify → GitHub for this repo (or set vault `NETLIFY_BUILD_HOOK_URL` / `NETLIFY_AUTH_TOKEN`+site id) and deploy production
   5. Curl `/macro-brief/` for self-canonical + MacroBrief assets; mark P0-001/P0-002 verified-fixed
 
+
+### Session 1b — 2026-07-19 (balance tasks, no Management API token)
+
+- **Applied live via pooler (run 29663192769 migrations step):**
+  - `20260719000010` RLS on 12 advisor tables (all `rls=true`)
+  - `20260719000020` revoked anon EXECUTE on analytics RPCs
+  - `20260719000030` normalized duplicate policies on 11 tables
+  - `20260719000040` `security_invoker=true` on 13 public telemetry views
+- **Live anon API confirm:**
+  - `us_companies` SELECT 200; INSERT 401
+  - `cb_gold_net` SELECT 200
+  - `ingestion_payload_hashes` SELECT 401 (service-only)
+  - `get_subscriber_stats` / `get_traffic_intelligence_summary` EXECUTE 401
+- **SEO (code, pending Netlify):** Netlify 301s for `/labs/india|china` and `/thematics`; expanded prerender hub checks; `scripts/list-seo-coverage.mjs` (66/79 pages SEOManager; remainder chart subcomponents)
+- **Admin:** graceful empty state when analytics RPCs sealed
+- **Still waiting on you (Supabase PAT + Netlify):** deploy `generate-morning-brief` binary; publish frontend so `/macro-brief/` leaves homepage shell
