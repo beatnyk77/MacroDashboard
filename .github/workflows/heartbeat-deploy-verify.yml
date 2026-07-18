@@ -1,0 +1,227 @@
+# One-shot deploy + verify for GraphiQuestor Heartbeat P0/P1.
+# Uses GH secrets (DB password proven working via CI schema-drift).
+# Trigger: workflow_dispatch
+name: Heartbeat Deploy + Verify
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_function:
+        description: 'Deploy generate-morning-brief edge function'
+        type: boolean
+        default: true
+      apply_migration:
+        description: 'Apply pending migrations (db push)'
+        type: boolean
+        default: true
+      invoke_brief:
+        description: 'Invoke generate-morning-brief after deploy'
+        type: boolean
+        default: true
+      trigger_netlify:
+        description: 'Fire Netlify rebuild via vault NETLIFY_BUILD_HOOK_URL if present'
+        type: boolean
+        default: true
+
+jobs:
+  deploy-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.98.2
+
+      - name: Verify secrets present
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          [ -n "$SUPABASE_PROJECT_ID" ] || { echo "::error::SUPABASE_PROJECT_ID missing"; exit 1; }
+          [ -n "$SUPABASE_DB_PASSWORD" ] || { echo "::error::SUPABASE_DB_PASSWORD missing"; exit 1; }
+          echo "Project ref length: ${#SUPABASE_PROJECT_ID}"
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "::warning::SUPABASE_ACCESS_TOKEN empty — function deploy will be skipped"
+          else
+            # Soft check token format
+            case "$SUPABASE_ACCESS_TOKEN" in
+              sbp_*) echo "Access token format looks valid (sbp_…)" ;;
+              *) echo "::warning::Access token does not start with sbp_ — Management API may reject it" ;;
+            esac
+          fi
+
+      - name: Probe Management API auth
+        id: api_auth
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          CODE=$(curl -s -o /tmp/proj.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            "https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_ID}")
+          echo "Management API project status: $CODE"
+          echo "http_code=$CODE" >> "$GITHUB_OUTPUT"
+          if [ "$CODE" = "200" ]; then
+            echo "token_ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "token_ok=false" >> "$GITHUB_OUTPUT"
+            head -c 300 /tmp/proj.json || true
+            echo
+          fi
+
+      - name: Link + db push migrations
+        if: ${{ inputs.apply_migration }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          # Prefer Management API link when token works; otherwise db push via connection string.
+          if [ "${{ steps.api_auth.outputs.token_ok }}" = "true" ]; then
+            supabase link --project-ref "$SUPABASE_PROJECT_ID"
+            supabase db push --include-all --yes
+          else
+            echo "::notice::Falling back to direct pooler SQL apply for latest heartbeat migration"
+            ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
+            DB_URL="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+            # Apply only the heartbeat security migration if full push unavailable
+            psql "$DB_URL" -v ON_ERROR_STOP=1 \
+              -f supabase/migrations/20260719000000_daily_macro_briefs_service_write_only.sql
+            echo "Applied 20260719000000_daily_macro_briefs_service_write_only.sql via pooler"
+          fi
+
+      - name: Deploy generate-morning-brief
+        if: ${{ inputs.deploy_function && steps.api_auth.outputs.token_ok == 'true' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          supabase link --project-ref "$SUPABASE_PROJECT_ID"
+          supabase functions deploy generate-morning-brief --project-ref "$SUPABASE_PROJECT_ID"
+          echo "Deployed generate-morning-brief"
+
+      - name: Deploy function via Management API FormData (token ok)
+        if: ${{ inputs.deploy_function && steps.api_auth.outputs.token_ok == 'true' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          # CLI deploy above is authoritative; this is a no-op check
+          true
+
+      - name: DB verify + invoke brief + netlify hook
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          INVOKE_BRIEF: ${{ inputs.invoke_brief }}
+          TRIGGER_NETLIFY: ${{ inputs.trigger_netlify }}
+        run: |
+          set -euo pipefail
+          ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
+          DB_URL="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+          export DB_URL
+
+          python3 <<'PY'
+          import os, json, urllib.request, ssl
+          import subprocess
+
+          db = os.environ["DB_URL"]
+
+          def psql(sql: str) -> str:
+              r = subprocess.run(
+                  ["psql", db, "-v", "ON_ERROR_STOP=1", "-t", "-A", "-c", sql],
+                  check=True, capture_output=True, text=True,
+              )
+              return r.stdout.strip()
+
+          print("=== RLS policies on daily_macro_briefs ===")
+          print(psql("""
+            SELECT policyname || ' | ' || cmd || ' | ' || roles::text
+            FROM pg_policies WHERE tablename='daily_macro_briefs'
+            ORDER BY policyname;
+          """))
+
+          print("=== Latest briefs ===")
+          print(psql("""
+            SELECT brief_date::text || ' | ' || coalesce(regime_label,'?') || ' | ' || coalesce(model_used,'?') || ' | ' || generated_at::text
+            FROM daily_macro_briefs
+            ORDER BY generated_at DESC NULLS LAST
+            LIMIT 8;
+          """))
+
+          print("=== Cron generate-morning-brief ===")
+          print(psql("""
+            SELECT jobname || ' | ' || schedule || ' | active=' || active::text
+            FROM cron.job
+            WHERE jobname ILIKE '%morning%brief%' OR command ILIKE '%generate-morning-brief%';
+          """))
+
+          # Pull secrets from vault for invoke / netlify
+          def vault(name: str) -> str:
+              try:
+                  return psql(f"SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name='{name}' LIMIT 1;")
+              except Exception as e:
+                  print(f"vault miss {name}: {e}")
+                  return ""
+
+          service_role = vault("SUPABASE_SERVICE_ROLE_KEY") or vault("SERVICE_ROLE_KEY")
+          netlify_hook = vault("NETLIFY_BUILD_HOOK_URL")
+          project_url = os.environ.get("SUPABASE_URL") or f"https://{os.environ['SUPABASE_PROJECT_ID']}.supabase.co"
+
+          if os.environ.get("INVOKE_BRIEF") == "true":
+              if not service_role:
+                  print("::warning::No service_role in vault — cannot invoke generate-morning-brief")
+              else:
+                  url = f"{project_url.rstrip('/')}/functions/v1/generate-morning-brief"
+                  req = urllib.request.Request(
+                      url,
+                      data=b"{}",
+                      headers={
+                          "Authorization": f"Bearer {service_role}",
+                          "Content-Type": "application/json",
+                      },
+                      method="POST",
+                  )
+                  try:
+                      with urllib.request.urlopen(req, timeout=120) as resp:
+                          body = resp.read().decode()
+                          print(f"invoke status={resp.status} body={body[:800]}")
+                  except Exception as e:
+                      print(f"::warning::invoke failed: {e}")
+
+          if os.environ.get("TRIGGER_NETLIFY") == "true":
+              if not netlify_hook:
+                  print("::warning::No NETLIFY_BUILD_HOOK_URL in vault — skip Netlify rebuild")
+              else:
+                  req = urllib.request.Request(
+                      netlify_hook,
+                      data=b'{"trigger_title":"heartbeat-deploy-verify"}',
+                      headers={"Content-Type": "application/json"},
+                      method="POST",
+                  )
+                  try:
+                      with urllib.request.urlopen(req, timeout=60) as resp:
+                          print(f"netlify hook status={resp.status} body={resp.read().decode()[:200]}")
+                  except Exception as e:
+                      print(f"::warning::netlify hook failed: {e}")
+
+          print("=== Post-invoke latest briefs ===")
+          print(psql("""
+            SELECT brief_date::text || ' | ' || coalesce(regime_label,'?') || ' | ' || coalesce(model_used,'?') || ' | ' || generated_at::text
+            FROM daily_macro_briefs
+            ORDER BY generated_at DESC NULLS LAST
+            LIMIT 5;
+          """))
+          PY
