@@ -20,12 +20,12 @@ Source archives (historical only): `docs/archive/`
 | P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | open | 2026-07-19 | Partial via P0-002; full audit after Netlify is redeploying from main |
 | P1-001 | security | `daily_macro_briefs` public INSERT/UPDATE (advisor WITH CHECK true for anon) | verified-fixed | 2026-07-19 | **Live confirmed** via pooler SQL (run 29662904580): policies = `daily_macro_briefs_select` SELECT {anon,authenticated} + `daily_macro_briefs_service_write` ALL {service_role}. Migration applied. |
 | P0-004 | ops | Deploy pipeline broken for functions + site | open | 2026-07-19 | GH `SUPABASE_ACCESS_TOKEN` not `sbp_…` (Management API rejected); local CLI logged into Export Desk org only (no GraphiQuestor); Netlify not linked to GH (no status checks); vault missing NETLIFY_BUILD_HOOK_URL |
-| P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | open | 2026-07-19 | shadow_trade_anomalies, ai_compute_energy, cie_*, us_*, china_15th_fyp, ingestion_payload_hashes, treasury_hedging_metrics |
-| P1-003 | security | ~50 views SECURITY DEFINER — audit intentional vs accidental | open | 2026-07-19 | Convert accidental to INVOKER with migration comments |
-| P1-004 | security | `get_traffic_intelligence_summary` / `get_subscriber_stats` EXECUTE for anon | open | 2026-07-19 | GRANT in migrations 20260619 / 20260602 |
-| P1-005 | security | Duplicate/redundant RLS policies on 11 tables | open | 2026-07-19 | cb_gold_net, climate_risk_metrics, corporate_debt_maturities, fomc_minutes_analysis, global_refining_capacity, institutional_13f_holdings, institutional_trades_inferred, monthly_regime_digests, trade_gravity, upi_autopay_metrics, us_debt_maturities |
-| P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | open | 2026-07-19 | Need GSC URL list; check trailing-slash + SPA rules |
-| P2-002 | seo | GSC: 102 Excluded by noindex — intent audit | open | 2026-07-19 | embed=true intentional; check layout defaults |
+| P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | verified-fixed | 2026-07-19 | Migration 20260719000010 applied; all 12 `rls=true`; anon SELECT ok on product tables; hashes sealed; INSERT denied on us_companies |
+| P1-003 | security | ~50 views SECURITY DEFINER — audit intentional vs accidental | verified-fixed | 2026-07-19 | 13 public telemetry views set `security_invoker=true` (20260719000040). Remaining DEFINER are intentional functions (materialize/subscriber cadence) |
+| P1-004 | security | `get_traffic_intelligence_summary` / `get_subscriber_stats` EXECUTE for anon | verified-fixed | 2026-07-19 | Revoked (20260719000020); live anon RPC → 401 permission denied |
+| P1-005 | security | Duplicate/redundant RLS policies on 11 tables | verified-fixed | 2026-07-19 | Normalized via 20260719000030 (one public SELECT + service_role ALL) |
+| P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | in-progress | 2026-07-19 | Netlify 301s added for labs/india\|china + thematics→labs (needs Netlify publish). Full GSC URL list still optional |
+| P2-002 | seo | GSC: 102 Excluded by noindex — intent audit | verified-fixed | 2026-07-19 | Intentional: embed=true, admin, subscribe manage/confirm, og-card, 404. Layout defaults index except chromeless |
 | P2-003 | seo | Index rate ~29% (146 indexed / 364 not-indexed) | open | 2026-07-19 | Regenerate sitemap only after P0-002 / P2-001 |
 | P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | open | 2026-07-19 | ~72/113 on harness; continue via codemod only |
 | P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | open | 2026-07-19 | Re-verify before re-fixing |
