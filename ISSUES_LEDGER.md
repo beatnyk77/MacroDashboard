@@ -14,10 +14,10 @@ Source archives (historical only): `docs/archive/`
 
 | id | area | description | status | last-verified-date | notes |
 |----|------|-------------|--------|--------------------|-------|
-| P0-000 | process | Compost: consolidate audits into ledger, clear root debris | open | 2026-07-19 | Audits already in docs/archive; ledger created this session |
-| P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | open | 2026-07-19 | Live: feeds chip lagged; client falls back today+yesterday only; edge uses UTC date |
-| P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | open | 2026-07-19 | Live curl: Terminal-*.js only, canonical `https://graphiquestor.com/`; archive route OK |
-| P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | open | 2026-07-19 | Layout auto-canonicals when route mounts; real failure is homepage SPA shell when prerender missing |
+| P0-000 | process | Compost: consolidate audits into ledger, clear root debris | verified-fixed | 2026-07-19 | Commit 934f857 — ISSUES_LEDGER created; living docs restored from archive |
+| P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | in-progress | 2026-07-19 | Code fix 3db1ef8 (ET dates, 3-day fallback, edge counts). Needs edge deploy + live URL verify |
+| P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | in-progress | 2026-07-19 | Code fix 520bd20 (prerender path + validate-seo hub check). Needs Netlify deploy + curl verify |
+| P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | open | 2026-07-19 | Layout auto-canonicals when route mounts; real failure is homepage SPA shell when prerender missing; partial via P0-002 |
 | P1-001 | security | `daily_macro_briefs` public INSERT/UPDATE (advisor WITH CHECK true for anon) | open | 2026-07-19 | Repo migration only has SELECT; confirm live policies |
 | P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | open | 2026-07-19 | shadow_trade_anomalies, ai_compute_energy, cie_*, us_*, china_15th_fyp, ingestion_payload_hashes, treasury_hedging_metrics |
 | P1-003 | security | ~50 views SECURITY DEFINER — audit intentional vs accidental | open | 2026-07-19 | Convert accidental to INVOKER with migration comments |
@@ -44,4 +44,16 @@ Source archives (historical only): `docs/archive/`
 
 ## Session log
 
-_(Append at end of each session.)_
+### Session 1 — 2026-07-19
+
+- **Closed:** P0-000 (ledger + living docs)
+- **Opened:** (none new beyond seeded ledger)
+- **In progress:** P0-001, P0-002 — code landed, not live-verified
+- **Commits:**
+  - `934f857` chore: consolidate audit reports into ISSUES_LEDGER, restore living docs
+  - `3db1ef8` fix(macro-brief): align market dates to ET and harden generation
+  - `520bd20` fix(seo): guard macro-brief prerender against homepage shell
+- **lint/build:** lint clean; tsc clean; full `npm run build` (puppeteer prerender) not run this session
+- **index rate:** not rechecked
+- **Next session priority:** Deploy edge function `generate-morning-brief` + Netlify frontend; curl `/macro-brief/` for self-canonical + non-Terminal content; query `daily_macro_briefs` + cron status; mark P0-001/P0-002 verified-fixed only after live confirm; then P1-001 RLS on daily_macro_briefs writes
+
