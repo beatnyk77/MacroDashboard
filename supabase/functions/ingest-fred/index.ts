@@ -174,8 +174,8 @@ async function doIngestFred(
           await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
           return { metricId: metric.id, count: 0, success: true };
         } catch (err: any) {
-          // TODO(task-1.3): evaluate whether bumping updated_at on per-metric fetch errors is correct
-          await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
+          // Do NOT bump metrics.updated_at on fetch failure — that would mark
+          // stale series as fresh (freshness-on-failure anti-pattern).
           return { metricId: metric.id, count: 0, success: false, error: err.message };
         }
       }));
