@@ -250,4 +250,8 @@ jobs:
           set -euo pipefail
           # verify_jwt overrides are read from supabase/config.toml automatically;
           # do NOT pass --no-verify-jwt here.
-          supabase functions deploy "${{ matrix.function }}"
+          # import-map required for bare @supabase/supabase-js (see functions/deno.json).
+          # --use-api avoids local Docker dependency on runners without Docker.
+          supabase functions deploy "${{ matrix.function }}" \
+            --import-map supabase/functions/deno.json \
+            --use-api

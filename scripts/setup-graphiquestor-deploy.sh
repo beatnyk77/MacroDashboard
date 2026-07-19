@@ -82,7 +82,10 @@ else
 fi
 
 echo "==> Deploying generate-morning-brief (critical P0)"
-supabase functions deploy generate-morning-brief --project-ref "$PROJECT_REF"
+supabase functions deploy generate-morning-brief \
+  --project-ref "$PROJECT_REF" \
+  --import-map supabase/functions/deno.json \
+  --use-api
 
 echo "==> Invoking generate-morning-brief (service role from project if available)"
 # Prefer vault-less invoke via CLI if supported; else skip

@@ -118,7 +118,10 @@ jobs:
         run: |
           set -euo pipefail
           supabase link --project-ref "$SUPABASE_PROJECT_ID"
-          supabase functions deploy generate-morning-brief --project-ref "$SUPABASE_PROJECT_ID"
+          supabase functions deploy generate-morning-brief \
+            --project-ref "$SUPABASE_PROJECT_ID" \
+            --import-map supabase/functions/deno.json \
+            --use-api
           echo "Deployed generate-morning-brief"
 
       - name: Deploy function via Management API FormData (token ok)
