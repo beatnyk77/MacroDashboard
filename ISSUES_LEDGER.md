@@ -17,7 +17,7 @@ Source archives (historical only): `docs/archive/`
 | P0-000 | process | Compost: consolidate audits into ledger, clear root debris | verified-fixed | 2026-07-19 | Commit 934f857 — ISSUES_LEDGER created; living docs restored from archive |
 | P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | in-progress | 2026-07-19 | **DB verified (run 29662904580):** briefs exist for 2026-07-18 (3 rows, fallback-template); cron `generate-morning-brief` active `45 6 * * *`; invoke 200. **Still blocked for new edge code:** Management API token invalid (not `sbp_…`) so function deploy skipped; live function still returns empty `counts:{}`. Frontend not redeployed yet. |
 | P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | in-progress | 2026-07-19 | Code 520bd20 on main; CI prerender green. **Blocked:** Netlify Edge still serving old shell; no Netlify GitHub check-runs on recent commits; no `NETLIFY_BUILD_HOOK_URL` in vault |
-| P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | open | 2026-07-19 | Partial via P0-002; full audit after Netlify is redeploying from main |
+| P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | in-progress | 2026-07-19 | Code audit: 66/66 routable pages mount SEOManager; 13 chart/stub excluded. Layout path canonical remains. **Live verification blocked** on Netlify publish (P0-002/P0-004). |
 | P1-001 | security | `daily_macro_briefs` public INSERT/UPDATE (advisor WITH CHECK true for anon) | verified-fixed | 2026-07-19 | **Live confirmed** via pooler SQL (run 29662904580): policies = `daily_macro_briefs_select` SELECT {anon,authenticated} + `daily_macro_briefs_service_write` ALL {service_role}. Migration applied. |
 | P0-004 | ops | Deploy pipeline broken for functions + site | open | 2026-07-19 | GH `SUPABASE_ACCESS_TOKEN` not `sbp_…` (Management API rejected); local CLI logged into Export Desk org only (no GraphiQuestor); Netlify not linked to GH (no status checks); vault missing NETLIFY_BUILD_HOOK_URL |
 | P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | verified-fixed | 2026-07-19 | Migration 20260719000010 applied; all 12 `rls=true`; anon SELECT ok on product tables; hashes sealed; INSERT denied on us_companies |
@@ -27,8 +27,8 @@ Source archives (historical only): `docs/archive/`
 | P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | in-progress | 2026-07-19 | Netlify 301s added for labs/india\|china + thematics→labs (needs Netlify publish). Full GSC URL list still optional |
 | P2-002 | seo | GSC: 102 Excluded by noindex — intent audit | verified-fixed | 2026-07-19 | Intentional: embed=true, admin, subscribe manage/confirm, og-card, 404. Layout defaults index except chromeless |
 | P2-003 | seo | Index rate ~29% (146 indexed / 364 not-indexed) | open | 2026-07-19 | Regenerate sitemap only after P0-002 / P2-001 |
-| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | **98 ingest jobs on serveIngest; 0 runIngestion left.** Dynamic-name jobs converted: us-macro (`?task=`) + country-metrics (`?supplement=gmd`) log under fixed names with mode in meta. Remaining raw Deno.serve are non-ingest utilities only. Live edge deploy still needs `sbp_…`. |
-| P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | in-progress | 2026-07-19 | GDP crores formula fixed in code (`gdpUSD * 75 / 1e7` — FRED is full USD). OECD CLI mock upsert removed (live FRED series). **Not live-verified** until edge deploy (needs `sbp_…`). |
+| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | **98 serveIngest; 0 runIngestion.** Repaired Milestone-3 codemod damage: empty `counts:{}`, glued catch, Response-in-job → throw, real upsert counts restored. Utilities stay raw Deno.serve. **Deploy blocked** on `sbp_…`. |
+| P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | in-progress | 2026-07-19 | GDP crores fixed; OECD mock removed; **ingest-fred no longer bumps `metrics.updated_at` on per-series fetch failure**. **Not live-verified** until edge deploy (`sbp_…`). |
 
 ---
 
@@ -114,3 +114,14 @@ Source archives (historical only): `docs/archive/`
 - **Zero** `runIngestion` left under `supabase/functions/**/index.ts`
 - Cron URLs unchanged (same path + query params)
 - **ci-guards** PASS
+
+### Session 1e — 2026-07-19 (remaining tasks: harness repair + freshness + SEO audit)
+
+- **P3-001 repair:** fixed serveIngest jobs damaged by earlier raw-Deno.serve codemod
+  - unglued `return { ok:true };} catch`
+  - removed dead OPTIONS preflights inside jobFn
+  - `return new Response` error/auth paths → throw
+  - restored non-empty `counts.upserted` on ~30 functions (incl. state-fiscal, major-economies, CIE, macro-events, etc.)
+- **P3-002:** `ingest-fred` no longer bumps `metrics.updated_at` on catch (freshness-on-failure)
+- **P0-003:** `list-seo-coverage.mjs` now excludes chart stubs; **0** routable pages missing SEOManager
+- **Still blocked (human):** `sbp_…` PAT + Netlify publish for live verify of P0-001/P0-002/P3-*

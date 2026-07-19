@@ -25,21 +25,39 @@ function walk(dir, out = []) {
   return out;
 }
 
+/** Chart subcomponents / deprecated stubs — not routed; parent *Page.tsx owns SEO. */
+const EXCLUDE = [
+  /Chart\.tsx$/,
+  /\/Dashboard\.tsx$/, // legacy unused
+  /\/MacroBrief\.tsx$/, // deprecated stub → MacroBriefPage
+  /\/MacroBriefArchive\.tsx$/, // deprecated stub → MacroBriefArchivePage
+];
+
 const pages = walk(join(ROOT, 'src/pages'));
 const withSeo = [];
 const withoutSeo = [];
+const excluded = [];
 for (const p of pages) {
   const src = readFileSync(p, 'utf8');
   const rel = relative(ROOT, p);
+  if (EXCLUDE.some((re) => re.test(rel))) {
+    excluded.push(rel);
+    continue;
+  }
   if (src.includes('SEOManager')) withSeo.push(rel);
   else withoutSeo.push(rel);
 }
 
 console.log(`Routes in App.tsx (trailRoute): ${uniqueRoutes.length}`);
-console.log(`Page components with SEOManager: ${withSeo.length}`);
-console.log(`Page components without SEOManager: ${withoutSeo.length}`);
-console.log('\nWithout SEOManager (layout still emits path canonical):');
-withoutSeo.forEach((f) => console.log(`  - ${f}`));
+console.log(`Routable page components with SEOManager: ${withSeo.length}`);
+console.log(`Routable page components without SEOManager: ${withoutSeo.length}`);
+console.log(`Excluded chart/stub components: ${excluded.length}`);
+if (withoutSeo.length) {
+  console.log('\nWithout SEOManager (layout still emits path canonical):');
+  withoutSeo.forEach((f) => console.log(`  - ${f}`));
+} else {
+  console.log('\nAll routable page components mount SEOManager (or are intentionally excluded).');
+}
 console.log('\nIntentional noindex surfaces:');
 console.log('  - ?embed=true (SEOManager + GlobalLayout chromeless)');
 console.log('  - AdminDashboard, DataHealthDashboard, ManageSubscription, SubscribeConfirm, OgCardPage, NotFound');
