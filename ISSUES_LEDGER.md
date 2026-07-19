@@ -15,11 +15,11 @@ Source archives (historical only): `docs/archive/`
 | id | area | description | status | last-verified-date | notes |
 |----|------|-------------|--------|--------------------|-------|
 | P0-000 | process | Compost: consolidate audits into ledger, clear root debris | verified-fixed | 2026-07-19 | Commit 934f857 — ISSUES_LEDGER created; living docs restored from archive |
-| P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | in-progress | 2026-07-19 | **Edge binary live:** generate-morning-brief invoke 200 with real counts (ET date 2026-07-19, 3 briefs present). GH `SUPABASE_ACCESS_TOKEN` fixed (sbp_ format). **Frontend still homepage shell** until Netlify publishes main. |
-| P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | in-progress | 2026-07-19 | Code 520bd20 on main; CI prerender green. **Blocked:** Netlify Edge still serving old shell; no Netlify GitHub check-runs on recent commits; no `NETLIFY_BUILD_HOOK_URL` in vault |
+| P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | verified-fixed | 2026-07-19 | Edge binary + live page verified 2026-07-19. Briefs present (fallback-template); page self-canonical. Optional: improve LLM brief quality when OPENROUTER key set. |
+| P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | verified-fixed | 2026-07-19 | **Live verified:** `/macro-brief/` title “Morning Macro Brief — 19 July 2026”; canonical `https://graphiquestor.com/macro-brief/2026-07-19/`. Netlify CLI prod deploy `6a5c817f4ebc16de797607ad`. |
 | P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | in-progress | 2026-07-19 | Code audit: 66/66 routable pages mount SEOManager; 13 chart/stub excluded. Layout path canonical remains. **Live verification blocked** on Netlify publish (P0-002/P0-004). |
 | P1-001 | security | `daily_macro_briefs` public INSERT/UPDATE (advisor WITH CHECK true for anon) | verified-fixed | 2026-07-19 | **Live confirmed** via pooler SQL (run 29662904580): policies = `daily_macro_briefs_select` SELECT {anon,authenticated} + `daily_macro_briefs_service_write` ALL {service_role}. Migration applied. |
-| P0-004 | ops | Deploy pipeline broken for functions + site | in-progress | 2026-07-19 | Supabase PAT valid; Heartbeat green (run 29678609749). **Remaining:** Netlify rebuild (no vault NETLIFY_BUILD_HOOK_URL / GH not linked). |
+| P0-004 | ops | Deploy pipeline broken for functions + site | in-progress | 2026-07-19 | Supabase PAT + Heartbeat green; site redeployed via Netlify CLI. **Remaining:** reconnect Netlify↔GitHub for auto-deploys / set build hook. |
 | P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | verified-fixed | 2026-07-19 | Migration 20260719000010 applied; all 12 `rls=true`; anon SELECT ok on product tables; hashes sealed; INSERT denied on us_companies |
 | P1-003 | security | ~50 views SECURITY DEFINER — audit intentional vs accidental | verified-fixed | 2026-07-19 | 13 public telemetry views set `security_invoker=true` (20260719000040). Remaining DEFINER are intentional functions (materialize/subscriber cadence) |
 | P1-004 | security | `get_traffic_intelligence_summary` / `get_subscriber_stats` EXECUTE for anon | verified-fixed | 2026-07-19 | Revoked (20260719000020); live anon RPC → 401 permission denied |
@@ -135,3 +135,10 @@ Source archives (historical only): `docs/archive/`
 - Migration history repaired for 20260719* security migrations
 - Heartbeat Deploy + Verify **green** (29678609749); Netlify hook still missing
 - **Security:** token set only via `gh secret set` stdin + CLI keychain; not committed; scrubbed from workspace search
+
+### Session 1g — 2026-07-19 (Netlify CLI production deploy)
+
+- Linked CLI → site `graphiquestormacro` (graphiquestor.com)
+- `netlify deploy --build --prod` — deploy id `6a5c817f4ebc16de797607ad`
+- Live `/macro-brief/`: self-canonical dated URL; **not** homepage shell → **P0-002 verified-fixed**
+- P0-001 marked verified-fixed (edge + frontend path)
