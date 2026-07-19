@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 interface FredObservation {
     date: string;
@@ -255,28 +250,30 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
     }
 
     return {
-        rows_inserted: rowsUpdated,
-        metadata: {
+    ok: true,
+    counts: { upserted: rowsUpdated },
+    meta: {
             fed_funds_count: fedFunds.length,
             usd_inr_count: usdInr.length,
             cny_inr_count: cnyInrData.length,
         }
-    };
+  };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+serveIngest('ingest-currency-wars', async (_req: Request): Promise<IngestResult> => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const fredApiKey = Deno.env.get('FRED_API_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-currency-wars', async (ctx) => {
-        return runWithRetry(
-            'ingest-currency-wars',
-            () => doIngestCurrencyWars(supabase, fredApiKey),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
+    
+    const _r = await (doIngestCurrencyWars(supabase, fredApiKey));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+    
 });

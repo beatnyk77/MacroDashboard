@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 async function doIngestEnergy(supabase: any) {
     const telemetry = new IndiaTelemetry();
@@ -40,25 +35,16 @@ async function doIngestEnergy(supabase: any) {
     if (upsertError) throw upsertError;
 
     return {
-        rows_inserted: results.length,
-        metadata: { year, states_count: results.length }
+        ok: true,
+        counts: { upserted: results.length },
+        meta: { year, states_count: results.length },
     };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    return runIngestion(supabase, 'ingest-energy', async (ctx) => {
-        return runWithRetry(
-            'ingest-energy',
-            () => doIngestEnergy(supabase),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
-})
+serveIngest('ingest-energy', async (_req: Request): Promise<IngestResult> => {
+    const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
+    return doIngestEnergy(supabase);
+}, { timeoutMs: 15 * 60 * 1000, retries: 3 })

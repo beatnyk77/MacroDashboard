@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 async function fetchFredSeries(fredId: string, apiKey: string, limit = 52) {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=${limit}`;
@@ -26,6 +20,7 @@ function calculateWoW(current: number, previous: number) {
 
 
 import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
 async function doIngestGlobalLiquidity(supabase: any, fredApiKey: string) {
     // 1. Fetch required series
@@ -135,23 +130,19 @@ async function doIngestGlobalLiquidity(supabase: any, fredApiKey: string) {
     if (upsertError) throw upsertError;
 
     return {
-        success: true,
-        date: latestDate,
-        score: composite_score,
-        regime: regime_label,
-        rows_inserted: 1,
-        raw_payload: payload
-    };
+    ok: true,
+    counts: { upserted: 1 },
+    meta: { success: true, date: latestDate, score: composite_score, regime: regime_label, raw_payload: payload }
+  };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+serveIngest('ingest-global-liquidity', async (_req: Request): Promise<IngestResult> => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-global-liquidity', async (ctx) => {
+    
         const fredApiKey = Deno.env.get('FRED_API_KEY');
         if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
@@ -162,6 +153,12 @@ Deno.serve(async (req: Request) => {
         );
 
         if (!result.ok) throw new Error(`Global liquidity ingestion failed: ${result.error}`);
-        return result.value!;
-    });
+        const _v = result.value!;
+        if (_v && typeof _v.ok === 'boolean') return _v as IngestResult;
+        return {
+          ok: true,
+          counts: { upserted: _v?.rows_inserted ?? 0 },
+          meta: _v?.metadata ?? _v,
+        };
+    
 });

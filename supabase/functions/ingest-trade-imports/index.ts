@@ -2,21 +2,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-import { runIngestion } from '../_shared/logging.ts';
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-
-
-declare const Deno: any;
-
-
-
-const corsHeaders = {
-
-  'Access-Control-Allow-Origin': '*',
-
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-
-};
 
 
 
@@ -62,7 +49,7 @@ export function buildReporterList(
 
 
 
-async function doIngest(ctx: any, req: Request): Promise<any> {
+async function doIngest(supabase: any, req: Request): Promise<IngestResult> {
 
   const url = new URL(req.url);
 
@@ -80,7 +67,7 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
 
   if (!force) {
 
-    const { data: existing, error: existErr } = await ctx.supabase
+    const { data: existing, error: existErr } = await supabase
 
       .from('trade_global_aggregates')
 
@@ -107,17 +94,14 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
 
 
   if (reporters.length === 0) {
-
     return {
-
-      message: 'All reporters already have import data. Use ?force=true to re-ingest.',
-
-      countries_updated: 0,
-
-      rows_updated: 0,
-
+      ok: true,
+      counts: { upserted: 0 },
+      meta: {
+        message: 'All reporters already have import data. Use ?force=true to re-ingest.',
+        countries_updated: 0,
+      },
     };
-
   }
 
 
@@ -136,7 +120,7 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
           try {
             console.log(`[ingest-trade-imports] Reading ${iso3} ${year} from cache...`);
 
-            const { data: cacheRecords, error: cacheErr } = await ctx.supabase
+            const { data: cacheRecords, error: cacheErr } = await supabase
               .from('comtrade_cache')
               .select('hs_code, primary_value')
               .eq('reporter_iso3', iso3)
@@ -184,7 +168,7 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
     }
 
     try {
-      const { error: upsertErr } = await ctx.supabase
+      const { error: upsertErr } = await supabase
         .from('trade_global_aggregates')
         .upsert(result.rows, { onConflict: 'reporter_iso3,hs_code,year', ignoreDuplicates: false });
 
@@ -200,43 +184,18 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
   }
 
   return {
-    countries_updated: reporters.length,
-    rows_updated: totalRowsUpdated,
-    metadata: { summary },
+    ok: true,
+    counts: { upserted: totalRowsUpdated },
+    meta: { countries_updated: reporters.length, summary },
   };
-
 }
 
 
 
-Deno.serve(async (req: Request) => {
-
-  if (req.method === 'OPTIONS') {
-
-    return new Response('ok', { headers: corsHeaders });
-
-  }
-
-
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-
-
-  return runIngestion(
-
-    supabase,
-
-    'ingest-trade-imports',
-
-    (ctx) => doIngest(ctx, req),
-
-    corsHeaders
-
+serveIngest('ingest-trade-imports', async (req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
   );
-
-});
+  return doIngest(supabase, req);
+}, { timeoutMs: 25 * 60 * 1000, retries: 2 });

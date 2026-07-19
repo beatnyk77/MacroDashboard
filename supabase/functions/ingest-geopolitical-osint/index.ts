@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from "@supabase/supabase-js";
-import { runIngestion } from "../_shared/logging.ts";
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 async function fetchWithTimeout(url: string, options: any = {}) {
     const timeout = options.timeout || 45000; // 45s default
@@ -27,10 +23,8 @@ async function fetchWithTimeout(url: string, options: any = {}) {
     }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
+serveIngest('ingest-geopolitical-osint', async (_req: Request): Promise<IngestResult> => {
+
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -45,7 +39,7 @@ Deno.serve(async (req: Request) => {
         ? `Basic ${btoa(`${openSkyUser}:${openSkyPass}`)}`
         : null;
 
-    return runIngestion(supabase, 'ingest-geopolitical-osint', async (ctx) => {
+    
         const results = [];
         const now = new Date().toISOString();
         const platformStats: Record<string, any> = {};
@@ -173,10 +167,11 @@ Deno.serve(async (req: Request) => {
         }
 
         return {
-            rows_inserted: results.length,
-            metadata: { count: results.length, stats: platformStats }
+            ok: true,
+            counts: { upserted: results.length },
+            meta: { count: results.length, stats: platformStats }
         };
-    });
+    
 });
 
 function determineMacroCorrelation(type: string, id: string, origin: string): string {

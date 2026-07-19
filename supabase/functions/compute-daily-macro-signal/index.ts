@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-import { runIngestion } from '../_shared/logging.ts'
-
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 // ─── Types ─────────────────────────────────────────────────────────────────
 type MacroRegime = 'RISK_ON' | 'NEUTRAL' | 'RISK_OFF';
 type ContradictionSeverity = 'NOTABLE' | 'EXTREME';
@@ -140,22 +139,16 @@ function computeMacroSignal(inputs: {
 
 // ─── Main handler ──────────────────────────────────────────────────────────
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+serveIngest('compute-daily-macro-signal', async (_req: Request): Promise<IngestResult> => {
+
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   );
 
-  return runIngestion(supabase, 'compute-daily-macro-signal', async (ctx) => {
+  
     const today = new Date().toISOString().slice(0, 10);
 
     // ── 1. Fetch all inputs ──────────────────────────────────────────────
@@ -417,5 +410,5 @@ Deno.serve(async (req: Request) => {
         changes: changes.length,
       }
     };
-  });
+  
 });

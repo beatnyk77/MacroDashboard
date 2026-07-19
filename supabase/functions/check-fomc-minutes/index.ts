@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-import { runIngestion } from '../_shared/logging.ts'
 import { sendDiscordAlert } from '../_shared/webhook_utils.ts'
 // unpdf ES module zero-dependency parser for pure Deno compatibility
 import { extractText } from 'https://esm.sh/unpdf@0.12.1'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 // Helper to strip HTML tags and scripts
 function cleanHtml(html: string): string {
@@ -101,10 +97,8 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
   throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+serveIngest('check-fomc-minutes', async (_req: Request): Promise<IngestResult> => {
+
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -112,12 +106,12 @@ Deno.serve(async (req: Request) => {
   const aimlapiKey = Deno.env.get('AIMLAPI_KEY') ?? '';
 
   if (!openrouterKey && !aimlapiKey) {
-    return new Response(JSON.stringify({ error: 'Both OPENROUTER_API_KEY and AIMLAPI_KEY are missing' }), { status: 500, headers: corsHeaders });
+    throw new Error('Both OPENROUTER_API_KEY and AIMLAPI_KEY are missing');
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  return runIngestion(supabase, 'check-fomc-minutes', async (ctx) => {
+  
     console.log('[fomc-minutes] Starting FOMC Calendar check...');
     
     // Step 1: Fetch FOMC Calendars page
@@ -167,11 +161,12 @@ Deno.serve(async (req: Request) => {
     
     if (sortedMeetingDates.length === 0) {
       return {
-        rows_inserted: 0,
-        metadata: {
+            ok: true,
+            counts: { upserted: 0 },
+            meta: {
           message: 'No recent FOMC meetings found within current/previous calendar years.'
         }
-      };
+        };
     }
 
     const latestMeetingDate = sortedMeetingDates[0];
@@ -179,7 +174,7 @@ Deno.serve(async (req: Request) => {
     console.log(`[fomc-minutes] Newest detected FOMC Meeting Date: ${latestMeetingDate}`);
 
     // Step 3: Deduplicate against Supabase DB
-    const { data: existingRecord } = await ctx.supabase
+    const { data: existingRecord } = await supabase
       .from('fomc_minutes_analysis')
       .select('meeting_date')
       .eq('meeting_date', latestMeetingDate)
@@ -188,13 +183,14 @@ Deno.serve(async (req: Request) => {
     if (existingRecord) {
       console.log(`[fomc-minutes] FOMC Minutes for ${latestMeetingDate} have already been analyzed and saved.`);
       return {
-        rows_inserted: 0,
-        metadata: {
+            ok: true,
+            counts: { upserted: 0 },
+            meta: {
           meeting_date: latestMeetingDate,
           processed: false,
           reason: 'Latest minutes already processed.'
         }
-      };
+        };
     }
 
     // Step 4: Scraping and Parsing Handler (Prefer HTML, Fallback to PDF)
@@ -399,7 +395,7 @@ Analyze this text and output a single valid JSON object following this exact str
     };
 
     console.log(`[fomc-minutes] Upserting records to database for meeting date ${latestMeetingDate}...`);
-    const { error: upsertError } = await ctx.supabase
+    const { error: upsertError } = await supabase
       .from('fomc_minutes_analysis')
       .upsert(rowToUpsert, { onConflict: 'meeting_date' });
 
@@ -413,15 +409,16 @@ Analyze this text and output a single valid JSON object following this exact str
     );
 
     return {
-      rows_inserted: 1,
-      raw_payload: rawLLMText, // Cryptographic payload proof hash logged
+            ok: true,
+            counts: { upserted: 1 },
+            meta: { raw_payload: rawLLMText, // Cryptographic payload proof hash logged
       metadata: {
         meeting_date: latestMeetingDate,
         tone: parsedResult.overall_tone,
         themes_count: parsedResult.key_themes.length,
         is_pdf: isPDF,
         source_url: targetUrl
-      }
-    };
-  });
+      } }
+        };
+  
 });

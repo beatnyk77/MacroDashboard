@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8'
-import { runIngestion } from '../_shared/logging.ts'
 import { fetchWithRetry, upsertObservations } from '../_shared/ingest_utils.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 const OUNCES_PER_TONNE = 32150.7466
 
@@ -95,15 +91,14 @@ async function fetchCbGoldNet(): Promise<{ date: string; value: number } | null>
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+serveIngest('ingest-fiscaldata', async (_req: Request): Promise<IngestResult> => {
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   )
 
-  return runIngestion(supabase, 'ingest-fiscaldata', async () => {
+  
     const fredApiKey = Deno.env.get('FRED_API_KEY')
     if (!fredApiKey) throw new Error('FRED_API_KEY is not set')
 
@@ -152,14 +147,12 @@ Deno.serve(async (req: Request) => {
     const { count } = await upsertObservations(supabase, observations)
 
     return {
-      rows_inserted: count,
-      tips_days: tipsRows.length,
-      cb_gold_net_tonnes: cbGold?.value ?? null,
-      cb_gold_as_of: cbGold?.date ?? null,
-      metadata: {
+      ok: true,
+      counts: { upserted: count },
+      meta: {
         tips_days: tipsRows.length,
         cb_gold_net_tonnes: cbGold?.value ?? null,
+        cb_gold_as_of: cbGold?.date ?? null,
       },
-    }
-  }, corsHeaders)
+    };
 })

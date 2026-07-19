@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 // Data Source Config
 interface GfcfMetric {
@@ -141,29 +136,31 @@ async function doIngestGfcf(supabase: any, fredApiKey: string) {
     }
 
     return {
-        rows_inserted: updates.length,
-        metadata: { errors, update_ids: updates.map(u => u.metric_id) }
-    };
+    ok: true,
+    counts: { upserted: updates.length },
+    meta: { errors, update_ids: updates.map(u => u.metric_id) }
+  };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+serveIngest('ingest-gfcf', async (_req: Request): Promise<IngestResult> => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const fredApiKey = Deno.env.get('FRED_API_KEY');
 
     if (!fredApiKey) {
-        return new Response(JSON.stringify({ error: 'FRED_API_KEY is missing' }), { status: 500, headers: corsHeaders });
+        throw new Error('FRED_API_KEY is missing');
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-gfcf', async (ctx) => {
-        return runWithRetry(
-            'ingest-gfcf',
-            () => doIngestGfcf(ctx.supabase, fredApiKey),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
+    
+    const _r = await (doIngestGfcf(supabase, fredApiKey));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+    
 });

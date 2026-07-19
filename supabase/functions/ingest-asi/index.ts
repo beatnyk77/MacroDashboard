@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
 import { IndiaTelemetry } from '../_shared/india-telemetry.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 const INDIAN_STATES = [
     { c: '01', n: 'Jammu & Kashmir' }, { c: '02', n: 'Himachal Pradesh' }, 
@@ -82,25 +77,26 @@ async function doIngestAsi(supabase: any) {
     }
 
     return {
-        rows_inserted: results.length,
-        metadata: { year, states_processed: results.length }
-    };
+    ok: true,
+    counts: { upserted: results.length },
+    meta: { year, states_processed: results.length }
+  };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+serveIngest('ingest-asi', async (_req: Request): Promise<IngestResult> => {
+
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    return runIngestion(supabase, 'ingest-asi', async (ctx) => {
-        return runWithRetry(
-            'ingest-asi',
-            () => doIngestAsi(ctx.supabase),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
+    
+    const _r = await (doIngestAsi(supabase));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+    
 })

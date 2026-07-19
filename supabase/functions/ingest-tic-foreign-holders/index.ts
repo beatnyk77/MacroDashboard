@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-declare const Deno: any;
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 async function doIngestTic(supabase: any) {
     console.log('Fetching TIC data from Treasury.gov...')
@@ -101,20 +95,21 @@ async function doIngestTic(supabase: any) {
     }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+serveIngest('ingest-tic-foreign-holders', async (_req: Request): Promise<IngestResult> => {
+
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    return runIngestion(supabase, 'ingest-tic-foreign-holders', async (ctx) => {
-        return runWithRetry(
-            'ingest-tic-foreign-holders',
-            () => doIngestTic(supabase),
-            { timeoutMs: 5 * 60 * 1000, maxRetries: 3 }
-        )
-    })
+    
+    const _r = await (doIngestTic(supabase));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+
+    
 })

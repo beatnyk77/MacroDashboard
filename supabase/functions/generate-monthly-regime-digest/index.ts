@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { runIngestion, IngestionContext } from "../_shared/logging.ts";
 import { runWithRetry } from "../_shared/job-runner.ts";
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-        "authorization, x-client-info, apikey, content-type",
-};
 
 function extractJSON(raw: string): unknown {
     try {
@@ -283,15 +278,14 @@ Generate the Monthly Regime Digest. Return only the JSON object, no markdown fen
     return { digest: parsedResult, year_month };
 }
 
-Deno.serve(async (req) => {
-    if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<IngestResult> => {
 
     const supabaseClient = createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    return await runIngestion(supabaseClient, "generate-monthly-regime-digest", async (ctx: IngestionContext) => {
+    
         let targetYearMonth: string | undefined;
         try {
             const body = await req.json();
@@ -302,7 +296,7 @@ Deno.serve(async (req) => {
 
         const result = await runWithRetry(
             "generate-monthly-regime-digest",
-            () => doGenerateDigest(ctx.supabase, targetYearMonth),
+            () => doGenerateDigest(supabaseClient, targetYearMonth),
             { timeoutMs: 10 * 60 * 1000, maxRetries: 1 }
         );
 
@@ -310,6 +304,12 @@ Deno.serve(async (req) => {
             throw new Error(`Digest generation failed: ${result.error}`);
         }
 
-        return result.value!;
-    });
+        const _v = result.value!;
+        if (_v && typeof _v.ok === 'boolean') return _v as IngestResult;
+        return {
+          ok: true,
+          counts: { upserted: _v?.rows_inserted ?? 0 },
+          meta: _v?.metadata ?? _v,
+        };
+    
 });

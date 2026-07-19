@@ -1,23 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+serveIngest('ingest-bis-reer', async (_req: Request): Promise<IngestResult> => {
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
 
     const supabaseClient = createClient(
                 Deno.env.get('SUPABASE_URL') ?? '',
                 Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    return runIngestion(supabaseClient, 'ingest-bis-reer', async (ctx) => {
+    
         const fredApiKey = Deno.env.get('FRED_API_KEY');
         if (!fredApiKey) throw new Error('FRED_API_KEY is not set');
 
@@ -59,23 +52,24 @@ Deno.serve(async (req: Request) => {
         }
 
         if (results.length > 0) {
-            const { error } = await ctx.supabase
+            const { error } = await supabaseClient
                 .from('metric_observations')
                 .upsert(results, { onConflict: 'metric_id, as_of_date' });
             if (error) throw error;
 
             // Update metrics updated_at
             for (const country of targetCountries) {
-                await ctx.supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', country.id);
+                await supabaseClient.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', country.id);
             }
         }
 
         return {
-            rows_inserted: results.length,
-            metadata: {
+            ok: true,
+            counts: { upserted: results.length },
+            meta: {
                 processed_countries: targetCountries.length,
                 errors: errors.length > 0 ? errors : undefined
             }
         };
-    });
+    
 })

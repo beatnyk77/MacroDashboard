@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
-
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
     let lastError: Error | null = null;
@@ -33,22 +28,20 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
     throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+serveIngest('ingest-ecb-balance-sheet', async (_req: Request): Promise<IngestResult> => {
+
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const fredApiKey = Deno.env.get('FRED_API_KEY');
 
     if (!fredApiKey) {
-        return new Response(JSON.stringify({ error: 'FRED_API_KEY is missing' }), { status: 500, headers: corsHeaders });
+        throw new Error('FRED_API_KEY is missing');
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-ecb-balance-sheet', async (ctx) => {
+    
         // Metrics to fetch from FRED
         const metricsMap = [
             { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' },
@@ -91,7 +84,7 @@ Deno.serve(async (req: Request) => {
         // For now, let's just ensure we have the primary ones.
 
         if (results.length > 0) {
-            const { error: upsertError } = await ctx.supabase
+            const { error: upsertError } = await supabase
                 .from('metric_observations')
                 .upsert(results, { onConflict: 'metric_id, as_of_date' });
 
@@ -99,11 +92,12 @@ Deno.serve(async (req: Request) => {
         }
 
         return {
-            rows_inserted: results.length,
-            metadata: {
+            ok: true,
+            counts: { upserted: results.length },
+            meta: {
                 metrics_processed: metricsMap.map(m => m.id),
                 errors
             }
         };
-    });
+    
 })

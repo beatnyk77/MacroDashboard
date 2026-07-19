@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts';
-import { runWithRetry } from '../_shared/job-runner.ts';
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 async function doIngestTradeGravity(supabase: any) {
     const comtradeKey = Deno.env.get('COMTRADE_API_KEY');
@@ -122,25 +117,26 @@ async function doIngestTradeGravity(supabase: any) {
 
     console.log(`Fetched periods from API: ${Array.from(fetchedPeriods).join(', ') || 'none'}`);
     return {
-        rows_inserted: tradeData.length,
-        metadata: { message: `Upserted ${tradeData.length} trade gravity records.`, fetched_periods: Array.from(fetchedPeriods) }
-    };
+    ok: true,
+    counts: { upserted: tradeData.length },
+    meta: { message: `Upserted ${tradeData.length} trade gravity records.`, fetched_periods: Array.from(fetchedPeriods) }
+  };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
+serveIngest('ingest-trade-gravity', async (_req: Request): Promise<IngestResult> => {
+
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-trade-gravity', async (ctx) => {
-        return runWithRetry(
-            'ingest-trade-gravity',
-            () => doIngestTradeGravity(supabase),
-            { timeoutMs: 10 * 60 * 1000, maxRetries: 3 }
-        );
-    });
+    
+    const _r = await (doIngestTradeGravity(supabase));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+    
 });

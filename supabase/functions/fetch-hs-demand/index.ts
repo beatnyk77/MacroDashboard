@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
 import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-declare const Deno: any;
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-}
 
 // ── ISO3 → ISO2 mapping for cross-linking with country_metrics (alpha-2) ──
 interface ComtradeRecord {
@@ -272,8 +266,7 @@ async function doIngestHSDemand(ctx: { supabase: SupabaseClient, hsCode: string,
     }
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+serveIngest('fetch-hs-demand', async (req: Request): Promise<IngestResult> => {
 
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL')
@@ -290,7 +283,7 @@ Deno.serve(async (req: Request) => {
         const yearParam = url.searchParams.get('year')
         const years = yearParam ? [parseInt(yearParam)] : [2024, 2023, 2022, 2021]
 
-        return await runIngestion(supabase, 'fetch-hs-demand', async () => {
+        
             return await runWithRetry(`fetch-hs-demand-${hsCode}`, async () => {
                 return await doIngestHSDemand({
                     supabase,
@@ -301,13 +294,5 @@ Deno.serve(async (req: Request) => {
                     supabaseKey
                 });
             }, { maxRetries: 2, backoffMs: 5000 });
-        }, corsHeaders);
-
-    } catch (err: any) {
-        console.error('[fetch-hs-demand] Global catch:', err)
-        return new Response(JSON.stringify({ ok: false, error: err.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
-    }
+        
 })

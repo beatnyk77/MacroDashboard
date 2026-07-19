@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts';
-
-declare const Deno: any;
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
 // ISO 3166-1 alpha-3 → UN Comtrade M49 reporter codes
 const REPORTER_MAP: Record<string, string> = {
@@ -22,7 +15,7 @@ const REPORTER_MAP: Record<string, string> = {
 const COMTRADE_BASE = 'https://comtradeapi.un.org/data/v1/get/C/A/HS';
 const DEFAULT_YEARS = ['2023', '2024'];
 
-async function doIngest(ctx: any, req: Request): Promise<any> {
+async function doIngest(supabase: any, req: Request): Promise<IngestResult> {
   const url = new URL(req.url);
   const reporterISO = url.searchParams.get('reporterISO')?.toUpperCase() || null;
   const yearParam = url.searchParams.get('year');
@@ -111,7 +104,7 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
     }
 
     try {
-      const { error: upsertErr } = await ctx.supabase
+      const { error: upsertErr } = await supabase
         .from('comtrade_cache')
         .upsert(result.rows, { onConflict: 'reporter_code,period,cmd_code,flow_code,partner_code,hs_code', ignoreDuplicates: true });
 
@@ -127,25 +120,16 @@ async function doIngest(ctx: any, req: Request): Promise<any> {
   }
 
   return {
-    reporters_cached: reporters.length,
-    rows_cached: totalRowsCached,
-    metadata: { summary },
+    ok: true,
+    counts: { upserted: totalRowsCached },
+    meta: { reporters_cached: reporters.length, summary },
   };
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  return runIngestion(
-    supabase,
-    'cache-comtrade-data',
-    (ctx) => doIngest(ctx, req),
-    corsHeaders
+serveIngest('cache-comtrade-data', async (req: Request): Promise<IngestResult> => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
   );
-});
+  return doIngest(supabase, req);
+}, { timeoutMs: 25 * 60 * 1000, retries: 2 });

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts'
-import { runWithRetry } from '../_shared/job-runner.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 const EIA_API_BASE = "https://api.eia.gov/v2";
 const FRED_API_BASE = "https://api.stlouisfed.org/fred";
@@ -36,29 +31,16 @@ async function fetchEiaBrent(apiKey: string) {
     return json.response?.data || [];
 }
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
-
+serveIngest('ingest-oil-india-china', async (_req: Request): Promise<IngestResult> => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const eiaApiKey = Deno.env.get('EIA_API_KEY');
     const fredApiKey = Deno.env.get('FRED_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-oil-india-china', async (ctx) => {
-        if (!eiaApiKey || !fredApiKey) throw new Error('Missing API keys (EIA or FRED)');
-
-        const result = await runWithRetry(
-            'ingest-oil-india-china',
-            () => doIngestOilIndiaChina(supabase, eiaApiKey, fredApiKey),
-            { timeoutMs: 20 * 60 * 1000, maxRetries: 3, backoffMs: 20_000 }
-        )
-        if (!result.ok) throw new Error(`All attempts failed: ${result.error}`)
-        return result.value!
-    });
-});
+    if (!eiaApiKey || !fredApiKey) throw new Error('Missing API keys (EIA or FRED)');
+    return doIngestOilIndiaChina(supabase, eiaApiKey, fredApiKey);
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 });
 
 // ─── Core ingest logic ────────────────────────────────────────────────────────
 async function doIngestOilIndiaChina(supabase: any, eiaApiKey: string, fredApiKey: string) {
@@ -175,7 +157,8 @@ async function doIngestOilIndiaChina(supabase: any, eiaApiKey: string, fredApiKe
     }
 
     return {
-        rows_inserted: totalProcessed,
-        metadata: { lastError: lastError || null }
-    };
+    ok: true,
+    counts: { upserted: totalProcessed },
+    meta: { lastError: lastError || null }
+  };
 }

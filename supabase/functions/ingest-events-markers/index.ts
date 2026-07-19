@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts';
-import { runWithRetry } from '../_shared/job-runner.ts';
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 // GDELT 2.0 Geo API with explicit 24-hour timespan
 // Documentation: https://blog.gdeltproject.org/gdelt-geo-2-0-api-debuts/
@@ -84,26 +79,27 @@ async function doIngestEventsMarkers(supabase: any) {
     }
 
     return {
-        rows_inserted: recordCount,
-        metadata: { source: 'GDELT', timespan: '24h', api_url: geoApiUrl, count: recordCount, status: recordCount === 0 ? 'empty' : 'success' }
-    };
+    ok: true,
+    counts: { upserted: recordCount },
+    meta: { source: 'GDELT', timespan: '24h', api_url: geoApiUrl, count: recordCount, status: recordCount === 0 ? 'empty' : 'success' }
+  };
 }
 
-Deno.serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
+serveIngest('ingest-events-markers', async (_req: Request): Promise<IngestResult> => {
+
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-events-markers', async (ctx) => {
-        return runWithRetry(
-            'ingest-events-markers',
-            () => doIngestEventsMarkers(supabase),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
+    
+    const _r = await (doIngestEventsMarkers(supabase));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+    
 });

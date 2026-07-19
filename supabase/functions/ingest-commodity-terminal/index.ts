@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-declare const Deno: any;
 import { createClient } from '@supabase/supabase-js';
-import { runIngestion } from '../_shared/logging.ts';
-import { runWithRetry } from '../_shared/job-runner.ts';
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 const COMTRADE_API_BASE = "https://comtradeapi.un.org/data/v1/get";
 
@@ -197,20 +191,20 @@ async function doIngestCommodityTerminal(supabase: any, reqUrl: string) {
     };
 }
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
-    }
+serveIngest('ingest-commodity-terminal', async (req: Request): Promise<IngestResult> => {
+
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return runIngestion(supabase, 'ingest-commodity-terminal', async (ctx) => {
-        return runWithRetry(
-            'ingest-commodity-terminal',
-            () => doIngestCommodityTerminal(supabase, req.url),
-            { timeoutMs: 15 * 60 * 1000, maxRetries: 3 }
-        );
-    });
+    
+    const _r = await (doIngestCommodityTerminal(supabase, req.url));
+    if (_r && typeof _r.ok === 'boolean') return _r as IngestResult;
+    return {
+      ok: true,
+      counts: { upserted: _r?.rows_inserted ?? 0 },
+      meta: _r?.metadata ?? _r,
+    };
+    
 });

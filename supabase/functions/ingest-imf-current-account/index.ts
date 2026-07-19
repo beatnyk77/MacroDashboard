@@ -1,23 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+serveIngest('ingest-imf-current-account', async (_req: Request): Promise<IngestResult> => {
 
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
 
     const supabaseClient = createClient(
                 Deno.env.get('SUPABASE_URL') ?? '',
                 Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    return runIngestion(supabaseClient, 'ingest-imf-current-account', async (ctx) => {
+    
         console.log('Fetching IMF Current Account (% GDP) data...');
 
         // India, China, Brazil, Turkey
@@ -48,18 +41,19 @@ Deno.serve(async (req: Request) => {
             });
         }
 
-        const { error } = await ctx.supabase
+        const { error } = await supabaseClient
             .from('metric_observations')
             .upsert(results, { onConflict: 'metric_id, as_of_date' });
 
         if (error) throw error;
 
         return {
-            rows_inserted: results.length,
-            metadata: {
+            ok: true,
+            counts: { upserted: results.length },
+            meta: {
                 as_of_date: baseDate,
                 values: mockValues
             }
         };
-    });
+    
 })

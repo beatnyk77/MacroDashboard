@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion } from '../_shared/logging.ts'
 import { runWithRetry } from '../_shared/job-runner.ts'
-import { 
-  fetchAlphaVantageCommodity, 
-  fetchAlphaVantageFX, 
-  fetchAlphaVantageTimeSeries, 
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import {
+  fetchAlphaVantageCommodity,
+  fetchAlphaVantageFX,
+  fetchAlphaVantageTimeSeries,
   fetchAlphaVantageCrypto,
   upsertObservations,
-  getActiveMetricsBySource
+  getActiveMetricsBySource,
 } from '../_shared/ingest_utils.ts'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 async function doIngestMarketPulse(supabase: any, avApiKey: string) {
     console.log('Starting Market Pulse ingestion (AlphaVantage)...')
@@ -23,7 +19,11 @@ async function doIngestMarketPulse(supabase: any, avApiKey: string) {
     const metrics = await getActiveMetricsBySource(supabase, 'AlphaVantage')
     
     if (metrics.length === 0) {
-        return { metadata: { message: 'No active AlphaVantage metrics found' } }
+        return {
+            ok: true,
+            counts: { upserted: 0 },
+            meta: { message: 'No active AlphaVantage metrics found' },
+        }
     }
 
     const summary: any[] = []
@@ -90,34 +90,24 @@ async function doIngestMarketPulse(supabase: any, avApiKey: string) {
         await new Promise(r => setTimeout(r, 13000))
     }
 
-    return { rows_inserted: total_rows, metadata: { summary } }
+    return {
+    ok: true,
+    counts: { upserted: total_rows },
+    meta: { summary }
+  }
 }
 
 /**
  * Market Pulse Ingestion
  * Migrated from Yahoo Finance to AlphaVantage (Source ID: 47)
  */
-Deno.serve(async (req: Request) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
-
+serveIngest('ingest-market-pulse', async (_req: Request): Promise<IngestResult> => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const avApiKey = Deno.env.get('ALPHAVANTAGE_API_KEY') ?? ''
-    
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    return await runIngestion(supabase, 'ingest-market-pulse', async (ctx) => {
-        if (!avApiKey) throw new Error('ALPHAVANTAGE_API_KEY not found in environment')
-
-        const result = await runWithRetry(
-            'ingest-market-pulse',
-            () => doIngestMarketPulse(ctx.supabase, avApiKey),
-            { timeoutMs: 45 * 60 * 1000, maxRetries: 3 }
-        );
-
-        if (!result.ok) throw new Error(`Market pulse ingestion failed: ${result.error}`);
-        return result.value!;
-    })
-})
+    if (!avApiKey) throw new Error('ALPHAVANTAGE_API_KEY not found in environment')
+    // serveIngest already retries; call job directly
+    return doIngestMarketPulse(supabase, avApiKey)
+}, { timeoutMs: 45 * 60 * 1000, retries: 3 })
