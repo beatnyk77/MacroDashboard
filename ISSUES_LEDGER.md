@@ -15,11 +15,11 @@ Source archives (historical only): `docs/archive/`
 | id | area | description | status | last-verified-date | notes |
 |----|------|-------------|--------|--------------------|-------|
 | P0-000 | process | Compost: consolidate audits into ledger, clear root debris | verified-fixed | 2026-07-19 | Commit 934f857 — ISSUES_LEDGER created; living docs restored from archive |
-| P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | in-progress | 2026-07-19 | **DB verified (run 29662904580):** briefs exist for 2026-07-18 (3 rows, fallback-template); cron `generate-morning-brief` active `45 6 * * *`; invoke 200. **Still blocked for new edge code:** Management API token invalid (not `sbp_…`) so function deploy skipped; live function still returns empty `counts:{}`. Frontend not redeployed yet. |
+| P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | in-progress | 2026-07-19 | **Edge binary live:** generate-morning-brief invoke 200 with real counts (ET date 2026-07-19, 3 briefs present). GH `SUPABASE_ACCESS_TOKEN` fixed (sbp_ format). **Frontend still homepage shell** until Netlify publishes main. |
 | P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | in-progress | 2026-07-19 | Code 520bd20 on main; CI prerender green. **Blocked:** Netlify Edge still serving old shell; no Netlify GitHub check-runs on recent commits; no `NETLIFY_BUILD_HOOK_URL` in vault |
 | P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | in-progress | 2026-07-19 | Code audit: 66/66 routable pages mount SEOManager; 13 chart/stub excluded. Layout path canonical remains. **Live verification blocked** on Netlify publish (P0-002/P0-004). |
 | P1-001 | security | `daily_macro_briefs` public INSERT/UPDATE (advisor WITH CHECK true for anon) | verified-fixed | 2026-07-19 | **Live confirmed** via pooler SQL (run 29662904580): policies = `daily_macro_briefs_select` SELECT {anon,authenticated} + `daily_macro_briefs_service_write` ALL {service_role}. Migration applied. |
-| P0-004 | ops | Deploy pipeline broken for functions + site | open | 2026-07-19 | GH `SUPABASE_ACCESS_TOKEN` not `sbp_…` (Management API rejected); local CLI logged into Export Desk org only (no GraphiQuestor); Netlify not linked to GH (no status checks); vault missing NETLIFY_BUILD_HOOK_URL |
+| P0-004 | ops | Deploy pipeline broken for functions + site | in-progress | 2026-07-19 | Supabase PAT valid; Heartbeat green (run 29678609749). **Remaining:** Netlify rebuild (no vault NETLIFY_BUILD_HOOK_URL / GH not linked). |
 | P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | verified-fixed | 2026-07-19 | Migration 20260719000010 applied; all 12 `rls=true`; anon SELECT ok on product tables; hashes sealed; INSERT denied on us_companies |
 | P1-003 | security | ~50 views SECURITY DEFINER — audit intentional vs accidental | verified-fixed | 2026-07-19 | 13 public telemetry views set `security_invoker=true` (20260719000040). Remaining DEFINER are intentional functions (materialize/subscriber cadence) |
 | P1-004 | security | `get_traffic_intelligence_summary` / `get_subscriber_stats` EXECUTE for anon | verified-fixed | 2026-07-19 | Revoked (20260719000020); live anon RPC → 401 permission denied |
@@ -125,3 +125,13 @@ Source archives (historical only): `docs/archive/`
 - **P3-002:** `ingest-fred` no longer bumps `metrics.updated_at` on catch (freshness-on-failure)
 - **P0-003:** `list-seo-coverage.mjs` now excludes chart stubs; **0** routable pages missing SEOManager
 - **Still blocked (human):** `sbp_…` PAT + Netlify publish for live verify of P0-001/P0-002/P3-*
+
+### Session 1f — 2026-07-19 (Supabase PAT + deploy)
+
+- CLI logged into GraphiQuestor-owning org; project `debdriyzfcwvgrhzzzre` linked
+- GH secrets updated: `SUPABASE_ACCESS_TOKEN` (sbp_), `SUPABASE_PROJECT_ID`, `SUPABASE_URL`
+- Deployed: generate-morning-brief, ingest-fred, ingest-oecd-cli, ingest-india-fiscal-stress, ingest-us-macro, ingest-country-metrics (with import-map)
+- Invoked brief: `ok:true`, counts with skipped-already-exists for 2026-07-19
+- Migration history repaired for 20260719* security migrations
+- Heartbeat Deploy + Verify **green** (29678609749); Netlify hook still missing
+- **Security:** token set only via `gh secret set` stdin + CLI keychain; not committed; scrubbed from workspace search
