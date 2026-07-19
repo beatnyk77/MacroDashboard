@@ -27,8 +27,8 @@ Source archives (historical only): `docs/archive/`
 | P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | in-progress | 2026-07-19 | Netlify 301s added for labs/india\|china + thematics→labs (needs Netlify publish). Full GSC URL list still optional |
 | P2-002 | seo | GSC: 102 Excluded by noindex — intent audit | verified-fixed | 2026-07-19 | Intentional: embed=true, admin, subscribe manage/confirm, og-card, 404. Layout defaults index except chromeless |
 | P2-003 | seo | Index rate ~29% (146 indexed / 364 not-indexed) | open | 2026-07-19 | Regenerate sitemap only after P0-002 / P2-001 |
-| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | open | 2026-07-19 | ~72/113 on harness; continue via codemod only |
-| P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | open | 2026-07-19 | Re-verify before re-fixing |
+| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | **96/110** on `serveIngest` after runIngestion codemod. Remaining manual: `ingest-country-metrics`, `ingest-us-macro` (dynamic job names). Utilities stay raw Deno.serve. |
+| P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | in-progress | 2026-07-19 | GDP crores formula fixed in code (`gdpUSD * 75 / 1e7` — FRED is full USD). OECD CLI mock upsert removed (live FRED series). **Not live-verified** until edge deploy (needs `sbp_…`). |
 
 ---
 
