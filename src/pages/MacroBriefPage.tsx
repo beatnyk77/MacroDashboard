@@ -254,7 +254,10 @@ const MacroBriefInner: React.FC = () => {
         title={`Morning Macro Brief — ${format(parsedDate, 'd MMMM yyyy')}`}
         description={seoDescription}
         ogType="article"
-        ogImage={`https://graphiquestor.com/og/brief-${activeBrief.brief_date}.png`}
+        ogImage={
+          activeBrief.share_image_url ||
+          `https://graphiquestor.com/og/brief-${activeBrief.brief_date}.png`
+        }
         publishedTime={activeBrief.generated_at}
         canonical={`https://graphiquestor.com/macro-brief/${activeBrief.brief_date}`}
         robots="index, follow"

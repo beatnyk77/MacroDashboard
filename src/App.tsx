@@ -77,7 +77,6 @@ const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(modu
 const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
 
 const TradeDashboard = lazy(() => import('@/pages/TradeDashboard').then(module => ({ default: module.default })));
-const UKTradeIntelPage = lazy(() => import('@/pages/UKTradeIntelPage').then(module => ({ default: module.default })));
 const HSCodeOverviewPage = lazy(() => import('@/pages/HSCodeOverviewPage').then(module => ({ default: module.default })));
 const MarketDeepDivePage = lazy(() => import('@/pages/MarketDeepDivePage').then(module => ({ default: module.default })));
 const ExportScoutPlaybookPage = lazy(() => import('@/pages/ExportScoutPlaybookPage').then(module => ({ default: module.ExportScoutPlaybookPage })));
@@ -152,7 +151,6 @@ function App() {
                                         <Route path={trailRoute('/trade/hs/:code')} element={<HSCodeOverviewPage />} />
                                         <Route path={trailRoute('/trade/playbook/:code')} element={<ExportScoutPlaybookPage />} />
                                         <Route path={trailRoute('/trade/hs/:code/market/:iso')} element={<MarketDeepDivePage />} />
-                                        <Route path={trailRoute('/trade/uk/:code')} element={<UKTradeIntelPage />} />
 
                                         {/* Tools & Embeds */}
                                         <Route path={trailRoute('/tools')} element={<ToolsIndexPage />} />

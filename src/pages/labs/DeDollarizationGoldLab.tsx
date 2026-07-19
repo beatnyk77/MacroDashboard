@@ -10,7 +10,6 @@ import {
     Coins,
     Zap,
     Globe,
-    Lock
 } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { LazyRender } from '@/components/LazyRender';
@@ -24,12 +23,10 @@ import { RelatedMetrics } from '@/components/RelatedMetrics';
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
-const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
 const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
-const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
 const ReserveSellerTracker = lazy(() => import('@/features/dashboard/components/rows/ReserveSellerTracker').then(m => ({ default: m.ReserveSellerTracker })));
 const GoldOilRevaluationScenario = lazy(() => import('@/features/dashboard/components/sections/GoldOilRevaluationScenario').then(m => ({ default: m.GoldOilRevaluationScenario })));
@@ -214,22 +211,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     </div>
                 </section>
 
-                {/* 4. Global Financial Hubs & Gold Gateways */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Lock className="text-blue-400" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Financial Hubs & Gold Gateways</h2>
-                    </div>
-                    <SectionErrorBoundary name="Financial Hubs">
-                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GlobalFinancialHubsGoldGateways />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                </section>
-
-                {/* 5. Trade Flows & Misinvoicing */}
+                {/* 4. Trade Flows & Settlement */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-rose-500" size={28} />
@@ -258,32 +240,15 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             </LazyRender>
                         </SectionErrorBoundary>
                     </div>
-                    <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
-                </section>
-
-                {/* 5.5 Trade Gravity Shift */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Globe className="text-orange-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Trade Gravity: BRICS+ vs G7</h2>
-                    </div>
-                    <SectionErrorBoundary name="Trade Gravity">
-                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                            <Suspense fallback={<LoadingFallback />}>
-                                <TradeGravityCard />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                    
                     <div className="mt-6 flex justify-end">
                         <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
                             <a href="/labs/brics-trade-settlement">Deep Dive: BRICS Trade Settlement <ChevronRight size={14} className="ml-2" /></a>
                         </Button>
                     </div>
-                    <ChartInsightSummary id="lab-trade-gravity" insight="The gravitational shift in global trade flows from G7 to BRICS+ represents a fundamental re-pricing of geopolitical risk and settlement currency preference." />
+                    <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
                 </section>
 
-                {/* 6. Gold Positioning & Manipulation Monitor */}
+                {/* 5. Gold Positioning & Manipulation Monitor */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Zap className="text-amber-500" size={28} />

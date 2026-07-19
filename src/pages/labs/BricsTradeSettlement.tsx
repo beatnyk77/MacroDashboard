@@ -10,7 +10,6 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 
-const TradeGravityCard = lazy(() => import('@/features/dashboard/components/rows/TradeGravityCard').then(m => ({ default: m.TradeGravityCard })));
 const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 
 const LoadingFallback = () => (
@@ -62,20 +61,6 @@ export const BricsTradeSettlement: React.FC = () => {
                 </div>
 
                 <div className="space-y-24">
-                    <section>
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-6">The Gravitational Shift in Global Trade</h2>
-                        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl mb-6">
-                            <SectionErrorBoundary name="Trade Gravity">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <TradeGravityCard />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-                        <p className="text-muted-foreground max-w-4xl text-sm leading-relaxed">
-                            Data demonstrating BRICS+ surpassing the G7 in share of global GDP (PPP) and physical trade volume. This shift in the center of economic gravity inherently necessitates non-USD clearing infrastructure to reduce systemic friction.
-                        </p>
-                    </section>
-
                     <section>
                         <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-6">Local Currency Settlement Volumes</h2>
                         <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl mb-6 max-w-3xl">

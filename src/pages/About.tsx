@@ -96,7 +96,7 @@ export const About: React.FC = () => {
                             Methodology & Data Integrity
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8, color: 'text.secondary' }}>
-                            Our surveillance framework is rooted in 25-year structural Z-scores and debt-to-hard-asset thresholds. We reject consensus indicators in favor of raw data provenance—ingesting directly from the <strong>Ministry of Statistics (MoSPI)</strong>, <strong>FRED</strong>, <strong>BIS</strong>, and <strong>Central Bank</strong> repositories.
+                            Our surveillance framework is rooted in 25-year structural Z-scores and debt-to-hard-asset thresholds. We reject consensus indicators in favor of raw data provenance—ingesting via a core telemetry mesh from <strong>MoSPI</strong>, <strong>FRED</strong>, <strong>RBI</strong>, <strong>IMF</strong>, <strong>EIA</strong>, <strong>BIS</strong>, and peer central-bank repositories, with public pipeline health at <Link to="/data-health" style={{ color: 'inherit', fontWeight: 700 }}>/data-health</Link>.
                         </Typography>
 
                         <Typography variant="h4" sx={{ color: 'text.primary', fontWeight: 700, fontSize: '1.2rem', mt: 4, mb: 2 }}>

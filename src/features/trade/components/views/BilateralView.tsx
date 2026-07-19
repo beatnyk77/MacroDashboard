@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { TrendingDown, Building2 } from 'lucide-react'
+import { TrendingDown } from 'lucide-react'
 import { GlobalTradePulse } from '../GlobalTradePulse'
 import { GlobalImportPulse } from '../GlobalImportPulse'
 import { IndiaChinaDeepDive } from '../IndiaChinaDeepDive'
@@ -64,16 +63,6 @@ export const BilateralView: React.FC = () => {
                     UN Comtrade 2-Digit HS · {TRADE_DATA_YEAR}
                 </div>
             </div>
-
-            {selectedISO === 'GBR' && (
-                <Link
-                    to="/trade/uk/620342"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500/20 transition-colors"
-                >
-                    <Building2 className="w-3.5 h-3.5" />
-                    UK HMRC Entity Intel — search any HS on-page
-                </Link>
-            )}
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
                 <div className="p-6 rounded-3xl bg-white/[0.02] border border-emerald-500/10">

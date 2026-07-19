@@ -33,6 +33,7 @@ interface DailyBrief {
     content: BriefContent;
     regime_label: string | null;
     regime_score: number | null;
+    share_image_url?: string | null;
 }
 
 const BASE_URL = "https://graphiquestor.com";
@@ -59,7 +60,9 @@ function buildHtml(brief: DailyBrief, manageToken: string): string {
     const changed = bullets(brief.content.what_changed);
     const watch = bullets(brief.content.watch_today);
 
-    const ogImage = `${BASE_URL}/og/brief-${brief.brief_date}.png`;
+    const ogImage =
+        brief.share_image_url ||
+        `${BASE_URL}/og/brief-${brief.brief_date}.png`;
 
     return `
         <div style="font-family:ui-sans-serif,system-ui,sans-serif;max-width:560px;margin:0 auto;">
@@ -104,7 +107,7 @@ Deno.serve(async (req: Request) => {
         const today = new Date().toISOString().split("T")[0];
         const { data: brief, error: briefError } = await supabase
             .from("daily_macro_briefs")
-            .select("brief_date, content, regime_label, regime_score")
+            .select("brief_date, content, regime_label, regime_score, share_image_url")
             .eq("brief_date", today)
             .order("generated_at", { ascending: false })
             .limit(1)

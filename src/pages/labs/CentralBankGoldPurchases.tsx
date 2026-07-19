@@ -12,7 +12,6 @@ import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
-const GlobalFinancialHubsGoldGateways = lazy(() => import('@/features/dashboard/components/rows/GlobalFinancialHubsGoldGateways').then(m => ({ default: m.GlobalFinancialHubsGoldGateways })));
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -91,19 +90,6 @@ export const CentralBankGoldPurchases: React.FC = () => {
                         </p>
                     </section>
                     
-                    <section>
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-6">Financial Hubs & Gold Arbitrage</h2>
-                        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl mb-6">
-                            <SectionErrorBoundary name="Financial Hubs">
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GlobalFinancialHubsGoldGateways />
-                                </Suspense>
-                            </SectionErrorBoundary>
-                        </div>
-                        <p className="text-muted-foreground max-w-4xl text-sm leading-relaxed">
-                            Observing the flow of physical gold from Western vaults (LBMA/COMEX) to Eastern hubs (Shanghai, Dubai). The arbitrage between paper derivatives and physical delivery is a primary indicator of sovereign stress.
-                        </p>
-                    </section>
                 </div>
 
                 <div className="mt-24 pt-12 border-t border-white/5 text-center">

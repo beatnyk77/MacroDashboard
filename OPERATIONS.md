@@ -17,7 +17,7 @@ between scheduled runs.
 External APIs (FRED, RBI, EIA, UN Comtrade, IMF, ECB, AlphaVantage, Ember, Finnhub…)
   │
   ▼ HTTP fetch (authenticated)
-Supabase Edge Functions (Deno, ~93 deployed)
+Supabase Edge Functions (Deno, free-tier budget: stay ≤95 ACTIVE; leave headroom for deploys)
   │ upsert (metric_id, as_of_date)
   ▼
 metric_observations table  ←  ~70 specialised tables (cie_*, gold_*, comtrade_cache…)
@@ -379,7 +379,7 @@ Ordered steps to rebuild the entire system from scratch. Each step requiring a c
 
 ### What runs itself (no human required)
 
-- **All 93 ingest Edge Functions** — scheduled via pg_cron, auto-invoked.
+- **Edge Functions (free-tier, stay ≤95 ACTIVE)** — scheduled via pg_cron, auto-invoked. Pruned 2026-07-19 then growth stack: `send-confirm-email`, `send-daily-brief`, `generate-share-card`, `growth-actions` (see `pipelineCatalog.ts`). **Do not create more functions without pruning first.**
 - **`check-data-health-daily`** — runs at 07:00 UTC, emails on ≥3 issues.
 - **`compute-daily-macro-signal`** and **`compute-zscores-daily`** — 06:00-06:30 UTC.
 - **`generate-morning-brief`** and **`generate-weekly-regime-digest`** — automated on schedule.
@@ -407,3 +407,11 @@ The `check-data-health` monitor alerts when any metric exceeds 30 days since upd
 ---
 
 *Document sourced from: repo working tree, `docs/live-state-2026-06.md`, `docs/devops.md`, `docs/MAINTENANCE.md`, `docs/automation/SETUP.md`, `netlify.toml`, `.github/workflows/`, `supabase/functions/` (all `Deno.env.get` calls), and `audit_report.md`. Last updated: 2026-06-13.*
+
+## Free-tier Edge Function Quota
+
+- **Hard ceiling:** ~100 ACTIVE edge functions on Supabase free plan.
+- **Ops budget:** never exceed **95 ACTIVE** (leave 5 slots for deploys / hotfixes).
+- **402 max functions / spend cap:** prune before creating new functions.
+- **Prune policy:** no cron + no SPA invoke first; keep newsletter (`get-newsletter-data`) and India CIE pack.
+- **Catalog:** `src/lib/pipelineCatalog.ts` is the public SSOT for pipeline narrative.

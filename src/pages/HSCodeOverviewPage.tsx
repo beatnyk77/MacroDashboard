@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { RefreshCw, Globe2, AlertTriangle, Calendar, FileDown } from 'lucide-react'
 import { useHSDemand } from '../features/trade/hooks/useHSDemand'
 import { useHSCodeSearch } from '../features/trade/hooks/useHSCodeSearch'
@@ -123,12 +123,6 @@ const HSCodeOverviewPage: React.FC = () => {
                         lastVerified={state.status === 'success' ? state.cachedAt : null}
                         size="sm"
                     />
-                    <Link
-                        to={`/trade/uk/${code}`}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30"
-                    >
-                        UK Intel
-                    </Link>
                     <button
                         onClick={handleGeneratePlaybook}
                         className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-500/50"

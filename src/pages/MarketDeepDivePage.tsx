@@ -128,14 +128,6 @@ const MarketDeepDivePage: React.FC = () => {
                         lastVerified={cachedAt}
                         size="sm"
                     />
-                    {iso === 'GBR' && (
-                        <Link
-                            to={`/trade/uk/${code}`}
-                            className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500/25 transition-colors"
-                        >
-                            UK Entity Intel
-                        </Link>
-                    )}
                     <button
                         onClick={() => state.refresh()}
                         disabled={isLoading}

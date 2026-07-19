@@ -7,6 +7,10 @@
 /labs/china /intel/china/ 301
 /labs/china/ /intel/china/ 301
 
+# Retired UK entity-intel surface (free-tier prune — Comtrade trade hub remains)
+/trade/uk/* /trade/ 301
+/trade/uk /trade/ 301
+
 # Trailing-slash enforcement is handled client-side (TrailingSlashRedirect)
 # + prerender canonicals. Netlify TOML multi-path conditions are limited.
 

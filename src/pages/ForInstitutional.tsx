@@ -25,7 +25,7 @@ const ARC = [
         n: '03',
         tag: 'Proof',
         title: 'It runs itself — and we show our work.',
-        body: '93 serverless pipelines ingest daily with provenance certificates and self-healing on API drift. Don’t take our word for it.',
+        body: 'Core telemetry mesh: automated ingest paths across FRED, RBI, IMF, EIA, UN Comtrade and peer official sources — each with provenance, freshness signals, and public health telemetry. Don’t take our word for it.',
         proof: true,
     },
     {

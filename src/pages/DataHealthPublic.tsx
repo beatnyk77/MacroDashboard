@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
+import { isRetiredPipeline, pipelineLabel, PIPELINE_MESH_COPY } from '@/lib/pipelineCatalog';
 
 interface IngestionRow {
     function_name: string;
@@ -11,23 +12,6 @@ interface IngestionRow {
     rows_inserted: number | null;
     start_time: string;
 }
-
-const SOURCE_META: Record<string, { name: string; sub: string }> = {
-    'ingest-fred': { name: 'FRED', sub: 'Federal Reserve · US Macro' },
-    'ingest-cofer': { name: 'IMF COFER', sub: 'Reserve Composition' },
-    'ingest-bis-reer': { name: 'BIS', sub: 'Cross-border Banking' },
-    'ingest-energy': { name: 'India Energy', sub: 'MoSPI · State Grid' },
-    'ingest-asi': { name: 'MoSPI ASI', sub: 'India · eSankhyiki' },
-    'ingest-china-macro': { name: 'NBS / PBOC', sub: 'China · Industrial' },
-    'ingest-us-macro': { name: 'US Macro Pulse', sub: 'Treasury · BEA' },
-    'ingest-commodity-terminal': { name: 'EIA', sub: 'Energy · Crude / SPR' },
-};
-
-const prettify = (fn: string) =>
-    fn
-        .replace(/^ingest-/, '')
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, (c) => c.toUpperCase());
 
 const daysSince = (iso: string, now: number): number =>
     (now - new Date(iso).getTime()) / (1000 * 60 * 60 * 24);
@@ -54,7 +38,7 @@ interface PipelineStatusCardProps {
 }
 
 const PipelineStatusCard = React.memo<PipelineStatusCardProps>(({ row, now }) => {
-    const meta = SOURCE_META[row.function_name];
+    const meta = pipelineLabel(row.function_name);
     const status = freshnessFor(row, now);
     const live = row.status_code === 200;
 
@@ -63,10 +47,10 @@ const PipelineStatusCard = React.memo<PipelineStatusCardProps>(({ row, now }) =>
             <div className="mb-3 flex items-center justify-between gap-2.5">
                 <div>
                     <div className="text-[14px] font-extrabold text-white">
-                        {meta?.name ?? prettify(row.function_name)}
+                        {meta.name}
                     </div>
                     <div className="mt-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-white/40">
-                        {meta?.sub ?? row.function_name}
+                        {meta.sub}
                     </div>
                 </div>
                 <FreshnessChip status={status} lastUpdated={row.start_time} />
@@ -117,7 +101,10 @@ export const DataHealthPublic: React.FC = () => {
         refetchInterval: 300000,
     });
 
-    const rows = useMemo(() => ingestions ?? [], [ingestions]);
+    const rows = useMemo(
+        () => (ingestions ?? []).filter((r) => !isRetiredPipeline(r.function_name)),
+        [ingestions],
+    );
     const total = rows.length;
     const freshCount = useMemo(
         () => rows.filter((r) => freshnessFor(r, now) === 'fresh').length,
@@ -138,7 +125,7 @@ export const DataHealthPublic: React.FC = () => {
             <div className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-400/80">Live · Public</div>
             <h1 className="mb-1.5 mt-3.5 text-[26px] font-extrabold text-white">Data Health &amp; Provenance</h1>
             <p className="m-0 max-w-[620px] text-[14px] leading-relaxed text-white/50">
-                Every metric on GraphiQuestor traces to an official source, ingested on a schedule, with an authenticity score. This board is live.
+                {PIPELINE_MESH_COPY} Every metric traces to an official source with an authenticity score. This board is live.
             </p>
 
             <div className="my-6 flex flex-wrap gap-2.5">

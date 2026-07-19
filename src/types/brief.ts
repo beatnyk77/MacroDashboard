@@ -11,6 +11,8 @@ export interface MacroBrief {
   regime_score: number | null;
   regime_label: string | null;
   generated_at: string;
+  /** Public share card URL from generate-share-card (optional). */
+  share_image_url?: string | null;
 }
 
 export type FocusArea = 

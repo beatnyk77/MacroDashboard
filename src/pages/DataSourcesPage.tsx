@@ -267,28 +267,6 @@ const DATA_SOURCES: DataSourceEntry[] = [
         tier: 'Secondary',
     },
     {
-        id: 'uktradeinfo',
-        name: 'UK Trade Info API (HMRC)',
-        acronym: 'HMRC UK',
-        category: 'International – Trade',
-        description: `The official source for UK overseas trade statistics, provided by HM Revenue & Customs. 
-        Provides granular, entity-level insights into UK importers and exporters, as well as port and regional 
-        level data for detailed tracking of bilateral flow dynamics within the United Kingdom.`,
-        url: 'https://www.uktradeinfo.com/api-documentation',
-        frequency: 'Monthly',
-        coverage: 'United Kingdom (granular to postcodes and regional ports)',
-        keyMetrics: [
-            'Bilateral trade flows by HS6 commodity (UK imports/exports)',
-            'Entity-level importer/exporter reconnaissance',
-            'Port-level Overseas Trade Statistics (OTS)',
-            'Regional Trade Statistics (RTS)'
-        ],
-        howWeUseIt: `Powers the "Target Entity Reconnaissance" feature within the Export Scout Playbook. 
-        Dynamically fetches actual UK traders importing or exporting specific HS codes to provide actionable 
-        institutional leads for capital allocators.`,
-        tier: 'Primary',
-    },
-    {
         id: 'wgc',
         name: 'World Gold Council',
         acronym: 'WGC',
@@ -629,13 +607,14 @@ export const DataSourcesPage: React.FC = () => {
                     <Clock size={16} className="text-terminal-gold flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-muted-foreground leading-relaxed">
                         <strong className="text-foreground">Ingestion Cadence:</strong>{' '}
-                        All data ingestion is managed via scheduled Supabase Edge Functions (pg_cron).
-                        Daily series update at 06:00 UTC; weekly at Monday 08:00 UTC; quarterly series
-                        are refreshed within 48 hours of official publication. The{' '}
-                        <Link to="/admin/data-health" className="text-terminal-blue hover:text-blue-300 transition-colors">
-                            Data Health Dashboard
+                        Core telemetry mesh: automated Edge Functions on pg_cron across FRED, RBI, IMF, EIA,
+                        UN Comtrade and peer official sources — each with provenance and freshness signals.
+                        Daily series refresh at 06:00 UTC; weekly on Monday 08:00 UTC; quarterly series
+                        within 48 hours of official publication. The public{' '}
+                        <Link to="/data-health" className="text-terminal-blue hover:text-blue-300 transition-colors">
+                            Data Health board
                         </Link>{' '}
-                        provides live ingestion status for all series.
+                        shows live pipeline status.
                     </div>
                 </div>
 

@@ -18,9 +18,9 @@ function buildHtml(confirmUrl: string): string {
                 Confirm your subscription
             </h1>
             <p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 24px;">
-                You're one step away from receiving the <strong>Weekly Regime Digest</strong> —
-                de-dollarization, liquidity &amp; energy signals synthesised from 15+ official sources,
-                every Sunday.
+                One click confirms your GraphiQuestor email cadence — <strong>Weekly Regime Digest</strong>
+                (Sundays), <strong>Daily Morning Brief</strong> (before the US open), or both —
+                synthesised from FRED, RBI, IMF, EIA and peer official sources. Terminal stays free.
             </p>
             <a href="${confirmUrl}"
                style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;
@@ -35,7 +35,7 @@ function buildHtml(confirmUrl: string): string {
             <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
             <p style="font-size:11px;color:#cbd5e1;line-height:1.5;">
                 If you didn't subscribe to GraphiQuestor, you can safely ignore this email.<br/>
-                This link expires after one use.
+                This link expires after one use. Change cadence anytime from email footers.
             </p>
         </div>
     `;
@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
             body: JSON.stringify({
                 from: "GraphiQuestor <digest@graphiquestor.com>",
                 to: email.trim().toLowerCase(),
-                subject: "Confirm your Weekly Regime Digest subscription",
+                subject: "Confirm your GraphiQuestor subscription",
                 html,
             }),
         });
