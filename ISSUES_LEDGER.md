@@ -27,7 +27,7 @@ Source archives (historical only): `docs/archive/`
 | P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | in-progress | 2026-07-19 | Netlify 301s added for labs/india\|china + thematics→labs (needs Netlify publish). Full GSC URL list still optional |
 | P2-002 | seo | GSC: 102 Excluded by noindex — intent audit | verified-fixed | 2026-07-19 | Intentional: embed=true, admin, subscribe manage/confirm, og-card, 404. Layout defaults index except chromeless |
 | P2-003 | seo | Index rate ~29% (146 indexed / 364 not-indexed) | open | 2026-07-19 | Regenerate sitemap only after P0-002 / P2-001 |
-| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | **96/110** on `serveIngest` after runIngestion codemod. Remaining manual: `ingest-country-metrics`, `ingest-us-macro` (dynamic job names). Utilities stay raw Deno.serve. |
+| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | **98 ingest jobs on serveIngest; 0 runIngestion left.** Dynamic-name jobs converted: us-macro (`?task=`) + country-metrics (`?supplement=gmd`) log under fixed names with mode in meta. Remaining raw Deno.serve are non-ingest utilities only. Live edge deploy still needs `sbp_…`. |
 | P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | in-progress | 2026-07-19 | GDP crores formula fixed in code (`gdpUSD * 75 / 1e7` — FRED is full USD). OECD CLI mock upsert removed (live FRED series). **Not live-verified** until edge deploy (needs `sbp_…`). |
 
 ---
@@ -97,7 +97,7 @@ Source archives (historical only): `docs/archive/`
 - **P3-001 harness migration:**
   - Extended `scripts/migrate-to-harness.ts` for `runIngestion` → `serveIngest` + `IngestResult`
   - Migrated 26 functions (incl. manual `cache-comtrade-data`, `ingest-trade-imports`)
-  - Coverage: **96/110** `serveIngest`; remaining `runIngestion`: `ingest-country-metrics`, `ingest-us-macro` (dynamic job names)
+  - Coverage after codemod: **96/110** `serveIngest`; remaining `runIngestion`: `ingest-country-metrics`, `ingest-us-macro`
   - Commit `d35a9d4`
 - **P3-002 data integrity (code only):**
   - India GDP crores: drop erroneous `* 1e9` (FRED `MKTGDPINA646NWDB` is full USD)
@@ -105,3 +105,12 @@ Source archives (historical only): `docs/archive/`
   - Commit `a0fba8c` — **not live-verified** (edge deploy needs `sbp_…`)
 - **Guards/lint:** `ci-guards` PASS; `npm run lint` clean
 - **Still blocked (human):** Supabase PAT + Netlify publish for P0-001/P0-002 and live P3-002 verification
+
+### Session 1d — 2026-07-19 (finish dynamic-name ingest jobs)
+
+- Manually migrated last two `runIngestion` jobs:
+  - `ingest-us-macro`: `?task=fiscal|ust|fred|auctions` preserved; logs as `ingest-us-macro` with `meta.task`
+  - `ingest-country-metrics`: `?supplement=gmd` preserved; logs as `ingest-country-metrics` with `meta.mode`
+- **Zero** `runIngestion` left under `supabase/functions/**/index.ts`
+- Cron URLs unchanged (same path + query params)
+- **ci-guards** PASS

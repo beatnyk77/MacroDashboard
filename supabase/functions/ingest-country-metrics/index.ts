@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
-import { runIngestion, IngestionContext } from '@shared/logging.ts'
+import { serveIngest, IngestResult } from '../_shared/handler.ts'
 
 const COUNTRIES = [
   'US','GB','DE','FR','IT','JP','CA','AU','BR','AR','MX','CN','IN','KR','ID','SA','TR','RU','ZA',
@@ -54,8 +54,7 @@ const GMD_SNAPSHOT_YEAR = 2024;
 // ---------------------------------------------------------------------------
 // FRED + reserves ingest (existing daily path)
 // ---------------------------------------------------------------------------
-async function ingestFREDMetrics(ctx: IngestionContext) {
-  const { supabase } = ctx;
+async function ingestFREDMetrics(supabase: any): Promise<IngestResult> {
   const timestamp = new Date().toISOString();
   const batchRows: any[] = [];
 
@@ -192,14 +191,17 @@ async function ingestFREDMetrics(ctx: IngestionContext) {
     console.log('[ingest-country-metrics] No rows to upsert');
   }
 
-  return { rows_inserted: batchRows.length, metadata: { timestamp } };
+  return {
+    ok: true,
+    counts: { upserted: batchRows.length },
+    meta: { mode: 'fred', timestamp },
+  };
 }
 
 // ---------------------------------------------------------------------------
 // GMD supplement ingest (quarterly path)
 // ---------------------------------------------------------------------------
-async function ingestGMDSupplement(ctx: IngestionContext) {
-  const { supabase } = ctx;
+async function ingestGMDSupplement(supabase: any): Promise<IngestResult> {
   const timestamp = new Date().toISOString();
   const batchRows: any[] = [];
   const year = GMD_SNAPSHOT_YEAR;
@@ -234,22 +236,19 @@ async function ingestGMDSupplement(ctx: IngestionContext) {
     console.warn('[ingest-country-gmd] No rows to upsert');
   }
 
-  return { rows_inserted: batchRows.length, metadata: { timestamp, year, source: 'GMD' } };
+  return {
+    ok: true,
+    counts: { upserted: batchRows.length },
+    meta: { mode: 'gmd', timestamp, year, source: 'GMD' },
+  };
 }
 
 // ---------------------------------------------------------------------------
 // Main entry: route by query param ?supplement=gmd
+// Fixed harness name `ingest-country-metrics`; mode recorded in meta.mode
+// (gmd | fred). serveIngest does not support dynamic log names.
 // ---------------------------------------------------------------------------
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-      }
-    });
-  }
-
+serveIngest('ingest-country-metrics', async (req: Request): Promise<IngestResult> => {
   const url = new URL(req.url);
   let supplement = url.searchParams.get('supplement');
 
@@ -263,14 +262,13 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  const isGMD = supplement === 'gmd';
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') || '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '',
+  );
 
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  const client = createClient(supabaseUrl, supabaseKey);
-
-  const functionName = isGMD ? 'ingest-country-gmd-supplement' : 'ingest-country-metrics';
-  const ingestFn = isGMD ? ingestGMDSupplement : ingestFREDMetrics;
-
-  return await runIngestion(client, functionName, ingestFn);
-});
+  if (supplement === 'gmd') {
+    return ingestGMDSupplement(supabase);
+  }
+  return ingestFREDMetrics(supabase);
+}, { timeoutMs: 20 * 60 * 1000, retries: 3 });
