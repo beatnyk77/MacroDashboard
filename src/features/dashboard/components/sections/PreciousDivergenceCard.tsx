@@ -27,6 +27,8 @@ interface ArbitrageRowProps {
     comexMetric?: PreciousDivergenceData;
     shanghaiMetric?: PreciousDivergenceData;
     iconColor: string;
+    /** When false, suppress live green pulse on Shanghai (dual-exit honesty). */
+    isLive?: boolean;
 }
 
 const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
@@ -34,7 +36,8 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
     spreadMetric,
     comexMetric,
     shanghaiMetric,
-    iconColor
+    iconColor,
+    isLive = true,
 }) => {
     if (!spreadMetric) return null;
 
@@ -79,7 +82,10 @@ const ArbitrageRow: React.FC<ArbitrageRowProps> = ({
                                 <span className="text-xs font-black text-emerald-500/40 uppercase tracking-heading mb-1">SHANGHAI (East)</span>
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl font-black text-emerald-400 font-mono tracking-heading tabular-nums">${shanghaiMetric?.value?.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</span>
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <div className={cn(
+                                        'w-1.5 h-1.5 rounded-full',
+                                        isLive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                                    )} />
                                 </div>
                             </div>
                         </div>
@@ -236,6 +242,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                     comexMetric={goldComex}
                     shanghaiMetric={goldShanghai}
                     iconColor="text-amber-500"
+                    isLive={isLive}
                 />
 
                 <ArbitrageRow
@@ -244,6 +251,7 @@ export const PreciousDivergenceCard: React.FC = () => {
                     comexMetric={silverComex}
                     shanghaiMetric={silverShanghai}
                     iconColor="text-slate-400"
+                    isLive={isLive}
                 />
             </div>
 

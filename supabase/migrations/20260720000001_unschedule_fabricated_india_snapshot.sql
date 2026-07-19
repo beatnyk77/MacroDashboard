@@ -16,5 +16,15 @@ BEGIN
   END LOOP;
 END $$;
 
-COMMENT ON TABLE public.india_macro_snapshot IS
-  'DEPRECATED 2026-07-20: populated by fabricated ingest-india-macro-snapshot. Do not surface as live telemetry. Cron unscheduled.';
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'india_macro_snapshots'
+  ) THEN
+    EXECUTE $c$
+      COMMENT ON TABLE public.india_macro_snapshots IS
+        'DEPRECATED 2026-07-20: populated by fabricated ingest-india-macro-snapshot. Do not surface as live telemetry. Cron unscheduled.'
+    $c$;
+  END IF;
+END $$;

@@ -131,7 +131,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                 setStats({
                     total: total,
                     yr1Total: yr1Sum,
-                    count: 500,
+                    count: rawData.length,
                     avgCpn: totalWeight > 0 ? totalWeightedCpn / totalWeight : 0,
                     deltaAvg: weightedDelta
                 });
@@ -473,18 +473,18 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                     <Calendar className="w-4 h-4 text-blue-400" />
                                 </div>
                                 <h4 className="text-xs font-bold text-blue-200 uppercase tracking-wider">
-                                    Market Context
+                                    Read Framework
                                 </h4>
                             </div>
                             <div className="space-y-3 text-xs text-slate-300">
                                 <p>
-                                    <strong className="text-blue-300">Sector Concentration:</strong> Financials & Industrials hold ~78% of the near-term maturity wall, creating sector-specific rollover vulnerability.
+                                    <strong className="text-blue-300">Tenor risk:</strong> Share of face maturing &lt;1Y is the primary rollover-stress gauge. Values above ~20% of total warrant higher scrutiny of refinancing capacity.
                                 </p>
                                 <p>
-                                    <strong className="text-blue-300">2020–2021 Vintage:</strong> Large volume of low-coupon debt (2–3%) issued during COVID liquidity boom now facing 350–450bps higher rates.
+                                    <strong className="text-blue-300">Units:</strong> All amounts are USD face aggregates from the maturity wall table. Coupons are weighted averages when present in source rows.
                                 </p>
                                 <p>
-                                    <strong className="text-blue-300">Covenant Erosion:</strong> Market-wide lax underwriting standards in 2020–21 vintages increase potential for default clusters in stress scenarios.
+                                    <strong className="text-blue-300">Provenance:</strong> Observations keyed by as_of date. Stale snapshots (&gt;30d) are withheld from the live chart.
                                 </p>
                             </div>
                         </div>
@@ -495,25 +495,21 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                     <Activity className="w-4 h-4 text-amber-400" />
                                 </div>
                                 <h4 className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                                    Key Watchpoints
+                                    Desk checklist
                                 </h4>
                             </div>
                             <ul className="space-y-2 text-[11px] text-slate-300 font-mono leading-relaxed">
                                 <li className="flex items-start gap-2">
                                     <span className="text-amber-400 mt-0.5">▸</span>
-                                    <span>BBB-rated rollover risk as spreads widen</span>
+                                    <span>Compare &lt;1Y USD share vs prior as_of</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-amber-400 mt-0.5">▸</span>
-                                    <span>Commercial real estate exposure in bank debt</span>
+                                    <span>Cross-check coupon WAC vs refinancing delta</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-amber-400 mt-0.5">▸</span>
-                                    <span>Leveraged loan maturity wall 2025–2026</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <span className="text-amber-400 mt-0.5">▸</span>
-                                    <span>High-yield cyclical names in industrials</span>
+                                    <span>Validate as_of freshness chip before citation</span>
                                 </li>
                             </ul>
                         </div>
@@ -543,7 +539,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-slate-600">|</span>
-                    <span>DATA AS OF: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <span>DATA AS OF: {asOfDate ?? '—'}</span>
                 </div>
             </div>
         </section>
