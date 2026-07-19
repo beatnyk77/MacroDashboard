@@ -91,3 +91,17 @@ Source archives (historical only): `docs/archive/`
 - **SEO (code, pending Netlify):** Netlify 301s for `/labs/india|china` and `/thematics`; expanded prerender hub checks; `scripts/list-seo-coverage.mjs` (66/79 pages SEOManager; remainder chart subcomponents)
 - **Admin:** graceful empty state when analytics RPCs sealed
 - **Still waiting on you (Supabase PAT + Netlify):** deploy `generate-morning-brief` binary; publish frontend so `/macro-brief/` leaves homepage shell
+
+### Session 1c — 2026-07-19 (Phase 4 serveIngest + data integrity)
+
+- **P3-001 harness migration:**
+  - Extended `scripts/migrate-to-harness.ts` for `runIngestion` → `serveIngest` + `IngestResult`
+  - Migrated 26 functions (incl. manual `cache-comtrade-data`, `ingest-trade-imports`)
+  - Coverage: **96/110** `serveIngest`; remaining `runIngestion`: `ingest-country-metrics`, `ingest-us-macro` (dynamic job names)
+  - Commit `d35a9d4`
+- **P3-002 data integrity (code only):**
+  - India GDP crores: drop erroneous `* 1e9` (FRED `MKTGDPINA646NWDB` is full USD)
+  - OECD CLI: remove mock constants; fetch FRED MEI series; fail closed on empty
+  - Commit `a0fba8c` — **not live-verified** (edge deploy needs `sbp_…`)
+- **Guards/lint:** `ci-guards` PASS; `npm run lint` clean
+- **Still blocked (human):** Supabase PAT + Netlify publish for P0-001/P0-002 and live P3-002 verification
