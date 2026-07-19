@@ -9,10 +9,6 @@ const _EUROSTAT_API_BASE = "https://ec.europa.eu/eurostat/api/dissemination/stat
 
 serveIngest('ingest-energy-global', async (req) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };
-    }
-
     try {
         const supabase = createClient(
             Deno.env.get('SUPABASE_URL') ?? '',
@@ -150,10 +146,10 @@ serveIngest('ingest-energy-global', async (req) => {
             console.error("GIE Fetch failed:", e);
         }
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: results.length }, meta: { metrics: results } };
 
     } catch (err: any) {
-        throw e;
+        throw err;
 
     }
 });

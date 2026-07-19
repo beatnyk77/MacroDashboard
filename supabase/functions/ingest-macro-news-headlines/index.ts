@@ -54,9 +54,6 @@ function isValidUrl(url: string): boolean {
 
 serveIngest('ingest-macro-news-headlines', async (req: Request) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };}
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseKey)
@@ -209,7 +206,8 @@ serveIngest('ingest-macro-news-headlines', async (req: Request) => {
             metadata: { summary }
         });
 
-        return { ok: true, counts: {} };} catch (error: any) {
+        return { ok: true, counts: { upserted: rows_inserted } };
+    } catch (error: any) {
         console.error('Master Error:', error.message)
 
         // Ensure log end is recorded

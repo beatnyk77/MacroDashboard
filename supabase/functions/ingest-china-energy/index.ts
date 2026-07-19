@@ -97,10 +97,10 @@ serveIngest('ingest-china-energy', async (_req: Request) => {
 
         console.log(`[ChinaEnergy] Done. Upserted ${upserts.length} records.`);
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: upserts.length } };
     } catch (error: any) {
         console.error('[ChinaEnergy] Error:', error);
-        throw e;
+        throw error;
 
     }
 });

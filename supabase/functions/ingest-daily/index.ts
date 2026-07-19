@@ -11,8 +11,7 @@ serveIngest('ingest-daily', async (req) => {
     // For now, we rely on Supabase's internal invoke protections or a shared secret header if needed.
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+        throw new Error('Unauthorized');}
 
     const runId = crypto.randomUUID()
     const client = createAdminClient()
@@ -38,7 +37,8 @@ serveIngest('ingest-daily', async (req) => {
         const totalDuration = Math.round(performance.now() - start)
         await logger.log('orchestrator', 'success', 0, 'Ingestion run complete', totalDuration)
 
-        return { ok: true, counts: {} };} catch (err: any) {
+        return { ok: true, counts: { upserted: 0 }, meta: { duration_ms: totalDuration } };
+    } catch (err: any) {
         console.error('Fatal orchestration error:', err)
         await logger.log('orchestrator', 'error', 0, `Fatal: ${err.message}`)
 

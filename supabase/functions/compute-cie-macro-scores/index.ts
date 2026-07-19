@@ -6,8 +6,7 @@ serveIngest('compute-cie-macro-scores', async (req: Request) => {
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+        throw new Error('Unauthorized');}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
@@ -110,7 +109,8 @@ serveIngest('compute-cie-macro-scores', async (req: Request) => {
             status_code: 200
         })
 
-        return { ok: true, counts: {} };} catch (error: any) {
+        return { ok: true, counts: { upserted: processed }, meta: { results } };
+    } catch (error: any) {
         await supabase.from('ingestion_logs').insert({
             function_name: functionName,
             status: 'failed',
@@ -120,5 +120,5 @@ serveIngest('compute-cie-macro-scores', async (req: Request) => {
             status_code: 500
         })
         throw error;
-}
+    }
 })

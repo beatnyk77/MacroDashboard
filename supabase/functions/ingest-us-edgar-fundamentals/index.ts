@@ -6,8 +6,7 @@ serveIngest('ingest-us-edgar-fundamentals', async (req: Request) => {
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+        throw new Error('Unauthorized');}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
@@ -53,7 +52,8 @@ serveIngest('ingest-us-edgar-fundamentals', async (req: Request) => {
             value: result.processed || result.inserted || 1
         });
 
-        return { ok: true, counts: {} };} catch (e: any) {
+        return { ok: true, counts: { upserted: processed } };
+    } catch (e: any) {
         await client.from('ingestion_logs').insert({
             function_name: `ingest-us-edgar-fundamentals-${mode}`,
             status: 'failed',

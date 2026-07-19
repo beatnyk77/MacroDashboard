@@ -120,10 +120,10 @@ serveIngest('ingest-pboc-liquidity', async (_req: Request) => {
 
         console.log('[PBOC] Done. Regime:', regime_label);
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: metricUpserts.length }, meta: { regime_label } };
     } catch (error: any) {
         console.error('[PBOC] Error:', error);
-        throw e;
+        throw error;
 
     }
 });

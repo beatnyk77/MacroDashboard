@@ -192,7 +192,7 @@ async function handleMockFallback(supabase: SupabaseClient, logId: number | null
     if (mockError) throw mockError;
 
     await logIngestionEnd(supabase, logId, 'success', { rows_inserted: mockEvents.length, metadata: { status: 'mocked', reason } });
-    return new Response(JSON.stringify({ count: mockEvents.length, status: 'mocked', reason }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return { ok: true, counts: { upserted: mockEvents.length }, meta: { status: 'mocked', reason } };
 }
 
 // Alpha Vantage Fallback mechanism for key macro indicators
@@ -240,7 +240,7 @@ async function handleAlphaVantageFallback(supabase: SupabaseClient, logId: numbe
     }
 
     await logIngestionEnd(supabase, logId, 'success', { rows_inserted: events.length, metadata: { status: 'alpha_vantage_fallback', count: successCount } });
-    return new Response(JSON.stringify({ count: events.length, status: 'alpha_vantage_fallback' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return { ok: true, counts: { upserted: events.length }, meta: { status: 'alpha_vantage_fallback', count: successCount } };
 }
 
 // Send alert to admin (via Supabase Edge Function or webhook)
@@ -252,9 +252,6 @@ async function sendAlert(message: string, severity: 'critical' | 'warning' = 'wa
 
 // --- MAIN FUNCTION ---
 serveIngest('ingest-macro-events', async (req: Request) => {
-
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -338,12 +335,11 @@ serveIngest('ingest-macro-events', async (req: Request) => {
         const result = { count: eventsToUpsert.length, dateRange: { from: fromStr, to: toStr } };
         await logIngestionEnd(supabase, logId, 'success', { rows_inserted: eventsToUpsert.length, metadata: result });
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: eventsToUpsert.length }, meta: result };
 
     } catch (error: any) {
         console.error('Fatal ingestion error:', error);
         if (logId) await logIngestionEnd(supabase, logId, 'failed', { error_message: error.message });
-        throw fetchErr;
-
+        throw error;
     }
 })

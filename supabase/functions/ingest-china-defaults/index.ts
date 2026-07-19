@@ -90,9 +90,10 @@ serveIngest('ingest-china-defaults', async (_req) => {
 
         await logIngestion(supabase, 'ingest-china-defaults', 'success', row);
 
-        return { ok: true, counts: {} };} catch (error: any) {
+        return { ok: true, counts: { upserted: 1 }, meta: row };
+    } catch (error: any) {
         console.error(error)
         await logIngestion(supabase, 'ingest-china-defaults', 'error', { error: error.message });
-        throw e;
+        throw error;
 }
 })

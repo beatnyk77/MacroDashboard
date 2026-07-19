@@ -304,12 +304,9 @@ serveIngest('generate-weekly-regime-digest', async (req) => {
 
         if (dbError) throw dbError;
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: 1 }, meta: { week_ending_date: weekEndingDate } };
 
     } catch (error: unknown) {
-        return new Response(JSON.stringify({ error: (error as Error).message }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        throw new Error(String((error as Error).message ));
     }
 });

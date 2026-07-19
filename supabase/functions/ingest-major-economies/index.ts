@@ -10,9 +10,6 @@ import { serveIngest } from '../_shared/handler.ts';
  */
 serveIngest('ingest-major-economies', async (req: Request) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };}
-
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -152,7 +149,7 @@ serveIngest('ingest-major-economies', async (req: Request) => {
             summary.reserves_upserted = reserveUpserts.length;
         }
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: (summary.metrics_upserted || 0) + (summary.reserves_upserted || 0) }, meta: summary };
 
     } catch (error: any) {
         console.error('Major Economies Ingestion Error:', error);

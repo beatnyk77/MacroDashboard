@@ -6,9 +6,6 @@ import { serveIngest } from '../_shared/handler.ts';
 
 serveIngest('ingest-state-fiscal-health', async (req: Request) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };}
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, supabaseKey)
@@ -32,8 +29,9 @@ serveIngest('ingest-state-fiscal-health', async (req: Request) => {
             latest_date: '2024-03-31'
         };
 
-        return { ok: true, counts: {} };} catch (error: any) {
+        return { ok: true, counts: { upserted: results.length }, meta: summary };
+    } catch (error: any) {
         console.error('State Fiscal Health Ingestion error:', error.message)
         throw error;
-}
+    }
 })

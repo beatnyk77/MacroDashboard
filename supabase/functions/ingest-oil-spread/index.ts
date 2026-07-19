@@ -99,8 +99,6 @@ async function fetchYahooHistory(ticker: string): Promise<Array<{ date: string; 
 
 serveIngest('ingest-oil-spread', async (_req: Request) => {
 
-    if (_req.method === 'OPTIONS') return { ok: true, counts: {} };
-
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -204,7 +202,7 @@ serveIngest('ingest-oil-spread', async (_req: Request) => {
             start_time: now,
         });
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: upserted } };
 
     } catch (err: unknown) {
         const msg = (err as Error).message ?? String(err);

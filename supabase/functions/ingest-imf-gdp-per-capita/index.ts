@@ -56,8 +56,7 @@ serveIngest('ingest-imf-gdp-per-capita', async (req: Request) => {
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+        throw new Error('Unauthorized');}
 
     const runId = crypto.randomUUID()
     const client = createAdminClient()
@@ -138,7 +137,8 @@ serveIngest('ingest-imf-gdp-per-capita', async (req: Request) => {
         }
 
         const duration = Math.round(performance.now() - start)
-        return { ok: true, counts: {} };} catch (err: any) {
+        return { ok: true, counts: { upserted: rowsToUpsert.length }, meta: { duration_ms: duration } };
+    } catch (err: any) {
         console.error('Ingestion error:', err)
         await logger.log('imf-gdp-per-capita', 'error', 0, err.message)
         throw err;

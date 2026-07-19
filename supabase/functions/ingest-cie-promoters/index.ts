@@ -6,8 +6,7 @@ serveIngest('ingest-cie-promoters', async (req: Request) => {
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
-    }
+        throw new Error('Unauthorized');}
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
@@ -92,5 +91,5 @@ serveIngest('ingest-cie-promoters', async (req: Request) => {
         console.error('Failed to fetch NSE promoters', e);
     }
 
-    return { ok: true, counts: {} };
+    return { ok: true, counts: { upserted: updates } };
 })

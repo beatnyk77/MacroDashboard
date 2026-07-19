@@ -109,10 +109,6 @@ function marketDateISO(now = new Date()): string {
 
 serveIngest('generate-morning-brief', async (req) => {
 
-  if (req.method === 'OPTIONS') {
-    return { ok: true, counts: {} };
-  }
-
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,

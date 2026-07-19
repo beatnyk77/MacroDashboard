@@ -93,9 +93,10 @@ serveIngest('ingest-global-refining', async (_req) => {
 
         await logIngestion(supabase, 'ingest-global-refining', 'success', { count: rows.length });
 
-        return { ok: true, counts: {} };} catch (error: any) {
+        return { ok: true, counts: { upserted: upserted } };
+    } catch (error: any) {
         console.error(error)
         await logIngestion(supabase, 'ingest-global-refining', 'error', { error: error.message });
-        throw e;
+        throw error;
 }
 })

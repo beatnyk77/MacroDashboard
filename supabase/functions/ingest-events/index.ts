@@ -6,9 +6,6 @@ import { serveIngest } from '../_shared/handler.ts';
 
 serveIngest('ingest-events', async (req: Request) => {
 
-  if (req.method === 'OPTIONS') {
-    return { ok: true, counts: {} };}
-
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -57,7 +54,7 @@ serveIngest('ingest-events', async (req: Request) => {
 
     if (upsertError) throw upsertError;
 
-    return { ok: true, counts: {} };
+    return { ok: true, counts: { upserted: events.length } };
 
   } catch (error: any) {
     console.error('Error in ingest-events:', error.message);

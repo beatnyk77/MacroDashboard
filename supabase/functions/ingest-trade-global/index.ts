@@ -17,10 +17,6 @@ type TradeDataRow = {
 
 serveIngest('ingest-trade-global', async (req) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };
-    }
-
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -92,10 +88,10 @@ serveIngest('ingest-trade-global', async (req) => {
             results.china = { status: 'failed', error: e.message };
         }
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: Object.values(results).reduce((n: number, r: any) => n + (r?.rows || 0), 0) }, meta: results };
 
     } catch (err: any) {
-        throw e;
+        throw err;
 
     }
 });

@@ -5,10 +5,6 @@ import { serveIngest } from '../_shared/handler.ts';
 
 serveIngest('ingest-shadow-trade', async (req: any) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };
-    }
-
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -44,7 +40,7 @@ serveIngest('ingest-shadow-trade', async (req: any) => {
 
         if (error) throw error;
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: anomalies.length } };
 
     } catch (err: any) {
         throw err;

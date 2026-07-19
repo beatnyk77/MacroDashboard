@@ -28,10 +28,6 @@ const COUNTRY_MAP_ISO3_TO_2: Record<string, string> = {
 
 serveIngest('ingest-oil-global', async (req) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };
-    }
-
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -165,7 +161,7 @@ serveIngest('ingest-oil-global', async (req) => {
         if (partnerError) console.error("Partner Upsert Error", partnerError);
         else importsRowsProcessed += partnerRows.length;
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: importsRowsProcessed } };
 
     } catch (err: any) {
         console.error(err);

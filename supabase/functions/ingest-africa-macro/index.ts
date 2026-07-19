@@ -9,9 +9,6 @@ const corsHeaders = {
 
 serveIngest('ingest-africa-macro', async (req) => {
 
-  if (req.method === 'OPTIONS') {
-    return { ok: true, counts: {} };}
-
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -92,10 +89,8 @@ serveIngest('ingest-africa-macro', async (req) => {
       if (metricError) console.error(`Error upserting metric for ${metric.iso}:`, metricError)
     }
 
-    return { ok: true, counts: {} };} catch (error: unknown) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400,
-    })
+    return { ok: true, counts: { upserted: 1 + pulseMetrics.length }, meta: { snapshot_date: snapshotDate } };
+  } catch (error: unknown) {
+    throw error instanceof Error ? error : new Error(String(error));
   }
 })

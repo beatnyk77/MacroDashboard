@@ -6,7 +6,7 @@ serveIngest('ingest-cie-fundamentals', async (req: Request) => {
 
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response('Unauthorized', { status: 401 })
+        throw new Error('Unauthorized');
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
@@ -27,19 +27,24 @@ serveIngest('ingest-cie-fundamentals', async (req: Request) => {
 
     const start = new Date().toISOString()
     try {
-        const response = await handler(client)
-        const result = await response.clone().json() as any
+        const result = await handler(client) as {
+            processed?: number
+            dealsInserted?: number
+            updates?: number
+            [key: string]: unknown
+        }
+        const upserted = result.processed || result.dealsInserted || result.updates || 0
 
         await client.from('ingestion_logs').insert({
             function_name: functionName,
             status: 'success',
-            rows_inserted: result.processed || result.dealsInserted || result.updates || 0,
+            rows_inserted: upserted,
             start_time: start,
             completed_at: new Date().toISOString(),
             status_code: 200
         })
 
-        return response
+        return { ok: true, counts: { upserted }, meta: result }
     } catch (e: any) {
         await client.from('ingestion_logs').insert({
             function_name: functionName,
@@ -50,7 +55,7 @@ serveIngest('ingest-cie-fundamentals', async (req: Request) => {
             status_code: 500
         })
         throw e;
-}
+    }
 })
 
 const baseHeaders = {
@@ -149,9 +154,7 @@ async function ingestDeals(client: any) {
         }
     }
 
-    return new Response(JSON.stringify({ success: true, dealsInserted }), {
-        headers: { 'Content-Type': 'application/json' }
-    });
+    return { success: true, dealsInserted };
 }
 
 async function ingestPromoters(client: any) {
@@ -206,9 +209,7 @@ async function ingestPromoters(client: any) {
         updates++;
     }
 
-    return new Response(JSON.stringify({ success: true, updates }), {
-        headers: { 'Content-Type': 'application/json' }
-    });
+    return { success: true, updates };
 }
 
 async function ingestFundamentals(client: any) {
@@ -362,11 +363,9 @@ async function ingestFundamentals(client: any) {
         await new Promise(r => setTimeout(r, 100));
     }
 
-    return new Response(JSON.stringify({
+    return {
         success: true,
         processed: results.length,
-        tickers: results
-    }), {
-        headers: { 'Content-Type': 'application/json' }
-    })
+        tickers: results,
+    }
 }

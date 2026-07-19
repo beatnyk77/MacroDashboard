@@ -6,10 +6,6 @@ import { serveIngest } from '../_shared/handler.ts';
 
 serveIngest('ingest-uk-trade-ots', async (req: Request) => {
 
-    if (req.method === 'OPTIONS') {
-        return { ok: true, counts: {} };
-    }
-
     try {
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
         const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -69,7 +65,7 @@ serveIngest('ingest-uk-trade-ots', async (req: Request) => {
             console.log(`Successfully upserted ${flowData.length} records.`);
         }
 
-        return { ok: true, counts: {} };
+        return { ok: true, counts: { upserted: upserted } };
 
     } catch (err: any) {
         console.error("Ingest Error:", err);
