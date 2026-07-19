@@ -58,8 +58,9 @@ async function doIngestIndiaFiscalStress(supabase: any, fredApiKey: string): Pro
         const year = obs.date.substring(0, 4);
         const gdpUSD = parseFloat(obs.value);
         if (!isNaN(gdpUSD)) {
-            // Convert USD to INR Crores (approximate exchange rate: 1 USD = 75 INR, 1 Crore = 10M)
-            const gdpINRCrores = (gdpUSD * 1000000000 * 75) / 10000000;
+            // FRED MKTGDPINA646NWDB is full current USD (e.g. 3.5e12), not billions.
+            // Convert: USD → INR (≈75) → crores (÷ 1e7). Do NOT multiply by 1e9.
+            const gdpINRCrores = (gdpUSD * 75) / 10_000_000;
             gdpMap.set(year, gdpINRCrores);
         }
     });
