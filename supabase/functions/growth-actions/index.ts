@@ -180,7 +180,7 @@ async function handleRegimeAlert(
       ${statusLine ? `<p style="font-size:15px;line-height:1.6;color:#334155;">${esc(statusLine)}</p>` : ""}
       ${bulletHtml ? `<ul style="padding-left:18px;font-size:14px;">${bulletHtml}</ul>` : ""}
       <p style="margin:24px 0;">
-        <a href="${BASE_URL}/macro-brief/${today}?utm_source=email&utm_medium=regime-alert"
+        <a href="${BASE_URL}/macro-brief/${today}/?utm_source=email&utm_medium=regime-alert"
            style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-size:13px;font-weight:800;padding:10px 20px;border-radius:8px;">
           Open free terminal brief →
         </a>

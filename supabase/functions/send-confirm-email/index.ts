@@ -91,7 +91,7 @@ Deno.serve(async (req: Request) => {
             });
         }
 
-        const confirmUrl = `${SITE_URL}/subscribe/confirm?token=${encodeURIComponent(token)}`;
+        const confirmUrl = `${SITE_URL}/subscribe/confirm/?token=${encodeURIComponent(token)}`;
         const html = buildHtml(confirmUrl);
 
         const res = await fetch("https://api.resend.com/emails", {

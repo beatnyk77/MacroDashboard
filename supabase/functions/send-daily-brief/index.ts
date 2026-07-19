@@ -44,12 +44,12 @@ function esc(s: string): string {
 }
 
 function buildHtml(brief: DailyBrief, manageToken: string): string {
-    const briefUrl = `${BASE_URL}/macro-brief/${brief.brief_date}?${UTM}`;
+    const briefUrl = `${BASE_URL}/macro-brief/${brief.brief_date}/?${UTM}`;
     const shareText = encodeURIComponent(
         `Morning Macro Brief — ${brief.brief_date} (${brief.regime_label ?? "Neutral"} regime)`
     );
-    const shareUrl = encodeURIComponent(`${BASE_URL}/macro-brief/${brief.brief_date}?utm_source=share&utm_medium=email`);
-    const manageBase = `${BASE_URL}/subscribe/manage?token=${encodeURIComponent(manageToken)}`;
+    const shareUrl = encodeURIComponent(`${BASE_URL}/macro-brief/${brief.brief_date}/?utm_source=share&utm_medium=email`);
+    const manageBase = `${BASE_URL}/subscribe/manage/?token=${encodeURIComponent(manageToken)}`;
 
     const bullets = (items?: string[]) =>
         (items ?? [])

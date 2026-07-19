@@ -35,7 +35,7 @@ function buildHtml(digest: WeeklyDigest, manageToken: string): string {
     const narrativeUrl = `${BASE_URL}/weekly-narrative/${digest.week_ending_date}?${UTM}`;
     const shareText = encodeURIComponent(`Weekly Macro Regime Digest — week ending ${digest.week_ending_date}`);
     const shareUrl = encodeURIComponent(`${BASE_URL}/weekly-narrative/${digest.week_ending_date}?utm_source=share&utm_medium=email`);
-    const manageBase = `${BASE_URL}/subscribe/manage?token=${encodeURIComponent(manageToken)}`;
+    const manageBase = `${BASE_URL}/subscribe/manage/?token=${encodeURIComponent(manageToken)}`;
     const watch = (digest.what_to_watch ?? [])
         .map((w) => `<li style="margin-bottom:8px;color:#475569;">${w}</li>`)
         .join("");

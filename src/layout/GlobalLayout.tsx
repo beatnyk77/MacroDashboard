@@ -54,7 +54,11 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const [searchParams] = useSearchParams();
     const isEmbedded = searchParams.get('embed') === 'true';
     const isPlaybookDoc = location.pathname.includes('/trade/playbook');
-    const isChromeless = isEmbedded || isPlaybookDoc;
+    // Email deep-links: confirm / manage must not render the full terminal chrome.
+    const pathNoSlash = withoutTrailingSlash(location.pathname);
+    const isEmailLanding =
+        pathNoSlash === '/subscribe/confirm' || pathNoSlash === '/subscribe/manage';
+    const isChromeless = isEmbedded || isPlaybookDoc || isEmailLanding;
     const isObservatory = location.pathname.includes('/macro-observatory');
 
 

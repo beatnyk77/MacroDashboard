@@ -70,6 +70,10 @@ if (fs.existsSync(rssPath)) {
     }
 }
 
+// Email deep-link landings (noindex) — force prerender so first paint ≠ homepage shell.
+seedRoutes.add('/subscribe/confirm/');
+seedRoutes.add('/subscribe/manage/');
+
 const distDir = path.resolve(__dirname, '../dist');
 if (!fs.existsSync(distDir)) {
     console.error('dist directory not found. Run `npm run build` first.');
@@ -85,7 +89,9 @@ app.use((req, res) => {
 
 // Routes to completely ignore from crawling and sitemap
 // /og-card is the internal 1200×630 social-card render target (screenshotted below)
-const ignorePrefixes = ['/admin', '/api', '/og-card', '/subscribe'];
+// /subscribe/* is seeded intentionally (email deep-links) but not crawled from other pages.
+// Keep /admin, /api, /og-card out of sitemap discovery.
+const ignorePrefixes = ['/admin', '/api', '/og-card'];
 
 function isRoutable(href) {
     if (!href) return false;
@@ -236,6 +242,10 @@ function ogCardJobs(routes) {
 }
 
 async function captureOgCards(browser, routes, port) {
+    if (process.env.SKIP_OG === '1' || process.env.SKIP_OG === 'true') {
+        console.log('OG cards: SKIP_OG set — skipping screenshot pass.');
+        return;
+    }
     const jobs = ogCardJobs(routes);
     if (jobs.length === 0) {
         console.log('OG cards: no dated-content routes discovered — skipping.');
@@ -363,6 +373,8 @@ function generateSitemap(routes) {
 
     for (const route of sortedRoutes) {
         const path = withoutTrailingSlash(route);
+        // Email landings are noindex — do not advertise in sitemap.
+        if (path.startsWith('/subscribe')) continue;
         const lastmod = routeLastmod(route);
         // Priority heuristic (sitemap hints, not ranking signals):
         //   1.0 homepage | 0.9 macro-brief, intel/india | 0.8 top-level sections
