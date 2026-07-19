@@ -17,18 +17,18 @@ Source archives (historical only): `docs/archive/`
 | P0-000 | process | Compost: consolidate audits into ledger, clear root debris | verified-fixed | 2026-07-19 | Commit 934f857 — ISSUES_LEDGER created; living docs restored from archive |
 | P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | verified-fixed | 2026-07-19 | Edge binary + live page verified 2026-07-19. Briefs present (fallback-template); page self-canonical. Optional: improve LLM brief quality when OPENROUTER key set. |
 | P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | verified-fixed | 2026-07-19 | **Live verified:** `/macro-brief/` title “Morning Macro Brief — 19 July 2026”; canonical `https://graphiquestor.com/macro-brief/2026-07-19/`. Netlify CLI prod deploy `6a5c817f4ebc16de797607ad`. |
-| P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | in-progress | 2026-07-19 | Code audit: 66/66 routable pages mount SEOManager; 13 chart/stub excluded. Layout path canonical remains. **Live verification blocked** on Netlify publish (P0-002/P0-004). |
+| P0-003 | seo | Canonical coverage incomplete for prerendered routes (prior claim 39/94 missing SEOManager) | verified-fixed | 2026-07-19 | **Live sample 23/23 self-canonical** (hubs, labs, methods, countries, macro-brief). No homepage shell. Code SEOManager 66/66 routable. |
 | P1-001 | security | `daily_macro_briefs` public INSERT/UPDATE (advisor WITH CHECK true for anon) | verified-fixed | 2026-07-19 | **Live confirmed** via pooler SQL (run 29662904580): policies = `daily_macro_briefs_select` SELECT {anon,authenticated} + `daily_macro_briefs_service_write` ALL {service_role}. Migration applied. |
-| P0-004 | ops | Deploy pipeline broken for functions + site | in-progress | 2026-07-19 | Supabase PAT + Heartbeat green; site redeployed via Netlify CLI. **Remaining:** reconnect Netlify↔GitHub for auto-deploys / set build hook. |
+| P0-004 | ops | Deploy pipeline broken for functions + site | in-progress | 2026-07-19 | Supabase PAT works; Heartbeat green; Netlify CLI prod done. **Remaining:** GitHub↔Netlify auto-deploy; **Supabase function deploy 402** max functions/spend cap blocks bulk redeploy. |
 | P1-002 | security | 12 tables RLS disabled while PostgREST-exposed | verified-fixed | 2026-07-19 | Migration 20260719000010 applied; all 12 `rls=true`; anon SELECT ok on product tables; hashes sealed; INSERT denied on us_companies |
 | P1-003 | security | ~50 views SECURITY DEFINER — audit intentional vs accidental | verified-fixed | 2026-07-19 | 13 public telemetry views set `security_invoker=true` (20260719000040). Remaining DEFINER are intentional functions (materialize/subscriber cadence) |
 | P1-004 | security | `get_traffic_intelligence_summary` / `get_subscriber_stats` EXECUTE for anon | verified-fixed | 2026-07-19 | Revoked (20260719000020); live anon RPC → 401 permission denied |
 | P1-005 | security | Duplicate/redundant RLS policies on 11 tables | verified-fixed | 2026-07-19 | Normalized via 20260719000030 (one public SELECT + service_role ALL) |
-| P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | in-progress | 2026-07-19 | Netlify 301s added for labs/india\|china + thematics→labs (needs Netlify publish). Full GSC URL list still optional |
+| P2-001 | seo | GSC: 124 Redirect error + 88 Page with redirect | verified-fixed | 2026-07-19 | **Edge verified:** thematics→labs, labs/india|china→intel/* all **301** with correct Location. GSC UI reprocess still lags (user console). |china + thematics→labs (needs Netlify publish). Full GSC URL list still optional |
 | P2-002 | seo | GSC: 102 Excluded by noindex — intent audit | verified-fixed | 2026-07-19 | Intentional: embed=true, admin, subscribe manage/confirm, og-card, 404. Layout defaults index except chromeless |
-| P2-003 | seo | Index rate ~29% (146 indexed / 364 not-indexed) | open | 2026-07-19 | Regenerate sitemap only after P0-002 / P2-001 |
-| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | **98 serveIngest; 0 runIngestion.** Repaired Milestone-3 codemod damage: empty `counts:{}`, glued catch, Response-in-job → throw, real upsert counts restored. Utilities stay raw Deno.serve. **Deploy blocked** on `sbp_…`. |
-| P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | in-progress | 2026-07-19 | GDP crores fixed; OECD mock removed; **ingest-fred no longer bumps `metrics.updated_at` on per-series fetch failure**. **Not live-verified** until edge deploy (`sbp_…`). |
+| P2-003 | seo | Index rate ~29% (146 indexed / 364 not-indexed) | in-progress | 2026-07-19 | Live sitemap **221 URLs** (2026-07-19). Index rate needs GSC reprocess after deploy — do not claim fixed without GSC numbers. |
+| P3-001 | ingest | Remaining edge functions not on serveIngest; silent error swallow risk | in-progress | 2026-07-19 | Code: 98 serveIngest. Remote has **100** ACTIVE fns. Today redeployed key set; **bulk redeploy blocked by 402** “Max number of functions / spend cap”. 10 local-only fns cannot create. Script: `scripts/deploy-all-functions.sh`. |
+| P3-002 | ingest | GDP unit bug / freshness-on-failure anti-pattern | verified-fixed | 2026-07-19 | **Live:** india_fiscal_stress gdp~2.8e7 crores, debt_gdp~58%, interest_gdp~3.7% (plausible). OECD CLI live FRED upserts (not mock 100.2/99.4); mock 2025-12-31 rows deleted. FRED ingest 5339 upserts. Note: FRED series dates lag (2024-01-01) — series ID freshness follow-up optional. |
 
 ---
 
@@ -142,3 +142,14 @@ Source archives (historical only): `docs/archive/`
 - `netlify deploy --build --prod` — deploy id `6a5c817f4ebc16de797607ad`
 - Live `/macro-brief/`: self-canonical dated URL; **not** homepage shell → **P0-002 verified-fixed**
 - P0-001 marked verified-fixed (edge + frontend path)
+
+### Session 2 — 2026-07-19 (SEO live + bulk deploy attempt + P3 verify)
+
+- **Anon writes invariant:** SELECT 200 product tables; INSERT 401 briefs/us_companies; hashes 401; analytics RPC 401
+- **P0-003 live:** 23/23 sample paths self-canonical, 0 homepage shells
+- **P2-001 live:** 6/6 configured 301s OK (thematics, labs/india|china)
+- **Sitemap:** 221 URLs live
+- **Bulk deploy:** blocked mid-flight by Supabase **402 max functions/spend cap**; key P3 functions already live from earlier deploys
+- **P3-002 live invokes:** oecd-cli / india-fiscal-stress / fred all 200 with real counts; GDP crores order 1e7; mock OECD rows purged
+- **PAT rotate:** still recommended (token was in chat) — dashboard revoke + new sbp_ → `gh secret set` + `supabase login --token`
+- **Scripts:** `scripts/deploy-all-functions.sh` (import-map + use-api)
