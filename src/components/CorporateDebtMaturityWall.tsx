@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Building2, Calendar, DollarSign, AlertTriangle, Activity, Percent, TrendingUp } from 'lucide-react';
+import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
 
-
-
+/** Format maturity amounts already stored in USD trillions as institutional USD presentation. */
+function formatUsdTrillions(t: number): string {
+    if (!Number.isFinite(t) || t <= 0) return '—';
+    if (t >= 1) return `$${t.toFixed(2)}T`;
+    return `$${(t * 1000).toFixed(0)}B`;
+}
 
 interface AggregateData {
     bucket: string;
@@ -50,7 +55,16 @@ const COLORS = {
 export const CorporateDebtMaturityWall: React.FC = () => {
     const [data, setData] = useState<AggregateData[]>([]);
     const [stats, setStats] = useState({ total: 0, yr1Total: 0, count: 0, avgCpn: 0, deltaAvg: 0 });
+    const [asOfDate, setAsOfDate] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const freshness: FreshnessStatus = useMemo(() => {
+        if (!asOfDate) return 'no_data';
+        const days = (Date.now() - new Date(asOfDate).getTime()) / (1000 * 60 * 60 * 24);
+        if (days <= 7) return 'fresh';
+        if (days <= 30) return 'lagged';
+        return 'stale';
+    }, [asOfDate]);
 
     const fetchData = async () => {
         try {
@@ -61,9 +75,14 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                 .order('as_of_date', { ascending: false })
                 .limit(1);
 
-            if (!latestEntry || latestEntry.length === 0) return;
+            if (!latestEntry || latestEntry.length === 0) {
+                setAsOfDate(null);
+                setData([]);
+                return;
+            }
 
             const latestDate = latestEntry[0].as_of_date;
+            setAsOfDate(latestDate);
 
             const { data: rawData, error } = await supabase
                 .from('corporate_debt_maturities')
@@ -140,6 +159,23 @@ export const CorporateDebtMaturityWall: React.FC = () => {
         );
     }
 
+    if (!asOfDate || data.length === 0 || freshness === 'stale') {
+        return (
+            <section className="w-full bg-slate-950 border border-slate-800/50 rounded-2xl p-8 md:p-10">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                    <FreshnessChip status={asOfDate ? freshness : 'no_data'} lastUpdated={asOfDate ?? undefined} />
+                    <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">USD presentation</span>
+                </div>
+                <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Corporate Debt Maturity Wall</h2>
+                <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
+                    {asOfDate
+                        ? `Latest snapshot as-of ${asOfDate} is beyond the 30-day freshness window and is not shown as live telemetry. Pipeline will restore when SEC/IG maturity ingest succeeds.`
+                        : 'No corporate debt maturity observations available. Surface withheld rather than displaying fabricated amounts.'}
+                </p>
+            </section>
+        );
+    }
+
     return (
         <section className="w-full bg-gradient-to-b from-slate-950 via-slate-900/95 to-slate-950 border border-slate-800/50 rounded-2xl overflow-hidden shadow-2xl relative">
             {/* Glow accents */}
@@ -152,8 +188,9 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="space-y-3">
                         <div className="flex flex-wrap items-center gap-2">
                             <span className="bg-gradient-to-r from-blue-500/15 to-cyan-500/15 text-blue-300 text-[10px] font-black px-2.5 py-1 rounded border border-blue-500/30 uppercase tracking-[0.15em] shadow-sm">
-                                Institutional Grade
+                                USD
                             </span>
+                            <FreshnessChip status={freshness} lastUpdated={asOfDate} sourceRef="sec_edgar:corporate_debt_maturities" />
                             <span className="text-slate-600 text-xs">|</span>
                             <span className="text-slate-400 text-xs font-mono">SEC EDGAR XBRL • S&P 500</span>
                             {stats.avgCpn > 0 && (
@@ -174,7 +211,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                     Corporate Debt Maturity Wall
                                 </h2>
                                 <p className="text-slate-400 text-xs md:text-sm mt-2 font-mono">
-                                    Aggregate maturities across top {stats.count} constituents • Focus on rollover risk and refinancing pressure
+                                    USD aggregate maturities • as-of {asOfDate} • rollover risk by tenor bucket
                                 </p>
                             </div>
                         </div>
@@ -207,10 +244,10 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                             <DollarSign className="w-3.5 h-3.5 text-blue-400" />
                             Total Aggregate Debt
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-white tracking-tight">
-                            ${stats.total.toFixed(2)}T
+                        <div className="text-2xl md:text-3xl font-mono font-black text-white tracking-tight tabular-nums">
+                            {formatUsdTrillions(stats.total)}
                         </div>
-                        <p className="text-slate-500 text-xs mt-1 font-mono">S&P 500 constituents</p>
+                        <p className="text-slate-500 text-xs mt-1 font-mono">USD • S&P 500 constituents</p>
                     </div>
                 </div>
 
@@ -221,11 +258,11 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                             <AlertTriangle className="w-3.5 h-3.5" />
                             &lt; 1 Year Maturities
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-red-400 tracking-tight">
-                            ${stats.yr1Total.toFixed(2)}T
+                        <div className="text-2xl md:text-3xl font-mono font-black text-red-400 tracking-tight tabular-nums">
+                            {formatUsdTrillions(stats.yr1Total)}
                         </div>
                         <p className="text-red-300/60 text-xs mt-1 font-mono">
-                            {((stats.yr1Total / stats.total) * 100).toFixed(1)}% of total
+                            USD · {((stats.yr1Total / stats.total) * 100).toFixed(1)}% of total
                         </p>
                     </div>
                 </div>
@@ -237,8 +274,8 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                             <Percent className="w-3.5 h-3.5" />
                             1–3 Year Bucket
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-amber-400 tracking-tight">
-                            ${(data.find(d => d.bucket === '1–3Y')?.amount || 0).toFixed(2)}T
+                        <div className="text-2xl md:text-3xl font-mono font-black text-amber-400 tracking-tight tabular-nums">
+                            {formatUsdTrillions(data.find(d => d.bucket === '1–3Y')?.amount || 0)}
                         </div>
                         <p className="text-slate-500 text-xs mt-1 font-mono">
                             {(data.find(d => d.bucket === '1–3Y')?.percent || 0).toFixed(1)}% of total

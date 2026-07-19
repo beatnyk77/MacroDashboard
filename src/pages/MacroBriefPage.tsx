@@ -283,152 +283,159 @@ const MacroBriefInner: React.FC = () => {
           </div>
         )}
 
-        {/* Header Bar */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-6">
-          <div className="space-y-1">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-white/50">
-              {TEXTS.morningMacroBrief}
+        {/* Masthead */}
+        <header className="border-b border-white/10 pb-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div className="space-y-2">
+              <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-emerald-500/90">
+                {TEXTS.morningMacroBrief}
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
+                {formattedDayLabel}
+              </h1>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-white/35">
+                Generated {activeBrief.generated_at
+                  ? new Date(activeBrief.generated_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/New_York' })
+                  : '—'} ET
+                {' · '}
+                {activeBrief.model_used || 'synthesis engine'}
+              </p>
             </div>
-            <h1 className="text-base font-semibold text-white">
-              {formattedDayLabel}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-mono font-medium text-white/70">
-            <Clock size={12} className="text-white/30" />
-            <span className={cn(countdown.includes('open in') ? 'text-amber-400' : 'text-white/30')}>
-              {countdown}
-            </span>
-          </div>
-        </div>
-
-        {/* Regime Strip */}
-        <div className={cn(
-          "flex items-center justify-between px-6 py-4 rounded-2xl border bg-white/[0.01]",
-          regimeColors.border
-        )}>
-          <div className="flex items-center gap-3">
-            <span className={cn("text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded", regimeColors.bg, regimeColors.text)}>
-              {activeBrief.regime_label || 'NEUTRAL'}
-            </span>
-            {activeBrief.regime_score !== null && (
-              <span className="text-xs font-mono text-white/40">
-                {TEXTS.score}{activeBrief.regime_score}
+            <div className="flex items-center gap-2 text-xs font-mono font-medium text-white/70">
+              <Clock size={12} className="text-white/30" aria-hidden />
+              <span className={cn(countdown.includes('open in') ? 'text-amber-400' : 'text-white/40')}>
+                {countdown}
               </span>
-            )}
+            </div>
           </div>
-          <span className="text-xs font-mono text-white/30">
-            {TEXTS.basedOnSignals}
-          </span>
-        </div>
 
-        {/* Focus Selector */}
-        <div className="space-y-3 bg-white/[0.02] border border-white/5 rounded-2xl p-6">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-white/40">
+          <div className={cn(
+            "flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 rounded-xl border bg-[#020617]/80",
+            regimeColors.border
+          )}>
+            <div className="flex items-center gap-3">
+              <span className={cn("text-[10px] font-black font-mono uppercase tracking-wider px-2.5 py-1 rounded", regimeColors.bg, regimeColors.text)}>
+                {activeBrief.regime_label || 'NEUTRAL'}
+              </span>
+              {activeBrief.regime_score !== null && (
+                <span className="text-xs font-mono tabular-nums text-white/50">
+                  {TEXTS.score}<span className="text-white/80">{activeBrief.regime_score}</span>
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-white/30">
+              {TEXTS.basedOnSignals}
+            </span>
+          </div>
+        </header>
+
+        {/* Focus chips — quiet desk chrome */}
+        <div className="space-y-2.5 py-1">
+          <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/35">
             {TEXTS.yourFocusAreas}
           </div>
           <FocusAreaSelector
             selected={selectedAreas}
             onChange={setSelectedAreas}
           />
-          <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest">
-            {TEXTS.briefTailors}
-          </div>
         </div>
 
-        {/* Section 1 — What Changed Overnight */}
-        <section className="space-y-4">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-white/40">
-            {TEXTS.whatChangedOvernight}
-          </h2>
-          <ul className="space-y-3.5">
-            {activeBrief.content.what_changed.map((bullet, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-white/80">
-                <span className="text-amber-400 shrink-0 mt-0.5">◆</span>
-                <span>{bullet}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {/* Desk grid: Overnight | Regime | Watch */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-5">
+          <section className="space-y-3 lg:col-span-1 rounded-xl border border-white/8 bg-white/[0.02] p-5">
+            <h2 className="text-[10px] font-black font-mono uppercase tracking-[0.2em] text-emerald-500/80">
+              {TEXTS.whatChangedOvernight}
+            </h2>
+            <ul className="space-y-3">
+              {activeBrief.content.what_changed.map((bullet, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-white/85 leading-relaxed">
+                  <span className="text-emerald-500 shrink-0 mt-1 text-[8px]" aria-hidden>●</span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-        {/* Section 2 — Regime Status */}
-        <section className="space-y-4">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-white/40">
-            {TEXTS.regimeStatus}
-          </h2>
-          <p className="text-sm text-white/70 leading-relaxed font-medium">
-            {activeBrief.content.regime_status}
+          <section className="space-y-3 lg:col-span-1 rounded-xl border border-white/8 bg-white/[0.02] p-5">
+            <h2 className="text-[10px] font-black font-mono uppercase tracking-[0.2em] text-blue-400/80">
+              {TEXTS.regimeStatus}
+            </h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              {activeBrief.content.regime_status}
+            </p>
+            <div className="pt-3 border-t border-white/5 space-y-2.5">
+              <h3 className="text-[10px] font-mono uppercase tracking-widest text-white/35">
+                {section3Heading}
+              </h3>
+              <ul className="space-y-2.5">
+                {activeBrief.content.focus_observations.map((obs, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-white/80 leading-relaxed">
+                    <span className="text-blue-400 shrink-0 mt-1 text-[8px]" aria-hidden>●</span>
+                    <span>{obs}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          <section className="space-y-3 lg:col-span-1 rounded-xl border border-white/8 bg-white/[0.02] p-5">
+            <h2 className="text-[10px] font-black font-mono uppercase tracking-[0.2em] text-amber-400/80">
+              {TEXTS.watchToday}
+            </h2>
+            <ul className="space-y-3">
+              {activeBrief.content.watch_today.map((item, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-white/75 leading-relaxed">
+                  <span className="text-amber-400 shrink-0 mt-0.5 font-mono text-xs" aria-hidden>→</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        {/* Provenance footer */}
+        <footer className="pt-6 border-t border-white/10 space-y-4">
+          <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest leading-relaxed">
+            Provenance · model {activeBrief.model_used || 'n/a'}
+            {activeBrief.tokens_used != null ? ` · ${activeBrief.tokens_used} tokens` : ''}
+            {' · '}not investment advice · observe structural reality
           </p>
-        </section>
-
-        {/* Section 3 — Focus Area Signals */}
-        <section className="space-y-4">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-white/40">
-            {section3Heading}
-          </h2>
-          <ul className="space-y-3.5">
-            {activeBrief.content.focus_observations.map((obs, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-white/80">
-                <span className="text-amber-400 shrink-0 mt-0.5">◆</span>
-                <span>{obs}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Section 4 — Watch Today */}
-        <section className="space-y-4">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-white/40">
-            {TEXTS.watchToday}
-          </h2>
-          <ul className="space-y-3.5">
-            {activeBrief.content.watch_today.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-white/70">
-                <span className="text-blue-400 shrink-0 mt-0.5">→</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Navigation Footer */}
-        <div className="flex items-center justify-between pt-8 border-t border-white/10 mt-12 text-xs font-mono">
-          <Link
-            to={`/macro-brief/${prevDateStr}`}
-            className="flex items-center gap-1.5 text-white/45 hover:text-white/80 transition-colors"
-          >
-            <ChevronLeft size={14} />
-            <span>{prevDateStr}</span>
-          </Link>
-
-          <Link
-            to="/macro-brief/archive"
-            className="text-white/45 hover:text-white/80 transition-colors uppercase tracking-widest text-[10px]"
-          >
-            {TEXTS.archiveArrow}
-          </Link>
-
-          {hasNextBrief ? (
+          <div className="flex items-center justify-between text-xs font-mono">
             <Link
-              to={`/macro-brief/${nextDateStr}`}
-              className="flex items-center gap-1.5 text-white/45 hover:text-white/80 transition-colors"
+              to={`/macro-brief/${prevDateStr}`}
+              className="flex items-center gap-1.5 text-white/45 hover:text-white/80 transition-colors cursor-pointer min-h-[44px]"
             >
-              <span>{nextDateStr}</span>
-              <ChevronRight size={14} />
+              <ChevronLeft size={14} aria-hidden />
+              <span>{prevDateStr}</span>
             </Link>
-          ) : (
-            <span className="text-white/10 select-none cursor-not-allowed">
-              --
-            </span>
-          )}
-        </div>
+
+            <Link
+              to="/macro-brief/archive"
+              className="text-white/45 hover:text-white/80 transition-colors uppercase tracking-widest text-[10px] min-h-[44px] flex items-center cursor-pointer"
+            >
+              {TEXTS.archiveArrow}
+            </Link>
+
+            {hasNextBrief ? (
+              <Link
+                to={`/macro-brief/${nextDateStr}`}
+                className="flex items-center gap-1.5 text-white/45 hover:text-white/80 transition-colors cursor-pointer min-h-[44px]"
+              >
+                <span>{nextDateStr}</span>
+                <ChevronRight size={14} aria-hidden />
+              </Link>
+            ) : (
+              <span className="text-white/10 select-none">—</span>
+            )}
+          </div>
+        </footer>
       </div>
     </>
   );
 };
 
 export const MacroBriefPage: React.FC = () => (
-  <div className="w-full max-w-3xl mx-auto py-10 px-4 sm:px-6">
+  <div className="w-full max-w-6xl mx-auto py-10 px-4 sm:px-6 motion-reduce:transition-none">
     <SectionErrorBoundary name="Morning Macro Brief">
       <MacroBriefInner />
     </SectionErrorBoundary>

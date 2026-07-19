@@ -43,18 +43,19 @@ describe('CorporateDebtMaturityWall', () => {
         expect(screen.getByText('Analyzing SEC Maturity Filings...')).toBeInTheDocument();
     });
 
-    it('renders data correctly after fetch', async () => {
+    it('renders data correctly after fetch when as_of is fresh', async () => {
+        const asOf = new Date().toISOString().slice(0, 10);
         // First query: get latest date
-        const mockLimitDate = vi.fn().mockResolvedValue({ data: [{ as_of_date: '2023-10-01' }], error: null });
+        const mockLimitDate = vi.fn().mockResolvedValue({ data: [{ as_of_date: asOf }], error: null });
         const mockOrderDate = vi.fn().mockReturnValue({ limit: mockLimitDate });
         const mockSelectDate = vi.fn().mockReturnValue({ order: mockOrderDate });
 
         // Second query: get data
         const mockData = [
-            { as_of_date: '2023-10-01', bucket: '<1Y', maturing_amount: 1.5, percent_of_total_debt: 15, weighted_avg_coupon: 4, implied_refinancing_cost_delta: 50 },
-            { as_of_date: '2023-10-01', bucket: '1-3Y', maturing_amount: 2.5, percent_of_total_debt: 25, weighted_avg_coupon: 3.5, implied_refinancing_cost_delta: 20 },
-            { as_of_date: '2023-10-01', bucket: '3-5Y', maturing_amount: 3.0, percent_of_total_debt: 30, weighted_avg_coupon: 3.0, implied_refinancing_cost_delta: 10 },
-            { as_of_date: '2023-10-01', bucket: '>5Y', maturing_amount: 3.0, percent_of_total_debt: 30, weighted_avg_coupon: 3.2, implied_refinancing_cost_delta: 5 },
+            { as_of_date: asOf, bucket: '<1Y', maturing_amount: 1.5, percent_of_total_debt: 15, weighted_avg_coupon: 4, implied_refinancing_cost_delta: 50 },
+            { as_of_date: asOf, bucket: '1-3Y', maturing_amount: 2.5, percent_of_total_debt: 25, weighted_avg_coupon: 3.5, implied_refinancing_cost_delta: 20 },
+            { as_of_date: asOf, bucket: '3-5Y', maturing_amount: 3.0, percent_of_total_debt: 30, weighted_avg_coupon: 3.0, implied_refinancing_cost_delta: 10 },
+            { as_of_date: asOf, bucket: '>5Y', maturing_amount: 3.0, percent_of_total_debt: 30, weighted_avg_coupon: 3.2, implied_refinancing_cost_delta: 5 },
         ];
         
         const mockEqData = vi.fn().mockResolvedValue({ data: mockData, error: null });
@@ -84,5 +85,29 @@ describe('CorporateDebtMaturityWall', () => {
         expect(screen.getByText('$1.50T')).toBeInTheDocument();
         
         expect(screen.getByText('Corporate Debt Maturity Wall')).toBeInTheDocument();
+        expect(screen.getAllByText(/USD/).length).toBeGreaterThan(0);
+    });
+
+    it('withholds stale snapshots instead of showing live chart', async () => {
+        const mockLimitDate = vi.fn().mockResolvedValue({ data: [{ as_of_date: '2023-10-01' }], error: null });
+        const mockOrderDate = vi.fn().mockReturnValue({ limit: mockLimitDate });
+        const mockSelectDate = vi.fn().mockReturnValue({ order: mockOrderDate });
+        const mockEqData = vi.fn().mockResolvedValue({
+            data: [{ as_of_date: '2023-10-01', bucket: '<1Y', maturing_amount: 1.5, percent_of_total_debt: 100 }],
+            error: null,
+        });
+        const mockSelectData = vi.fn().mockReturnValue({ eq: mockEqData });
+        let queryCount = 0;
+        (supabase.from as any).mockImplementation(() => {
+            queryCount++;
+            return { select: queryCount === 1 ? mockSelectDate : mockSelectData };
+        });
+
+        render(<CorporateDebtMaturityWall />);
+        await waitFor(() => {
+            expect(screen.queryByText('Analyzing SEC Maturity Filings...')).not.toBeInTheDocument();
+        });
+        expect(screen.getByText(/beyond the 30-day freshness window/i)).toBeInTheDocument();
+        expect(screen.queryByText('$1.50T')).not.toBeInTheDocument();
     });
 });

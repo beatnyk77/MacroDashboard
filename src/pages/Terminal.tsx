@@ -55,7 +55,7 @@ const TreasurySnapshotSection = lazy(() => import('@/features/dashboard/componen
 // 3. REGIONAL & MACRO
 const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/components/sections/ChinaMacroPulseSection').then(m => ({ default: m.ChinaMacroPulseSection })));
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
-const IndiaMacroDashboard = lazy(() => import('@/features/dashboard/components/sections/IndiaMacroDashboard').then(m => ({ default: m.IndiaMacroDashboard })));
+// IndiaMacroDashboard removed — fabricated snapshot producer (credibility sprint)
 const AfricaMacroSnapshot = lazy(() => import('@/features/dashboard/components/sections/AfricaMacroSnapshot').then(m => ({ default: m.AfricaMacroSnapshot })));
 
 export const Terminal: React.FC = () => {
@@ -297,28 +297,13 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
 
-                {/* Row 12: INDIA MACRO SUMMARY */}
-                <ModuleRow
-                    label="INDIA SUMMARY"
-                    href="/intel/india"
-                    labelColor="text-amber-500/80"
-                    alternateBg
-                >
-                    <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
-                    <SectionErrorBoundary name="India Macro Snapshot">
-                        <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
-                            <IndiaMacroDashboard />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    </LazyRender>
-                </ModuleRow>
-
-                {/* Row 13: INDIA CREDIT CYCLE */}
+                {/* Row 12: INDIA CREDIT CYCLE */}
                 <ModuleRow
                     label="CREDIT CYCLE"
                     href="/intel/india"
                     badge={<GQSignalBadge href="/methods/india-credit-cycle-clock" />}
                     labelColor="text-amber-500/80"
+                    alternateBg
                 >
                     <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
                     <SectionErrorBoundary name="India Credit Cycle">

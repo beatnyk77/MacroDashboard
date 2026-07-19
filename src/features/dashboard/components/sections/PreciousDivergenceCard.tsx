@@ -11,6 +11,15 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils';
+import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
+
+function goldFreshness(lastUpdated?: string): FreshnessStatus {
+    if (!lastUpdated) return 'no_data';
+    const hours = (Date.now() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60);
+    if (hours <= 48) return 'fresh';
+    if (hours <= 72) return 'lagged';
+    return 'stale';
+}
 
 interface ArbitrageRowProps {
     title: string;
@@ -164,6 +173,28 @@ export const PreciousDivergenceCard: React.FC = () => {
     const silverComex = divergenceData?.find(d => d.metric_id === 'SILVER_COMEX_USD');
     const silverShanghai = divergenceData?.find(d => d.metric_id === 'SILVER_SHANGHAI_USD');
 
+    const asOf = goldSpread?.last_updated || goldComex?.last_updated || silverSpread?.last_updated;
+    const status = goldFreshness(asOf);
+    const isLive = status === 'fresh';
+
+    if (!divergenceData?.length || status === 'stale' || status === 'no_data') {
+        return (
+            <Card className="p-8 bg-black/40 border-white/5 rounded-[2.5rem]">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                    <FreshnessChip status={status} lastUpdated={asOf} sourceRef="live_api:ingest-precious-divergence" />
+                </div>
+                <h2 className="text-xl font-black tracking-heading text-white uppercase">
+                    Gold Derivatives &amp; Physical Arbitrage
+                </h2>
+                <p className="mt-3 text-sm text-muted-foreground max-w-xl leading-relaxed">
+                    {status === 'stale'
+                        ? `Last observation older than 72h${asOf ? ` (${asOf})` : ''}. Withholding live vault chrome until daily ingest writes succeed.`
+                        : 'No Shanghai–COMEX arbitrage observations available. Surface withheld rather than showing a green live pulse.'}
+                </p>
+            </Card>
+        );
+    }
+
     return (
         <Card className="p-8 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl relative overflow-hidden rounded-[2.5rem]">
             {/* Header */}
@@ -180,11 +211,21 @@ export const PreciousDivergenceCard: React.FC = () => {
                     <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
                         East-West price tracking of physical arbitrage. Persistent <span className="text-white font-bold">Shanghai Premiums</span> signal metal drainage from LBMA/COMEX vaults toward Asian central banks and retail.
                     </p>
+                    {asOf && (
+                        <p className="text-xs font-mono text-muted-foreground/50 uppercase tracking-widest">
+                            As-of {new Date(asOf).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                        </p>
+                    )}
                 </div>
 
-                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-2xl">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.15em]">Live Vault Signals</span>
+                <div className="flex flex-col items-end gap-2">
+                    <FreshnessChip status={status} lastUpdated={asOf} sourceRef="live_api:ingest-precious-divergence" />
+                    <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-2xl">
+                        <div className={cn('w-1.5 h-1.5 rounded-full', isLive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500')} />
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.15em]">
+                            {isLive ? 'Live Vault Signals' : 'Lagged Vault Signals'}
+                        </span>
+                    </div>
                 </div>
             </div>
 

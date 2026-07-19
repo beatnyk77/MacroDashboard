@@ -9,6 +9,17 @@ export interface CreditCycleData {
     phase: 'Recovery' | 'Expansion' | 'Downturn' | 'Repair';
 }
 
+export type CreditCycleFreshness = 'fresh' | 'lagged' | 'stale' | 'no_data';
+
+/** SLA: ≥ today−45d = fresh; ≤90d = lagged; else stale. */
+export function creditCycleFreshness(asOf: string | null | undefined, now = Date.now()): CreditCycleFreshness {
+    if (!asOf) return 'no_data';
+    const days = (now - new Date(asOf).getTime()) / (1000 * 60 * 60 * 24);
+    if (days <= 45) return 'fresh';
+    if (days <= 90) return 'lagged';
+    return 'stale';
+}
+
 export function useIndiaCreditCycle() {
     const [data, setData] = useState<CreditCycleData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -38,5 +49,8 @@ export function useIndiaCreditCycle() {
         fetchCreditCycleData();
     }, []);
 
-    return { data, loading, error };
+    const latestDate = data.length ? data[data.length - 1].date : null;
+    const freshness = creditCycleFreshness(latestDate);
+
+    return { data, loading, error, latestDate, freshness };
 }

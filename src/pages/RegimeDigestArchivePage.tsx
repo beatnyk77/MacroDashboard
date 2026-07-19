@@ -12,6 +12,24 @@ interface DigestSummary {
     generated_at: string | null;
 }
 
+/** Build expected year-months from first digest to current month (inclusive). */
+function expectedYearMonths(fromYm: string, toYm: string): string[] {
+    const [fy, fm] = fromYm.split('-').map(Number);
+    const [ty, tm] = toYm.split('-').map(Number);
+    const out: string[] = [];
+    let y = fy;
+    let m = fm;
+    while (y < ty || (y === ty && m <= tm)) {
+        out.push(`${y}-${String(m).padStart(2, '0')}`);
+        m += 1;
+        if (m > 12) {
+            m = 1;
+            y += 1;
+        }
+    }
+    return out;
+}
+
 export const RegimeDigestArchivePage: React.FC = () => {
     const [digests, setDigests] = useState<DigestSummary[]>([]);
     const [loading, setLoading] = useState(true);
@@ -37,23 +55,42 @@ export const RegimeDigestArchivePage: React.FC = () => {
         return new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     };
 
+    const now = new Date();
+    const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const earliest = digests.length ? digests[digests.length - 1].year_month : currentYm;
+    const presentSet = new Set(digests.map(d => d.year_month));
+    const gapMonths = digests.length
+        ? expectedYearMonths(earliest, currentYm).filter(ym => !presentSet.has(ym)).reverse()
+        : [];
+
     return (
-        <div className="w-full max-w-4xl mx-auto py-12 px-4 sm:px-6">
+        <div className="w-full max-w-5xl mx-auto py-12 px-4 sm:px-6">
             <SEOManager
                 title="Macro Regime Digest Archive"
                 description="Monthly institutional-grade macro intelligence reports on Global Liquidity, Debt/Gold, and Geopolitics."
             />
 
-            <div className="mb-12">
-                <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500 mb-3">
-                    GraphiQuestor Intelligence
+            <div className="mb-12 border-b border-white/10 pb-10">
+                <p className="text-[10px] font-black tracking-[0.3em] uppercase text-emerald-500 mb-3">
+                    GraphiQuestor Desk Product
                 </p>
                 <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tighter uppercase leading-none mb-4">
-                    Macro Regime<br /><span className="text-blue-500">Digest Archive</span>
+                    Macro Regime<br /><span className="text-emerald-500">Digest Archive</span>
                 </h1>
-                <p className="text-sm text-muted-foreground/60 max-w-xl leading-relaxed">
-                    Monthly institutional synthesis on Global Liquidity, Sovereign Stress, De-Dollarization, and structural regime shifts. Published on the 1st of each month.
+                <p className="text-sm text-muted-foreground/70 max-w-2xl leading-relaxed">
+                    Monthly institutional synthesis on Global Liquidity, Sovereign Stress, De-Dollarization, and structural regime shifts. Published on the 1st of each month. Missing months are listed explicitly — never silent.
                 </p>
+                {gapMonths.length > 0 && (
+                    <div className="mt-6 p-4 rounded-xl border border-amber-500/25 bg-amber-500/5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-2">
+                            Coverage gaps ({gapMonths.length})
+                        </p>
+                        <p className="text-xs font-mono text-amber-200/70 leading-relaxed">
+                            {gapMonths.slice(0, 12).join(' · ')}
+                            {gapMonths.length > 12 ? ` · +${gapMonths.length - 12} more` : ''}
+                        </p>
+                    </div>
+                )}
             </div>
 
             <Card variant="elevated" className="overflow-hidden bg-slate-950/50 backdrop-blur-md border-white/10">
