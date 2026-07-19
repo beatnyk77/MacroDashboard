@@ -52,18 +52,20 @@ export const RegimeDigestSection: React.FC = () => {
                                 No digest generated yet for this period.
                             </p>
                         </div>
-                        <Button
-                            onClick={() => regenerate(undefined)}
-                            disabled={isRegenerating}
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg shrink-0"
-                        >
-                            {isRegenerating ? (
-                                <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
-                            ) : (
-                                <RefreshCw className="mr-2 h-3 w-3" />
-                            )}
-                            {isRegenerating ? 'Generating...' : 'Generate Digest'}
-                        </Button>
+                        {import.meta.env.DEV && (
+                            <Button
+                                onClick={() => regenerate(undefined)}
+                                disabled={isRegenerating}
+                                className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg shrink-0"
+                            >
+                                {isRegenerating ? (
+                                    <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                                ) : (
+                                    <RefreshCw className="mr-2 h-3 w-3" />
+                                )}
+                                {isRegenerating ? 'Generating...' : 'Generate Digest'}
+                            </Button>
+                        )}
                     </div>
                 </CardContent>
             </Card>
@@ -126,19 +128,21 @@ export const RegimeDigestSection: React.FC = () => {
                                 Read Full Digest <ChevronRight size={14} className="ml-2" />
                             </Link>
                         </Button>
-                        <Button
-                            onClick={() => regenerate(undefined)}
-                            disabled={isRegenerating}
-                            variant="outline"
-                            className="border-white/10 hover:bg-white/5 text-white font-bold text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg"
-                        >
-                            {isRegenerating ? (
-                                <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
-                            ) : (
-                                <RefreshCw className="mr-2 h-3 w-3" />
-                            )}
-                            {isRegenerating ? 'Syncing...' : 'Force Sync'}
-                        </Button>
+                        {import.meta.env.DEV && (
+                            <Button
+                                onClick={() => regenerate(undefined)}
+                                disabled={isRegenerating}
+                                variant="outline"
+                                className="border-white/10 hover:bg-white/5 text-white font-bold text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg"
+                            >
+                                {isRegenerating ? (
+                                    <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                                ) : (
+                                    <RefreshCw className="mr-2 h-3 w-3" />
+                                )}
+                                {isRegenerating ? 'Syncing...' : 'Force Sync'}
+                            </Button>
+                        )}
                     </div>
                 </div>
             </CardContent>

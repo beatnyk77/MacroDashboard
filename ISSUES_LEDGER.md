@@ -14,6 +14,9 @@ Source archives (historical only): `docs/archive/`
 
 | id | area | description | status | last-verified-date | notes |
 |----|------|-------------|--------|--------------------|-------|
+| P2-010 | ingest | serveIngest empty-success systemic audit (zero-write jobs report green) | open | 2026-07-20 | Deferred from credibility sprint gold function-local fix. Audit serveIngest; fail jobs with zero writes. |
+| P2-011 | cleanup | Delete deprecated IndiaMacroDashboard + unused corporate-debt dead code after 1 release | open | 2026-07-20 | Unmounted/deprecated 2026-07-20; delete ~30d after PR lands if no rollback need. |
+| P1-010 | credibility | PR1 trust: types drift, kill fabricated India snapshot, corp debt USD+freshness, dual-exit credit/gold/digest | in-progress | 2026-07-20 | Branch fix/credibility-sprint-pr1-pr2 |
 | P0-000 | process | Compost: consolidate audits into ledger, clear root debris | verified-fixed | 2026-07-19 | Commit 934f857 — ISSUES_LEDGER created; living docs restored from archive |
 | P0-001 | macro-brief | `/macro-brief` shows Brief Unavailable; generation/cron/TZ may be broken | verified-fixed | 2026-07-19 | Edge binary + live page verified 2026-07-19. Briefs present (fallback-template); page self-canonical. Optional: improve LLM brief quality when OPENROUTER key set. |
 | P0-002 | seo | `/macro-brief` (and dated routes) serve homepage shell + homepage canonical | verified-fixed | 2026-07-19 | **Live verified:** `/macro-brief/` title “Morning Macro Brief — 19 July 2026”; canonical `https://graphiquestor.com/macro-brief/2026-07-19/`. Netlify CLI prod deploy `6a5c817f4ebc16de797607ad`. |

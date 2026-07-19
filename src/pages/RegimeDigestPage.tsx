@@ -138,14 +138,19 @@ const RegimeDigestContent: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex justify-center gap-3">
-                    <Button onClick={handleRefresh} disabled={isRegenerating} size="sm" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase">
-                        {isRegenerating ? <RefreshCw className="mr-2 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-2 h-3 w-3" />}
-                        {isRegenerating ? 'Generating...' : 'Generate Now'}
-                    </Button>
+                    {import.meta.env.DEV && (
+                        <Button onClick={handleRefresh} disabled={isRegenerating} size="sm" className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase">
+                            {isRegenerating ? <RefreshCw className="mr-2 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-2 h-3 w-3" />}
+                            {isRegenerating ? 'Generating...' : 'Generate Now'}
+                        </Button>
+                    )}
                     <Button asChild variant="outline" size="sm" className="border-white/10">
                         <Link to="/regime-digest"><ArrowLeft className="mr-2 h-3 w-3" /> Archive</Link>
                     </Button>
                 </div>
+                <p className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest max-w-sm mx-auto">
+                    Monthly digests generate on the 1st via cron. Gaps are intentional visibility, not silent omission.
+                </p>
             </div>
         );
     }
@@ -191,19 +196,25 @@ const RegimeDigestContent: React.FC = () => {
                         <span className="text-[10px] font-bold text-muted-foreground/35 uppercase tracking-widest">GraphiQuestor AI</span>
                     </div>
                 </div>
-                <Button
-                    onClick={handleRefresh}
-                    disabled={isRegenerating}
-                    variant="outline"
-                    size="sm"
-                    className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
-                >
-                    {isRegenerating
-                        ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
-                        : <RefreshCw className="mr-1.5 h-3 w-3" />}
-                    {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-                </Button>
+                {import.meta.env.DEV && (
+                    <Button
+                        onClick={handleRefresh}
+                        disabled={isRegenerating}
+                        variant="outline"
+                        size="sm"
+                        className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
+                    >
+                        {isRegenerating
+                            ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
+                            : <RefreshCw className="mr-1.5 h-3 w-3" />}
+                        {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+                    </Button>
+                )}
             </div>
+            <p className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">
+                Generated {digest.created_at ? new Date(digest.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—'}
+                {' · '}Source: multi-metric monthly synthesis · GraphiQuestor
+            </p>
 
             {/* Digest card */}
             <Card className="overflow-hidden border-white/[0.06] bg-slate-950/50 backdrop-blur-xl shadow-2xl">

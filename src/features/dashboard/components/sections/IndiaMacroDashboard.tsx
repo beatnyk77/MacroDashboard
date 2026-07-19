@@ -1,9 +1,15 @@
+/**
+ * @deprecated 2026-07-20 — Fabricated monthly snapshot (hardcoded months + ingest).
+ * Unmounted from Terminal and IntelIndia. Do not re-mount.
+ * Delete after one production release (see ISSUES_LEDGER).
+ */
 import React from 'react';
 import { m } from 'framer-motion';
 import { Activity, TrendingUp, TrendingDown, Minus, Calendar, ShieldAlert } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useIndiaMacroSnapshot } from '@/hooks/useIndiaMacroSnapshot';
 
+/** @deprecated Do not mount — credibility sprint kill switch */
 export const IndiaMacroDashboard: React.FC = () => {
     const { data: snapshot, isLoading } = useIndiaMacroSnapshot();
 

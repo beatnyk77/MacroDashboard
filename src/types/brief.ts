@@ -13,6 +13,8 @@ export interface MacroBrief {
   generated_at: string;
   /** Public share card URL from generate-share-card (optional). */
   share_image_url?: string | null;
+  model_used?: string | null;
+  tokens_used?: number | null;
 }
 
 export type FocusArea = 

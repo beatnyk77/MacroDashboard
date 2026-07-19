@@ -1685,6 +1685,7 @@ export type Database = {
           model_used: string | null
           regime_label: string | null
           regime_score: number | null
+          share_image_url: string | null
           tokens_used: number | null
         }
         Insert: {
@@ -1696,6 +1697,7 @@ export type Database = {
           model_used?: string | null
           regime_label?: string | null
           regime_score?: number | null
+          share_image_url?: string | null
           tokens_used?: number | null
         }
         Update: {
@@ -1707,6 +1709,7 @@ export type Database = {
           model_used?: string | null
           regime_label?: string | null
           regime_score?: number | null
+          share_image_url?: string | null
           tokens_used?: number | null
         }
         Relationships: []
@@ -1876,6 +1879,33 @@ export type Database = {
           raw_metadata?: Json | null
           source?: string
           type?: string
+        }
+        Relationships: []
+      }
+      export_scout_leads: {
+        Row: {
+          created_at: string
+          email: string
+          hs_code: string | null
+          id: string
+          playbook_path: string | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          hs_code?: string | null
+          id?: string
+          playbook_path?: string | null
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          hs_code?: string | null
+          id?: string
+          playbook_path?: string | null
+          source?: string
         }
         Relationships: []
       }
@@ -4331,6 +4361,33 @@ export type Database = {
           term_money_vol?: number | null
           triparty_repo_rate?: number | null
           triparty_repo_vol?: number | null
+        }
+        Relationships: []
+      }
+      regime_alert_sends: {
+        Row: {
+          as_of_date: string
+          created_at: string
+          from_label: string | null
+          id: string
+          sent_count: number
+          to_label: string | null
+        }
+        Insert: {
+          as_of_date: string
+          created_at?: string
+          from_label?: string | null
+          id?: string
+          sent_count?: number
+          to_label?: string | null
+        }
+        Update: {
+          as_of_date?: string
+          created_at?: string
+          from_label?: string | null
+          id?: string
+          sent_count?: number
+          to_label?: string | null
         }
         Relationships: []
       }

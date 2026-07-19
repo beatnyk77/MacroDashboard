@@ -102,9 +102,15 @@ async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: st
         is_provisional: false,
     });
 
+    // Function-local empty-success guard (credibility sprint): never report green on zero writes.
+    const upserted = count ?? 0;
+    if (upserted === 0) {
+        throw new Error('Empty write: computed observations but upserted 0 rows')
+    }
+
     return {
         ok: true,
-        counts: { upserted: count ?? 0, skipped: 0 },
+        counts: { upserted, skipped: 0 },
         meta: { gold_spread: gold_spread_pct, silver_spread: silver_spread_pct, date: asOfDate, usdcny },
     }
 }

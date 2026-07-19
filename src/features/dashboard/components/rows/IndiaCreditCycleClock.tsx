@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useIndiaCreditCycle } from '@/hooks/useIndiaCreditCycle';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
+import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
 
 // Defining quadrant bounds for historical perspective
 const Y_AXIS_MID = 14.5; // Credit Growth Midpoint
@@ -22,7 +23,7 @@ const PHASE_COLORS = {
 };
 
 export const IndiaCreditCycleClock: React.FC = () => {
-    const { data: cycleData, loading } = useIndiaCreditCycle();
+    const { data: cycleData, loading, latestDate, freshness } = useIndiaCreditCycle();
 
     const currentData = useMemo(() => cycleData[cycleData.length - 1], [cycleData]);
 
@@ -34,12 +35,28 @@ export const IndiaCreditCycleClock: React.FC = () => {
         }));
     }, [cycleData]);
 
-    if (loading || !currentData) {
+    const chipStatus: FreshnessStatus =
+        freshness === 'fresh' ? 'fresh' : freshness === 'lagged' ? 'lagged' : freshness === 'stale' ? 'stale' : 'no_data';
+
+    if (loading) {
         return <div className="h-96 w-full bg-white/[0.02] border border-white/5 rounded-3xl animate-pulse" />;
+    }
+
+    if (!currentData) {
+        return (
+            <section className="w-full bg-[#070b14] rounded-[2.5rem] border border-white/12 p-10">
+                <FreshnessChip status="no_data" />
+                <h2 className="mt-4 text-2xl font-black text-white uppercase">Credit Cycle Clock</h2>
+                <p className="mt-2 text-sm text-slate-400 max-w-lg">
+                    No RBI credit-cycle observations available. Surface withheld rather than displaying a live pulse on empty data.
+                </p>
+            </section>
+        );
     }
 
     const { phase, credit_growth_yoy, deposit_growth_yoy, cd_ratio, date } = currentData;
     const isExpanding = phase === 'Expansion' || phase === 'Recovery';
+    const showLivePulse = freshness === 'fresh';
 
     return (
         <section className="w-full bg-[#070b14] rounded-[2.5rem] border border-white/12 overflow-hidden shadow-2xl relative font-sans">
@@ -57,15 +74,20 @@ export const IndiaCreditCycleClock: React.FC = () => {
                 {/* Header Section */}
                 <div className="px-8 pt-10 pb-6 md:px-12 md:pt-12">
                     <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                            </span>
-                            <span className="text-blue-400 text-xs font-black uppercase tracking-uppercase">Proprietary RBI Signal</span>
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                            {showLivePulse ? (
+                                <span className="flex h-2 w-2 relative">
+                                    <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                            ) : (
+                                <span className="inline-flex h-2 w-2 rounded-full bg-amber-500/80" />
+                            )}
+                            <span className="text-blue-400 text-xs font-black uppercase tracking-uppercase">RBI Credit Signal</span>
+                            <FreshnessChip status={chipStatus} lastUpdated={latestDate ?? date} sourceRef="rbi_dbie:india_credit_cycle" />
                             <GQSignalBadge
                                 tooltip="Proprietary phase model derived from RBI's credit-deposit ratio, systemic lending velocity, and deposit growth — mapped to four cycle quadrants."
-                                href="/methods/loan-to-job-efficiency"
+                                href="/methods/india-credit-cycle-clock"
                             />
                         </div>
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-heading uppercase mb-1">
@@ -73,6 +95,12 @@ export const IndiaCreditCycleClock: React.FC = () => {
                         </h2>
                         <p className="text-slate-400 text-sm md:text-base font-medium max-w-2xl">
                             Where we are in the RBI credit cycle based on lending growth vs systemic liquidity.
+                            {latestDate ? (
+                                <span className="block mt-1 text-xs font-mono text-slate-500">
+                                    As-of {new Date(latestDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: 'numeric' })}
+                                    {freshness !== 'fresh' ? ' · not a live monthly update — dual-exit display' : ''}
+                                </span>
+                            ) : null}
                         </p>
                     </div>
                 </div>
