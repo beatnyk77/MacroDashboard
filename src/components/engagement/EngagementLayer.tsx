@@ -21,7 +21,7 @@ const DATA_ROUTE_PREFIXES = [
     '/methods',
     '/labs',
     '/intel',
-    '/trade',
+
     '/countries',
     '/regime-digest',
 ];

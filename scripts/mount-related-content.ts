@@ -35,7 +35,6 @@ const SKIP_FILES = new Set([
   'DataHealthDashboard.tsx',
   'DataHealthPublic.tsx',
   'DataSourcesPage.tsx',
-  'ExportScoutPlaybookPage.tsx',
   'ForInstitutional.tsx',
   'GlossaryIndexPage.tsx',
   'GlossaryTermPage.tsx',

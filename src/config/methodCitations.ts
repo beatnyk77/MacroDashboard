@@ -126,7 +126,7 @@ export const METHOD_CITATIONS: Record<string, ResearchCitationInput> = {
         keyPoints: [
             'IMF COFER reserve composition with BRICS+ settlement telemetry.',
             'Gold purchases by central banks as structural de-dollarization signal.',
-            'Links to Sovereign Compass and Trade Intelligence modules.',
+            'Links to Sovereign Compass and regional macro modules.',
         ],
         source: 'IMF COFER, BIS, World Gold Council',
     },
