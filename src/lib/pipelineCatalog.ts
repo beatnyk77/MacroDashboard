@@ -220,6 +220,21 @@ export const RETIRED_PIPELINE_IDS = [
   'ingest-cie-promoters',
   'ingest-cie-short-selling',
   'ingest-nse-flows',
+  // R3 pilot delete batch (≤80 target)
+  'api-auth-middleware',
+  'debug-logs',
+  'execute-restoration-sql',
+  'ingest-china-defaults',
+  'ingest-eurostat-debt',
+  'ingest-financial-hubs-gold',
+  'ingest-imf-gdp-per-capita',
+  'ingest-macro-events',
+  'llm-knowledge',
+  'ingest-us-edgar-fundamentals',
+  'ingest-corporate-debt-maturities',
+  'ingest-events',
+  'ingest-events-markers',
+  'ingest-asi',
 ] as const;
 
 export const PIPELINE_BY_ID: Record<string, PipelineEntry> = Object.fromEntries(
