@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, ArrowRightLeft } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -32,8 +32,6 @@ const terminalNavItems = [
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={18} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
-    { id: 'trade-intelligence', label: 'Trade Intelligence', path: '/trade', icon: <Globe size={18} /> },
-    { id: 'trade-fx', label: 'TradeFx', path: '/trade-fx', icon: <ArrowRightLeft size={18} /> },
     { id: 'sovereign-compass', label: 'Sovereign Compass', path: '/countries', icon: <Globe size={18} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
     { id: 'de-dollarization-guide', label: 'De-Dollarization Guide', path: '/methods/de-dollarization-guide', icon: <FileText size={18} /> },
@@ -53,12 +51,11 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const isEmbedded = searchParams.get('embed') === 'true';
-    const isPlaybookDoc = location.pathname.includes('/trade/playbook');
     // Email deep-links: confirm / manage must not render the full terminal chrome.
     const pathNoSlash = withoutTrailingSlash(location.pathname);
     const isEmailLanding =
         pathNoSlash === '/subscribe/confirm' || pathNoSlash === '/subscribe/manage';
-    const isChromeless = isEmbedded || isPlaybookDoc || isEmailLanding;
+    const isChromeless = isEmbedded || isEmailLanding;
     const isObservatory = location.pathname.includes('/macro-observatory');
 
 

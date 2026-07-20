@@ -42,8 +42,6 @@ const USDebtMaturityWall = lazy(() => import('@/components/USDebtMaturityWall').
 const CorporateDebtMaturityWall = lazy(() => import('@/components/CorporateDebtMaturityWall').then(m => ({ default: m.CorporateDebtMaturityWall })));
 const FedMonetizationMonitor = lazy(() => import('@/features/dashboard/components/rows/FedMonetizationMonitor').then(m => ({ default: m.FedMonetizationMonitor })));
 const EnergySection = lazy(() => import('@/features/dashboard/components/sections/EnergySection').then(m => ({ default: m.EnergySection })));
-const TradeEntryBanner = lazy(() => import('@/features/trade/components/TradeEntryBanner').then(m => ({ default: m.TradeEntryBanner })));
-
 // 1. LIQUIDITY & FLOWS
 const GlobalLiquidityMonitor = lazy(() => import('@/features/dashboard/components/sections/GlobalLiquidityMonitor').then(m => ({ default: m.GlobalLiquidityMonitor })));
 
@@ -286,18 +284,7 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
 
-                {/* Row 11: TRADE INTELLIGENCE */}
-                <ModuleRow label="TRADE INTEL" href="/trade" labelColor="text-emerald-500/80">
-                    <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
-                    <SectionErrorBoundary name="Trade Intelligence">
-                        <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
-                            <TradeEntryBanner />
-                        </Suspense>
-                    </SectionErrorBoundary>
-                    </LazyRender>
-                </ModuleRow>
-
-                {/* Row 12: INDIA CREDIT CYCLE */}
+                {/* Row 11: INDIA CREDIT CYCLE */}
                 <ModuleRow
                     label="CREDIT CYCLE"
                     href="/intel/india"

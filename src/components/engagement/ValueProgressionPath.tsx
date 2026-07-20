@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 const STEPS = [
     { id: 'terminal', label: 'Terminal', icon: Home, paths: ['/', '/macro-observatory'], to: '/' },
     { id: 'learn', label: 'Glossary & Methods', icon: BookOpen, paths: ['/glossary', '/methods', '/methodology'], to: '/glossary', match: (p: string) => p.startsWith('/glossary') || p.startsWith('/methods') },
-    { id: 'explore', label: 'Labs & Intel', icon: Globe, paths: ['/labs', '/intel', '/trade', '/countries'], to: '/labs', match: (p: string) => p.startsWith('/labs') || p.startsWith('/intel') || p.startsWith('/trade') || p.startsWith('/countries') },
+    { id: 'explore', label: 'Labs & Intel', icon: Globe, paths: ['/labs', '/intel', '/countries'], to: '/labs', match: (p: string) => p.startsWith('/labs') || p.startsWith('/intel') || p.startsWith('/countries') },
     { id: 'subscribe', label: 'Digest & API', icon: Mail, paths: ['/regime-digest', '/api-access', '/api-docs'], to: '/regime-digest', match: (p: string) => p.startsWith('/regime-digest') || p.startsWith('/api') },
 ] as const;
 

@@ -8,8 +8,6 @@ export type PipelineTier =
   | 'core'
   | 'sovereign'
   | 'energy_gold'
-  | 'trade'
-  | 'india_equities'
   | 'platform';
 
 export interface PipelineEntry {
@@ -26,8 +24,6 @@ export const PIPELINE_TIER_LABELS: Record<PipelineTier, string> = {
   core: 'Core Macro',
   sovereign: 'Sovereign · India / China',
   energy_gold: 'Energy · Gold · Commodities',
-  trade: 'Trade Intelligence',
-  india_equities: 'India Equities (CIE)',
   platform: 'Platform · Ops',
 };
 
@@ -146,42 +142,6 @@ export const PIPELINES: PipelineEntry[] = [
     cadence: 'Monthly',
   },
 
-  // Trade (Comtrade spine — UK entity pack retired)
-  {
-    id: 'ingest-un-comtrade',
-    title: 'UN Comtrade Flows',
-    tier: 'trade',
-    sources: ['UN Comtrade'],
-    surfaces: ['/trade', '/trade/hs/:code'],
-    cadence: 'Weekly',
-  },
-  {
-    id: 'generate-export-scout',
-    title: 'Export Scout Playbook',
-    tier: 'trade',
-    sources: ['UN Comtrade', 'Derived'],
-    surfaces: ['/trade/playbook/:code'],
-    cadence: 'On demand',
-  },
-
-  // India equities CIE (kept)
-  {
-    id: 'ingest-cie-fundamentals',
-    title: 'CIE Fundamentals',
-    tier: 'india_equities',
-    sources: ['Exchange filings', 'Alpha Vantage'],
-    surfaces: ['/intel/india'],
-    cadence: 'Daily',
-  },
-  {
-    id: 'compute-cie-macro-scores',
-    title: 'CIE Macro Scores',
-    tier: 'india_equities',
-    sources: ['Derived'],
-    surfaces: ['/intel/india'],
-    cadence: 'Daily',
-  },
-
   // Platform
   {
     id: 'check-data-health',
@@ -225,10 +185,10 @@ export const PIPELINES: PipelineEntry[] = [
   },
   {
     id: 'growth-actions',
-    title: 'Regime Alerts · Export Leads',
+    title: 'Regime Alerts',
     tier: 'platform',
-    sources: ['Resend', 'export_scout_leads'],
-    surfaces: ['/trade/playbook/:code', 'email'],
+    sources: ['Resend'],
+    surfaces: ['email'],
     cadence: 'On flip / on demand',
   },
 ];
@@ -241,9 +201,25 @@ export const RETIRED_PIPELINE_IDS = [
   'ingest-financial-hubs-gold',
   'ingest-imf-gdp-per-capita',
   'ingest-macro-events',
+  // Trade / export scout / CIE (minimalist scope prune)
+  'cache-comtrade-data',
+  'compute-hs-opportunity-scores',
+  'fetch-hs-demand',
+  'generate-export-scout',
+  'ingest-trade-global',
+  'ingest-trade-global-pulse',
   'ingest-trade-gravity',
+  'ingest-trade-imports',
   'ingest-uk-trade-ots',
   'ingest-uk-trade-traders',
+  'ingest-un-comtrade',
+  'compute-cie-macro-scores',
+  'ingest-cie-deals',
+  'ingest-cie-fundamentals',
+  'ingest-cie-ipos',
+  'ingest-cie-promoters',
+  'ingest-cie-short-selling',
+  'ingest-nse-flows',
 ] as const;
 
 export const PIPELINE_BY_ID: Record<string, PipelineEntry> = Object.fromEntries(
@@ -273,4 +249,4 @@ export function isRetiredPipeline(functionName: string): boolean {
 
 /** Institutional one-liner for marketing surfaces (no vanity count). */
 export const PIPELINE_MESH_COPY =
-  'Core telemetry mesh: automated ingest paths across FRED, RBI, IMF, EIA, UN Comtrade and peer official sources — each with provenance, freshness signals, and public health telemetry.';
+  'Core telemetry mesh: automated ingest paths across FRED, RBI, IMF, EIA, and peer official sources — each with provenance, freshness signals, and public health telemetry.';

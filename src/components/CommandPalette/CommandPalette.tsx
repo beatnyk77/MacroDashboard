@@ -19,7 +19,7 @@ import {
     AlertTriangle,
     FileText,
     Terminal,
-    ArrowRightLeft,
+
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './command-palette.css';
@@ -37,7 +37,6 @@ const TERMINAL_SECTIONS: TerminalSection[] = [
     { id: 'monthly-strategy',       label: 'Monthly Strategy',               icon: <Calendar className="h-4 w-4 text-slate-400" /> },
     { id: 'liquidity-plumbline',    label: 'Liquidity Plumbline',            icon: <TrendingUp className="h-4 w-4 text-emerald-400" /> },
     { id: 'sovereign-stress',       label: 'Sovereign Stress',               icon: <ShieldAlert className="h-4 w-4 text-rose-400" /> },
-    { id: 'trade-intelligence',     label: 'Trade Intelligence',             icon: <Globe className="h-4 w-4 text-emerald-400" /> },
     { id: 'regional-intelligence',  label: 'Regional Intelligence',          icon: <MapPin className="h-4 w-4 text-amber-400" /> },
     { id: 'energy-commodities',     label: 'Energy & Commodities',           icon: <Zap className="h-4 w-4 text-orange-400" /> },
     { id: 'institutional-strategy', label: 'Institutional Strategy',         icon: <BarChart3 className="h-4 w-4 text-cyan-400" /> },
@@ -124,16 +123,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             Metrics Methodology
                         </Item>
                         <Item
-                            onSelect={() => runCommand(() => navigate('/trade'))}
-                            icon={<Globe className="h-4 w-4 text-emerald-400" />}
+                            onSelect={() => runCommand(() => navigate('/labs/de-dollarization-gold'))}
+                            icon={<Globe className="h-4 w-4 text-amber-500" />}
                         >
-                            Trade Intelligence
-                        </Item>
-                        <Item
-                            onSelect={() => runCommand(() => navigate('/trade-fx'))}
-                            icon={<ArrowRightLeft className="h-4 w-4 text-amber-500" />}
-                        >
-                            TradeFx — Currency Intelligence
+                            De-Dollarization & Gold Lab
                         </Item>
                     </Command.Group>
 

@@ -18,7 +18,6 @@ const EXPECTED_LABELS = [
     'Monthly Strategy',
     'Liquidity Plumbline',
     'Sovereign Stress',
-    'Trade Intelligence',
     'Regional Intelligence',
     'Energy & Commodities',
     'Institutional Strategy',
@@ -27,15 +26,17 @@ const EXPECTED_LABELS = [
 ];
 
 describe('CommandPalette — Terminal Sections', () => {
-    it('renders all 12 terminal section jump entries when open', () => {
+    it('renders terminal section jump entries when open (trade product removed)', () => {
         renderPalette();
         for (const label of EXPECTED_LABELS) {
             expect(screen.getAllByText(label).length).toBeGreaterThanOrEqual(1);
         }
+        expect(screen.queryByText('Trade Intelligence')).not.toBeInTheDocument();
     });
 
-    it('renders TradeFx navigation entry', () => {
+    it('does not render TradeFx navigation entry', () => {
         renderPalette();
-        expect(screen.getByText('TradeFx — Currency Intelligence')).toBeInTheDocument();
+        expect(screen.queryByText('TradeFx — Currency Intelligence')).not.toBeInTheDocument();
+        expect(screen.getByText('De-Dollarization & Gold Lab')).toBeInTheDocument();
     });
 });

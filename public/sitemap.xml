@@ -4,55 +4,43 @@
     <loc>https://graphiquestor.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/macro-brief/</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/weekly-narrative/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/regime-digest/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/intel/india/</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/intel/china/</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/trade/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-07-19</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/trade-fx/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2026-06-22</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/countries/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/blog/</loc>
@@ -100,7 +88,7 @@
     <loc>https://graphiquestor.com/institutional/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-06-02</lastmod>
+    <lastmod>2026-07-19</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/api-access/</loc>
@@ -118,7 +106,7 @@
     <loc>https://graphiquestor.com/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-06-23</lastmod>
+    <lastmod>2026-07-19</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/privacy/</loc>
@@ -136,7 +124,7 @@
     <loc>https://graphiquestor.com/data-sources/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-06-08</lastmod>
+    <lastmod>2026-07-19</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/macro-observatory/</loc>
@@ -148,157 +136,157 @@
     <loc>https://graphiquestor.com/demo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/us-macro-fiscal/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/de-dollarization-gold/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/central-bank-gold-purchases/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/brics-trade-settlement/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/us-treasury-foreign-holdings/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/petrodollar-decay-indicators/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/energy-commodities/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/sovereign-stress/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/shadow-system/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/china-15th-fyp/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/labs/africa-macro/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/net-liquidity-z-score/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/debt-gold-z-score/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/loan-to-job-efficiency/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/energy-dependency-ratio/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/fiscal-dominance-meter/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/m2-gold-ratio/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/de-dollarization-guide/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/fed-monetization-monitor/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/india-credit-cycle-clock/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/methods/china-debt-iceberg/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/tools/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/tools/net-liquidity-gauge/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/tools/daily-regime-signal/</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/tools/gold-ratios/</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
+    <lastmod>2026-07-20</lastmod>
   </url>
   <url>
     <loc>https://graphiquestor.com/blog/m2-gold-ratio-debasement-signal-2026/</loc>
@@ -689,125 +677,5 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-07-03</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-19/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-19</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-18/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-18</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-17/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-17</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-16/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-15/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-15</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-14/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-14</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-13/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-13</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-12/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-12</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-11/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-11</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-10/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-10</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-09/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-09</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-08/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-08</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-07/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-07</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-06/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-06</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-05/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-05</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-04/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-04</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-03/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-03</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-02/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-02</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-07-01/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-07-01</lastmod>
-  </url>
-  <url>
-    <loc>https://graphiquestor.com/macro-brief/2026-06-30/</loc>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2026-06-30</lastmod>
   </url>
 </urlset>

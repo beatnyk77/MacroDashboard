@@ -24,7 +24,6 @@ const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components
 const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
-const TradeFlowsCard = lazy(() => import('@/features/dashboard/components/cards/TradeFlowsCard').then(m => ({ default: m.TradeFlowsCard })));
 const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
 const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
 const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
@@ -232,20 +231,19 @@ export const DeDollarizationGoldLab: React.FC = () => {
                                 </Button>
                             </div>
                         </div>
-                        <SectionErrorBoundary name="Trade Flows">
-                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <TradeFlowsCard />
-                                </Suspense>
-                            </LazyRender>
-                        </SectionErrorBoundary>
+                        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-5">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-2">Settlement telemetry</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                Commercial HS-code trade dashboards are out of scope. Settlement gravity is observed via COFER reserves, CB gold, and petrodollar/petroyuan panels above — with explicit unavailable states when series lag.
+                            </p>
+                        </div>
                     </div>
                     <div className="mt-6 flex justify-end">
                         <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
                             <a href="/labs/brics-trade-settlement">Deep Dive: BRICS Trade Settlement <ChevronRight size={14} className="ml-2" /></a>
                         </Button>
                     </div>
-                    <ChartInsightSummary id="lab-trade-flows" insight="Analyzing de-dollarization through the lens of trade settlement and illicit flow metrics reveals the true speed of the structural decoupling between G7 and BRICS+ networks." />
+                    <ChartInsightSummary id="lab-trade-flows" insight="De-dollarization is observed via reserve composition, CB gold, and petrodollar/petroyuan settlement — not commercial HS-code export flows." />
                 </section>
 
                 {/* 5. Gold Positioning & Manipulation Monitor */}

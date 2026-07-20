@@ -64,8 +64,6 @@ async function generateSitemap() {
     { url: '/regime-digest',       changefreq: 'monthly', lastmod: BUILD_DATE },
     { url: '/intel/india',         changefreq: 'daily',   lastmod: BUILD_DATE },
     { url: '/intel/china',         changefreq: 'daily',   lastmod: BUILD_DATE },
-    { url: '/trade',               changefreq: 'weekly',  lastmod: BUILD_DATE },
-    { url: '/trade-fx',            changefreq: 'daily',   lastmod: gitLastmod('src/features/trade-fx/TradeFxPage.tsx') },
     { url: '/countries',           changefreq: 'weekly',  lastmod: BUILD_DATE },
     // Static/editorial pages — lastmod = git log date of owning component
     { url: '/blog',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/BlogPage.tsx') },

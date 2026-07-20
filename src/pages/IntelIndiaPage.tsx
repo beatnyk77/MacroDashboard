@@ -227,10 +227,10 @@ export const IntelIndiaPage: React.FC = () => {
                             </a>
                         ))}
                         <Link
-                            to="/trade-fx"
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors bg-[#B8860B]/10 border border-[#B8860B]/25 text-[#B8860B] hover:bg-[#B8860B]/20"
+                            to="/labs/de-dollarization-gold"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors bg-amber-500/10 border border-amber-500/25 text-amber-500 hover:bg-amber-500/20"
                         >
-                            Currency Intelligence <ArrowRight size={10} />
+                            De-Dollarization Lab <ArrowRight size={10} />
                         </Link>
                     </div>
                 </div>

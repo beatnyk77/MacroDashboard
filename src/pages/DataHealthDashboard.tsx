@@ -191,29 +191,7 @@ export const DataHealthDashboard: React.FC = () => {
         refetchInterval: 300000
     });
 
-    // 15. NEW: CIE Short Selling
-    const { data: cieShortSellingStatus } = useQuery({
-        queryKey: ['cie-short-selling-status'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('cie_short_selling_history').select('date').order('date', { ascending: false }).limit(1).single();
-            if (error && error.code !== 'PGRST116') throw error;
-            return data;
-        },
-        refetchInterval: 300000
-    });
-
-    // 16. NEW: CIE Promoters
-    const { data: ciePromoterStatus } = useQuery({
-        queryKey: ['cie-promoter-status'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('cie_promoter_history').select('date').order('date', { ascending: false }).limit(1).single();
-            if (error && error.code !== 'PGRST116') throw error;
-            return data;
-        },
-        refetchInterval: 300000
-    });
-
-    // 17. NEW: Global Refining
+    // Global Refining
     const { data: globalRefiningStatus } = useQuery({
         queryKey: ['global-refining-status'],
         queryFn: async () => {
@@ -548,32 +526,6 @@ export const DataHealthDashboard: React.FC = () => {
                             </Box>
                             <IconButton color="warning" onClick={() => handleForceRefresh('ingest-gold-positioning')} disabled={refreshing === 'ingest-gold-positioning'}>
                                 {refreshing === 'ingest-gold-positioning' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(14, 165, 233, 0.05)', border: '1px solid rgba(14, 165, 233, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#0ea5e9', fontWeight: 700, display: 'block', lineHeight: 1 }}>CIE Short Selling</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {cieShortSellingStatus ? new Date(cieShortSellingStatus.date).toLocaleDateString() : 'Pending'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-cie-short-selling')} disabled={refreshing === 'ingest-cie-short-selling'}>
-                                {refreshing === 'ingest-cie-short-selling' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
-                            </IconButton>
-                        </Paper>
-                    </Grid>
-                    <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(14, 165, 233, 0.05)', border: '1px solid rgba(14, 165, 233, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box>
-                                <Typography variant="overline" sx={{ color: '#0ea5e9', fontWeight: 700, display: 'block', lineHeight: 1 }}>CIE Promoters</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
-                                    {ciePromoterStatus ? new Date(ciePromoterStatus.date).toLocaleDateString() : 'Pending'}
-                                </Typography>
-                            </Box>
-                            <IconButton color="info" onClick={() => handleForceRefresh('ingest-cie-fundamentals/promoters')} disabled={refreshing === 'ingest-cie-fundamentals/promoters'}>
-                                {refreshing === 'ingest-cie-fundamentals/promoters' ? <CircularProgress size={20} /> : <RefreshCcw size={20} />}
                             </IconButton>
                         </Paper>
                     </Grid>

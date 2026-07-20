@@ -162,7 +162,7 @@ import { China15thFYPLab } from '@/pages/labs/China15thFYP';
 import SovereignStressLab from '@/pages/labs/SovereignStressLab';
 
 import { About } from '@/pages/About';
-import TradeDashboard from '@/pages/TradeDashboard';
+import { BricsTradeSettlement } from '@/pages/labs/BricsTradeSettlement';
 
 const theme = createTheme();
 const queryClient = new QueryClient({
@@ -294,12 +294,13 @@ describe('Smoke Tests', () => {
         expect(await screen.findByText(/The Surveillance Mandate/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
-    it('renders TradeDashboard page without crashing', async () => {
+    it('renders BricsTradeSettlement without TradeFlowsCard', async () => {
         render(
-            <TestWrapper route="/trade">
-                <TradeDashboard />
+            <TestWrapper route="/labs/brics-trade-settlement">
+                <BricsTradeSettlement />
             </TestWrapper>
         );
-        expect(await screen.findByRole('button', { name: /Export Markets/i }, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByText(/Local Currency/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(screen.queryByText(/TradeFlowsCard/i)).not.toBeInTheDocument();
     }, 20000);
 });
