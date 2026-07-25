@@ -3,6 +3,7 @@ import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/m
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Link2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
+import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
@@ -35,7 +36,9 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
             />
 
             <Container maxWidth="md">
-                {/* Breadcrumb */}
+                
+                <MethodsSpokeBanner />
+{/* Breadcrumb */}
                 <Box mb={5} display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
                     <Button component={Link} to="/glossary" startIcon={<ArrowLeft size={15} />}
                         sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main', bgcolor: 'transparent' } }}>Glossary</Button>

@@ -21,6 +21,10 @@ import type { ResearchCitationInput } from '@/lib/researchCitation';
 import { GLOSSARY_LIVE_CONFIG } from '@/features/glossary/glossaryLiveMap';
 import { LiveIntelligenceBox, LiveMetricResult } from '@/features/glossary/LiveIntelligenceBox';
 import { useGlossaryDataHub } from '@/features/glossary/useGlossaryDataHub';
+import { getConceptByGlossarySlug } from '@/lib/conceptHub';
+import { ConceptHierarchyBanner } from '@/components/seo/ConceptHierarchyBanner';
+import { glossarySpokeMeta } from '@/lib/seoTemplates';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 
 export const GlossaryTermPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -51,21 +55,23 @@ export const GlossaryTermPage: React.FC = () => {
         }
     }, [slug, rawData, lastUpdated]);
 
+    const spokeMeta = termData ? glossarySpokeMeta(termData.term) : null;
+
     const pageTitle = useMemo(() => {
         if (seo?.seoTitle) return seo.seoTitle;
-        if (liveResult) {
-            return `${termData?.term}: ${liveResult.displayValue}${liveResult.unit} (${liveResult.label}) — Definition`;
+        if (liveResult && termData) {
+            return `${termData.term}: ${liveResult.displayValue}${liveResult.unit} (${liveResult.label}) — Definition`;
         }
-        return `${termData?.term} — Definition & Formula`;
-    }, [seo, termData?.term, liveResult]);
+        return spokeMeta?.title ?? `${termData?.term ?? 'Term'} Definition | GraphiQuestor Glossary`;
+    }, [seo, termData, liveResult, spokeMeta?.title]);
 
     const pageDescription = useMemo(() => {
         if (seo?.seoDescription) return seo.seoDescription;
-        if (liveResult) {
-            return `Current ${termData?.term}: ${liveResult.displayValue}${liveResult.unit} [${liveResult.label}]. ${termData?.definition.substring(0, 100)}...`;
+        if (liveResult && termData) {
+            return `Current ${termData.term}: ${liveResult.displayValue}${liveResult.unit} [${liveResult.label}]. ${termData.definition.substring(0, 100)}...`;
         }
-        return `${termData?.definition.substring(0, 150)}...`;
-    }, [seo, liveResult, termData?.term, termData?.definition]);
+        return spokeMeta?.description ?? `${termData?.definition?.substring(0, 150) ?? ''}...`;
+    }, [seo, liveResult, termData, spokeMeta?.description]);
 
     const pageKeywords = useMemo(() => {
         const base = [termData?.term ?? '', termData?.category ?? '', 'Macro Definition', 'Institutional Finance Glossary'];
@@ -218,8 +224,13 @@ export const GlossaryTermPage: React.FC = () => {
 
     const schemas: object[] = [termJsonLd, breadcrumbJsonLd, faqJsonLd];
 
-    const displayH1 = seo?.h1 ?? termData.term;
+    // Differentiated H1 for spoke (avoid identical H1 as /metrics and /methods)
+    const displayH1 = seo?.h1
+        ?? (termData.term.toLowerCase().startsWith('what is')
+            ? termData.term
+            : `What is ${termData.term}?`);
     const showMetricPanel = seo?.liveMetricId && !liveResult;
+    const concept = slug ? getConceptByGlossarySlug(slug) : undefined;
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh' }}>
@@ -232,6 +243,7 @@ export const GlossaryTermPage: React.FC = () => {
             />
 
             <Container maxWidth="md">
+                {concept && <ConceptHierarchyBanner role="definition" concept={concept} />}
                 <Box sx={{ mb: 6 }}>
                     <Button
                         component={TrailLink}
@@ -274,7 +286,11 @@ export const GlossaryTermPage: React.FC = () => {
                         </Box>
                     )}
 
-                    <PremiumActionBar className="mb-6" latestDataHref="/" compareHref="/countries" />
+                    <PremiumActionBar
+                        className="mb-6"
+                        latestDataHref={concept?.primaryPath ?? '/'}
+                        compareHref="/countries"
+                    />
 
                     <GlossaryInteractiveTools slug={slug ?? ''} className="mb-6" />
 
@@ -413,6 +429,9 @@ export const GlossaryTermPage: React.FC = () => {
                     </Box>
 
                     <Box sx={{ mb: 6 }}>
+                        <Box sx={{ mb: 4 }}>
+                            <InstitutionalAccessStrip variant="compact" />
+                        </Box>
                         <SubscribeCard source={`glossary-${slug}`} />
                     </Box>
 

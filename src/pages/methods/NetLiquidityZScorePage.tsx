@@ -7,6 +7,7 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
+import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
@@ -34,15 +35,17 @@ export const NetLiquidityZScorePage: React.FC = () => {
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Net Liquidity Z-Score — Methodology & Formula"
-                description="The complete methodology for the Net Liquidity Z-Score: how it is calculated from the Fed balance sheet, TGA, and RRP, and how to interpret regime signals."
+                title="How We Calculate Net Liquidity Z-Score | GraphiQuestor"
+                description="Methodology for GraphiQuestor Net Liquidity Z-Score: Fed balance sheet, TGA, and RRP formula, regime interpretation, and link to the live metric terminal."
                 keywords={["Net Liquidity Z-Score", "Federal Reserve Liquidity", "Macro Regime", "RRP", "TGA"]}
                 canonicalUrl="https://graphiquestor.com/methods/net-liquidity-z-score"
                 jsonLd={jsonLd}
             />
 
             <Container maxWidth="md">
-                {/* Breadcrumb */}
+                
+                <MethodsSpokeBanner />
+{/* Breadcrumb */}
                 <Box mb={5} display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
                     <Button component={Link} to="/glossary" startIcon={<ArrowLeft size={15} />}
                         sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main', bgcolor: 'transparent' } }}>
@@ -62,7 +65,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
                         sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem' }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                         <Typography variant="h2" component="h1" fontWeight={900}>
-                            Net Liquidity Z-Score
+                            How we calculate Net Liquidity Z-Score
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>

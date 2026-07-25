@@ -39,7 +39,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
         <>
             <EnergyLabNav />
             <SEOManager
-                title="Energy Security Intelligence Lab | WTI Contango, SPR Depletion & Refining Capacity Telemetry — GraphiQuestor"
+                title="Energy Security Lab — WTI, SPR & Refining Telemetry"
                 description="Live WTI calendar spread, US SPR depletion tracker, global refining imbalance monitor, and India fuel security clock. Institutional-grade energy flow telemetry for macro strategists."
                 keywords={[
                     'WTI contango backwardation',

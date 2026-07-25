@@ -13,6 +13,10 @@ import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { METRICS_CATALOG, type MetricEntry } from '@/features/metrics/metricsCatalog';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { getConceptByMetricId } from '@/lib/conceptHub';
+import { ConceptHierarchyBanner } from '@/components/seo/ConceptHierarchyBanner';
+import { metricPrimaryMeta } from '@/lib/seoTemplates';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 
 /**
  * /metrics/:id — programmatic SEO pages for proprietary metrics (roadmap F5).
@@ -90,6 +94,13 @@ function useMetricSeries(entryId: string | undefined) {
 
 function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string) {
     const url = `https://graphiquestor.com/metrics/${entry.id}`;
+    const org = {
+        '@type': 'Organization',
+        name: 'GraphiQuestor',
+        url: 'https://graphiquestor.com',
+        logo: 'https://graphiquestor.com/hero-preview.jpg',
+        sameAs: ['https://graphiquestor.com/about/', 'https://graphiquestor.com/for-researchers/'],
+    };
     const faq = {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
@@ -112,10 +123,29 @@ function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string
                 name: `How do institutions use the ${entry.name}?`,
                 acceptedAnswer: { '@type': 'Answer', text: entry.institutionalUse.replace(/\s+/g, ' ').trim() },
             },
+            {
+                '@type': 'Question',
+                name: `What data sources power the ${entry.name}?`,
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: `GraphiQuestor computes the ${entry.name} from: ${entry.sources.join('; ')}. Methodology and refresh cadence are documented on this page and linked methods articles.`,
+                },
+            },
         ],
     };
-    if (!hasSeries) return faq;
+    const webPage = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: entry.name,
+        url,
+        description: entry.intuition.replace(/\s+/g, ' ').trim().slice(0, 300),
+        isPartOf: { '@type': 'WebSite', name: 'GraphiQuestor', url: 'https://graphiquestor.com' },
+        publisher: org,
+        about: { '@type': 'Thing', name: entry.name },
+    };
+    if (!hasSeries) return [webPage, faq];
     return [
+        webPage,
         faq,
         {
             '@context': 'https://schema.org',
@@ -124,7 +154,7 @@ function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string
             description: `Historical time series for the ${entry.name}, updated automatically from official sources (${entry.sources.join(', ')}).`,
             url,
             license: 'https://graphiquestor.com/terms',
-            creator: { '@type': 'Organization', name: 'GraphiQuestor', url: 'https://graphiquestor.com' },
+            creator: org,
             ...(latestDate ? { temporalCoverage: `../${latestDate}` } : {}),
         },
     ];
@@ -146,24 +176,27 @@ export const MetricPage: React.FC = () => {
     }
 
     const latest = series && series.length > 0 ? series[series.length - 1] : undefined;
-    const description = `${entry.name}: definition, formula, and institutional interpretation. ${entry.intuition.replace(/\s+/g, ' ').trim()}`.slice(0, 158);
+    const meta = metricPrimaryMeta(entry.name, entry.id);
+    const concept = getConceptByMetricId(entry.id);
 
     return (
         <div className="w-full max-w-4xl mx-auto py-12 px-4 sm:px-6">
             <SEOManager
-                title={`${entry.name} — Definition, Formula & Live Data`}
-                description={description}
+                title={meta.title}
+                description={meta.description}
                 keywords={[entry.name, entry.category, 'macro metric', 'methodology', ...entry.sources]}
                 canonical={`https://graphiquestor.com/metrics/${entry.id}`}
                 jsonLd={buildJsonLd(entry, !!latest, latest?.date)}
             />
 
             {/* Breadcrumb */}
-            <nav className="mb-8 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-white/30">
+            <nav className="mb-6 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-white/30">
                 <Link to="/methodology" className="hover:text-blue-400 transition-colors">Methodology</Link>
                 <ChevronRight size={12} />
                 <span className="text-white/60">{entry.name}</span>
             </nav>
+
+            {concept && <ConceptHierarchyBanner role="primary" concept={concept} />}
 
             <div ref={shareRef} className="relative group space-y-8">
                 <div className="absolute right-0 top-0 z-10">
@@ -178,7 +211,9 @@ export const MetricPage: React.FC = () => {
                 {/* Header */}
                 <header className="space-y-3 border-b border-white/10 pb-6">
                     <div className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">{entry.category}</div>
-                    <h1 className="text-3xl font-black tracking-tight text-white">{entry.name}</h1>
+                    <h1 className="text-3xl font-black tracking-tight text-white">
+                        Live terminal: {entry.name}
+                    </h1>
                     {(latest || liveMetric) && (
                         <div className="flex flex-wrap items-center gap-3 text-[12px] font-bold text-white/50">
                             <span className="text-white text-lg font-black">
@@ -268,23 +303,40 @@ export const MetricPage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* Sources + related */}
-                <section className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-6 text-[12px]">
-                    <span className="flex items-center gap-1.5 text-white/40">
-                        <Database size={13} /> {entry.sources.join(' · ')}
-                    </span>
-                    {entry.relatedPage && (
-                        <Link to={entry.relatedPage} className="flex items-center gap-1.5 font-bold text-blue-400 hover:underline">
-                            <BookOpen size={13} /> {entry.relatedPageLabel ?? 'Methodology deep dive'}
+                {/* Sources + EEAT */}
+                <section className="space-y-3 border-t border-white/10 pt-6 text-[12px]">
+                    <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Data provenance</h2>
+                    <p className="flex items-start gap-1.5 leading-relaxed text-white/50">
+                        <Database size={13} className="mt-0.5 flex-shrink-0 text-white/40" />
+                        <span>
+                            Sources: {entry.sources.join(' · ')}. Computed and published by GraphiQuestor Research.
+                            Values are observational composites — not forecasts. See{' '}
+                            <Link to="/about/" className="font-bold text-blue-400 hover:underline">About</Link>
+                            {' '}and{' '}
+                            <Link to="/for-researchers/" className="font-bold text-blue-400 hover:underline">citation guidelines</Link>.
+                        </span>
+                    </p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                        {entry.relatedPage && (
+                            <Link to={entry.relatedPage} className="flex items-center gap-1.5 font-bold text-blue-400 hover:underline">
+                                <BookOpen size={13} /> {entry.relatedPageLabel ?? 'Methodology deep dive'}
+                            </Link>
+                        )}
+                        <Link to="/methodology" className="font-bold text-blue-400 hover:underline">
+                            All metric methodologies →
                         </Link>
-                    )}
-                    <Link to="/methodology" className="font-bold text-blue-400 hover:underline">
-                        All metric methodologies →
-                    </Link>
+                        <Link to="/api-docs/" className="font-bold text-blue-400 hover:underline">
+                            Pull via API →
+                        </Link>
+                    </div>
                 </section>
             </div>
 
-            <div className="mt-14">
+            <div className="mt-10">
+                <InstitutionalAccessStrip variant="compact" />
+            </div>
+
+            <div className="mt-10">
                 <SubscribeCard source="metric-page" />
             </div>
         </div>

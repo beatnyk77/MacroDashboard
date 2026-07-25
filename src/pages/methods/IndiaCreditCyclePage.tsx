@@ -7,6 +7,7 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { SEOManager } from '@/components/SEOManager';
+import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
@@ -41,7 +42,9 @@ export const IndiaCreditCyclePage: React.FC = () => {
             />
 
             <Container maxWidth="md">
-                {/* Breadcrumb */}
+                
+                <MethodsSpokeBanner />
+{/* Breadcrumb */}
                 <Box mb={5} display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
                     <Button component={Link} to="/glossary" startIcon={<ArrowLeft size={15} />}
                         sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main', bgcolor: 'transparent' } }}>Glossary</Button>
