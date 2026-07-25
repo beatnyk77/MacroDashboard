@@ -17,6 +17,13 @@
     "deploy:china-debt": "bash scripts/deploy-china-debt.sh",
     "deploy:migrations": "bash scripts/deploy-db-migrations.sh",
     "deploy:invoicing-fx": "bash scripts/deploy-invoicing-fx.sh",
+    "deploy:functions": "bash scripts/deploy-all-functions.sh",
+    "backend:status": "bash scripts/automate-backend.sh status",
+    "backend:migrate": "bash scripts/automate-backend.sh migrate",
+    "backend:deploy": "bash scripts/automate-backend.sh deploy",
+    "backend:deploy:seo": "bash scripts/automate-backend.sh deploy --seo",
+    "backend:all": "bash scripts/automate-backend.sh all",
+    "backend:smoke": "bash scripts/automate-backend.sh smoke",
     "test": "vitest run",
     "preview": "vite preview"
   },
