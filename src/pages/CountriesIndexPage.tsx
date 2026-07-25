@@ -106,7 +106,7 @@ export const CountriesIndexPage: React.FC = () => {
                 country.hasData ? (
                   <Link
                     key={country.code}
-                    to={`/countries/${country.code}`}
+                    to={`/countries/${country.code.toLowerCase()}`}
                     className="block p-4 rounded-xl border bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/50 hover:scale-[1.02] transition-all duration-200"
                   >
                     <div className="text-2xl mb-2">{country.flag}</div>

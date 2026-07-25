@@ -1,32 +1,85 @@
+# GraphiQuestor robots policy
+# Product lock (2026-07-25): answer engines yes, training no.
+#
+# Cloudflare Managed Content may prepend additional AI bot rules.
+# Align CF dashboard with this file: allow search/answer crawlers;
+# keep training crawlers (GPTBot train, Google-Extended, CCBot, etc.) blocked.
+# Ops: Cloudflare → Security → Bots / AI Crawl Control — disable conflicting
+# managed Allow/Disallow that reverse this policy.
+
 User-agent: *
 Allow: /
-Allow: /blog
-Allow: /regime-digest
-Allow: /methodology
-Allow: /countries
 Disallow: /admin/
 Disallow: /api/
 Disallow: /api/fallback/
 Disallow: /us-equities/
-Disallow: /us-equities
+Disallow: /us-equities/
+Disallow: /subscribe/
+# Intentional noindex product surfaces (also excluded from sitemap)
+Disallow: /labs/grit-index
+Disallow: /labs/grit-index/
+Disallow: /india-equities
+Disallow: /india-equities/
+Disallow: /methods/regime-scoring
+Disallow: /methods/regime-scoring/
 
-# AI Search Crawlers & LLM Agents
-User-agent: GPTBot
-User-agent: ChatGPT-User
-User-agent: OAI-SearchBot
-User-agent: ClaudeBot
-User-agent: Claude-Web
-User-agent: Google-Extended
+# --- Answer / search engines (ALLOW) ---
 User-agent: Googlebot
+Allow: /
+
 User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
 User-agent: PerplexityBot
+Allow: /
+
 User-agent: YouBot
 Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# --- Training / bulk AI crawlers (DISALLOW) ---
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
 
 # Sitemaps
 Sitemap: https://graphiquestor.com/sitemap.xml
 
-# LLM / AI assistant context files
+# LLM / AI assistant context (answer engines / citation)
 X-LLM-Context: https://graphiquestor.com/llm.txt
 X-LLM-Index: https://graphiquestor.com/llms.txt
 X-LLM-Research-Hub: https://graphiquestor.com/for-researchers/

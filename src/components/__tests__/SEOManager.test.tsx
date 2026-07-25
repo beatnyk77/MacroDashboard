@@ -72,10 +72,16 @@ describe('SEOManager canonical URL', () => {
         expect(link!.href).toBe('https://graphiquestor.com/labs/us-macro-fiscal/');
     });
 
-    it('dynamic segment path with trailing slash is preserved', async () => {
+    it('dynamic country path is lowercased in canonical', async () => {
         const link = await renderSEOManager('/countries/IN/');
         expect(link).not.toBeNull();
-        expect(link!.href).toBe('https://graphiquestor.com/countries/IN/');
+        expect(link!.href).toBe('https://graphiquestor.com/countries/in/');
+    });
+
+    it('lowercase country path stays lowercase', async () => {
+        const link = await renderSEOManager('/countries/us/');
+        expect(link).not.toBeNull();
+        expect(link!.href).toBe('https://graphiquestor.com/countries/us/');
     });
 
     it('glossary path canonical includes trailing slash', async () => {

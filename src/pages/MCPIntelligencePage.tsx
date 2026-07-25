@@ -14,6 +14,7 @@ import {
 import { SEOManager } from '@/components/SEOManager';
 import { CodeBlock } from '@/components/docs/CodeBlock';
 import { CiteThisPage } from '@/components/research/CiteThisPage';
+import { mcpMeta } from '@/lib/seoTemplates';
 import {
     MCP_CONFIG,
     MCP_TOOLS,
@@ -176,8 +177,8 @@ export const MCPIntelligencePage: React.FC = () => {
     return (
         <div className="min-h-screen text-slate-100">
             <SEOManager
-                title="MCP Server — GraphiQuestor Macro Intelligence"
-                description="Production Model Context Protocol server for AI agents. Eight typed tools, institutional commentary, dashboard deep links. Smithery one-command install for Cursor and Claude."
+                title={mcpMeta().title}
+                description={mcpMeta().description}
                 keywords={[
                     'GraphiQuestor MCP',
                     'macro intelligence MCP server',
@@ -185,7 +186,7 @@ export const MCPIntelligencePage: React.FC = () => {
                     'Smithery MCP',
                     'AI agent macro data',
                 ]}
-                canonicalUrl={toAbsoluteUrl('/mcp')}
+                canonical={toAbsoluteUrl('/mcp')}
                 jsonLd={jsonLd}
             />
 

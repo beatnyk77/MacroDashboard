@@ -4,6 +4,7 @@ import { Zap, ShieldCheck, Database, ArrowRight, Lock, BookOpen } from 'lucide-r
 import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { SEOManager } from '@/components/SEOManager';
+import { apiAccessMeta } from '@/lib/seoTemplates';
 
 declare global {
     interface Window {
@@ -70,9 +71,10 @@ export const APIAccessPage: React.FC = () => {
             </script>
             <Container maxWidth="lg" sx={{ py: { xs: 8, md: 15 } }}>
                 <SEOManager 
-                    title="Institutional API Access — GraphiQuestor"
-                    description="Connect your quantitative models to our proprietary macro data streams. Real-time access to 270+ institutional macro metrics."
+                    title={apiAccessMeta().title}
+                    description={apiAccessMeta().description}
                     keywords={['Macro API', 'Institutional Data', 'Quant Finance API', 'Market Intelligence']}
+                    canonical="/api-access/"
                 />
                 <Box sx={{ mb: 10, textAlign: 'center', position: 'relative' }}>
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8">

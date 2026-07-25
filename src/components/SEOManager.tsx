@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { BrandConfig } from '@/config/brandConfig';
@@ -66,6 +66,29 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     const resolvedRobots = isEmbedded && !robots.includes('noindex')
         ? 'noindex, follow'
         : robots;
+
+    // react-helmet-async often leaves the static index.html description tag
+    // (no data-rh) in place. Imperatively sync description so prerender captures
+    // unique SERP copy for crawlers.
+    useEffect(() => {
+        if (isLayoutMode || !description) return;
+        const ensureMeta = (selector: string, attr: 'name' | 'property', key: string, value: string) => {
+            let el = document.head.querySelector(selector) as HTMLMetaElement | null;
+            if (!el) {
+                el = document.createElement('meta');
+                el.setAttribute(attr, key);
+                document.head.appendChild(el);
+            }
+            el.setAttribute('content', value);
+            el.setAttribute('data-rh', 'true');
+        };
+        ensureMeta('meta[name="description"]', 'name', 'description', description);
+        ensureMeta('meta[property="og:description"]', 'property', 'og:description', description);
+        ensureMeta('meta[name="twitter:description"]', 'name', 'twitter:description', description);
+        if (fullTitle) {
+            document.title = fullTitle;
+        }
+    }, [isLayoutMode, description, fullTitle]);
 
     return (
         <Helmet defer={false}>

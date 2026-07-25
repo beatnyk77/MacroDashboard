@@ -25,13 +25,33 @@ function withoutTrailingSlash(route) {
 }
 
 function normalizeVisitedRoute(route) {
-    const clean = route.split('#')[0].split('?')[0];
+    let clean = route.split('#')[0].split('?')[0];
     if (clean === '/') return '/';
+    // Lowercase /countries/{iso}/ for crawl + sitemap consistency
+    const countryMatch = clean.match(/^(\/countries\/)([^/]+)(\/?)$/i);
+    if (countryMatch) {
+        clean = `${countryMatch[1]}${countryMatch[2].toLowerCase()}${countryMatch[3] || ''}`;
+    }
     return clean.endsWith('/') ? clean : `${clean}/`;
 }
 
+/** Intentionally noindex product surfaces — never list in sitemap. */
+const SITEMAP_NOINDEX_PREFIXES = [
+    '/subscribe',
+    '/methods/regime-scoring',
+    '/india-equities',
+    '/labs/grit-index',
+];
+
+function isSitemapNoindexRoute(route) {
+    const path = withoutTrailingSlash(route);
+    return SITEMAP_NOINDEX_PREFIXES.some(
+        (p) => path === p || path.startsWith(`${p}/`)
+    );
+}
+
 function sitemapLoc(route) {
-    const base = withoutTrailingSlash(route);
+    const base = withoutTrailingSlash(normalizeVisitedRoute(route));
     if (base === '/') return 'https://graphiquestor.com/';
     return `https://graphiquestor.com${base}/`;
 }
@@ -73,6 +93,20 @@ if (fs.existsSync(rssPath)) {
 // Email deep-link landings (noindex) — force prerender so first paint ≠ homepage shell.
 seedRoutes.add('/subscribe/confirm/');
 seedRoutes.add('/subscribe/manage/');
+
+// North Star conversion surfaces + sample country pages — always prerender even if
+// crawl misses them (validate-prerender-seo hard-fails without unique meta).
+for (const money of [
+    '/api-docs/',
+    '/mcp/',
+    '/for-researchers/',
+    '/api-access/',
+    '/countries/us/',
+    '/countries/in/',
+    '/countries/cn/',
+]) {
+    seedRoutes.add(money);
+}
 
 const distDir = path.resolve(__dirname, '../dist');
 if (!fs.existsSync(distDir)) {
@@ -373,8 +407,8 @@ function generateSitemap(routes) {
 
     for (const route of sortedRoutes) {
         const path = withoutTrailingSlash(route);
-        // Email landings are noindex — do not advertise in sitemap.
-        if (path.startsWith('/subscribe')) continue;
+        // Email landings + intentional noindex surfaces — do not advertise in sitemap.
+        if (isSitemapNoindexRoute(route)) continue;
         const lastmod = routeLastmod(route);
         // Priority heuristic (sitemap hints, not ranking signals):
         //   1.0 homepage | 0.9 macro-brief, intel/india | 0.8 top-level sections
@@ -426,6 +460,142 @@ async function capturePageHtml(page) {
     } catch {
         return null;
     }
+}
+
+const HOMEPAGE_DESC_PREFIX =
+    'Institutional macro intelligence terminal tracking global liquidity';
+
+/** Escape attribute values for safe HTML rewrite. */
+function escapeAttr(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;');
+}
+
+/**
+ * react-helmet-async often updates <title> + canonical but leaves the static
+ * index.html <meta name="description"> untouched (no data-rh). Force unique
+ * descriptions so crawlers never see the homepage blurb on money pages.
+ */
+function resolveForcedDescription(cleanRoute, html) {
+    const path = withoutTrailingSlash(cleanRoute);
+    if (path === '/') return null;
+
+    const country = path.match(/^\/countries\/([a-z]{2})$/i);
+    if (country) {
+        const iso = country[1].toUpperCase();
+        // Prefer title-derived country name when present
+        const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+        const title = (titleMatch?.[1] || '').replace(/\s*\|\s*GraphiQuestor.*$/i, '').trim();
+        const name = title.replace(/\s*\([A-Z]{2}\).*$/, '').trim() || iso;
+        return `${name} macro terminal: GDP growth, inflation, sovereign debt, FX reserves, and policy rates. Live institutional telemetry for ${iso} on GraphiQuestor.`;
+    }
+
+    const ROUTE_DESC = {
+        '/api-docs':
+            'REST API reference for GraphiQuestor: 270+ institutional macro metrics, time-series history, regime signals, and composites for quant and agent integrations.',
+        '/mcp':
+            'Model Context Protocol server for AI agents: typed macro tools, institutional commentary, and dashboard deep links. Install via Smithery for Cursor and Claude.',
+        '/for-researchers':
+            'Citation guidelines, structured summaries, and deep-link inventory for institutional researchers and LLMs using GraphiQuestor macro intelligence.',
+        '/api-access':
+            'Request institutional API access to GraphiQuestor macro metrics, regime signals, and composites. Built for desks, quant teams, and automated agents.',
+        '/about':
+            'About GraphiQuestor — institutional macro intelligence terminal for global liquidity, sovereign stress, and de-dollarization research.',
+        '/glossary':
+            'Institutional macro glossary: definitions for net liquidity, fiscal dominance, de-dollarization, and GraphiQuestor proprietary composites.',
+        '/methodology':
+            'GraphiQuestor methodology hub — formulas, data sources, and refresh cadence for proprietary macro composites.',
+        '/blog':
+            'GraphiQuestor research blog — macro regime notes, sovereign stress, and multipolar liquidity analysis.',
+        '/labs':
+            'Thematic macro labs on GraphiQuestor — energy, gold, sovereign stress, BRICS, and US fiscal telemetry.',
+        '/macro-brief':
+            'Morning macro brief archive on GraphiQuestor — daily regime synthesis for institutional desks.',
+        '/macro-brief/archive':
+            'Archive of GraphiQuestor morning macro briefs — historical regime synthesis for research desks.',
+        '/intel/india':
+            'India macro intelligence hub — RBI, fiscal, external sector, and sovereign stress telemetry on GraphiQuestor.',
+        '/intel/china':
+            'China macro intelligence hub — credit, property, FX, and policy telemetry on GraphiQuestor.',
+        '/countries':
+            'Sovereign country macro terminals — GDP, inflation, debt, FX reserves, and policy rates for G20 and EM on GraphiQuestor.',
+    };
+
+    if (ROUTE_DESC[path]) return ROUTE_DESC[path];
+
+    // Glossary / methods / metrics / blog articles — derive from title when unique
+    const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+    const title = (titleMatch?.[1] || '').replace(/\s*\|\s*GraphiQuestor.*$/i, '').trim();
+    if (title && !title.startsWith('Global Macro Intelligence')) {
+        return `${title}. Institutional macro telemetry and methodology on GraphiQuestor.`;
+    }
+    // Path-slug fallback (covers thin shells where title never hydrated)
+    const slug = path.split('/').filter(Boolean).pop();
+    if (slug && (path.includes('/glossary/') || path.includes('/methods/') || path.includes('/metrics/'))) {
+        const label = slug.replace(/-/g, ' ');
+        return `${label} — institutional macro definition and telemetry on GraphiQuestor.`;
+    }
+    return null;
+}
+
+function patchMetaDescription(html, cleanRoute) {
+    const forced = resolveForcedDescription(cleanRoute, html);
+    if (!forced) return html;
+
+    const descRe = /(<meta\s+[^>]*name=["']description["'][^>]*content=["'])([^"']*)(["'][^>]*>)/i;
+    const descReAlt = /(<meta\s+[^>]*content=["'])([^"']*)(["'][^>]*name=["']description["'][^>]*>)/i;
+    const m = html.match(descRe) || html.match(descReAlt);
+    const current = m?.[2] ?? '';
+    if (current && !current.startsWith(HOMEPAGE_DESC_PREFIX) && current.length > 40) {
+        return html; // already unique
+    }
+
+    const escaped = escapeAttr(forced);
+    let out = html;
+    if (descRe.test(out)) {
+        out = out.replace(descRe, `$1${escaped}$3`);
+    } else if (descReAlt.test(out)) {
+        out = out.replace(descReAlt, `$1${escaped}$3`);
+    } else {
+        out = out.replace(
+            /<\/head>/i,
+            `<meta name="description" content="${escaped}">\n</head>`
+        );
+    }
+
+    // Keep OG/Twitter in sync when they still carry homepage blurb (or are missing).
+    const patchNamed = (attr, key) => {
+        const re = new RegExp(
+            `(<meta\\s+[^>]*${attr}=["']${key}["'][^>]*content=["'])([^"']*)(["'][^>]*>)`,
+            'i'
+        );
+        const re2 = new RegExp(
+            `(<meta\\s+[^>]*content=["'])([^"']*)(["'][^>]*${attr}=["']${key}["'][^>]*>)`,
+            'i'
+        );
+        if (re.test(out)) {
+            out = out.replace(re, (full, a, content, c) =>
+                !content || content.startsWith(HOMEPAGE_DESC_PREFIX) ? `${a}${escaped}${c}` : full
+            );
+            return;
+        }
+        if (re2.test(out)) {
+            out = out.replace(re2, (full, a, content, c) =>
+                !content || content.startsWith(HOMEPAGE_DESC_PREFIX) ? `${a}${escaped}${c}` : full
+            );
+            return;
+        }
+        // Insert missing tag before </head>
+        out = out.replace(
+            /<\/head>/i,
+            `<meta ${attr}="${key}" content="${escaped}">\n</head>`
+        );
+    };
+    patchNamed('property', 'og:description');
+    patchNamed('name', 'twitter:description');
+    return out;
 }
 
 function prerenderedFilePath(cleanRoute) {
@@ -528,25 +698,27 @@ async function run() {
 
                 const DEFAULT_TITLE = 'Global Macro Intelligence Terminal | GraphiQuestor';
                 const DEFAULT_DESC_PREFIX = 'Institutional macro intelligence terminal tracking global liquidity';
+                // Wait for SPA mount + at least layout canonical. Unique descriptions are
+                // enforced by patchMetaDescription() after capture (Helmet often leaves the
+                // static homepage description tag without data-rh).
                 const helmetReady = await page.waitForFunction(
-                    (defaultTitle, defaultDescPrefix) => {
-                        const helmetMeta = document.head.querySelector(
-                            'meta[name="description"][data-rh], link[rel="canonical"][data-rh], meta[property="og:title"][data-rh]'
-                        );
-                        if (helmetMeta) return true;
+                    (defaultTitle) => {
+                        const canon = document.head.querySelector('link[rel="canonical"][data-rh]');
+                        if (canon) return true;
                         const title = document.querySelector('title')?.textContent?.trim() ?? '';
-                        if (title.length > 0 && title !== defaultTitle) return true;
-                        const desc = document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '';
-                        return desc.length > 0 && !desc.startsWith(defaultDescPrefix);
+                        return title.length > 0 && title !== defaultTitle;
                     },
-                    { timeout: 15_000 },
-                    DEFAULT_TITLE,
-                    DEFAULT_DESC_PREFIX
+                    { timeout: 12_000 },
+                    DEFAULT_TITLE
                 ).catch(() => null);
 
                 if (!helmetReady) {
-                    console.warn(`⚠ Helmet tags never appeared on ${cleanRoute} — skipping static-tag dedup for this page.`);
+                    console.warn(
+                        `⚠ Helmet canonical/title never appeared on ${cleanRoute} — continuing; patchMetaDescription will still run.`
+                    );
                 }
+                // Extra beat for lazy page SEOManager + imperative description sync
+                await new Promise((resolve) => setTimeout(resolve, 400));
 
                 // Extract internal links from the rendered DOM
                 const newLinks = await page.evaluate(() => {
@@ -591,7 +763,9 @@ async function run() {
                 if (!html) {
                     throw new Error('Failed to capture page HTML');
                 }
-                const finalHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
+                let finalHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
+                // Force unique meta description when Helmet left the static homepage blurb.
+                finalHtml = patchMetaDescription(finalHtml, cleanRoute);
 
                 // Always use prerenderedFilePath — never path.join(distDir, cleanRoute)
                 // when cleanRoute has a leading slash (POSIX path.join treats it as absolute).
@@ -647,9 +821,11 @@ async function run() {
                     await new Promise((resolve) => setTimeout(resolve, 1500));
                     const html = await capturePageHtml(page);
                     if (!html) throw new Error('Failed to capture page HTML on retry');
+                    let outHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
+                    outHtml = patchMetaDescription(outHtml, cleanRoute);
                     const outPath = prerenderedFilePath(cleanRoute);
                     fs.mkdirSync(path.dirname(outPath), { recursive: true });
-                    fs.writeFileSync(outPath, html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`);
+                    fs.writeFileSync(outPath, outHtml);
                     visitedRoutes.add(cleanRoute);
                 } catch (retryErr) {
                     console.error(`Retry failed for ${cleanRoute}:`, retryErr);

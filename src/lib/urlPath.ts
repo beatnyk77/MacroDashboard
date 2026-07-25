@@ -22,9 +22,21 @@ export function withoutTrailingSlash(path: string): string {
     return base === '/' ? '/' : `${base}${rest.join('')}`;
 }
 
+/**
+ * Normalize country ISO segment to lowercase for stable URLs.
+ * e.g. /countries/US → /countries/us
+ */
+export function normalizeCountryPath(pathname: string): string {
+    const [pathPart, ...rest] = pathname.split(/(?=[?#])/);
+    const m = pathPart.match(/^(\/countries\/)([^/]+)(\/?)$/i);
+    if (!m) return pathname;
+    const normalized = `${m[1]}${m[2].toLowerCase()}${m[3] || ''}`;
+    return `${normalized}${rest.join('')}`;
+}
+
 /** Canonical pathname for SEO (trailing slash on all non-root routes). */
 export function toCanonicalPath(pathname: string): string {
-    return withTrailingSlash(withoutTrailingSlash(pathname));
+    return withTrailingSlash(withoutTrailingSlash(normalizeCountryPath(pathname)));
 }
 
 /** Absolute canonical URL for a pathname or relative path. */

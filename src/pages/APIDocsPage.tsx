@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { SEOManager } from '@/components/SEOManager';
+import { apiDocsMeta } from '@/lib/seoTemplates';
 import { CodeBlock } from '@/components/docs/CodeBlock';
 import { Link } from 'react-router-dom';
 
@@ -218,9 +219,10 @@ export const APIDocsPage = () => {
     return (
         <div className="min-h-screen text-slate-100">
             <SEOManager
-                title="API Documentation — GraphiQuestor"
-                description="Complete REST API reference for GraphiQuestor. 270+ institutional macro metrics, time-series history, regime signals, and composite scores. Integration guide for quantitative teams."
+                title={apiDocsMeta().title}
+                description={apiDocsMeta().description}
                 keywords={['GraphiQuestor API', 'Macro Data API', 'Institutional Macro REST API', 'India macro data API', 'regime signal API']}
+                canonical="/api-docs/"
             />
 
             {/* Mobile sticky top nav */}

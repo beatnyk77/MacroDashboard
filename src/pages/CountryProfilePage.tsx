@@ -12,6 +12,9 @@ import { CountryNarrativeBlock } from '@/components/CountryNarrativeBlock';
 import { COUNTRY_NARRATIVES } from '@/data/countryNarratives';
 import { ALL_COUNTRIES } from '@/lib/countries';
 import { BrandConfig } from '@/config/brandConfig';
+import { countryMeta } from '@/lib/seoTemplates';
+import { withTrailingSlash } from '@/lib/urlPath';
+import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 
 // High-level grouping for the country terminal layout
 const TERMINAL_SECTIONS = [
@@ -25,6 +28,7 @@ const TERMINAL_SECTIONS = [
 export const CountryProfilePage: React.FC = () => {
   const { iso } = useParams<{ iso: string }>();
   const uppercaseIso = iso?.toUpperCase();
+  const lowercaseIso = iso?.toLowerCase();
 
   // 1. Fetch Country Terminal Data from Supabase view
   const { data: countryData, isLoading, error } = useQuery({
@@ -47,9 +51,10 @@ export const CountryProfilePage: React.FC = () => {
   }, [uppercaseIso]);
 
   const seoData = useMemo(() => {
-    const title = `${countryName} (${uppercaseIso}) Macro Data & Sovereign Risk Terminal`;
-    const description = `Institutional-grade macro-economic terminal for ${countryName}. Live tracking of GDP growth, inflation, sovereign debt maturity, and ${uppercaseIso} yield curve telemetry.`;
-    const keywords = [countryName, uppercaseIso || '', 'Macro Data', 'Sovereign Debt', 'Yield Curve', 'Institutional Terminal', 'Macro Observatory'];
+    const base = countryMeta(countryName, uppercaseIso || '');
+    const title = base.title;
+    const description = base.description;
+    const keywords = base.keywords;
 
     const schemas: any[] = [
       {
@@ -137,7 +142,18 @@ export const CountryProfilePage: React.FC = () => {
     return { title, description, keywords, schemas };
   }, [countryName, uppercaseIso, countryData]);
 
-  if (!uppercaseIso) return <Navigate to="/" replace />;
+  if (!uppercaseIso || !lowercaseIso) return <Navigate to="/" replace />;
+
+  // Unknown ISO — do not index junk country shells
+  const known = ALL_COUNTRIES.some((c) => c.code === uppercaseIso);
+  if (!known) {
+    return <Navigate to={withTrailingSlash('/countries')} replace />;
+  }
+
+  // Force lowercase public URL (canonical + inlinks); keep data keyed on UPPER ISO
+  if (iso !== lowercaseIso) {
+    return <Navigate to={withTrailingSlash(`/countries/${lowercaseIso}`)} replace />;
+  }
 
   return (
     <div className="min-h-screen bg-[#050810] text-white">
@@ -146,6 +162,7 @@ export const CountryProfilePage: React.FC = () => {
         description={seoData.description}
         keywords={seoData.keywords}
         jsonLd={seoData.schemas}
+        canonical={withTrailingSlash(`/countries/${lowercaseIso}`)}
       />
 
       {/* Hero Section */}
@@ -185,6 +202,11 @@ export const CountryProfilePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* API / MCP primary conversion (North Star) */}
+      <Container maxWidth="xl" sx={{ mt: 6 }}>
+        <InstitutionalAccessStrip variant="compact" />
+      </Container>
 
       {/* Narrative Intelligent Analysis */}
       <Container maxWidth="xl" sx={{ mt: 8 }}>

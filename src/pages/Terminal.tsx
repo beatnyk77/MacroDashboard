@@ -358,7 +358,7 @@ export const Terminal: React.FC = () => {
                                     ].map(country => (
                                         <Link
                                             key={country.code}
-                                            to={`/countries/${country.code}`}
+                                            to={`/countries/${country.code.toLowerCase()}`}
                                             className="group p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/30 transition-all duration-200"
                                         >
                                             <div className="text-2xl mb-2">{country.flag}</div>

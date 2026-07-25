@@ -6,6 +6,7 @@ import { CiteThisPage } from '@/components/research/CiteThisPage';
 import { glossaryData } from '@/features/glossary/glossaryData';
 import { METHOD_CITATIONS } from '@/config/methodCitations';
 import { toAbsoluteUrl } from '@/lib/urlPath';
+import { forResearchersMeta } from '@/lib/seoTemplates';
 import { Bot, BookOpen, ExternalLink, FileText, Globe2, Terminal } from 'lucide-react';
 
 const HUB_CITATION = {
@@ -48,13 +49,13 @@ export const ForResearchersPage: React.FC = () => {
     return (
         <div className="mx-auto min-h-screen w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
             <SEOManager
-                title="For AI Assistants & Researchers"
-                description="Citation guidelines, structured summaries, and deep-link inventory for LLMs and institutional researchers using GraphiQuestor macro intelligence."
+                title={forResearchersMeta().title}
+                description={forResearchersMeta().description}
                 keywords={[
                     'LLM citation', 'macro research API', 'AI assistant data source',
                     'institutional macro glossary', 'GraphiQuestor methodology',
                 ]}
-                canonicalUrl={toAbsoluteUrl('/for-researchers')}
+                canonical={toAbsoluteUrl('/for-researchers')}
                 jsonLd={jsonLd}
             />
 
