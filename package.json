@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node scripts/run-with-flags.mjs vite",
     "generate-sitemap": "npx tsx scripts/generate-sitemap.ts",
-    "build": "node scripts/run-with-flags.mjs npm run generate-sitemap && tsc && vite build && npm run prerender && npm run validate-seo",
+    "generate-terminal-snapshot": "node scripts/generate-terminal-snapshot.mjs",
+    "build": "node scripts/run-with-flags.mjs npm run generate-sitemap && npm run generate-terminal-snapshot && tsc && vite build && npm run prerender && npm run validate-seo",
     "prerender": "node scripts/prerender.mjs",
     "validate-seo": "node scripts/validate-prerender-seo.mjs",
     "lint": "eslint src --max-warnings 0",

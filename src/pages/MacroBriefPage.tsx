@@ -14,6 +14,12 @@ import { Clock, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { marketDateISO } from '@/lib/marketDate';
 import { withTrailingSlash } from '@/lib/urlPath';
+import {
+  briefContentToText,
+  briefDepthLabel,
+  classifyBriefDepth,
+  countWords,
+} from '@/lib/briefQuality';
 
 const STORAGE_KEY = 'gq_focus_areas';
 const DEFAULT_AREAS: FocusArea[] = ['india', 'us_macro', 'gold_dedollarization'];
@@ -198,11 +204,13 @@ const MacroBriefInner: React.FC = () => {
   const hasNextBrief = nextDateStr <= todayStr;
 
   const regimeColors = getRegimeColors(activeBrief.regime_label || 'unknown');
+  const briefWords = countWords(briefContentToText(activeBrief.content));
+  const briefDepth = classifyBriefDepth(briefWords);
   const seoDescription = activeBrief.content.regime_status?.trim()
     ? (activeBrief.content.regime_status.length > 155 
         ? `${activeBrief.content.regime_status.slice(0, 152)}...` 
         : activeBrief.content.regime_status)
-    : `GraphiQuestor's daily institutional macro brief for ${format(parsedDate, 'd MMMM yyyy')}. Regime: ${activeBrief.regime_label || 'Neutral'}. Key signals across India, US, and global macro.`;
+    : `GraphiQuestor weekday institutional macro brief for ${format(parsedDate, 'd MMMM yyyy')}. Regime: ${activeBrief.regime_label || 'Neutral'}. Deep notes Mon–Fri ET.`;
 
   // Derived Section 3 Heading
   const focusAreaNames = selectedAreas
@@ -287,8 +295,22 @@ const MacroBriefInner: React.FC = () => {
         <header className="border-b border-white/10 pb-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div className="space-y-2">
-              <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-emerald-500/90">
-                {TEXTS.morningMacroBrief}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-emerald-500/90">
+                  {TEXTS.morningMacroBrief}
+                </div>
+                <span
+                  className={cn(
+                    'rounded border px-2 py-0.5 text-[9px] font-black uppercase tracking-widest',
+                    briefDepth === 'deep' && 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400',
+                    briefDepth === 'standard' && 'border-sky-500/30 bg-sky-500/10 text-sky-400',
+                    briefDepth === 'thin' && 'border-amber-500/30 bg-amber-500/10 text-amber-400',
+                    briefDepth === 'unknown' && 'border-white/15 text-white/40'
+                  )}
+                  title={`${briefWords} words · weekday deep-note bar ≥350`}
+                >
+                  {briefDepthLabel(briefDepth)} · {briefWords}w
+                </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
                 {formattedDayLabel}
@@ -299,6 +321,8 @@ const MacroBriefInner: React.FC = () => {
                   : '—'} ET
                 {' · '}
                 {activeBrief.model_used || 'synthesis engine'}
+                {' · '}
+                Mon–Fri ET deep notes
               </p>
             </div>
             <div className="flex items-center gap-2 text-xs font-mono font-medium text-white/70">

@@ -20,8 +20,8 @@ export const MacroBriefArchivePage: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto py-12 px-4 sm:px-6">
       <SEOManager
-        title="Morning Macro Brief Archive | GraphiQuestor"
-        description="Chronological archive of GraphiQuestor daily Morning Macro Briefs tracking regime changes, risk telemetry, and focus signals."
+        title="Morning Macro Brief Archive | Weekday Deep Notes | GraphiQuestor"
+        description="Archive of GraphiQuestor weekday morning macro briefs (Mon–Fri ET). Regime signals, risk telemetry, and focus-area deep notes — not weekend stubs."
         canonicalUrl="https://graphiquestor.com/macro-brief/archive"
         robots="index, follow"
       />
@@ -39,7 +39,11 @@ export const MacroBriefArchivePage: React.FC = () => {
           Morning Brief Archive
         </h1>
         <p className="text-sm font-medium text-white/40 max-w-lg">
-          Daily pre-market macro intelligence history. Each brief is a permanent indexed page.
+          Weekday deep notes (Mon–Fri America/New_York). Target ≥350 words of institutional regime
+          synthesis. Weekends are not generated — quality over thin daily stubs.
+        </p>
+        <p className="text-[11px] font-mono uppercase tracking-widest text-emerald-500/70">
+          Quality bar · deep ≥350w · acceptable ≥180w
         </p>
       </div>
 

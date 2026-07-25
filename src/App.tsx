@@ -20,6 +20,7 @@ const ArticlePage = lazy(() => import('@/pages/ArticlePage').then(module => ({ d
 const RegimeDigestArchivePage = lazy(() => import('@/pages/RegimeDigestArchivePage').then(module => ({ default: module.RegimeDigestArchivePage })));
 const RegimeDigestPage = lazy(() => import('@/pages/RegimeDigestPage').then(module => ({ default: module.RegimeDigestPage })));
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+const AdminSeoPage = lazy(() => import('@/pages/AdminSeoPage').then(module => ({ default: module.AdminSeoPage })));
 const DataHealthDashboard = lazy(() => import('@/pages/DataHealthDashboard').then(module => ({ default: module.DataHealthDashboard })));
 const DataHealthPublic = lazy(() => import('@/pages/DataHealthPublic').then(module => ({ default: module.DataHealthPublic })));
 const SubscribeConfirm = lazy(() => import('@/pages/SubscribeConfirm').then(module => ({ default: module.SubscribeConfirm })));
@@ -108,6 +109,7 @@ function App() {
                                         <Route path={trailRoute('/regime-digest')} element={<RegimeDigestArchivePage />} />
                                         <Route path={trailRoute('/regime-digest/:year/:month')} element={<RegimeDigestPage />} />
                                         <Route path={trailRoute('/admin')} element={<AdminDashboard />} />
+                                        <Route path={trailRoute('/admin/seo')} element={<AdminSeoPage />} />
                                         <Route path={trailRoute('/admin/data-health')} element={<DataHealthDashboard />} />
                                         <Route path={trailRoute('/data-health')} element={<DataHealthPublic />} />
                                         <Route path={trailRoute('/subscribe/confirm')} element={<SubscribeConfirm />} />

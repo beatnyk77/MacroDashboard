@@ -119,6 +119,19 @@ serveIngest('generate-morning-brief', async (req) => {
     const today = marketDateISO();
     const insertErrors: string[] = [];
 
+    // Weekday deep notes only — skip Sat/Sun ET (quality bar / thin-archive policy).
+    const etWeekday = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'short',
+    }).format(new Date());
+    if (etWeekday === 'Sat' || etWeekday === 'Sun') {
+      return {
+        ok: true,
+        message: `Weekend skip (${etWeekday} ET) — weekday deep briefs only`,
+        counts: { upserted: 0, skipped: 1, errors: 0 },
+      };
+    }
+
     // 1. Get current regime
     const { data: regimeData } = await supabase
       .from('metric_observations')

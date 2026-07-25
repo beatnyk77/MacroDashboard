@@ -22,6 +22,7 @@ import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { TerminalHero } from '@/features/dashboard/components/TerminalHero';
+import { TerminalSnapshotStrip } from '@/features/dashboard/components/TerminalSnapshotStrip';
 import { StartExploringSection } from '@/features/dashboard/components/StartExploringSection';
 import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
 import { ValueProgressionPath } from '@/components/engagement/ValueProgressionPath';
@@ -91,6 +92,9 @@ export const Terminal: React.FC = () => {
             />
 
             <TerminalHero />
+
+            {/* E4: build-time key telemetry for crawlers + live hydrate */}
+            <TerminalSnapshotStrip />
 
             <InstitutionalAccessStrip className="mb-8" />
 

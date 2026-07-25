@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { Link as RouterLink } from 'react-router-dom';
 import { SubscriberTractionCard } from '@/components/admin/SubscriberTractionCard';
 import { TrafficIntelligencePanel } from '@/components/admin/TrafficIntelligencePanel';
 
@@ -206,6 +207,13 @@ export const AdminDashboard = () => {
                         label="NETWORK STABLE"
                         sx={{ bgcolor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)' }}
                     />
+                    <Button
+                        component={RouterLink}
+                        to="/admin/seo/"
+                        sx={{ color: BLOOMBERG_ORANGE, fontWeight: 800, letterSpacing: '0.08em', fontSize: '0.7rem' }}
+                    >
+                        SEO OPS →
+                    </Button>
                     <Button
                         startIcon={<RefreshCcw size={18} />}
                         onClick={() => { refetchIngestions(); refetchRecentRuns(); }}
