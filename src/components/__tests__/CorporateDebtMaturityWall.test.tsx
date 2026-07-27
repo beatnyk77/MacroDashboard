@@ -40,7 +40,7 @@ describe('CorporateDebtMaturityWall', () => {
         (supabase.from as any).mockReturnValue({ select: mockSelect });
 
         render(<CorporateDebtMaturityWall />);
-        expect(screen.getByText('Analyzing SEC Maturity Filings...')).toBeInTheDocument();
+        expect(screen.getByText('Loading corporate maturity telemetry...')).toBeInTheDocument();
     });
 
     it('renders data correctly after fetch when as_of is fresh', async () => {
@@ -75,7 +75,7 @@ describe('CorporateDebtMaturityWall', () => {
 
         // Wait for loading to finish and component to render data
         await waitFor(() => {
-            expect(screen.queryByText('Analyzing SEC Maturity Filings...')).not.toBeInTheDocument();
+            expect(screen.queryByText('Loading corporate maturity telemetry...')).not.toBeInTheDocument();
         });
 
         // The total debt should be 1.5 + 2.5 + 3.0 + 3.0 = 10.0

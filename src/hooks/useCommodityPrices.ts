@@ -24,6 +24,9 @@ const METRIC_LABELS: Record<string, string> = {
     [MID.NICKEL_PRICE_USD]: 'Nickel ($/t)',
 };
 
+/** Keep latest + previous print per metric so PriceTerminalCard can compute d/d %. */
+const PRINTS_PER_METRIC = 2;
+
 export const useCommodityPrices = () => {
     return useQuery({
         queryKey: ['commodity-prices'],
@@ -37,18 +40,29 @@ export const useCommodityPrices = () => {
 
             if (error) throw error;
 
-            // Latest print per metric (table is multi-day history)
-            const latestByMetric = new Map<string, CommodityPrice>();
+            // Group by metric; take the two most recent dates (already sorted desc)
+            const byMetric = new Map<string, CommodityPrice[]>();
             for (const d of data || []) {
-                if (latestByMetric.has(d.metric_id)) continue;
-                latestByMetric.set(d.metric_id, {
+                const list = byMetric.get(d.metric_id) ?? [];
+                if (list.length >= PRINTS_PER_METRIC) continue;
+                // Skip duplicate same-day rows
+                if (list.some((r) => r.as_of_date === String(d.as_of_date))) continue;
+                list.push({
                     symbol: METRIC_LABELS[d.metric_id] ?? d.metric_id,
                     as_of_date: String(d.as_of_date),
                     price: Number(d.value),
                     curve_type: 'spot',
                 });
+                byMetric.set(d.metric_id, list);
             }
-            return Array.from(latestByMetric.values());
+
+            // Flatten: for each metric emit latest then previous (stable order for consumers)
+            const out: CommodityPrice[] = [];
+            for (const id of COMMODITY_IDS) {
+                const rows = byMetric.get(id);
+                if (rows) out.push(...rows);
+            }
+            return out;
         },
         staleTime: 1000 * 60 * 15,
         refetchInterval: 1000 * 60 * 30,
