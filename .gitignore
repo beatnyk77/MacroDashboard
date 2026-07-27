@@ -125,3 +125,4 @@ scripts/.deploy-all-functions.*
 scripts/.remote-functions.txt
 scripts/.redeploy-list.txt
 scripts/.deploy-all-functions.*
+.worktrees/
