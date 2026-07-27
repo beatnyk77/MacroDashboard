@@ -6,14 +6,89 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
-import { useRegimeDigest, MetricsSnapshot } from '@/features/regime-digest/hooks/useRegimeDigest';
+import { useRegimeDigest, MetricsSnapshot, Digest } from '@/features/regime-digest/hooks/useRegimeDigest';
+import {
+    EditionHeader,
+    RegimeStrip,
+    DeskBrief,
+    Scoreboard,
+    RegimeHistory,
+    BriefIndex,
+    QualityFooter,
+} from '@/features/regime-digest/components';
+import type { NotebookPayload } from '@/features/regime-digest/lib/types';
 import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
 import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip';
 import { RelatedContent } from '@/components/RelatedContent';
 import { ShareButton } from '@/components/ShareButton';
 import { format } from 'date-fns';
 
-// ── Metric pill ──────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function formatMonthYear(yearMonth: string): string {
+    const [y, m] = yearMonth.split('-');
+    const yi = parseInt(y, 10);
+    const mi = parseInt(m, 10);
+    if (!yi || !mi) return yearMonth;
+    return format(new Date(yi, mi - 1), 'MMMM yyyy');
+}
+
+function formatRegimeLabel(label?: string): string {
+    if (!label) return 'Macro';
+    return label.replace(/_/g, ' ');
+}
+
+function buildEditionSeo(
+    year: string | undefined,
+    month: string | undefined,
+    digest: Digest | null | undefined,
+    payload: NotebookPayload | null | undefined,
+) {
+    const ym = digest?.year_month ?? (year && month ? `${year}-${month}` : undefined);
+    const formattedMonthYear = ym ? formatMonthYear(ym) : `${year ?? '—'}-${month ?? '—'}`;
+    const regimeLabel = formatRegimeLabel(payload?.regime.label);
+    const metaFact =
+        payload?.thesis[0] ??
+        digest?.subject_line ??
+        'Institutional monthly regime synthesis from GraphiQuestor telemetry.';
+    const description = metaFact.slice(0, 160);
+    const title = `${formattedMonthYear} Macro Regime Digest: ${regimeLabel} | GraphiQuestor`;
+    const publishedTime =
+        payload?.publishedAt ?? digest?.generated_at ?? digest?.created_at ?? undefined;
+    const canonicalPath =
+        year && month
+            ? `https://graphiquestor.com/regime-digest/${year}/${month}/`
+            : ym
+              ? `https://graphiquestor.com/regime-digest/${ym.replace('-', '/')}/`
+              : 'https://graphiquestor.com/regime-digest/';
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline: title,
+        datePublished: publishedTime,
+        dateModified: publishedTime,
+        author: { '@type': 'Organization', name: 'GraphiQuestor' },
+        publisher: {
+            '@type': 'Organization',
+            name: 'GraphiQuestor',
+            url: 'https://graphiquestor.com',
+        },
+        mainEntityOfPage: canonicalPath,
+        description,
+    };
+
+    return {
+        title,
+        description,
+        publishedTime,
+        canonical: canonicalPath,
+        ogImage: `https://graphiquestor.com/og/digest-${year ?? 'unknown'}-${month ?? 'unknown'}.png`,
+        jsonLd,
+        formattedMonthYear,
+    };
+}
+
+// ── Metric pill (legacy path) ─────────────────────────────────────────────────
 
 interface MetricPillProps {
     label: string;
@@ -37,7 +112,7 @@ const MetricPill: React.FC<MetricPillProps> = ({ label, value, sub, trend }) => 
     );
 };
 
-// ── Metrics strip ─────────────────────────────────────────────────────────────
+// ── Metrics strip (legacy path) ───────────────────────────────────────────────
 
 const MetricsStrip: React.FC<{ snapshot: MetricsSnapshot }> = ({ snapshot }) => {
     const fmt = (v?: number, decimals = 1) => (v != null ? v.toFixed(decimals) : '—');
@@ -54,7 +129,6 @@ const MetricsStrip: React.FC<{ snapshot: MetricsSnapshot }> = ({ snapshot }) => 
         ? snapshot.commodities.brent_crude > snapshot.commodities.brent_prev ? 'up' : 'down'
         : 'flat' as const;
 
-    // Six primary vitals — ordered by CIO scan priority, all fit in one row at max-w-5xl
     const vitals: Array<{ label: string; value: string; sub?: string; trend?: 'up' | 'down' | 'flat' }> = [];
     if (snapshot.us?.dxy != null)
         vitals.push({ label: 'DXY', value: fmt(snapshot.us.dxy), trend: dxyTrend });
@@ -82,6 +156,307 @@ const MetricsStrip: React.FC<{ snapshot: MetricsSnapshot }> = ({ snapshot }) => 
                 {vitals.map(v => (
                     <MetricPill key={v.label} label={v.label} value={v.value} sub={v.sub} trend={v.trend} />
                 ))}
+            </div>
+        </div>
+    );
+};
+
+// ── Notebook render path ──────────────────────────────────────────────────────
+
+const NotebookDigest: React.FC<{
+    digest: Digest;
+    payload: NotebookPayload;
+    year?: string;
+    month?: string;
+    status: FreshnessStatus;
+    onRefresh: () => void;
+    isRegenerating: boolean;
+}> = ({ digest, payload, year, month, status, onRefresh, isRegenerating }) => {
+    const seo = buildEditionSeo(year, month, digest, payload);
+    const lastUpdated = payload.publishedAt ?? digest.generated_at ?? digest.created_at;
+
+    return (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <SEOManager
+                title={seo.title}
+                description={seo.description}
+                ogType="article"
+                publishedTime={seo.publishedTime}
+                jsonLd={seo.jsonLd}
+                canonical={seo.canonical}
+                ogImage={seo.ogImage}
+            />
+
+            <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/35">
+                <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
+                <ChevronRight size={10} />
+                <Link to="/regime-digest" className="hover:text-blue-400 transition-colors">Archive</Link>
+                <ChevronRight size={10} />
+                <span className="text-blue-400/70">{digest.year_month}</span>
+            </nav>
+
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="min-w-0 flex-1 space-y-3">
+                    <EditionHeader
+                        yearMonth={payload.yearMonth || digest.year_month}
+                        publishedAt={payload.publishedAt}
+                        asOf={payload.asOf}
+                        editionNumber={payload.editionNumber}
+                    />
+                    <div className="flex flex-wrap items-center gap-3">
+                        <FreshnessChip
+                            status={status}
+                            lastUpdated={lastUpdated}
+                            label={status === 'fresh' ? 'Live' : 'Archive'}
+                        />
+                    </div>
+                </div>
+                {import.meta.env.DEV && (
+                    <Button
+                        onClick={onRefresh}
+                        disabled={isRegenerating}
+                        variant="outline"
+                        size="sm"
+                        className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
+                    >
+                        {isRegenerating
+                            ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
+                            : <RefreshCw className="mr-1.5 h-3 w-3" />}
+                        {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+                    </Button>
+                )}
+            </div>
+
+            {payload.quality.overall === 'partial' && (
+                <div
+                    role="status"
+                    className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200/90"
+                >
+                    Partial data quality — some metrics withheld or stale.
+                </div>
+            )}
+
+            {payload.quality.overall === 'blocked' && (
+                <div
+                    role="status"
+                    className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200/90"
+                >
+                    Data quality blocked — key metrics unavailable for this edition.
+                </div>
+            )}
+
+            <RegimeStrip regime={payload.regime} />
+            <DeskBrief
+                thesis={payload.thesis}
+                movers={payload.movers}
+                positioning={payload.positioning}
+                watchlist={payload.watchlist}
+            />
+            <Scoreboard board={payload.board} />
+            <RegimeHistory history={payload.history} />
+            <BriefIndex links={payload.briefLinks} />
+            <QualityFooter quality={payload.quality} asOf={payload.asOf} />
+
+            <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
+                <Button asChild variant="ghost" size="sm" className="text-muted-foreground/50 hover:text-white -ml-2">
+                    <Link to="/regime-digest">
+                        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> All Editions
+                    </Link>
+                </Button>
+                <p className="text-[9px] font-bold text-muted-foreground/25 uppercase tracking-widest">
+                    Ref: {digest.id.substring(0, 8)}
+                    {lastUpdated
+                        ? ` · ${new Date(lastUpdated).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`
+                        : ''}
+                </p>
+            </div>
+        </div>
+    );
+};
+
+// ── Legacy HTML render path ───────────────────────────────────────────────────
+
+const LegacyDigest: React.FC<{
+    digest: Digest;
+    year?: string;
+    month?: string;
+    status: FreshnessStatus;
+    onRefresh: () => void;
+    isRegenerating: boolean;
+}> = ({ digest, year, month, status, onRefresh, isRegenerating }) => {
+    const seo = buildEditionSeo(year, month, digest, null);
+    const cleanHtml = (digest.html_content ?? '')
+        .replace(/<!DOCTYPE html>/gi, '')
+        .replace(/<html[^>]*>/gi, '')
+        .replace(/<\/html>/gi, '')
+        .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
+        .replace(/<body[^>]*>/gi, '')
+        .replace(/<\/body>/gi, '')
+        .trim();
+
+    const formattedTitleDate = formatMonthYear(digest.year_month);
+    const plainText = digest.plain_text ?? '';
+    const wordCount = plainText ? plainText.split(/\s+/).filter(Boolean).length : 0;
+    const readingMinutes = Math.max(1, Math.round(wordCount / 200));
+    const generatedAt = digest.generated_at ?? digest.created_at;
+
+    return (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <SEOManager
+                title={seo.title}
+                description={seo.description}
+                ogType="article"
+                publishedTime={seo.publishedTime}
+                jsonLd={seo.jsonLd}
+                canonical={seo.canonical}
+                ogImage={seo.ogImage}
+            />
+
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div>
+                    <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/35 mb-3">
+                        <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
+                        <ChevronRight size={10} />
+                        <Link to="/regime-digest" className="hover:text-blue-400 transition-colors">Archive</Link>
+                        <ChevronRight size={10} />
+                        <span className="text-blue-400/70">{digest.year_month}</span>
+                    </nav>
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-tight">
+                        {formattedTitleDate} Macro Regime Digest
+                    </h1>
+                    <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest pt-2">
+                        Desk brief · Scoreboard · Automated rules
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3 pt-3">
+                        <FreshnessChip
+                            status={status}
+                            lastUpdated={generatedAt}
+                            label={status === 'fresh' ? 'Live' : 'Archive'}
+                        />
+                        {wordCount > 0 && (
+                            <>
+                                <span className="w-px h-3 bg-white/10" />
+                                <span className="text-[10px] font-bold text-muted-foreground/35 uppercase tracking-widest">
+                                    {readingMinutes} min read
+                                </span>
+                            </>
+                        )}
+                    </div>
+                </div>
+                {import.meta.env.DEV && (
+                    <Button
+                        onClick={onRefresh}
+                        disabled={isRegenerating}
+                        variant="outline"
+                        size="sm"
+                        className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
+                    >
+                        {isRegenerating
+                            ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
+                            : <RefreshCw className="mr-1.5 h-3 w-3" />}
+                        {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+                    </Button>
+                )}
+            </div>
+            <p className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">
+                Generated{' '}
+                {generatedAt
+                    ? new Date(generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+                    : '—'}
+                {' · '}Source: multi-metric monthly synthesis · GraphiQuestor
+            </p>
+
+            <Card className="overflow-hidden border-white/[0.06] bg-slate-950/50 backdrop-blur-xl shadow-2xl">
+                <CardContent className="p-6 sm:p-10 lg:p-14">
+                    <div className="mb-10 pb-10 border-b border-white/[0.06]">
+                        <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/80 mb-4">
+                            Intelligence Brief · {formattedTitleDate}
+                        </p>
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-[1.15] max-w-3xl">
+                            {digest.subject_line}
+                        </h2>
+                    </div>
+
+                    {digest.metrics_snapshot && <MetricsStrip snapshot={digest.metrics_snapshot} />}
+
+                    <style>{`
+                        .digest-body { max-width: 72ch; }
+                        .digest-body h2 {
+                            color: #fff;
+                            font-size: 0.875rem;
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            letter-spacing: 0.08em;
+                            margin-top: 3.5rem;
+                            margin-bottom: 1.25rem;
+                            padding-left: 0.875rem;
+                            border-left: 2px solid #3b82f6;
+                            line-height: 1.3;
+                        }
+                        .digest-body > h2:first-child { margin-top: 0; }
+                        .digest-body h3 {
+                            color: #7dd3fc;
+                            font-size: 0.6875rem;
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            letter-spacing: 0.14em;
+                            margin-top: 2.25rem;
+                            margin-bottom: 0.875rem;
+                        }
+                        .digest-body p {
+                            color: #cbd5e1;
+                            font-size: 0.9375rem;
+                            line-height: 1.85;
+                            margin-bottom: 1.375rem;
+                        }
+                        .digest-body strong { color: #f8fafc; font-weight: 800; }
+                        .digest-body ul { margin: 1.25rem 0; padding: 0; list-style: none; }
+                        .digest-body li {
+                            color: #94a3b8;
+                            font-size: 0.9rem;
+                            line-height: 1.75;
+                            margin-bottom: 0.75rem;
+                            padding-left: 1.375rem;
+                            position: relative;
+                        }
+                        .digest-body li::before {
+                            content: '—';
+                            position: absolute;
+                            left: 0;
+                            color: #3b82f6;
+                            font-weight: 700;
+                            opacity: 0.7;
+                        }
+                        .digest-body a { color: #60a5fa; text-decoration: none; }
+                        .digest-body a:hover { color: #93c5fd; }
+                        .digest-body hr {
+                            border: none;
+                            border-top: 1px solid rgba(255,255,255,0.05);
+                            margin: 3rem 0;
+                        }
+                    `}</style>
+                    {cleanHtml ? (
+                        <div dangerouslySetInnerHTML={{ __html: cleanHtml }} className="digest-body" />
+                    ) : (
+                        <p className="text-sm text-muted-foreground/50">
+                            Narrative body unavailable for this edition.
+                        </p>
+                    )}
+                </CardContent>
+            </Card>
+
+            <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
+                <Button asChild variant="ghost" size="sm" className="text-muted-foreground/50 hover:text-white -ml-2">
+                    <Link to="/regime-digest">
+                        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> All Editions
+                    </Link>
+                </Button>
+                <p className="text-[9px] font-bold text-muted-foreground/25 uppercase tracking-widest">
+                    Ref: {digest.id.substring(0, 8)}
+                    {generatedAt
+                        ? ` · ${new Date(generatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`
+                        : ''}
+                </p>
             </div>
         </div>
     );
@@ -155,158 +530,30 @@ const RegimeDigestContent: React.FC = () => {
         );
     }
 
-    const cleanHtml = digest.html_content
-        .replace(/<!DOCTYPE html>/gi, '')
-        .replace(/<html[^>]*>/gi, '')
-        .replace(/<\/html>/gi, '')
-        .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
-        .replace(/<body[^>]*>/gi, '')
-        .replace(/<\/body>/gi, '')
-        .trim();
-
-    const [y, m] = digest.year_month.split('-');
-    const formattedTitleDate = format(new Date(parseInt(y), parseInt(m) - 1), 'MMMM yyyy');
-    const wordCount = digest.plain_text.split(/\s+/).length;
-    const readingMinutes = Math.max(1, Math.round(wordCount / 200));
+    const payload = digest.notebook_payload;
+    if (payload) {
+        return (
+            <NotebookDigest
+                digest={digest}
+                payload={payload}
+                year={year}
+                month={month}
+                status={status}
+                onRefresh={handleRefresh}
+                isRegenerating={isRegenerating}
+            />
+        );
+    }
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Page header */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div>
-                    <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/35 mb-3">
-                        <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
-                        <ChevronRight size={10} />
-                        <Link to="/regime-digest" className="hover:text-blue-400 transition-colors">Archive</Link>
-                        <ChevronRight size={10} />
-                        <span className="text-blue-400/70">{digest.year_month}</span>
-                    </nav>
-                    <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tighter leading-none uppercase">
-                        {formattedTitleDate} <span className="text-blue-500">Regime</span>
-                    </h1>
-                    <div className="flex flex-wrap items-center gap-3 pt-3">
-                        <FreshnessChip
-                            status={status}
-                            lastUpdated={digest.created_at}
-                            label={status === 'fresh' ? 'Live' : 'Archive'}
-                        />
-                        <span className="w-px h-3 bg-white/10" />
-                        <span className="text-[10px] font-bold text-muted-foreground/35 uppercase tracking-widest">{readingMinutes} min read</span>
-                        <span className="w-px h-3 bg-white/10" />
-                        <span className="text-[10px] font-bold text-muted-foreground/35 uppercase tracking-widest">GraphiQuestor AI</span>
-                    </div>
-                </div>
-                {import.meta.env.DEV && (
-                    <Button
-                        onClick={handleRefresh}
-                        disabled={isRegenerating}
-                        variant="outline"
-                        size="sm"
-                        className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
-                    >
-                        {isRegenerating
-                            ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
-                            : <RefreshCw className="mr-1.5 h-3 w-3" />}
-                        {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-                    </Button>
-                )}
-            </div>
-            <p className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">
-                Generated {digest.created_at ? new Date(digest.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—'}
-                {' · '}Source: multi-metric monthly synthesis · GraphiQuestor
-            </p>
-
-            {/* Digest card */}
-            <Card className="overflow-hidden border-white/[0.06] bg-slate-950/50 backdrop-blur-xl shadow-2xl">
-                <CardContent className="p-6 sm:p-10 lg:p-14">
-
-                    {/* Subject line — the centrepiece */}
-                    <div className="mb-10 pb-10 border-b border-white/[0.06]">
-                        <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/80 mb-4">
-                            Intelligence Brief · {formattedTitleDate}
-                        </p>
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-[1.15] max-w-3xl">
-                            {digest.subject_line}
-                        </h2>
-                    </div>
-
-                    {/* Macro vitals strip */}
-                    {digest.metrics_snapshot && <MetricsStrip snapshot={digest.metrics_snapshot} />}
-
-                    {/* Narrative body */}
-                    <style>{`
-                        .digest-body { max-width: 72ch; }
-                        .digest-body h2 {
-                            color: #fff;
-                            font-size: 0.875rem;
-                            font-weight: 900;
-                            text-transform: uppercase;
-                            letter-spacing: 0.08em;
-                            margin-top: 3.5rem;
-                            margin-bottom: 1.25rem;
-                            padding-left: 0.875rem;
-                            border-left: 2px solid #3b82f6;
-                            line-height: 1.3;
-                        }
-                        .digest-body > h2:first-child { margin-top: 0; }
-                        .digest-body h3 {
-                            color: #7dd3fc;
-                            font-size: 0.6875rem;
-                            font-weight: 900;
-                            text-transform: uppercase;
-                            letter-spacing: 0.14em;
-                            margin-top: 2.25rem;
-                            margin-bottom: 0.875rem;
-                        }
-                        .digest-body p {
-                            color: #cbd5e1;
-                            font-size: 0.9375rem;
-                            line-height: 1.85;
-                            margin-bottom: 1.375rem;
-                        }
-                        .digest-body strong { color: #f8fafc; font-weight: 800; }
-                        .digest-body ul { margin: 1.25rem 0; padding: 0; list-style: none; }
-                        .digest-body li {
-                            color: #94a3b8;
-                            font-size: 0.9rem;
-                            line-height: 1.75;
-                            margin-bottom: 0.75rem;
-                            padding-left: 1.375rem;
-                            position: relative;
-                        }
-                        .digest-body li::before {
-                            content: '—';
-                            position: absolute;
-                            left: 0;
-                            color: #3b82f6;
-                            font-weight: 700;
-                            opacity: 0.7;
-                        }
-                        .digest-body a { color: #60a5fa; text-decoration: none; }
-                        .digest-body a:hover { color: #93c5fd; }
-                        .digest-body hr {
-                            border: none;
-                            border-top: 1px solid rgba(255,255,255,0.05);
-                            margin: 3rem 0;
-                        }
-                    `}</style>
-                    <div dangerouslySetInnerHTML={{ __html: cleanHtml }} className="digest-body" />
-
-                </CardContent>
-            </Card>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
-                <Button asChild variant="ghost" size="sm" className="text-muted-foreground/50 hover:text-white -ml-2">
-                    <Link to="/regime-digest">
-                        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> All Editions
-                    </Link>
-                </Button>
-                <p className="text-[9px] font-bold text-muted-foreground/25 uppercase tracking-widest">
-                    Ref: {digest.id.substring(0, 8)} · {new Date(digest.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </p>
-            </div>
-        </div>
+        <LegacyDigest
+            digest={digest}
+            year={year}
+            month={month}
+            status={status}
+            onRefresh={handleRefresh}
+            isRegenerating={isRegenerating}
+        />
     );
 };
 
@@ -316,11 +563,23 @@ export const RegimeDigestPage: React.FC = () => {
     const { year, month } = useParams<{ year: string; month: string }>();
     const shareRef = React.useRef<HTMLDivElement>(null);
 
+    const fallbackYm =
+        year && month ? formatMonthYear(`${year}-${month}`) : `${year ?? ''}-${month ?? ''}`;
+    const fallbackTitle = `${fallbackYm} Macro Regime Digest | GraphiQuestor`;
+    const fallbackDescription =
+        'Institutional monthly regime synthesis from GraphiQuestor telemetry — desk brief, scoreboard, and automated rules.';
+
     return (
         <div className="w-full max-w-5xl mx-auto py-12 px-4 sm:px-6">
             <SEOManager
-                title={`${year}-${month} Macro Regime Digest | GraphiQuestor`}
-                description="Institutional-grade monthly macro intelligence on Global Liquidity, Sovereign Stress, and De-Dollarization."
+                title={fallbackTitle}
+                description={fallbackDescription}
+                ogType="article"
+                canonical={
+                    year && month
+                        ? `https://graphiquestor.com/regime-digest/${year}/${month}/`
+                        : undefined
+                }
                 ogImage={`https://graphiquestor.com/og/digest-${year}-${month}.png`}
             />
 
