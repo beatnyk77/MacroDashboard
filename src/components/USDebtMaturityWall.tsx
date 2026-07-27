@@ -42,10 +42,11 @@ const COST_COLORS = {
     tbill: '#94a3b8'    // slate-400
 };
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload, viewMode }: any) => {
     if (active && payload && payload.length) {
         const dataPoint = payload[0].payload;
         const total = dataPoint.amount;
+        const isClass = viewMode === 'security_class';
         return (
             <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
                 <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{dataPoint.bucket}</p>
@@ -54,25 +55,37 @@ const CustomTooltip = ({ active, payload }: any) => {
                         <div className="flex items-center justify-between gap-4">
                             <span className="text-slate-400 text-xs flex items-center gap-1">
                                 <div className="w-2 h-2 rounded-full bg-slate-400 border border-dashed border-slate-200"></div>
-                                T-bills (discount, {dataPoint.tbillYield.toFixed(2)}%)
+                                T-Bills{dataPoint.tbillYield ? ` @ ${dataPoint.tbillYield.toFixed(2)}%` : ''}
                             </span>
                             <span className="text-white font-mono">${dataPoint.tbill.toFixed(2)}T</span>
                         </div>
                     )}
-                    <div className="flex items-center justify-between gap-4">
-                        <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
-                        <span className="text-white font-mono">${dataPoint.high.toFixed(2)}T</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-4">
-                        <span className="text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
-                        <span className="text-white font-mono">${dataPoint.medium.toFixed(2)}T</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-4">
-                        <span className="text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
-                        <span className="text-white font-mono">${dataPoint.low.toFixed(2)}T</span>
-                    </div>
+                    {isClass ? (
+                        <div className="flex items-center justify-between gap-4">
+                            <span className="text-cyan-400 text-xs flex items-center gap-1">
+                                <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
+                                Marketable excl. bills (Notes/Bonds/TIPS/FRN)
+                            </span>
+                            <span className="text-white font-mono">${(dataPoint.couponMarketable ?? 0).toFixed(2)}T</span>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
+                                <span className="text-white font-mono">${dataPoint.high.toFixed(2)}T</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
+                                <span className="text-white font-mono">${dataPoint.medium.toFixed(2)}T</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
+                                <span className="text-white font-mono">${dataPoint.low.toFixed(2)}T</span>
+                            </div>
+                        </>
+                    )}
                     <div className="border-t border-slate-700 pt-1 mt-1 flex items-center justify-between gap-4">
-                        <span className="text-slate-400 text-xs font-semibold">Total</span>
+                        <span className="text-slate-400 text-xs font-semibold">Total marketable</span>
                         <span className="text-cyan-400 font-bold">${total.toFixed(2)}T</span>
                     </div>
                 </div>
@@ -82,6 +95,8 @@ const CustomTooltip = ({ active, payload }: any) => {
     return null;
 };
 
+type WallViewMode = 'security_class' | 'rollover_cost';
+
 export const USDebtMaturityWall: React.FC = () => {
     const [maturityData, setMaturityData] = useState<MaturityBucket[]>([]);
     const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
@@ -90,6 +105,7 @@ export const USDebtMaturityWall: React.FC = () => {
     const [latestDate, setLatestDate] = useState<string>('');
     const [latestTotalDebt, setLatestTotalDebt] = useState<number | null>(null);
     const [lastDebtDate, setLastDebtDate] = useState<string>('');
+    const [viewMode, setViewMode] = useState<WallViewMode>('security_class');
 
     const fetchLatestTotalDebt = async () => {
         try {
@@ -256,16 +272,32 @@ export const USDebtMaturityWall: React.FC = () => {
     const tbillShortTermTrillions = (tbillShortTerm / 1_000_000).toFixed(2);
     const tbillAvgYield = shortTermData.reduce((sum, d) => sum + ((d.tbill_amount || 0) * (d.tbill_avg_yield || 0)), 0) / (tbillShortTerm || 1);
 
-    const chartData = maturityData.map(d => ({
-        bucket: d.bucket,
-        amount: parseFloat(d.amount.toString()) / 1_000_000,
-        tbill: (d.tbill_amount || 0) / 1_000_000,
-        tbillYield: d.tbill_avg_yield || 0,
-        low: (d.low_cost_amount || 0) / 1_000_000,
-        medium: (d.medium_cost_amount || 0) / 1_000_000,
-        high: (d.high_cost_amount || 0) / 1_000_000,
-        amountMillions: parseFloat(d.amount.toString())
-    }));
+    const chartData = maturityData.map(d => {
+        const amount = parseFloat(d.amount.toString()) / 1_000_000;
+        const tbill = (d.tbill_amount || 0) / 1_000_000;
+        const low = (d.low_cost_amount || 0) / 1_000_000;
+        const medium = (d.medium_cost_amount || 0) / 1_000_000;
+        const high = (d.high_cost_amount || 0) / 1_000_000;
+        // Coupon marketable = total − bills (avoid double-count; cost stacks already exclude bills in ingest)
+        const couponMarketable = Math.max(0, amount - tbill);
+        return {
+            bucket: d.bucket,
+            amount,
+            tbill,
+            tbillYield: d.tbill_avg_yield || 0,
+            low,
+            medium,
+            high,
+            couponMarketable,
+            amountMillions: parseFloat(d.amount.toString()),
+        };
+    });
+
+    const totalTbillAll = chartData.reduce((s, d) => s + d.tbill, 0);
+    const totalCouponAll = chartData.reduce((s, d) => s + d.couponMarketable, 0);
+    const billSharePct = (totalTbillAll + totalCouponAll) > 0
+        ? ((totalTbillAll / (totalTbillAll + totalCouponAll)) * 100).toFixed(1)
+        : '—';
 
     return (
         <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
@@ -361,38 +393,90 @@ export const USDebtMaturityWall: React.FC = () => {
                 >
                     <div className="flex items-center gap-3 mb-2">
                         <TrendingUp className="w-6 h-6 text-slate-400" />
-                        <span className="text-slate-400 text-sm font-medium">T-Bills Maturing ≤1Y</span>
+                        <span className="text-slate-400 text-sm font-medium">T-Bills (all tenors)</span>
                     </div>
-                    <p className="text-3xl font-bold text-white">${tbillShortTermTrillions}T</p>
-                    <p className="text-slate-500 text-xs mt-1">Issued @ avg. {tbillAvgYield.toFixed(2)}% yield</p>
+                    <p className="text-3xl font-bold text-white">${totalTbillAll.toFixed(2)}T</p>
+                    <p className="text-slate-500 text-xs mt-1">
+                        {billSharePct}% of marketable · ≤1Y bills ${tbillShortTermTrillions}T @ {tbillAvgYield.toFixed(2)}%
+                    </p>
                 </m.div>
+            </div>
+
+            {/* Security-class summary strip */}
+            <div className="px-6 md:px-8 pb-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-lg border border-slate-700/40 bg-slate-800/30 px-4 py-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Marketable excl. bills</p>
+                    <p className="text-xl font-mono font-bold text-cyan-300">${totalCouponAll.toFixed(2)}T</p>
+                </div>
+                <div className="rounded-lg border border-slate-700/40 bg-slate-800/30 px-4 py-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">T-Bills only</p>
+                    <p className="text-xl font-mono font-bold text-slate-200">${totalTbillAll.toFixed(2)}T</p>
+                </div>
+                <div className="rounded-lg border border-slate-700/40 bg-slate-800/30 px-4 py-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Bill share of marketable</p>
+                    <p className="text-xl font-mono font-bold text-amber-300">{billSharePct}%</p>
+                </div>
             </div>
 
             {/* Main Chart: Maturity Buckets with Rollover Stack */}
             <div className="p-6 md:p-8 grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <h3 className="text-xl font-bold text-white flex items-center gap-2">
                             <span className="w-1 h-6 bg-cyan-400 rounded-full"></span>
-                            Maturity & Cost Distribution
+                            {viewMode === 'security_class' ? 'Marketable vs T-Bills' : 'Maturity & Cost Distribution'}
                         </h3>
-                        {/* Legend */}
-                        <div className="flex gap-4" role="legend" aria-label="Maturity Cost Legend">
-                            <div className="flex items-center gap-2" role="listitem">
-                                <div className="w-3 h-3 rounded-sm bg-slate-400 border border-dashed border-slate-200" aria-hidden="true"></div>
-                                <span className="text-slate-400 text-xs">T-Bills (discount)</span>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="inline-flex rounded-lg border border-slate-600/60 bg-slate-900/60 p-0.5" role="group" aria-label="Chart view mode">
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('security_class')}
+                                    className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide rounded-md transition-colors ${
+                                        viewMode === 'security_class'
+                                            ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                                            : 'text-slate-400 hover:text-slate-200'
+                                    }`}
+                                >
+                                    Security class
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setViewMode('rollover_cost')}
+                                    className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide rounded-md transition-colors ${
+                                        viewMode === 'rollover_cost'
+                                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                                            : 'text-slate-400 hover:text-slate-200'
+                                    }`}
+                                >
+                                    Rollover cost
+                                </button>
                             </div>
-                            <div className="flex items-center gap-2" role="listitem">
-                                <div className="w-3 h-3 rounded-sm bg-red-500" aria-hidden="true"></div>
-                                <span className="text-slate-400 text-xs">High Cost (&gt;4%)</span>
-                            </div>
-                            <div className="flex items-center gap-2" role="listitem">
-                                <div className="w-3 h-3 rounded-sm bg-amber-500" aria-hidden="true"></div>
-                                <span className="text-slate-400 text-xs">Medium</span>
-                            </div>
-                            <div className="flex items-center gap-2" role="listitem">
-                                <div className="w-3 h-3 rounded-sm bg-green-500" aria-hidden="true"></div>
-                                <span className="text-slate-400 text-xs">Low Cost (&lt;2%)</span>
+                            <div className="flex gap-3" role="legend" aria-label="Maturity legend">
+                                <div className="flex items-center gap-2" role="listitem">
+                                    <div className="w-3 h-3 rounded-sm bg-slate-400 border border-dashed border-slate-200" aria-hidden="true"></div>
+                                    <span className="text-slate-400 text-xs">T-Bills</span>
+                                </div>
+                                {viewMode === 'security_class' ? (
+                                    <div className="flex items-center gap-2" role="listitem">
+                                        <div className="w-3 h-3 rounded-sm bg-cyan-500" aria-hidden="true"></div>
+                                        <span className="text-slate-400 text-xs">Excl. bills</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex items-center gap-2" role="listitem">
+                                            <div className="w-3 h-3 rounded-sm bg-red-500" aria-hidden="true"></div>
+                                            <span className="text-slate-400 text-xs">High Cost</span>
+                                        </div>
+                                        <div className="flex items-center gap-2" role="listitem">
+                                            <div className="w-3 h-3 rounded-sm bg-amber-500" aria-hidden="true"></div>
+                                            <span className="text-slate-400 text-xs">Medium</span>
+                                        </div>
+                                        <div className="flex items-center gap-2" role="listitem">
+                                            <div className="w-3 h-3 rounded-sm bg-green-500" aria-hidden="true"></div>
+                                            <span className="text-slate-400 text-xs">Low Cost</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -412,17 +496,24 @@ export const USDebtMaturityWall: React.FC = () => {
                                     {...DEFAULT_YAXIS_PROPS}
                                     width={50}
                                 />
-                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }} />
-                                {/* Stacked Bars */}
-                                <Bar dataKey="tbill" name="T-Bills (discount)" stackId="a" fill={COST_COLORS.tbill} radius={[0, 0, 0, 0]} stroke="#cbd5e1" strokeDasharray="3 3" />
-                                <Bar dataKey="low" name="Low Cost" stackId="a" fill={COST_COLORS.low} />
-                                <Bar dataKey="medium" name="Medium Cost" stackId="a" fill={COST_COLORS.medium} />
-                                <Bar dataKey="high" name="High Cost" stackId="a" fill={COST_COLORS.high} radius={[0, 4, 4, 0]} />
+                                <Tooltip content={<CustomTooltip viewMode={viewMode} />} cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }} />
+                                <Bar dataKey="tbill" name="T-Bills" stackId="a" fill={COST_COLORS.tbill} radius={[0, 0, 0, 0]} stroke="#cbd5e1" strokeDasharray="3 3" />
+                                {viewMode === 'security_class' ? (
+                                    <Bar dataKey="couponMarketable" name="Marketable excl. bills" stackId="a" fill="#06b6d4" radius={[0, 4, 4, 0]} />
+                                ) : (
+                                    <>
+                                        <Bar dataKey="low" name="Low Cost" stackId="a" fill={COST_COLORS.low} />
+                                        <Bar dataKey="medium" name="Medium Cost" stackId="a" fill={COST_COLORS.medium} />
+                                        <Bar dataKey="high" name="High Cost" stackId="a" fill={COST_COLORS.high} radius={[0, 4, 4, 0]} />
+                                    </>
+                                )}
                             </BarChart>
                         </MacroChartContainer>
                     </div>
                     <p className="text-slate-500 text-xs italic mt-2 text-center">
-                        Low-cost = effective yield at issuance (&lt;2%). T-bills use discount rate/yield at auction, not coupon.
+                        {viewMode === 'security_class'
+                            ? 'Segregates T-Bills from coupon marketable (Notes, Bonds, TIPS, FRN). Amounts from Treasury MSPD Table 3.'
+                            : 'Low-cost = effective yield at issuance (<2%). T-bills use discount yield; cost stacks exclude bills (no double-count).'}
                     </p>
                 </div>
 

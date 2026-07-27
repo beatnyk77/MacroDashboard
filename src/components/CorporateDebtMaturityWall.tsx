@@ -153,7 +153,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
             <div className="w-full h-96 flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-800">
                 <div className="animate-pulse text-slate-500 flex items-center gap-2">
                     <Activity className="w-5 h-5 animate-spin" />
-                    Analyzing SEC Maturity Filings...
+                    Loading corporate maturity telemetry...
                 </div>
             </div>
         );
@@ -169,8 +169,8 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                 <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Corporate Debt Maturity Wall</h2>
                 <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
                     {asOfDate
-                        ? `Latest snapshot as-of ${asOfDate} is beyond the 30-day freshness window and is not shown as live telemetry. Pipeline will restore when SEC/IG maturity ingest succeeds.`
-                        : 'No corporate debt maturity observations available. Surface withheld rather than displaying fabricated amounts.'}
+                        ? `Latest snapshot as-of ${asOfDate} is beyond the 30-day freshness window and is not shown as live telemetry. Pipeline restores via ingest-corporate-debt-maturities (FRED Z.1 × SIFMA structure).`
+                        : 'No corporate debt maturity observations available. Surface withheld rather than displaying fabricated amounts. Source: FRED NCBCMDPMVCE + ICE BofA yields + SIFMA maturity weights.'}
                 </p>
             </section>
         );
@@ -190,9 +190,9 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                             <span className="bg-gradient-to-r from-blue-500/15 to-cyan-500/15 text-blue-300 text-[10px] font-black px-2.5 py-1 rounded border border-blue-500/30 uppercase tracking-[0.15em] shadow-sm">
                                 USD
                             </span>
-                            <FreshnessChip status={freshness} lastUpdated={asOfDate} sourceRef="sec_edgar:corporate_debt_maturities" />
+                            <FreshnessChip status={freshness} lastUpdated={asOfDate} sourceRef="fred:NCBCMDPMVCE+ICE_BofA" />
                             <span className="text-slate-600 text-xs">|</span>
-                            <span className="text-slate-400 text-xs font-mono">SEC EDGAR XBRL • S&P 500</span>
+                            <span className="text-slate-400 text-xs font-mono">FRED Z.1 stock × SIFMA structure · ICE BofA yields</span>
                             {stats.avgCpn > 0 && (
                                 <>
                                     <span className="text-slate-600 text-xs">|</span>
@@ -247,7 +247,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                         <div className="text-2xl md:text-3xl font-mono font-black text-white tracking-tight tabular-nums">
                             {formatUsdTrillions(stats.total)}
                         </div>
-                        <p className="text-slate-500 text-xs mt-1 font-mono">USD • S&P 500 constituents</p>
+                        <p className="text-slate-500 text-xs mt-1 font-mono">USD · nonfin. corp debt securities (FRED)</p>
                     </div>
                 </div>
 
@@ -484,7 +484,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                     <strong className="text-blue-300">Units:</strong> All amounts are USD face aggregates from the maturity wall table. Coupons are weighted averages when present in source rows.
                                 </p>
                                 <p>
-                                    <strong className="text-blue-300">Provenance:</strong> Observations keyed by as_of date. Stale snapshots (&gt;30d) are withheld from the live chart.
+                                    <strong className="text-blue-300">Provenance:</strong> FRED nonfinancial corporate debt securities stock allocated by SIFMA remaining-maturity weights; coupons from ICE BofA FRED yield series. Stale snapshots (&gt;30d) are withheld.
                                 </p>
                             </div>
                         </div>

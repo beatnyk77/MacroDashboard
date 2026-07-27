@@ -14,6 +14,12 @@ Source archives (historical only): `docs/archive/`
 
 | id | area | description | status | last-verified-date | notes |
 |----|------|-------------|--------|--------------------|-------|
+| P0-010 | auction | Auction Demand Gauge zeros on 3M/6M/5Y — term mismatch UI vs ingest | in-progress | 2026-07-27 | Code: normalizeAuctionTerm + expand TARGET; empty state "—". Deploy ingest-us-macro + force auction sync. |
+| P0-011 | crude | Crude spots only weekly via commodity-terminal → stale | in-progress | 2026-07-27 | Code: ingest-oil-spread writes WTI/BRENT daily (Yahoo + FRED fallback). Deploy oil-spread. |
+| P0-012 | digest | Monthly regime digest stuck at Apr-2026 | in-progress | 2026-07-27 | Template fallback + catch_up=1 daily cron migration. Invoke catch-up once after deploy. |
+| P0-013 | corp-debt | Corporate maturity wall wrong/missing pipeline | in-progress | 2026-07-27 | New ingest-corporate-debt-maturities (FRED Z.1 × SIFMA × ICE yields); honest UI labels. Deploy fn + migration. |
+| P1-011 | us-debt-ui | US debt wall: segregate Marketable vs T-Bills | in-progress | 2026-07-27 | Dual mode Security class / Rollover cost in USDebtMaturityWall. |
+| P1-012 | morning-brief | Thin morning brief / metric ID drift / free-model fallback | in-progress | 2026-07-27 | Signal Pack v2 + correct metric IDs + denser template + paid model preference. Deploy generate-morning-brief. |
 | P2-010 | ingest | serveIngest empty-success systemic audit (zero-write jobs report green) | open | 2026-07-20 | Deferred from credibility sprint gold function-local fix. Audit serveIngest; fail jobs with zero writes. |
 | P2-011 | cleanup | Delete deprecated IndiaMacroDashboard + unused corporate-debt dead code after 1 release | open | 2026-07-20 | Unmounted/deprecated 2026-07-20; delete ~30d after PR lands if no rollback need. |
 | P1-010 | credibility | PR1 trust: types drift, kill fabricated India snapshot, corp debt USD+freshness, dual-exit credit/gold/digest | in-progress | 2026-07-20 | Branch fix/credibility-sprint-pr1-pr2 |
@@ -47,6 +53,26 @@ Source archives (historical only): `docs/archive/`
 ---
 
 ## Session log
+
+### Session — 2026-07-27 (data integrity PR1–PR6)
+
+**Product decision:** Corporate debt path **A** (rebuild FRED ICE/SIFMA honest pipeline). Implement all PR1–PR6.
+
+**Code shipped (local; deploy required for live):**
+- PR1 Auctions: `auctionTerms.ts` normalizer; expand tenors; UI "—" when missing; Deno tests pass
+- PR2 Crude: `ingest-oil-spread` upserts `WTI_CRUDE_PRICE` / `BRENT_CRUDE_PRICE` daily; commodity hook uses latest-per-metric
+- PR3 Regime digest: LLM template fallback; `?catch_up=1` / body catch-up; migration catch-up cron
+- PR4 Corporate: new `ingest-corporate-debt-maturities`; UI labels FRED/SIFMA/ICE (not SEC EDGAR)
+- PR5 US debt wall: Security class vs Rollover cost toggle; T-Bills vs excl-bills KPIs
+- PR6 Morning brief: Signal Pack v2, correct metric IDs, dense template, multi-provider LLM, UI thesis/cross-asset/risks
+
+**Verify:** `npm run lint` clean; `tsc --noEmit` clean; deno auction tests 4/4.
+
+**Deploy checklist (human / CI):**
+1. `supabase functions deploy ingest-us-macro ingest-oil-spread ingest-corporate-debt-maturities generate-monthly-regime-digest generate-morning-brief`
+2. Apply migration `20260727000001_data_integrity_crons.sql`
+3. Invoke: auctions task; oil-spread; corporate-debt; `generate-monthly-regime-digest?catch_up=1`; morning-brief
+4. Live-check Terminal chips + `/macro-brief/` + `/regime-digest/`
 
 ### Session 1 — 2026-07-19
 

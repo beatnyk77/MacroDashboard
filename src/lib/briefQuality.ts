@@ -28,6 +28,7 @@ export function briefContentToText(content: unknown): string {
     const c = content as Record<string, unknown>;
     const parts: string[] = [];
     for (const key of [
+        'thesis',
         'regime_status',
         'executive_summary',
         'summary',
@@ -36,6 +37,10 @@ export function briefContentToText(content: unknown): string {
         'narrative',
         'key_signals',
         'implications',
+        'what_changed',
+        'focus_observations',
+        'watch_today',
+        'risks',
     ]) {
         const v = c[key];
         if (typeof v === 'string') parts.push(v);

@@ -67,19 +67,30 @@ const TenorChip: React.FC<{
   auction: USTreasuryAuction | undefined; 
   history: number[] 
 }> = ({ term, auction, history }) => {
-  const score = auction?.demand_strength_score || 0;
-  const regime = getRegime(score);
+  const hasData = auction != null && Number.isFinite(auction.demand_strength_score);
+  const score = hasData ? auction!.demand_strength_score : null;
+  const regime = score != null ? getRegime(score) : null;
   
   return (
     <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-colors min-w-[140px]">
       <div className="flex flex-col">
         <span className="text-[10px] font-black text-muted-foreground uppercase">{term}</span>
-        <span className={cn("text-sm font-bold tabular-nums", regime.color)}>
-          {score.toFixed(2)}
-        </span>
+        {hasData && score != null && regime ? (
+          <span className={cn("text-sm font-bold tabular-nums", regime.color)}>
+            {score.toFixed(2)}
+          </span>
+        ) : (
+          <span className="text-sm font-bold tabular-nums text-slate-500" title="No auction observation for this tenor">
+            —
+          </span>
+        )}
       </div>
       <div className="ml-auto">
-        <MicroSparkline data={history} color={regime.fill} />
+        {history.length >= 2 && regime ? (
+          <MicroSparkline data={history} color={regime.fill} />
+        ) : (
+          <span className="text-[9px] font-mono text-slate-600 uppercase">No auction</span>
+        )}
       </div>
     </div>
   );
@@ -132,10 +143,12 @@ export const USTreasuryDemandGauge: React.FC = () => {
         size: a.total_accepted
       }));
 
-    // Selected tenors for the chips
-    const tenorList = ['4-Week', '3-Month', '6-Month', '2-Year', '5-Year', '30-Year'];
+    // Canonical tenors (must match normalizeAuctionTerm in ingest-us-macro/auctions.ts)
+    const tenorList = ['4-Week', '3-Month', '6-Month', '2-Year', '5-Year', '10-Year', '30-Year'];
     const others = tenorList.map(term => {
-      const termAuctions = grouped[term] || [];
+      const termAuctions = (grouped[term] || []).slice().sort(
+        (a, b) => b.auction_date.localeCompare(a.auction_date)
+      );
       return {
         term,
         latest: termAuctions[0],
@@ -190,10 +203,11 @@ export const USTreasuryDemandGauge: React.FC = () => {
   }
 
   const current = processedData.current;
-  const currentScore = current?.demand_strength_score || 0;
+  const hasPrimary = current != null && Number.isFinite(current.demand_strength_score);
+  const currentScore = hasPrimary ? current!.demand_strength_score : 0;
   const regime = getRegime(currentScore);
-  const gaugePercent = Math.min((currentScore / 2.5) * 100, 100);
-  const hasTailAlert = isTailAlert(current);
+  const gaugePercent = hasPrimary ? Math.min((currentScore / 2.5) * 100, 100) : 0;
+  const hasTailAlert = hasPrimary && isTailAlert(current);
 
   return (
     <section className="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-2xl shadow-2xl overflow-hidden border border-slate-800/50">
@@ -264,12 +278,17 @@ export const USTreasuryDemandGauge: React.FC = () => {
                 <m.span 
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className={cn("text-7xl font-black tracking-tight transition-all duration-1000", regime.color)}
+                  className={cn("text-7xl font-black tracking-tight transition-all duration-1000", hasPrimary ? regime.color : "text-slate-500")}
                 >
-                  {currentScore.toFixed(2)}
+                  {hasPrimary ? currentScore.toFixed(2) : '—'}
                 </m.span>
                 <span className="text-lg font-bold text-white/10 uppercase tracking-tighter">/ 2.50 Limit</span>
               </div>
+              {!hasPrimary && (
+                <p className="text-xs text-amber-400/80 font-mono">
+                  No recent 10-Year auction score — sync auctions or wait for next note auction.
+                </p>
+              )}
 
               {/* Progress Bar */}
               <div className="space-y-3">
@@ -299,12 +318,12 @@ export const USTreasuryDemandGauge: React.FC = () => {
                   className="w-full flex items-center justify-between text-left group"
                 >
                   <div className="flex items-center gap-3 text-sm font-bold text-white/80">
-                    <span>Bid-to-Cover {current?.bid_to_cover.toFixed(2)}x</span>
+                    <span>Bid-to-Cover {current?.bid_to_cover != null ? `${current.bid_to_cover.toFixed(2)}x` : '—'}</span>
                     <span className="text-white/20">·</span>
-                    <span>Indirect {current?.indirect_bidder_pct.toFixed(1)}%</span>
+                    <span>Indirect {current?.indirect_bidder_pct != null ? `${current.indirect_bidder_pct.toFixed(1)}%` : '—'}</span>
                     <span className="text-white/20">·</span>
                     <span className={cn(hasTailAlert ? "text-rose-400" : "text-emerald-400")}>
-                      Dealers {current?.primary_dealer_pct.toFixed(1)}% {hasTailAlert && "(Tail)"}
+                      Dealers {current?.primary_dealer_pct != null ? `${current.primary_dealer_pct.toFixed(1)}%` : '—'} {hasTailAlert && "(Tail)"}
                     </span>
                   </div>
                   {isExpanded ? <ChevronUp size={16} className="text-white/40 group-hover:text-white transition-colors" /> : <ChevronDown size={16} className="text-white/40 group-hover:text-white transition-colors" />}

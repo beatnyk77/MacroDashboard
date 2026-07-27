@@ -196,22 +196,122 @@ serveIngest('ingest-oil-spread', async (_req: Request) => {
         const latest = rows[0];
         console.log(`[ingest-oil-spread] Done. ${upserted} rows. Latest: ${latest.date} CL1=$${latest.front_price} CL2=$${latest.next_price} spread=${latest.spread >= 0 ? '+' : ''}${latest.spread}`);
 
-        await supabase.from('ingestion_logs').insert({
-            function_name: 'ingest-oil-spread', status: 'success',
-            metadata: { rows_upserted: upserted, latest_date: latest.date, spread: latest.spread, regime: latest.regime, cl2_ticker: cl2TickerUsed },
-            start_time: now,
-        });
+        // ── 6. Daily spot prices → metric_observations (WTI + Brent)
+        // Prefer Yahoo front-month; fall back to FRED DCOIL when Yahoo thin.
+        let spotUpserted = 0;
+        const spotObs: Array<{ metric_id: string; as_of_date: string; value: number; metadata: Record<string, string> }> = [];
 
-        return { ok: true, counts: { upserted: upserted } };
+        // WTI from CL=F series already loaded
+        for (const r of cl1Series.slice(0, 10)) {
+            spotObs.push({
+                metric_id: 'WTI_CRUDE_PRICE',
+                as_of_date: r.date,
+                value: Math.round(r.close * 100) / 100,
+                metadata: { source: 'Yahoo', ticker: 'CL=F', unit: 'USD/bbl' },
+            });
+        }
+
+        // Brent via BZ=F
+        try {
+            const bzSeries = await fetchYahooHistory('BZ=F');
+            for (const r of bzSeries.slice(0, 10)) {
+                spotObs.push({
+                    metric_id: 'BRENT_CRUDE_PRICE',
+                    as_of_date: r.date,
+                    value: Math.round(r.close * 100) / 100,
+                    metadata: { source: 'Yahoo', ticker: 'BZ=F', unit: 'USD/bbl' },
+                });
+            }
+            console.log(`[ingest-oil-spread] Brent BZ=F: ${bzSeries.length} rows, latest ${bzSeries[0]?.date}`);
+        } catch (bzErr) {
+            console.warn('[ingest-oil-spread] BZ=F failed, trying FRED DCOILBRENTEU:', (bzErr as Error).message);
+            const fredKey = Deno.env.get('FRED_API_KEY');
+            if (fredKey) {
+                try {
+                    const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=DCOILBRENTEU&api_key=${fredKey}&file_type=json&sort_order=desc&limit=10`;
+                    const fredRes = await fetch(fredUrl);
+                    if (fredRes.ok) {
+                        const fredJson = await fredRes.json() as { observations?: Array<{ date: string; value: string }> };
+                        for (const o of fredJson.observations ?? []) {
+                            if (o.value === '.') continue;
+                            const v = parseFloat(o.value);
+                            if (!isNaN(v)) {
+                                spotObs.push({
+                                    metric_id: 'BRENT_CRUDE_PRICE',
+                                    as_of_date: o.date,
+                                    value: v,
+                                    metadata: { source: 'FRED', series: 'DCOILBRENTEU', unit: 'USD/bbl' },
+                                });
+                            }
+                        }
+                    }
+                } catch (fredErr) {
+                    console.warn('[ingest-oil-spread] FRED Brent fallback failed:', (fredErr as Error).message);
+                }
+            }
+        }
+
+        // FRED WTI fallback if Yahoo CL series somehow empty (already guarded) — keep for resilience
+        if (!spotObs.some((o) => o.metric_id === 'WTI_CRUDE_PRICE')) {
+            const fredKey = Deno.env.get('FRED_API_KEY');
+            if (fredKey) {
+                try {
+                    const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=DCOILWTICO&api_key=${fredKey}&file_type=json&sort_order=desc&limit=10`;
+                    const fredRes = await fetch(fredUrl);
+                    if (fredRes.ok) {
+                        const fredJson = await fredRes.json() as { observations?: Array<{ date: string; value: string }> };
+                        for (const o of fredJson.observations ?? []) {
+                            if (o.value === '.') continue;
+                            const v = parseFloat(o.value);
+                            if (!isNaN(v)) {
+                                spotObs.push({
+                                    metric_id: 'WTI_CRUDE_PRICE',
+                                    as_of_date: o.date,
+                                    value: v,
+                                    metadata: { source: 'FRED', series: 'DCOILWTICO', unit: 'USD/bbl' },
+                                });
+                            }
+                        }
+                    }
+                } catch (_) { /* non-fatal */ }
+            }
+        }
+
+        if (spotObs.length > 0) {
+            const { error: spotErr } = await supabase
+                .from('metric_observations')
+                .upsert(
+                    spotObs.map((o) => ({
+                        ...o,
+                        last_updated_at: now,
+                        source_ref: `live_api:ingest-oil-spread:${o.metadata.source}`,
+                        is_provisional: false,
+                    })),
+                    { onConflict: 'metric_id, as_of_date' },
+                );
+            if (spotErr) {
+                console.warn('[ingest-oil-spread] Spot upsert error:', spotErr.message);
+            } else {
+                spotUpserted = spotObs.length;
+                console.log(`[ingest-oil-spread] Spot prices upserted: ${spotUpserted}`);
+            }
+        }
+
+        return {
+            ok: true,
+            counts: { upserted: upserted + spotUpserted, spot: spotUpserted, spreads: upserted },
+            meta: {
+                latest_date: latest.date,
+                spread: latest.spread,
+                regime: latest.regime,
+                cl2_ticker: cl2TickerUsed,
+                wti: latest.front_price,
+            },
+        };
 
     } catch (err: unknown) {
         const msg = (err as Error).message ?? String(err);
         console.error('[ingest-oil-spread] Fatal:', msg);
-        await supabase.from('ingestion_logs').insert({
-            function_name: 'ingest-oil-spread', status: 'FAILED',
-            metadata: { error: msg }, start_time: new Date().toISOString(),
-        });
-        throw _;
-
+        throw err;
     }
 });

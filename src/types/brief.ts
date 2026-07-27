@@ -7,6 +7,15 @@ export interface MacroBrief {
     regime_status: string;
     focus_observations: string[];
     watch_today: string[];
+    /** Signal Pack v2 optional fields */
+    thesis?: string;
+    risks?: string[];
+    cross_asset?: Record<string, string>;
+    data_quality?: {
+      fresh_count?: number;
+      total?: number;
+      stale_metrics?: string[];
+    };
   };
   regime_score: number | null;
   regime_label: string | null;

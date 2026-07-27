@@ -33,17 +33,24 @@ export const useCommodityPrices = () => {
                 .select('metric_id, as_of_date, value')
                 .in('metric_id', COMMODITY_IDS)
                 .order('as_of_date', { ascending: false })
-                .limit(40);
+                .limit(80);
 
             if (error) throw error;
 
-            return (data || []).map(d => ({
-                symbol: METRIC_LABELS[d.metric_id] ?? d.metric_id,
-                as_of_date: String(d.as_of_date),
-                price: Number(d.value),
-                curve_type: 'spot',
-            }));
+            // Latest print per metric (table is multi-day history)
+            const latestByMetric = new Map<string, CommodityPrice>();
+            for (const d of data || []) {
+                if (latestByMetric.has(d.metric_id)) continue;
+                latestByMetric.set(d.metric_id, {
+                    symbol: METRIC_LABELS[d.metric_id] ?? d.metric_id,
+                    as_of_date: String(d.as_of_date),
+                    price: Number(d.value),
+                    curve_type: 'spot',
+                });
+            }
+            return Array.from(latestByMetric.values());
         },
-        staleTime: 1000 * 60 * 30,
+        staleTime: 1000 * 60 * 15,
+        refetchInterval: 1000 * 60 * 30,
     });
 };

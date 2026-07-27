@@ -364,6 +364,38 @@ const MacroBriefInner: React.FC = () => {
           />
         </div>
 
+        {/* Thesis (Signal Pack v2) */}
+        {activeBrief.content.thesis && (
+          <section className="rounded-xl border border-cyan-500/20 bg-cyan-500/[0.04] p-5 space-y-2">
+            <h2 className="text-[10px] font-black font-mono uppercase tracking-[0.2em] text-cyan-400/90">
+              Session thesis
+            </h2>
+            <p className="text-sm sm:text-base text-white/90 leading-relaxed font-medium">
+              {activeBrief.content.thesis}
+            </p>
+          </section>
+        )}
+
+        {/* Cross-asset board */}
+        {activeBrief.content.cross_asset && Object.keys(activeBrief.content.cross_asset).length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-[10px] font-black font-mono uppercase tracking-[0.2em] text-white/40">
+              Cross-asset board
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {Object.entries(activeBrief.content.cross_asset).map(([k, v]) => (
+                <div
+                  key={k}
+                  className="rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2.5 min-h-[64px]"
+                >
+                  <div className="text-[9px] font-mono uppercase tracking-widest text-white/35 mb-1">{k.replace(/_/g, ' ')}</div>
+                  <div className="text-xs text-white/80 leading-snug font-mono tabular-nums">{v}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Desk grid: Overnight | Regime | Watch */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-5">
           <section className="space-y-3 lg:col-span-1 rounded-xl border border-white/8 bg-white/[0.02] p-5">
@@ -371,7 +403,7 @@ const MacroBriefInner: React.FC = () => {
               {TEXTS.whatChangedOvernight}
             </h2>
             <ul className="space-y-3">
-              {activeBrief.content.what_changed.map((bullet, i) => (
+              {(activeBrief.content.what_changed ?? []).map((bullet, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-white/85 leading-relaxed">
                   <span className="text-emerald-500 shrink-0 mt-1 text-[8px]" aria-hidden>●</span>
                   <span>{bullet}</span>
@@ -392,7 +424,7 @@ const MacroBriefInner: React.FC = () => {
                 {section3Heading}
               </h3>
               <ul className="space-y-2.5">
-                {activeBrief.content.focus_observations.map((obs, i) => (
+                {(activeBrief.content.focus_observations ?? []).map((obs, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-white/80 leading-relaxed">
                     <span className="text-blue-400 shrink-0 mt-1 text-[8px]" aria-hidden>●</span>
                     <span>{obs}</span>
@@ -407,13 +439,23 @@ const MacroBriefInner: React.FC = () => {
               {TEXTS.watchToday}
             </h2>
             <ul className="space-y-3">
-              {activeBrief.content.watch_today.map((item, i) => (
+              {(activeBrief.content.watch_today ?? []).map((item, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-white/75 leading-relaxed">
                   <span className="text-amber-400 shrink-0 mt-0.5 font-mono text-xs" aria-hidden>→</span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
+            {(activeBrief.content.risks?.length ?? 0) > 0 && (
+              <div className="pt-3 border-t border-white/5 space-y-2">
+                <h3 className="text-[10px] font-mono uppercase tracking-widest text-rose-400/70">Risks</h3>
+                <ul className="space-y-2">
+                  {activeBrief.content.risks!.map((r, i) => (
+                    <li key={i} className="text-xs text-white/60 leading-relaxed">• {r}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
         </div>
 
@@ -422,6 +464,9 @@ const MacroBriefInner: React.FC = () => {
           <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest leading-relaxed">
             Provenance · model {activeBrief.model_used || 'n/a'}
             {activeBrief.tokens_used != null ? ` · ${activeBrief.tokens_used} tokens` : ''}
+            {activeBrief.content.data_quality
+              ? ` · telemetry ${activeBrief.content.data_quality.fresh_count ?? '—'}/${activeBrief.content.data_quality.total ?? '—'} fresh`
+              : ''}
             {' · '}not investment advice · observe structural reality
           </p>
           <div className="flex items-center justify-between text-xs font-mono">

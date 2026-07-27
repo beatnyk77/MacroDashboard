@@ -259,8 +259,12 @@ Generate the Monthly Regime Digest. Return only the JSON object, no markdown fen
         }
     }
 
+    let usedTemplate = false;
     if (!parsedResult) {
-        throw new Error(`All LLM providers failed. Errors: ${errorsList.join(" | ")}`);
+        // Never leave a month blank — publish deterministic metrics digest when LLMs fail.
+        console.warn(`[monthly-digest] All LLM providers failed; using template. ${errorsList.join(" | ")}`);
+        parsedResult = buildTemplateDigest(year_month, macroContext);
+        usedTemplate = true;
     }
 
     const { error: dbError } = await supabaseClient
@@ -275,41 +279,191 @@ Generate the Monthly Regime Digest. Return only the JSON object, no markdown fen
 
     if (dbError) throw dbError;
 
-    return { digest: parsedResult, year_month };
+    return {
+        digest: parsedResult,
+        year_month,
+        rows_inserted: 1,
+        metadata: { used_template: usedTemplate, llm_errors: errorsList.length ? errorsList : undefined },
+    };
+}
+
+function fmtNum(v: unknown, digits = 2): string {
+    if (v == null || v === '') return 'n/a';
+    const n = Number(v);
+    return Number.isFinite(n) ? n.toFixed(digits) : String(v);
+}
+
+function buildTemplateDigest(year_month: string, ctx: any) {
+    const us = ctx.us ?? {};
+    const india = ctx.india ?? {};
+    const china = ctx.china ?? {};
+    const commodities = ctx.commodities ?? {};
+
+    const subject_line = `Regime Snapshot ${year_month}: Liquidity & Prices`;
+    const lines = [
+        `Monthly Regime Digest — ${year_month} (metrics template)`,
+        ``,
+        `US Macro: CPI YoY ${fmtNum(us.cpi_yoy)}%; DXY ${fmtNum(us.dxy)}; VIX ${fmtNum(us.vix)}; Global liquidity ${fmtNum(us.global_liquidity_usd_bn, 0)} bn; Debt/Gold ${fmtNum(us.debt_gold_ratio)}.`,
+        `India: GDP YoY ${fmtNum(india.gdp_yoy)}%; CPI YoY ${fmtNum(india.cpi_yoy)}%.`,
+        `China: GDP YoY ${fmtNum(china.gdp_yoy)}%.`,
+        `Commodities: Gold $${fmtNum(commodities.gold_usd)}; Brent $${fmtNum(commodities.brent_crude)}.`,
+        ``,
+        `Narrative generation via LLM was unavailable this cycle. Figures above are live telemetry as of generation time. Re-run generate-monthly-regime-digest once provider keys recover to replace with full narrative.`,
+    ];
+    const plain_text = lines.join('\n');
+    const html_content = [
+        `<h2>Monthly Regime Digest — ${year_month}</h2>`,
+        `<p><em>Metrics template (LLM fallback). Source: GraphiQuestor telemetry.</em></p>`,
+        `<h3>US Macro Pulse</h3>`,
+        `<ul>`,
+        `<li>CPI YoY: <strong>${fmtNum(us.cpi_yoy)}%</strong></li>`,
+        `<li>DXY: <strong>${fmtNum(us.dxy)}</strong> (prev ${fmtNum(us.dxy_prev)})</li>`,
+        `<li>VIX: <strong>${fmtNum(us.vix)}</strong></li>`,
+        `<li>Global liquidity (USD bn): <strong>${fmtNum(us.global_liquidity_usd_bn, 0)}</strong></li>`,
+        `<li>Debt / Gold ratio: <strong>${fmtNum(us.debt_gold_ratio)}</strong></li>`,
+        `</ul>`,
+        `<h3>India Macro Pulse</h3>`,
+        `<ul><li>GDP YoY: <strong>${fmtNum(india.gdp_yoy)}%</strong></li><li>CPI YoY: <strong>${fmtNum(india.cpi_yoy)}%</strong></li></ul>`,
+        `<h3>China Macro Pulse</h3>`,
+        `<ul><li>GDP YoY: <strong>${fmtNum(china.gdp_yoy)}%</strong></li></ul>`,
+        `<h3>Energy &amp; Commodities</h3>`,
+        `<ul><li>Gold: <strong>$${fmtNum(commodities.gold_usd)}</strong></li><li>Brent: <strong>$${fmtNum(commodities.brent_crude)}</strong></li></ul>`,
+        `<p>Full institutional narrative will replace this template when LLM providers succeed. Data integrity takes priority over silence.</p>`,
+    ].join('\n');
+
+    return { subject_line, html_content, plain_text };
+}
+
+function currentYearMonthUTC(d = new Date()): string {
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+/** List YYYY-MM from start (inclusive) through end (inclusive). */
+function monthRange(fromYm: string, toYm: string): string[] {
+    const out: string[] = [];
+    const [fy, fm] = fromYm.split('-').map(Number);
+    const [ty, tm] = toYm.split('-').map(Number);
+    let y = fy;
+    let m = fm;
+    while (y < ty || (y === ty && m <= tm)) {
+        out.push(`${y}-${String(m).padStart(2, '0')}`);
+        m += 1;
+        if (m > 12) {
+            m = 1;
+            y += 1;
+        }
+        if (out.length > 36) break;
+    }
+    return out;
 }
 
 serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<IngestResult> => {
-
     const supabaseClient = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    
-        let targetYearMonth: string | undefined;
-        try {
-            const body = await req.json();
-            targetYearMonth = body.year_month;
-        } catch (_e) {
-            // body is optional
+    let targetYearMonth: string | undefined;
+    let catchUp = false;
+    try {
+        const body = await req.json();
+        targetYearMonth = body.year_month;
+        catchUp = body.catch_up === true || body.catchUp === true;
+    } catch (_e) {
+        // body optional — also allow ?catch_up=1
+    }
+
+    try {
+        const url = new URL(req.url);
+        if (url.searchParams.get('catch_up') === '1' || url.searchParams.get('catch_up') === 'true') {
+            catchUp = true;
+        }
+        if (!targetYearMonth && url.searchParams.get('year_month')) {
+            targetYearMonth = url.searchParams.get('year_month') ?? undefined;
+        }
+    } catch { /* ignore */ }
+
+    // Catch-up: ensure every month from earliest missing through current exists.
+    // Default catch-up window starts April 2026 (last known good) if table empty of recent rows.
+    if (catchUp && !targetYearMonth) {
+        const nowYm = currentYearMonthUTC();
+        const { data: existing } = await supabaseClient
+            .from('monthly_regime_digests')
+            .select('year_month')
+            .order('year_month', { ascending: true });
+
+        const have = new Set((existing ?? []).map((r: { year_month: string }) => r.year_month));
+        const start = '2026-04';
+        const needed = monthRange(start, nowYm).filter((ym) => !have.has(ym));
+
+        let upserted = 0;
+        const generated: string[] = [];
+        const errors: string[] = [];
+
+        for (const ym of needed) {
+            try {
+                const result = await runWithRetry(
+                    `generate-monthly-regime-digest:${ym}`,
+                    () => doGenerateDigest(supabaseClient, ym),
+                    { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
+                );
+                if (!result.ok) {
+                    errors.push(`${ym}: ${result.error}`);
+                    continue;
+                }
+                upserted += 1;
+                generated.push(ym);
+            } catch (e: any) {
+                errors.push(`${ym}: ${e.message}`);
+            }
         }
 
-        const result = await runWithRetry(
-            "generate-monthly-regime-digest",
-            () => doGenerateDigest(supabaseClient, targetYearMonth),
-            { timeoutMs: 10 * 60 * 1000, maxRetries: 1 }
-        );
-
-        if (!result.ok) {
-            throw new Error(`Digest generation failed: ${result.error}`);
+        // Always ensure current month exists even if already present (refresh optional — skip if present)
+        if (!have.has(nowYm) && !generated.includes(nowYm)) {
+            const result = await runWithRetry(
+                'generate-monthly-regime-digest:current',
+                () => doGenerateDigest(supabaseClient, nowYm),
+                { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
+            );
+            if (result.ok) {
+                upserted += 1;
+                generated.push(nowYm);
+            } else if (result.error) {
+                errors.push(`${nowYm}: ${result.error}`);
+            }
         }
 
-        const _v = result.value!;
-        if (_v && typeof _v.ok === 'boolean') return _v as IngestResult;
+        if (upserted === 0 && errors.length > 0) {
+            return {
+                ok: false,
+                error: `Catch-up produced 0 digests. ${errors.slice(0, 5).join(' | ')}`,
+                counts: { upserted: 0, errors: errors.length },
+                meta: { mode: 'catch_up', needed, errors },
+            };
+        }
+
         return {
-          ok: true,
-          counts: { upserted: _v?.rows_inserted ?? 0 },
-          meta: _v?.metadata ?? _v,
+            ok: true,
+            counts: { upserted, skipped: needed.length - upserted, errors: errors.length },
+            meta: { mode: 'catch_up', generated, needed, errors: errors.length ? errors : undefined },
         };
-    
+    }
+
+    const result = await runWithRetry(
+        'generate-monthly-regime-digest',
+        () => doGenerateDigest(supabaseClient, targetYearMonth),
+        { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
+    );
+
+    if (!result.ok) {
+        throw new Error(`Digest generation failed: ${result.error}`);
+    }
+
+    const _v = result.value!;
+    if (_v && typeof _v.ok === 'boolean') return _v as IngestResult;
+    return {
+        ok: true,
+        counts: { upserted: _v?.rows_inserted ?? 1 },
+        meta: _v?.metadata ?? { year_month: _v?.year_month },
+    };
 });
