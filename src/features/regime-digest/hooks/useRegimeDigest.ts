@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import type { NotebookPayload } from '@/features/regime-digest/lib/types';
 
 export interface MetricsSnapshot {
     us?: { cpi_yoy?: number; dxy?: number; dxy_prev?: number; debt_gold_ratio?: number; vix?: number; global_liquidity_usd_bn?: number };
@@ -14,8 +15,10 @@ export interface Digest {
     html_content: string;
     plain_text: string;
     subject_line: string;
-    created_at: string;
+    created_at?: string;
+    generated_at?: string | null;
     metrics_snapshot?: MetricsSnapshot | null;
+    notebook_payload?: NotebookPayload | null;
 }
 
 export function useRegimeDigest(year?: string, month?: string) {
