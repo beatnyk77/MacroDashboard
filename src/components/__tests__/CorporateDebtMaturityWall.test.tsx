@@ -105,7 +105,7 @@ describe('CorporateDebtMaturityWall', () => {
 
         render(<CorporateDebtMaturityWall />);
         await waitFor(() => {
-            expect(screen.queryByText('Analyzing SEC Maturity Filings...')).not.toBeInTheDocument();
+            expect(screen.queryByText('Loading corporate maturity telemetry...')).not.toBeInTheDocument();
         });
         expect(screen.getByText(/beyond the 30-day freshness window/i)).toBeInTheDocument();
         expect(screen.queryByText('$1.50T')).not.toBeInTheDocument();
