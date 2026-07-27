@@ -8,11 +8,15 @@ function dirWord(deltaPct: number | null): 'rose' | 'fell' | 'was unchanged' {
 
 export function buildThesisLines(regime: NotebookRegime, board: MetricRow[]): string[] {
   const lines: string[] = [];
-  const conf = regime.confidence != null ? ` (confidence ${Math.round(regime.confidence)}%` : '';
-  const days = regime.daysInRegime != null ? `; ${regime.daysInRegime} days in regime)` : conf ? ')' : '';
-  lines.push(
-    `Month-end regime: ${regime.label.replace('_', ' ')}${conf}${days || (conf ? ')' : '')}.`,
-  );
+  const parenParts: string[] = [];
+  if (regime.confidence != null) {
+    parenParts.push(`confidence ${Math.round(regime.confidence)}%`);
+  }
+  if (regime.daysInRegime != null) {
+    parenParts.push(`${regime.daysInRegime} days in regime`);
+  }
+  const paren = parenParts.length ? ` (${parenParts.join('; ')})` : '';
+  lines.push(`Month-end regime: ${regime.label.replace('_', ' ')}${paren}.`);
 
   const byId = (id: string) => board.find((r) => r.id === id && r.status === 'ok');
 

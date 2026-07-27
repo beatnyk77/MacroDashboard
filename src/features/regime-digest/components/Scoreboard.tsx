@@ -32,16 +32,39 @@ const SECTION_LABELS: Record<ScoreboardSectionId, string> = {
   china: 'China',
 };
 
-function formatLevel(row: MetricRow): string {
-  if (row.level == null) return '—';
-  const n = row.level;
+function formatNumber(n: number | null): string {
+  if (n == null || Number.isNaN(n)) return '—';
   const abs = Math.abs(n);
   if (abs >= 1000) {
     return n.toLocaleString('en-US', { maximumFractionDigits: 1 });
   }
   if (abs >= 100) return n.toFixed(1);
-  if (abs >= 10) return n.toFixed(2);
   return n.toFixed(2);
+}
+
+function formatLevel(row: MetricRow): string {
+  return formatNumber(row.level);
+}
+
+function formatPrior(row: MetricRow): string {
+  return formatNumber(row.priorLevel);
+}
+
+function formatAbsDelta(delta: number | null): { text: string; dir: 'up' | 'down' | 'flat' } {
+  if (delta == null || Number.isNaN(delta)) return { text: '—', dir: 'flat' };
+  if (delta === 0) return { text: '0.00', dir: 'flat' };
+  const sign = delta > 0 ? '+' : '-';
+  const abs = Math.abs(delta);
+  const body =
+    abs >= 1000
+      ? abs.toLocaleString('en-US', { maximumFractionDigits: 1 })
+      : abs >= 100
+        ? abs.toFixed(1)
+        : abs.toFixed(2);
+  return {
+    text: `${sign}${body}`,
+    dir: delta > 0 ? 'up' : 'down',
+  };
 }
 
 function formatDeltaPct(pct: number | null): { text: string; dir: 'up' | 'down' | 'flat' } {
@@ -54,7 +77,7 @@ function formatDeltaPct(pct: number | null): { text: string; dir: 'up' | 'down' 
   };
 }
 
-const DeltaCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
+const DeltaPctCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
   const { text, dir } = formatDeltaPct(deltaPct);
   const Icon = dir === 'up' ? ArrowUpRight : dir === 'down' ? ArrowDownRight : Minus;
   const color =
@@ -67,6 +90,15 @@ const DeltaCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
         {dir === 'up' ? 'up' : dir === 'down' ? 'down' : 'unchanged'}
       </span>
     </span>
+  );
+};
+
+const AbsDeltaCell: React.FC<{ delta: number | null }> = ({ delta }) => {
+  const { text, dir } = formatAbsDelta(delta);
+  const color =
+    dir === 'up' ? 'text-emerald-400' : dir === 'down' ? 'text-rose-400' : 'text-muted-foreground/50';
+  return (
+    <span className={cn('font-mono tabular-nums text-xs font-bold', color)}>{text}</span>
   );
 };
 
@@ -137,6 +169,8 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                 <tr className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35 border-b border-white/5">
                   <th className="px-5 py-2.5 font-black">Metric</th>
                   <th className="px-3 py-2.5 font-black text-right">Level</th>
+                  <th className="px-3 py-2.5 font-black text-right">Prior</th>
+                  <th className="px-3 py-2.5 font-black text-right">Δ</th>
                   <th className="px-3 py-2.5 font-black text-right">Δ%</th>
                   <th className="px-3 py-2.5 font-black">Unit</th>
                   <th className="px-3 py-2.5 font-black">As of</th>
@@ -159,7 +193,15 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                       </span>
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <DeltaCell deltaPct={row.deltaPct} />
+                      <span className="font-mono text-xs font-bold text-muted-foreground/70 tabular-nums">
+                        {formatPrior(row)}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3 text-right">
+                      <AbsDeltaCell delta={row.delta} />
+                    </td>
+                    <td className="px-3 py-3 text-right">
+                      <DeltaPctCell deltaPct={row.deltaPct} />
                     </td>
                     <td className="px-3 py-3 text-[11px] text-muted-foreground/50 font-medium">
                       {row.unit || '—'}
@@ -187,7 +229,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                   <MetricName row={row} />
                   <StatusChip status={row.status} />
                 </div>
-                <div className="flex items-end justify-between gap-3">
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                   <div>
                     <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
                       Level
@@ -201,7 +243,28 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                       ) : null}
                     </p>
                   </div>
-                  <DeltaCell deltaPct={row.deltaPct} />
+                  <div className="text-right">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                      Prior
+                    </p>
+                    <p className="font-mono text-sm font-bold text-muted-foreground/70 tabular-nums">
+                      {formatPrior(row)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                      Δ
+                    </p>
+                    <AbsDeltaCell delta={row.delta} />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                      Δ%
+                    </p>
+                    <div className="flex justify-end">
+                      <DeltaPctCell deltaPct={row.deltaPct} />
+                    </div>
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground/40">
                   <span>

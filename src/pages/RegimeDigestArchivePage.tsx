@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { Link } from 'react-router-dom';
 import { Activity, ArrowRight, Calendar, FileText, Gauge, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { NotebookPayload, RegimeLabel } from '@/features/regime-digest/lib/types';
@@ -328,6 +329,41 @@ export const RegimeDigestArchivePage: React.FC = () => {
                     )}
                 </div>
             )}
+
+            <div className="mt-16 p-10 sm:p-14 rounded-2xl bg-gradient-to-br from-blue-950/60 to-slate-950 border border-blue-500/10 text-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_70%)]" />
+                <div className="relative z-10 space-y-5">
+                    <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/70">
+                        Monthly Intelligence
+                    </p>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tighter leading-tight">
+                        Delivered to Your Inbox
+                        <br />
+                        on the 1st of Every Month
+                    </h3>
+                    <p className="text-sm text-slate-400/80 max-w-sm mx-auto leading-relaxed">
+                        Institutional macro synthesis on Global Liquidity, Sovereign Stress, and structural
+                        regime shifts.
+                    </p>
+                    <div className="flex justify-center flex-wrap gap-3 pt-2">
+                        <Button
+                            asChild
+                            size="lg"
+                            className="bg-blue-600 hover:bg-blue-500 text-white font-black px-10 rounded-xl h-12"
+                        >
+                            <a href="https://graphiquestor.com/#newsletter">Subscribe — Free</a>
+                        </Button>
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="lg"
+                            className="border-white/10 rounded-xl h-12 bg-white/[0.03] hover:bg-white/[0.06]"
+                        >
+                            <Link to="/">Open Terminal</Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
 
             <p className="mt-10 text-center text-[10px] font-bold text-muted-foreground/25 uppercase tracking-widest">
                 GraphiQuestor · Institutional Macro Intelligence · Rules-based notebook

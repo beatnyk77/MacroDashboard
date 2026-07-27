@@ -59,11 +59,15 @@ export interface WatchItem {
   why: string;
 }
 
+export type RegimeSource = 'frozen' | 'default';
+
 export interface NotebookRegime {
   label: RegimeLabel;
   confidence: number | null;
   daysInRegime: number | null;
   compositeScore: number | null;
+  /** 'frozen' from daily_signal; 'default' when no freeze available (NEUTRAL fallback). */
+  regimeSource?: RegimeSource;
 }
 
 export interface NotebookPayload {

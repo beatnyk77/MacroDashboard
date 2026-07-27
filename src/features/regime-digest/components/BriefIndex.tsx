@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExternalLink, Newspaper } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import type { NotebookPayload } from '@/features/regime-digest/lib/types';
 
@@ -16,6 +17,10 @@ function formatDate(iso: string): string {
     year: 'numeric',
     timeZone: 'UTC',
   });
+}
+
+function isExternalUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
 }
 
 export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
@@ -48,30 +53,44 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
 
           <ul className="divide-y divide-white/5">
             {ordered.map((link) => {
-              const external = /^https?:\/\//i.test(link.url);
-              return (
-                <li key={`${link.date}-${link.url}`} className="py-3 first:pt-0 last:pb-0">
-                  <a
-                    href={link.url}
-                    {...(external
-                      ? { target: '_blank', rel: 'noopener noreferrer' }
-                      : {})}
-                    className="group flex items-start justify-between gap-3 hover:bg-white/[0.02] rounded-lg -mx-1 px-1 transition-colors"
-                  >
-                    <div className="min-w-0 space-y-0.5">
-                      <p className="text-sm font-bold text-white/90 group-hover:text-blue-400 transition-colors truncate">
-                        {link.title}
-                      </p>
-                      <p className="text-[11px] font-mono tabular-nums text-muted-foreground/45">
-                        {formatDate(link.date)}
-                      </p>
-                    </div>
+              const external = isExternalUrl(link.url);
+              const className =
+                'group flex items-start justify-between gap-3 hover:bg-white/[0.02] rounded-lg -mx-1 px-1 transition-colors';
+              const body = (
+                <>
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="text-sm font-bold text-white/90 group-hover:text-blue-400 transition-colors truncate">
+                      {link.title}
+                    </p>
+                    <p className="text-[11px] font-mono tabular-nums text-muted-foreground/45">
+                      {formatDate(link.date)}
+                    </p>
+                  </div>
+                  {external ? (
                     <ExternalLink
                       size={13}
                       className="mt-1 shrink-0 text-muted-foreground/30 group-hover:text-blue-400/70"
                       aria-hidden
                     />
-                  </a>
+                  ) : null}
+                </>
+              );
+              return (
+                <li key={`${link.date}-${link.url}`} className="py-3 first:pt-0 last:pb-0">
+                  {external ? (
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={className}
+                    >
+                      {body}
+                    </a>
+                  ) : (
+                    <Link to={link.url} className={className}>
+                      {body}
+                    </Link>
+                  )}
                 </li>
               );
             })}

@@ -71,10 +71,16 @@ export function buildNotebookPayload(input: BuildNotebookInput): NotebookPayload
   const coreOk = core.filter((r) => r.status === 'ok' || r.status === 'stale').length;
   const coreRatio = core.length ? coreOk / core.length : 0;
 
+  const regimeDefaulted =
+    input.regime.regimeSource === 'default' ||
+    (input.regime.confidence == null &&
+      input.regime.daysInRegime == null &&
+      input.regime.compositeScore == null);
+
   let overall: QualityOverall = 'ok';
   if (coreRatio < 0.5 || !input.regime.label) {
     overall = 'blocked';
-  } else if (withheldCount > 0 || staleCount > 0 || coreRatio < 1) {
+  } else if (withheldCount > 0 || staleCount > 0 || coreRatio < 1 || regimeDefaulted) {
     overall = 'partial';
   }
 

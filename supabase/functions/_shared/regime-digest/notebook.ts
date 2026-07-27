@@ -65,11 +65,15 @@ export interface WatchItem {
   why: string;
 }
 
+export type RegimeSource = 'frozen' | 'default';
+
 export interface NotebookRegime {
   label: RegimeLabel;
   confidence: number | null;
   daysInRegime: number | null;
   compositeScore: number | null;
+  /** 'frozen' from daily_signal; 'default' when no freeze available (NEUTRAL fallback). */
+  regimeSource?: RegimeSource;
 }
 
 export interface NotebookPayload {
@@ -341,11 +345,15 @@ function dirWord(deltaPct: number | null): 'rose' | 'fell' | 'was unchanged' {
 
 export function buildThesisLines(regime: NotebookRegime, board: MetricRow[]): string[] {
   const lines: string[] = [];
-  const conf = regime.confidence != null ? ` (confidence ${Math.round(regime.confidence)}%` : '';
-  const days = regime.daysInRegime != null ? `; ${regime.daysInRegime} days in regime)` : conf ? ')' : '';
-  lines.push(
-    `Month-end regime: ${regime.label.replace('_', ' ')}${conf}${days || (conf ? ')' : '')}.`,
-  );
+  const parenParts: string[] = [];
+  if (regime.confidence != null) {
+    parenParts.push(`confidence ${Math.round(regime.confidence)}%`);
+  }
+  if (regime.daysInRegime != null) {
+    parenParts.push(`${regime.daysInRegime} days in regime`);
+  }
+  const paren = parenParts.length ? ` (${parenParts.join('; ')})` : '';
+  lines.push(`Month-end regime: ${regime.label.replace('_', ' ')}${paren}.`);
 
   const byId = (id: string) => board.find((r) => r.id === id && r.status === 'ok');
 
@@ -499,10 +507,16 @@ export function buildNotebookPayload(input: BuildNotebookInput): NotebookPayload
   const coreOk = core.filter((r) => r.status === 'ok' || r.status === 'stale').length;
   const coreRatio = core.length ? coreOk / core.length : 0;
 
+  const regimeDefaulted =
+    input.regime.regimeSource === 'default' ||
+    (input.regime.confidence == null &&
+      input.regime.daysInRegime == null &&
+      input.regime.compositeScore == null);
+
   let overall: QualityOverall = 'ok';
   if (coreRatio < 0.5 || !input.regime.label) {
     overall = 'blocked';
-  } else if (withheldCount > 0 || staleCount > 0 || coreRatio < 1) {
+  } else if (withheldCount > 0 || staleCount > 0 || coreRatio < 1 || regimeDefaulted) {
     overall = 'partial';
   }
 

@@ -52,4 +52,60 @@ describe('buildNotebookPayload', () => {
     expect(cpi?.status).toBe('failed_validation');
     expect(payload.movers.up.every((m) => m.id !== 'US_CPI_YOY')).toBe(true);
   });
+
+  it('forces quality partial when regime is defaulted (no freeze)', () => {
+    // Full core set at healthy levels so metrics alone would be ok/partial from core only;
+    // defaulted regime must still prevent pure `ok`.
+    const corePoints: RawMetricPoint[] = [
+      { id: 'BIS_GLOBAL_LIQUIDITY_USD_BN', value: 25400, asOf: '2026-06-15' },
+      { id: 'BIS_GLOBAL_LIQUIDITY_USD_BN', value: 25000, asOf: '2026-05-15' },
+      { id: 'DXY_INDEX', value: 101, asOf: '2026-06-28' },
+      { id: 'DXY_INDEX', value: 100, asOf: '2026-05-28' },
+      { id: 'VIX_INDEX', value: 17, asOf: '2026-06-28' },
+      { id: 'VIX_INDEX', value: 18, asOf: '2026-05-28' },
+      { id: 'GOLD_PRICE_USD', value: 4200, asOf: '2026-06-28' },
+      { id: 'GOLD_PRICE_USD', value: 4000, asOf: '2026-05-28' },
+      { id: 'US_CPI_YOY', value: 2.7, asOf: '2026-06-12' },
+      { id: 'US_CPI_YOY', value: 2.8, asOf: '2026-05-12' },
+      { id: 'IN_CPI_YOY', value: 4.1, asOf: '2026-06-12' },
+      { id: 'IN_CPI_YOY', value: 4.0, asOf: '2026-05-12' },
+      { id: 'CN_GDP_GROWTH_YOY', value: 5.0, asOf: '2026-06-01' },
+      { id: 'CN_GDP_GROWTH_YOY', value: 4.8, asOf: '2026-03-01' },
+    ];
+    const payload = buildNotebookPayload({
+      yearMonth: '2026-06',
+      now: new Date('2026-07-01T12:00:00Z'),
+      points: corePoints,
+      regime: {
+        label: 'NEUTRAL',
+        confidence: null,
+        daysInRegime: null,
+        compositeScore: null,
+        regimeSource: 'default',
+      },
+      history: [],
+      briefLinks: [],
+      editionNumber: 1,
+    });
+    expect(payload.quality.overall).not.toBe('ok');
+    expect(['partial', 'blocked']).toContain(payload.quality.overall);
+  });
+
+  it('forces quality partial when confidence/days/score all null even without regimeSource', () => {
+    const payload = buildNotebookPayload({
+      yearMonth: '2026-06',
+      now: new Date('2026-07-01T12:00:00Z'),
+      points: samplePoints,
+      regime: {
+        label: 'NEUTRAL',
+        confidence: null,
+        daysInRegime: null,
+        compositeScore: null,
+      },
+      history: [],
+      briefLinks: [],
+      editionNumber: 1,
+    });
+    expect(payload.quality.overall).not.toBe('ok');
+  });
 });

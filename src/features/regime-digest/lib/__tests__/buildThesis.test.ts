@@ -40,9 +40,34 @@ describe('buildThesisLines', () => {
     const lines = buildThesisLines(regime, board);
     // Label is humanized in prose (RISK_OFF → RISK OFF)
     expect(lines.some((l) => l.includes('RISK OFF'))).toBe(true);
+    expect(lines[0]).toBe('Month-end regime: RISK OFF (confidence 82%; 12 days in regime).');
     expect(lines.some((l) => l.includes('DXY'))).toBe(true);
     expect(lines.some((l) => l.includes('CPI'))).toBe(false);
     expect(lines.length).toBeLessThanOrEqual(5);
+  });
+
+  it('formats days-only paren without leading semicolon', () => {
+    const daysOnly: NotebookRegime = {
+      label: 'NEUTRAL',
+      confidence: null,
+      daysInRegime: 7,
+      compositeScore: null,
+    };
+    const lines = buildThesisLines(daysOnly, []);
+    expect(lines[0]).toBe('Month-end regime: NEUTRAL (7 days in regime).');
+    expect(lines[0]).not.toMatch(/;\s*\d+ days/);
+  });
+
+  it('omits paren when confidence and days are both null', () => {
+    const bare: NotebookRegime = {
+      label: 'NEUTRAL',
+      confidence: null,
+      daysInRegime: null,
+      compositeScore: null,
+      regimeSource: 'default',
+    };
+    const lines = buildThesisLines(bare, []);
+    expect(lines[0]).toBe('Month-end regime: NEUTRAL.');
   });
 });
 

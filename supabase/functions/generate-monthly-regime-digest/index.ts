@@ -136,7 +136,13 @@ async function freezeRegime(
   }>;
 
   if (rows.length === 0) {
-    return { label: 'NEUTRAL', confidence: null, daysInRegime: null, compositeScore: null };
+    return {
+      label: 'NEUTRAL',
+      confidence: null,
+      daysInRegime: null,
+      compositeScore: null,
+      regimeSource: 'default',
+    };
   }
 
   const head = rows[0];
@@ -160,6 +166,7 @@ async function freezeRegime(
     confidence: conf,
     daysInRegime,
     compositeScore: score,
+    regimeSource: 'frozen',
   };
 }
 
