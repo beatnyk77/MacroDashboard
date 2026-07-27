@@ -1,469 +1,661 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { runWithRetry } from "../_shared/job-runner.ts";
+/**
+ * generate-monthly-regime-digest
+ *
+ * Default path is rules-only (no LLM). Builds a structured Monthly Regime Notebook
+ * via pure helpers in `_shared/regime-digest/notebook.ts`, freezes month-end regime
+ * from `daily_signal`, and upserts `monthly_regime_digests`.
+ *
+ * Optional: body.use_llm === true re-enables the legacy OpenRouter/AIMLAPI narrative
+ * path (non-critical; failure falls back to notebook rules output).
+ */
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { runWithRetry } from '../_shared/job-runner.ts';
 import { serveIngest, IngestResult } from '../_shared/handler.ts';
+import {
+  DIGEST_METRICS,
+  buildNotebookPayload,
+  subjectFromPayload,
+  plainTextFromPayload,
+  htmlFromPayload,
+  metricsSnapshotFromBoard,
+  lastDayOfMonth,
+  isRegimeLabel,
+  type RawMetricPoint,
+  type NotebookRegime,
+  type RegimeLabel,
+  type NotebookPayload,
+} from '../_shared/regime-digest/notebook.ts';
 
-
-function extractJSON(raw: string): unknown {
-    try {
-        return JSON.parse(raw.trim());
-    } catch {
-        const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
-        if (fenced) {
-            try { return JSON.parse(fenced[1].trim()); } catch { /* fall through */ }
-        }
-        const start = raw.indexOf('{');
-        const end = raw.lastIndexOf('}');
-        if (start !== -1 && end > start) {
-            try { return JSON.parse(raw.slice(start, end + 1)); } catch { /* fall through */ }
-        }
-        throw new Error("Could not extract valid JSON from AI response");
-    }
-}
-
-async function fetchLatestMetric(supabase: SupabaseClient, metricId: string) {
-    const { data } = await supabase
-        .from("metric_observations")
-        .select("value, as_of_date")
-        .eq("metric_id", metricId)
-        .order("as_of_date", { ascending: false })
-        .limit(2);
-    return data || [];
-}
-
-async function fetchRegionalPulse(supabase: SupabaseClient, table: string) {
-    const { data } = await supabase
-        .from(table)
-        .select("*")
-        .order("snapshot_date", { ascending: false })
-        .limit(1);
-    return data?.[0] || null;
-}
-
-async function doGenerateDigest(supabaseClient: SupabaseClient, targetYearMonth?: string) {
-    const now = new Date();
-    const year_month = targetYearMonth || `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-
-    console.log(`Generating Monthly Regime Digest for ${year_month}...`);
-
-    const [
-        liq, vix, dxy, gold, brent,
-        debtGold, usCpi, inGdp, inCpi, cnGdp,
-        africaPulse, indiaPulse, chinaPulse
-    ] = await Promise.all([
-        fetchLatestMetric(supabaseClient, "BIS_GLOBAL_LIQUIDITY_USD_BN"),
-        fetchLatestMetric(supabaseClient, "VIX_INDEX"),
-        fetchLatestMetric(supabaseClient, "DXY_INDEX"),
-        fetchLatestMetric(supabaseClient, "GOLD_PRICE_USD"),
-        fetchLatestMetric(supabaseClient, "BRENT_CRUDE_PRICE"),
-        fetchLatestMetric(supabaseClient, "RATIO_DEBT_GOLD"),
-        fetchLatestMetric(supabaseClient, "US_CPI_YOY"),
-        fetchLatestMetric(supabaseClient, "IN_GDP_GROWTH_YOY"),
-        fetchLatestMetric(supabaseClient, "IN_CPI_YOY"),
-        fetchLatestMetric(supabaseClient, "CN_GDP_GROWTH_YOY"),
-        fetchRegionalPulse(supabaseClient, "africa_macro_snapshots"),
-        fetchRegionalPulse(supabaseClient, "india_macro_snapshots"),
-        fetchRegionalPulse(supabaseClient, "china_macro_pulse")
-    ]);
-
-    const macroContext = {
-        us: {
-            cpi_yoy: usCpi[0]?.value,
-            dxy: dxy[0]?.value,
-            dxy_prev: dxy[1]?.value,
-            debt_gold_ratio: debtGold[0]?.value,
-            vix: vix[0]?.value,
-            global_liquidity_usd_bn: liq[0]?.value,
-            global_liquidity_prev: liq[1]?.value,
-        },
-        india: {
-            gdp_yoy: inGdp[0]?.value,
-            cpi_yoy: inCpi[0]?.value,
-            pulse_summary: indiaPulse?.holistic_summary
-        },
-        china: {
-            gdp_yoy: cnGdp[0]?.value,
-            pulse_summary: chinaPulse?.growth_momentum
-        },
-        africa: {
-            pulse_summary: africaPulse?.continent_summary
-        },
-        commodities: {
-            gold_usd: gold[0]?.value,
-            gold_prev: gold[1]?.value,
-            brent_crude: brent[0]?.value,
-            brent_prev: brent[1]?.value,
-        }
-    };
-
-    const openrouterKey = Deno.env.get("OPENROUTER_API_KEY") ?? "";
-    const aimlapiKey = Deno.env.get("AIMLAPI_KEY") ?? "";
-
-    if (!openrouterKey && !aimlapiKey) {
-        throw new Error("Neither OPENROUTER_API_KEY nor AIMLAPI_KEY configured in edge function secrets");
-    }
-
-    const systemPrompt = `You are an elite macro strategist and institutional writer for GraphiQuestor.
-Transform the macro telemetry data into a single, cohesive, high-value institutional Monthly Regime Digest.
-
-Sections to cover (weave these together into a holistic narrative):
-- US Macro Pulse
-- China Macro Pulse
-- India Macro Pulse
-- Africa Macro Pulse
-- Energy & Commodities
-- Sovereign Stress, De-Dollarization & Gold
-
-Core Requirements:
-- Holistic Narrative: Show interconnections (e.g., US fiscal dominance -> de-dollarization -> capital flows to India/Africa -> commodity implications).
-- Regime Focus: Clearly state the prevailing macro regime and any shifts during the past month.
-- Tone: Elite institutional (Luke Gromen / Bridgewater style). Calm, precise, authoritative. No marketing language.
-
-Report Structure:
-1. Executive Summary: High-level regime view for the month.
-2. Key Regime Shifts: Across all pillars, showing reinforcement or offsets.
-3. What Changed vs Last Month + Historical Context.
-4. Forward Outlook: High-Conviction Risks & Opportunities.
-
-Return a JSON object with this exact schema (no markdown, no code fences, pure JSON):
-{
-  "subject_line": "A compelling 5-8 word subject line summarizing the monthly regime",
-  "html_content": "The full report as clean semantic HTML. Use <h2> for major sections, <h3> for sub-points, <p> for paragraphs, <ul>/<li> for lists, <strong> for key terms. Do NOT wrap in markdown code blocks or add <html>/<body> tags.",
-  "plain_text": "The full report as plain text without any HTML tags"
-}`;
-
-    const userPrompt = `Macro telemetry for ${year_month}:
-${JSON.stringify(macroContext, null, 2)}
-
-Generate the Monthly Regime Digest. Return only the JSON object, no markdown fences.`;
-
-    interface Provider {
-        name: string;
-        url: string;
-        key: string;
-        model: string;
-        supportsJsonMode: boolean;
-    }
-
-    const providers: Provider[] = [];
-
-    if (openrouterKey) {
-        providers.push({
-            name: "OpenRouter",
-            url: "https://openrouter.ai/api/v1/chat/completions",
-            key: openrouterKey,
-            model: "deepseek/deepseek-r1:free",
-            supportsJsonMode: false,
-        });
-        providers.push({
-            name: "OpenRouter",
-            url: "https://openrouter.ai/api/v1/chat/completions",
-            key: openrouterKey,
-            model: "meta-llama/llama-3.3-70b-instruct:free",
-            supportsJsonMode: false,
-        });
-        providers.push({
-            name: "OpenRouter",
-            url: "https://openrouter.ai/api/v1/chat/completions",
-            key: openrouterKey,
-            model: "google/gemma-3-27b-it:free",
-            supportsJsonMode: false,
-        });
-    }
-
-    if (aimlapiKey) {
-        providers.push({
-            name: "AIMLAPI",
-            url: "https://api.aimlapi.com/v1/chat/completions",
-            key: aimlapiKey,
-            model: "gpt-4o-mini",
-            supportsJsonMode: true,
-        });
-        providers.push({
-            name: "AIMLAPI",
-            url: "https://api.aimlapi.com/v1/chat/completions",
-            key: aimlapiKey,
-            model: "gpt-4o",
-            supportsJsonMode: true,
-        });
-    }
-
-    const errorsList: string[] = [];
-    let parsedResult: any = null;
-
-    for (let i = 0; i < providers.length; i++) {
-        const provider = providers[i];
-        const attemptNum = i + 1;
-        try {
-            console.log(`[monthly-digest] Attempt ${attemptNum}/${providers.length}: ${provider.name} / ${provider.model}`);
-
-            const headers: Record<string, string> = {
-                "Authorization": `Bearer ${provider.key}`,
-                "Content-Type": "application/json",
-            };
-            if (provider.name === "OpenRouter") {
-                headers["HTTP-Referer"] = "https://graphiquestor.com";
-                headers["X-Title"] = "GraphiQuestor Monthly Regime Digest";
-            }
-
-            const requestBody: any = {
-                model: provider.model,
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    {
-                        role: "user",
-                        content: userPrompt + (attemptNum > 1
-                            ? "\n\nIMPORTANT: Output ONLY valid JSON. No markdown, no code fences, no explanation text."
-                            : "")
-                    }
-                ],
-                temperature: 0.4,
-                max_tokens: 4096,
-            };
-
-            if (provider.supportsJsonMode) {
-                requestBody.response_format = { type: "json_object" };
-            }
-
-            const response = await fetch(provider.url, {
-                method: "POST",
-                headers,
-                body: JSON.stringify(requestBody),
-            });
-
-            if (!response.ok) {
-                const errBody = await response.text();
-                throw new Error(`${provider.name} API error ${response.status}: ${errBody.substring(0, 300)}`);
-            }
-
-            const completion = await response.json();
-            if (completion.error) {
-                throw new Error(`${provider.name} error: ${completion.error.message || JSON.stringify(completion.error)}`);
-            }
-
-            const rawContent = completion.choices?.[0]?.message?.content ?? "";
-            parsedResult = extractJSON(rawContent) as any;
-
-            if (!parsedResult.subject_line || !parsedResult.html_content || !parsedResult.plain_text) {
-                throw new Error(`Incomplete JSON from ${provider.name}: missing required fields`);
-            }
-
-            console.log(`[monthly-digest] Success via ${provider.name} (${provider.model})`);
-            break;
-        } catch (err: any) {
-            console.warn(`[monthly-digest] Attempt ${attemptNum} failed: ${err.message}`);
-            errorsList.push(`Attempt ${attemptNum} (${provider.name}/${provider.model}): ${err.message}`);
-            if (i < providers.length - 1) {
-                await new Promise(r => setTimeout(r, (i + 1) * 2000));
-            }
-        }
-    }
-
-    let usedTemplate = false;
-    if (!parsedResult) {
-        // Never leave a month blank — publish deterministic metrics digest when LLMs fail.
-        console.warn(`[monthly-digest] All LLM providers failed; using template. ${errorsList.join(" | ")}`);
-        parsedResult = buildTemplateDigest(year_month, macroContext);
-        usedTemplate = true;
-    }
-
-    const { error: dbError } = await supabaseClient
-        .from("monthly_regime_digests")
-        .upsert({
-            year_month,
-            subject_line: parsedResult.subject_line,
-            html_content: parsedResult.html_content,
-            plain_text: parsedResult.plain_text,
-            metrics_snapshot: macroContext,
-        }, { onConflict: "year_month" });
-
-    if (dbError) throw dbError;
-
-    return {
-        digest: parsedResult,
-        year_month,
-        rows_inserted: 1,
-        metadata: { used_template: usedTemplate, llm_errors: errorsList.length ? errorsList : undefined },
-    };
-}
-
-function fmtNum(v: unknown, digits = 2): string {
-    if (v == null || v === '') return 'n/a';
-    const n = Number(v);
-    return Number.isFinite(n) ? n.toFixed(digits) : String(v);
-}
-
-function buildTemplateDigest(year_month: string, ctx: any) {
-    const us = ctx.us ?? {};
-    const india = ctx.india ?? {};
-    const china = ctx.china ?? {};
-    const commodities = ctx.commodities ?? {};
-
-    const subject_line = `Regime Snapshot ${year_month}: Liquidity & Prices`;
-    const lines = [
-        `Monthly Regime Digest — ${year_month} (metrics template)`,
-        ``,
-        `US Macro: CPI YoY ${fmtNum(us.cpi_yoy)}%; DXY ${fmtNum(us.dxy)}; VIX ${fmtNum(us.vix)}; Global liquidity ${fmtNum(us.global_liquidity_usd_bn, 0)} bn; Debt/Gold ${fmtNum(us.debt_gold_ratio)}.`,
-        `India: GDP YoY ${fmtNum(india.gdp_yoy)}%; CPI YoY ${fmtNum(india.cpi_yoy)}%.`,
-        `China: GDP YoY ${fmtNum(china.gdp_yoy)}%.`,
-        `Commodities: Gold $${fmtNum(commodities.gold_usd)}; Brent $${fmtNum(commodities.brent_crude)}.`,
-        ``,
-        `Narrative generation via LLM was unavailable this cycle. Figures above are live telemetry as of generation time. Re-run generate-monthly-regime-digest once provider keys recover to replace with full narrative.`,
-    ];
-    const plain_text = lines.join('\n');
-    const html_content = [
-        `<h2>Monthly Regime Digest — ${year_month}</h2>`,
-        `<p><em>Metrics template (LLM fallback). Source: GraphiQuestor telemetry.</em></p>`,
-        `<h3>US Macro Pulse</h3>`,
-        `<ul>`,
-        `<li>CPI YoY: <strong>${fmtNum(us.cpi_yoy)}%</strong></li>`,
-        `<li>DXY: <strong>${fmtNum(us.dxy)}</strong> (prev ${fmtNum(us.dxy_prev)})</li>`,
-        `<li>VIX: <strong>${fmtNum(us.vix)}</strong></li>`,
-        `<li>Global liquidity (USD bn): <strong>${fmtNum(us.global_liquidity_usd_bn, 0)}</strong></li>`,
-        `<li>Debt / Gold ratio: <strong>${fmtNum(us.debt_gold_ratio)}</strong></li>`,
-        `</ul>`,
-        `<h3>India Macro Pulse</h3>`,
-        `<ul><li>GDP YoY: <strong>${fmtNum(india.gdp_yoy)}%</strong></li><li>CPI YoY: <strong>${fmtNum(india.cpi_yoy)}%</strong></li></ul>`,
-        `<h3>China Macro Pulse</h3>`,
-        `<ul><li>GDP YoY: <strong>${fmtNum(china.gdp_yoy)}%</strong></li></ul>`,
-        `<h3>Energy &amp; Commodities</h3>`,
-        `<ul><li>Gold: <strong>$${fmtNum(commodities.gold_usd)}</strong></li><li>Brent: <strong>$${fmtNum(commodities.brent_crude)}</strong></li></ul>`,
-        `<p>Full institutional narrative will replace this template when LLM providers succeed. Data integrity takes priority over silence.</p>`,
-    ].join('\n');
-
-    return { subject_line, html_content, plain_text };
-}
+// ─── Date helpers ────────────────────────────────────────────────────────────
 
 function currentYearMonthUTC(d = new Date()): string {
-    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
 /** List YYYY-MM from start (inclusive) through end (inclusive). */
 function monthRange(fromYm: string, toYm: string): string[] {
-    const out: string[] = [];
-    const [fy, fm] = fromYm.split('-').map(Number);
-    const [ty, tm] = toYm.split('-').map(Number);
-    let y = fy;
-    let m = fm;
-    while (y < ty || (y === ty && m <= tm)) {
-        out.push(`${y}-${String(m).padStart(2, '0')}`);
-        m += 1;
-        if (m > 12) {
-            m = 1;
-            y += 1;
-        }
-        if (out.length > 36) break;
+  const out: string[] = [];
+  const [fy, fm] = fromYm.split('-').map(Number);
+  const [ty, tm] = toYm.split('-').map(Number);
+  let y = fy;
+  let m = fm;
+  while (y < ty || (y === ty && m <= tm)) {
+    out.push(`${y}-${String(m).padStart(2, '0')}`);
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
     }
-    return out;
+    if (out.length > 36) break;
+  }
+  return out;
 }
 
-serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<IngestResult> => {
-    const supabaseClient = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    );
+/** First calendar day of (year_month − nMonths), as YYYY-MM-DD. */
+function monthsBeforeStart(ym: string, nMonths: number): string {
+  const [y, m] = ym.split('-').map(Number);
+  const d = new Date(Date.UTC(y, m - 1 - nMonths, 1));
+  return d.toISOString().slice(0, 10);
+}
 
-    let targetYearMonth: string | undefined;
-    let catchUp = false;
+/**
+ * As-of clock for validation: wall clock for current month, day-after month-end
+ * for historical editions so catch-up does not mass-stale frozen data.
+ */
+function resolveNow(yearMonth: string): Date {
+  const end = lastDayOfMonth(yearMonth);
+  const freeze = new Date(`${end}T23:59:59.999Z`);
+  const wall = new Date();
+  if (yearMonth < currentYearMonthUTC(wall)) {
+    return new Date(freeze.getTime() + 24 * 60 * 60 * 1000);
+  }
+  return wall;
+}
+
+// ─── Data loaders ────────────────────────────────────────────────────────────
+
+async function fetchMetricPoints(
+  supabase: SupabaseClient,
+  yearMonth: string,
+): Promise<RawMetricPoint[]> {
+  const metricIds = DIGEST_METRICS.map((m) => m.id);
+  const fromDate = monthsBeforeStart(yearMonth, 24);
+
+  const { data, error } = await supabase
+    .from('metric_observations')
+    .select('metric_id, value, as_of_date')
+    .in('metric_id', metricIds)
+    .gte('as_of_date', fromDate)
+    .order('as_of_date', { ascending: false });
+
+  if (error) {
+    console.warn(`[monthly-digest] metric_observations query error: ${error.message}`);
+    return [];
+  }
+
+  const points: RawMetricPoint[] = [];
+  for (const row of data ?? []) {
+    const v = Number((row as any).value);
+    const asOf = String((row as any).as_of_date ?? '');
+    const id = String((row as any).metric_id ?? '');
+    if (!id || !asOf || !Number.isFinite(v)) continue;
+    points.push({ id, value: v, asOf });
+  }
+  return points;
+}
+
+/**
+ * Freeze regime at month-end from daily_signal.
+ * daysInRegime = consecutive prior rows (desc by signal_date) sharing the same label.
+ */
+async function freezeRegime(
+  supabase: SupabaseClient,
+  yearMonth: string,
+): Promise<NotebookRegime> {
+  const lastDay = lastDayOfMonth(yearMonth);
+  const lookback = monthsBeforeStart(yearMonth, 6);
+
+  const { data, error } = await supabase
+    .from('daily_signal')
+    .select('signal_date, regime, score, confidence_pct')
+    .lte('signal_date', lastDay)
+    .gte('signal_date', lookback)
+    .order('signal_date', { ascending: false })
+    .limit(200);
+
+  if (error) {
+    console.warn(`[monthly-digest] daily_signal query error: ${error.message}`);
+  }
+
+  const rows = (data ?? []) as Array<{
+    signal_date: string;
+    regime: string;
+    score: number | null;
+    confidence_pct: number | null;
+  }>;
+
+  if (rows.length === 0) {
+    return { label: 'NEUTRAL', confidence: null, daysInRegime: null, compositeScore: null };
+  }
+
+  const head = rows[0];
+  const label: RegimeLabel = isRegimeLabel(head.regime) ? head.regime : 'NEUTRAL';
+
+  let daysInRegime = 0;
+  for (const row of rows) {
+    if (row.regime === label) daysInRegime += 1;
+    else break;
+  }
+
+  const conf = head.confidence_pct != null && Number.isFinite(Number(head.confidence_pct))
+    ? Number(head.confidence_pct)
+    : null;
+  const score = head.score != null && Number.isFinite(Number(head.score))
+    ? Number(head.score)
+    : null;
+
+  return {
+    label,
+    confidence: conf,
+    daysInRegime,
+    compositeScore: score,
+  };
+}
+
+async function fetchHistory(
+  supabase: SupabaseClient,
+  yearMonth: string,
+): Promise<{ yearMonth: string; regime: RegimeLabel }[]> {
+  const { data, error } = await supabase
+    .from('monthly_regime_digests')
+    .select('year_month, notebook_payload')
+    .lt('year_month', yearMonth)
+    .order('year_month', { ascending: false })
+    .limit(12);
+
+  if (error) {
+    console.warn(`[monthly-digest] history query error: ${error.message}`);
+    return [];
+  }
+
+  const out: { yearMonth: string; regime: RegimeLabel }[] = [];
+  for (const row of data ?? []) {
+    const ym = String((row as any).year_month ?? '');
+    const payload = (row as any).notebook_payload;
+    const label = payload?.regime?.label;
+    if (ym && isRegimeLabel(label)) {
+      out.push({ yearMonth: ym, regime: label });
+    }
+  }
+  // chronological for consumers
+  return out.reverse();
+}
+
+async function fetchBriefLinks(
+  supabase: SupabaseClient,
+  yearMonth: string,
+): Promise<{ date: string; url: string; title: string }[]> {
+  const lastDay = lastDayOfMonth(yearMonth);
+  const { data, error } = await supabase
+    .from('daily_macro_briefs')
+    .select('brief_date, regime_label')
+    .gte('brief_date', `${yearMonth}-01`)
+    .lte('brief_date', lastDay)
+    .order('brief_date', { ascending: true });
+
+  if (error) {
+    console.warn(`[monthly-digest] daily_macro_briefs query error: ${error.message}`);
+    return [];
+  }
+
+  // Dedupe by date (keep first)
+  const seen = new Set<string>();
+  const links: { date: string; url: string; title: string }[] = [];
+  for (const row of data ?? []) {
+    const date = String((row as any).brief_date ?? '');
+    if (!date || seen.has(date)) continue;
+    seen.add(date);
+    const regime = (row as any).regime_label;
+    const title = regime
+      ? `Morning Brief ${date} · ${regime}`
+      : `Morning Brief ${date}`;
+    links.push({ date, url: `/macro-brief/${date}/`, title });
+  }
+  return links;
+}
+
+async function countEditions(
+  supabase: SupabaseClient,
+  yearMonth: string,
+): Promise<number | null> {
+  const { count, error } = await supabase
+    .from('monthly_regime_digests')
+    .select('year_month', { count: 'exact', head: true })
+    .lte('year_month', yearMonth);
+
+  if (error) {
+    console.warn(`[monthly-digest] edition count error: ${error.message}`);
+    return null;
+  }
+  // +1 if this month is not yet stored (new edition)
+  const { data: existing } = await supabase
+    .from('monthly_regime_digests')
+    .select('year_month')
+    .eq('year_month', yearMonth)
+    .maybeSingle();
+
+  const base = count ?? 0;
+  if (existing) return base;
+  return base + 1;
+}
+
+async function existingQuality(
+  supabase: SupabaseClient,
+  yearMonth: string,
+): Promise<string | null> {
+  const { data } = await supabase
+    .from('monthly_regime_digests')
+    .select('notebook_payload')
+    .eq('year_month', yearMonth)
+    .maybeSingle();
+  const overall = (data as any)?.notebook_payload?.quality?.overall;
+  return typeof overall === 'string' ? overall : null;
+}
+
+// ─── Optional LLM (gated) ────────────────────────────────────────────────────
+
+function extractJSON(raw: string): unknown {
+  try {
+    return JSON.parse(raw.trim());
+  } catch {
+    const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fenced) {
+      try {
+        return JSON.parse(fenced[1].trim());
+      } catch { /* fall through */ }
+    }
+    const start = raw.indexOf('{');
+    const end = raw.lastIndexOf('}');
+    if (start !== -1 && end > start) {
+      try {
+        return JSON.parse(raw.slice(start, end + 1));
+      } catch { /* fall through */ }
+    }
+    throw new Error('Could not extract valid JSON from AI response');
+  }
+}
+
+/**
+ * Optional narrative overlay. Never required for success.
+ * Returns null on any failure.
+ */
+async function tryLlmNarrative(
+  yearMonth: string,
+  payload: NotebookPayload,
+): Promise<{ subject_line: string; html_content: string; plain_text: string } | null> {
+  const openrouterKey = Deno.env.get('OPENROUTER_API_KEY') ?? '';
+  const aimlapiKey = Deno.env.get('AIMLAPI_KEY') ?? '';
+  if (!openrouterKey && !aimlapiKey) {
+    console.warn('[monthly-digest] use_llm requested but no provider keys configured');
+    return null;
+  }
+
+  const systemPrompt = `You are an elite macro strategist for GraphiQuestor.
+Given a structured Monthly Regime Notebook JSON, produce a polished institutional narrative.
+
+Return a JSON object with this exact schema (no markdown, pure JSON):
+{
+  "subject_line": "A compelling 5-8 word subject line summarizing the monthly regime",
+  "html_content": "Full report as clean semantic HTML. Use <h2>/<h3>/<p>/<ul>/<li>/<strong>. No <html>/<body>.",
+  "plain_text": "Full report as plain text without HTML"
+}`;
+
+  const userPrompt = `Notebook payload for ${yearMonth}:
+${JSON.stringify({
+    yearMonth: payload.yearMonth,
+    regime: payload.regime,
+    thesis: payload.thesis,
+    movers: payload.movers,
+    positioning: payload.positioning,
+    quality: payload.quality,
+    board: payload.board.map((r) => ({
+      id: r.id,
+      name: r.name,
+      level: r.level,
+      deltaPct: r.deltaPct,
+      status: r.status,
+      asOf: r.asOf,
+    })),
+  }, null, 2)}
+
+Generate the Monthly Regime Digest narrative. Return only the JSON object.`;
+
+  interface Provider {
+    name: string;
+    url: string;
+    key: string;
+    model: string;
+    supportsJsonMode: boolean;
+  }
+
+  const providers: Provider[] = [];
+  if (openrouterKey) {
+    providers.push({
+      name: 'OpenRouter',
+      url: 'https://openrouter.ai/api/v1/chat/completions',
+      key: openrouterKey,
+      model: 'deepseek/deepseek-r1:free',
+      supportsJsonMode: false,
+    });
+    providers.push({
+      name: 'OpenRouter',
+      url: 'https://openrouter.ai/api/v1/chat/completions',
+      key: openrouterKey,
+      model: 'meta-llama/llama-3.3-70b-instruct:free',
+      supportsJsonMode: false,
+    });
+  }
+  if (aimlapiKey) {
+    providers.push({
+      name: 'AIMLAPI',
+      url: 'https://api.aimlapi.com/v1/chat/completions',
+      key: aimlapiKey,
+      model: 'gpt-4o-mini',
+      supportsJsonMode: true,
+    });
+  }
+
+  for (let i = 0; i < providers.length; i++) {
+    const provider = providers[i];
     try {
-        const body = await req.json();
-        targetYearMonth = body.year_month;
-        catchUp = body.catch_up === true || body.catchUp === true;
-    } catch (_e) {
-        // body optional — also allow ?catch_up=1
+      console.log(`[monthly-digest] LLM attempt ${i + 1}/${providers.length}: ${provider.name}/${provider.model}`);
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${provider.key}`,
+        'Content-Type': 'application/json',
+      };
+      if (provider.name === 'OpenRouter') {
+        headers['HTTP-Referer'] = 'https://graphiquestor.com';
+        headers['X-Title'] = 'GraphiQuestor Monthly Regime Digest';
+      }
+      const requestBody: Record<string, unknown> = {
+        model: provider.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.4,
+        max_tokens: 4096,
+      };
+      if (provider.supportsJsonMode) {
+        requestBody.response_format = { type: 'json_object' };
+      }
+      const response = await fetch(provider.url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody),
+      });
+      if (!response.ok) {
+        const errBody = await response.text();
+        throw new Error(`${provider.name} ${response.status}: ${errBody.substring(0, 200)}`);
+      }
+      const completion = await response.json();
+      if (completion.error) {
+        throw new Error(`${provider.name}: ${completion.error.message || JSON.stringify(completion.error)}`);
+      }
+      const rawContent = completion.choices?.[0]?.message?.content ?? '';
+      const parsed = extractJSON(rawContent) as any;
+      if (!parsed?.subject_line || !parsed?.html_content || !parsed?.plain_text) {
+        throw new Error('Incomplete LLM JSON');
+      }
+      console.log(`[monthly-digest] LLM success via ${provider.name}`);
+      return {
+        subject_line: String(parsed.subject_line),
+        html_content: String(parsed.html_content),
+        plain_text: String(parsed.plain_text),
+      };
+    } catch (err: any) {
+      console.warn(`[monthly-digest] LLM attempt failed: ${err.message}`);
     }
+  }
+  return null;
+}
 
-    try {
-        const url = new URL(req.url);
-        if (url.searchParams.get('catch_up') === '1' || url.searchParams.get('catch_up') === 'true') {
-            catchUp = true;
-        }
-        if (!targetYearMonth && url.searchParams.get('year_month')) {
-            targetYearMonth = url.searchParams.get('year_month') ?? undefined;
-        }
-    } catch { /* ignore */ }
+// ─── Core generator ──────────────────────────────────────────────────────────
 
-    // Catch-up: ensure every month from earliest missing through current exists.
-    // Default catch-up window starts April 2026 (last known good) if table empty of recent rows.
-    if (catchUp && !targetYearMonth) {
-        const nowYm = currentYearMonthUTC();
-        const { data: existing } = await supabaseClient
-            .from('monthly_regime_digests')
-            .select('year_month')
-            .order('year_month', { ascending: true });
+export interface GenerateResult {
+  ok: boolean;
+  error?: string;
+  year_month?: string;
+  rows_inserted?: number;
+  metadata?: Record<string, unknown>;
+}
 
-        const have = new Set((existing ?? []).map((r: { year_month: string }) => r.year_month));
-        const start = '2026-04';
-        const needed = monthRange(start, nowYm).filter((ym) => !have.has(ym));
+async function doGenerateDigest(
+  supabaseClient: SupabaseClient,
+  targetYearMonth?: string,
+  useLlm = false,
+): Promise<GenerateResult> {
+  const year_month = targetYearMonth || currentYearMonthUTC();
+  console.log(`[monthly-digest] Generating notebook for ${year_month} (rules-only default; use_llm=${useLlm})...`);
 
-        let upserted = 0;
-        const generated: string[] = [];
-        const errors: string[] = [];
+  const now = resolveNow(year_month);
 
-        for (const ym of needed) {
-            try {
-                const result = await runWithRetry(
-                    `generate-monthly-regime-digest:${ym}`,
-                    () => doGenerateDigest(supabaseClient, ym),
-                    { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
-                );
-                if (!result.ok) {
-                    errors.push(`${ym}: ${result.error}`);
-                    continue;
-                }
-                upserted += 1;
-                generated.push(ym);
-            } catch (e: any) {
-                errors.push(`${ym}: ${e.message}`);
-            }
-        }
+  const [points, regime, history, briefLinks, editionNumber] = await Promise.all([
+    fetchMetricPoints(supabaseClient, year_month),
+    freezeRegime(supabaseClient, year_month),
+    fetchHistory(supabaseClient, year_month),
+    fetchBriefLinks(supabaseClient, year_month),
+    countEditions(supabaseClient, year_month),
+  ]);
 
-        // Always ensure current month exists even if already present (refresh optional — skip if present)
-        if (!have.has(nowYm) && !generated.includes(nowYm)) {
-            const result = await runWithRetry(
-                'generate-monthly-regime-digest:current',
-                () => doGenerateDigest(supabaseClient, nowYm),
-                { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
-            );
-            if (result.ok) {
-                upserted += 1;
-                generated.push(nowYm);
-            } else if (result.error) {
-                errors.push(`${nowYm}: ${result.error}`);
-            }
-        }
+  const payload = buildNotebookPayload({
+    yearMonth: year_month,
+    now,
+    points,
+    regime,
+    history,
+    briefLinks,
+    editionNumber,
+  });
 
-        if (upserted === 0 && errors.length > 0) {
-            return {
-                ok: false,
-                error: `Catch-up produced 0 digests. ${errors.slice(0, 5).join(' | ')}`,
-                counts: { upserted: 0, errors: errors.length },
-                meta: { mode: 'catch_up', needed, errors },
-            };
-        }
-
-        return {
-            ok: true,
-            counts: { upserted, skipped: needed.length - upserted, errors: errors.length },
-            meta: { mode: 'catch_up', generated, needed, errors: errors.length ? errors : undefined },
-        };
+  if (payload.quality.overall === 'blocked') {
+    const prior = await existingQuality(supabaseClient, year_month);
+    if (prior === 'ok' || prior === 'partial') {
+      console.warn(
+        `[monthly-digest] blocked quality for ${year_month}; preserving existing ${prior} row`,
+      );
+    } else {
+      console.warn(`[monthly-digest] blocked quality for ${year_month}; no upsert`);
     }
-
-    const result = await runWithRetry(
-        'generate-monthly-regime-digest',
-        () => doGenerateDigest(supabaseClient, targetYearMonth),
-        { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
-    );
-
-    if (!result.ok) {
-        throw new Error(`Digest generation failed: ${result.error}`);
-    }
-
-    const _v = result.value!;
-    if (_v && typeof _v.ok === 'boolean') return _v as IngestResult;
     return {
-        ok: true,
-        counts: { upserted: _v?.rows_inserted ?? 1 },
-        meta: _v?.metadata ?? { year_month: _v?.year_month },
+      ok: false,
+      error: 'blocked quality',
+      year_month,
+      metadata: { quality: payload.quality, preserved_existing: prior },
     };
+  }
+
+  let subject_line = subjectFromPayload(payload);
+  let html_content = htmlFromPayload(payload);
+  let plain_text = plainTextFromPayload(payload);
+  let llmUsed = false;
+
+  if (useLlm) {
+    const narrative = await tryLlmNarrative(year_month, payload);
+    if (narrative) {
+      subject_line = narrative.subject_line;
+      html_content = narrative.html_content;
+      plain_text = narrative.plain_text;
+      llmUsed = true;
+    }
+  }
+
+  const metrics_snapshot = metricsSnapshotFromBoard(payload.board);
+
+  const { error: dbError } = await supabaseClient.from('monthly_regime_digests').upsert(
+    {
+      year_month,
+      subject_line,
+      html_content,
+      plain_text,
+      metrics_snapshot,
+      notebook_payload: payload,
+      generated_at: new Date().toISOString(),
+    },
+    { onConflict: 'year_month' },
+  );
+
+  if (dbError) throw dbError;
+
+  return {
+    ok: true,
+    year_month,
+    rows_inserted: 1,
+    metadata: {
+      engine: 'rules',
+      quality: payload.quality.overall,
+      regime: payload.regime.label,
+      llm_used: llmUsed,
+      metric_points: points.length,
+      brief_links: briefLinks.length,
+    },
+  };
+}
+
+// ─── HTTP entry ──────────────────────────────────────────────────────────────
+
+serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<IngestResult> => {
+  const supabaseClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  );
+
+  let targetYearMonth: string | undefined;
+  let catchUp = false;
+  let useLlm = false;
+  try {
+    const body = await req.json();
+    targetYearMonth = body.year_month;
+    catchUp = body.catch_up === true || body.catchUp === true;
+    useLlm = body.use_llm === true || body.useLlm === true;
+  } catch (_e) {
+    // body optional
+  }
+
+  try {
+    const url = new URL(req.url);
+    if (url.searchParams.get('catch_up') === '1' || url.searchParams.get('catch_up') === 'true') {
+      catchUp = true;
+    }
+    if (!targetYearMonth && url.searchParams.get('year_month')) {
+      targetYearMonth = url.searchParams.get('year_month') ?? undefined;
+    }
+    if (url.searchParams.get('use_llm') === '1' || url.searchParams.get('use_llm') === 'true') {
+      useLlm = true;
+    }
+  } catch { /* ignore */ }
+
+  // Catch-up: ensure every month from earliest missing through current exists.
+  if (catchUp && !targetYearMonth) {
+    const nowYm = currentYearMonthUTC();
+    const { data: existing } = await supabaseClient
+      .from('monthly_regime_digests')
+      .select('year_month')
+      .order('year_month', { ascending: true });
+
+    const have = new Set((existing ?? []).map((r: { year_month: string }) => r.year_month));
+    const start = '2026-04';
+    const needed = monthRange(start, nowYm).filter((ym) => !have.has(ym));
+
+    let upserted = 0;
+    const generated: string[] = [];
+    const errors: string[] = [];
+
+    for (const ym of needed) {
+      try {
+        const result = await runWithRetry(
+          `generate-monthly-regime-digest:${ym}`,
+          () => doGenerateDigest(supabaseClient, ym, useLlm),
+          { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
+        );
+        if (!result.ok) {
+          errors.push(`${ym}: ${result.error}`);
+          continue;
+        }
+        const v = result.value;
+        if (v && v.ok === false) {
+          errors.push(`${ym}: ${v.error ?? 'blocked quality'}`);
+          continue;
+        }
+        upserted += 1;
+        generated.push(ym);
+      } catch (e: any) {
+        errors.push(`${ym}: ${e.message}`);
+      }
+    }
+
+    // Ensure current month exists
+    if (!have.has(nowYm) && !generated.includes(nowYm)) {
+      const result = await runWithRetry(
+        'generate-monthly-regime-digest:current',
+        () => doGenerateDigest(supabaseClient, nowYm, useLlm),
+        { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
+      );
+      if (result.ok && result.value?.ok !== false) {
+        upserted += 1;
+        generated.push(nowYm);
+      } else {
+        const err = result.error ?? result.value?.error;
+        if (err) errors.push(`${nowYm}: ${err}`);
+      }
+    }
+
+    if (upserted === 0 && errors.length > 0) {
+      return {
+        ok: false,
+        error: `Catch-up produced 0 digests. ${errors.slice(0, 5).join(' | ')}`,
+        counts: { upserted: 0, errors: errors.length },
+        meta: { mode: 'catch_up', needed, errors },
+      };
+    }
+
+    return {
+      ok: true,
+      counts: { upserted, skipped: needed.length - upserted, errors: errors.length },
+      meta: { mode: 'catch_up', generated, needed, errors: errors.length ? errors : undefined },
+    };
+  }
+
+  const result = await runWithRetry(
+    'generate-monthly-regime-digest',
+    () => doGenerateDigest(supabaseClient, targetYearMonth, useLlm),
+    { timeoutMs: 10 * 60 * 1000, maxRetries: 1 },
+  );
+
+  if (!result.ok) {
+    throw new Error(`Digest generation failed: ${result.error}`);
+  }
+
+  const _v = result.value!;
+  if (_v && typeof _v.ok === 'boolean') {
+    if (!_v.ok) {
+      return {
+        ok: false,
+        error: _v.error ?? 'blocked quality',
+        meta: _v.metadata ?? { year_month: _v.year_month },
+      };
+    }
+    return {
+      ok: true,
+      counts: { upserted: _v.rows_inserted ?? 1 },
+      meta: _v.metadata ?? { year_month: _v.year_month },
+    };
+  }
+
+  return {
+    ok: true,
+    counts: { upserted: 1 },
+    meta: { year_month: targetYearMonth },
+  };
 });
