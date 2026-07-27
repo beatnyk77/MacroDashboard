@@ -534,11 +534,13 @@ serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<Inge
   let targetYearMonth: string | undefined;
   let catchUp = false;
   let useLlm = false;
+  let force = false;
   try {
     const body = await req.json();
     targetYearMonth = body.year_month;
     catchUp = body.catch_up === true || body.catchUp === true;
     useLlm = body.use_llm === true || body.useLlm === true;
+    force = body.force === true;
   } catch (_e) {
     // body optional
   }
@@ -554,9 +556,12 @@ serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<Inge
     if (url.searchParams.get('use_llm') === '1' || url.searchParams.get('use_llm') === 'true') {
       useLlm = true;
     }
+    if (url.searchParams.get('force') === '1' || url.searchParams.get('force') === 'true') {
+      force = true;
+    }
   } catch { /* ignore */ }
 
-  // Catch-up: ensure every month from earliest missing through current exists.
+  // Catch-up: fill missing months (or force-rebuild all) from first archive edition through current UTC month.
   if (catchUp && !targetYearMonth) {
     const nowYm = currentYearMonthUTC();
     const { data: existing } = await supabaseClient
@@ -565,8 +570,11 @@ serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<Inge
       .order('year_month', { ascending: true });
 
     const have = new Set((existing ?? []).map((r: { year_month: string }) => r.year_month));
-    const start = '2026-04';
-    const needed = monthRange(start, nowYm).filter((ym) => !have.has(ym));
+    // First archive edition for notebook_v1 catch-up / force rebuild.
+    const start = '2026-02';
+    const window = monthRange(start, nowYm);
+    // force=true regenerates every month in window (rebuild notebook_payload even if row exists).
+    const needed = force ? window : window.filter((ym) => !have.has(ym));
 
     let upserted = 0;
     const generated: string[] = [];
@@ -595,8 +603,9 @@ serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<Inge
       }
     }
 
-    // Ensure current month exists
-    if (!have.has(nowYm) && !generated.includes(nowYm)) {
+    // Ensure current month exists (retry if missing and not yet generated).
+    // force already walks full window including nowYm, so skip double-run.
+    if (!force && !have.has(nowYm) && !generated.includes(nowYm)) {
       const result = await runWithRetry(
         'generate-monthly-regime-digest:current',
         () => doGenerateDigest(supabaseClient, nowYm, useLlm),
@@ -616,14 +625,21 @@ serveIngest('generate-monthly-regime-digest', async (req: Request): Promise<Inge
         ok: false,
         error: `Catch-up produced 0 digests. ${errors.slice(0, 5).join(' | ')}`,
         counts: { upserted: 0, errors: errors.length },
-        meta: { mode: 'catch_up', needed, errors },
+        meta: { mode: 'catch_up', force, start, needed, errors },
       };
     }
 
     return {
       ok: true,
       counts: { upserted, skipped: needed.length - upserted, errors: errors.length },
-      meta: { mode: 'catch_up', generated, needed, errors: errors.length ? errors : undefined },
+      meta: {
+        mode: 'catch_up',
+        force,
+        start,
+        generated,
+        needed,
+        errors: errors.length ? errors : undefined,
+      },
     };
   }
 
