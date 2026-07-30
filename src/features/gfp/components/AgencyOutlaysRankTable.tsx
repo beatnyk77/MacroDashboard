@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useGfpMtsOutlays } from '@/hooks/useGfpMtsOutlays';
-import { formatBillions, formatPct } from '@/features/gfp/lib/format';
+import { formatCashDollars, formatPct } from '@/features/gfp/lib/format';
 import { GFP_BASIS } from '@/features/gfp/lib/types';
 import type { MtsOutlayRankRow } from '@/features/gfp/lib/types';
 import { GfpBasisBadge, GfpLoadingState, GfpUnavailableState } from './GfpEmptyState';
@@ -9,9 +9,10 @@ type SortKey = 'rnk' | 'current_month_net_outly' | 'share' | 'yoy_fytd' | 'vol_1
 
 function formatYoy(n: number | null | undefined): string {
   if (n == null || Number.isNaN(n)) return '—';
-  // yoy_fytd may already be a ratio or a level delta depending on view; treat |n|<=2 as share
+  // View emits FYTD growth as a ratio; treat |n|<=2 as percent change
   if (Math.abs(n) <= 2) return formatPct(n);
-  return formatBillions(n);
+  // Fallback: raw-dollar level delta (should be rare)
+  return formatCashDollars(n);
 }
 
 export const AgencyOutlaysRankTable: React.FC = () => {
@@ -86,7 +87,7 @@ export const AgencyOutlaysRankTable: React.FC = () => {
                   {r.classification_desc}
                 </td>
                 <td className="px-3 py-1.5 font-mono tabular-nums text-right text-white">
-                  {formatBillions(r.current_month_net_outly)}
+                  {formatCashDollars(r.current_month_net_outly)}
                 </td>
                 <td className="px-3 py-1.5 font-mono tabular-nums text-right text-white/80">
                   {formatPct(r.share)}
@@ -95,7 +96,7 @@ export const AgencyOutlaysRankTable: React.FC = () => {
                   {formatYoy(r.yoy_fytd)}
                 </td>
                 <td className="px-3 py-1.5 font-mono tabular-nums text-right text-white/80">
-                  {r.vol_12m == null ? '—' : r.vol_12m.toFixed(2)}
+                  {formatCashDollars(r.vol_12m)}
                 </td>
               </tr>
             ))}

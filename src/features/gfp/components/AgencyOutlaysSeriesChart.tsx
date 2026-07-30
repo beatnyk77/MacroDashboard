@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'recharts';
 import { useGfpMtsOutlays } from '@/hooks/useGfpMtsOutlays';
-import { formatBillions } from '@/features/gfp/lib/format';
+import { formatCashDollars } from '@/features/gfp/lib/format';
 import { GFP_BASIS } from '@/features/gfp/lib/types';
 import {
   DEFAULT_CARTESIAN_GRID_PROPS,
@@ -127,13 +127,13 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
               />
               <YAxis
                 {...DEFAULT_YAXIS_PROPS}
-                tickFormatter={(v) => formatBillions(Number(v), 0)}
+                tickFormatter={(v) => formatCashDollars(Number(v), 0)}
                 width={56}
               />
               <Tooltip
                 contentStyle={DEFAULT_TOOLTIP_STYLE}
                 formatter={(value: number, name: string) => [
-                  formatBillions(value),
+                  formatCashDollars(value),
                   name.length > 40 ? `${name.slice(0, 38)}…` : name,
                 ]}
               />

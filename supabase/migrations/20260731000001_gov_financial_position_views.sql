@@ -26,39 +26,51 @@ WITH agency AS (
     AND net_cost_bil IS NOT NULL
     AND net_cost_bil > 0
 ),
-tot AS (
-  SELECT stmt_fiscal_year, sum(net_cost_bil) AS total_net_cost
+-- Positive agency sum used only as share/HHI denominator
+agency_tot AS (
+  SELECT stmt_fiscal_year, sum(net_cost_bil) AS agency_sum_net_cost
   FROM agency
   GROUP BY 1
+),
+-- Prefer FRUSG "Total" row for headline total_net_cost (consolidations differ from agency sum)
+stmt_tot AS (
+  SELECT stmt_fiscal_year, net_cost_bil AS stmt_total_net_cost
+  FROM public.vw_frusg_net_cost_yearly
+  WHERE is_total_row
+    AND net_cost_bil IS NOT NULL
 ),
 ranked AS (
   SELECT
     a.stmt_fiscal_year,
     a.agency_nm,
     a.net_cost_bil,
-    a.net_cost_bil / nullif(t.total_net_cost, 0) AS share,
+    a.net_cost_bil / nullif(t.agency_sum_net_cost, 0) AS share,
     row_number() OVER (PARTITION BY a.stmt_fiscal_year ORDER BY a.net_cost_bil DESC) AS rnk
   FROM agency a
-  JOIN tot t ON t.stmt_fiscal_year = a.stmt_fiscal_year
+  JOIN agency_tot t ON t.stmt_fiscal_year = a.stmt_fiscal_year
 )
 SELECT
-  stmt_fiscal_year,
-  sum(CASE WHEN rnk <= 5 THEN share ELSE 0 END) AS top5_share,
-  sum(CASE WHEN rnk <= 10 THEN share ELSE 0 END) AS top10_share,
-  sum(share * share) AS hhi,
-  max(total_net_cost) AS total_net_cost
-FROM ranked
-JOIN tot USING (stmt_fiscal_year)
-GROUP BY stmt_fiscal_year, total_net_cost;
+  r.stmt_fiscal_year,
+  sum(CASE WHEN r.rnk <= 5 THEN r.share ELSE 0 END) AS top5_share,
+  sum(CASE WHEN r.rnk <= 10 THEN r.share ELSE 0 END) AS top10_share,
+  sum(r.share * r.share) AS hhi,
+  coalesce(max(st.stmt_total_net_cost), max(at.agency_sum_net_cost)) AS total_net_cost
+FROM ranked r
+JOIN agency_tot at ON at.stmt_fiscal_year = r.stmt_fiscal_year
+LEFT JOIN stmt_tot st ON st.stmt_fiscal_year = r.stmt_fiscal_year
+GROUP BY r.stmt_fiscal_year;
 
--- Balance sheet summary: pick total rows by account_desc/line_item heuristics
+-- Balance sheet summary: totals from Total assets / Total liabilities rows.
+-- net_position is derived (assets - liabilities), NOT a SUM of "Net position" lines
+-- (those can appear multiple times / double-count across accounts).
 CREATE OR REPLACE VIEW public.vw_frusg_balance_sheet_summary AS
 SELECT
   stmt_fiscal_year,
   max(record_date) AS record_date,
   sum(CASE WHEN lower(line_item_desc) = 'total assets' THEN position_bil END) AS total_assets_bil,
   sum(CASE WHEN lower(line_item_desc) = 'total liabilities' THEN position_bil END) AS total_liabilities_bil,
-  sum(CASE WHEN lower(line_item_desc) IN ('net position', 'total net position') THEN position_bil END) AS net_position_bil
+  sum(CASE WHEN lower(line_item_desc) = 'total assets' THEN position_bil END)
+    - sum(CASE WHEN lower(line_item_desc) = 'total liabilities' THEN position_bil END) AS net_position_bil
 FROM public.frusg_balance_sheet
 WHERE restmt_flag = 'N'
 GROUP BY stmt_fiscal_year;
@@ -84,7 +96,8 @@ SELECT stmt_fiscal_year, record_date, account_desc, component_desc, line_item_de
 FROM public.frusg_cash_balance
 WHERE restmt_flag = 'N';
 
--- MTS: keep detail-ish rows; exclude blank amounts for charts
+-- MTS: detail rows only (data_type_cd = 'D'); exclude totals/subtotals and blank amounts.
+-- Negatives kept (offsetting receipts / adjustments); amounts are raw dollars.
 CREATE OR REPLACE VIEW public.vw_mts_agency_outlays_monthly AS
 SELECT
   record_date,
@@ -98,7 +111,9 @@ SELECT
   data_type_cd,
   line_code_nbr
 FROM public.mts_agency_outlays
-WHERE current_month_net_outly IS NOT NULL;
+WHERE current_month_net_outly IS NOT NULL
+  AND data_type_cd = 'D'
+  AND classification_desc !~* '^total';
 
 CREATE OR REPLACE VIEW public.vw_mts_agency_outlays_rank AS
 WITH latest AS (
@@ -109,11 +124,15 @@ month_rows AS (
   FROM public.mts_agency_outlays m
   JOIN latest l ON m.record_date = l.record_date
   WHERE m.current_month_net_outly IS NOT NULL
-    AND m.current_month_net_outly > 0
-    AND lower(m.classification_desc) NOT IN ('total', 'total outlays')
+    -- Prefer detail; exclude totals (T) / subtotals (S) and labels starting with Total
+    AND m.data_type_cd = 'D'
+    AND m.classification_desc !~* '^total'
 ),
 tot AS (
-  SELECT sum(current_month_net_outly) AS total_outly FROM month_rows
+  -- Share denominator: positive outlays only so negatives don't distort total.
+  -- Share for a negative row may be negative; rank still includes all detail rows.
+  SELECT sum(CASE WHEN current_month_net_outly > 0 THEN current_month_net_outly ELSE 0 END) AS total_outly
+  FROM month_rows
 ),
 hist AS (
   SELECT classification_desc,
@@ -121,6 +140,8 @@ hist AS (
   FROM public.mts_agency_outlays
   WHERE record_date >= (SELECT record_date - interval '12 months' FROM latest)
     AND current_month_net_outly IS NOT NULL
+    AND data_type_cd = 'D'
+    AND classification_desc !~* '^total'
   GROUP BY 1
 )
 SELECT

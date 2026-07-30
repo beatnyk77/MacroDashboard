@@ -19,7 +19,8 @@ export function useGfpNetCost() {
       const { data, error } = await (supabase as any)
         .from('vw_frusg_net_cost_yearly')
         .select('*')
-        .order('stmt_fiscal_year', { ascending: true });
+        .order('stmt_fiscal_year', { ascending: true })
+        .limit(5000);
       if (error) throw error;
       return (data ?? []) as FrusgNetCostRow[];
     },
@@ -35,7 +36,8 @@ export function useGfpNetCostConcentration() {
       const { data, error } = await (supabase as any)
         .from('vw_frusg_net_cost_concentration')
         .select('*')
-        .order('stmt_fiscal_year', { ascending: true });
+        .order('stmt_fiscal_year', { ascending: true })
+        .limit(100);
       if (error) throw error;
       return (data ?? []) as FrusgNetCostConcentrationRow[];
     },

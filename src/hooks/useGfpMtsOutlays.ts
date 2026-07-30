@@ -22,6 +22,8 @@ export interface GfpMtsOutlaysData {
 }
 
 const MONTHLY_LOOKBACK_MS = 1000 * 60 * 60 * 24 * 30 * 36; // ~36 months
+const RANK_LIMIT = 500;
+const MONTHLY_LIMIT = 5000;
 
 function filterLast36Months(rows: MtsOutlayMonthlyRow[]): MtsOutlayMonthlyRow[] {
   if (rows.length === 0) return rows;
@@ -46,17 +48,22 @@ export function useGfpMtsOutlays() {
         (supabase as any)
           .from('vw_mts_agency_outlays_rank')
           .select('*')
-          .order('rnk', { ascending: true }),
+          .order('rnk', { ascending: true })
+          .limit(RANK_LIMIT),
         (supabase as any)
           .from('vw_mts_agency_outlays_monthly')
           .select('*')
-          .order('record_date', { ascending: true }),
+          .order('record_date', { ascending: false })
+          .limit(MONTHLY_LIMIT),
       ]);
 
       if (rankRes.error) throw rankRes.error;
       if (monthlyRes.error) throw monthlyRes.error;
 
-      const monthlyAll = (monthlyRes.data ?? []) as MtsOutlayMonthlyRow[];
+      // Query newest-first so LIMIT keeps recent months; re-sort ASC for charts.
+      const monthlyAll = ((monthlyRes.data ?? []) as MtsOutlayMonthlyRow[]).slice().sort((a, b) =>
+        a.record_date.localeCompare(b.record_date),
+      );
 
       return {
         rank: (rankRes.data ?? []) as MtsOutlayRankRow[],

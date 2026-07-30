@@ -20,12 +20,10 @@ import {
 } from '@/constants/chartDefaults';
 import { GfpBasisBadge, GfpLoadingState, GfpUnavailableState } from './GfpEmptyState';
 
-/** Fiscal Data receipt amounts may be raw dollars or billions — normalize display. */
+/** Fiscal Data receipt_amt is raw dollars → display billions. */
 function toDisplayBillions(amt: number | null | undefined): number | null {
   if (amt == null || Number.isNaN(amt)) return null;
-  // Values > 1e6 are almost certainly raw dollars
-  if (Math.abs(amt) >= 1e6) return amt / 1e9;
-  return amt;
+  return amt / 1e9;
 }
 
 export const ReceiptsByAgencyPanel: React.FC = () => {
