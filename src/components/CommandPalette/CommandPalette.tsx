@@ -150,6 +150,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             US Fiscal & SOMA Lab
                         </Item>
                         <Item
+                            onSelect={() => runCommand(() => navigate('/labs/gov-financial-position'))}
+                            icon={<ShieldAlert className="h-4 w-4 text-cyan-500" />}
+                        >
+                            Government Financial Position
+                        </Item>
+                        <Item
                             onSelect={() => runCommand(() => navigate('/labs/de-dollarization-gold'))}
                             icon={<Globe className="h-4 w-4 text-amber-500" />}
                         >

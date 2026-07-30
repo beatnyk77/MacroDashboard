@@ -19,7 +19,6 @@ import {
   GfpExportButton,
   GfpProvenanceFooter,
 } from '@/features/gfp/components';
-import { GFP_BASIS } from '@/features/gfp/lib/types';
 
 export const GovFinancialPositionLab: React.FC = () => {
   return (
@@ -99,10 +98,11 @@ export const GovFinancialPositionLab: React.FC = () => {
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground/60 leading-relaxed">
-              <span className="text-cyan-400/80 font-semibold">Accrual / GAAP</span> panels use the Financial
-              Report of the U.S. Government ({GFP_BASIS.accrual.split('(')[0].trim()}).{' '}
-              <span className="text-amber-400/80 font-semibold">Cash / budget</span> panels use Monthly
-              Treasury Statement agency series. Net cost (accrual) is not comparable 1:1 to outlays (cash).
+              <span className="text-cyan-400/80 font-semibold">Accrual panels:</span> Financial Report of the
+              U.S. Government (GAAP).{' '}
+              <span className="text-amber-400/80 font-semibold">Cash panels:</span> MTS Table 5 / Receipts by
+              Department (budget basis). Do not mix bases without labels. Net cost (accrual) is not
+              comparable 1:1 to outlays (cash).
             </p>
           </div>
         </div>

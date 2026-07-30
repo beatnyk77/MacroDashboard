@@ -22,6 +22,7 @@ const terminalNavItems: NavItem[] = [
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} /> },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} /> },
+    { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={14} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={14} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
