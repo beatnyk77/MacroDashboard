@@ -46,12 +46,22 @@ export const contentRelations: Record<string, RelatedLink[]> = {
     { to: '/regime-digest', label: 'Regime Digest Archive', kind: 'brief' },
   ],
   '/labs/us-macro-fiscal': [
+    { to: '/labs/gov-financial-position', label: 'Government Financial Position', kind: 'lab' },
     { to: '/methods/fiscal-dominance-meter', label: 'Fiscal Dominance Meter', kind: 'brief' },
     { to: '/methods/net-liquidity-z-score', label: 'Net Liquidity Methodology', kind: 'brief' },
     { to: '/labs/shadow-system', label: 'Funding Plumbing Lab', kind: 'lab' },
     { to: '/glossary/fiscal-dominance', label: 'Fiscal Dominance', kind: 'glossary' },
     { to: '/glossary/public-debt-to-gdp', label: 'Public Debt to GDP', kind: 'glossary' },
     { to: '/glossary/interest-expense-to-tax-revenue', label: 'Interest / Tax Revenue', kind: 'glossary' },
+  ],
+  '/labs/gov-financial-position': [
+    { to: '/labs/us-macro-fiscal', label: 'US Macro & Fiscal Lab', kind: 'lab' },
+    { to: '/methods/fiscal-dominance-meter', label: 'Fiscal Dominance Meter', kind: 'brief' },
+    { to: '/labs/us-treasury-foreign-holdings', label: 'Treasury Foreign Holdings', kind: 'lab' },
+    { to: '/labs/shadow-system', label: 'Funding Plumbing Lab', kind: 'lab' },
+    { to: '/glossary/fiscal-dominance', label: 'Fiscal Dominance', kind: 'glossary' },
+    { to: '/glossary/public-debt-to-gdp', label: 'Public Debt to GDP', kind: 'glossary' },
+    { to: '/glossary/tga', label: 'Treasury General Account', kind: 'glossary' },
   ],
   '/labs/de-dollarization-gold': [
     { to: '/labs/central-bank-gold-purchases', label: 'Central Bank Gold', kind: 'lab' },

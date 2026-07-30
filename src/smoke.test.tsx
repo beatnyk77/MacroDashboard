@@ -160,6 +160,7 @@ import USMacroFiscalLab from '@/pages/labs/USMacroFiscalLab';
 import EnergyCommoditiesLab from '@/pages/labs/EnergyCommoditiesLab';
 import { China15thFYPLab } from '@/pages/labs/China15thFYP';
 import SovereignStressLab from '@/pages/labs/SovereignStressLab';
+import { GovFinancialPositionLab } from '@/pages/labs/GovFinancialPositionLab';
 
 import { About } from '@/pages/About';
 import { BricsTradeSettlement } from '@/pages/labs/BricsTradeSettlement';
@@ -253,6 +254,15 @@ describe('Smoke Tests', () => {
             </TestWrapper>
         );
         expect(await screen.findByText(/Core Sovereign Telemetry/i, {}, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders GovFinancialPositionLab without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/gov-financial-position">
+                <GovFinancialPositionLab />
+            </TestWrapper>
+        );
+        expect(await screen.findByText(/Government Financial Position/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
     it('renders EnergyCommoditiesLab page without crashing', async () => {

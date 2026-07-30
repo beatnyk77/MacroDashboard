@@ -65,6 +65,9 @@ const MetricPage = lazy(() => import('@/pages/MetricPage').then(module => ({ def
 
 const ThematicLabsIndexPage = lazy(() => import('@/pages/labs/ThematicLabsIndexPage').then(module => ({ default: module.ThematicLabsIndexPage })));
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
+const GovFinancialPositionLab = lazy(() =>
+    import('@/pages/labs/GovFinancialPositionLab').then((module) => ({ default: module.GovFinancialPositionLab })),
+);
 const DeDollarizationGoldLab = lazy(() => import('@/pages/labs/DeDollarizationGoldLab').then(module => ({ default: module.DeDollarizationGoldLab })));
 const CentralBankGoldPurchases = lazy(() => import('@/pages/labs/CentralBankGoldPurchases').then(module => ({ default: module.CentralBankGoldPurchases })));
 const BricsTradeSettlement = lazy(() => import('@/pages/labs/BricsTradeSettlement').then(module => ({ default: module.BricsTradeSettlement })));
@@ -153,6 +156,7 @@ function App() {
 
                                         {/* Labs */}
                                         <Route path={trailRoute('/labs/us-macro-fiscal')} element={<USMacroFiscalLab />} />
+                                        <Route path={trailRoute('/labs/gov-financial-position')} element={<GovFinancialPositionLab />} />
                                         <Route path={trailRoute('/labs/india')} element={<Navigate to={trailRoute('/intel/india')} replace />} />
                                         <Route path={trailRoute('/labs/china')} element={<Navigate to={trailRoute('/intel/china')} replace />} />
                                         <Route path={trailRoute('/labs/de-dollarization-gold')} element={<DeDollarizationGoldLab />} />

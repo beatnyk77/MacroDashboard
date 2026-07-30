@@ -29,6 +29,7 @@ const terminalNavItems = [
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={18} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },
+    { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={18} /> },
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={18} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },

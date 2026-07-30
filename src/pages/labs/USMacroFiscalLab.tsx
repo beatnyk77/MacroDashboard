@@ -24,6 +24,7 @@ import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { USDebtMaturityWall } from '@/components/USDebtMaturityWall';
 import { USFiscalDominanceMeter } from '@/components/USFiscalDominanceMeter';
 import { LazyRender } from '@/components/LazyRender';
+import { GfpTeaserCard } from '@/features/gfp/components';
 
 // Lazy loaded components
 const USTreasuryDemandGauge = lazy(() => import('@/features/dashboard/components/rows/USTreasuryDemandGauge').then(m => ({ default: m.USTreasuryDemandGauge })));
@@ -155,6 +156,13 @@ export const USMacroFiscalLab: React.FC = () => {
                         </LazyRender>
                     </SectionErrorBoundary>
                     <ChartInsightSummary id="lab-us-fiscal-dominance" insight="Fiscal dominance occurs when mandatory spending (interest + entitlements) consumes over 100% of tax receipts, forcing the Treasury to issue additional debt for operations and structurally raising market dependency on central bank monetization. Historically unprecedented in peacetime — this signal defines the transition to a regime of monetary-fiscal fusion." />
+                </section>
+
+                {/* Government Financial Position teaser */}
+                <section>
+                    <SectionErrorBoundary name="Government Financial Position Teaser">
+                        <GfpTeaserCard />
+                    </SectionErrorBoundary>
                 </section>
 
                 {/* Section 2.1: Funding Plumbing Stress (RRP, TGA, SRF, Swaps) */}
