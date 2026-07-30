@@ -50,6 +50,14 @@ export const PIPELINES: PipelineEntry[] = [
     cadence: 'Daily / Weekly',
   },
   {
+    id: 'ingest-gov-financial-position',
+    title: 'US Government Financial Position',
+    tier: 'core',
+    sources: ['US Treasury FiscalData (FRUSG, MTS Table 5, Receipts by Dept)'],
+    surfaces: ['/labs/gov-financial-position', '/labs/us-macro-fiscal'],
+    cadence: 'Nightly / Monthly releases',
+  },
+  {
     id: 'ingest-oecd-cli',
     title: 'OECD Composite Leading Indicators',
     tier: 'core',
