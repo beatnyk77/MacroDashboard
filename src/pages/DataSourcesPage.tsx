@@ -72,11 +72,19 @@ const DATA_SOURCES: DataSourceEntry[] = [
             'US Debt Maturity Wall (by cusip and maturity)',
             'Federal Budget Surplus/Deficit',
             'Debt Subject to Limit',
+            'FRUSG Net Cost by agency (accrual / GAAP, annual)',
+            'FRUSG Balance Sheet & Net Position (accrual)',
+            'MTS Table 5 agency outlays (cash / budget, monthly)',
+            'Receipts by Department (cash, annual)',
         ],
         howWeUseIt: `Primary source for the US Debt Maturity Wall tracker and Treasury Auction 
         Demand Gauge. Auction bid-to-cover ratios and high yields are ingested in near-real-time 
         post-auction via the FiscalData REST API. Maturity wall data drives the structural 
-        rollover risk analysis in the US Macro & Fiscal Lab.`,
+        rollover risk analysis in the US Macro & Fiscal Lab. Government Financial Position 
+        (/labs/gov-financial-position) additionally ingests the Financial Report of the U.S. 
+        Government (FRUSG five accrual statements), MTS Table 5 monthly agency cash outlays, 
+        and annual Receipts by Department via ingest-gov-financial-position — dual-basis labeled; 
+        restmt_flag=N default in views. Endpoint map: docs/gfp-fiscal-data-endpoints.md.`,
         tier: 'Primary',
     },
 
