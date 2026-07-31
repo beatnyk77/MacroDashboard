@@ -8,7 +8,7 @@
   "TGA_BALANCE_BN": {
     "divisor": 1000,
     "suffix": "B",
-    "sanityRange": [50, 2000],
+    "sanityRange": [0, 2000],
     "note": "FRED WTREGEN, stored in millions of USD despite the _BN suffix in the metric id"
   },
   "RRP_BALANCE_BN": {

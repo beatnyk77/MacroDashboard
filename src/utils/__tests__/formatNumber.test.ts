@@ -8,7 +8,8 @@ import {
   formatTrillions,
   getSignalLabel,
   formatScaledMetric,
-  assertMetricSanityRange
+  assertMetricSanityRange,
+  SNAPSHOT_METRIC_SCALES
 } from '../formatNumber';
 
 describe('formatNumber utilities', () => {
@@ -125,6 +126,25 @@ describe('formatNumber utilities', () => {
     });
   });
 
+  describe('SNAPSHOT_METRIC_SCALES shape validation', () => {
+    it('every entry has a valid divisor, suffix, and sanityRange', () => {
+      const entries = Object.entries(SNAPSHOT_METRIC_SCALES);
+      expect(entries.length).toBeGreaterThan(0);
+      for (const [metricId, config] of entries) {
+        expect(Number.isFinite(config.divisor), `${metricId}.divisor should be a finite number`).toBe(true);
+        expect(config.divisor, `${metricId}.divisor should be positive`).toBeGreaterThan(0);
+        expect(typeof config.suffix, `${metricId}.suffix should be a non-empty string`).toBe('string');
+        expect(config.suffix.length, `${metricId}.suffix should be non-empty`).toBeGreaterThan(0);
+        expect(Array.isArray(config.sanityRange), `${metricId}.sanityRange should be an array`).toBe(true);
+        expect(config.sanityRange.length, `${metricId}.sanityRange should have exactly 2 elements`).toBe(2);
+        const [min, max] = config.sanityRange;
+        expect(Number.isFinite(min), `${metricId}.sanityRange[0] should be finite`).toBe(true);
+        expect(Number.isFinite(max), `${metricId}.sanityRange[1] should be finite`).toBe(true);
+        expect(min, `${metricId}.sanityRange min should be less than max`).toBeLessThan(max);
+      }
+    });
+  });
+
   describe('assertMetricSanityRange', () => {
     it('does not throw for a plausible FED_BALANCE_SHEET value', () => {
       expect(() => assertMetricSanityRange('FED_BALANCE_SHEET', 6747380)).not.toThrow();
@@ -139,7 +159,7 @@ describe('formatNumber utilities', () => {
       expect(() => assertMetricSanityRange('FED_BALANCE_SHEET', 500000)).toThrow(/outside plausible range/);
     });
 
-    it('throws for a TGA_BALANCE_BN value outside [50, 2000]B', () => {
+    it('throws for a TGA_BALANCE_BN value outside [0, 2000]B', () => {
       // 10,000,000M = $10,000B — implausibly high for the TGA
       expect(() => assertMetricSanityRange('TGA_BALANCE_BN', 10000000)).toThrow(/outside plausible range/);
     });

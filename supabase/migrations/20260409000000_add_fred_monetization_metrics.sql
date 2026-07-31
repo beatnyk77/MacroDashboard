@@ -13,6 +13,16 @@ BEGIN
 
     -- Federal Reserve Balance Sheet (Total Assets)
     -- FRED Series: WALCL — Weekly Thursday snapshot, billions USD
+    -- NOTE: unit/unit_label below say "billion USD", but the raw WALCL value
+    -- ingested by ingest-fred (generic FRED-series pipeline, driven by this
+    -- row's metadata.fred_id) is stored as-is in metric_observations, and
+    -- WALCL reports in MILLIONS of dollars — not billions. This is the same
+    -- misleading-metadata trap documented for TGA_BALANCE_BN in
+    -- ingest-nyfed-markets/index.ts. Consumers must scale by 1e6 to get USD;
+    -- see src/data/metric-scales.json's FED_BALANCE_SHEET divisor (1e6) and
+    -- formatNumber.ts's SNAPSHOT_METRIC_SCALES, which already do this
+    -- correctly. Do not change this metadata string or the stored values
+    -- without migrating every consumer that assumes millions.
     INSERT INTO metrics (id, name, description, source_id, native_frequency, display_frequency, unit, unit_label, tier, category, methodology_note, expected_interval_days, metadata)
     VALUES
       ('FED_BALANCE_SHEET', 'Federal Reserve Balance Sheet', 'Total assets of the Federal Reserve System (FRED: WALCL)', fred_source_id, 'weekly', 'weekly', 'USD bn', 'billion USD', 'core', 'liquidity', 'FRED WALCL weekly Thursday values. Sum of all Fed assets.', 7, '{"fred_id": "WALCL"}')
