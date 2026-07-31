@@ -9,7 +9,8 @@ SET is_active = false,
     )
 WHERE id IN ('CA_GDP_PCT_IN', 'CA_GDP_PCT_CN', 'CA_GDP_PCT_BR', 'CA_GDP_PCT_TR');
 
-SELECT cron.unschedule('ingest-imf-current-account-monthly');
+-- Idempotent: jobs may already have been unscheduled during ad-hoc apply.
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'ingest-imf-current-account-monthly';
 
 -- ingest-imf-brics wrote hardcoded BRICS-bloc aggregates and country gold
 -- reserves, restamped as live monthly data. Deactivating until a real
@@ -22,4 +23,4 @@ SET is_active = false,
     )
 WHERE id LIKE 'BRICS\_%' ESCAPE '\';
 
-SELECT cron.unschedule('ingest-imf-brics-monthly');
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'ingest-imf-brics-monthly';

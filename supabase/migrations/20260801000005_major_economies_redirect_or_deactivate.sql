@@ -103,4 +103,5 @@ WHERE id = 'JP_POLICY_RATE';
 -- ---------------------------------------------------------------------------
 -- Step 4: Unschedule monthly cron (function is a documented no-op)
 -- ---------------------------------------------------------------------------
-SELECT cron.unschedule('ingest-major-economies-monthly');
+-- Idempotent: job may already have been unscheduled during ad-hoc apply.
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'ingest-major-economies-monthly';
