@@ -52,7 +52,8 @@ interface IngestFredOptions {
 }
 
 // ─── Core ingest logic ────────────────────────────────────────────────────────
-async function doIngestFred(
+/** Exported for unit tests. */
+export async function doIngestFred(
   supabase: any,
   fredApiKey: string,
   options: IngestFredOptions = {},
@@ -171,8 +172,12 @@ async function doIngestFred(
             await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
             return { metricId: metric.id, count: observations.length, success: true };
           }
-          await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', metric.id);
-          return { metricId: metric.id, count: 0, success: true };
+          // Do NOT bump updated_at here — a 0-observation response usually means
+          // the upstream series ID is dead/discontinued or temporarily empty.
+          // Bumping updated_at would make it look freshly-checked and would push
+          // it to the back of the "prioritize stalest first" queue, hiding the
+          // problem indefinitely. Surface it as a soft failure instead.
+          return { metricId: metric.id, count: 0, success: false, error: 'FRED returned zero observations' };
         } catch (err: any) {
           // Do NOT bump metrics.updated_at on fetch failure — that would mark
           // stale series as fresh (freshness-on-failure anti-pattern).
