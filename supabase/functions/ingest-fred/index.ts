@@ -77,7 +77,9 @@ export async function doIngestFred(
     const fredLimit = Math.min(Math.max(options.limit ?? 100, 1), 2000);
     const metricIdFilter = options.metricIds?.length ? new Set(options.metricIds) : null;
 
-    let targetMetrics = metrics?.filter((m: any) => (m.metadata as any)?.fred_id) || [];
+    let targetMetrics = metrics?.filter((m: any) =>
+      (m.metadata as any)?.fred_id || m.id === 'COPPER_GOLD_RATIO' || m.id === 'CNY_INR_RATE'
+    ) || [];
     if (metricIdFilter) {
       targetMetrics = targetMetrics.filter((m: any) => metricIdFilter.has(m.id));
     }
@@ -141,6 +143,96 @@ export async function doIngestFred(
             return { metricId: 'SOFR_OIS_SPREAD', count: 0, success: true };
           } catch (err: any) {
             return { metricId: 'SOFR_OIS_SPREAD', count: 0, success: false, error: err.message };
+          }
+        }
+
+        // --- Special Case: Copper/Gold Ratio ---
+        if (metric.id === 'COPPER_GOLD_RATIO') {
+          try {
+            const numId = (metric.metadata as any).fred_id_numerator; // PCOPPUSDM
+            const denId = (metric.metadata as any).fred_id_denominator; // GOLDAMGBD228NLBM
+            const [numRes, denRes] = await Promise.all([
+              withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=${numId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'Copper Fetch'),
+              withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=${denId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'Gold Fetch')
+            ]);
+
+            const numData = await numRes.json() as any;
+            const denData = await denRes.json() as any;
+
+            rawPayloads.push({ metricId: 'COPPER_GOLD_RATIO_NUM', data: numData });
+            rawPayloads.push({ metricId: 'COPPER_GOLD_RATIO_DEN', data: denData });
+
+            const numObs = numData.observations || [];
+            const denMap = new Map(denData.observations?.map((o: any) => [o.date, parseFloat(o.value)]) || []);
+
+            const ratioObservations = numObs
+              .map((n: any) => {
+                const numVal = parseFloat(n.value);
+                const denVal = denMap.get(n.date);
+                if (isNaN(numVal) || denVal === undefined || isNaN(denVal as number) || (denVal as number) === 0) return null;
+                return {
+                  metric_id: 'COPPER_GOLD_RATIO',
+                  as_of_date: n.date,
+                  value: numVal / (denVal as number),
+                  last_updated_at: new Date().toISOString(),
+                  provenance: 'api_live'
+                };
+              })
+              .filter((o: any) => o !== null);
+
+            if (ratioObservations.length > 0) {
+              const { error: upsertError } = await supabase.from('metric_observations').upsert(ratioObservations, { onConflict: 'metric_id, as_of_date' });
+              if (upsertError) throw upsertError;
+              await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', 'COPPER_GOLD_RATIO');
+              return { metricId: 'COPPER_GOLD_RATIO', count: ratioObservations.length, success: true };
+            }
+            return { metricId: 'COPPER_GOLD_RATIO', count: 0, success: false, error: 'No overlapping copper/gold observations' };
+          } catch (err: any) {
+            return { metricId: 'COPPER_GOLD_RATIO', count: 0, success: false, error: err.message };
+          }
+        }
+
+        // --- Special Case: CNY/INR derived cross-rate (no direct FRED series) ---
+        if (metric.id === 'CNY_INR_RATE') {
+          try {
+            const { data: usdInr } = await supabase
+              .from('metric_observations')
+              .select('as_of_date, value')
+              .eq('metric_id', 'USD_INR_RATE')
+              .order('as_of_date', { ascending: false })
+              .limit(100);
+            const { data: usdCny } = await supabase
+              .from('metric_observations')
+              .select('as_of_date, value')
+              .eq('metric_id', 'USD_CNY_RATE')
+              .order('as_of_date', { ascending: false })
+              .limit(100);
+
+            const cnyMap = new Map((usdCny || []).map((o: any) => [o.as_of_date, Number(o.value)]));
+            const crossObservations = (usdInr || [])
+              .map((inr: any) => {
+                const inrVal = Number(inr.value);
+                const cnyVal = cnyMap.get(inr.as_of_date);
+                if (isNaN(inrVal) || cnyVal === undefined || isNaN(cnyVal) || cnyVal === 0) return null;
+                return {
+                  metric_id: 'CNY_INR_RATE',
+                  as_of_date: inr.as_of_date,
+                  value: inrVal / cnyVal,
+                  last_updated_at: new Date().toISOString(),
+                  provenance: 'api_live'
+                };
+              })
+              .filter((o: any) => o !== null);
+
+            if (crossObservations.length > 0) {
+              const { error: upsertError } = await supabase.from('metric_observations').upsert(crossObservations, { onConflict: 'metric_id, as_of_date' });
+              if (upsertError) throw upsertError;
+              await supabase.from('metrics').update({ updated_at: new Date().toISOString() }).eq('id', 'CNY_INR_RATE');
+              return { metricId: 'CNY_INR_RATE', count: crossObservations.length, success: true };
+            }
+            return { metricId: 'CNY_INR_RATE', count: 0, success: false, error: 'No overlapping USD/INR and USD/CNY dates' };
+          } catch (err: any) {
+            return { metricId: 'CNY_INR_RATE', count: 0, success: false, error: err.message };
           }
         }
 
