@@ -1,0 +1,20 @@
+{
+  "FED_BALANCE_SHEET": {
+    "divisor": 1000000,
+    "suffix": "T",
+    "sanityRange": [1, 15],
+    "note": "FRED WALCL, stored in millions of USD"
+  },
+  "TGA_BALANCE_BN": {
+    "divisor": 1000,
+    "suffix": "B",
+    "sanityRange": [50, 2000],
+    "note": "FRED WTREGEN, stored in millions of USD despite the _BN suffix in the metric id"
+  },
+  "RRP_BALANCE_BN": {
+    "divisor": 1,
+    "suffix": "B",
+    "sanityRange": [0, 3000],
+    "note": "FRED RRPONTSYD, already stored in billions of USD"
+  }
+}

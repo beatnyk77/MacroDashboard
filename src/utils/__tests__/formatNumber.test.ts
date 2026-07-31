@@ -111,6 +111,18 @@ describe('formatNumber utilities', () => {
       expect(warnSpy).toHaveBeenCalledTimes(1);
       warnSpy.mockRestore();
     });
+
+    it('formats RRP_BALANCE_BN raw billions as billions', () => {
+      // Raw FRED RRPONTSYD value, already in billions ($2.576B)
+      expect(formatScaledMetric('RRP_BALANCE_BN', 2.576)).toBe('2.58B');
+    });
+
+    it('matches live production values as of 2026-07-31', () => {
+      // Regression guard for the exact production defect this fixes:
+      // these previously rendered as "6738.19T" and "829.62T".
+      expect(formatScaledMetric('FED_BALANCE_SHEET', 6738190)).toBe('6.74T');
+      expect(formatScaledMetric('TGA_BALANCE_BN', 829623)).toBe('829.62B');
+    });
   });
 
   describe('assertMetricSanityRange', () => {

@@ -6,13 +6,23 @@
  * Uses VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY when present.
  * Without env: writes an explicit unavailable snapshot (never fabricates).
  */
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_PUBLIC = join(__dirname, '../public/data/terminal-snapshot.json');
 const OUT_SRC = join(__dirname, '../src/data/terminal-snapshot.json');
+
+/**
+ * Single source of truth for per-metric display scaling, shared with
+ * src/utils/formatNumber.ts so the build-time snapshot and the client
+ * render can never disagree. Add new metrics to src/data/metric-scales.json,
+ * not here.
+ */
+const METRIC_SCALES = JSON.parse(
+  readFileSync(join(__dirname, '../src/data/metric-scales.json'), 'utf8')
+);
 
 /** Metric IDs that commonly power the homepage hero / liquidity strip */
 const SNAPSHOT_METRICS = [
@@ -92,9 +102,16 @@ function formatValue(metricId, value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return String(value ?? '—');
   if (metricId.includes('GOLD') && n > 100) return `$${Math.round(n).toLocaleString()}`;
-  if (metricId.includes('BALANCE') || metricId === 'FED_BALANCE_SHEET') {
-    if (Math.abs(n) >= 1000) return `${(n / 1000).toFixed(2)}T`;
-    return `${n.toFixed(1)}B`;
+  const scale = METRIC_SCALES[metricId];
+  if (scale) {
+    const scaled = n / scale.divisor;
+    const [min, max] = scale.sanityRange;
+    if (scaled < min || scaled > max) {
+      console.warn(
+        `Terminal snapshot: ${metricId} resolved to ${scaled.toFixed(2)}${scale.suffix}, outside plausible range [${min}, ${max}]${scale.suffix}. Raw value: ${n}.`
+      );
+    }
+    return `${scaled.toFixed(2)}${scale.suffix}`;
   }
   if (metricId.includes('YIELD') || metricId === 'VIX_INDEX' || metricId === 'DXY_INDEX') return n.toFixed(2);
   if (metricId.includes('RATIO')) return n.toFixed(2);

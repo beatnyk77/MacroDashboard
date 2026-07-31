@@ -3,6 +3,8 @@
  * Provides consistent, institutional-grade number formatting across all components
  */
 
+import metricScales from '@/data/metric-scales.json';
+
 export interface FormatOptions {
     notation?: 'compact' | 'standard' | 'engineering';
     prefix?: string;
@@ -158,13 +160,14 @@ export interface ScaledMetricConfig {
     sanityRange: [number, number];
 }
 
-export const SNAPSHOT_METRIC_SCALES: Record<string, ScaledMetricConfig> = {
-    // Raw value from FRED WALCL, stored in millions of USD.
-    FED_BALANCE_SHEET: { divisor: 1e6, suffix: 'T', sanityRange: [1, 15] },
-    // Raw value from FRED WTREGEN, stored in millions of USD despite the
-    // "_BN" suffix in the metric id — see ingest-nyfed-markets/index.ts.
-    TGA_BALANCE_BN: { divisor: 1e3, suffix: 'B', sanityRange: [50, 2000] },
-};
+/**
+ * Single source of truth for per-metric display scaling, shared with
+ * scripts/generate-terminal-snapshot.mjs so the build-time snapshot and the
+ * client render can never disagree. Add new metrics to
+ * src/data/metric-scales.json, not here.
+ */
+export const SNAPSHOT_METRIC_SCALES: Record<string, ScaledMetricConfig> =
+    metricScales as unknown as Record<string, ScaledMetricConfig>;
 
 /**
  * Format a raw metric value using its configured scale/suffix.
