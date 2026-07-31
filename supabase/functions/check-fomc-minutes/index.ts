@@ -97,7 +97,7 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
   throw lastError || new Error(`Failed to fetch ${url} after ${maxRetries} retries`);
 }
 
-serveIngest('check-fomc-minutes', async (_req: Request): Promise<IngestResult> => {
+serveIngest('check-fomc-minutes', async (req: Request): Promise<IngestResult> => {
 
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -111,8 +111,23 @@ serveIngest('check-fomc-minutes', async (_req: Request): Promise<IngestResult> =
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  
-    console.log('[fomc-minutes] Starting FOMC Calendar check...');
+  // force=true (query or JSON body) re-analyzes the latest meeting even if a row exists —
+  // used after prompt policy changes so structural copy replaces trade-advisory text.
+  let force = false;
+  try {
+    const url = new URL(req.url);
+    if (url.searchParams.get('force') === 'true' || url.searchParams.get('force') === '1') {
+      force = true;
+    }
+  } catch { /* ignore bad URL */ }
+  if (!force && req.method !== 'GET') {
+    try {
+      const body = await req.clone().json() as { force?: boolean | string };
+      if (body?.force === true || body?.force === 'true' || body?.force === '1') force = true;
+    } catch { /* no/invalid body */ }
+  }
+
+    console.log(`[fomc-minutes] Starting FOMC Calendar check...${force ? ' (force=true)' : ''}`);
     
     // Step 1: Fetch FOMC Calendars page
     const calendarUrl = 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm';
@@ -180,7 +195,7 @@ serveIngest('check-fomc-minutes', async (_req: Request): Promise<IngestResult> =
       .eq('meeting_date', latestMeetingDate)
       .maybeSingle();
 
-    if (existingRecord) {
+    if (existingRecord && !force) {
       console.log(`[fomc-minutes] FOMC Minutes for ${latestMeetingDate} have already been analyzed and saved.`);
       return {
             ok: true,
@@ -232,12 +247,17 @@ serveIngest('check-fomc-minutes', async (_req: Request): Promise<IngestResult> =
       extractedText = extractedText.substring(0, charLimit);
     }
 
-    // Step 6: Invoke OpenRouter (Claude 3.5 Sonnet) with Schema Validation and Retries
-    const systemPrompt = `You are an elite central bank strategy consultant. You produce highly technical, institutional-grade quantitative analyses. You always respond in pure valid JSON strictly matching the requested keys, with absolutely no markdown wrapping, no conversational preamble, and no extra text.`;
+    // Step 6: LLM synthesis — structural minutes reading only (no trade advice / forecasts)
+    const systemPrompt = `You are an institutional central-bank minutes reader for a pure macro data terminal. You extract observable policy signals from official FOMC minutes. You do not forecast markets, recommend trades, or construct portfolios. You always respond in pure valid JSON strictly matching the requested keys, with absolutely no markdown wrapping, no conversational preamble, and no extra text.`;
 
-    const userPrompt = `You are an elite Chief Investment Officer managing sovereign wealth and dynastic capital for ultra-high-net-worth families. You read between the lines of FOMC minutes to identify macroeconomic shifts, hidden central bank concerns, and strategic asset allocation trades.
+    const userPrompt = `Read the attached official Federal Reserve FOMC Minutes as a structural analyst. Summarize what the Committee said and how the language describes the policy regime — not what an investor should buy or sell.
 
-Attached is the cleaned text of the official Federal Reserve FOMC Minutes.
+HARD RULES (must obey):
+- No tickers, futures codes, options, or ETF symbols
+- No price targets, yield targets, entry/exit levels, or sizing
+- No "buy", "sell", "overweight", "underweight", "long", "short", or portfolio construction language
+- No fund size, CIO, sovereign wealth, or client cosplay
+- Describe observable setup and regime implications only
 
 FOMC MINUTES TEXT:
 ${extractedText}
@@ -246,15 +266,15 @@ Analyze this text and output a single valid JSON object following this exact str
 {
   "overall_tone": "Hawkish | Dovish | Neutral | Hawkish Shift | Dovish Shift",
   "key_themes": [
-    "Theme 1 (e.g. Quantitative Tightening Runway)",
+    "Theme 1 (e.g. Inflation persistence language)",
     "Theme 2",
     "Theme 3",
     "Theme 4"
   ],
-  "notable_shifts": "A detailed assessment of the language adjustments, voting shifts, or voting consensus adjustments...",
-  "capital_implications": "Strategic portfolio moves across fixed income bucket maturities, gold/bullion, risk equities, FX, and hard assets...",
-  "actionable_insight": "The absolute key tactical trade advisory recommendation for our $100B+ multi-asset sovereign fund...",
-  "raw_analysis": "The complete verbatim qualitative analysis structured in markdown format, written in your premier, non-obvious, deeply analytical CIO persona. Highlight key metrics and policy nuances."
+  "notable_shifts": "Detailed assessment of language adjustments, voting shifts, or consensus changes relative to prior communications — text-level only.",
+  "capital_implications": "Structural / regime implications for liquidity conditions, the rates policy path as discussed in the minutes, and the risk environment — without instruments or trade recommendations.",
+  "actionable_insight": "One paragraph: the primary structural takeaway from these minutes (what changed in the observable policy setup). Not a trade call.",
+  "raw_analysis": "Extended minutes analysis in institutional prose (markdown allowed inside this string only). Highlight policy nuances and metrics stated in the document. No CIO persona, no trades."
 }`;
 
     let parsedResult: FOMCAnalysis | null = null;
@@ -404,7 +424,7 @@ Analyze this text and output a single valid JSON object following this exact str
     // Send successful Slack/Discord notifications to highlight brand new central bank insights
     await sendDiscordAlert(
       `🟢 New FOMC Minutes Analyzed (${latestMeetingDate})`,
-      `**Fed Policy Bias:** ${parsedResult.overall_tone}\n\n**Actionable CIO Insight:**\n${parsedResult.actionable_insight.substring(0, 500)}...\n\n*Raw LLM text verified & stored successfully.*`,
+      `**Fed Policy Bias:** ${parsedResult.overall_tone}\n\n**Structural takeaway:**\n${parsedResult.actionable_insight.substring(0, 500)}...\n\n*Minutes analysis stored (observe-only framing; not a forecast).*\n${force ? '_force re-analysis_' : ''}`,
       false
     );
 

@@ -8,7 +8,6 @@ import {
   ChevronDown, 
   ChevronUp, 
   ExternalLink, 
-  DollarSign, 
   FileText, 
   ShieldCheck
 } from 'lucide-react';
@@ -19,12 +18,16 @@ interface FOMCMinutesRecord {
   release_date: string;
   overall_tone: string;
   key_themes: string[];
-  notable_shifts: string;
-  capital_implications: string;
-  actionable_insight: string;
-  raw_analysis: string;
+  notable_shifts: string | null;
+  capital_implications: string | null;
+  actionable_insight: string | null;
+  raw_analysis: string | null;
   pdf_url: string | null;
   created_at: string;
+}
+
+function hasText(value: string | null | undefined): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
 }
 
 export const FOMCMinutesAnalysisCard: React.FC = () => {
@@ -124,7 +127,7 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
 
   const toneConfig = getToneConfig(analysis.overall_tone);
 
-  // Simple and highly performant custom markdown renderer for CIO prose analysis content
+  // Simple markdown renderer for extended minutes analysis
   const renderMarkdown = (text: string) => {
     return text.split('\n').map((para, i) => {
       const trimmed = para.trim();
@@ -179,6 +182,9 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
               Observed Release: <strong className="text-slate-200">{formatDate(analysis.release_date)}</strong>
             </span>
           </div>
+          <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500 pt-1">
+            Interpretive summary of published FOMC minutes · not a forecast or investment advice
+          </p>
         </div>
 
         {/* Dynamic Glass Tone Badge */}
@@ -208,10 +214,10 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Dual Column Grid: Shifts & Implications */}
+        {/* Dual Column: stance shifts + structural regime implications */}
+        {(hasText(analysis.notable_shifts) || hasText(analysis.capital_implications)) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-          
-          {/* Card: Notable Shifts */}
+          {hasText(analysis.notable_shifts) && (
           <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-5 md:p-6 space-y-4 hover:border-slate-800 transition-colors duration-300">
             <div className="flex items-center gap-2 border-b border-slate-800/80 pb-3">
               <TrendingUp className="w-5 h-5 text-blue-400" />
@@ -221,37 +227,39 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
               {analysis.notable_shifts}
             </p>
           </div>
+          )}
 
-          {/* Card: Capital Implications */}
+          {hasText(analysis.capital_implications) && (
           <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-5 md:p-6 space-y-4 hover:border-slate-800 transition-colors duration-300">
             <div className="flex items-center gap-2 border-b border-slate-800/80 pb-3">
-              <DollarSign className="w-5 h-5 text-cyan-400" />
-              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Asset Allocation Implications</h4>
+              <Activity className="w-5 h-5 text-cyan-400" />
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider">Regime / Structural Implications</h4>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed text-justify">
               {analysis.capital_implications}
             </p>
           </div>
-
+          )}
         </div>
+        )}
 
-        {/* Highlighted Gold Block: Actionable Insight */}
-        <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-5 md:p-6 space-y-3 relative overflow-hidden group">
-          <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
-            <DollarSign className="w-32 h-32 text-amber-400" />
-          </div>
+        {/* Structural takeaway — neutral chrome, not trade advisory */}
+        {hasText(analysis.actionable_insight) && (
+        <div className="bg-slate-900/50 border border-slate-700/40 rounded-xl p-5 md:p-6 space-y-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-2 h-2 rounded-full bg-amber-400" />
-            <h4 className="text-xs font-black text-amber-400 uppercase tracking-widest font-mono">
-              Actionable sovereign portfolio Advisory
+            <div className="w-2 h-2 rounded-full bg-slate-400" />
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest font-mono">
+              Structural takeaway
             </h4>
           </div>
-          <p className="text-amber-200/90 text-sm font-semibold leading-relaxed text-justify">
+          <p className="text-slate-200 text-sm font-medium leading-relaxed text-justify">
             {analysis.actionable_insight}
           </p>
         </div>
+        )}
 
-        {/* Folding Accordion: Qualitative Analysis */}
+        {/* Folding Accordion: full minutes analysis */}
+        {hasText(analysis.raw_analysis) && (
         <div className="border-t border-slate-800/80 pt-6">
           <button 
             onClick={() => setExpanded(!expanded)}
@@ -259,7 +267,7 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
           >
             <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
               <FileText className="w-4 h-4 text-blue-500" />
-              View Full CIO Qualitative Assessment
+              Full minutes analysis
             </span>
             <div className="bg-slate-800/30 border border-slate-700/30 rounded-lg p-1 text-slate-400 group-hover:text-white transition-all">
               {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -274,6 +282,7 @@ export const FOMCMinutesAnalysisCard: React.FC = () => {
             </div>
           )}
         </div>
+        )}
 
         {/* Source References */}
         {analysis.pdf_url && (
