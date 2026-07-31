@@ -147,33 +147,54 @@ export async function doIngestFred(
         }
 
         // --- Special Case: Copper/Gold Ratio ---
+        // IBA LBMA gold series (GOLDAMGBD228NLBM) was removed from FRED in 2022.
+        // Derive from already-ingested COPPER_PRICE_USD + GOLD_PRICE_USD rows instead.
         if (metric.id === 'COPPER_GOLD_RATIO') {
           try {
-            const numId = (metric.metadata as any).fred_id_numerator; // PCOPPUSDM
-            const denId = (metric.metadata as any).fred_id_denominator; // GOLDAMGBD228NLBM
-            const [numRes, denRes] = await Promise.all([
-              withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=${numId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'Copper Fetch'),
-              withTimeout(fetchWithRetry(`https://api.stlouisfed.org/fred/series/observations?series_id=${denId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=100`), 10000, 'Gold Fetch')
-            ]);
+            const { data: copperRows } = await supabase
+              .from('metric_observations')
+              .select('as_of_date, value')
+              .eq('metric_id', 'COPPER_PRICE_USD')
+              .order('as_of_date', { ascending: false })
+              .limit(120);
+            const { data: goldRows } = await supabase
+              .from('metric_observations')
+              .select('as_of_date, value')
+              .eq('metric_id', 'GOLD_PRICE_USD')
+              .order('as_of_date', { ascending: false })
+              .limit(500);
 
-            const numData = await numRes.json() as any;
-            const denData = await denRes.json() as any;
+            const goldByDate = new Map((goldRows || []).map((o: any) => [o.as_of_date, Number(o.value)]));
+            // Gold is higher-frequency than monthly copper — match exact date, else
+            // the nearest gold print on or before copper's as_of_date (≤7 days).
+            const goldDates = (goldRows || [])
+              .map((o: any) => o.as_of_date as string)
+              .sort();
 
-            rawPayloads.push({ metricId: 'COPPER_GOLD_RATIO_NUM', data: numData });
-            rawPayloads.push({ metricId: 'COPPER_GOLD_RATIO_DEN', data: denData });
-
-            const numObs = numData.observations || [];
-            const denMap = new Map(denData.observations?.map((o: any) => [o.date, parseFloat(o.value)]) || []);
-
-            const ratioObservations = numObs
-              .map((n: any) => {
-                const numVal = parseFloat(n.value);
-                const denVal = denMap.get(n.date);
-                if (isNaN(numVal) || denVal === undefined || isNaN(denVal as number) || (denVal as number) === 0) return null;
+            const ratioObservations = (copperRows || [])
+              .map((c: any) => {
+                const copperVal = Number(c.value);
+                if (isNaN(copperVal)) return null;
+                let goldVal = goldByDate.get(c.as_of_date);
+                if (goldVal === undefined || isNaN(goldVal)) {
+                  const cTime = new Date(c.as_of_date).getTime();
+                  let best: string | null = null;
+                  for (let i = goldDates.length - 1; i >= 0; i--) {
+                    const gTime = new Date(goldDates[i]).getTime();
+                    if (gTime <= cTime && cTime - gTime <= 7 * 86400000) {
+                      best = goldDates[i];
+                      break;
+                    }
+                    if (gTime < cTime - 7 * 86400000) break;
+                  }
+                  if (!best) return null;
+                  goldVal = goldByDate.get(best);
+                }
+                if (goldVal === undefined || isNaN(goldVal as number) || (goldVal as number) === 0) return null;
                 return {
                   metric_id: 'COPPER_GOLD_RATIO',
-                  as_of_date: n.date,
-                  value: numVal / (denVal as number),
+                  as_of_date: c.as_of_date,
+                  value: copperVal / (goldVal as number),
                   last_updated_at: new Date().toISOString(),
                   provenance: 'api_live'
                 };
