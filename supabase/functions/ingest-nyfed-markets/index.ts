@@ -36,7 +36,13 @@ serveIngest('ingest-nyfed-markets', async (_req: Request): Promise<IngestResult>
         }
     };
 
-    // 1. TGA (FRED - WTREGEN) - Billions
+    // 1. TGA (FRED - WTREGEN)
+    // NOTE: metric_id says "_BN" but WTREGEN reports in MILLIONS of dollars.
+    // Raw value is stored as-is (millions) — do not rename this id or
+    // rescale it here without migrating every consumer that assumes
+    // millions (src/hooks/useNetLiquidity.ts, NetLiquidityCard.tsx,
+    // the vw_net_liquidity SQL view, and formatNumber.ts's
+    // SNAPSHOT_METRIC_SCALES).
     await fetchFred('WTREGEN', 'TGA_BALANCE_BN');
 
     // 2. RRP (FRED - RRPONTSYD) - Billions
