@@ -7,30 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
@@ -67,6 +47,24 @@ export type Database = {
           metrics_summary?: Json
           snapshot_date?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      agency_code_map: {
+        Row: {
+          agency_name: string
+          aid_cd: string
+          notes: string | null
+        }
+        Insert: {
+          agency_name: string
+          aid_cd: string
+          notes?: string | null
+        }
+        Update: {
+          agency_name?: string
+          aid_cd?: string
+          notes?: string | null
         }
         Relationships: []
       }
@@ -2044,6 +2042,222 @@ export type Database = {
         }
         Relationships: []
       }
+      frusg_balance_sheet: {
+        Row: {
+          account_desc: string
+          id: string
+          ingested_at: string
+          line_item_desc: string
+          position_bil: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Insert: {
+          account_desc: string
+          id?: string
+          ingested_at?: string
+          line_item_desc: string
+          position_bil?: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint?: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Update: {
+          account_desc?: string
+          id?: string
+          ingested_at?: string
+          line_item_desc?: string
+          position_bil?: number | null
+          record_date?: string
+          restmt_flag?: string
+          source_endpoint?: string
+          src_line_nbr?: string
+          stmt_fiscal_year?: number
+        }
+        Relationships: []
+      }
+      frusg_cash_balance: {
+        Row: {
+          account_desc: string
+          component_desc: string | null
+          id: string
+          ingested_at: string
+          line_item_desc: string
+          position_bil: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Insert: {
+          account_desc: string
+          component_desc?: string | null
+          id?: string
+          ingested_at?: string
+          line_item_desc: string
+          position_bil?: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint?: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Update: {
+          account_desc?: string
+          component_desc?: string | null
+          id?: string
+          ingested_at?: string
+          line_item_desc?: string
+          position_bil?: number | null
+          record_date?: string
+          restmt_flag?: string
+          source_endpoint?: string
+          src_line_nbr?: string
+          stmt_fiscal_year?: number
+        }
+        Relationships: []
+      }
+      frusg_net_cost: {
+        Row: {
+          agency_nm: string
+          change_assumptions_bil: number | null
+          earned_revenue_bil: number | null
+          gross_cost_bil: number | null
+          id: string
+          ingested_at: string
+          net_cost_bil: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Insert: {
+          agency_nm: string
+          change_assumptions_bil?: number | null
+          earned_revenue_bil?: number | null
+          gross_cost_bil?: number | null
+          id?: string
+          ingested_at?: string
+          net_cost_bil?: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint?: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Update: {
+          agency_nm?: string
+          change_assumptions_bil?: number | null
+          earned_revenue_bil?: number | null
+          gross_cost_bil?: number | null
+          id?: string
+          ingested_at?: string
+          net_cost_bil?: number | null
+          record_date?: string
+          restmt_flag?: string
+          source_endpoint?: string
+          src_line_nbr?: string
+          stmt_fiscal_year?: number
+        }
+        Relationships: []
+      }
+      frusg_net_position: {
+        Row: {
+          account_desc: string
+          consolidated_bil: number | null
+          dedicated_funds_bil: number | null
+          eliminations_bil: number | null
+          id: string
+          ingested_at: string
+          line_item_desc: string
+          non_dedicated_funds_bil: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Insert: {
+          account_desc: string
+          consolidated_bil?: number | null
+          dedicated_funds_bil?: number | null
+          eliminations_bil?: number | null
+          id?: string
+          ingested_at?: string
+          line_item_desc: string
+          non_dedicated_funds_bil?: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint?: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Update: {
+          account_desc?: string
+          consolidated_bil?: number | null
+          dedicated_funds_bil?: number | null
+          eliminations_bil?: number | null
+          id?: string
+          ingested_at?: string
+          line_item_desc?: string
+          non_dedicated_funds_bil?: number | null
+          record_date?: string
+          restmt_flag?: string
+          source_endpoint?: string
+          src_line_nbr?: string
+          stmt_fiscal_year?: number
+        }
+        Relationships: []
+      }
+      frusg_reconciliations: {
+        Row: {
+          account_desc: string
+          component_desc: string | null
+          id: string
+          ingested_at: string
+          line_item_desc: string
+          position_bil: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Insert: {
+          account_desc: string
+          component_desc?: string | null
+          id?: string
+          ingested_at?: string
+          line_item_desc: string
+          position_bil?: number | null
+          record_date: string
+          restmt_flag: string
+          source_endpoint?: string
+          src_line_nbr: string
+          stmt_fiscal_year: number
+        }
+        Update: {
+          account_desc?: string
+          component_desc?: string | null
+          id?: string
+          ingested_at?: string
+          line_item_desc?: string
+          position_bil?: number | null
+          record_date?: string
+          restmt_flag?: string
+          source_endpoint?: string
+          src_line_nbr?: string
+          stmt_fiscal_year?: number
+        }
+        Relationships: []
+      }
       fuel_security_clock_india: {
         Row: {
           active_tankers_count: number | null
@@ -3976,6 +4190,7 @@ export type Database = {
           html_content: string
           id: string
           metrics_snapshot: Json | null
+          notebook_payload: Json | null
           plain_text: string
           subject_line: string
           year_month: string
@@ -3985,6 +4200,7 @@ export type Database = {
           html_content: string
           id?: string
           metrics_snapshot?: Json | null
+          notebook_payload?: Json | null
           plain_text: string
           subject_line: string
           year_month: string
@@ -3994,9 +4210,64 @@ export type Database = {
           html_content?: string
           id?: string
           metrics_snapshot?: Json | null
+          notebook_payload?: Json | null
           plain_text?: string
           subject_line?: string
           year_month?: string
+        }
+        Relationships: []
+      }
+      mts_agency_outlays: {
+        Row: {
+          classification_desc: string
+          classification_id: string
+          current_fytd_net_outly: number | null
+          current_month_net_outly: number | null
+          data_type_cd: string | null
+          id: string
+          ingested_at: string
+          line_code_nbr: string | null
+          parent_id: string | null
+          prior_fytd_net_outly: number | null
+          record_date: string
+          record_type_cd: string | null
+          sequence_level_nbr: string | null
+          source_endpoint: string
+          src_line_nbr: string
+        }
+        Insert: {
+          classification_desc: string
+          classification_id: string
+          current_fytd_net_outly?: number | null
+          current_month_net_outly?: number | null
+          data_type_cd?: string | null
+          id?: string
+          ingested_at?: string
+          line_code_nbr?: string | null
+          parent_id?: string | null
+          prior_fytd_net_outly?: number | null
+          record_date: string
+          record_type_cd?: string | null
+          sequence_level_nbr?: string | null
+          source_endpoint?: string
+          src_line_nbr: string
+        }
+        Update: {
+          classification_desc?: string
+          classification_id?: string
+          current_fytd_net_outly?: number | null
+          current_month_net_outly?: number | null
+          data_type_cd?: string | null
+          id?: string
+          ingested_at?: string
+          line_code_nbr?: string | null
+          parent_id?: string | null
+          prior_fytd_net_outly?: number | null
+          record_date?: string
+          record_type_cd?: string | null
+          sequence_level_nbr?: string | null
+          source_endpoint?: string
+          src_line_nbr?: string
         }
         Relationships: []
       }
@@ -4911,6 +5182,48 @@ export type Database = {
           metadata?: Json | null
           metric_id?: string
           value?: number
+        }
+        Relationships: []
+      }
+      treasury_receipts_by_dept: {
+        Row: {
+          a_cd: string | null
+          aid_cd: string
+          id: string
+          ingested_at: string
+          main_cd: string
+          receipt_amt: number | null
+          receipt_line_item_nm: string
+          record_date: string
+          source_endpoint: string
+          src_line_nbr: string
+          sub_cd: string
+        }
+        Insert: {
+          a_cd?: string | null
+          aid_cd: string
+          id?: string
+          ingested_at?: string
+          main_cd: string
+          receipt_amt?: number | null
+          receipt_line_item_nm: string
+          record_date: string
+          source_endpoint?: string
+          src_line_nbr: string
+          sub_cd: string
+        }
+        Update: {
+          a_cd?: string | null
+          aid_cd?: string
+          id?: string
+          ingested_at?: string
+          main_cd?: string
+          receipt_amt?: number | null
+          receipt_line_item_nm?: string
+          record_date?: string
+          source_endpoint?: string
+          src_line_nbr?: string
+          sub_cd?: string
         }
         Relationships: []
       }
@@ -5984,6 +6297,173 @@ export type Database = {
           },
         ]
       }
+      vw_frusg_balance_sheet_summary: {
+        Row: {
+          net_position_bil: number | null
+          record_date: string | null
+          stmt_fiscal_year: number | null
+          total_assets_bil: number | null
+          total_liabilities_bil: number | null
+        }
+        Relationships: []
+      }
+      vw_frusg_bs_line_items: {
+        Row: {
+          account_desc: string | null
+          line_item_desc: string | null
+          position_bil: number | null
+          record_date: string | null
+          src_line_nbr: string | null
+          stmt_fiscal_year: number | null
+        }
+        Insert: {
+          account_desc?: string | null
+          line_item_desc?: string | null
+          position_bil?: number | null
+          record_date?: string | null
+          src_line_nbr?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Update: {
+          account_desc?: string | null
+          line_item_desc?: string | null
+          position_bil?: number | null
+          record_date?: string | null
+          src_line_nbr?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Relationships: []
+      }
+      vw_frusg_cash_balance_summary: {
+        Row: {
+          account_desc: string | null
+          component_desc: string | null
+          line_item_desc: string | null
+          position_bil: number | null
+          record_date: string | null
+          stmt_fiscal_year: number | null
+        }
+        Insert: {
+          account_desc?: string | null
+          component_desc?: string | null
+          line_item_desc?: string | null
+          position_bil?: number | null
+          record_date?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Update: {
+          account_desc?: string | null
+          component_desc?: string | null
+          line_item_desc?: string | null
+          position_bil?: number | null
+          record_date?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Relationships: []
+      }
+      vw_frusg_net_cost_concentration: {
+        Row: {
+          hhi: number | null
+          stmt_fiscal_year: number | null
+          top10_share: number | null
+          top5_share: number | null
+          total_net_cost: number | null
+        }
+        Relationships: []
+      }
+      vw_frusg_net_cost_yearly: {
+        Row: {
+          agency_nm: string | null
+          earned_revenue_bil: number | null
+          gross_cost_bil: number | null
+          is_total_row: boolean | null
+          net_cost_bil: number | null
+          record_date: string | null
+          restmt_flag: string | null
+          stmt_fiscal_year: number | null
+        }
+        Insert: {
+          agency_nm?: string | null
+          earned_revenue_bil?: number | null
+          gross_cost_bil?: number | null
+          is_total_row?: never
+          net_cost_bil?: number | null
+          record_date?: string | null
+          restmt_flag?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Update: {
+          agency_nm?: string | null
+          earned_revenue_bil?: number | null
+          gross_cost_bil?: number | null
+          is_total_row?: never
+          net_cost_bil?: number | null
+          record_date?: string | null
+          restmt_flag?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Relationships: []
+      }
+      vw_frusg_net_position_summary: {
+        Row: {
+          account_desc: string | null
+          consolidated_bil: number | null
+          dedicated_funds_bil: number | null
+          eliminations_bil: number | null
+          line_item_desc: string | null
+          non_dedicated_funds_bil: number | null
+          record_date: string | null
+          stmt_fiscal_year: number | null
+        }
+        Insert: {
+          account_desc?: string | null
+          consolidated_bil?: number | null
+          dedicated_funds_bil?: number | null
+          eliminations_bil?: number | null
+          line_item_desc?: string | null
+          non_dedicated_funds_bil?: number | null
+          record_date?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Update: {
+          account_desc?: string | null
+          consolidated_bil?: number | null
+          dedicated_funds_bil?: number | null
+          eliminations_bil?: number | null
+          line_item_desc?: string | null
+          non_dedicated_funds_bil?: number | null
+          record_date?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Relationships: []
+      }
+      vw_frusg_reconciliation_summary: {
+        Row: {
+          account_desc: string | null
+          component_desc: string | null
+          line_item_desc: string | null
+          position_bil: number | null
+          record_date: string | null
+          stmt_fiscal_year: number | null
+        }
+        Insert: {
+          account_desc?: string | null
+          component_desc?: string | null
+          line_item_desc?: string | null
+          position_bil?: number | null
+          record_date?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Update: {
+          account_desc?: string | null
+          component_desc?: string | null
+          line_item_desc?: string | null
+          position_bil?: number | null
+          record_date?: string | null
+          stmt_fiscal_year?: number | null
+        }
+        Relationships: []
+      }
       vw_fx_monthly_cross_rates: {
         Row: {
           cny_inr: number | null
@@ -6033,6 +6513,20 @@ export type Database = {
           gold_z: number | null
           move_z: number | null
           vix_z: number | null
+        }
+        Relationships: []
+      }
+      vw_gfp_narrative_inputs: {
+        Row: {
+          hhi: number | null
+          latest_fy: number | null
+          net_position_bil: number | null
+          net_position_yoy_bil: number | null
+          top10_share: number | null
+          top5_share: number | null
+          total_assets_bil: number | null
+          total_liabilities_bil: number | null
+          total_net_cost: number | null
         }
         Relationships: []
       }
@@ -6226,6 +6720,59 @@ export type Database = {
         }
         Relationships: []
       }
+      vw_mts_agency_outlays_monthly: {
+        Row: {
+          classification_desc: string | null
+          classification_id: string | null
+          current_fytd_net_outly: number | null
+          current_month_net_outly: number | null
+          data_type_cd: string | null
+          line_code_nbr: string | null
+          parent_id: string | null
+          prior_fytd_net_outly: number | null
+          record_date: string | null
+          sequence_level_nbr: string | null
+        }
+        Insert: {
+          classification_desc?: string | null
+          classification_id?: string | null
+          current_fytd_net_outly?: number | null
+          current_month_net_outly?: number | null
+          data_type_cd?: string | null
+          line_code_nbr?: string | null
+          parent_id?: string | null
+          prior_fytd_net_outly?: number | null
+          record_date?: string | null
+          sequence_level_nbr?: string | null
+        }
+        Update: {
+          classification_desc?: string | null
+          classification_id?: string | null
+          current_fytd_net_outly?: number | null
+          current_month_net_outly?: number | null
+          data_type_cd?: string | null
+          line_code_nbr?: string | null
+          parent_id?: string | null
+          prior_fytd_net_outly?: number | null
+          record_date?: string | null
+          sequence_level_nbr?: string | null
+        }
+        Relationships: []
+      }
+      vw_mts_agency_outlays_rank: {
+        Row: {
+          classification_desc: string | null
+          current_fytd_net_outly: number | null
+          current_month_net_outly: number | null
+          prior_fytd_net_outly: number | null
+          record_date: string | null
+          rnk: number | null
+          share: number | null
+          vol_12m: number | null
+          yoy_fytd: number | null
+        }
+        Relationships: []
+      }
       vw_mutual_fund_universe: {
         Row: {
           category: string | null
@@ -6273,6 +6820,16 @@ export type Database = {
           slope_bps?: never
           sofr_ois_spread?: number | null
           status?: never
+        }
+        Relationships: []
+      }
+      vw_receipts_by_agency_yearly: {
+        Row: {
+          agency_name: string | null
+          aid_cd: string | null
+          fiscal_year_end_year: number | null
+          receipt_amt: number | null
+          record_date: string | null
         }
         Relationships: []
       }
@@ -6575,13 +7132,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       fyp_section: ["pillar", "target", "milestone", "correlation"],
     },
   },
 } as const
-
