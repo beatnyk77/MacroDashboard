@@ -144,6 +144,71 @@ export const formatTrillions = (
 };
 
 /**
+ * Per-metric scale configuration for values whose raw storage unit doesn't
+ * match a generic 1e3/1e6/1e9/1e12 heuristic. Add an entry here — with a
+ * verified divisor and a plausible historical range — before displaying a
+ * new metric through formatScaledMetric.
+ */
+export interface ScaledMetricConfig {
+    /** Raw value is divided by this to reach the display unit. */
+    divisor: number;
+    /** Unit suffix appended after scaling (e.g. 'T', 'B'). */
+    suffix: string;
+    /** Plausible historical range for the *scaled* value: [min, max]. */
+    sanityRange: [number, number];
+}
+
+export const SNAPSHOT_METRIC_SCALES: Record<string, ScaledMetricConfig> = {
+    // Raw value from FRED WALCL, stored in millions of USD.
+    FED_BALANCE_SHEET: { divisor: 1e6, suffix: 'T', sanityRange: [1, 15] },
+    // Raw value from FRED WTREGEN, stored in millions of USD despite the
+    // "_BN" suffix in the metric id — see ingest-nyfed-markets/index.ts.
+    TGA_BALANCE_BN: { divisor: 1e3, suffix: 'B', sanityRange: [50, 2000] },
+};
+
+/**
+ * Format a raw metric value using its configured scale/suffix.
+ * Returns null when the metric has no entry in SNAPSHOT_METRIC_SCALES so
+ * callers can fall back to their own logic. Never throws — logs a warning
+ * if the scaled value falls outside its plausible historical range, since
+ * this runs on the render path and a bad data point shouldn't crash the UI.
+ */
+export const formatScaledMetric = (metricId: string, rawValue: number): string | null => {
+    const config = SNAPSHOT_METRIC_SCALES[metricId];
+    if (!config) return null;
+
+    const scaled = rawValue / config.divisor;
+    const [min, max] = config.sanityRange;
+    if (scaled < min || scaled > max) {
+        console.warn(
+            `formatScaledMetric: ${metricId} resolved to ${scaled.toFixed(2)}${config.suffix}, outside plausible range [${min}, ${max}]${config.suffix}. Raw value: ${rawValue}.`
+        );
+    }
+
+    return `${scaled.toFixed(2)}${config.suffix}`;
+};
+
+/**
+ * Strict sanity-range check for CI/tests: throws if the metric is unmapped
+ * or if its scaled value falls outside the configured plausible range.
+ * Not called from render paths — use formatScaledMetric there instead.
+ */
+export const assertMetricSanityRange = (metricId: string, rawValue: number): void => {
+    const config = SNAPSHOT_METRIC_SCALES[metricId];
+    if (!config) {
+        throw new Error(`assertMetricSanityRange: no scale config for metric "${metricId}"`);
+    }
+
+    const scaled = rawValue / config.divisor;
+    const [min, max] = config.sanityRange;
+    if (scaled < min || scaled > max) {
+        throw new Error(
+            `${metricId} resolved to ${scaled.toFixed(2)}${config.suffix}, outside plausible range [${min}, ${max}]${config.suffix} (raw value: ${rawValue})`
+        );
+    }
+};
+
+/**
  * Get signal label from numeric status
  * Maps status values to brief labels for traffic-light styling
  */

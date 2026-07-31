@@ -1,12 +1,14 @@
-import { describe, it, expect } from 'vitest';
-import { 
-  formatNumber, 
-  formatCurrency, 
-  formatPercentage, 
-  formatDelta, 
-  formatBillions, 
+import { describe, it, expect, vi } from 'vitest';
+import {
+  formatNumber,
+  formatCurrency,
+  formatPercentage,
+  formatDelta,
+  formatBillions,
   formatTrillions,
-  getSignalLabel 
+  getSignalLabel,
+  formatScaledMetric,
+  assertMetricSanityRange
 } from '../formatNumber';
 
 describe('formatNumber utilities', () => {
@@ -84,6 +86,54 @@ describe('formatNumber utilities', () => {
       expect(getSignalLabel('safe')).toBe('Stable');
       expect(getSignalLabel('danger')).toBe('Alert');
       expect(getSignalLabel('UNKNOWN')).toBe('UNKNOWN');
+    });
+  });
+
+  describe('formatScaledMetric', () => {
+    it('formats FED_BALANCE_SHEET raw millions as trillions', () => {
+      // Raw FRED WALCL value in millions ($6,747,380M = $6.75T)
+      expect(formatScaledMetric('FED_BALANCE_SHEET', 6747380)).toBe('6.75T');
+    });
+
+    it('formats TGA_BALANCE_BN raw millions as billions', () => {
+      // Raw FRED WTREGEN value in millions ($829,620M = $829.62B)
+      expect(formatScaledMetric('TGA_BALANCE_BN', 829620)).toBe('829.62B');
+    });
+
+    it('returns null for unmapped metric ids', () => {
+      expect(formatScaledMetric('SOME_OTHER_METRIC', 12345)).toBeNull();
+    });
+
+    it('warns but does not throw when a value is outside the sanity range', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      // 500,000M = $0.5T — below the [1, 15] plausible range for Fed balance sheet
+      expect(formatScaledMetric('FED_BALANCE_SHEET', 500000)).toBe('0.50T');
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      warnSpy.mockRestore();
+    });
+  });
+
+  describe('assertMetricSanityRange', () => {
+    it('does not throw for a plausible FED_BALANCE_SHEET value', () => {
+      expect(() => assertMetricSanityRange('FED_BALANCE_SHEET', 6747380)).not.toThrow();
+    });
+
+    it('does not throw for a plausible TGA_BALANCE_BN value', () => {
+      expect(() => assertMetricSanityRange('TGA_BALANCE_BN', 829620)).not.toThrow();
+    });
+
+    it('throws for a FED_BALANCE_SHEET value outside [1, 15]T', () => {
+      // 500,000M = $0.5T — implausibly low for the modern Fed balance sheet
+      expect(() => assertMetricSanityRange('FED_BALANCE_SHEET', 500000)).toThrow(/outside plausible range/);
+    });
+
+    it('throws for a TGA_BALANCE_BN value outside [50, 2000]B', () => {
+      // 10,000,000M = $10,000B — implausibly high for the TGA
+      expect(() => assertMetricSanityRange('TGA_BALANCE_BN', 10000000)).toThrow(/outside plausible range/);
+    });
+
+    it('throws for an unmapped metric id', () => {
+      expect(() => assertMetricSanityRange('SOME_OTHER_METRIC', 12345)).toThrow(/no scale config/);
     });
   });
 });
