@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { supabase } from '@/lib/supabase';
 
-// Mock Supabase
 vi.mock('@/lib/supabase', () => ({
     supabase: {
         from: vi.fn(),
@@ -43,15 +42,14 @@ describe('useDataIntegrity', () => {
         expect(result.current.data?.status).toBe('critical');
     });
 
-    it('returns healthy status when no high frequency metrics are stale', async () => {
-        const now = Date.now();
-        const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString();
-        const mockSelect = vi.fn().mockResolvedValue({ 
-            // Mock returned data, within the week limit
+    it('returns healthy status when every metric has staleness_flag fresh, regardless of cadence', async () => {
+        const mockSelect = vi.fn().mockResolvedValue({
             data: [
-                { metric_id: 'CAPITAL_FROM_XYZ', as_of_date: twoDaysAgo },
-                { metric_id: 'PMI_MANUFACTURING', as_of_date: twoDaysAgo }
-            ] 
+                { metric_id: 'CAPITAL_FROM_XYZ', staleness_flag: 'fresh', as_of_date: '2026-07-30' },
+                // A quarterly metric that's 60 days old is 'fresh' per its own expected_interval_days —
+                // this is exactly the case the old flat-7-day threshold got wrong.
+                { metric_id: 'BOP_CURRENT_ACCOUNT_GDP', staleness_flag: 'fresh', as_of_date: '2026-06-01' },
+            ]
         });
         (supabase.from as any).mockReturnValue({ select: mockSelect });
 
@@ -66,19 +64,14 @@ describe('useDataIntegrity', () => {
         expect(result.current.data?.totalHighFrequency).toBe(2);
     });
 
-    it('returns degraded status when some high frequency metrics are stale (< 25% or count < 10)', async () => {
-        const now = Date.now();
-        const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString();
-        const tenDaysAgo = new Date(now - 10 * 24 * 60 * 60 * 1000).toISOString();
-        const mockSelect = vi.fn().mockResolvedValue({ 
+    it('returns degraded status when some metrics are lagged (below critical threshold)', async () => {
+        const mockSelect = vi.fn().mockResolvedValue({
             data: [
-                // One stale
-                { metric_id: 'CAPITAL_FROM_XYZ', as_of_date: tenDaysAgo },
-                // 3 Not stale
-                { metric_id: 'PMI_MANUFACTURING', as_of_date: twoDaysAgo },
-                { metric_id: 'USD_GBP', as_of_date: twoDaysAgo },
-                { metric_id: 'GOLD_PRICE', as_of_date: twoDaysAgo }
-            ] 
+                { metric_id: 'CAPITAL_FROM_XYZ', staleness_flag: 'lagged', as_of_date: '2026-06-01' },
+                { metric_id: 'PMI_MANUFACTURING', staleness_flag: 'fresh', as_of_date: '2026-07-30' },
+                { metric_id: 'USD_GBP', staleness_flag: 'fresh', as_of_date: '2026-07-30' },
+                { metric_id: 'GOLD_PRICE', staleness_flag: 'fresh', as_of_date: '2026-07-30' },
+            ]
         });
         (supabase.from as any).mockReturnValue({ select: mockSelect });
 
@@ -92,20 +85,11 @@ describe('useDataIntegrity', () => {
         expect(result.current.data?.staleCount).toBe(1);
     });
 
-    it('returns critical status when >25% and >10 high frequency metrics are stale', async () => {
-        const now = Date.now();
-        const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString();
-        const tenDaysAgo = new Date(now - 10 * 24 * 60 * 60 * 1000).toISOString();
-
-        // Create 20 metrics, where 11 are stale (11/20 > 25% and 11 > 10)
-        let metrics = [];
-        for (let i = 0; i < 11; i++) {
-            metrics.push({ metric_id: `USD_${i}`, as_of_date: tenDaysAgo });
-        }
-        for (let i = 0; i < 9; i++) {
-            metrics.push({ metric_id: `PMI_${i}`, as_of_date: twoDaysAgo });
-        }
-
+    it('returns critical status when >25% are stale and >10 are very_lagged', async () => {
+        const metrics = [
+            ...Array.from({ length: 11 }, (_, i) => ({ metric_id: `USD_${i}`, staleness_flag: 'very_lagged', as_of_date: '2024-01-01' })),
+            ...Array.from({ length: 9 }, (_, i) => ({ metric_id: `PMI_${i}`, staleness_flag: 'fresh', as_of_date: '2026-07-30' })),
+        ];
         const mockSelect = vi.fn().mockResolvedValue({ data: metrics });
         (supabase.from as any).mockReturnValue({ select: mockSelect });
 

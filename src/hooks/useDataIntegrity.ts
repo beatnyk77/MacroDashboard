@@ -14,33 +14,9 @@ export function useDataIntegrity() {
     return useQuery({
         queryKey: ['data-integrity'],
         queryFn: async (): Promise<IntegrityReport> => {
-            // Only count high-frequency metrics (daily/weekly) toward stale count
-            // Monthly/quarterly metrics (GDP, BOP, ASI) will always exceed 7-day threshold
-            const HIGH_FREQUENCY_PREFIXES = [
-                'CAPITAL_FROM_',
-                'FLOW_TO_',
-                'HOUSING_MORTGAGE_',
-                'PMI_',
-                'LABOR_VACANCIES',
-                'LABOR_UNEMPLOYMENT',
-                'INFLATION_HEADLINE',
-                'INFLATION_CORE',
-                'GOLD_PRICE',
-                'COPPER_PRICE',
-                'OIL_PRICE',
-                'OIL_BRENT_',
-                'BRENT_CRUDE_',
-                'WTI_CRUDE_',
-                'EU_GAS_',
-                'OIL_REFINERY_',
-                'OIL_SPR_',
-                'USD_',
-                'CNY_',
-            ];
-
             const { data: metrics } = await supabase
                 .from('vw_latest_metrics')
-                .select('metric_id, as_of_date');
+                .select('metric_id, staleness_flag, as_of_date');
 
             if (!metrics || metrics.length === 0) {
                 return {
@@ -53,49 +29,40 @@ export function useDataIntegrity() {
                 };
             }
 
-            const now = new Date().getTime();
-            const weekInMs = 1000 * 60 * 60 * 24 * 7;
+            // staleness_flag is computed in the database per-metric against
+            // that metric's own registered expected_interval_days — a
+            // quarterly series that's 60 days old is correctly 'fresh',
+            // unlike the old client-side flat-7-day-threshold check.
+            const staleMetrics = metrics.filter(m => m.staleness_flag === 'lagged' || m.staleness_flag === 'very_lagged');
+            const veryStaleMetrics = metrics.filter(m => m.staleness_flag === 'very_lagged');
 
-            // Filter to high-frequency metrics only
-            const highFreqMetrics = metrics.filter(m =>
-                HIGH_FREQUENCY_PREFIXES.some(prefix => m.metric_id?.startsWith(prefix))
-            );
-
-            // Freshest as_of_date among high-freq metrics = proxy for last successful ingestion
-            const freshestMs = highFreqMetrics.reduce((acc, m) => {
-                const t = new Date(m.as_of_date ?? '').getTime(); // TODO(types): vw_latest_metrics.as_of_date is nullable
+            const freshestMs = metrics.reduce((acc, m) => {
+                const t = new Date(m.as_of_date ?? '').getTime();
                 return t > acc ? t : acc;
             }, 0);
             const lastIngestionAt = freshestMs > 0 ? new Date(freshestMs).toISOString() : null;
 
-            const staleHighFreq = highFreqMetrics.filter(m => {
-                const diff = now - new Date(m.as_of_date ?? '').getTime(); // TODO(types): nullable
-                return diff > weekInMs;
-            });
+            const staleCount = staleMetrics.length;
+            const totalHighFrequency = metrics.length;
+            const staleRatio = totalHighFrequency > 0 ? staleCount / totalHighFrequency : 0;
 
-            const totalHighFreq = highFreqMetrics.length;
-            const staleCount = staleHighFreq.length;
-            const staleRatio = totalHighFreq > 0 ? staleCount / totalHighFreq : 0;
-
-            // CRITICAL: >25% of high-freq metrics stale AND >10 absolute count
-            if (staleRatio > 0.25 && staleCount > 10) {
+            if (staleRatio > 0.25 && veryStaleMetrics.length > 10) {
                 return {
                     status: 'critical',
                     message: 'Data sync delayed',
                     staleCount,
-                    totalHighFrequency: totalHighFreq,
+                    totalHighFrequency,
                     lastChecked: new Date().toISOString(),
                     lastIngestionAt
                 };
             }
 
-            // DEGRADED: any high-freq metrics stale
             if (staleCount > 0) {
                 return {
                     status: 'degraded',
                     message: 'Data latency detected',
                     staleCount,
-                    totalHighFrequency: totalHighFreq,
+                    totalHighFrequency,
                     lastChecked: new Date().toISOString(),
                     lastIngestionAt
                 };
@@ -105,7 +72,7 @@ export function useDataIntegrity() {
                 status: 'healthy',
                 message: 'All core systems operational.',
                 staleCount: 0,
-                totalHighFrequency: totalHighFreq,
+                totalHighFrequency,
                 lastChecked: new Date().toISOString(),
                 lastIngestionAt
             };
