@@ -6,6 +6,7 @@ import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { getStaleness } from '@/hooks/useStaleness';
 import { cn } from '@/lib/utils';
+import { formatScaledMetric } from '@/utils/formatNumber';
 
 export interface SnapshotMetric {
     metricId: string;
@@ -37,8 +38,8 @@ function SnapshotCell({ m }: { m: SnapshotMetric }) {
             ? (() => {
                   const n = Number(live.value);
                   if (m.metricId.includes('GOLD') && n > 100) return `$${Math.round(n).toLocaleString()}`;
-                  if (Math.abs(n) >= 1000 && (m.metricId.includes('BALANCE') || m.metricId === 'FED_BALANCE_SHEET'))
-                      return `${(n / 1000).toFixed(2)}T`;
+                  const scaled = formatScaledMetric(m.metricId, n);
+                  if (scaled != null) return scaled;
                   if (m.metricId.includes('YIELD') || m.metricId === 'VIX_INDEX' || m.metricId === 'DXY_INDEX')
                       return n.toFixed(2);
                   return m.display;
