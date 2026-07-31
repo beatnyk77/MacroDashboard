@@ -83,7 +83,7 @@ export const APIAccessPage: React.FC = () => {
                     <Typography variant="h1" component="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
                         Quantum <span className="text-blue-500">Access</span>
                     </Typography>
-                    <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '700px', mx: 'auto', fontWeight: 500, lineHeight: 1.5, fontSize: '1.2rem', textTransform: 'uppercase' }}>
+                    <Typography component="p" variant="h5" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '700px', mx: 'auto', fontWeight: 500, lineHeight: 1.5, fontSize: '1.2rem', textTransform: 'uppercase' }}>
                         Professional-grade macro telemetry delivered via high-frequency REST API.
                     </Typography>
                 </Box>

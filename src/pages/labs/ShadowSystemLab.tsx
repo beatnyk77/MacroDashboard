@@ -32,7 +32,7 @@ export const ShadowSystemLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="Shadow System Lab — Capital Flight, Trade Misinvoicing & Off-Grid Flows"
+            title="Shadow System Lab — Capital Flight, Trade"
             description="Track the unobserved economy: elite wealth flight, trade misinvoicing indices, and non-G7 trade network gravitational shifts. Institutional dark-flow telemetry."
             keywords={['shadow trade', 'capital flight', 'trade misinvoicing', 'illicit financial flows', 'off-grid economy', 'shadow banking']}
             jsonLd={[

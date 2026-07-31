@@ -28,8 +28,8 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Loan-to-Job Efficiency Ratio — India Credit & Employment Methodology"
-                description="How the Loan-to-Job Efficiency Ratio measures the productivity of India bank credit in generating formal employment. Formula, data sources, and institutional interpretation."
+                title="Loan-to-Job Efficiency Ratio — India"
+                description="How the Loan-to-Job Efficiency Ratio measures the productivity of India bank credit in generating formal employment. Formula, data sources, and"
                 keywords={["India Loan To Job", "EPFO Employment", "India Credit Growth", "K-Shaped Economy"]}
                 canonicalUrl="https://graphiquestor.com/methods/loan-to-job-efficiency"
                 jsonLd={jsonLd}
@@ -56,14 +56,14 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                     <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
                         Loan-to-Job Efficiency Ratio
                     </Typography>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Measuring whether India's credit boom is generating real employment or simply inflating asset prices. A proprietary signal for K-shaped economic divergence.
                     </Typography>
                 </Box>
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} style={{ color: '#818cf8' }} />
                         Definition &amp; Intuition
                     </Typography>
@@ -77,7 +77,7 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(129,140,248,0.25)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#818cf8' }} />
                         Formula
                     </Typography>
@@ -105,7 +105,7 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#818cf8' }} />
                         Credit Growth vs. Formal Job Creation (Illustrative, Q1 2022–Q4 2024)
                     </Typography>
@@ -119,7 +119,7 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Users size={20} style={{ color: '#818cf8' }} />
                         Institutional Use Cases
                     </Typography>
@@ -131,7 +131,7 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                             { role: 'Policy Research', use: 'Quantifies the "jobless growth" critique of India\'s post-2022 recovery — essential for ground-truthing official GDP and employment metrics against third-party EPFO data.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(129,140,248,0.04)', borderRadius: 2, border: '1px solid rgba(129,140,248,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#818cf8' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#818cf8' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}

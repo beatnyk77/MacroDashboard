@@ -43,8 +43,8 @@ export const DeDollarizationGoldLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="De-Dollarization & Gold Lab — Reserve Shifts, Gold Flows & Trade Settlement"
-            description="Track the structural shift from fiat reserves to hard-asset anchors. Central bank gold purchases, COFER reserve composition, petrodollar vs petroyuan settlement, and G20 gold-debt coverage analysis."
+            title="De-Dollarization & Gold Lab"
+            description="Track the structural shift from fiat reserves to hard-asset anchors. Central bank gold purchases, COFER reserve composition, petrodollar vs petroyuan"
             keywords={['de-dollarization', 'gold reserves', 'central bank gold purchases', 'BRICS', 'petrodollar', 'petroyuan', 'reserve currency', 'COFER']}
             jsonLd={[
                 {

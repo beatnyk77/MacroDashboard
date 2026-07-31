@@ -97,7 +97,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                             >
                                                 <div className="flex-1">
                                                     <Box display="flex" alignItems="center" gap={3} mb={3}>
-                                                        <Typography variant="h5" className="font-serif font-medium text-foreground group-hover:text-primary transition-colors">
+                                                        <Typography component="p" variant="h5" className="font-serif font-medium text-foreground group-hover:text-primary transition-colors">
                                                             {new Date(narrative.week_ending_date).toLocaleDateString(undefined, {
                                                                 month: 'long',
                                                                 day: 'numeric',

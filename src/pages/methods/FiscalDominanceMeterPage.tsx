@@ -34,8 +34,8 @@ export const FiscalDominanceMeterPage: React.FC = () => {
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Fiscal Dominance Meter — Methodology & Central Bank Policy Implications"
-                description="The full methodology for the Fiscal Dominance Meter: when interest expense/tax revenue constrains the Fed's ability to raise rates. Formulas, historical context, US vs Japan vs India."
+                title="Fiscal Dominance Meter — Methodology &"
+                description="The full methodology for the Fiscal Dominance Meter: when interest expense/tax revenue constrains the Fed's ability to raise rates. Formulas, historical"
                 keywords={["Fiscal Dominance Meter", "Fed Independence", "US Debt Service", "Interest Tax Ratio", "Central Bank Constraint"]}
                 canonicalUrl="https://graphiquestor.com/methods/fiscal-dominance-meter"
                 jsonLd={jsonLd}
@@ -65,7 +65,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         The single most important structural constraint on Fed policy independence: when does the cost of government debt service make rate hikes fiscally impossible?
                     </Typography>
                 </Box>
@@ -75,7 +75,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                     <Box display="flex" gap={2} alignItems="flex-start">
                         <AlertTriangle size={20} style={{ color: '#ef4444', flexShrink: 0, marginTop: 2 }} />
                         <Box>
-                            <Typography variant="subtitle2" fontWeight={800} sx={{ color: '#ef4444' }} mb={1}>2024 Reading: 21.3% — Highest in 40 Years</Typography>
+                            <Typography component="p" variant="subtitle2" fontWeight={800} sx={{ color: '#ef4444' }} mb={1}>2024 Reading: 21.3% — Highest in 40 Years</Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                                 The US Fiscal Dominance Meter reached 21.3% in Q4 2024 — meaning 21 cents of every dollar in federal tax revenue goes to debt interest payments. This level has not been seen since the late 1980s and approaches the structural threshold at which rate hikes become fiscally self-defeating.
                             </Typography>
@@ -85,7 +85,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} style={{ color: '#ef4444' }} />
                         Definition &amp; Intuition
                     </Typography>
@@ -105,7 +105,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#ef4444' }} />
                         Formula
                     </Typography>
@@ -137,7 +137,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#ef4444' }} />
                         Interest/Tax Revenue Ratio — US, Japan, India (2000–2024)
                     </Typography>
@@ -156,7 +156,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Policy Implications */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#f59e0b' }} />
                         Policy Implications by Regime
                     </Typography>
@@ -168,7 +168,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                             { regime: 'FDM > 30% (Full Fiscal Dominance)', desc: 'Central bank becomes operationally subservient to Treasury. YCC or its equivalent becomes the policy tool. Inflation becomes "structural" rather than transient. This is Japan 2000-present.', color: '#dc2626' },
                         ].map(p => (
                             <Box key={p.regime} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.06)', borderLeft: `3px solid ${p.color}` }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: p.color }} mb={1}>{p.regime}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: p.color }} mb={1}>{p.regime}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{p.desc}</Typography>
                             </Box>
                         ))}
@@ -177,7 +177,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom>Institutional Use Cases</Typography>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>Institutional Use Cases</Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
                         {[
                             { role: 'Global Macro Hedge Funds', use: 'FDM crossing 20% is a high-conviction entry signal for long gold, long TIPS, and long commodity/real asset positions. The fiscal dominance regime historically resolves through inflation rather than austerity.' },
@@ -186,7 +186,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                             { role: 'Sovereign Credit Analysts', use: 'US S&P downgrade in 2023 and Fitch 2023 downgrade both cited interest cost trajectory. FDM provides the quantitative underpinning of this concern — track monthly for AAA rating risk assessment.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(239,68,68,0.04)', borderRadius: 2, border: '1px solid rgba(239,68,68,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#ef4444' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#ef4444' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}

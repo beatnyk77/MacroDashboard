@@ -45,19 +45,23 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
-const CardTitle = React.forwardRef<
-    HTMLParagraphElement,
-    React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-    <h3
-        ref={ref}
-        className={cn(
-            "text-lg font-bold tracking-heading leading-none",
-            className
-        )}
-        {...props}
-    />
-))
+type CardTitleProps = React.HTMLAttributes<HTMLHeadingElement> & {
+    /** Semantic heading level; default h3. Use h2 when CardTitle is first heading after page H1. */
+    as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div'
+}
+
+const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+    ({ className, as: Comp = 'h3', ...props }, ref) => (
+        <Comp
+            ref={ref as React.Ref<HTMLHeadingElement>}
+            className={cn(
+                "text-lg font-bold tracking-heading leading-none",
+                className
+            )}
+            {...props}
+        />
+    )
+)
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<

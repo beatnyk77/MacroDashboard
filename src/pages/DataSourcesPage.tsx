@@ -516,8 +516,8 @@ export const DataSourcesPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-background">
             <SEOManager
-                title="Data Sources — Authoritative Macro Intelligence Inputs"
-                description="Full transparency on every data source powering GraphiQuestor: FRED, US Treasury FiscalData, IMF COFER, BIS Statistics, RBI DBIE, MoSPI, EIA, UN Comtrade, World Gold Council, and more. Update frequencies, key metrics, and institutional use cases documented."
+                title="Data Sources — Authoritative Macro"
+                description="Full transparency on every data source powering GraphiQuestor: FRED, US Treasury FiscalData, IMF COFER, BIS Statistics, RBI DBIE, MoSPI, EIA, UN"
                 keywords={[
                     'FRED data source', 'IMF COFER data', 'BIS statistics', 'RBI DBIE India data',
                     'MoSPI India GDP', 'EIA energy data', 'UN Comtrade trade data',

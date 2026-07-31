@@ -136,9 +136,9 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                         <span className="block text-primary font-black tracking-uppercase text-xs font-sans mb-2">
                             GRAPHIQUESTOR INTELLIGENCE
                         </span>
-                        <h3 className="text-3xl md:text-4xl font-serif text-foreground tracking-heading leading-tight">
+                        <p className="text-3xl md:text-4xl font-serif text-foreground tracking-heading leading-tight">
                             {formatDate(new Date())}
-                        </h3>
+                        </p>
                     </div>
                     <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-xs font-black tracking-uppercase uppercase">
                         Proprietary View
@@ -155,9 +155,9 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                     Regime Consensus
                                 </span>
                             </div>
-                            <h5 className={cn("text-xl font-black mb-1", getRegimeColorClass())}>
+                            <p className={cn("text-xl font-black mb-1", getRegimeColorClass())}>
                                 {regime?.regimeLabel || 'Neutral Persistence'}
-                            </h5>
+                            </p>
                             <span className="text-xs font-semibold text-muted-foreground">
                                 {regime?.timestamp ? `Model updated ${new Date(regime.timestamp).toLocaleDateString()}` : 'Real-time detection active'}
                             </span>
@@ -174,9 +174,9 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                     Liquidity Impulse
                                 </span>
                             </div>
-                            <h5 className={cn("text-xl font-black mb-1", getLiquidityColorClass())}>
+                            <p className={cn("text-xl font-black mb-1", getLiquidityColorClass())}>
                                 {liquidityStatus}
-                            </h5>
+                            </p>
                             <span className="text-xs font-semibold text-muted-foreground">
                                 {liquidityDelta ? `${liquidityDelta > 0 ? '+' : ''}${formatBillions(liquidityDelta / 1e9, { decimals: 1 })} net change (7D)` : 'Awaiting fresh feed'}
                             </span>

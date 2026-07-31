@@ -39,10 +39,10 @@ export const China15thFYPTeaserRow: React.FC = () => {
                             <Flag className="text-red-500" size={16} />
                             <span className="text-xs font-black uppercase tracking-uppercase text-red-400">Policy Intelligence</span>
                         </div>
-                        <h3 className="text-lg font-black tracking-heading text-white leading-tight">
+                        <h2 className="text-lg font-black tracking-heading text-white leading-tight">
                             China 15th <br />
                             <span className="text-red-500">Five-Year Plan</span>
-                        </h3 >
+                        </h2>
                         <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                             Structural shift to high-quality development & tech self-reliance.
                         </p>

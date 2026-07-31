@@ -117,7 +117,7 @@ export const CountryNarrativeBlock: React.FC<CountryNarrativeBlockProps> = ({
               <Lightbulb size={20} />
               <span className="text-xs font-black uppercase tracking-widest">Core Thesis</span>
             </div>
-            <Typography variant="h5" className="font-black tracking-tight leading-none mb-4 uppercase italic italic">
+            <Typography variant="h5" component="h2" className="font-black tracking-tight leading-none mb-4 uppercase italic italic">
               {narrativeData.thesis}
             </Typography>
             <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">

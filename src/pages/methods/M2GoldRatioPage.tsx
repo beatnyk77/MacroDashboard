@@ -87,8 +87,8 @@ export const M2GoldRatioPage: React.FC = () => {
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="M2/Gold Ratio — Methodology, History & Debasement Signal"
-                description="Complete guide to the M2/Gold Ratio: formula, historical episodes from 2001–2026, interpretation framework, and how institutional allocators use it as a gold valuation signal."
+                title="M2/Gold Ratio — Methodology, History &"
+                description="Complete guide to the M2/Gold Ratio: formula, historical episodes from 2001–2026, interpretation framework, and how institutional allocators use it as a"
                 keywords={['M2 gold ratio', 'gold M2 ratio', 'monetary debasement signal', 'gold valuation metric', 'global M2 money supply', 'hard assets macro', 'm2 to gold ratio']}
                 canonicalUrl="https://graphiquestor.com/methods/m2-gold-ratio"
                 ogType="article"
@@ -127,7 +127,7 @@ export const M2GoldRatioPage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A structural debasement gauge: how much global M2 money supply is "covered" by the world's above-ground gold supply at current spot prices. When M2 expands faster than gold, the ratio rises — historically a leading indicator for structural gold re-ratings.
                     </Typography>
                 </Box>
@@ -150,7 +150,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} className="text-amber-400" />
                         Definition &amp; Intuition
                     </Typography>
@@ -167,7 +167,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#f59e0b' }} />
                         Formula &amp; Data Components
                     </Typography>
@@ -198,7 +198,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#f59e0b' }} />
                         M2/Gold Ratio — Historical Index (2000–2026, Illustrative)
                     </Typography>
@@ -212,7 +212,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Interpretation Framework */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <TrendingUp size={20} style={{ color: '#f59e0b' }} />
                         Interpretation Framework
                     </Typography>
@@ -234,7 +234,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Historical Episodes */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Database size={20} style={{ color: '#f59e0b' }} />
                         Five Key Historical Episodes
                     </Typography>
@@ -244,7 +244,7 @@ export const M2GoldRatioPage: React.FC = () => {
                                 <Box display="flex" justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap={1} mb={1.5}>
                                     <Box>
                                         <Typography variant="caption" sx={{ color: ep.color, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>{ep.period}</Typography>
-                                        <Typography variant="h6" fontWeight={800} sx={{ color: 'text.primary' }}>{ep.title}</Typography>
+                                        <Typography component="h2" variant="h6" fontWeight={800} sx={{ color: 'text.primary' }}>{ep.title}</Typography>
                                     </Box>
                                     <Box display="flex" gap={1} flexWrap="wrap">
                                         <Chip size="small" label={`Ratio: ${ep.ratio}`} sx={{ bgcolor: `${ep.color}18`, color: ep.color, fontWeight: 700, fontSize: '0.7rem' }} />
@@ -259,7 +259,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Institutional Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#f59e0b' }} />
                         Institutional Use Cases
                     </Typography>
@@ -283,7 +283,7 @@ export const M2GoldRatioPage: React.FC = () => {
                             },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b', mb: 1.5 }}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b', mb: 1.5 }}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -292,7 +292,7 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Limitations */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: 3 }}>
-                    <Typography variant="h6" fontWeight={800} gutterBottom sx={{ color: '#ef4444' }}>
+                    <Typography component="h2" variant="h6" fontWeight={800} gutterBottom sx={{ color: '#ef4444' }}>
                         Known Limitations
                     </Typography>
                     <Box component="ul" sx={{ m: 0, pl: 2, color: 'text.secondary' }}>

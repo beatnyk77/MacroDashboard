@@ -149,8 +149,8 @@ export const IntelIndiaPage: React.FC = () => {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
-                title="India Macro Pulse — Live RBI, Fiscal & CPI Dashboard"
-                description="Live India macro dashboard: RBI credit cycle, fiscal stress ratio, sovereign debt maturity walls, CPI/WPI inflation, and FII flows. Data sourced from RBI DBIE & MoSPI, updated daily."
+                title="India Macro Pulse — Live RBI, Fiscal & CPI"
+                description="Live India macro dashboard: RBI credit cycle, fiscal stress ratio, sovereign debt maturity walls, CPI/WPI inflation, and FII flows. Data sourced from RBI"
                 keywords={[
                     'India macro dashboard', 'RBI monetary policy live', 'India fiscal deficit',
                     'India CPI inflation', 'India credit cycle', 'India sovereign debt',

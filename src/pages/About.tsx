@@ -65,7 +65,7 @@ export const About: React.FC = () => {
                             <Typography variant="h3" sx={{ fontWeight: 800, fontSize: '1.4rem', mb: 0.5 }}>
                                 Kartikay Sharma
                             </Typography>
-                            <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 600, mb: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <Typography variant="subtitle2" component="p" sx={{ color: 'primary.main', fontWeight: 600, mb: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 Principal Analyst, CA
                             </Typography>
                             <Button

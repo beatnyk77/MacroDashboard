@@ -154,8 +154,8 @@ export const IntelChinaPage: React.FC = () => {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
-                title="China Macro Pulse — Live PBoC, Credit Impulse & PMI Dashboard"
-                description="Live China macro dashboard: PBoC credit impulse, NBS vs Caixin PMI, trade balance, FX & gold reserves, deflation risk, and de-dollarization velocity. Updated daily."
+                title="China Macro Pulse — Live PBoC, Credit"
+                description="Live China macro dashboard: PBoC credit impulse, NBS vs Caixin PMI, trade balance, FX & gold reserves, deflation risk, and de-dollarization velocity."
                 keywords={[
                     'China macro dashboard', 'China credit impulse', 'PBoC monetary policy',
                     'China PMI live', 'China deflation risk', 'China FX reserves',

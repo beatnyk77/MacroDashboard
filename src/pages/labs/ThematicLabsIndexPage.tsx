@@ -187,8 +187,8 @@ export const ThematicLabsIndexPage: React.FC = () => {
     return (
         <div className="w-full max-w-[1400px] mx-auto space-y-12 pb-24 px-4 sm:px-6">
             <SEOManager
-                title="Thematic Macro Labs | Institutional Research Hub"
-                description="GraphiQuestor analytical laboratories tracking structural macroeconomic shifts: US net liquidity plumbline, sovereign stress thresholds, de-dollarization flows, and India/China credit aggregates."
+                title="Thematic Macro Labs"
+                description="GraphiQuestor analytical laboratories tracking structural macroeconomic shifts: US net liquidity plumbline, sovereign stress thresholds, de-dollarization"
                 keywords={[
                     'Macroeconomic research labs', 'Sovereign stress terminal', 'US Net Liquidity analysis',
                     'De-dollarization tracker', 'China Five Year Plan data', 'Energy security mapping',
@@ -245,7 +245,7 @@ export const ThematicLabsIndexPage: React.FC = () => {
                                         {lab.status}
                                     </span>
                                 </div>
-                                <CardTitle className="text-lg font-black text-white uppercase tracking-tight leading-snug">
+                                <CardTitle as="h2" className="text-lg font-black text-white uppercase tracking-tight leading-snug">
                                     {lab.name}
                                 </CardTitle>
                             </CardHeader>

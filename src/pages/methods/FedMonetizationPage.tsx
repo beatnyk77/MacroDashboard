@@ -35,7 +35,7 @@ export const FedMonetizationPage: React.FC = () => {
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
                 title="Fed Monetization Monitor — GraphiQuestor Methodology"
-                description="Fed debt monetization ratio methodology: what percentage of US debt does the Fed own, how WALCL ÷ GFDEBTN is calculated, and why readings above 20% historically precede yield curve control discussions."
+                description="Fed debt monetization ratio methodology: what percentage of US debt does the Fed own, how WALCL ÷ GFDEBTN is calculated, and why readings above 20%"
                 keywords={["Fed debt monetization ratio", "what percentage of US debt does the Fed own", "Fed monetization tracker", "fiscal dominance", "yield curve control"]}
                 canonicalUrl="https://graphiquestor.com/methods/fed-monetization-monitor"
                 jsonLd={jsonLd}
@@ -65,14 +65,14 @@ export const FedMonetizationPage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Tracks the Federal Reserve's balance sheet as a share of total US marketable debt — a direct measure of how much of the government's financing burden has been absorbed by monetary policy.
                     </Typography>
                 </Box>
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} style={{ color: '#6366f1' }} />
                         Definition &amp; Intuition
                     </Typography>
@@ -86,7 +86,7 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#6366f1' }} />
                         Formula
                     </Typography>
@@ -115,7 +115,7 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Historical Context */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#6366f1' }} />
                         Historical Context
                     </Typography>
@@ -133,7 +133,7 @@ export const FedMonetizationPage: React.FC = () => {
                         ].map(d => (
                             <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(99,102,241,0.05)', borderRadius: 2, border: '1px solid rgba(99,102,241,0.15)', textAlign: 'center' }}>
                                 <Typography variant="caption" color="text.disabled" display="block">{d.label}</Typography>
-                                <Typography variant="h5" fontWeight={900} sx={{ color: '#a5b4fc', my: 0.5 }}>{d.value}</Typography>
+                                <Typography component="h2" variant="h5" fontWeight={900} sx={{ color: '#a5b4fc', my: 0.5 }}>{d.value}</Typography>
                                 <Typography variant="caption" color="text.secondary">{d.note}</Typography>
                             </Box>
                         ))}
@@ -142,7 +142,7 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Fiscal Dominance Framework */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#6366f1' }} />
                         Fiscal Dominance Framework
                     </Typography>
@@ -159,7 +159,7 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Database size={20} style={{ color: '#6366f1' }} />
                         Institutional Use Cases
                     </Typography>
@@ -171,7 +171,7 @@ export const FedMonetizationPage: React.FC = () => {
                             { role: 'Central Bank Research', use: 'Comparative analysis across G7: ECB, BoJ, and BoE equivalent ratios reveal relative fiscal dominance intensity and inform reserve currency allocation modelling.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(99,102,241,0.04)', borderRadius: 2, border: '1px solid rgba(99,102,241,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#a5b4fc' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#a5b4fc' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}

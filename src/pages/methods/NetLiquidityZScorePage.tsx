@@ -69,14 +69,14 @@ export const NetLiquidityZScorePage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A normalised measure of effective Federal Reserve market liquidity — the single most predictive macro regime indicator for equity markets over a 3–12 month horizon.
                     </Typography>
                 </Box>
 
                 {/* Section 1: Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} className="text-blue-400" />
                         Definition &amp; Intuition
                     </Typography>
@@ -90,7 +90,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 2: Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} className="text-blue-400" />
                         Formula
                     </Typography>
@@ -122,7 +122,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 3: Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} className="text-blue-400" />
                         Historical Z-Score (Illustrative, 2020–2025)
                     </Typography>
@@ -136,7 +136,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 4: Institutional Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#f59e0b' }} />
                         Institutional Use Cases
                     </Typography>
@@ -148,7 +148,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
                             { role: 'Risk Management', use: 'Incorporate in VaR and tail-risk scenarios. NL Z < −2.0σ warrants activation of liquidity stress protocols and position de-risking.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="subtitle2" fontWeight={700} color="primary.main" mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} color="primary.main" mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -157,7 +157,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 5: Regime Interpretation */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <TrendingUp size={20} className="text-blue-400" />
                         Regime Interpretation Table
                     </Typography>

@@ -60,20 +60,20 @@ export const GlossaryIndexPage: React.FC = () => {
                     <Typography variant="h3" component="h1" gutterBottom className="font-display font-bold">
                         Macro Concepts Glossary
                     </Typography>
-                    <Typography variant="subtitle1" color="text.secondary" maxWidth="sm" mx="auto">
+                    <Typography component="p" variant="subtitle1" color="text.secondary" maxWidth="sm" mx="auto">
                         A curated dictionary of institutional finance terminology focusing on global liquidity flows, monetary regimes, and sovereign stress.
                     </Typography>
                     <Box display="flex" gap={4} justifyContent="center" mt={3}>
                         <Box textAlign="center">
-                            <Typography variant="h5" fontWeight={800} color="primary.main">{glossaryData.length}</Typography>
+                            <Typography component="h2" variant="h5" fontWeight={800} color="primary.main">{glossaryData.length}</Typography>
                             <Typography variant="caption" color="text.disabled">Terms Defined</Typography>
                         </Box>
                         <Box textAlign="center">
-                            <Typography variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.formula).length}</Typography>
+                            <Typography component="h2" variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.formula).length}</Typography>
                             <Typography variant="caption" color="text.disabled">With Formulas</Typography>
                         </Box>
                         <Box textAlign="center">
-                            <Typography variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.methodsPage).length}</Typography>
+                            <Typography component="h2" variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.methodsPage).length}</Typography>
                             <Typography variant="caption" color="text.disabled">Deep Dives</Typography>
                         </Box>
                     </Box>

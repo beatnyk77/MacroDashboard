@@ -417,7 +417,7 @@ export const GlossaryTermPage: React.FC = () => {
                                         '&:hover': { borderColor: 'primary.main', transform: 'translateY(-4px)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }
                                     }}
                                 >
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary', mb: 1 }}>
+                                    <Typography component="p" variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary', mb: 1 }}>
                                         {term.term}
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: 'text.secondary', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineClamp: 2 }}>
@@ -437,7 +437,7 @@ export const GlossaryTermPage: React.FC = () => {
 
                     <Paper sx={{ p: 4, borderRadius: 3, bgcolor: 'text.primary', color: 'background.paper', position: 'relative', overflow: 'hidden', mb: 4 }}>
                         <Activity size={100} style={{ position: 'absolute', right: -20, bottom: -20, opacity: 0.1 }} />
-                        <Typography variant="h5" sx={{ fontWeight: 900, mb: 1 }}>
+                        <Typography component="p" variant="h5" sx={{ fontWeight: 900, mb: 1 }}>
                             Track {termData.term} live
                         </Typography>
                         <Typography variant="body2" sx={{ opacity: 0.7, mb: 3, maxWidth: '80%' }}>

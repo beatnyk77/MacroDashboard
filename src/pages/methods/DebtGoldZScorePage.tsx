@@ -65,14 +65,14 @@ export const DebtGoldZScorePage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A thought-experiment made operational: how many "gold equivalents" would it take to redeem US Federal Debt? Normalised as a Z-score to identify structural gold undervaluation.
                     </Typography>
                 </Box>
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} className="text-amber-400" />
                         Definition &amp; Intuition
                     </Typography>
@@ -86,7 +86,7 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#f59e0b' }} />
                         Formula
                     </Typography>
@@ -115,7 +115,7 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#f59e0b' }} />
                         Debt/Gold Z-Score Historical (Illustrative, 2000–2024)
                     </Typography>
@@ -129,7 +129,7 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#f59e0b' }} />
                         Institutional Use Cases
                     </Typography>
@@ -141,7 +141,7 @@ export const DebtGoldZScorePage: React.FC = () => {
                             { role: 'Commodity Trading Advisors', use: 'Use as a non-momentum confirmation signal for gold futures positioning. Reduces false signals from technical-only approaches.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}

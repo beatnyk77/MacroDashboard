@@ -32,9 +32,9 @@ export interface GlossarySeoEnrichment {
 
 export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
     'breakeven-inflation-rate': {
-        seoTitle: 'Breakeven Inflation Rate: Definition, Formula & Live 10Y Data (2026)',
+        seoTitle: 'Breakeven Inflation Rate: Formula & Live Data',
         seoDescription:
-            'What is breakeven inflation? Market-implied inflation from nominal Treasury vs TIPS yields. Live 10Y breakeven (T10YIE), formula, and 2026 Fed policy context for macro allocators.',
+            'Breakeven inflation: market-implied CPI from Treasuries vs TIPS. Live 10Y T10YIE, formula, and Fed policy context.',
         seoKeywords: [
             'breakeven inflation',
             'breakeven inflation rate',
@@ -76,9 +76,9 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
     },
 
     'foreign-exchange-reserves': {
-        seoTitle: 'Foreign Exchange Reserves: Definition, Forex Reserves & 2026 Trends',
+        seoTitle: 'Foreign Exchange Reserves: Definition & Trends',
         seoDescription:
-            'Foreign exchange reserves (forex reserves) explained: what central banks hold, why FX reserves matter for currency stability, import cover ratios, and live India RBI reserve data on GraphiQuestor.',
+            'FX (forex) reserves explained: central bank holdings, import cover, currency stability, and live India RBI data.',
         seoKeywords: [
             'foreign exchange reserves',
             'forex reserves',
@@ -120,7 +120,7 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
     },
 
     'fiscal-dominance': {
-        seoTitle: 'Fiscal Dominance: Definition, Formula & US Debt Context (2026)',
+        seoTitle: 'Fiscal Dominance: Definition & US Debt Context',
         seoDescription:
             'Fiscal dominance defined: when government debt constrains central bank policy. Interest-to-tax ratios, Thomas Sargent framework, live Fiscal Dominance Meter, and 2026 US sovereign stress signals.',
         seoKeywords: [
@@ -160,9 +160,9 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
     },
 
     tga: {
-        seoTitle: 'Treasury General Account (TGA): Definition, Balance & Liquidity Impact',
+        seoTitle: 'Treasury General Account (TGA): Liquidity Impact',
         seoDescription:
-            'Treasury General Account (TGA) explained: the Fed\'s fiscal liquidity lever. How TGA balance drains or injects reserves, WTREGEN data, net liquidity formula, and 2026 market impact.',
+            'TGA explained: how Treasury General Account balances drain or inject bank reserves, WTREGEN, and net liquidity.',
         seoKeywords: [
             'treasury general account',
             'TGA',

@@ -49,7 +49,7 @@ export const CountriesIndexPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#050810] text-white">
       <SEOManager
-        title="Sovereign Compass — Country Intelligence Directory"
+        title="Sovereign Compass — Country Intelligence"
         description="Access institutional-grade macro intelligence for 40+ countries. Real-time GDP, inflation, debt, yield curve, and sovereign stress metrics."
         keywords={['country intelligence', 'sovereign risk', 'macro data', 'FX reserves', 'yield curve', 'institutional terminal']}
       />

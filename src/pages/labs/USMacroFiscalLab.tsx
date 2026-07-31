@@ -41,8 +41,8 @@ export const USMacroFiscalLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="US Macro & Fiscal Lab \u2014 Debt Maturity, Auction Demand & Fiscal Dominance"
-            description="Real-time telemetry on US sovereign debt dynamics, Treasury auction demand, fiscal dominance metrics, and offshore dollar funding stress. Institutional-grade analysis of the world's reserve currency issuer."
+            title="US Macro & Fiscal Lab: Debt & Auctions"
+            description="Real-time telemetry on US sovereign debt dynamics, Treasury auction demand, fiscal dominance metrics, and offshore dollar funding stress."
             keywords={['US macro', 'fiscal dominance', 'Treasury auction demand', 'US debt maturity wall', 'offshore dollar stress', 'sovereign debt', 'Federal Reserve']}
             jsonLd={[
                 {

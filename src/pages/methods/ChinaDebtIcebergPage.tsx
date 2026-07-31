@@ -63,7 +63,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         A five-layer framework for China's public sector balance sheet — separating MoF-reported central government debt from the shadow stack of LGFV liabilities, policy bank quasi-fiscal exposure, and SOE contingent guarantees.
                     </Typography>
                 </Box>
@@ -72,7 +72,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                     <Box display="flex" gap={2} alignItems="flex-start">
                         <AlertTriangle size={20} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
                         <Box>
-                            <Typography variant="subtitle2" fontWeight={800} sx={{ color: '#f59e0b' }} mb={1}>Why Ranges, Not Point Estimates</Typography>
+                            <Typography component="p" variant="subtitle2" fontWeight={800} sx={{ color: '#f59e0b' }} mb={1}>Why Ranges, Not Point Estimates</Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                                 Layers 3–5 (LGFV, policy banks, SOE contingent) lack audited public disclosure. GraphiQuestor uses IMF Article IV staff estimates and BIS credit aggregates, published as low/base/high ranges with full provenance. We do not fabricate precision where the underlying data is structurally opaque.
                             </Typography>
@@ -81,7 +81,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Layers size={20} style={{ color: '#f59e0b' }} />
                         The Five Layers
                     </Typography>
@@ -98,14 +98,14 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom>Live Layer Snapshot</Typography>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>Live Layer Snapshot</Typography>
                     <Suspense fallback={<ChartSkeleton height={280} />}>
                         <ChinaDebtIcebergChart />
                     </Suspense>
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#f59e0b' }} />
                         Proprietary Composite Formulas
                     </Typography>
@@ -127,7 +127,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} style={{ color: '#f59e0b' }} />
                         Data Provenance Hierarchy
                     </Typography>
@@ -139,7 +139,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                             { tier: 'Tier 4 — Scenario', sources: 'SOE contingent liability matrix (conservative/base/stress)' },
                         ].map(s => (
                             <Box key={s.tier} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{s.tier}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{s.tier}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{s.sources}</Typography>
                             </Box>
                         ))}
@@ -147,7 +147,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Database size={20} style={{ color: '#f59e0b' }} />
                         Institutional Use Cases
                     </Typography>
@@ -159,7 +159,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                             { role: 'Multilateral Research', use: 'Layer decomposition aligns with IMF GFSM 2014 consolidated government definition; useful for Article IV surveillance calibration.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}

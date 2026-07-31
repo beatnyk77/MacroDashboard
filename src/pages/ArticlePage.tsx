@@ -286,7 +286,7 @@ export const ArticlePage: React.FC = () => {
                         {article.author.split(' ').map(n => n[0]).join('')}
                     </Avatar>
                     <Box sx={{ flex: 1 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 0.5 }}>
+                        <Typography variant="subtitle1" component="p" sx={{ fontWeight: 800, mb: 0.5 }}>
                             {article.author}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
@@ -350,7 +350,7 @@ export const ArticlePage: React.FC = () => {
                 {/* ── Related Articles ── */}
                 {relatedArticles.length > 0 && (
                     <Box sx={{ mt: 8 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 800, mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Typography variant="h6" component="h2" sx={{ fontWeight: 800, mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <BookOpen size={18} />
                             Continue Reading
                         </Typography>
@@ -370,7 +370,7 @@ export const ArticlePage: React.FC = () => {
                                             textTransform: 'uppercase', letterSpacing: '0.05em',
                                         }}
                                     />
-                                    <Typography variant="subtitle2" sx={{
+                                    <Typography variant="subtitle2" component="p" sx={{
                                         fontWeight: 700, mb: 1, lineHeight: 1.4,
                                         display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                                     }}>

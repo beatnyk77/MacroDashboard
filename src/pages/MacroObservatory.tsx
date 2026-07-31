@@ -49,8 +49,8 @@ export const MacroObservatory: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="Macro Observatory — Research Labs & Intelligence Hubs"
-            description="Access specialized macro research labs covering US fiscal policy, de-dollarization, gold reserves, energy commodities, sovereign stress, and shadow trade flows. Institutional-grade telemetry for the multipolar era."
+            title="Macro Observatory — Research Labs &"
+            description="Access specialized macro research labs covering US fiscal policy, de-dollarization, gold reserves, energy commodities, sovereign stress, and shadow trade"
             keywords={['macro observatory', 'research labs', 'sovereign stress', 'de-dollarization', 'gold reserves', 'energy commodities', 'institutional macro']}
             robots="index, follow"
             jsonLd={{

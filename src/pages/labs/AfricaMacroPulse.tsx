@@ -59,8 +59,8 @@ export const AfricaMacroPulseLab: React.FC = () => {
     return (
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             <SEOManager
-                title="Africa Macro Pulse — Sovereign Debt, Commodity & Trade Gravity"
-                description="Institutional-grade terminal for tracking African macro intelligence. Monitor fiscal stress, debt-to-GDP, and the shift towards BRICS trade gravity for 10 key African economies."
+                title="Africa Macro Pulse — Sovereign Debt"
+                description="Institutional-grade terminal for tracking African macro intelligence. Monitor fiscal stress, debt-to-GDP, and the shift towards BRICS trade gravity for"
                 keywords={[
                     'Africa Macro Intelligence', 'Africa Sovereign Debt', 'BRICS Trade Africa',
                     'Nigeria Macro', 'South Africa Economy', 'Egypt Debt Stress',

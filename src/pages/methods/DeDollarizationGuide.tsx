@@ -23,8 +23,8 @@ export const DeDollarizationGuide: React.FC = () => {
     return (
         <>
             <SEOManager
-                title="The Ultimate Guide to Global De-Dollarization & BRICS Currencies (2026)"
-                description="An institutional-grade analysis of global de-dollarization, central bank gold purchases, petrodollar decay, and the structural fragmentation of settlement networks."
+                title="Global De-Dollarization Guide (2026)"
+                description="An institutional-grade analysis of global de-dollarization, central bank gold purchases, petrodollar decay, and the structural fragmentation of"
                 keywords={['de-dollarization', 'BRICS currency', 'reserve currency shift', 'central bank gold', 'petrodollar', 'US fiscal dominance']}
                 jsonLd={[
                     {

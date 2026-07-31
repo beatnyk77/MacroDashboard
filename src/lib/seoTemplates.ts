@@ -12,7 +12,8 @@ export function countryMeta(countryName: string, iso: string): {
 } {
   const code = iso.toUpperCase();
   return {
-    title: `${countryName} (${code}) Macro Data & Sovereign Risk Terminal`,
+    // Keep ≤60 chars with SEOManager's " | GraphiQuestor" suffix (longest: United Arab Emirates).
+    title: `${countryName} (${code}) Sovereign Risk`,
     description: `${countryName} macro terminal: GDP growth, inflation, sovereign debt, FX reserves, and policy rates. Live institutional telemetry for ${code} on ${BRAND}.`,
     keywords: [countryName, code, 'Macro Data', 'Sovereign Risk', 'Yield Curve', BRAND],
   };

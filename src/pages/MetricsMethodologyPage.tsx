@@ -270,7 +270,7 @@ export const MetricsMethodologyPage: React.FC = () => {
         <div className="min-h-screen bg-background">
             <SEOManager
                 title="Metric Methodology & Calculation Framework"
-                description="Detailed formulas, economic intuition, and institutional use cases for every derived macro metric on GraphiQuestor — Net Liquidity Z-Score, Debt/Gold Z-Score, Fiscal Dominance Meter, Energy Dependency Ratio, and more."
+                description="Detailed formulas, economic intuition, and institutional use cases for every derived macro metric on GraphiQuestor — Net Liquidity Z-Score, Debt/Gold"
                 keywords={[
                     'Net Liquidity Z-Score methodology', 'Debt Gold ratio formula', 'Fiscal Dominance Meter',
                     'Energy Dependency Ratio', 'Sovereign Stress Index', 'macro metric calculation',

@@ -15,8 +15,8 @@ export const blogArticles: BlogArticle[] = [
     {
         id: '9',
         slug: 'm2-gold-ratio-debasement-signal-2026',
-        title: 'M2/Gold Ratio in 2026: The Definitive Debasement Signal Explained',
-        description: 'A complete guide to the M2/Gold Ratio — the macro signal that compares global money supply to gold market cap. Historical analysis from 2001 to 2026, interpretation framework, and what the current reading means for institutional gold positioning.',
+        title: 'M2/Gold Ratio 2026: Debasement Signal Explained',
+        description: 'M2/Gold Ratio guide: global money supply vs gold market cap, 2001–2026 episodes, and how institutional desks read the debasement signal.',
         date: '2026-05-30',
         author: 'GraphiQuestor Research',
         category: 'Monetary Policy',
@@ -134,7 +134,7 @@ For the broader hard asset framework, our [De-Dollarization & Gold Lab](/labs/de
     {
         id: '1',
         slug: 'debt-gold-ratio-analysis-2026',
-        title: 'The Debt/Gold Ratio: Why It Matters for Monetary Sovereignty in 2026',
+        title: 'Debt/Gold Ratio & Monetary Sovereignty (2026)',
         description: 'An institutional-grade analysis of sovereign debt burdens relative to gold reserves, featuring our proprietary Gold Ratio Ribbon.',
         date: '2026-02-14',
         author: 'GraphiQuestor Research',
@@ -142,7 +142,6 @@ For the broader hard asset framework, our [De-Dollarization & Gold Lab](/labs/de
         tags: ['Gold', 'Debt', 'Inflation', 'Sovereign Risk'],
         keywords: ['Debt Gold Ratio', 'Monetary Sovereignty', 'Gold Valuation', 'Sovereign Debt'],
         content: `
-# The Debt/Gold Ratio: Why It Matters for Monetary Sovereignty in 2026
 
 In an era of unprecedented fiscal deficit spending and central bank balance sheet expansion, traditional metrics for sovereign creditworthiness are increasingly failing to capture the full spectrum of monetary risk. At GraphiQuestor, we argue that the **Debt/Gold Ratio** is the most reliable indicator of a nation's true monetary optionality.
 
@@ -165,7 +164,7 @@ For capital allocators, these Z-scores provide a framework for currency hedging.
     {
         id: '2',
         slug: 'brics-de-dollarization-tracker-2026',
-        title: 'BRICS+ De-Dollarization: Mapping the Structural Shift in Global Reserves',
+        title: 'BRICS+ De-Dollarization & Global Reserves (2026)',
         description: 'Tracking the secular decline of USD reserve share and the rise of mBridge and bilateral settlement systems.',
         date: '2026-02-13',
         author: 'GraphiQuestor Research',
@@ -173,7 +172,6 @@ For capital allocators, these Z-scores provide a framework for currency hedging.
         tags: ['BRICS', 'De-Dollarization', 'Reserve Currency', 'mBridge'],
         keywords: ['BRICS De-Dollarization', 'Central Bank Reserves', 'Currency Wars', 'USD Hegemony'],
         content: `
-# BRICS+ De-Dollarization: Mapping the Structural Shift in Global Reserves
 
 The unipolar moment of the US Dollar as the undisputed global reserve currency is transitioning toward a multipolar arrangement. This "Geopolitical Pivot" is not merely rhetorical—it is being coded into the infrastructure of global finance.
 
@@ -192,7 +190,7 @@ India continues to play a balancing act, participating in BRICS+ initiatives whi
     {
         id: '3',
         slug: 'india-macro-pulse-mospi-dashboard-guide',
-        title: 'India Macro Pulse: A Deep Dive into MoSPI Industrial and Labor Data',
+        title: 'India Macro Pulse: MoSPI Industrial & Labor Data',
         description: 'Understanding India’s real economy through PLFS, ASI, and CPI granularity.',
         date: '2026-02-12',
         author: 'GraphiQuestor Research',
@@ -200,7 +198,6 @@ India continues to play a balancing act, participating in BRICS+ initiatives whi
         tags: ['India', 'MoSPI', 'PLFS', 'ASI', 'Macro Data'],
         keywords: ['India Macro Pulse MoSPI', 'Indian Economy', 'Manufacturing GVA', 'Labor Force India'],
         content: `
-# India Macro Pulse: A Deep Dive into MoSPI Industrial and Labor Data
 
 Official GDP figures often mask the underlying sectoral dynamics of the Indian economy. To gain a true edge, institutional investors must look at the **India Macro Pulse**—a synthesis of high-frequency telemetry from the Ministry of Statistics and Programme Implementation (MoSPI).
 
@@ -219,7 +216,7 @@ For sovereign bond investors, these real-economy signals indicate whether moneta
     {
         id: '4',
         slug: 'shanghai-divergence-indicator-explained',
-        title: 'Shanghai Divergence: When Monetary Policy Conflicts with Fiscal Mandates',
+        title: 'Shanghai Divergence: Policy vs Fiscal Mandates',
         description: 'Explaining our proprietary indicator that tracks policy tension between the PBOC and Beijing fiscal authorities.',
         date: '2026-02-11',
         author: 'GraphiQuestor Research',
@@ -227,7 +224,6 @@ For sovereign bond investors, these real-economy signals indicate whether moneta
         tags: ['China', 'PBOC', 'Shanghai Divergence', 'Monetary Policy'],
         keywords: ['Shanghai Divergence', 'China Macro Pulse', 'PBOC Policy', 'EM Capital Flows'],
         content: `
-# Shanghai Divergence: When Monetary Policy Conflicts with Fiscal Mandates
 
 Investing in China requires understanding the tension between monetary accommodation and structural deleveraging. We call this the **Shanghai Divergence**.
 
@@ -246,7 +242,7 @@ When the world's second-largest economy shows signs of internal policy tension, 
     {
         id: '5',
         slug: 'india-energy-security-state-wise-analysis',
-        title: 'India Energy Security: A State-wise Vulnerability Mapping',
+        title: 'India Energy Security: State-wise Vulnerability',
         description: 'Analyzing energy dependency ratios across Indian states using MoSPI Energy Statistics.',
         date: '2026-02-10',
         author: 'GraphiQuestor Research',
@@ -254,7 +250,6 @@ When the world's second-largest economy shows signs of internal policy tension, 
         tags: ['Energy Security', 'India', 'Sustainability', 'Infrastructure'],
         keywords: ['India Energy Security State-wise Analysis', 'Oil Imports India', 'Renewable Energy India', 'State-level Energy Data'],
         content: `
-# India Energy Security: A State-wise Vulnerability Mapping
 
 Energy is the fundamental constraint of economic growth. In India, energy security is not a monolithic national issue but a collection of state-level challenges.
 
@@ -273,7 +268,7 @@ As states pivot toward solar and wind, the map of energy security is being redra
     {
         id: '6',
         slug: 'global-net-liquidity-guide-2026',
-        title: 'The Capital Allocator’s Guide to Global Net Liquidity',
+        title: 'Capital Allocator’s Guide to Net Liquidity',
         description: 'How to track the "Oxygen" of the financial markets using Fed, TGA, and RRP signals.',
         date: '2026-02-09',
         author: 'GraphiQuestor Research',
@@ -281,7 +276,6 @@ As states pivot toward solar and wind, the map of energy security is being redra
         tags: ['Liquidity', 'Fed', 'TGA', 'RRP', 'Monetary Oxygen'],
         keywords: ['Global Net Liquidity Guide', 'Fed Balance Sheet', 'TGA RRP Drain', 'Market Liquidity'],
         content: `
-# The Capital Allocator’s Guide to Global Net Liquidity
 
 In a world governed by central bank interventions, "Asset Price Inflation" is often just another name for "Net Liquidity Expansion."
 
@@ -300,7 +294,7 @@ While central bank officials focus on interest rate "forward guidance," the actu
     {
         id: '7',
         slug: 'asi-manufacturing-intelligence-india-advantage',
-        title: 'ASI Manufacturing Intelligence: Beyond Headline IIP Numbers',
+        title: 'ASI Manufacturing Intelligence Beyond IIP',
         description: 'Leveraging the Annual Survey of Industries for institutional EM positioning.',
         date: '2026-02-08',
         author: 'GraphiQuestor Research',
@@ -308,7 +302,6 @@ While central bank officials focus on interest rate "forward guidance," the actu
         tags: ['ASI', 'Manufacturing', 'India', 'Industrial Growth'],
         keywords: ['ASI Manufacturing Intelligence', 'India Industrial Production', 'MoSPI ASI', 'EM Manufacturing'],
         content: `
-# ASI Manufacturing Intelligence: Beyond Headline IIP Numbers
 
 While the Index of Industrial Production (IIP) provides a monthly pulse, the **Annual Survey of Industries (ASI)** provides the structural skeleton of the Indian manufacturing story.
 
@@ -327,7 +320,7 @@ We provide direct integration with MoSPI's ASI infrastructure, delivering insigh
     {
         id: '8',
         slug: 'g20-macro-surveillance-dashboard-analysis',
-        title: 'G20 Macro Surveillance: Tracking Sovereign Stress in a Fragmenting World',
+        title: 'G20 Macro Surveillance & Sovereign Stress',
         description: 'How unified macro surveillance helps identify systemic risks across the G20 nations.',
         date: '2026-02-07',
         author: 'GraphiQuestor Research',
@@ -335,7 +328,6 @@ We provide direct integration with MoSPI's ASI infrastructure, delivering insigh
         tags: ['G20', 'Sovereign Debt', 'Macro Risk', 'Global Economy'],
         keywords: ['G20 Macro Surveillance Dashboard', 'Sovereign Stress', 'Global Debt Cycle', 'Macro Risk Monitoring'],
         content: `
-# G20 Macro Surveillance: Tracking Sovereign Stress in a Fragmenting World
 
 The G20 represents 85% of global GDP, but its internal cohesion is at a multi-decade low. In this environment, macro surveillance must be autonomous and institutional-grade.
 

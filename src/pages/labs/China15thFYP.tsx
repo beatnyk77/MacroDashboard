@@ -28,8 +28,8 @@ export const China15thFYPLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="China 15th Five-Year Plan Lab — 2026–2030 Strategic Roadmap Intelligence"
-            description="Institutional-grade telemetry tracking China's 15th Five-Year Plan (2026–2030): high-quality development targets, technological self-reliance, R&D growth, and supply chain independence metrics."
+            title="China 15th Five-Year Plan Lab — 2026–2030"
+            description="Institutional-grade telemetry tracking China's 15th Five-Year Plan (2026–2030): high-quality development targets, technological self-reliance, R&D"
             keywords={['China five-year plan', '15th FYP', 'China 2026-2030', 'technological self-reliance', 'China macro', 'CPC policy', 'semiconductor independence']}
             jsonLd={[
                 {

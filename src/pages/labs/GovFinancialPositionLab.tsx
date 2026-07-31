@@ -24,7 +24,7 @@ export const GovFinancialPositionLab: React.FC = () => {
   return (
     <>
       <SEOManager
-        title="Government Financial Position — FRUSG Net Cost, Balance Sheet & Agency Outlays"
+        title="Government Financial Position Lab"
         description="Institutional board for U.S. government GAAP net cost by agency, consolidated balance sheet, and monthly Treasury outlays by agency (MTS Table 5)."
         keywords={['FRUSG', 'Statement of Net Cost', 'US balance sheet', 'agency outlays', 'fiscal data']}
         jsonLd={[

@@ -34,8 +34,8 @@ export const IndiaCreditCyclePage: React.FC = () => {
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="India Credit Cycle Clock — RBI Policy Signal Methodology"
-                description="India credit cycle tracker methodology: how Credit Growth YoY vs the Credit-Deposit ratio maps to four cycle phases (Expansion/Recovery/Downturn/Repair), calibrated against 10-year RBI averages."
+                title="India Credit Cycle Clock — RBI Policy"
+                description="India credit cycle tracker methodology: how Credit Growth YoY vs the Credit-Deposit ratio maps to four cycle phases (Expansion/Recovery/Downturn/Repair)"
                 keywords={["India credit cycle tracker", "RBI lending cycle indicator", "India CD ratio monitor", "India credit growth YoY", "RBI policy signal"]}
                 canonicalUrl="https://graphiquestor.com/methods/india-credit-cycle-clock"
                 jsonLd={jsonLd}
@@ -65,14 +65,14 @@ export const IndiaCreditCyclePage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Maps the Indian banking system's lending cycle across four regimes — Expansion, Downturn, Repair, and Recovery — using the relationship between credit growth momentum and the credit-deposit ratio as calibrated against RBI 10-year averages.
                     </Typography>
                 </Box>
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} style={{ color: '#22c55e' }} />
                         Definition &amp; Intuition
                     </Typography>
@@ -86,7 +86,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#22c55e' }} />
                         Formula &amp; Quadrant Mapping
                     </Typography>
@@ -116,7 +116,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* Quadrant Definitions */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#22c55e' }} />
                         Quadrant Definitions
                     </Typography>
@@ -153,7 +153,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
                             <Box key={q.name} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: `1px solid ${q.color}30` }}>
                                 <Box display="flex" alignItems="center" gap={1} mb={1}>
                                     <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: q.color, flexShrink: 0 }} />
-                                    <Typography variant="subtitle2" fontWeight={800} sx={{ color: q.color }}>{q.name}</Typography>
+                                    <Typography component="p" variant="subtitle2" fontWeight={800} sx={{ color: q.color }}>{q.name}</Typography>
                                 </Box>
                                 <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#64748b' }} display="block" mb={1}>{q.coords}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{q.desc}</Typography>
@@ -172,7 +172,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* Calibration */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#22c55e' }} />
                         Calibration Methodology
                     </Typography>
@@ -186,7 +186,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Database size={20} style={{ color: '#22c55e' }} />
                         Institutional Use Cases
                     </Typography>
@@ -198,7 +198,7 @@ export const IndiaCreditCyclePage: React.FC = () => {
                             { role: 'Sovereign Wealth Funds', use: 'India allocation sizing informed by cycle phase. Expansion phase warrants caution on credit-intensive sectors; Recovery phase signals structural consumption growth tailwind.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(34,197,94,0.04)', borderRadius: 2, border: '1px solid rgba(34,197,94,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#22c55e' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#22c55e' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}

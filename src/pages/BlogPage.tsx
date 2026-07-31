@@ -11,7 +11,7 @@ export const BlogPage: React.FC = () => {
     return (
         <div className="py-8">
             <SEOManager
-                title="Intelligence Journal | Macro Research & Analysis"
+                title="Intelligence Journal: Macro Research"
                 description="Institutional-grade macro research, de-dollarization trackers, and India real-economy analysis."
                 keywords={['Macro Research', 'India Economy', 'De-dollarization', 'Gold Ratio', 'Institutional Intelligence']}
                 jsonLd={{

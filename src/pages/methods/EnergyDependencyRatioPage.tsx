@@ -43,8 +43,8 @@ export const EnergyDependencyRatioPage: React.FC = () => {
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Energy Dependency Ratio — Methodology & Oil Price Sensitivity"
-                description="How the Energy Dependency Ratio measures sovereign vulnerability to energy price shocks, with oil/CAD sensitivity analysis for India. Formula, data, and use cases."
+                title="Energy Dependency Ratio — Methodology &"
+                description="How the Energy Dependency Ratio measures sovereign vulnerability to energy price shocks, with oil/CAD sensitivity analysis for India. Formula, data, and"
                 keywords={["Energy Dependency Ratio", "India Oil Imports", "CAD Oil Sensitivity", "Energy Security Macro"]}
                 canonicalUrl="https://graphiquestor.com/methods/energy-dependency-ratio"
                 jsonLd={jsonLd}
@@ -74,14 +74,14 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </Box>
-                    <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
+                    <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
                         Quantifying how exposed a sovereign is to global energy price shocks — and translating that into direct current account and currency risk.
                     </Typography>
                 </Box>
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} style={{ color: '#10b981' }} />
                         Definition &amp; Intuition
                     </Typography>
@@ -92,14 +92,14 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                         Negative values indicate net energy exporters (Russia, Saudi Arabia, USA after the shale revolution). The ratio is sourced from IEA World Energy Balances and uses the standardised "ktoe" (kiloton of oil equivalent) unit to normalise across coal, oil, gas, and renewables.
                     </Typography>
                     <Box sx={{ mt: 3, p: 3, bgcolor: 'rgba(16,185,129,0.05)', borderRadius: 2, border: '1px solid rgba(16,185,129,0.15)' }}>
-                        <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>India Context (2024)</Typography>
+                        <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>India Context (2024)</Typography>
                         <Typography variant="body2" color="text.secondary">India imports ~88% of its petroleum, ~50% of its natural gas, and a declining but still significant share of its coal. The total energy import bill was approximately <strong style={{ color: '#6ee7b7' }}>$221 billion in FY2024</strong>, representing the single largest driver of the current account deficit.</Typography>
                     </Box>
                 </Paper>
 
                 {/* Formula */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} style={{ color: '#10b981' }} />
                         Formula
                     </Typography>
@@ -125,7 +125,7 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Cross-country bar chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} style={{ color: '#10b981' }} />
                         Cross-Country Energy Dependency (2024, Illustrative)
                     </Typography>
@@ -139,7 +139,7 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Oil Price Sensitivity Table */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Zap size={20} style={{ color: '#f59e0b' }} />
                         India Oil Price Sensitivity Matrix
                     </Typography>
@@ -177,7 +177,7 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Lightbulb size={20} style={{ color: '#10b981' }} />
                         Institutional Use Cases
                     </Typography>
@@ -189,7 +189,7 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                             { role: 'Policy Analysts', use: 'EDR is the quantitative anchor for India\'s National Energy Security Strategy modeling — cross-referenced with renewable energy transition milestones to estimate EDR trajectory to 2030.' },
                         ].map(u => (
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(16,185,129,0.04)', borderRadius: 2, border: '1px solid rgba(16,185,129,0.12)' }}>
-                                <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>{u.role}</Typography>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
