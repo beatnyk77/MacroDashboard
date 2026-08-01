@@ -141,7 +141,7 @@ export const SovereignStressLab: React.FC = () => {
                         A primary focus of our surveillance is the <strong>BoJ Monetary Dominance</strong> monitor. As the last anchor of negative rates and Yield Curve Control (YCC) shifts toward normalization, the global carry trade faces an unprecedented unwinding risk. Our Z-score analysis tracks the BoJ's balance sheet relative to total Japanese government debt (JGBs), revealing the extent of central bank absorption and the potential for a liquidity vacuum in G7 treasuries.
                     </p>
                     <p>
-                        In the multipolar era, sovereign risk is no longer just about debt-to-GDP; it is about the <strong>Interest-to-Revenue Ratio</strong>. When a government spends more on servicing past debt than on future growth (infrastructure or R&D), the regime enters a structural decline. GraphiQuestor's <a href="/glossary/sovereign-risk-matrix" className="text-blue-400 hover:underline">Sovereign Risk Matrix</a> synthesizes these metrics into a real-time stress coordinate, enabling capital allocators to navigate the final stages of the global debt supercycle.
+                        In the multipolar era, sovereign risk is no longer just about debt-to-GDP; it is about the <strong>Interest-to-Revenue Ratio</strong>. When a government spends more on servicing past debt than on future growth (infrastructure or R&D), the regime enters a structural decline. GraphiQuestor's <strong>Sovereign Risk Matrix</strong> synthesizes these metrics into a real-time stress coordinate, enabling capital allocators to navigate the final stages of the global debt supercycle.
                     </p>
                 </div>
             </article>

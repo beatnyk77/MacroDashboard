@@ -2,6 +2,7 @@ import React from 'react';
 import { Activity, TrendingUp, TrendingDown, Minus, Calendar, ShieldAlert } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useAfricaMacroSnapshot } from '@/hooks/useAfricaMacroSnapshot';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 export const AfricaMacroSnapshot: React.FC = () => {
     const { data: snapshot, isLoading } = useAfricaMacroSnapshot();
@@ -17,7 +18,17 @@ export const AfricaMacroSnapshot: React.FC = () => {
         );
     }
 
-    if (!snapshot) return null;
+    if (!snapshot) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="Africa macro snapshot unavailable"
+                description="No continental snapshot has been published yet."
+                accentColor="blue"
+                height={300}
+            />
+        );
+    }
 
     return (
         <div className="relative space-y-8">

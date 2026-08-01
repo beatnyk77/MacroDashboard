@@ -88,28 +88,28 @@ export const ChinaLGFFiscalPanel: React.FC = () => {
                         value: lgfvDebt?.value,
                         range: lgfvDebt ? `${lgfvDebt.value_low}–${lgfvDebt.value_high}` : null,
                         unit: 'CNY Tn',
-                        warn: true,
+                        warn: lgfvDebt?.value != null,
                     },
                     {
                         label: 'Special Refinancing Issued',
                         value: specialRefi?.value,
                         range: specialRefi ? `${specialRefi.value_low}–${specialRefi.value_high}` : null,
                         unit: 'CNY Tn',
-                        warn: (specialRefi?.value ?? 0) > 1.5,
+                        warn: specialRefi?.value != null && specialRefi.value > 1.5,
                     },
                     {
                         label: 'LGFV Net Issuance',
                         value: netIssuance?.value,
                         range: null,
                         unit: 'CNY Tn',
-                        warn: (netIssuance?.value ?? 0) < 0,
+                        warn: netIssuance?.value != null && netIssuance.value < 0,
                     },
                     {
                         label: 'Land Revenue / LG Revenue',
                         value: landPct?.value,
                         range: null,
                         unit: '%',
-                        warn: (landPct?.value ?? 100) < 25,
+                        warn: landPct?.value != null && landPct.value < 25,
                     },
                 ].map(({ label, value, range, unit, warn }) => (
                     <div key={label} className={cn(

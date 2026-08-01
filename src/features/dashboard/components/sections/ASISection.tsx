@@ -6,6 +6,7 @@ import { Factory, Users, TrendingUp, ChevronRight, Activity, Globe, DollarSign, 
 import { scaleQuantile } from 'd3-scale';
 import { StateMacroInsights } from '../StateMacroInsights';
 import React, { Suspense } from 'react';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 const IndiaLeafletMap = React.lazy(() => import('../maps/IndiaLeafletMap').then(m => ({ default: m.IndiaLeafletMap })));
 
@@ -51,6 +52,17 @@ export const ASISection: React.FC = () => {
 
     if (isLoading) return <div className="flex justify-center p-12"><Activity className="animate-spin text-blue-500" /></div>;
     if (error) return <div className="p-8 text-rose-400 font-bold bg-rose-500/10 rounded-2xl border border-rose-500/20">Error loading ASI telemetry</div>;
+    if (!data || data.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="ASI industrial data unavailable"
+                description="Annual Survey of Industries state-level data has not been published for the requested window."
+                accentColor="blue"
+                height={400}
+            />
+        );
+    }
 
     const formatValue = (state: StateASIStats, metric: ASIMapMetric) => {
         const val = Number(state[metric]) || 0;

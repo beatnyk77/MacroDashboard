@@ -5,6 +5,7 @@ import {
     AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell
 } from 'recharts';
 import { Package2, Anchor } from 'lucide-react';
+import { statusFromThreshold, STATUS_DOT_CLASS } from '@/lib/dataStatus';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
@@ -63,27 +64,31 @@ export const ChinaExternalSectorPanel: React.FC = () => {
                         value: latestTrade?.value != null ? `$${latestTrade.value.toFixed(1)}Bn` : '--',
                         sub: 'Monthly surplus/deficit',
                         color: 'text-blue-400',
-                        status: (latestTrade?.value ?? 0) > 70 ? 'safe' : 'warning',
+                        status: statusFromThreshold(latestTrade?.value, (v) => v > 70),
                     },
                     {
                         label: 'Export Growth',
                         value: latestExports?.value != null ? `${latestExports.value >= 0 ? '+' : ''}${latestExports.value.toFixed(1)}%` : '--',
                         sub: 'YoY nominal exports',
-                        color: (latestExports?.value ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400',
-                        status: (latestExports?.value ?? 0) >= 0 ? 'safe' : 'warning',
+                        color: latestExports?.value == null
+                            ? 'text-muted-foreground'
+                            : latestExports.value >= 0
+                                ? 'text-emerald-400'
+                                : 'text-rose-400',
+                        status: statusFromThreshold(latestExports?.value, (v) => v >= 0),
                     },
                     {
                         label: 'PBOC FX Reserves',
                         value: latestFX?.value != null ? `$${latestFX.value.toFixed(2)}Tn` : '--',
                         sub: 'Total foreign exchange holdings',
                         color: 'text-cyan-400',
-                        status: (latestFX?.value ?? 0) > 3.0 ? 'safe' : 'warning',
+                        status: statusFromThreshold(latestFX?.value, (v) => v > 3.0),
                     },
                 ].map(({ label, value, sub, color, status }) => (
                     <div key={label} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
                         <div className="flex justify-between items-start mb-2">
                             <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</p>
-                            <div className={cn('w-1.5 h-1.5 rounded-full', status === 'safe' ? 'bg-emerald-500' : 'bg-amber-500')} />
+                            <div className={cn('w-1.5 h-1.5 rounded-full', STATUS_DOT_CLASS[status])} />
                         </div>
                         <p className={cn('text-3xl font-black tabular-nums tracking-heading mb-1', color)}>{value}</p>
                         <p className="text-xs text-muted-foreground/40">{sub}</p>

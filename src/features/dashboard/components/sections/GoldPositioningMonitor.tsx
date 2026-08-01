@@ -9,6 +9,7 @@ import {
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, AreaChart, Area, CartesianGrid, Cell } from 'recharts';
 import { useGoldPositioning } from '@/hooks/useGoldPositioning';
 import { MotionCard } from '@/components/MotionCard';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 // Custom tooltip component for basis chart
 interface BasisTooltipProps {
@@ -74,7 +75,18 @@ export const GoldPositioningMonitor: React.FC = () => {
         }));
     }, [historyData]);
 
-    if (isLoading || !historyData || historyData.length === 0) return null;
+    if (isLoading) return null;
+    if (!historyData || historyData.length === 0) {
+        return (
+            <DataStatePanel
+                variant="empty"
+                title="Gold positioning data unavailable"
+                description="CFTC COT positioning and paper/physical basis data has not reported for the requested window."
+                accentColor="amber"
+                height={300}
+            />
+        );
+    }
 
     // Latest snapshot (most recent date)
     const latest = historyData[0];

@@ -39,7 +39,7 @@ async function fetchCbGoldNet(): Promise<{ date: string; value: number } | null>
   const currentYear = new Date().getFullYear()
   const startPeriod = currentYear - 3
 
-  const url = `http://dataservices.imf.org/REST/SDMX_JSON.svc/CompactData/IFS/A..RAXG_FO.`
+  const url = `https://dataservices.imf.org/REST/SDMX_JSON.svc/CompactData/IFS/A..RAXG_FO.`
     + `?startPeriod=${startPeriod}&endPeriod=${currentYear}`
 
   const res = await fetchWithRetry(url, { timeoutMs: 30_000, maxRetries: 2 })

@@ -5,6 +5,7 @@ import {
     XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LineChart, Line, Legend
 } from 'recharts';
 import { Factory } from 'lucide-react';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 const GaugeNeedle: React.FC<{ value: number }> = ({ value }) => {
     // value is PMI index. 50 = neutral. Range 44–56.
@@ -72,8 +73,8 @@ export const ChinaRealEconomyPanel: React.FC = () => {
     }
     const pmiData = Object.values(pmiByDate).sort((a, b) => a.date.localeCompare(b.date)).slice(-12);
 
-    const latestNBS = pmiData[pmiData.length - 1]?.NBS ?? 50.1;
-    const latestCaixin = pmiData[pmiData.length - 1]?.Caixin ?? 50.5;
+    const latestNBS = pmiData[pmiData.length - 1]?.NBS as number | undefined;
+    const latestCaixin = pmiData[pmiData.length - 1]?.Caixin as number | undefined;
 
     const pmiStatus = (v: number) => v >= 50 ? { label: 'Expanding', cls: 'text-emerald-400' } : { label: 'Contracting', cls: 'text-rose-400' };
 
@@ -96,12 +97,24 @@ export const ChinaRealEconomyPanel: React.FC = () => {
                 <div className="h-48 rounded-2xl bg-white/[0.02] animate-pulse" />
             ) : (
                 <>
-                    {/* PMI Dual Gauge */}
+                    {/* PMI Dual Gauge — per-series empty state (never fabricate 50.x) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {[
                             { label: 'NBS PMI', value: latestNBS, sub: 'Official Manufacturing PMI', color: 'text-red-400' },
                             { label: 'Caixin PMI', value: latestCaixin, sub: 'Private sector / SME focus', color: 'text-amber-400' },
                         ].map(({ label, value, sub, color }) => {
+                            if (value == null) {
+                                return (
+                                    <DataStatePanel
+                                        key={label}
+                                        variant="empty"
+                                        title="PMI data unavailable"
+                                        description={`${label} has not reported for the requested window.`}
+                                        accentColor="amber"
+                                        height={220}
+                                    />
+                                );
+                            }
                             const s = pmiStatus(value);
                             return (
                                 <div key={label} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col items-center text-center gap-2">

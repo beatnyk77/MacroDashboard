@@ -57,17 +57,34 @@ export const ChinaProprietarySignals: React.FC = () => {
         value: r.value,
     }));
 
-    // Build Radar data for summary
+    // Build Radar data for summary — omit axes with no observed metric (never plot midpoints)
     const radarData = [
-        { subject: 'Liquidity', value: Math.min(100, Math.max(0, 50 + (latestPBOC?.net_liquidity_signal ?? 0) * 10)) },
-        { subject: 'Credit', value: Math.min(100, Math.max(0, 50 + (latestCI?.value ?? 0) * 15)) },
-        { subject: 'External', value: 70 },  // Strong surplus — proxy
-        { subject: 'USD Decoupling', value: Math.min(100, 60 + Math.abs(latestDD?.value ?? 0) * 20) },
-        { subject: 'Margins', value: Math.min(100, Math.max(0, 50 + (latestCD?.value ?? 0) * 5)) },
-    ];
+        latestPBOC?.net_liquidity_signal != null && {
+            subject: 'Liquidity',
+            value: Math.min(100, Math.max(0, 50 + latestPBOC.net_liquidity_signal * 10)),
+        },
+        latestCI?.value != null && {
+            subject: 'Credit',
+            value: Math.min(100, Math.max(0, 50 + latestCI.value * 15)),
+        },
+        latestDD?.value != null && {
+            subject: 'USD Decoupling',
+            value: Math.min(100, 60 + Math.abs(latestDD.value) * 20),
+        },
+        latestCD?.value != null && {
+            subject: 'Margins',
+            value: Math.min(100, Math.max(0, 50 + latestCD.value * 5)),
+        },
+    ].filter(Boolean) as { subject: string; value: number }[];
 
-    const pbocFedGap = latestPBOC?.pboc_vs_fed_gap ?? -3.33;
-    const pbocDivergenceLabel = pbocFedGap < -2 ? 'Wide — Capital Outflow Pressure' : pbocFedGap > -1 ? 'Compressing — Supportive' : 'Neutral';
+    const pbocFedGap = latestPBOC?.pboc_vs_fed_gap ?? null;
+    const pbocDivergenceLabel = pbocFedGap == null
+        ? 'No data available for this window.'
+        : pbocFedGap < -2
+            ? 'Wide — Capital Outflow Pressure'
+            : pbocFedGap > -1
+                ? 'Compressing — Supportive'
+                : 'Neutral';
 
     return (
         <div className="space-y-6">
@@ -100,9 +117,11 @@ export const ChinaProprietarySignals: React.FC = () => {
                     borderColor="border-amber-500/20"
                     desc="Source: PBoC Total Social Financing / Nominal GDP"
                     interpretation={
-                        (latestCI?.value ?? 0) > 1.5
+                        latestCI?.value == null
+                            ? 'No data available for this window.'
+                            : latestCI.value > 1.5
                             ? '🟢 Rising impulse → bullish for commodities & EM equities in 9-12M'
-                            : (latestCI?.value ?? 0) > 0
+                            : latestCI.value > 0
                             ? '🟡 Positive but decelerating → mixed signal'
                             : '🔴 Negative impulse → demand contraction signal'
                     }
@@ -118,9 +137,11 @@ export const ChinaProprietarySignals: React.FC = () => {
                     borderColor="border-red-500/20"
                     desc="Source: IMF COFER database (quarterly)"
                     interpretation={
-                        (latestDD?.value ?? 0) < -1.0
+                        latestDD?.value == null
+                            ? 'No data available for this window.'
+                            : latestDD.value < -1.0
                             ? '🔴 Accelerating USD decoupling — CIPS + CNY trade routes expanding'
-                            : (latestDD?.value ?? 0) < 0
+                            : latestDD.value < 0
                             ? '🟡 Slow de-dollarization — structural but gradual'
                             : '⬜ USD dominance stable'
                     }
@@ -136,13 +157,15 @@ export const ChinaProprietarySignals: React.FC = () => {
                     trend={latestCD?.value != null && corpDistress?.[1]?.value != null
                         ? latestCD.value < corpDistress[1].value ? 'down' : 'up'
                         : 'neutral'}
-                    color={(latestCD?.value ?? 0) < -1.5 ? 'text-rose-400' : 'text-amber-400'}
-                    borderColor={(latestCD?.value ?? 0) < -1.5 ? 'border-rose-500/20' : 'border-amber-500/20'}
+                    color={latestCD?.value == null ? 'text-muted-foreground' : latestCD.value < -1.5 ? 'text-rose-400' : 'text-amber-400'}
+                    borderColor={latestCD?.value == null ? 'border-white/10' : latestCD.value < -1.5 ? 'border-rose-500/20' : 'border-amber-500/20'}
                     desc="Negative = PPI deflation faster than CPI → industrial margin squeeze"
                     interpretation={
-                        (latestCD?.value ?? 0) < -2.0
+                        latestCD?.value == null
+                            ? 'No data available for this window.'
+                            : latestCD.value < -2.0
                             ? '🔴 Severe margin compression → watch for credit defaults & SOE support'
-                            : (latestCD?.value ?? 0) < -1.0
+                            : latestCD.value < -1.0
                             ? '🟡 Moderate pressure → property + industrial sector stress'
                             : '🟢 Spreads recovering → earnings stabilization signal'
                     }
@@ -151,13 +174,16 @@ export const ChinaProprietarySignals: React.FC = () => {
                 <SignalCard
                     label="PBOC vs Fed Divergence"
                     sublabel="MLF Rate minus Fed Funds Rate"
-                    value={pbocFedGap !== null ? `${pbocFedGap.toFixed(2)}%` : '--'}
-                    color={pbocFedGap < -2 ? 'text-rose-400' : 'text-emerald-400'}
-                    borderColor={pbocFedGap < -2 ? 'border-rose-500/20' : 'border-emerald-500/20'}
+                    value={pbocFedGap != null ? `${pbocFedGap.toFixed(2)}%` : '--'}
+                    color={pbocFedGap == null ? 'text-muted-foreground' : pbocFedGap < -2 ? 'text-rose-400' : 'text-emerald-400'}
+                    borderColor={pbocFedGap == null ? 'border-white/10' : pbocFedGap < -2 ? 'border-rose-500/20' : 'border-emerald-500/20'}
                     desc="Source: PBOC (MLF 1Y) vs Fed Funds Effective Rate"
-                    interpretation={pbocFedGap < -2
-                        ? `🔴 ${pbocDivergenceLabel} — negative carry on CNY-denominated assets vs USD`
-                        : `🟢 ${pbocDivergenceLabel} — narrowing differential reduces outflow pressure`
+                    interpretation={
+                        pbocFedGap == null
+                            ? 'No data available for this window.'
+                            : pbocFedGap < -2
+                                ? `🔴 ${pbocDivergenceLabel} — negative carry on CNY-denominated assets vs USD`
+                                : `🟢 ${pbocDivergenceLabel} — narrowing differential reduces outflow pressure`
                     }
                 />
             </div>

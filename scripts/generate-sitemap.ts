@@ -88,7 +88,6 @@ async function generateSitemap() {
     { url: '/terms',               changefreq: 'yearly',  lastmod: gitLastmod('src/pages/TermsOfService.tsx') },
     { url: '/data-sources',        changefreq: 'monthly', lastmod: gitLastmod('src/pages/DataSourcesPage.tsx') },
     { url: '/macro-observatory',   changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroObservatory.tsx') },
-    { url: '/demo',                changefreq: 'monthly', lastmod: BUILD_DATE },
     // Additional static pages (labs, methods, tools) — lastmod = build date (data refreshes daily via crons)
     { url: '/labs/us-macro-fiscal', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/labs/de-dollarization-gold', changefreq: 'weekly', lastmod: BUILD_DATE },
@@ -101,6 +100,7 @@ async function generateSitemap() {
     { url: '/labs/shadow-system', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/labs/china-15th-fyp', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/labs/africa-macro', changefreq: 'weekly', lastmod: BUILD_DATE },
+    { url: '/labs/gov-financial-position', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/methods/net-liquidity-z-score', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/methods/debt-gold-z-score', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/methods/loan-to-job-efficiency', changefreq: 'weekly', lastmod: BUILD_DATE },

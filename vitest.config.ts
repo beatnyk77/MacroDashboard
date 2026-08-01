@@ -15,6 +15,9 @@ export default defineConfig({
     include: [
       'src/**/*.{test,spec}.{ts,tsx}',
       'supabase/functions/_shared/__tests__/**/*.test.ts',
+      // Colocated edge-function regression tests (pre-launch + existing ingest-fred pattern)
+      'supabase/functions/**/index.test.ts',
+      'scripts/__tests__/**/*.{test,spec}.{ts,tsx}',
     ],
     environmentMatchGlobs: [
       ['supabase/**', 'node'],

@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RotateCcw } from 'lucide-react';
+import { reportClientError } from '@/lib/errorReporting';
 
 interface Props {
     children: ReactNode;
@@ -23,6 +24,13 @@ export class SectionErrorBoundary extends Component<Props, State> {
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         console.error(`Error in section "${this.props.name || 'Unknown'}":`, error, errorInfo);
+        void reportClientError({
+            message: error.message,
+            stack: error.stack,
+            componentStack: errorInfo.componentStack ?? undefined,
+            route: typeof window !== 'undefined' ? window.location.pathname : undefined,
+            boundary: `SectionErrorBoundary:${this.props.name || 'Unknown'}`,
+        });
     }
 
     private handleReset = () => {

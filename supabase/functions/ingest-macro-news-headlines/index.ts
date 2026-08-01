@@ -52,12 +52,7 @@ function isValidUrl(url: string): boolean {
         (lower.startsWith('http://') || lower.startsWith('https://'));
 }
 
-serveIngest('ingest-macro-news-headlines', async (req: Request) => {
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
+export async function doIngestMacroNewsHeadlines(supabase: any) {
     // Start logging
     const logId = await logIngestionStart(supabase, 'ingest-macro-news-headlines');
 
@@ -206,7 +201,7 @@ serveIngest('ingest-macro-news-headlines', async (req: Request) => {
             metadata: { summary }
         });
 
-        return { ok: true, counts: { upserted: rows_inserted } };
+        return { ok: true, counts: { upserted: filteredArticles.length } };
     } catch (error: any) {
         console.error('Master Error:', error.message)
 
@@ -219,6 +214,13 @@ serveIngest('ingest-macro-news-headlines', async (req: Request) => {
             console.error('Failed to log News Ingestion end:', logErr);
         }
 
-        throw e;
+        throw error;
+    }
 }
+
+serveIngest('ingest-macro-news-headlines', async (_req: Request) => {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    return doIngestMacroNewsHeadlines(supabase)
 })

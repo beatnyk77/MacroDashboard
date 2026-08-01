@@ -5,7 +5,7 @@ import { MoSPIClient } from './mospi-client.ts';
 import { serveIngest, IngestResult } from '../_shared/handler.ts';
 import { upsertObservations } from '../_shared/ingest_utils.ts';
 
-async function doIngestMospi(supabase: any): Promise<IngestResult> {
+export async function doIngestMospi(supabase: any): Promise<IngestResult> {
     const mospi = new MoSPIClient();
     const results = [];
     let totalUpserted = 0;
@@ -107,15 +107,20 @@ async function doIngestMospi(supabase: any): Promise<IngestResult> {
                 const grouped: any = {};
                 for (const row of asiResponse.data) {
                     const key = `${row.year}_${row.sector}`;
-                    if (!grouped[key]) grouped[key] = {
-                        state_code: sc,
-                        state_name: row.state,
-                        year: parseInt(String(row.year).split('-')[0]) || new Date().getFullYear(),
-                        sector: String(row.sector || "").toLowerCase(),
-                        gva_crores: 0,
-                        employment_thousands: 0,
-                        fixed_capital_crores: 0
-                    };
+                    if (!grouped[key]) {
+                        const year = parseInt(String(row.year).split('-')[0]) || new Date().getFullYear();
+                        grouped[key] = {
+                            state_code: sc,
+                            state_name: row.state,
+                            year,
+                            sector: String(row.sector || "").toLowerCase(),
+                            gva_crores: 0,
+                            employment_thousands: 0,
+                            fixed_capital_crores: 0,
+                            as_of_date: `${year}-01-01`,
+                            last_updated_at: new Date().toISOString(),
+                        };
+                    }
 
                     const val = parseFloat(row.value);
                     if (row.indicator === 'Gross Value Added') grouped[key].gva_crores = val;
