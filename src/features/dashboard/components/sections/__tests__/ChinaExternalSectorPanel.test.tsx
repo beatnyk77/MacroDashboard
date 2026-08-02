@@ -10,8 +10,6 @@ vi.mock('@/hooks/useChinaMacro', () => ({
 describe('ChinaExternalSectorPanel', () => {
     it('renders a neutral no-data dot, not a green/amber verdict, when metrics are missing', () => {
         const { container } = render(<ChinaExternalSectorPanel />);
-        const dots = container.querySelectorAll('.w-1\\.5.h-1\\.5.rounded-full, [class*="w-1.5"][class*="h-1.5"][class*="rounded-full"]');
-        // Fallback: any status dots in KPI row
         const statusDots = Array.from(container.querySelectorAll('div')).filter(
             (el) => el.className.includes('w-1.5') && el.className.includes('h-1.5') && el.className.includes('rounded-full'),
         );

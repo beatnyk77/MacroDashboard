@@ -4,14 +4,13 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 import { runWithRetry } from "../_shared/job-runner.ts";
 import { sendDiscordAlert } from "../_shared/webhook_utils.ts";
-// @ts-ignore
-import { google } from "npm:googleapis";
+import { getGoogleAccessToken } from "./google-auth.ts";
 
 declare const Deno: any;
 
 const JOB_NAME = "gsc-sync";
 
-async function fetchAndUpsertGscData() {
+export async function fetchAndUpsertGscData() {
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
@@ -34,21 +33,25 @@ async function fetchAndUpsertGscData() {
     throw new Error("GSC_SERVICE_ACCOUNT_KEY is not a valid JSON string");
   }
 
+  if (!gscCreds.client_email) {
+    throw new Error("GSC_SERVICE_ACCOUNT_KEY is missing required field: client_email");
+  }
+  if (!gscCreds.private_key) {
+    throw new Error("GSC_SERVICE_ACCOUNT_KEY is missing required field: private_key");
+  }
+
   // The property URL (e.g. "https://graphiquestor.com/") or Domain property (e.g. "sc-domain:graphiquestor.com")
   const siteUrl = Deno.env.get("GSC_SITE_URL") || "https://graphiquestor.com/"; // Defaulting to terminal domain
 
   console.log(`[${JOB_NAME}] Authenticating with Google APIs for site: ${siteUrl}`);
 
-  // Create JWT Client
-  const auth = new google.auth.JWT(
-    gscCreds.client_email,
-    null,
-    // Ensure the private key handles escaped newlines correctly if passed as a single string
-    gscCreds.private_key?.replace(/\\n/g, '\n'),
-    ["https://www.googleapis.com/auth/webmasters.readonly"]
-  );
-
-  const searchconsole = google.searchconsole({ version: 'v1', auth });
+  // Manual OAuth2 JWT-bearer flow (see google-auth.ts) — the npm:googleapis
+  // package's google.auth.JWT does not work under Deno's npm-compat layer
+  // for RS256 signing, so we bypass it entirely for this auth step.
+  const accessToken = await getGoogleAccessToken({
+    client_email: gscCreds.client_email,
+    private_key: gscCreds.private_key,
+  });
 
   // Calculate dates. GSC data is usually 2 days lagged. We'll fetch the last 7 days of available data.
   const today = new Date();
@@ -65,18 +68,30 @@ async function fetchAndUpsertGscData() {
 
   console.log(`[${JOB_NAME}] Querying GSC data from ${startDateStr} to ${endDateStr}`);
 
-  // Query GSC API
-  const response = await searchconsole.searchanalytics.query({
-    siteUrl,
-    requestBody: {
+  // Query GSC API directly via fetch (see comment above on why we don't use
+  // the googleapis SDK's searchconsole client here).
+  const searchConsoleUrl = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
+  const response = await fetch(searchConsoleUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       startDate: startDateStr,
       endDate: endDateStr,
       dimensions: ["date", "page", "query", "country", "device"],
       rowLimit: 25000, // Fetch up to 25k rows to ensure comprehensive coverage
-    },
+    }),
   });
 
-  const rows = response.data.rows || [];
+  if (!response.ok) {
+    const bodyText = await response.text();
+    throw new Error(`Google Search Console API request failed: HTTP ${response.status} - ${bodyText.substring(0, 300)}`);
+  }
+
+  const data = await response.json();
+  const rows = data.rows || [];
   console.log(`[${JOB_NAME}] Retrieved ${rows.length} rows from GSC`);
 
   if (rows.length === 0) {

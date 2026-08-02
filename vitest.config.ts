@@ -17,6 +17,8 @@ export default defineConfig({
       'supabase/functions/_shared/__tests__/**/*.test.ts',
       // Colocated edge-function regression tests (pre-launch + existing ingest-fred pattern)
       'supabase/functions/**/index.test.ts',
+      // gsc-sync's auth logic lives in a sibling module, not index.ts
+      'supabase/functions/gsc-sync/*.test.ts',
       'scripts/__tests__/**/*.{test,spec}.{ts,tsx}',
     ],
     environmentMatchGlobs: [
