@@ -123,6 +123,7 @@ export class MoSPIClient {
         state_code?: string;
         year?: string;
         indicator_code?: number;
+        limit?: number;
     }) {
         return this.fetchAPI("/api/asi/getASIData", params);
     }

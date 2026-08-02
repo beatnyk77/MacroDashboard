@@ -55,8 +55,8 @@ async function fetchSGEPrice(contract: string, retries = 3): Promise<number> {
 
 async function doIngestPreciousDivergence(supabase: SupabaseClient, avApiKey: string): Promise<IngestResult> {
     const [goldData, silverData, fxData] = await Promise.all([
-        fetchAlphaVantageCommodity('GOLD', avApiKey, 'daily'),
-        fetchAlphaVantageCommodity('SILVER', avApiKey, 'daily'),
+        fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', avApiKey, 'daily', 'GOLD'),
+        fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', avApiKey, 'daily', 'SILVER'),
         fetchAlphaVantageFX('USD', 'CNY', avApiKey)
     ])
 

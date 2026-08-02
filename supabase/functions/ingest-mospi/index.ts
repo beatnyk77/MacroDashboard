@@ -97,23 +97,49 @@ export async function doIngestMospi(supabase: any): Promise<IngestResult> {
             "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
             "31", "32", "33", "34", "35"
         ];
-        for (const sc of stateCodes) {
-            const asiResponse = await mospi.getASIData({
-                classification_year: '2008',
-                state_code: sc
-            });
+        // getASIData with no indicator_code only returns "Number of Factories"
+        // rows (irrelevant here) and silently caps at ~10 rows per call. Each
+        // target indicator (GVA=19, Persons Engaged=31, Fixed Capital=3) must
+        // be requested explicitly, with a limit high enough to cover every
+        // 3-digit NIC code (there are 200+), or the sum below would silently
+        // undercount using only the first page.
+        const ASI_INDICATOR_CODES: Record<number, string> = {
+            19: 'Gross Value Added',
+            31: 'Total Number of Persons Engaged',
+            3: 'Fixed Capital',
+        };
+        const ASI_ROW_LIMIT = 1000;
 
-            if (asiResponse?.data?.length > 0) {
-                const grouped: any = {};
+        for (const sc of stateCodes) {
+            // MoSPI's ASI API returns sector="Combined" on every row (an
+            // ownership-type label — public/private/combined — not an industry
+            // classification). The real industry breakdown (manufacturing /
+            // mining / electricity / construction) would require mapping each
+            // row's NIC code, which this endpoint doesn't do per-row here.
+            // Rather than mislabel a partial NIC-code slice as a specific
+            // industry, aggregate everything into 'all_industries' and sum
+            // (not overwrite) across every NIC-code row so the total is real.
+            const grouped: any = {};
+
+            for (const indicatorCode of Object.keys(ASI_INDICATOR_CODES).map(Number)) {
+                const asiResponse = await mospi.getASIData({
+                    classification_year: '2008',
+                    state_code: sc,
+                    indicator_code: indicatorCode,
+                    limit: ASI_ROW_LIMIT,
+                });
+
+                if (!(asiResponse?.data?.length > 0)) continue;
+
                 for (const row of asiResponse.data) {
-                    const key = `${row.year}_${row.sector}`;
+                    const year = parseInt(String(row.year).split('-')[0]) || new Date().getFullYear();
+                    const key = `${sc}_${year}`;
                     if (!grouped[key]) {
-                        const year = parseInt(String(row.year).split('-')[0]) || new Date().getFullYear();
                         grouped[key] = {
                             state_code: sc,
                             state_name: row.state,
                             year,
-                            sector: String(row.sector || "").toLowerCase(),
+                            sector: 'all_industries',
                             gva_crores: 0,
                             employment_thousands: 0,
                             fixed_capital_crores: 0,
@@ -123,14 +149,17 @@ export async function doIngestMospi(supabase: any): Promise<IngestResult> {
                     }
 
                     const val = parseFloat(row.value);
-                    if (row.indicator === 'Gross Value Added') grouped[key].gva_crores = val;
-                    else if (row.indicator === 'Total Number of Persons Engaged') grouped[key].employment_thousands = val / 1000;
-                    else if (row.indicator === 'Fixed Capital') grouped[key].fixed_capital_crores = val;
+                    if (isNaN(val)) continue;
+                    // MoSPI reports GVA/Fixed Capital in ₹ lakhs; this table's
+                    // columns are ₹ crores (1 crore = 100 lakh).
+                    if (row.indicator === 'Gross Value Added') grouped[key].gva_crores += val / 100;
+                    else if (row.indicator === 'Total Number of Persons Engaged') grouped[key].employment_thousands += val / 1000;
+                    else if (row.indicator === 'Fixed Capital') grouped[key].fixed_capital_crores += val / 100;
                 }
+            }
 
-                for (const payload of Object.values(grouped)) {
-                    await upsertASIData(payload);
-                }
+            for (const payload of Object.values(grouped)) {
+                await upsertASIData(payload);
             }
         }
         results.push({ metric: 'INDIA_ASI', status: 'success' });

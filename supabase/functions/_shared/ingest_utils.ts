@@ -144,9 +144,11 @@ export async function getActiveMetricsBySource(
 export async function fetchAlphaVantageCommodity(
   functionName: string,
   apiKey: string,
-  interval: 'daily' | 'weekly' | 'monthly' = 'daily'
+  interval: 'daily' | 'weekly' | 'monthly' = 'daily',
+  symbol?: string
 ) {
-  const url = `https://www.alphavantage.co/query?function=${functionName}&interval=${interval}&apikey=${apiKey}`;
+  const symbolParam = symbol ? `&symbol=${symbol}` : '';
+  const url = `https://www.alphavantage.co/query?function=${functionName}${symbolParam}&interval=${interval}&apikey=${apiKey}`;
   const resp = await fetchWithRetry(url);
   const json = await resp.json();
 

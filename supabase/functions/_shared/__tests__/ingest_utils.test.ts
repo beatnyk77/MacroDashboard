@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { upsertObservations, validateNumericData } from '../ingest_utils.ts';
+import { upsertObservations, validateNumericData, fetchAlphaVantageCommodity } from '../ingest_utils.ts';
 
 // ─── Supabase mock factory ────────────────────────────────────────────────────
 
@@ -163,5 +163,54 @@ describe('validateNumericData', () => {
 
   it('returns true for an empty keys array (vacuously true)', () => {
     expect(validateNumericData({}, [])).toBe(true);
+  });
+});
+
+// ─── fetchAlphaVantageCommodity ────────────────────────────────────────────────
+
+describe('fetchAlphaVantageCommodity', () => {
+  const originalFetch = globalThis.fetch;
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it('includes a symbol= param when one is provided (required by GOLD_SILVER_HISTORY)', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [{ date: '2026-08-01', value: '2050.00' }] }),
+    });
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    await fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', 'test-key', 'daily', 'GOLD');
+
+    const calledUrl = fetchSpy.mock.calls[0][0] as string;
+    expect(calledUrl).toContain('function=GOLD_SILVER_HISTORY');
+    expect(calledUrl).toContain('symbol=GOLD');
+    expect(calledUrl).toContain('interval=daily');
+  });
+
+  it('omits symbol= entirely when none is provided (backward compatible with single-name functions like WTI/BRENT)', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [{ date: '2026-08-01', value: '80.00' }] }),
+    });
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    await fetchAlphaVantageCommodity('WTI', 'test-key', 'daily');
+
+    const calledUrl = fetchSpy.mock.calls[0][0] as string;
+    expect(calledUrl).not.toContain('symbol=');
+  });
+
+  it('throws with the raw message when AlphaVantage returns a Note/Information field', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ Information: 'rate limit exceeded' }),
+    }) as unknown as typeof fetch;
+
+    await expect(
+      fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', 'test-key', 'daily', 'GOLD')
+    ).rejects.toThrow('AlphaVantage Rate Limit or Info: rate limit exceeded');
   });
 });

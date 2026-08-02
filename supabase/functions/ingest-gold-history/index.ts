@@ -6,7 +6,7 @@ import { fetchAlphaVantageCommodity, upsertObservations } from '../_shared/inges
 async function doIngestGoldHistory(supabase: any, avApiKey: string): Promise<IngestResult> {
     console.log('Starting Gold History Sync from AlphaVantage...')
 
-    const goldData = await fetchAlphaVantageCommodity('GOLD', avApiKey, 'monthly')
+    const goldData = await fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', avApiKey, 'monthly', 'GOLD')
 
     if (goldData.length === 0) {
         throw new Error('No gold data returned from AlphaVantage')

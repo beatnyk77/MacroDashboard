@@ -7,8 +7,8 @@ async function doIngestGold(supabase: any, avApiKey: string): Promise<IngestResu
     console.log('Fetching Gold and Silver prices from AlphaVantage...')
 
     const [goldData, silverData] = await Promise.all([
-        fetchAlphaVantageCommodity('GOLD', avApiKey, 'daily'),
-        fetchAlphaVantageCommodity('SILVER', avApiKey, 'daily')
+        fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', avApiKey, 'daily', 'GOLD'),
+        fetchAlphaVantageCommodity('GOLD_SILVER_HISTORY', avApiKey, 'daily', 'SILVER')
     ])
 
     const observations: any[] = []
