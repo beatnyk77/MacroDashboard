@@ -23,7 +23,11 @@ fi
 
 echo ""
 echo "▶ Step 1/2: Link project (idempotent)..."
-supabase link --project-ref "$PROJECT_REF"
+if [ -n "${SUPABASE_DB_PASSWORD:-}" ]; then
+  supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+else
+  supabase link --project-ref "$PROJECT_REF"
+fi
 
 echo ""
 echo "▶ Step 2/2: Push migrations (--include-all for out-of-order timestamps)..."
