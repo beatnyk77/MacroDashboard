@@ -19,7 +19,7 @@ export function base64UrlEncode(input: string | ArrayBuffer): string {
     return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export function pemToArrayBuffer(pem: string): ArrayBuffer {
+export function pemToUint8Array(pem: string): Uint8Array {
     // Some secret-storage paths double-escape newlines in the JSON value.
     const normalized = pem.replace(/\\n/g, '\n');
     const b64 = normalized
@@ -29,7 +29,7 @@ export function pemToArrayBuffer(pem: string): ArrayBuffer {
     const binary = atob(b64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return bytes.buffer;
+    return bytes;
 }
 
 export async function buildAndSignJwt(clientEmail: string, privateKeyPem: string): Promise<string> {
@@ -47,7 +47,7 @@ export async function buildAndSignJwt(clientEmail: string, privateKeyPem: string
 
     const key = await crypto.subtle.importKey(
         'pkcs8',
-        pemToArrayBuffer(privateKeyPem),
+        pemToUint8Array(privateKeyPem),
         { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
         false,
         ['sign'],

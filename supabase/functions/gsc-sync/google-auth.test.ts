@@ -53,7 +53,7 @@ function base64UrlDecodeToString(segment: string): string {
     return atob(b64);
 }
 
-function pemPublicKeyToArrayBuffer(pem: string): ArrayBuffer {
+function pemPublicKeyToUint8Array(pem: string): Uint8Array {
     const b64 = pem
         .replace(/-----BEGIN PUBLIC KEY-----/, '')
         .replace(/-----END PUBLIC KEY-----/, '')
@@ -61,7 +61,7 @@ function pemPublicKeyToArrayBuffer(pem: string): ArrayBuffer {
     const binary = atob(b64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return bytes.buffer;
+    return bytes;
 }
 
 describe('buildAndSignJwt', () => {
@@ -86,7 +86,7 @@ describe('buildAndSignJwt', () => {
 
         const publicKey = await crypto.subtle.importKey(
             'spki',
-            pemPublicKeyToArrayBuffer(TEST_PUBLIC_KEY),
+            pemPublicKeyToUint8Array(TEST_PUBLIC_KEY),
             { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
             false,
             ['verify'],
