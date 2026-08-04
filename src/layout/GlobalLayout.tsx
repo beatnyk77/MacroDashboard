@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { TerminalSidebar } from '@/components/TerminalSidebar';
+import { ClockDisplay } from '@/components/ClockDisplay';
 import { cn } from '@/lib/utils';
 import { DataHealthBanner, DataHealthHeaderChip } from '@/components/DataHealthBanner';
 import { EngagementLayer } from '@/components/engagement/EngagementLayer';
@@ -46,7 +47,6 @@ const terminalNavItems = [
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
-    const [currentTime, setCurrentTime] = useState(new Date());
     const [cmdKOpen, setCmdKOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
@@ -60,10 +60,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const isObservatory = location.pathname.includes('/macro-observatory');
 
 
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
 
 
 
@@ -127,24 +123,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
                         <div className="hidden md:block h-6 w-px bg-white/10 mx-2" />
 
-                        <div className="hidden md:flex items-center gap-4">
-                            <div>
-                                <span className="block text-xs font-black text-muted-foreground uppercase leading-none mb-0.5">
-                                    LOCAL TIME
-                                </span>
-                                <span className="text-sm font-black text-foreground font-mono">
-                                    {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                                </span>
-                            </div>
-                            <div>
-                                <span className="block text-xs font-black text-muted-foreground uppercase leading-none mb-0.5">
-                                    DATE
-                                </span>
-                                <span className="text-xs font-black text-foreground">
-                                    {currentTime.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                                </span>
-                            </div>
-                        </div>
+                        <ClockDisplay />
                     </div>
 
                     <div className="flex items-center gap-4">

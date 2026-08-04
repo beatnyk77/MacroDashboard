@@ -46,15 +46,27 @@ const GLASS_BORDER = '1px solid rgba(255, 255, 255, 0.08)';
 const AdminLogin = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
+    const [locked, setLocked] = useState(false);
 
-    const handleLogin = () => {
-        const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+    // SECURITY: Password must be provided via VITE_ADMIN_PASSWORD env var.
+    // No insecure fallback. If the env var is missing, access is blocked entirely.
+    const adminPass = import.meta.env.VITE_ADMIN_PASSWORD;
+    const isMisconfigured = !adminPass;
+
+    const handleLogin = async () => {
+        if (locked || isMisconfigured) return;
+        setLocked(true);
+        // Artificial delay to slow brute-force attempts
+        await new Promise((r) => setTimeout(r, 500));
         if (password === adminPass) {
             sessionStorage.setItem('admin_auth', 'true');
             onAuthenticated();
         } else {
+            // Clear any stale valid token on failed attempt
+            sessionStorage.removeItem('admin_auth');
             setError(true);
         }
+        setLocked(false);
     };
 
     return (
@@ -82,40 +94,49 @@ const AdminLogin = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
                     INSTITUTIONAL ACCESS ONLY
                 </Typography>
 
-                <TextField
-                    fullWidth
-                    type="password"
-                    label="ACCESS CODE"
-                    variant="filled"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    error={error}
-                    helperText={error ? "INVALID CREDENTIALS" : ""}
-                    onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                    InputProps={{ disableUnderline: true }}
-                    sx={{
-                        mb: 3,
-                        '& .MuiFilledInput-root': {
-                            bgcolor: 'rgba(255,255,255,0.05)',
-                            color: '#fff',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
-                        }
-                    }}
-                />
+                {isMisconfigured ? (
+                    <Typography sx={{ color: '#ef4444', fontSize: '0.8rem', mb: 2 }}>
+                        ADMIN ACCESS NOT CONFIGURED — set VITE_ADMIN_PASSWORD in environment.
+                    </Typography>
+                ) : (
+                    <>
+                        <TextField
+                            fullWidth
+                            type="password"
+                            label="ACCESS CODE"
+                            variant="filled"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            error={error}
+                            helperText={error ? "INVALID CREDENTIALS" : ""}
+                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                            InputProps={{ disableUnderline: true }}
+                            sx={{
+                                mb: 3,
+                                '& .MuiFilledInput-root': {
+                                    bgcolor: 'rgba(255,255,255,0.05)',
+                                    color: '#fff',
+                                    '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
+                                }
+                            }}
+                        />
 
-                <Button
-                    fullWidth
-                    variant="contained"
-                    onClick={handleLogin}
-                    sx={{
-                        bgcolor: BLOOMBERG_ORANGE,
-                        color: '#000',
-                        fontWeight: 900,
-                        '&:hover': { bgcolor: '#d97706' }
-                    }}
-                >
-                    INITIALIZE SESSION
-                </Button>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            onClick={handleLogin}
+                            disabled={locked}
+                            sx={{
+                                bgcolor: BLOOMBERG_ORANGE,
+                                color: '#000',
+                                fontWeight: 900,
+                                '&:hover': { bgcolor: '#d97706' }
+                            }}
+                        >
+                            {locked ? 'VERIFYING…' : 'INITIALIZE SESSION'}
+                        </Button>
+                    </>
+                )}
             </MuiCard>
         </Box>
     );

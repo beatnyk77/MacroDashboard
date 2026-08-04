@@ -126,3 +126,4 @@ scripts/.remote-functions.txt
 scripts/.redeploy-list.txt
 scripts/.deploy-all-functions.*
 .worktrees/
+tradefx-agent-prompt.md

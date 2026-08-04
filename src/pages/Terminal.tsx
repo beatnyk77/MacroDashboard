@@ -9,7 +9,8 @@ import { Link } from 'react-router-dom';
 import { MetricFreshnessChip } from '@/components/MetricFreshnessChip';
 import { SectionLoadingFallback } from '@/components/SectionLoadingFallback';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
-import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
+import { useMetricsBatch } from '@/hooks/useMetricsBatch';
+
 import { DailyMacroPanel } from '@/features/daily-macro/components/DailyMacroPanel';
 import { TodaysBriefPanel } from '@/features/dashboard/components/sections/TodaysBriefPanel';
 import { ModuleRow } from '@/components/layout/ModuleRow';
@@ -23,7 +24,7 @@ import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { TerminalHero } from '@/features/dashboard/components/TerminalHero';
 import { TerminalSnapshotStrip } from '@/features/dashboard/components/TerminalSnapshotStrip';
-import { StartExploringSection } from '@/features/dashboard/components/StartExploringSection';
+
 import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
 import { ValueProgressionPath } from '@/components/engagement/ValueProgressionPath';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
@@ -62,6 +63,15 @@ export const Terminal: React.FC = () => {
     const fedMonetizationRef = useRef<HTMLDivElement>(null);
     const usDebtRef = useRef<HTMLDivElement>(null);
 
+    // Prefetch the above-fold metric chips in 2 bulk queries instead of 2N individual ones.
+    // This seeds the TanStack Query cache so MetricFreshnessChip / useLatestMetric calls
+    // return instantly without additional network round-trips.
+    useMetricsBatch([
+        MID.FED_BALANCE_SHEET,
+        MID.TGA_BALANCE,
+        MID.PRIMARY_DEALER_TREASURY_HOLDINGS_BN,
+    ]);
+
     return (
         <div className="w-full min-h-screen py-6">
             <SEOManager
@@ -96,25 +106,7 @@ export const Terminal: React.FC = () => {
             {/* E4: build-time key telemetry for crawlers + live hydrate */}
             <TerminalSnapshotStrip />
 
-            <InstitutionalAccessStrip className="mb-8" />
-
-            <ChinaLocaleHint className="mb-8" />
-
-            <StartExploringSection />
-
-            <PremiumActionBar className="mb-8" />
-
-            <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
-                <M2GoldRatioExplorer className="mb-8" />
-            </Suspense>
-
-            <ValueProgressionPath className="mb-10" />
-
-            <div id="weekly-narrative" className="mb-10">
-                <SubscribeCard source="homepage-hero" />
-            </div>
-
-            {/* ── REGIME ANCHOR — position 0, above-fold interpretive frame ── */}
+            {/* ── REGIME ANCHOR — position 1, first data above-fold ── */}
             {/* Full-bleed: uses negative margins to break out of px-4 sm:px-6 lg:px-8 */}
             <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] -mx-4 sm:-mx-6 lg:-mx-8 mb-0">
                 <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -137,9 +129,13 @@ export const Terminal: React.FC = () => {
                     </SectionErrorBoundary>
                 </ModuleRow>
 
-                <div className="mb-8 px-1">
-                    <SubscribeCard source="homepage-midfold" />
+                {/* ── GROWTH STRIP — after first 2 data rows so users get value first ── */}
+                <div className="px-1 pb-2 pt-6 space-y-4">
+                    <ChinaLocaleHint className="" />
+                    <InstitutionalAccessStrip className="" />
+                    <PremiumActionBar className="" />
                 </div>
+
 
                 {/* Row 3: GLOBAL LIQUIDITY COMPOSITE */}
                 <ModuleRow
@@ -222,14 +218,6 @@ export const Terminal: React.FC = () => {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <USTreasuryDemandGauge />
-                                    <div className="flex justify-end pt-2">
-                                        <DataProvenanceBadge
-                                            source="FRED / Treasury"
-                                            methodology="B/S Aggregation"
-                                            lastVerified={new Date()}
-                                            size="sm"
-                                        />
-                                    </div>
                                 </CardContent>
                             </Card>
                         </Suspense>
@@ -381,8 +369,15 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
             </div>
-            <div className="mb-10">
-                <SubscribeCard source="homepage-prefooter" />
+            <div className="mb-10 mt-8">
+                <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
+                    <M2GoldRatioExplorer className="mb-6" />
+                </Suspense>
+                <ValueProgressionPath className="mb-6" />
+                {/* Pre-footer subscribe — id keeps header Subscribe button scroll-anchor working */}
+                <div id="weekly-narrative">
+                    <SubscribeCard source="homepage-prefooter" />
+                </div>
             </div>
 
             <RelatedMetrics minLinks={2} />
