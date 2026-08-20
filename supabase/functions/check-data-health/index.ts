@@ -79,8 +79,6 @@ Deno.serve(async (req: Request) => {
             const resendApiKey = Deno.env.get('RESEND_API_KEY')
             if (resendApiKey) {
                 console.log('Sending email alert via Resend...')
-                const fromEmail = Deno.env.get('RESEND_FROM_EMAIL') ?? 'GraphiQuestor Monitor <alerts@mahanka.com>'
-                const adminNotifyEmail = Deno.env.get('ADMIN_NOTIFY_EMAIL') ?? 'k@foundersoffice.co'
                 const res = await fetch('https://api.resend.com/emails', {
                     method: 'POST',
                     headers: {
@@ -88,8 +86,8 @@ Deno.serve(async (req: Request) => {
                         'Authorization': `Bearer ${resendApiKey}`
                     },
                     body: JSON.stringify({
-                        from: fromEmail,
-                        to: [adminNotifyEmail],
+                        from: 'GraphiQuestor Monitor <alerts@resend.dev>',
+                        to: ['graphiquestor@gmail.com'],
                         subject: '⚠️ GraphiQuestor: Critical Data Health Alert',
                         html: `
                             <h1>Data Pipeline Health Alert</h1>

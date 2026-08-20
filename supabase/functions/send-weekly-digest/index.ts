@@ -127,7 +127,8 @@ Deno.serve(async (req: Request) => {
                 status: 500,
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
-        const fromEmail = Deno.env.get("RESEND_FROM_EMAIL") ?? "GraphiQuestor <digest@mahanka.com>";
+        }
+
         const subject = `Weekly Regime Digest — week ending ${digest.week_ending_date}`;
 
         // Per-recipient batch sends (Resend /emails/batch, 100 per call) so each
@@ -138,7 +139,7 @@ Deno.serve(async (req: Request) => {
         for (let i = 0; i < recipients.length; i += CHUNK) {
             const chunk = recipients.slice(i, i + CHUNK);
             const payload = chunk.map((r) => ({
-                from: fromEmail,
+                from: "GraphiQuestor <digest@graphiquestor.com>",
                 to: [r.email],
                 subject,
                 html: buildHtml(digest as WeeklyDigest, r.confirm_token),

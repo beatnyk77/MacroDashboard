@@ -41,13 +41,9 @@ async function sendResend(opts: {
   to: string[];
   subject: string;
   html: string;
-  from?: string;
 }): Promise<boolean> {
   const key = Deno.env.get("RESEND_API_KEY");
   if (!key) throw new Error("RESEND_API_KEY not configured");
-  const defaultFrom = Deno.env.get("RESEND_FROM_EMAIL") ?? "GraphiQuestor <digest@mahanka.com>";
-  const from = opts.from ?? defaultFrom;
-
   // Resend batch for many; single for one.
   if (opts.to.length === 1) {
     const res = await fetch("https://api.resend.com/emails", {
@@ -57,7 +53,7 @@ async function sendResend(opts: {
         Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-        from,
+        from: "GraphiQuestor <digest@graphiquestor.com>",
         to: opts.to[0],
         subject: opts.subject,
         html: opts.html,
@@ -72,7 +68,7 @@ async function sendResend(opts: {
   for (let i = 0; i < opts.to.length; i += BATCH) {
     const chunk = opts.to.slice(i, i + BATCH);
     const payload = chunk.map((email) => ({
-      from,
+      from: "GraphiQuestor <digest@graphiquestor.com>",
       to: [email],
       subject: opts.subject,
       html: opts.html,
@@ -286,78 +282,7 @@ async function handleScoutLead(
     console.warn("scout lead email failed (row saved)", e);
   }
 
-  // Notify admin at k@foundersoffice.co of the new lead response
-  try {
-    const adminEmail = Deno.env.get("ADMIN_NOTIFY_EMAIL") ?? "k@foundersoffice.co";
-    await sendResend({
-      to: [adminEmail],
-      subject: `[GraphiQuestor] Export Scout Lead: ${email}`,
-      html: `
-        <div style="font-family:ui-sans-serif,system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;">
-          <h2 style="color:#0f172a;margin-bottom:12px;">New Export Scout Lead Captured</h2>
-          <p><strong>Email:</strong> ${esc(email)}</p>
-          <p><strong>HS Code:</strong> ${esc(hs || "Not specified")}</p>
-          <p><strong>Playbook Path:</strong> ${esc(path || "Trade terminal")}</p>
-          <p><strong>Source:</strong> ${esc(source)}</p>
-          <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-        </div>`,
-    });
-  } catch (adminErr) {
-    console.warn("admin notification failed for scout lead", adminErr);
-  }
-
   return json({ ok: true });
-}
-
-async function handleInquiry(
-  _supabase: ReturnType<typeof createClient>,
-  body: {
-    email?: string;
-    name?: string;
-    message?: string;
-    company?: string;
-    source?: string;
-    honeypot?: string;
-  },
-): Promise<Response> {
-  // Bot trap
-  if (body.honeypot && body.honeypot.trim().length > 0) {
-    return json({ ok: true });
-  }
-
-  const email = (body.email ?? "").trim().toLowerCase();
-  if (!EMAIL_RE.test(email) || email.length > 254) {
-    return json({ error: "Valid email required" }, 400);
-  }
-
-  const name = (body.name ?? "").slice(0, 128);
-  const message = (body.message ?? "").slice(0, 2000);
-  const company = (body.company ?? "").slice(0, 128);
-  const source = (body.source ?? "contact-form").slice(0, 64);
-  const adminEmail = Deno.env.get("ADMIN_NOTIFY_EMAIL") ?? "k@foundersoffice.co";
-
-  try {
-    await sendResend({
-      to: [adminEmail],
-      subject: `[GraphiQuestor] New Inquiry Response from ${name || email}`,
-      html: `
-        <div style="font-family:ui-sans-serif,system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;">
-          <h2 style="color:#0f172a;margin-bottom:12px;">New Response / Inquiry Received</h2>
-          <p><strong>Name:</strong> ${esc(name || "N/A")}</p>
-          <p><strong>Email:</strong> ${esc(email)}</p>
-          <p><strong>Company:</strong> ${esc(company || "N/A")}</p>
-          <p><strong>Source:</strong> ${esc(source)}</p>
-          <p><strong>Message:</strong></p>
-          <div style="background:#f1f5f9;padding:12px 16px;border-radius:8px;font-size:14px;color:#334155;white-space:pre-wrap;">${esc(message || "No message content")}</div>
-          <p style="color:#94a3b8;font-size:12px;margin-top:16px;">Timestamp: ${new Date().toISOString()}</p>
-        </div>`,
-    });
-  } catch (err) {
-    console.error("inquiry email notification failed", err);
-    return json({ error: "Failed to dispatch notification" }, 500);
-  }
-
-  return json({ ok: true, message: "Response received and forwarded to desk" });
 }
 
 Deno.serve(async (req: Request) => {
@@ -397,18 +322,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    if (task === "inquiry" || task === "contact") {
-      return await handleInquiry(supabase, body as {
-        email?: string;
-        name?: string;
-        message?: string;
-        company?: string;
-        source?: string;
-        honeypot?: string;
-      });
-    }
-
-    return json({ error: "Unknown task. Use regime-alert | scout-lead | inquiry" }, 400);
+    return json({ error: "Unknown task. Use regime-alert | scout-lead" }, 400);
   } catch (err: unknown) {
     console.error("[growth-actions]", err);
     return json({ error: (err as Error).message }, 500);
