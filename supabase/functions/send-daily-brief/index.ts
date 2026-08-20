@@ -162,6 +162,7 @@ Deno.serve(async (req: Request) => {
             });
         }
 
+        const fromEmail = Deno.env.get("RESEND_FROM_EMAIL") ?? "GraphiQuestor <digest@mahanka.com>";
         const typedBrief = brief as unknown as DailyBrief;
         const subject = `Morning Macro Brief — ${today}${typedBrief.regime_label ? ` · ${typedBrief.regime_label}` : ""}`;
 
@@ -171,7 +172,7 @@ Deno.serve(async (req: Request) => {
         for (let i = 0; i < recipients.length; i += BATCH) {
             const chunk = recipients.slice(i, i + BATCH);
             const payload = chunk.map((r) => ({
-                from: "GraphiQuestor <digest@graphiquestor.com>",
+                from: fromEmail,
                 to: [r.email],
                 subject,
                 html: buildHtml(typedBrief, r.confirm_token),

@@ -44,17 +44,20 @@ const GLASS_BORDER = '1px solid rgba(255, 255, 255, 0.08)';
 // --- COMPONENTS ---
 
 const AdminLogin = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
+    const [authMode, setAuthMode] = useState<'code' | 'email'>('code');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [locked, setLocked] = useState(false);
+    const [email, setEmail] = useState('k@foundersoffice.co');
+    const [emailSent, setEmailSent] = useState(false);
+    const [emailLoading, setEmailLoading] = useState(false);
+    const [emailError, setEmailError] = useState<string | null>(null);
 
-    // SECURITY: Password must be provided via VITE_ADMIN_PASSWORD env var.
-    // No insecure fallback. If the env var is missing, access is blocked entirely.
+    // SECURITY: Password can be provided via VITE_ADMIN_PASSWORD env var.
     const adminPass = import.meta.env.VITE_ADMIN_PASSWORD;
-    const isMisconfigured = !adminPass;
 
     const handleLogin = async () => {
-        if (locked || isMisconfigured) return;
+        if (locked || !adminPass) return;
         setLocked(true);
         // Artificial delay to slow brute-force attempts
         await new Promise((r) => setTimeout(r, 500));
@@ -62,11 +65,30 @@ const AdminLogin = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
             sessionStorage.setItem('admin_auth', 'true');
             onAuthenticated();
         } else {
-            // Clear any stale valid token on failed attempt
             sessionStorage.removeItem('admin_auth');
             setError(true);
         }
         setLocked(false);
+    };
+
+    const handleSendMagicLink = async () => {
+        if (!email || emailLoading) return;
+        setEmailLoading(true);
+        setEmailError(null);
+        try {
+            const { error: otpError } = await supabase.auth.signInWithOtp({
+                email: email.trim().toLowerCase(),
+                options: {
+                    emailRedirectTo: window.location.href,
+                },
+            });
+            if (otpError) throw otpError;
+            setEmailSent(true);
+        } catch (err: unknown) {
+            setEmailError((err as Error).message || 'Failed to dispatch magic link');
+        } finally {
+            setEmailLoading(false);
+        }
     };
 
     return (
@@ -80,7 +102,7 @@ const AdminLogin = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
         }}>
             <MuiCard sx={{
                 p: 4,
-                width: 400,
+                width: 420,
                 bgcolor: CARD_BG,
                 backdropFilter: 'blur(10px)',
                 border: GLASS_BORDER,
@@ -90,52 +112,131 @@ const AdminLogin = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
                 <Typography variant="h5" sx={{ mb: 1, color: '#fff', fontWeight: 800 }}>
                     SOVEREIGN CONSOLE
                 </Typography>
-                <Typography variant="caption" sx={{ display: 'block', mb: 4, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.5)' }}>
+                <Typography variant="caption" sx={{ display: 'block', mb: 3, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.5)' }}>
                     INSTITUTIONAL ACCESS ONLY
                 </Typography>
 
-                {isMisconfigured ? (
-                    <Typography sx={{ color: '#ef4444', fontSize: '0.8rem', mb: 2 }}>
-                        ADMIN ACCESS NOT CONFIGURED — set VITE_ADMIN_PASSWORD in environment.
-                    </Typography>
-                ) : (
-                    <>
-                        <TextField
-                            fullWidth
-                            type="password"
-                            label="ACCESS CODE"
-                            variant="filled"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            error={error}
-                            helperText={error ? "INVALID CREDENTIALS" : ""}
-                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                            InputProps={{ disableUnderline: true }}
-                            sx={{
-                                mb: 3,
-                                '& .MuiFilledInput-root': {
-                                    bgcolor: 'rgba(255,255,255,0.05)',
-                                    color: '#fff',
-                                    '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
-                                }
-                            }}
-                        />
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 3 }}>
+                    <Button
+                        size="small"
+                        onClick={() => setAuthMode('code')}
+                        sx={{
+                            color: authMode === 'code' ? BLOOMBERG_ORANGE : 'rgba(255,255,255,0.4)',
+                            fontWeight: 700,
+                            fontSize: '0.75rem',
+                            borderBottom: authMode === 'code' ? `2px solid ${BLOOMBERG_ORANGE}` : 'none',
+                            borderRadius: 0,
+                        }}
+                    >
+                        Access Code
+                    </Button>
+                    <Button
+                        size="small"
+                        onClick={() => setAuthMode('email')}
+                        sx={{
+                            color: authMode === 'email' ? BLOOMBERG_ORANGE : 'rgba(255,255,255,0.4)',
+                            fontWeight: 700,
+                            fontSize: '0.75rem',
+                            borderBottom: authMode === 'email' ? `2px solid ${BLOOMBERG_ORANGE}` : 'none',
+                            borderRadius: 0,
+                        }}
+                    >
+                        Magic Link (k@foundersoffice.co)
+                    </Button>
+                </Box>
 
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleLogin}
-                            disabled={locked}
-                            sx={{
-                                bgcolor: BLOOMBERG_ORANGE,
-                                color: '#000',
-                                fontWeight: 900,
-                                '&:hover': { bgcolor: '#d97706' }
-                            }}
-                        >
-                            {locked ? 'VERIFYING…' : 'INITIALIZE SESSION'}
-                        </Button>
-                    </>
+                {authMode === 'email' ? (
+                    emailSent ? (
+                        <Box sx={{ p: 2, bgcolor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 2 }}>
+                            <Typography sx={{ color: '#10b981', fontWeight: 700, fontSize: '0.85rem', mb: 1 }}>
+                                Magic Link Dispatched
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block' }}>
+                                Check <strong>{email}</strong> for the secure sign-in link to open this terminal.
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <>
+                            <TextField
+                                fullWidth
+                                type="email"
+                                label="ADMIN EMAIL"
+                                variant="filled"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                error={Boolean(emailError)}
+                                helperText={emailError || ''}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendMagicLink()}
+                                InputProps={{ disableUnderline: true }}
+                                sx={{
+                                    mb: 3,
+                                    '& .MuiFilledInput-root': {
+                                        bgcolor: 'rgba(255,255,255,0.05)',
+                                        color: '#fff',
+                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
+                                    }
+                                }}
+                            />
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleSendMagicLink}
+                                disabled={emailLoading}
+                                sx={{
+                                    bgcolor: BLOOMBERG_ORANGE,
+                                    color: '#000',
+                                    fontWeight: 900,
+                                    '&:hover': { bgcolor: '#d97706' }
+                                }}
+                            >
+                                {emailLoading ? 'DISPATCHING…' : 'SEND MAGIC LINK'}
+                            </Button>
+                        </>
+                    )
+                ) : (
+                    !adminPass ? (
+                        <Typography sx={{ color: '#ef4444', fontSize: '0.8rem', mb: 2 }}>
+                            ADMIN ACCESS NOT CONFIGURED — switch to Magic Link tab or set VITE_ADMIN_PASSWORD.
+                        </Typography>
+                    ) : (
+                        <>
+                            <TextField
+                                fullWidth
+                                type="password"
+                                label="ACCESS CODE"
+                                variant="filled"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                error={error}
+                                helperText={error ? "INVALID CREDENTIALS" : ""}
+                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                                InputProps={{ disableUnderline: true }}
+                                sx={{
+                                    mb: 3,
+                                    '& .MuiFilledInput-root': {
+                                        bgcolor: 'rgba(255,255,255,0.05)',
+                                        color: '#fff',
+                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
+                                    }
+                                }}
+                            />
+
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleLogin}
+                                disabled={locked}
+                                sx={{
+                                    bgcolor: BLOOMBERG_ORANGE,
+                                    color: '#000',
+                                    fontWeight: 900,
+                                    '&:hover': { bgcolor: '#d97706' }
+                                }}
+                            >
+                                {locked ? 'VERIFYING…' : 'INITIALIZE SESSION'}
+                            </Button>
+                        </>
+                    )
                 )}
             </MuiCard>
         </Box>
@@ -146,6 +247,25 @@ export const AdminDashboard = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(() =>
         sessionStorage.getItem('admin_auth') === 'true'
     );
+
+    // Auto-check Supabase Auth Session
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user?.email) {
+                sessionStorage.setItem('admin_auth', 'true');
+                setIsAuthenticated(true);
+            }
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (session?.user?.email) {
+                sessionStorage.setItem('admin_auth', 'true');
+                setIsAuthenticated(true);
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     const { data: latestIngestions, refetch: refetchIngestions } = useQuery({
         queryKey: ['admin', 'latest_ingestions'],

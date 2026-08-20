@@ -91,6 +91,9 @@ Deno.serve(async (req: Request) => {
             });
         }
 
+        const fromEmail = Deno.env.get("RESEND_FROM_EMAIL") ?? "GraphiQuestor <digest@mahanka.com>";
+        const adminNotifyEmail = Deno.env.get("ADMIN_NOTIFY_EMAIL") ?? "k@foundersoffice.co";
+
         const confirmUrl = `${SITE_URL}/subscribe/confirm/?token=${encodeURIComponent(token)}`;
         const html = buildHtml(confirmUrl);
 
@@ -101,12 +104,38 @@ Deno.serve(async (req: Request) => {
                 Authorization: `Bearer ${resendApiKey}`,
             },
             body: JSON.stringify({
-                from: "GraphiQuestor <digest@graphiquestor.com>",
+                from: fromEmail,
                 to: email.trim().toLowerCase(),
                 subject: "Confirm your GraphiQuestor subscription",
                 html,
             }),
         });
+
+        // Notify admin at k@foundersoffice.co of the new subscription response
+        try {
+            await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${resendApiKey}`,
+                },
+                body: JSON.stringify({
+                    from: fromEmail,
+                    to: adminNotifyEmail,
+                    subject: `[GraphiQuestor] New Subscriber Signup: ${email.trim().toLowerCase()}`,
+                    html: `
+                        <div style="font-family:ui-sans-serif,system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;">
+                            <h2 style="color:#0f172a;margin-bottom:12px;">New Subscriber Signup</h2>
+                            <p><strong>Email:</strong> ${email.trim().toLowerCase()}</p>
+                            <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+                            <p><strong>Platform:</strong> GraphiQuestor Terminal</p>
+                        </div>
+                    `,
+                }),
+            });
+        } catch (adminErr) {
+            console.warn("Failed to notify admin of new subscriber:", adminErr);
+        }
 
         if (!res.ok) {
             const detail = await res.text();

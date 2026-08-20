@@ -6,6 +6,7 @@ export const BrandConfig = {
   tagline: 'Macro Observatory · Not Sovereign AI',
   domain: 'graphiquestor.com',
   baseUrl: 'https://graphiquestor.com',
+  contactEmail: 'k@foundersoffice.co',
   signalBadgePrefix: 'GQ',
   twitter: '@GraphiQuestor',
   colors: {
