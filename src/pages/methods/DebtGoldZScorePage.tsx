@@ -1,7 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -26,8 +27,8 @@ export const DebtGoldZScorePage: React.FC = () => {
         "url": "https://graphiquestor.com/methods/debt-gold-z-score",
         "datePublished": "2026-04-10",
         "dateModified": "2026-04-10",
-        "author": { "@type": "Organization", "name": "GraphiQuestor Research" },
-        "publisher": { "@type": "Organization", "name": "GraphiQuestor" },
+        "author": AuthorPersonSchema,
+        "publisher": PublisherOrganizationSchema,
         "keywords": ["Debt Gold Ratio", "Gold Valuation", "Sovereign Debt", "Z-Score", "Federal Reserve Gold"]
     };
 

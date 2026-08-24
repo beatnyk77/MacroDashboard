@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { cn } from '@/lib/utils';
 import { useIndiaEnergy, StateEnergyStats } from '@/hooks/useIndiaEnergy';
 import { useLatestMetric } from '@/hooks/useLatestMetric';

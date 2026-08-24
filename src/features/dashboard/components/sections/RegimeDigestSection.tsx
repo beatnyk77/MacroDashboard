@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Newspaper, ChevronRight, Calendar, RefreshCw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { useRegimeDigest } from '@/features/regime-digest/hooks/useRegimeDigest';
 import { useIngestionHealth } from '@/features/daily-macro/hooks/useIngestionHealth';
 import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip';

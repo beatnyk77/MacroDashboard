@@ -1,10 +1,10 @@
 import React from 'react';
 import { Typography, Container, Chip } from '@mui/material';
 import { Card } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { blogArticles } from '@/features/blog/blogData';
 import { SEOManager } from '@/components/SEOManager';
-import { BrandConfig } from '@/config/brandConfig';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Calendar, User } from 'lucide-react';
 
 export const BlogPage: React.FC = () => {
@@ -20,11 +20,7 @@ export const BlogPage: React.FC = () => {
                     "name": "GraphiQuestor Intelligence Journal",
                     "description": "Institutional-grade macro research focusing on structural monetary shifts, sovereign risk, and emerging market credit cycles.",
                     "url": "https://graphiquestor.com/blog",
-                    "publisher": {
-                        "@type": "Organization",
-                        "name": "GraphiQuestor",
-                        "logo": BrandConfig.seo.logoImage
-                    },
+                    "publisher": PublisherOrganizationSchema,
                     "mainEntity": {
                         "@type": "ItemList",
                         "itemListElement": blogArticles.map((article, index) => ({

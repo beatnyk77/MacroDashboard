@@ -11,6 +11,10 @@ export const TermsOfService = () => {
             />
             <Typography variant="h1" component="h1" gutterBottom>Terms of Service</Typography>
             <Box sx={{ mt: 4 }}>
+                <Typography paragraph sx={{ color: 'text.secondary' }}>
+                    GraphiQuestor is operated and published by <strong>FounderHQ LLP</strong>. References to
+                    &quot;GraphiQuestor&quot;, &quot;we&quot;, or &quot;us&quot; in this document mean FounderHQ LLP.
+                </Typography>
                 <Typography variant="h6">1. API Usage</Typography>
                 <Typography paragraph>
                     GraphiQuestor provides API access to institutional clients for market intelligence and macro data.

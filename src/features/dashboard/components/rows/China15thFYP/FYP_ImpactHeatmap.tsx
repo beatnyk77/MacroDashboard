@@ -5,7 +5,7 @@ import {
     Activity, ArrowRight, Zap, Globe, 
     Shield, TrendingUp, Link as LinkIcon
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { cn } from '@/lib/utils';
 
 export const FYP_ImpactHeatmap: React.FC = () => {

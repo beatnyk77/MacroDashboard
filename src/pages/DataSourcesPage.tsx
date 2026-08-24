@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { cn } from '@/lib/utils';
 import { SEOManager } from '@/components/SEOManager';
 import { Database, Globe, BarChart3, Building2, Shield, FileText, ExternalLink, CheckCircle2, Clock, RefreshCw } from 'lucide-react';

@@ -1,5 +1,6 @@
 // src/pages/labs/EnergyCommoditiesLab.tsx
 import React, { Suspense, lazy } from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -82,15 +83,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         'keywords': ['WTI calendar spread', 'SPR depletion', 'refining capacity', 'India energy security', 'Asia commodity flows', 'chokepoint risk', 'energy market regime'],
                         'url': 'https://graphiquestor.com/labs/energy-commodities',
                         'isAccessibleForFree': true,
-                        'creator': {
-                            '@type': 'Organization',
-                            'name': 'GraphiQuestor'
-                        },
-                        'author': {
-                            '@type': 'Organization',
-                            'name': 'GraphiQuestor',
-                            'url': 'https://graphiquestor.com'
-                        }
+                        'license': 'https://creativecommons.org/licenses/by/4.0/',
+                        'creator': PublisherOrganizationSchema,
+                        'author': PublisherOrganizationSchema
                     }
                 ]}
             />
@@ -100,7 +95,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                         <a href="/" className="hover:text-white transition-colors">Home</a>
                         <ChevronRight size={10} />
-                        <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                        <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
                         <ChevronRight size={10} />
                         <span className="text-blue-500">Energy & Commodities</span>
                     </nav>
@@ -280,7 +275,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
                         asChild
                     >
-                        <a href="/macro-observatory" className="flex items-center gap-2">
+                        <a href="/macro-observatory/" className="flex items-center gap-2">
                             <ArrowLeft size={18} /> Back to Observatory
                         </a>
                     </Button>

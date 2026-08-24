@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { ArrowRight } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
 import { SubscribeCard } from '@/components/SubscribeCard';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 
 const ARC = [
     {
@@ -39,9 +40,8 @@ const ARC = [
 export const ForInstitutional: React.FC = () => {
     const jsonLd = {
         '@context': 'https://schema.org',
-        '@type': 'Organization',
         '@id': 'https://graphiquestor.com/#organization',
-        name: 'GraphiQuestor',
+        ...PublisherOrganizationSchema,
         url: 'https://graphiquestor.com/institutional',
         description:
             'Live telemetry on de-dollarization, liquidity regimes, and energy security — wired directly to 15+ official statistical sources.',

@@ -43,7 +43,7 @@ export const USTreasuryForeignHoldings: React.FC = () => {
                     <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                         <a href="/" className="hover:text-white transition-colors">Home</a>
                         <ChevronRight size={10} />
-                        <a href="/labs/de-dollarization-gold" className="hover:text-white transition-colors">De-Dollarization Lab</a>
+                        <a href="/labs/de-dollarization-gold/" className="hover:text-white transition-colors">De-Dollarization Lab</a>
                         <ChevronRight size={10} />
                         <span className="text-amber-500">US Treasury Holdings</span>
                     </nav>
@@ -93,7 +93,7 @@ export const USTreasuryForeignHoldings: React.FC = () => {
 
                 <div className="mt-24 pt-12 border-t border-white/5 text-center">
                     <Button variant="ghost" className="text-muted-foreground/40 font-black uppercase tracking-widest hover:text-white" asChild>
-                        <a href="/labs/de-dollarization-gold" className="flex items-center gap-2">
+                        <a href="/labs/de-dollarization-gold/" className="flex items-center gap-2">
                             <ArrowLeft size={18} /> Back to Lab
                         </a>
                     </Button>

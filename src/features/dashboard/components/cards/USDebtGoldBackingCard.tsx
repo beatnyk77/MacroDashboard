@@ -52,7 +52,7 @@ export const USDebtGoldBackingCard: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <GQSignalBadge
                             tooltip="Proprietary Z-Score: US debt-to-gold-reserve ratio normalized against its 30-year history, with implied full-backing gold price as a monetary anchor signal."
-                            href="/methods/debt-gold-z-score"
+                            href="/methods/debt-gold-z-score/"
                         />
                         <Tooltip title="US Total Public Debt vs Market Value of US Treasury Gold Reserves.">
                             <Info size={16} style={{ color: '#64748b', cursor: 'help' }} />

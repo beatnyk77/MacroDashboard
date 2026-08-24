@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { m } from 'framer-motion';
 import { Layers, TrendingUp, Info, BookOpen } from 'lucide-react';
 import {

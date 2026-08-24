@@ -18,7 +18,7 @@ export const blogArticles: BlogArticle[] = [
         title: 'M2/Gold Ratio 2026: Debasement Signal Explained',
         description: 'M2/Gold Ratio guide: global money supply vs gold market cap, 2001–2026 episodes, and how institutional desks read the debasement signal.',
         date: '2026-05-30',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Monetary Policy',
         tags: ['Gold', 'M2', 'Monetary Debasement', 'Global Liquidity', 'Hard Assets', 'Gold Valuation'],
         keywords: ['M2 gold ratio', 'gold M2 ratio', 'm2 to gold ratio', 'monetary debasement signal', 'gold valuation 2026', 'global M2 money supply gold'],
@@ -120,11 +120,11 @@ Given that fiscal deficits across the G20 are structurally expanding (US deficit
 
 ## Tracking the Live Reading
 
-GraphiQuestor tracks the M2/Gold Ratio in real time on our [M2/Gold Ratio glossary page](/glossary/m2-gold-ratio), sourcing US M2 from FRED, Eurozone M2 from the ECB, China M2 from PBoC monthly releases, and gold spot from the LBMA PM fix. The signal is updated monthly (constrained by ECB and PBoC publication lags) with the US M2 component refreshed weekly.
+GraphiQuestor tracks the M2/Gold Ratio in real time on our [M2/Gold Ratio glossary page](/glossary/m2-gold-ratio/), sourcing US M2 from FRED, Eurozone M2 from the ECB, China M2 from PBoC monthly releases, and gold spot from the LBMA PM fix. The signal is updated monthly (constrained by ECB and PBoC publication lags) with the US M2 component refreshed weekly.
 
-The full methodology — including the formula breakdown, historical episode analysis, interpretation framework, and institutional use cases — is documented in our [M2/Gold Ratio Methods article](/methods/m2-gold-ratio).
+The full methodology — including the formula breakdown, historical episode analysis, interpretation framework, and institutional use cases — is documented in our [M2/Gold Ratio Methods article](/methods/m2-gold-ratio/).
 
-For the broader hard asset framework, our [De-Dollarization & Gold Lab](/labs/de-dollarization-gold) integrates the M2/Gold Ratio with central bank gold purchase data, BRICS reserve composition shifts, and the Debt/Gold Z-Score — providing a composite view of the structural forces driving the current gold bull market.
+For the broader hard asset framework, our [De-Dollarization & Gold Lab](/labs/de-dollarization-gold/) integrates the M2/Gold Ratio with central bank gold purchase data, BRICS reserve composition shifts, and the Debt/Gold Z-Score — providing a composite view of the structural forces driving the current gold bull market.
 
 ---
 
@@ -137,7 +137,7 @@ For the broader hard asset framework, our [De-Dollarization & Gold Lab](/labs/de
         title: 'Debt/Gold Ratio & Monetary Sovereignty (2026)',
         description: 'An institutional-grade analysis of sovereign debt burdens relative to gold reserves, featuring our proprietary Gold Ratio Ribbon.',
         date: '2026-02-14',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Monetary Policy',
         tags: ['Gold', 'Debt', 'Inflation', 'Sovereign Risk'],
         keywords: ['Debt Gold Ratio', 'Monetary Sovereignty', 'Gold Valuation', 'Sovereign Debt'],
@@ -167,7 +167,7 @@ For capital allocators, these Z-scores provide a framework for currency hedging.
         title: 'BRICS+ De-Dollarization & Global Reserves (2026)',
         description: 'Tracking the secular decline of USD reserve share and the rise of mBridge and bilateral settlement systems.',
         date: '2026-02-13',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Geopolitics',
         tags: ['BRICS', 'De-Dollarization', 'Reserve Currency', 'mBridge'],
         keywords: ['BRICS De-Dollarization', 'Central Bank Reserves', 'Currency Wars', 'USD Hegemony'],
@@ -193,7 +193,7 @@ India continues to play a balancing act, participating in BRICS+ initiatives whi
         title: 'India Macro Pulse: MoSPI Industrial & Labor Data',
         description: 'Understanding India’s real economy through PLFS, ASI, and CPI granularity.',
         date: '2026-02-12',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Emerging Markets',
         tags: ['India', 'MoSPI', 'PLFS', 'ASI', 'Macro Data'],
         keywords: ['India Macro Pulse MoSPI', 'Indian Economy', 'Manufacturing GVA', 'Labor Force India'],
@@ -219,7 +219,7 @@ For sovereign bond investors, these real-economy signals indicate whether moneta
         title: 'Shanghai Divergence: Policy vs Fiscal Mandates',
         description: 'Explaining our proprietary indicator that tracks policy tension between the PBOC and Beijing fiscal authorities.',
         date: '2026-02-11',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'China Macro',
         tags: ['China', 'PBOC', 'Shanghai Divergence', 'Monetary Policy'],
         keywords: ['Shanghai Divergence', 'China Macro Pulse', 'PBOC Policy', 'EM Capital Flows'],
@@ -245,7 +245,7 @@ When the world's second-largest economy shows signs of internal policy tension, 
         title: 'India Energy Security: State-wise Vulnerability',
         description: 'Analyzing energy dependency ratios across Indian states using MoSPI Energy Statistics.',
         date: '2026-02-10',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Energy',
         tags: ['Energy Security', 'India', 'Sustainability', 'Infrastructure'],
         keywords: ['India Energy Security State-wise Analysis', 'Oil Imports India', 'Renewable Energy India', 'State-level Energy Data'],
@@ -271,7 +271,7 @@ As states pivot toward solar and wind, the map of energy security is being redra
         title: 'Capital Allocator’s Guide to Net Liquidity',
         description: 'How to track the "Oxygen" of the financial markets using Fed, TGA, and RRP signals.',
         date: '2026-02-09',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Liquidity',
         tags: ['Liquidity', 'Fed', 'TGA', 'RRP', 'Monetary Oxygen'],
         keywords: ['Global Net Liquidity Guide', 'Fed Balance Sheet', 'TGA RRP Drain', 'Market Liquidity'],
@@ -297,7 +297,7 @@ While central bank officials focus on interest rate "forward guidance," the actu
         title: 'ASI Manufacturing Intelligence Beyond IIP',
         description: 'Leveraging the Annual Survey of Industries for institutional EM positioning.',
         date: '2026-02-08',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Manufacturing',
         tags: ['ASI', 'Manufacturing', 'India', 'Industrial Growth'],
         keywords: ['ASI Manufacturing Intelligence', 'India Industrial Production', 'MoSPI ASI', 'EM Manufacturing'],
@@ -323,7 +323,7 @@ We provide direct integration with MoSPI's ASI infrastructure, delivering insigh
         title: 'G20 Macro Surveillance & Sovereign Stress',
         description: 'How unified macro surveillance helps identify systemic risks across the G20 nations.',
         date: '2026-02-07',
-        author: 'GraphiQuestor Research',
+        author: 'Kartikay Sharma',
         category: 'Global Macro',
         tags: ['G20', 'Sovereign Debt', 'Macro Risk', 'Global Economy'],
         keywords: ['G20 Macro Surveillance Dashboard', 'Sovereign Stress', 'Global Debt Cycle', 'Macro Risk Monitoring'],

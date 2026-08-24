@@ -16,8 +16,7 @@ import {
 import { TrendingUp, TrendingDown, AlertTriangle, Info, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
-import { Link } from 'react-router-dom';
-
+import { TrailLink as Link } from '@/components/TrailLink';
 /* ── Tenor ordering for x-axis ────────────────────────────────── */
 const TENOR_ORDER = ['3M', '6M', '1Y', '2Y', '5Y', '10Y', '30Y'];
 

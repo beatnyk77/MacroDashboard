@@ -201,6 +201,7 @@ export const ThematicLabsIndexPage: React.FC = () => {
                     "name": "GraphiQuestor Macro Surveillance Thematic Labs Dataset Collection",
                     "description": "Comprehensive collections of sovereign risk, net liquidity, energy flows, and BRICS+ reserve allocation telemetry.",
                     "url": "https://graphiquestor.com/labs",
+                    "license": "https://creativecommons.org/licenses/by/4.0/",
                     "creator": {
                         "@id": "https://graphiquestor.com/#organization"
                     },

@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -58,10 +59,38 @@ export const ShadowSystemLab: React.FC = () => {
                     'description': 'Data on capital flight, trade misinvoicing, and illicit financial flows.',
                     'url': 'https://graphiquestor.com/labs/shadow-system',
                     'isAccessibleForFree': true,
-                    'creator': {
-                        '@type': 'Organization',
-                        'name': 'GraphiQuestor'
-                    }
+                    'license': 'https://creativecommons.org/licenses/by/4.0/',
+                    'creator': PublisherOrganizationSchema
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'FAQPage',
+                    'mainEntity': [
+                        {
+                            '@type': 'Question',
+                            'name': 'What is trade misinvoicing?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'Trade misinvoicing is the deliberate misreporting of the value, quantity, or origin of an import or export on customs declarations, typically to move capital across borders while evading taxes, tariffs, or capital controls. It is measured by comparing what one country reports exporting against what its trading partner reports importing — the gap is the misinvoicing signal.'
+                            }
+                        },
+                        {
+                            '@type': 'Question',
+                            'name': 'What is the shadow trade ratio?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'The shadow trade ratio isolates the share of bilateral trade settlement occurring outside traditional SWIFT-mediated channels — including local-currency swap lines, physical commodity bartering, and CBDC pilot corridors. A rising ratio signals structural de-dollarization of transactional trade flows, distinct from reserve-currency composition shifts.'
+                            }
+                        },
+                        {
+                            '@type': 'Question',
+                            'name': 'Why does capital flight matter for macro surveillance?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'Sustained capital flight — elite wealth and corporate capital exiting a jurisdiction faster than official balance-of-payments data captures — has historically been an early, unofficial warning sign of currency crises and regime stress, often visible in trade misinvoicing data well before it shows up in reserve or currency-market indicators.'
+                            }
+                        }
+                    ]
                 }
             ]}
         />
@@ -71,7 +100,7 @@ export const ShadowSystemLab: React.FC = () => {
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
                     <ChevronRight size={10} />
-                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
                     <ChevronRight size={10} />
                     <span className="text-slate-400">Shadow System</span>
                 </nav>
@@ -122,6 +151,26 @@ export const ShadowSystemLab: React.FC = () => {
                     <p>
                         Furthermore, the lab monitors the gravitational shift of trade toward non-G7 networks (BRICS+). This pivot is not just about volume, but about the <strong>Settlement Architecture</strong>. By tracking the adoption of local currency settlement and central bank digital currencies (CBDCs) in cross-border trade, the Shadow System Lab provides a leading-edge view of the erosion of the dollar's transactional hegemony.
                     </p>
+                    <p>
+                        Trade misinvoicing is not a theoretical construct — IMF and Global Financial Integrity research has repeatedly estimated bilateral misinvoicing gaps running into the hundreds of billions of dollars annually across emerging markets, concentrated in commodity-exporting economies where customs valuation is hardest to verify. The pattern has a well-documented precedent: capital flight measured through trade-data discrepancies was visible in balance-of-payments statistics months before both the 1997 Asian Financial Crisis and more recent frontier-market currency dislocations, making misinvoicing one of the few leading (rather than coincident) indicators of external-sector stress.
+                    </p>
+                </div>
+
+                {/* Visible FAQ block, mirrors the FAQPage JSON-LD above */}
+                <div className="mt-10 pt-8 border-t border-white/5 space-y-5">
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Frequently Asked Questions</h3>
+                    <div>
+                        <p className="text-sm font-bold text-white/90 mb-1">What is trade misinvoicing?</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">The deliberate misreporting of the value, quantity, or origin of an import or export on customs declarations, typically to move capital across borders while evading taxes, tariffs, or capital controls — measured by comparing what one country reports exporting against what its partner reports importing.</p>
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-white/90 mb-1">What is the shadow trade ratio?</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">The share of bilateral trade settlement occurring outside traditional SWIFT-mediated channels — including local-currency swap lines, physical commodity bartering, and CBDC pilot corridors. A rising ratio signals structural de-dollarization of transactional trade flows.</p>
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-white/90 mb-1">Why does capital flight matter for macro surveillance?</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">Sustained capital flight has historically been an early, unofficial warning sign of currency crises — often visible in trade misinvoicing data well before it shows up in reserve or currency-market indicators.</p>
+                    </div>
                 </div>
             </article>
 
@@ -131,7 +180,7 @@ export const ShadowSystemLab: React.FC = () => {
                     className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory" className="flex items-center gap-2">
+                    <a href="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
                     </a>
                 </Button>

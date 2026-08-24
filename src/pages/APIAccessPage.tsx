@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Container, Typography, Box, Button, Grid } from '@mui/material';
 import { Zap, ShieldCheck, Database, ArrowRight, Lock, BookOpen } from 'lucide-react';
 import { m } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { apiAccessMeta } from '@/lib/seoTemplates';
 

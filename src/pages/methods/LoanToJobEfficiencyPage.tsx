@@ -1,7 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Link2, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
@@ -20,8 +21,8 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
         "url": "https://graphiquestor.com/methods/loan-to-job-efficiency",
         "datePublished": "2026-04-10",
         "dateModified": "2026-04-10",
-        "author": { "@type": "Organization", "name": "GraphiQuestor Research" },
-        "publisher": { "@type": "Organization", "name": "GraphiQuestor" },
+        "author": AuthorPersonSchema,
+        "publisher": PublisherOrganizationSchema,
         "keywords": ["India Employment", "EPFO", "Bank Credit Growth", "Loan to Job Ratio", "India Macro"]
     };
 

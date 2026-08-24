@@ -132,7 +132,7 @@ describe('DataHealthHeaderChip', () => {
         );
 
         const link = screen.getByRole('link', { name: /data feed status/i });
-        expect(link).toHaveAttribute('href', '/data-health');
+        expect(link).toHaveAttribute('href', '/data-health/');
         expect(screen.getByText('All feeds live')).toBeInTheDocument();
     });
 });

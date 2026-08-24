@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Shield, BookOpen, Radio, ArrowRight, Database, FlaskConical } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { FreshnessChip } from '@/components/FreshnessChip';

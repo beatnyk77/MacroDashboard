@@ -3,7 +3,7 @@ import { MetricCard } from '@/components/MetricCard';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { formatMetric } from '@/utils/formatMetric';
 import { formatNumber } from '@/utils/formatNumber';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { BookOpen } from 'lucide-react';
 
 export const NetLiquidityCard: React.FC = () => {

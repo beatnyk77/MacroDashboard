@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Search, Filter } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
-
+import { TrailLink as Link } from '@/components/TrailLink';
 export const USScreener: React.FC = () => {
     const [search, setSearch] = useState('');
 

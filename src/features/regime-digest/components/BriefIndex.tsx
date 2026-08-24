@@ -1,6 +1,6 @@
 import React from 'react';
 import { ExternalLink, Newspaper } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Card, CardContent } from '@/components/ui/card';
 import type { NotebookPayload } from '@/features/regime-digest/lib/types';
 

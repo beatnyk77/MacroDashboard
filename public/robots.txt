@@ -13,7 +13,6 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /api/fallback/
 Disallow: /us-equities/
-Disallow: /us-equities/
 Disallow: /subscribe/
 # Intentional noindex product surfaces (also excluded from sitemap)
 Disallow: /labs/grit-index

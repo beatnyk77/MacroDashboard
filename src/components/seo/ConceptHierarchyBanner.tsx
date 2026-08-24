@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Activity, BookOpen, FlaskConical, ChevronRight } from 'lucide-react';
 import type { ConceptNode, ConceptRole } from '@/lib/conceptHub';
 import { cn } from '@/lib/utils';

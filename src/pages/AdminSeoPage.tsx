@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { Search, ExternalLink, CheckCircle2, Circle, FileText, Bot, Map } from 'lucide-react';
 import snapshotJson from '@/data/terminal-snapshot.json';

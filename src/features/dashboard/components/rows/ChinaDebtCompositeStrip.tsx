@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { CompositeIndexCard } from '@/features/dashboard/components/sections/CompositeIndexCard';
 import { useChinaDebtComposites, useLatestChinaDebtComposites } from '@/hooks/useChinaDebt';
 import { useLatestMetric } from '@/hooks/useLatestMetric';

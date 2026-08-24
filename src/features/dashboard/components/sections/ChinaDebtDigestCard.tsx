@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Card, CardContent } from '@/components/ui/card';
 import { Landmark, ArrowRight } from 'lucide-react';
 

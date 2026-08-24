@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShieldCheck, BookOpen, Globe, Mail } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { BrandConfig } from '@/config/brandConfig';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { DataFreshnessFooterChip } from '@/components/DataHealthBanner';
@@ -78,7 +78,7 @@ export const InstitutionalFooter: React.FC = () => {
 
                 <div className="mt-12 pt-8 border-t border-white/[0.03] flex justify-between items-center">
                     <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
-                        © 2026 {BrandConfig.name}. PRO-SERIES TERMINAL.
+                        © 2026 FounderHQ LLP. {BrandConfig.name} PRO-SERIES TERMINAL.
                     </span>
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-4 border-r border-white/5 pr-6">

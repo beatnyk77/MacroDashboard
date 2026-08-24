@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Paper, Typography, Button, Divider } from '@mui/material';
 import { ShieldCheck, Info, ArrowRight, Activity } from 'lucide-react';
-import { Link as RouterLink } from 'react-router-dom';
+import { TrailLink as RouterLink } from '@/components/TrailLink';
 
 export type LiveMetricColor = 'emerald' | 'amber' | 'rose' | 'blue';
 

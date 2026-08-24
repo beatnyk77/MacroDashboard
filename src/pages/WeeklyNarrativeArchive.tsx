@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Container, Typography, Box, List, ListItem, ListItemButton, Paper, Divider, Chip, Skeleton, Stack } from '@mui/material';
 import { SEOManager } from '@/components/SEOManager';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Calendar, ChevronRight } from 'lucide-react';
 
 interface WeeklyNarrativeSummary {

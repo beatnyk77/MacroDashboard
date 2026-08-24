@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Link as RouterLink } from 'react-router-dom';
+import { TrailLink as RouterLink } from '@/components/TrailLink';
 import { SubscriberTractionCard } from '@/components/admin/SubscriberTractionCard';
 import { TrafficIntelligencePanel } from '@/components/admin/TrafficIntelligencePanel';
 

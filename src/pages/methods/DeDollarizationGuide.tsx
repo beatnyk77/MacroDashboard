@@ -50,7 +50,7 @@ export const DeDollarizationGuide: React.FC = () => {
                     <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                         <a href="/" className="hover:text-white transition-colors">Home</a>
                         <ChevronRight size={10} />
-                        <a href="/labs/de-dollarization-gold" className="hover:text-white transition-colors">De-Dollarization Lab</a>
+                        <a href="/labs/de-dollarization-gold/" className="hover:text-white transition-colors">De-Dollarization Lab</a>
                         <ChevronRight size={10} />
                         <span className="text-amber-500">Methodology Guide</span>
                     </nav>
@@ -172,9 +172,9 @@ export const DeDollarizationGuide: React.FC = () => {
                         GraphiQuestor provides the raw intelligence required to front-run these macroeconomic shifts. We do not forecast; we observe structural reality.
                     </p>
                     <ul>
-                        <li><a href="/labs/de-dollarization-gold">De-Dollarization & Gold Lab</a>: Monitor real-time changes in the Debt/Gold Z-Score and central bank accumulation.</li>
-                        <li><a href="/labs/central-bank-gold-purchases">Gold Purchases Tracker</a>: Deep dive into sovereign gold flows.</li>
-                        <li><a href="/labs/us-treasury-foreign-holdings">US Treasury Foreign Holdings</a>: Track the shifting buyer base for US sovereign debt.</li>
+                        <li><a href="/labs/de-dollarization-gold/">De-Dollarization & Gold Lab</a>: Monitor real-time changes in the Debt/Gold Z-Score and central bank accumulation.</li>
+                        <li><a href="/labs/central-bank-gold-purchases/">Gold Purchases Tracker</a>: Deep dive into sovereign gold flows.</li>
+                        <li><a href="/labs/us-treasury-foreign-holdings/">US Treasury Foreign Holdings</a>: Track the shifting buyer base for US sovereign debt.</li>
                     </ul>
                 </article>
 
@@ -184,7 +184,7 @@ export const DeDollarizationGuide: React.FC = () => {
                         className="font-black uppercase tracking-widest text-amber-500 border-amber-500/20 hover:bg-amber-500/10"
                         asChild
                     >
-                        <a href="/labs/de-dollarization-gold" className="flex items-center gap-2">
+                        <a href="/labs/de-dollarization-gold/" className="flex items-center gap-2">
                             <ArrowLeft size={16} /> Explore the De-Dollarization Lab
                         </a>
                     </Button>

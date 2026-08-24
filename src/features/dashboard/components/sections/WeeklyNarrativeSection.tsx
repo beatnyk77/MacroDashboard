@@ -4,7 +4,7 @@ import { m } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { SectionHeader } from '@/components/SectionHeader';
 import { History, Info, ChevronRight, Activity } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Card } from "@/components/ui/card";
 
 interface WeeklyRegimeDigest {

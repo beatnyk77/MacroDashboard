@@ -1,4 +1,5 @@
 import React from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { ChevronRight, ArrowLeft, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
@@ -58,7 +59,8 @@ export const GovFinancialPositionLab: React.FC = () => {
               'FRUSG Statement of Net Cost, consolidated balance sheet, and MTS Table 5 agency outlays from U.S. Treasury Fiscal Data.',
             url: 'https://graphiquestor.com/labs/gov-financial-position',
             isAccessibleForFree: true,
-            creator: { '@type': 'Organization', name: 'GraphiQuestor' },
+            license: 'https://creativecommons.org/licenses/by/4.0/',
+            creator: PublisherOrganizationSchema,
           },
         ]}
       />
@@ -69,7 +71,7 @@ export const GovFinancialPositionLab: React.FC = () => {
               Home
             </a>
             <ChevronRight size={10} />
-            <a href="/labs/us-macro-fiscal" className="hover:text-white transition-colors">
+            <a href="/labs/us-macro-fiscal/" className="hover:text-white transition-colors">
               US Macro & Fiscal
             </a>
             <ChevronRight size={10} />
@@ -155,7 +157,7 @@ export const GovFinancialPositionLab: React.FC = () => {
             className="text-muted-foreground/40 font-black uppercase tracking-widest hover:text-white"
             asChild
           >
-            <a href="/labs/us-macro-fiscal" className="flex items-center gap-2">
+            <a href="/labs/us-macro-fiscal/" className="flex items-center gap-2">
               <ArrowLeft size={18} /> Back to US Macro & Fiscal Lab
             </a>
           </Button>

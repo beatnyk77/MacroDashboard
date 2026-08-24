@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -49,10 +50,8 @@ export const AfricaMacroPulseLab: React.FC = () => {
         "name": "Africa Macro & Sovereign Debt Pulse",
         "description": "Real-time dataset tracking fiscal stress, debt sustainability, and bilateral trade flows for major African economies including Nigeria, South Africa, Egypt, and Kenya.",
         "url": "https://graphiquestor.com/labs/africa-macro",
-        "creator": {
-            "@type": "Organization",
-            "name": "GraphiQuestor Intelligence"
-        },
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "creator": PublisherOrganizationSchema,
         "keywords": ["Africa Macro", "Sovereign Debt", "BRICS Trade", "Commodity Exposure"]
     };
 
@@ -96,7 +95,7 @@ export const AfricaMacroPulseLab: React.FC = () => {
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40" aria-label="Breadcrumb">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
                     <ChevronRight size={10} aria-hidden="true" />
-                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
                     <ChevronRight size={10} aria-hidden="true" />
                     <span className="text-blue-500">Africa Macro Pulse</span>
                 </nav>
@@ -180,7 +179,7 @@ export const AfricaMacroPulseLab: React.FC = () => {
                     className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory" className="flex items-center gap-2">
+                    <a href="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
                     </a>
                 </Button>

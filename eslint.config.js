@@ -133,11 +133,28 @@ export default [
                 { allowConstantExport: true },
             ],
             '@typescript-eslint/no-explicit-any': 'off',
-            '@typescript-eslint/no-unused-vars': ['warn', { 
+            '@typescript-eslint/no-unused-vars': ['warn', {
                 argsIgnorePattern: '^_',
                 varsIgnorePattern: '^_',
                 caughtErrorsIgnorePattern: '^_'
             }],
+            // Use TrailLink/TrailNavLink (@/components/TrailLink) instead — they enforce the
+            // site's trailing-slash URL convention. A bare react-router-dom Link/NavLink renders
+            // an href without the trailing slash, forcing an extra 301 hop and splitting Google's
+            // ranking signal across two URL variants for the same page.
+            'no-restricted-imports': ['error', {
+                paths: [{
+                    name: 'react-router-dom',
+                    importNames: ['Link', 'NavLink'],
+                    message: "Use TrailLink/TrailNavLink from '@/components/TrailLink' instead, so internal hrefs always carry the trailing slash.",
+                }],
+            }],
+        },
+    },
+    {
+        files: ['src/components/TrailLink.tsx'],
+        rules: {
+            'no-restricted-imports': 'off',
         },
     }
 ];

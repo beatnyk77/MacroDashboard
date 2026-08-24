@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMacroBrief } from '@/hooks/useMacroBrief';
 import type { FocusArea } from '@/types/brief';
 import { FOCUS_AREA_LABELS } from '@/types/brief';
+import { AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { FocusAreaSelector } from '@/components/brief/FocusAreaSelector';
 import { ShareButton } from '@/components/ShareButton';
 import { getRegimeColors } from '@/constants/semanticColors';
@@ -231,19 +233,8 @@ const MacroBriefInner: React.FC = () => {
     "description": activeBrief.content.regime_status ?? "Daily institutional macro intelligence brief",
     "datePublished": activeBrief.generated_at,
     "dateModified": activeBrief.generated_at,
-    "author": {
-      "@type": "Organization",
-      "name": "GraphiQuestor",
-      "url": "https://graphiquestor.com"
-    },
-    "publisher": {
-      "@type": "Organization", 
-      "name": "GraphiQuestor",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://graphiquestor.com/hero-preview.jpg"
-      }
-    },
+    "author": AuthorPersonSchema,
+    "publisher": PublisherOrganizationSchema,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": `https://graphiquestor.com/macro-brief/${activeBrief.brief_date}`

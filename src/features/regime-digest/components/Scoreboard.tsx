@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ArrowDownRight, ArrowUpRight, Minus, Table2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { MetricRow, ScoreboardSectionId } from '@/features/regime-digest/lib/types';

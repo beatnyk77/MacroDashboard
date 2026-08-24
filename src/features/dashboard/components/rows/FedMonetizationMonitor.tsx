@@ -652,7 +652,7 @@ export const FedMonetizationMonitor: React.FC = () => {
               FED Debt Monetization & Yield Control
               <GQSignalBadge
                 tooltip="Proprietary composite: Fed balance sheet dynamics, SOMA weekly flows, real yield suppression, and M2-CPI spread — not available from any single public source."
-                href="/methods/fiscal-dominance-meter"
+                href="/methods/fiscal-dominance-meter/"
               />
             </h2>
             <p className="text-slate-400 text-sm md:text-base max-w-2xl">

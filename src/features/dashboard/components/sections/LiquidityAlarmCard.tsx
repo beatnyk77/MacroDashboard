@@ -6,8 +6,7 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
 import { cn } from '@/lib/utils';
 import { formatBillions } from '@/utils/formatNumber';
-import { Link } from 'react-router-dom';
-
+import { TrailLink as Link } from '@/components/TrailLink';
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         return (

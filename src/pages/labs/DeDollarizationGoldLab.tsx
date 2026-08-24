@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -69,10 +70,8 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     'description': 'Data on central bank gold purchases, COFER reserve composition, and petrodollar vs petroyuan settlement.',
                     'url': 'https://graphiquestor.com/labs/de-dollarization-gold',
                     'isAccessibleForFree': true,
-                    'creator': {
-                        '@type': 'Organization',
-                        'name': 'GraphiQuestor'
-                    }
+                    'license': 'https://creativecommons.org/licenses/by/4.0/',
+                    'creator': PublisherOrganizationSchema
                 }
             ]}
         />
@@ -82,7 +81,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
                     <ChevronRight size={10} />
-                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
                     <ChevronRight size={10} />
                     <span className="text-amber-500">De-Dollarization & Gold</span>
                 </nav>
@@ -109,7 +108,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         <p className="text-white/70 text-sm font-medium">Read our comprehensive institutional analysis of global reserve shifts, BRICS currency dynamics, and actionable macro scenarios for 2026.</p>
                     </div>
                     <Button className="bg-amber-500 hover:bg-amber-600 text-black font-black uppercase tracking-widest shrink-0" asChild>
-                        <a href="/methods/de-dollarization-guide">Read the Guide</a>
+                        <a href="/methods/de-dollarization-guide/">Read the Guide</a>
                     </Button>
                 </div>
             </div>
@@ -184,7 +183,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     </div>
                     <div className="mt-6 flex justify-end">
                         <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/us-treasury-foreign-holdings">Deep Dive: US Treasury Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
+                            <a href="/labs/us-treasury-foreign-holdings/">Deep Dive: US Treasury Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
                         </Button>
                     </div>
                 </section>
@@ -205,7 +204,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     
                     <div className="mt-6 flex justify-end">
                         <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/central-bank-gold-purchases">Deep Dive: Gold Purchases Tracker <ChevronRight size={14} className="ml-2" /></a>
+                            <a href="/labs/central-bank-gold-purchases/">Deep Dive: Gold Purchases Tracker <ChevronRight size={14} className="ml-2" /></a>
                         </Button>
                     </div>
                 </section>
@@ -227,7 +226,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                             </SectionErrorBoundary>
                             <div className="flex justify-end">
                                 <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                                    <a href="/labs/petrodollar-decay-indicators">Deep Dive: Petrodollar Decay <ChevronRight size={14} className="ml-2" /></a>
+                                    <a href="/labs/petrodollar-decay-indicators/">Deep Dive: Petrodollar Decay <ChevronRight size={14} className="ml-2" /></a>
                                 </Button>
                             </div>
                         </div>
@@ -240,7 +239,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     </div>
                     <div className="mt-6 flex justify-end">
                         <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/brics-trade-settlement">Deep Dive: BRICS Trade Settlement <ChevronRight size={14} className="ml-2" /></a>
+                            <a href="/labs/brics-trade-settlement/">Deep Dive: BRICS Trade Settlement <ChevronRight size={14} className="ml-2" /></a>
                         </Button>
                     </div>
                     <ChartInsightSummary id="lab-trade-flows" insight="De-dollarization is observed via reserve composition, CB gold, and petrodollar/petroyuan settlement — not commercial HS-code export flows." />
@@ -274,7 +273,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                         Our predictive telemetry isolates the exact velocity of this transition by measuring the <em>M2 to Gold Ratio</em>, central bank net purchases, and the evolving composition of the IMF's Currency Composition of Official Foreign Exchange Reserves (COFER). When combined with our <strong>Petrodollar vs Petroyuan</strong> analysis, institutional observers can map the structural decoupling of global energy trade from the US Dollar hegemony.
                     </p>
                     <p>
-                        Understanding the divergence between paper gold derivatives and physical gold arbitrage is critical for macro positioning. As the <a href="/glossary/de-dollarization" className="text-blue-400 hover:underline">De-dollarization</a> macro regime accelerates, the gravitational center of global trade is demonstrably shifting towards the BRICS+ block, fundamentally re-pricing geopolitical risk and necessitating a new framework for cross-border settlement.
+                        Understanding the divergence between paper gold derivatives and physical gold arbitrage is critical for macro positioning. As the <a href="/glossary/de-dollarization/" className="text-blue-400 hover:underline">De-dollarization</a> macro regime accelerates, the gravitational center of global trade is demonstrably shifting towards the BRICS+ block, fundamentally re-pricing geopolitical risk and necessitating a new framework for cross-border settlement.
                     </p>
                 </div>
             </article>
@@ -285,7 +284,7 @@ export const DeDollarizationGoldLab: React.FC = () => {
                     className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory" className="flex items-center gap-2">
+                    <a href="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
                     </a>
                 </Button>

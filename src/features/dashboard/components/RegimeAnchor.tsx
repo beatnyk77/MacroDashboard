@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { useDailyMacroSignal } from '@/features/daily-macro/hooks/useDailyMacroSignal';
 import { generateMacroBrief } from '@/features/daily-macro/services/macroSignalEngine';

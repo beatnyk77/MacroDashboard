@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { SEOManager } from '@/components/SEOManager';
 import { apiDocsMeta } from '@/lib/seoTemplates';
 import { CodeBlock } from '@/components/docs/CodeBlock';
-import { Link } from 'react-router-dom';
-
+import { TrailLink as Link } from '@/components/TrailLink';
 // ─── Nav structure ────────────────────────────────────────────────────────────
 
 const NAV_SECTIONS = [

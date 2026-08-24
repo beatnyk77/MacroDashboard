@@ -1,11 +1,12 @@
 import React, { Suspense, lazy } from 'react';
+import { AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, TrendingUp } from 'lucide-react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
@@ -79,8 +80,8 @@ export const M2GoldRatioPage: React.FC = () => {
         "url": "https://graphiquestor.com/methods/m2-gold-ratio",
         "datePublished": "2026-05-30",
         "dateModified": "2026-05-30",
-        "author": { "@type": "Organization", "name": "GraphiQuestor Research" },
-        "publisher": { "@type": "Organization", "name": "GraphiQuestor", "url": "https://graphiquestor.com" },
+        "author": AuthorPersonSchema,
+        "publisher": PublisherOrganizationSchema,
         "keywords": ["M2 Gold Ratio", "Gold Valuation", "Monetary Debasement", "Global Liquidity", "Hard Assets", "Gold M2"]
     };
 

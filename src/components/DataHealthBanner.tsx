@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { AlertCircle, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';

@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Button } from '@/components/ui/button';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
@@ -68,10 +69,38 @@ export const USMacroFiscalLab: React.FC = () => {
                     'description': 'Real-time structural debt dynamics, treasury demand vectors, and fiscal policy impact of the US dollar.',
                     'url': 'https://graphiquestor.com/labs/us-macro-fiscal',
                     'isAccessibleForFree': true,
-                    'creator': {
-                        '@type': 'Organization',
-                        'name': 'GraphiQuestor'
-                    }
+                    'license': 'https://creativecommons.org/licenses/by/4.0/',
+                    'creator': PublisherOrganizationSchema
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'FAQPage',
+                    'mainEntity': [
+                        {
+                            '@type': 'Question',
+                            'name': 'What is the US debt maturity wall?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'The maturity wall refers to the roughly $9T+ of outstanding US Treasury securities that must be refinanced within a rolling 12-month window. Because a large share was issued at pandemic-era low coupons, each refinancing re-prices that debt at current, structurally higher market yields, mechanically raising future interest expense regardless of new deficit spending.'
+                            }
+                        },
+                        {
+                            '@type': 'Question',
+                            'name': 'What does fiscal dominance mean for the Federal Reserve?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'Fiscal dominance is the regime where government debt service costs constrain how high or how long the Fed can hold restrictive rates, because tightening further would itself worsen the deficit through higher interest expense. It occurs when mandatory spending — interest plus entitlements — approaches or exceeds tax receipts, forcing monetary policy to accommodate fiscal reality rather than target inflation independently.'
+                            }
+                        },
+                        {
+                            '@type': 'Question',
+                            'name': 'How much does the US government pay in interest on its debt?',
+                            'acceptedAnswer': {
+                                '@type': 'Answer',
+                                'text': 'US federal net interest expense rose from roughly $250B a decade ago to over $1 trillion annually by 2025 — now comparable in size to the total national defense budget. This lab tracks that trajectory live against the debt maturity wall and Treasury auction demand.'
+                            }
+                        }
+                    ]
                 }
             ]}
         />
@@ -81,7 +110,7 @@ export const USMacroFiscalLab: React.FC = () => {
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
                     <ChevronRight size={10} />
-                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
                     <ChevronRight size={10} />
                     <span className="text-blue-500">US Macro & Fiscal</span>
                 </nav>
@@ -222,7 +251,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     
                     <div className="mt-6 flex justify-end">
                         <Button variant="outline" className="text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/us-treasury-foreign-holdings">Deep Dive: Foreign Holder Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
+                            <a href="/labs/us-treasury-foreign-holdings/">Deep Dive: Foreign Holder Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
                         </Button>
                     </div>
                 </section>
@@ -253,11 +282,31 @@ export const USMacroFiscalLab: React.FC = () => {
                         The <strong>US Macro & Fiscal Lab</strong> provides high-frequency telemetry on the structural constraints facing the United States Treasury and the Federal Reserve. Over the past decade, the reliance on short-term debt issuance (Treasury Bills) has created a significant <em>maturity wall</em>, forcing the sovereign to constantly refinance obligations rather than lock in long-term capital.
                     </p>
                     <p>
-                        Our predictive telemetry indicates that as interest expense on the national debt supersedes major discretionary categories (such as defense spending), the likelihood of <strong>fiscal dominance</strong> increases. Fiscal dominance occurs when the central bank is forced to subordinate its inflation target to maintain the solvency of the government, often leading to <a href="/glossary/stealth-qe" className="text-blue-400 hover:underline">Stealth QE</a> or Yield Curve Control (YCC). By tracking <em>Treasury Auction Demand Metrics</em> natively through GraphiQuestor, institutional participants can monitor the exact inflection point of buyer exhaustion.
+                        Our predictive telemetry indicates that as interest expense on the national debt supersedes major discretionary categories (such as defense spending), the likelihood of <strong>fiscal dominance</strong> increases. Fiscal dominance occurs when the central bank is forced to subordinate its inflation target to maintain the solvency of the government, often leading to <a href="/glossary/stealth-qe/" className="text-blue-400 hover:underline">Stealth QE</a> or Yield Curve Control (YCC). By tracking <em>Treasury Auction Demand Metrics</em> natively through GraphiQuestor, institutional participants can monitor the exact inflection point of buyer exhaustion.
                     </p>
                     <p>
-                        Simultaneously, the <a href="/glossary/tga" className="text-blue-400 hover:underline">Treasury General Account (TGA)</a> and the Overnight Reverse Repo Facility (RRP) act as critical hydraulic valves for global liquidity. By synthesizing direct data feeds from the Federal Reserve Economic Data (FRED) API with our custom capital flow Sankey architectures, analysts can isolate the precise velocity at which liquidity is injected or drained from risk assets.
+                        Simultaneously, the <a href="/glossary/tga/" className="text-blue-400 hover:underline">Treasury General Account (TGA)</a> and the Overnight Reverse Repo Facility (RRP) act as critical hydraulic valves for global liquidity. By synthesizing direct data feeds from the Federal Reserve Economic Data (FRED) API with our custom capital flow Sankey architectures, analysts can isolate the precise velocity at which liquidity is injected or drained from risk assets.
                     </p>
+                    <p>
+                        The clearest historical proof of this mechanism came in 2021, when a debt-ceiling standoff forced the Treasury to draw the TGA down from roughly $1.7T to near $150B by August — mechanically injecting an estimated $1.5T of reserves into the banking system with zero change to the Fed funds rate. The mirror-image episode followed in mid-2023: once the ceiling was resolved, the TGA rebuilt to above $750B within months, draining reserves and coinciding with tighter financial conditions even as headline rates held steady. Net interest expense itself has followed an equally stark path, rising from roughly $250B a decade ago to over $1 trillion annually by 2025 — now comparable in size to the entire national defense budget, and the single fastest-growing line item in the federal budget.
+                    </p>
+                </div>
+
+                {/* Visible FAQ block, mirrors the FAQPage JSON-LD above */}
+                <div className="mt-10 pt-8 border-t border-white/5 space-y-5">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2">Frequently Asked Questions</h4>
+                    <div>
+                        <p className="text-sm font-bold text-white/90 mb-1">What is the US debt maturity wall?</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">The maturity wall refers to the roughly $9T+ of outstanding US Treasury securities that must be refinanced within a rolling 12-month window. Because a large share was issued at pandemic-era low coupons, each refinancing re-prices that debt at current, structurally higher market yields.</p>
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-white/90 mb-1">What does fiscal dominance mean for the Federal Reserve?</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">Fiscal dominance is the regime where government debt service costs constrain how high or how long the Fed can hold restrictive rates, because tightening further would itself worsen the deficit through higher interest expense.</p>
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-white/90 mb-1">How much does the US government pay in interest on its debt?</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">US federal net interest expense rose from roughly $250B a decade ago to over $1 trillion annually by 2025 — now comparable in size to the total national defense budget.</p>
+                    </div>
                 </div>
             </article>
 
@@ -267,7 +316,7 @@ export const USMacroFiscalLab: React.FC = () => {
                     className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory" className="flex items-center gap-2">
+                    <a href="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
                     </a>
                 </Button>

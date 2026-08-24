@@ -4,8 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Box, Typography, Skeleton } from '@mui/material';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import { TrailLink as Link } from '@/components/TrailLink';
 export const USFilingsFeed: React.FC = () => {
     const { data: filings, isLoading } = useQuery({
         queryKey: ['us-live-filings'],

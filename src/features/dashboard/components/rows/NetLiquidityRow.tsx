@@ -32,7 +32,7 @@ export const NetLiquidityRow: React.FC = () => {
             <div className="flex items-center justify-between pt-2">
                 <GQSignalBadge
                     tooltip="Proprietary Z-Score: deviation of net liquidity (Fed assets − TGA − RRP) from its 3-year rolling mean, normalized by standard deviation."
-                    href="/methods/net-liquidity-z-score"
+                    href="/methods/net-liquidity-z-score/"
                 />
                 <DataProvenanceBadge
                     source="FRED / Treasury"

@@ -1,7 +1,8 @@
 import React, { Suspense, lazy } from 'react';
+import { AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Layers, Link2, AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -26,8 +27,8 @@ export const ChinaDebtIcebergPage: React.FC = () => {
         "url": "https://graphiquestor.com/methods/china-debt-iceberg",
         "datePublished": "2026-06-20",
         "dateModified": "2026-06-20",
-        "author": { "@type": "Organization", "name": "GraphiQuestor Research" },
-        "publisher": { "@type": "Organization", "name": "GraphiQuestor" },
+        "author": AuthorPersonSchema,
+        "publisher": PublisherOrganizationSchema,
         "keywords": ["China debt iceberg", "LGFV stress", "China public sector debt", "IMF Article IV China", "China monetization pressure"]
     };
 

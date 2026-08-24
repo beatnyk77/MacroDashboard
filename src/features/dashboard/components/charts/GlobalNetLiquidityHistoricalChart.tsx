@@ -19,8 +19,7 @@ import {
 } from 'recharts';
 import { useNetLiquidityHistory } from '@/hooks/useNetLiquidityHistory';
 import { Info, Zap, BookOpen } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import { TrailLink as Link } from '@/components/TrailLink';
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
     return (

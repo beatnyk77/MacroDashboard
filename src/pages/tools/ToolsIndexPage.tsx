@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Container, Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Gauge, Activity, Coins, Code } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
 

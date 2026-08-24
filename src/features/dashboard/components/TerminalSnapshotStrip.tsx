@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Activity, Clock } from 'lucide-react';
 import snapshotJson from '@/data/terminal-snapshot.json';
 import { useLatestMetric } from '@/hooks/useLatestMetric';

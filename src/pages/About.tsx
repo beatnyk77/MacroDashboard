@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Container, Typography, Avatar, Stack, Divider, Button } from '@mui/material';
 import { SEOManager } from '@/components/SEOManager';
-import { BrandConfig } from '@/config/brandConfig';
+import { BrandConfig, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Linkedin, Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 export const About: React.FC = () => {
@@ -24,17 +24,12 @@ export const About: React.FC = () => {
                             "https://www.linkedin.com/in/kartikay-sharma-b9190214/"
                         ],
                         "description": "Chartered Accountant focusing on institutional macro surveillance, systemic liquidity, and sovereign risk.",
-                        "worksFor": {
-                            "@type": "Organization",
-                            "name": "GraphiQuestor"
-                        }
+                        "worksFor": PublisherOrganizationSchema
                     },
                     {
                         "@context": "https://schema.org",
-                        "@type": "Organization",
-                        "name": "GraphiQuestor",
-                        "url": "https://graphiquestor.com",
-                        "logo": BrandConfig.seo.logoImage
+                        "@id": `${BrandConfig.baseUrl}/#organization`,
+                        ...PublisherOrganizationSchema
                     }
                 ]}
             />
@@ -91,7 +86,11 @@ export const About: React.FC = () => {
                         <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8, color: 'text.secondary', fontSize: '1.05rem' }}>
                             GraphiQuestor operates as a structural intelligence authority, bypassing financial narratives to focus on the unvarnished telemetry of the global monetary regime. We provide institutional-grade capital allocators with the tools required to navigate the fracturing of the post-1971 fiat architecture.
                         </Typography>
-                        
+
+                        <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8, color: 'text.secondary' }}>
+                            GraphiQuestor is built and published by <strong>FounderHQ LLP</strong>, founded by Kartikay Sharma, a Chartered Accountant who designed the terminal&apos;s surveillance framework and continues to author its methodology and editorial output.
+                        </Typography>
+
                         <Typography variant="h4" sx={{ color: 'text.primary', fontWeight: 700, fontSize: '1.2rem', mt: 4, mb: 2 }}>
                             Methodology & Data Integrity
                         </Typography>

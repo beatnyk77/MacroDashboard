@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { FileText, ExternalLink, Lightbulb } from 'lucide-react';
 
 interface CountryNarrativeBlockProps {

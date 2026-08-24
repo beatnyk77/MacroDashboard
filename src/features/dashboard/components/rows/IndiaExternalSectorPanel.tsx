@@ -114,7 +114,7 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                                 <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1 block">Arbitrage & Carry</span>
                                 <div className="flex items-center gap-2">
                                     <h3 className="text-lg font-black text-white uppercase tracking-heading">India-US 10Y Spread</h3>
-                                    <GQSignalBadge href="/methods/india-credit-cycle-clock" />
+                                    <GQSignalBadge href="/methods/india-credit-cycle-clock/" />
                                 </div>
                             </div>
                             <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-white/5">

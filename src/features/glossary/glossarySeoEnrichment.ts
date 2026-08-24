@@ -65,6 +65,16 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
                 answer:
                     'Gold responds more to real interest rates (nominal yield minus breakeven) than to breakevens alone. Rising breakevens without matching nominal yield increases compress real rates, which is bullish for gold. Rising breakevens alongside rising nominal yields (positive real rates) is typically bearish for gold.',
             },
+            {
+                question: 'What was the highest 10-year breakeven inflation rate on record?',
+                answer:
+                    'The 10-year breakeven spiked to roughly 3.0% in April 2022 as post-pandemic supply shocks and the Russia-Ukraine energy shock pushed realised CPI above 9%. That episode remains the reference extreme desks compare current readings against when assessing whether inflation expectations are becoming un-anchored.',
+            },
+            {
+                question: 'Is breakeven inflation the same as the Fed\'s inflation forecast?',
+                answer:
+                    'No — breakeven inflation is a market-derived price, reflecting what bond traders collectively expect and are willing to pay for, not an official Fed projection. The Fed publishes its own forecasts in the quarterly Summary of Economic Projections, which can and does diverge from the breakeven-implied path.',
+            },
         ],
         relatedReading: [
             { to: '/glossary/real-interest-rates', label: 'Real Interest Rates', kind: 'glossary' },
@@ -108,6 +118,16 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
                 question: 'What is a healthy level of forex reserves?',
                 answer:
                     'The IMF Guidotti-Greenspan rule suggests reserves should cover 100% of short-term external debt. Import cover of 6–12 months is standard for emerging markets. India targets 10+ months; levels below 3 months import cover historically precede currency crises.',
+            },
+            {
+                question: 'What happens when forex reserves fall too fast?',
+                answer:
+                    'A rapid drawdown is the earliest observable balance-of-payments stress signal — it preceded the 1997 Asian Financial Crisis (Thailand\'s reserves fell from ~$38B to under $1B usable within months) and Sri Lanka\'s 2022 default, where reserves collapsed below one month of import cover before capital controls and a sovereign default followed.',
+            },
+            {
+                question: 'How have India\'s forex reserves trended in 2026?',
+                answer:
+                    'India\'s reserves have stayed above $600B through 2026, supported by RBI intervention discipline and steady FPI/FDI inflows, keeping import cover comfortably above the 10-month threshold the RBI targets — a buffer built specifically after the reserve drawdown pressure of the 2013 taper tantrum.',
             },
         ],
         relatedReading: [
@@ -173,7 +193,10 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
         ],
         h1: 'Treasury General Account (TGA)',
         context2026:
-            'The TGA balance at the NY Fed (FRED: WTREGEN) remains a critical but underreported liquidity variable in 2026. Post-debt-ceiling rebuilds drain reserves mechanically — each $100B TGA increase removes an equivalent amount from bank reserves without any Fed policy action. Conversely, tax-refund season and fiscal spending drawdowns inject liquidity equivalent to stealth QE. GraphiQuestor tracks TGA within the Net Liquidity formula (WALCL − WTREGEN − RRPONTSYD); TGA swings frequently explain equity moves that FOMC statements alone cannot.',
+            'The TGA balance at the NY Fed (FRED: WTREGEN) remains a critical but underreported liquidity variable in 2026. Post-debt-ceiling rebuilds drain reserves mechanically — each $100B TGA increase removes an equivalent amount from bank reserves without any Fed policy action. The clearest historical episode was 2021, when the debt-ceiling standoff forced the TGA down from roughly $1.7T to near $150B by August, injecting an estimated $1.5T of liquidity into markets with zero change to the Fed funds rate. Conversely, tax-refund season and post-ceiling rebuilds — such as the rapid climb back above $750B in mid-2023 — drain liquidity equivalent to stealth QT. GraphiQuestor tracks TGA within the Net Liquidity formula (WALCL − WTREGEN − RRPONTSYD); TGA swings frequently explain equity moves that FOMC statements alone cannot.',
+        liveMetricId: 'TGA_BALANCE',
+        liveMetricLabel: 'Treasury General Account Balance (WTREGEN)',
+        liveMetricUnit: '$Bn',
         faqItems: [
             {
                 question: 'What is a normal TGA balance?',
@@ -189,6 +212,11 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
                 question: 'What is the relationship between TGA and quantitative easing?',
                 answer:
                     'TGA drawdowns mimic QE mechanically: when the Treasury spends down its Fed account, reserves enter the banking system without Fed balance sheet expansion. This is why net liquidity (not just WALCL) is the superior indicator.',
+            },
+            {
+                question: 'Where can I find the current TGA balance?',
+                answer:
+                    'The Treasury publishes the daily balance via FRED series WTREGEN (Federal Reserve H.4.1 release) and the Daily Treasury Statement. GraphiQuestor surfaces the live figure above alongside its role in the net liquidity formula.',
             },
         ],
         relatedReading: [

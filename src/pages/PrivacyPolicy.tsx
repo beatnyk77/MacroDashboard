@@ -11,6 +11,10 @@ export const PrivacyPolicy = () => {
             />
             <Typography variant="h1" component="h1" gutterBottom>Privacy Policy</Typography>
             <Box sx={{ mt: 4 }}>
+                <Typography paragraph sx={{ color: 'text.secondary' }}>
+                    GraphiQuestor is operated and published by <strong>FounderHQ LLP</strong>. References to
+                    &quot;GraphiQuestor&quot;, &quot;we&quot;, or &quot;us&quot; in this document mean FounderHQ LLP.
+                </Typography>
                 <Typography variant="h6">1. Data Collection</Typography>
                 <Typography paragraph>
                     We collect minimal personal data required for billing and authentication via Paddle and Supabase.

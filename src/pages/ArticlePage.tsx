@@ -1,9 +1,10 @@
 import React from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { Box, Typography, Container, Button, Stack, Chip, Divider, Avatar, IconButton, Tooltip } from '@mui/material';
 import { blogArticles } from '@/features/blog/blogData';
 import { SEOManager } from '@/components/SEOManager';
-import { BrandConfig } from '@/config/brandConfig';
+import { BrandConfig, AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Calendar, User, Clock, Twitter, Linkedin, LinkIcon, BookOpen, ChevronRight } from 'lucide-react';
@@ -67,25 +68,8 @@ export const ArticlePage: React.FC = () => {
                     "image": BrandConfig.seo.ogImage,
                     "datePublished": article.date,
                     "wordCount": article.content.trim().split(/\s+/).length,
-                    "author": {
-                        "@type": "Person",
-                        "name": article.author,
-                        ...(article.author === 'Kartikay Sharma' ? {
-                            "jobTitle": "Chartered Accountant & Macro Analyst",
-                            "url": "https://graphiquestor.com/about",
-                            "sameAs": [
-                                "https://www.linkedin.com/in/kartikay-sharma-b9190214/"
-                            ]
-                        } : {})
-                    },
-                    "publisher": {
-                        "@type": "Organization",
-                        "name": "GraphiQuestor",
-                        "logo": {
-                            "@type": "ImageObject",
-                            "url": BrandConfig.seo.logoImage
-                        }
-                    },
+                    "author": article.author === 'Kartikay Sharma' ? AuthorPersonSchema : { "@type": "Person", "name": article.author },
+                    "publisher": PublisherOrganizationSchema,
                     "mainEntityOfPage": {
                         "@type": "WebPage",
                         "@id": `https://graphiquestor.com/blog/${article.slug}`

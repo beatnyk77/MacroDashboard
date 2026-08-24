@@ -5,7 +5,8 @@ import { useNetLiquidity } from '@/hooks/useNetLiquidity';
 import { SEOManager } from '@/components/SEOManager';
 import { EmbedCodeBlock } from '@/components/EmbedCodeBlock';
 import { ExternalLink, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const NetLiquidityGaugeChart = lazy(() => import('./NetLiquidityGaugeChart').then(m => ({ default: m.NetLiquidityGaugeChart })));

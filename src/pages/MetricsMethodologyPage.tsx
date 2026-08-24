@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { SEOManager } from '@/components/SEOManager';

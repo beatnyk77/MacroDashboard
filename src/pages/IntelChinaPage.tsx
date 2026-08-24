@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
@@ -469,7 +469,7 @@ export const IntelChinaPage: React.FC = () => {
                             The <strong>China Macro Hub</strong> tracks the deliberate structural deceleration of China's property sector alongside the corresponding acceleration in high-quality manufacturing, green technology, and sovereign influence architecture. Analyzing the People's Bank of China (PBoC) monetary plumbing and credit impulse cycles provides leading indicators for global commodity demand and emerging market liquidity.
                         </p>
                         <p>
-                            A key focus of this hub is the tracking of <a href="/glossary/de-dollarization" className="text-blue-400 hover:underline transition-colors">De-Dollarization</a> vectors and the expansion of parallel settlement infrastructure like the <a href="/glossary/mbridge" className="text-blue-400 hover:underline transition-colors">mBridge</a> network. By monitoring the spheres of institutional influence, including BRICS+ trade alignments and bilateral swap lines, the timeline for multi-polar reserve optionality becomes quantifiable.
+                            A key focus of this hub is the tracking of <a href="/glossary/de-dollarization/" className="text-blue-400 hover:underline transition-colors">De-Dollarization</a> vectors and the expansion of parallel settlement infrastructure like the <a href="/glossary/mbridge/" className="text-blue-400 hover:underline transition-colors">mBridge</a> network. By monitoring the spheres of institutional influence, including BRICS+ trade alignments and bilateral swap lines, the timeline for multi-polar reserve optionality becomes quantifiable.
                         </p>
                         <p>
                             The shift from export-led accumulation to domestic consumption and strategic industrial autonomy is modeled through our proprietary alpha signals, visualizing the long-term relative growth rate of the Chinese economy against developed market peers.

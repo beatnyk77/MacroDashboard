@@ -1,7 +1,7 @@
 {
-  "generatedAt": "1970-01-01T00:00:00.000Z",
-  "source": "placeholder",
+  "generatedAt": "2026-08-24T18:11:28.271Z",
+  "source": "build-time",
   "available": false,
-  "reason": "Run npm run generate-terminal-snapshot during build",
+  "reason": "Supabase env not set at build time — UI hydrates live client-side",
   "metrics": []
 }

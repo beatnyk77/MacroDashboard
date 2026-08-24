@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { ArrowUpRight } from 'lucide-react';
 import { useGfpNetCostConcentration } from '@/hooks/useGfpNetCost';
 import { useGfpBalanceSheet } from '@/hooks/useGfpBalanceSheet';

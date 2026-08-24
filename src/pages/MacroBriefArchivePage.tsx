@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { useMacroBriefArchive } from '@/hooks/useMacroBrief';
 import { Skeleton } from '@/components/ui/skeleton';

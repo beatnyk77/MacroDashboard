@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -60,10 +61,8 @@ export const SovereignStressLab: React.FC = () => {
                     'description': 'Real-time sovereign debt risk tracking G20 debt sustainability, yield curve stress, and BoJ dominance.',
                     'url': 'https://graphiquestor.com/labs/sovereign-stress',
                     'isAccessibleForFree': true,
-                    'creator': {
-                        '@type': 'Organization',
-                        'name': 'GraphiQuestor'
-                    }
+                    'license': 'https://creativecommons.org/licenses/by/4.0/',
+                    'creator': PublisherOrganizationSchema
                 }
             ]}
         />
@@ -73,7 +72,7 @@ export const SovereignStressLab: React.FC = () => {
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
                     <ChevronRight size={10} />
-                    <a href="/macro-observatory" className="hover:text-white transition-colors">Observatory</a>
+                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
                     <ChevronRight size={10} />
                     <span className="text-purple-500">Sovereign Stress</span>
                 </nav>
@@ -152,7 +151,7 @@ export const SovereignStressLab: React.FC = () => {
                     className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory" className="flex items-center gap-2">
+                    <a href="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
                     </a>
                 </Button>

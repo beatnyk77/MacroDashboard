@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Container, Paper, Skeleton } from '@mui/material';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { ExternalLink, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { SEOManager } from '@/components/SEOManager';

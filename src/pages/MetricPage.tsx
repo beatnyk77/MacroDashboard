@@ -1,5 +1,6 @@
 import React from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { useQuery } from '@tanstack/react-query';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { ChevronRight, Database, BookOpen } from 'lucide-react';
@@ -309,7 +310,7 @@ export const MetricPage: React.FC = () => {
                     <p className="flex items-start gap-1.5 leading-relaxed text-white/50">
                         <Database size={13} className="mt-0.5 flex-shrink-0 text-white/40" />
                         <span>
-                            Sources: {entry.sources.join(' · ')}. Computed and published by GraphiQuestor Research.
+                            Sources: {entry.sources.join(' · ')}. Computed and published by Kartikay Sharma, CA, for FounderHQ LLP.
                             Values are observational composites — not forecasts. See{' '}
                             <Link to="/about/" className="font-bold text-blue-400 hover:underline">About</Link>
                             {' '}and{' '}

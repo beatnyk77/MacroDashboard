@@ -98,7 +98,7 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
                         G20 GDP Convergence Monitor
                         <GQSignalBadge
                             tooltip="Proprietary indexed convergence model: real GDP per capita (PPP, constant USD) rebased to a user-selected pivot year, tracking divergence across the G20 bloc."
-                            href="/methods/de-dollarization-guide"
+                            href="/methods/de-dollarization-guide/"
                         />
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary', maxWidth: 600 }}>

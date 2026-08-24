@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import { TrailLink as Link } from '@/components/TrailLink';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Container, Typography, Box, Grid } from '@mui/material';
@@ -11,7 +12,7 @@ import { COUNTRY_METRIC_GROUPS } from '@/lib/macro-metrics';
 import { CountryNarrativeBlock } from '@/components/CountryNarrativeBlock';
 import { COUNTRY_NARRATIVES } from '@/data/countryNarratives';
 import { ALL_COUNTRIES } from '@/lib/countries';
-import { BrandConfig } from '@/config/brandConfig';
+import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { countryMeta } from '@/lib/seoTemplates';
 import { withTrailingSlash } from '@/lib/urlPath';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
@@ -63,12 +64,7 @@ export const CountryProfilePage: React.FC = () => {
         "name": `${countryName} Macro Intelligence Profile`,
         "description": `Comprehensive macro-economic data and sovereign risk analysis for ${countryName}.`,
         "publisher": {
-            "@type": "Organization",
-            "name": "GraphiQuestor",
-            "logo": {
-                "@type": "ImageObject",
-                "url": BrandConfig.seo.logoImage
-            }
+            ...PublisherOrganizationSchema
         },
         "about": {
             "@type": "Country",
