@@ -1,299 +1,75 @@
-import React, { Suspense, lazy } from 'react';
+import React, { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
+import { ArrowLeft, CheckCircle2, ChevronRight, HelpCircle, Database, Search, ShieldAlert } from 'lucide-react';
 import { PublisherOrganizationSchema } from '@/config/brandConfig';
-import { useLatestMetric } from '@/hooks/useLatestMetric';
-import { getStaleness } from '@/hooks/useStaleness';
-import { FreshnessChip } from '@/components/FreshnessChip';
-import { METRIC_IDS as MID } from '@/constants/metricIds';
-import {
-    ChevronRight,
-    ArrowLeft,
-    TrendingUp,
-    Coins,
-    Zap,
-    Globe,
-} from 'lucide-react';
-import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
-import { LazyRender } from '@/components/LazyRender';
-import { ChartInsightSummary } from '@/components/ChartInsightSummary';
-import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
-import { RelatedContent } from '@/components/RelatedContent';
-import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
+import { DataStatePanel } from '@/components/DataStatePanel';
+import { supabase } from '@/lib/supabase';
+import { EVIDENCE_DEFINITIONS, EVIDENCE_FAMILIES, getFamilyDefinitions, type EvidenceClass, type EvidenceDefinition, type EvidenceFamily } from '@/lib/deDollarizationEvidence';
+import { cn } from '@/lib/utils';
+import { TrailLink } from '@/components/TrailLink';
 
-// Lazy loaded components
-const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
-const GoldRatioRibbon = lazy(() => import('@/features/dashboard/components/sections/GoldRatioRibbon').then(m => ({ default: m.GoldRatioRibbon })));
-const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
-const GlobalReserveTracker = lazy(() => import('@/features/dashboard/components/sections/GlobalReserveTracker').then(m => ({ default: m.GlobalReserveTracker })));
-const GoldPositioningMonitor = lazy(() => import('@/features/dashboard/components/sections/GoldPositioningMonitor').then(m => ({ default: m.GoldPositioningMonitor })));
-const G20GoldDebtCoveragePanel = lazy(() => import('@/features/dashboard/components/sections/G20GoldDebtCoveragePanel').then(m => ({ default: m.G20GoldDebtCoveragePanel })));
-const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/components/sections/PetrodollarVsPetroyuan').then(m => ({ default: m.PetrodollarVsPetroyuan })));
-const ReserveSellerTracker = lazy(() => import('@/features/dashboard/components/rows/ReserveSellerTracker').then(m => ({ default: m.ReserveSellerTracker })));
-const GoldOilRevaluationScenario = lazy(() => import('@/features/dashboard/components/sections/GoldOilRevaluationScenario').then(m => ({ default: m.GoldOilRevaluationScenario })));
+interface EvidenceRow { metric_id: string; value: number | null; as_of_date: string | null; staleness_flag: 'fresh' | 'lagged' | 'very_lagged' | null; native_frequency: string | null; source_name: string | null; source_ref: string | null; delta_mom: number | null; delta_wow: number | null; }
+const LIVE_METRIC_IDS = EVIDENCE_DEFINITIONS.filter((definition) => !['cb_gold_net', 'tic_foreign_holdings'].includes(definition.id)).map((definition) => definition.id);
+const CLASS_LABELS: Record<EvidenceClass, string> = { observed: 'Observed', derived: 'Derived', estimated: 'Estimated', scenario: 'Scenario' };
+const STATUS_LABELS: Record<string, string> = { fresh: 'Fresh', lagged: 'Lagged', very_lagged: 'Very lagged' };
 
+function useEvidenceRows() {
+    return useQuery({
+        queryKey: ['de-dollarization-evidence-library', LIVE_METRIC_IDS],
+        queryFn: async (): Promise<EvidenceRow[]> => {
+            const { data, error } = await supabase.from('vw_latest_metrics').select('metric_id, value, as_of_date, staleness_flag, native_frequency, source_name, source_ref, delta_mom, delta_wow').in('metric_id', LIVE_METRIC_IDS);
+            if (error) throw error;
+            const rows = (data ?? []).map((row) => ({ ...(row as unknown as EvidenceRow), value: row.value == null ? null : Number(row.value), delta_mom: row.delta_mom == null ? null : Number(row.delta_mom), delta_wow: row.delta_wow == null ? null : Number(row.delta_wow) }));
+            const { data: goldRows, error: goldError } = await supabase.from('cb_gold_net').select('period_label, period_start_year, net_tonnes, updated_at').order('period_start_year', { ascending: false }).limit(1);
+            if (goldError) throw goldError;
+            const gold = goldRows?.[0];
+            if (gold) rows.push({ metric_id: 'cb_gold_net', value: gold.net_tonnes == null ? null : Number(gold.net_tonnes), as_of_date: gold.updated_at ?? String(gold.period_label), staleness_flag: 'lagged', native_frequency: 'monthly', source_name: 'WGC / IMF', source_ref: null, delta_mom: null, delta_wow: null });
+            return rows;
+        }, staleTime: 1000 * 60 * 5, refetchOnWindowFocus: false,
+    });
+}
 
-const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Gold Signal...</span>
-    </div>
-);
+function evidenceClassStyle(evidenceClass: EvidenceClass) { return evidenceClass === 'observed' ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : evidenceClass === 'derived' ? 'border-blue-400/20 bg-blue-400/10 text-blue-300' : 'border-amber-400/20 bg-amber-400/10 text-amber-300'; }
+function formatValue(row: EvidenceRow | undefined, definition: EvidenceDefinition) { if (!row || row.value == null) return 'Unavailable'; const digits = definition.unit === '%' || definition.unit === 'USD/bbl' ? 2 : definition.unit === 'USD/oz' ? 0 : 2; return `${row.value.toLocaleString(undefined, { maximumFractionDigits: digits })} ${definition.unit}`; }
+function freshnessStatus(row: EvidenceRow | undefined): FreshnessStatus { if (!row) return 'no_data'; if (row.staleness_flag === 'very_lagged') return 'stale'; return row.staleness_flag ?? 'no_data'; }
 
-export const DeDollarizationGoldLab: React.FC = () => {
-    const { data: primaryMetric } = useLatestMetric(MID.GOLD_PRICE_USD);
-    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
-    return (
-        <>
-        <SEOManager
-            title="De-Dollarization & Gold Lab"
-            description="Track the structural shift from fiat reserves to hard-asset anchors. Central bank gold purchases, COFER reserve composition, petrodollar vs petroyuan"
-            keywords={['de-dollarization', 'gold reserves', 'central bank gold purchases', 'BRICS', 'petrodollar', 'petroyuan', 'reserve currency', 'COFER']}
-            jsonLd={[
-                {
-                    '@context': 'https://schema.org',
-                    '@type': 'WebPage',
-                    'name': 'De-Dollarization & Gold Lab',
-                    'url': 'https://graphiquestor.com/labs/de-dollarization-gold',
-                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                    'breadcrumb': {
-                        '@type': 'BreadcrumbList',
-                        'itemListElement': [
-                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                            { '@type': 'ListItem', 'position': 3, 'name': 'De-Dollarization & Gold Lab' }
-                        ]
-                    }
-                },
-                {
-                    '@context': 'https://schema.org',
-                    '@type': 'Dataset',
-                    'name': 'De-Dollarization & Gold Data',
-                    'description': 'Data on central bank gold purchases, COFER reserve composition, and petrodollar vs petroyuan settlement.',
-                    'url': 'https://graphiquestor.com/labs/de-dollarization-gold',
-                    'isAccessibleForFree': true,
-                    'license': 'https://creativecommons.org/licenses/by/4.0/',
-                    'creator': PublisherOrganizationSchema
-                }
-            ]}
-        />
-        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-            {/* Breadcrumbs */}
-            <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                    <a href="/" className="hover:text-white transition-colors">Home</a>
-                    <ChevronRight size={10} />
-                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
-                    <ChevronRight size={10} />
-                    <span className="text-amber-500">De-Dollarization & Gold</span>
-                </nav>
-            </div>
+function getFamilyState(definitions: EvidenceDefinition[], rowsById: Map<string, EvidenceRow>) {
+    const primary = definitions.find((definition) => definition.role === 'primary');
+    if (!primary) return { label: 'Methodology pending', tone: 'muted' };
+    const primaryRow = rowsById.get(primary.id);
+    if (!primaryRow || primaryRow.value == null || primaryRow.staleness_flag === 'very_lagged') return { label: 'Insufficient evidence', tone: 'muted' };
+    const confirmations = definitions.filter((definition) => definition.role === 'confirmation' && definition.direction).map((definition) => ({ definition, row: rowsById.get(definition.id) })).filter(({ row }) => row?.value != null && row.staleness_flag !== 'very_lagged');
+    if (!primary.direction || confirmations.length === 0) return { label: 'Direction observed', tone: 'blue' };
+    const primaryDelta = primaryRow.delta_mom ?? primaryRow.delta_wow;
+    if (primaryDelta == null || primaryDelta === 0) return { label: 'Mixed', tone: 'amber' };
+    const primaryUp = primary.direction === 'up' ? primaryDelta > 0 : primaryDelta < 0;
+    const agrees = confirmations.some(({ definition, row }) => { const delta = row?.delta_mom ?? row?.delta_wow; if (delta == null || delta === 0) return false; return (definition.direction === 'up' ? delta > 0 : delta < 0) === primaryUp; });
+    return primaryUp && agrees ? { label: 'Strengthening', tone: 'green' } : { label: 'Mixed', tone: 'amber' };
+}
 
-            <div className="mb-16">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-uppercase mb-6">
-                    <Coins size={12} /> Hard Money Telemetry
-                </div>
-                <div className="flex items-center gap-3 mb-4">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
-                        De-Dollarization & <span className="text-amber-500">Gold</span>
-                    </h1>
-                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
-                </div>
-                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide mb-8">
-                    Monitoring the systemic shift from fiat-centric reserves to hard-asset anchors and the fragmentation of global settlement networks.
-                </p>
+const EvidenceBadge: React.FC<{ evidenceClass: EvidenceClass }> = ({ evidenceClass }) => <span className={cn('inline-flex items-center rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-widest', evidenceClassStyle(evidenceClass))}>{CLASS_LABELS[evidenceClass]}</span>;
 
-                {/* Pillar Page Banner */}
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div>
-                        <h3 className="text-amber-500 font-black uppercase tracking-widest text-lg mb-2">The Ultimate Guide to De-Dollarization</h3>
-                        <p className="text-white/70 text-sm font-medium">Read our comprehensive institutional analysis of global reserve shifts, BRICS currency dynamics, and actionable macro scenarios for 2026.</p>
-                    </div>
-                    <Button className="bg-amber-500 hover:bg-amber-600 text-black font-black uppercase tracking-widest shrink-0" asChild>
-                        <a href="/methods/de-dollarization-guide/">Read the Guide</a>
-                    </Button>
-                </div>
-            </div>
-
-            <div className="space-y-32">
-                {/* 1. Gold Anchor Ratios */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <TrendingUp className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Gold Anchor Ratios</h2>
-                    </div>
-                    <div className="space-y-16">
-                        <SectionErrorBoundary name="US Debt Gold Backing">
-                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <USDebtGoldBackingCard />
-                                </Suspense>
-                            </LazyRender>
-                        </SectionErrorBoundary>
-                        <SectionErrorBoundary name="Gold Ratio Ribbon">
-                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GoldRatioRibbon />
-                                </Suspense>
-                            </LazyRender>
-                        </SectionErrorBoundary>
-                        <div id="gold-oil-revaluation" />
-                        <SectionErrorBoundary name="Gold Oil Revaluation Scenario">
-                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <GoldOilRevaluationScenario />
-                                </Suspense>
-                            </LazyRender>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <div className="mt-16">
-                        <SectionErrorBoundary name="G20 Gold Debt Coverage">
-                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <G20GoldDebtCoveragePanel />
-                                </Suspense>
-                            </LazyRender>
-                        </SectionErrorBoundary>
-                    </div>
-
-                    <ChartInsightSummary id="lab-gold-ratios" insight="The M2/Gold ratio tracks the relative debasement of the monetary supply against the hard asset anchor. Structurally rising ratios indicate a regime change in sovereign preference for physical liquidity." />
-                </section>
-
-                {/* 2. Global Reserve Composition */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Globe className="text-blue-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Global Reserve Composition</h2>
-                    </div>
-                    <SectionErrorBoundary name="Global Reserve Tracker">
-                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GlobalReserveTracker />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-
-                    <div className="mt-8">
-                        <SectionErrorBoundary name="Reserve-Seller Tracker">
-                            <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                <Suspense fallback={<LoadingFallback />}>
-                                    <ReserveSellerTracker />
-                                </Suspense>
-                            </LazyRender>
-                        </SectionErrorBoundary>
-                    </div>
-                    <div className="mt-6 flex justify-end">
-                        <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/us-treasury-foreign-holdings/">Deep Dive: US Treasury Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
-                        </Button>
-                    </div>
-                </section>
-
-                {/* 3. Central Bank Gold Net Purchases */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Zap className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Central Bank Gold Net Purchases</h2>
-                    </div>
-                    <SectionErrorBoundary name="Gold Net Purchases">
-                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                            <Suspense fallback={<LoadingFallback />}>
-                                <CentralBankGoldNet />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                    
-                    <div className="mt-6 flex justify-end">
-                        <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/central-bank-gold-purchases/">Deep Dive: Gold Purchases Tracker <ChevronRight size={14} className="ml-2" /></a>
-                        </Button>
-                    </div>
-                </section>
-
-                {/* 4. Trade Flows & Settlement */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <TrendingUp className="text-rose-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Trade Settlement & Misinvoicing</h2>
-                    </div>
-                    <div className="space-y-16">
-                        <div className="space-y-6">
-                            <SectionErrorBoundary name="Petrodollar vs Petroyuan">
-                                <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                                    <Suspense fallback={<LoadingFallback />}>
-                                        <PetrodollarVsPetroyuan />
-                                    </Suspense>
-                                </LazyRender>
-                            </SectionErrorBoundary>
-                            <div className="flex justify-end">
-                                <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                                    <a href="/labs/petrodollar-decay-indicators/">Deep Dive: Petrodollar Decay <ChevronRight size={14} className="ml-2" /></a>
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-5">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-2">Settlement telemetry</p>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                Commercial HS-code trade dashboards are out of scope. Settlement gravity is observed via COFER reserves, CB gold, and petrodollar/petroyuan panels above — with explicit unavailable states when series lag.
-                            </p>
-                        </div>
-                    </div>
-                    <div className="mt-6 flex justify-end">
-                        <Button variant="outline" className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/brics-trade-settlement/">Deep Dive: BRICS Trade Settlement <ChevronRight size={14} className="ml-2" /></a>
-                        </Button>
-                    </div>
-                    <ChartInsightSummary id="lab-trade-flows" insight="De-dollarization is observed via reserve composition, CB gold, and petrodollar/petroyuan settlement — not commercial HS-code export flows." />
-                </section>
-
-                {/* 5. Gold Positioning & Manipulation Monitor */}
-                <section>
-                    <div className="flex items-center gap-3 mb-10">
-                        <Zap className="text-amber-500" size={28} />
-                        <h2 className="text-3xl font-black uppercase tracking-heading text-white">Gold Derivatives & Physical Arbitrage Monitor</h2>
-                    </div>
-                    <SectionErrorBoundary name="Gold Positioning">
-                        <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
-                            <Suspense fallback={<LoadingFallback />}>
-                                <GoldPositioningMonitor />
-                            </Suspense>
-                        </LazyRender>
-                    </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-gold-positioning" insight="The divergence between paper gold positioning (futures/options) and physical demand is a primary indicator of institutional hedging velocity and sovereign 'price discovery' outside Western exchanges." />
-                </section>
-            </div>
-
-            {/* SEO Structural Analysis Text Block */}
-            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of De-Dollarization and Gold Accumulation">
-                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: The Shift to Hard Assets and Multipolar Settlement</h3>
-                <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
-                    <p>
-                        The <strong>De-Dollarization & Gold Lab</strong> tracks the systemic migration of global reserve capital from fiat-centric ledgers to hard-asset anchors. Over the past decade, and accelerating post-2022, central banks outside the G7 have engaged in historic gold accumulation. This represents a fundamental shift in sovereign reserve management, prioritizing counterparty-risk-free assets over traditional US Treasuries.
-                    </p>
-                    <p>
-                        Our predictive telemetry isolates the exact velocity of this transition by measuring the <em>M2 to Gold Ratio</em>, central bank net purchases, and the evolving composition of the IMF's Currency Composition of Official Foreign Exchange Reserves (COFER). When combined with our <strong>Petrodollar vs Petroyuan</strong> analysis, institutional observers can map the structural decoupling of global energy trade from the US Dollar hegemony.
-                    </p>
-                    <p>
-                        Understanding the divergence between paper gold derivatives and physical gold arbitrage is critical for macro positioning. As the <a href="/glossary/de-dollarization/" className="text-blue-400 hover:underline">De-dollarization</a> macro regime accelerates, the gravitational center of global trade is demonstrably shifting towards the BRICS+ block, fundamentally re-pricing geopolitical risk and necessitating a new framework for cross-border settlement.
-                    </p>
-                </div>
-            </article>
-
-            <div className="mt-24 pt-12 border-t border-white/5 text-center">
-                <Button
-                    variant="ghost"
-                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
-                    asChild
-                >
-                    <a href="/macro-observatory/" className="flex items-center gap-2">
-                        <ArrowLeft size={18} /> Back to Observatory
-                    </a>
-                </Button>
-            </div>
-            <RelatedContent />
-            <RelatedMetrics />
-        </div>
-        </>
-    );
+const FamilyCard: React.FC<{ family: typeof EVIDENCE_FAMILIES[number]; rowsById: Map<string, EvidenceRow>; onOpen: (family: EvidenceFamily) => void }> = ({ family, rowsById, onOpen }) => {
+    const definitions = getFamilyDefinitions(family.id); const state = getFamilyState(definitions, rowsById); const liveCount = definitions.filter((definition) => rowsById.get(definition.id)?.value != null).length; const pending = definitions.length === 0;
+    return <button type="button" onClick={() => onOpen(family.id)} className="group rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 text-left transition hover:border-amber-400/30 hover:bg-white/[0.045]"><div className="mb-5 flex items-start justify-between gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-400/20 bg-amber-400/10 text-amber-300"><Database size={16} /></div><ChevronRight size={16} className="text-white/30 transition group-hover:translate-x-1 group-hover:text-amber-300" /></div><h2 className="text-base font-black uppercase tracking-tight text-white">{family.label}</h2><p className="mt-2 min-h-10 text-xs leading-relaxed text-muted-foreground">{family.description}</p><div className="mt-5 flex flex-wrap items-center gap-2"><span className={cn('rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-widest', pending || state.tone === 'muted' ? 'border-white/10 bg-white/5 text-white/45' : state.tone === 'green' ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : state.tone === 'blue' ? 'border-blue-400/20 bg-blue-400/10 text-blue-300' : 'border-amber-400/20 bg-amber-400/10 text-amber-300')}>{pending ? 'Methodology pending' : state.label}</span><span className="text-[10px] font-bold uppercase tracking-widest text-white/35">{liveCount}/{definitions.length} live</span></div><div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-white/35">Source: {family.sourceSummary}</div></button>;
 };
 
-export default DeDollarizationGoldLab;
+export const DeDollarizationGoldLab: React.FC = () => {
+    const { data: rows = [], isLoading, isError, refetch } = useEvidenceRows(); const [searchParams, setSearchParams] = useSearchParams(); const [search, setSearch] = React.useState(''); const selectedMetric = searchParams.get('metric'); const selectedFamily = searchParams.get('family') as EvidenceFamily | null; const rowsById = useMemo(() => new Map(rows.map((row) => [row.metric_id, row])), [rows]);
+    const filteredDefinitions = useMemo(() => { const query = search.trim().toLowerCase(); return EVIDENCE_DEFINITIONS.filter((definition) => (!selectedFamily || definition.family === selectedFamily) && (!query || `${definition.label} ${definition.id} ${definition.source} ${definition.description}`.toLowerCase().includes(query))); }, [search, selectedFamily]);
+    const selectedDefinition = EVIDENCE_DEFINITIONS.find((definition) => definition.id === selectedMetric); const selectedRow = selectedDefinition ? rowsById.get(selectedDefinition.id) : undefined;
+    const openMetric = (metric: string) => setSearchParams({ ...(selectedFamily ? { family: selectedFamily } : {}), metric }); const clearFilters = () => { setSearch(''); setSearchParams({}); };
+    return <><SEOManager title="De-Dollarization Indicators: Live Gold, Reserves & Settlement Data" description="Live de-dollarization indicators covering IMF COFER reserve shares, central-bank gold purchases, Treasury holdings, currency settlement, and market confirmation. See sources, freshness, methodology, and data limits for every series." keywords={['de-dollarization indicators', 'central bank gold purchases', 'IMF COFER dollar share', 'BRICS settlement', 'gold reserves']} canonical="/labs/de-dollarization-gold/" jsonLd={[{ '@context': 'https://schema.org', '@type': 'WebPage', '@id': 'https://graphiquestor.com/labs/de-dollarization-gold/#webpage', name: 'De-Dollarization Indicators and Gold Reserve Monitor', url: 'https://graphiquestor.com/labs/de-dollarization-gold/', description: 'A source-led library of de-dollarization indicators with provenance, freshness, methodology, and coverage limits.', isPartOf: { '@id': 'https://graphiquestor.com/#website' } }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://graphiquestor.com/' }, { '@type': 'ListItem', position: 2, name: 'Observatory', item: 'https://graphiquestor.com/macro-observatory/' }, { '@type': 'ListItem', position: 3, name: 'De-Dollarization Indicators', item: 'https://graphiquestor.com/labs/de-dollarization-gold/' }] }, { '@context': 'https://schema.org', '@type': 'Dataset', name: 'GraphiQuestor De-Dollarization Evidence Library', description: 'Observed and derived indicators for reserve composition, official gold, sovereign collateral, and market confirmation.', url: 'https://graphiquestor.com/labs/de-dollarization-gold/', isAccessibleForFree: true, creator: PublisherOrganizationSchema, temporalCoverage: '1999/..', measurementTechnique: 'Official source observations and documented derived ratios', variableMeasured: EVIDENCE_DEFINITIONS.map((definition) => definition.label) }]} />
+        <main className="mx-auto w-full max-w-[1700px] px-4 py-10 sm:px-6 lg:px-12"><nav className="mb-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40"><TrailLink to="/" className="hover:text-white">Home</TrailLink><ChevronRight size={10} /><TrailLink to="/macro-observatory/" className="hover:text-white">Observatory</TrailLink><ChevronRight size={10} /><span className="text-amber-400">De-Dollarization Evidence</span></nav>
+            <header className="mb-12 max-w-4xl"><div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-300">Live evidence library</div><h1 className="text-3xl font-black uppercase tracking-tight text-white md:text-5xl">De-Dollarization Indicators and <span className="text-amber-400">Gold Reserve Monitor</span></h1><p className="mt-5 text-sm leading-7 text-muted-foreground md:text-base">A source-led library for monitoring reserve composition, official gold accumulation, sovereign collateral demand, settlement rails, and market confirmation. Each indicator carries its source, timing, method, and limits.</p></header>
+            <section aria-labelledby="what-is-dedollarization" className="mb-14 max-w-5xl rounded-2xl border border-white/[0.08] bg-white/[0.025] p-6 md:p-8"><h2 id="what-is-dedollarization" className="text-lg font-black uppercase tracking-tight text-white">How to read de-dollarization evidence</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">De-dollarization is a broad shift in how reserves, trade, and financial claims are denominated. A lower dollar share in official foreign-exchange reserves, higher official gold holdings, and more non-dollar settlement are related observations with different data sources and reporting lags. This library keeps them separate so a market price or a reserve share is not mistaken for proof of a settlement change.</p></section>
+            <section aria-labelledby="evidence-families" className="mb-16"><div className="mb-6 flex items-end justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-widest text-amber-300">Evidence map</p><h2 id="evidence-families" className="mt-2 text-2xl font-black uppercase tracking-tight text-white">Browse by family</h2></div><span className="text-[10px] font-bold uppercase tracking-widest text-white/35">{EVIDENCE_DEFINITIONS.length} registered indicators</span></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{EVIDENCE_FAMILIES.map((family) => <FamilyCard key={family.id} family={family} rowsById={rowsById} onOpen={(familyId) => setSearchParams({ family: familyId })} />)}</div></section>
+            <section aria-labelledby="library" className="scroll-mt-8"><div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-[10px] font-black uppercase tracking-widest text-blue-300">Research index</p><h2 id="library" className="mt-2 text-2xl font-black uppercase tracking-tight text-white">Indicator library</h2></div><div className="flex gap-2"><div className="flex min-w-0 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2"><Search size={14} className="shrink-0 text-white/35" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search indicators, sources..." className="w-full bg-transparent text-xs text-white outline-none placeholder:text-white/30" /></div><button type="button" onClick={clearFilters} className="rounded-xl border border-white/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white">Clear</button></div></div>{selectedFamily && <p className="mb-4 text-xs text-muted-foreground">Filtered to <span className="font-bold text-white">{EVIDENCE_FAMILIES.find((family) => family.id === selectedFamily)?.label}</span>. <button type="button" onClick={clearFilters} className="text-amber-300 underline underline-offset-4">Show all families</button></p>}<div className="overflow-x-auto rounded-2xl border border-white/[0.08] bg-black/20"><table className="w-full min-w-[900px] text-left"><thead className="border-b border-white/[0.08] bg-white/[0.025]"><tr className="text-[10px] font-black uppercase tracking-widest text-white/35"><th className="px-5 py-4">Indicator</th><th className="px-5 py-4">Latest</th><th className="px-5 py-4">As of</th><th className="px-5 py-4">Cadence</th><th className="px-5 py-4">Evidence</th><th className="px-5 py-4">Status</th></tr></thead><tbody className="divide-y divide-white/[0.06]">{filteredDefinitions.map((definition) => { const row = rowsById.get(definition.id); return <tr key={definition.id} className="transition hover:bg-white/[0.03]"><td className="px-5 py-4"><button type="button" onClick={() => openMetric(definition.id)} className="text-left"><span className="block text-sm font-bold text-white hover:text-amber-300">{definition.label}</span><span className="mt-1 block max-w-md text-[11px] leading-relaxed text-white/35">{definition.description}</span></button></td><td className="px-5 py-4 text-sm font-black tabular-nums text-white">{formatValue(row, definition)}</td><td className="px-5 py-4 text-xs text-white/55">{row?.as_of_date ?? 'Unavailable'}</td><td className="px-5 py-4 text-xs text-white/55">{row?.native_frequency ?? definition.frequency}</td><td className="px-5 py-4"><EvidenceBadge evidenceClass={definition.evidenceClass} /></td><td className="px-5 py-4"><FreshnessChip status={freshnessStatus(row)} lastUpdated={row?.as_of_date ?? undefined} label={row ? STATUS_LABELS[row.staleness_flag ?? ''] : 'NO DATA'} /></td></tr>; })}</tbody></table></div>{filteredDefinitions.length === 0 && <DataStatePanel variant="empty" title="No indicators match this search" description="Clear the filter to return to the complete evidence library." compact className="mt-4" />}</section>
+            {selectedDefinition && <section aria-labelledby="selected-indicator" className="mt-8 scroll-mt-8 rounded-2xl border border-amber-400/20 bg-amber-400/[0.04] p-6 md:p-8"><div className="flex flex-col gap-6 lg:flex-row lg:justify-between"><div><p className="text-[10px] font-black uppercase tracking-widest text-amber-300">Selected indicator</p><h2 id="selected-indicator" className="mt-2 text-2xl font-black uppercase tracking-tight text-white">{selectedDefinition.label}</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">{selectedDefinition.description}</p></div><button type="button" onClick={() => setSearchParams(selectedFamily ? { family: selectedFamily } : {})} className="self-start text-[10px] font-black uppercase tracking-widest text-white/45 hover:text-white">Close detail</button></div><div className="mt-7 grid gap-4 md:grid-cols-4"><div><p className="text-[10px] uppercase tracking-widest text-white/35">Latest</p><p className="mt-1 text-lg font-black text-white">{formatValue(selectedRow, selectedDefinition)}</p></div><div><p className="text-[10px] uppercase tracking-widest text-white/35">Source</p><a href={selectedDefinition.sourceUrl} target="_blank" rel="noreferrer" className="mt-1 block text-sm font-bold text-blue-300 hover:underline">{selectedDefinition.source}</a></div><div><p className="text-[10px] uppercase tracking-widest text-white/35">Cadence</p><p className="mt-1 text-sm font-bold text-white">{selectedRow?.native_frequency ?? selectedDefinition.frequency}</p></div><div><p className="text-[10px] uppercase tracking-widest text-white/35">Limit</p><p className="mt-1 text-xs leading-relaxed text-white/60">{selectedDefinition.limitation}</p></div></div>{selectedDefinition.evidenceClass === 'derived' && <div className="mt-6 flex gap-2 rounded-xl border border-blue-400/20 bg-blue-400/10 p-4 text-xs leading-relaxed text-blue-100"><HelpCircle size={15} className="mt-0.5 shrink-0" /> Derived context is shown separately from directly observed reserve and settlement data.</div>}</section>}
+            <section className="mt-16 grid gap-4 md:grid-cols-2"><div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-6"><div className="flex items-center gap-2 text-amber-300"><ShieldAlert size={16} /><h2 className="text-sm font-black uppercase tracking-widest">Known data limits</h2></div><p className="mt-3 text-sm leading-7 text-muted-foreground">COFER excludes monetary gold and does not publish country-level currency allocations. TIC country holdings can differ from ultimate ownership. Gold and official-reserve series often publish with a lag and may be revised.</p></div><div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-6"><div className="flex items-center gap-2 text-emerald-300"><CheckCircle2 size={16} /><h2 className="text-sm font-black uppercase tracking-widest">Source discipline</h2></div><p className="mt-3 text-sm leading-7 text-muted-foreground">Observed, derived, estimated, and scenario evidence remain separate. A missing value is shown as unavailable. The library does not convert an unsupported settlement estimate into a live reading.</p></div></section>
+                {isLoading && <div className="mt-5"><DataStatePanel variant="pending" title="Loading live observations" description="The evidence registry is available while current observations load." height={140} /></div>}{isError && <div className="mt-5"><DataStatePanel variant="error" title="Live observations unavailable" description="The registry remains available. Retry the observation query when the data service is reachable." onRetry={() => refetch()} height={140} /></div>}<div className="mt-16 border-t border-white/[0.08] pt-8"><TrailLink to="/macro-observatory/" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/45 hover:text-white"><ArrowLeft size={15} /> Back to Observatory</TrailLink></div>
+        </main></>;
+};

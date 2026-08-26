@@ -42,6 +42,7 @@ function llmsTxt(): string {
 - **Net Liquidity**: ${BASE}/methods/net-liquidity-z-score/
 - **M2/Gold Ratio**: ${BASE}/methods/m2-gold-ratio/
 - **De-Dollarization**: ${BASE}/methods/de-dollarization-guide/
+- **De-Dollarization Evidence Library**: ${BASE}/labs/de-dollarization-gold/ — Live source-led indicators for reserve composition, official gold accumulation, Treasury holdings, settlement evidence, and market confirmation. Observed, derived, estimated, and scenario evidence are labeled separately.
 - **Glossary Index**: ${BASE}/glossary/
 - **Methodology Hub**: ${BASE}/methodology/
 - **Institutional API**: ${BASE}/api-access/
@@ -90,6 +91,7 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - ${BASE}/intel/india/ — India MoSPI telemetry
 - ${BASE}/methods/net-liquidity-z-score/ — Net Liquidity Z-Score methodology
 - ${BASE}/methods/m2-gold-ratio/ — M2/Gold debasement signal
+- ${BASE}/labs/de-dollarization-gold/ — Live de-dollarization evidence library covering IMF COFER, official gold, Treasury holdings, settlement evidence, and market confirmation with source and freshness labels
 - ${BASE}/glossary/ — ${glossaryData.length} institutional definitions
 - ${BASE}/methodology/ — Full metric calculation framework
 - ${BASE}/api-access/ — Commercial API ($299/mo)
