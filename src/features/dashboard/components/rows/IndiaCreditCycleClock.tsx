@@ -84,7 +84,7 @@ export const IndiaCreditCycleClock: React.FC = () => {
                                 <span className="inline-flex h-2 w-2 rounded-full bg-amber-500/80" />
                             )}
                             <span className="text-blue-400 text-xs font-black uppercase tracking-uppercase">RBI Credit Signal</span>
-                            <FreshnessChip status={chipStatus} lastUpdated={latestDate ?? date} sourceRef="rbi_dbie:india_credit_cycle" />
+                            <FreshnessChip status={chipStatus} lastUpdated={latestDate ?? date} />
                             <GQSignalBadge
                                 tooltip="Proprietary phase model derived from RBI's credit-deposit ratio, systemic lending velocity, and deposit growth — mapped to four cycle quadrants."
                                 href="/methods/india-credit-cycle-clock/"

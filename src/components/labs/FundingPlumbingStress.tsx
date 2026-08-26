@@ -146,7 +146,8 @@ export const FundingPlumbingStress: React.FC = () => {
         );
     }
 
-    if (!metrics || !metrics.rrp || !metrics.tga || !metrics.srf || !metrics.swaps) {
+    if (!metrics || !metrics.rrp || !metrics.tga || !metrics.srf || !metrics.swaps
+        || [metrics.rrp, metrics.tga, metrics.srf, metrics.swaps].some(metric => metric.history.length === 0)) {
         return (
             <DataStatePanel
                 variant="empty"
@@ -184,7 +185,7 @@ export const FundingPlumbingStress: React.FC = () => {
                     <div className="hidden md:flex items-center gap-6">
                         <div className="flex items-center gap-2">
                             <Activity className="w-3 h-3 text-emerald-500" />
-                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Live Feed OK</span>
+                                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Published feed</span>
                         </div>
                         <div className="h-4 w-px bg-white/10" />
                         <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">Threshold: Institutional</span>
@@ -249,7 +250,7 @@ export const FundingPlumbingStress: React.FC = () => {
                     <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Market Alpha:</span>
                         <p className="text-[10px] text-muted-foreground/70 font-medium">
-                            {metrics.rrp.current_value < 300 ? "⚠️ RRP buffer depleted. Increased volatility risk in O/N funding." : "✅ Systemic liquidity remains abundant via RRP drain."}
+                            {metrics.rrp.current_value < 300 ? "RRP balance is below the configured observation threshold." : "RRP balance is above the configured observation threshold."}
                         </p>
                     </div>
                     <div className="flex items-center gap-2">

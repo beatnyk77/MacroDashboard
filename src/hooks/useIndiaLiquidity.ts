@@ -4,11 +4,11 @@ import { supabase } from '@/lib/supabase';
 export interface IndiaLiquidityData {
     id: number;
     date: string;
-    laf_net_injection_cr: number;
-    repo_rate: number;
-    msf_rate: number;
-    call_rate: number;
-    treps_rate: number;
+    laf_net_injection_cr: number | null;
+    repo_rate: number | null;
+    msf_rate: number | null;
+    call_rate: number | null;
+    treps_rate: number | null;
 }
 
 export function useIndiaLiquidity() {

@@ -16,9 +16,10 @@ import {
 import { AlertTriangle, TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 export const IndiaFiscalStressMonitor: React.FC = () => {
-    const { data, isLoading } = useIndiaFiscalStress();
+    const { data, isLoading, isError, refetch } = useIndiaFiscalStress();
     const [timeRange, setTimeRange] = useState<'5Y' | 'ALL'>('ALL');
 
     const latest = data?.[data.length - 1];
@@ -34,7 +35,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
         return data;
     }, [data, timeRange]);
 
-    const interestRevenuePercent = latest?.interest_revenue_pct?.toFixed(1) || '0.0';
+    const interestRevenuePercent = latest?.interest_revenue_pct != null ? latest.interest_revenue_pct.toFixed(1) : null;
     const isCrisisZone = latest?.interest_revenue_pct ? latest.interest_revenue_pct >= 35 : false;
 
     if (isLoading) {
@@ -43,6 +44,14 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                 <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Analyzing India Fiscal Stress...</span>
             </div>
         );
+    }
+
+    if (isError) {
+        return <DataStatePanel variant="error" title="India fiscal data unavailable" description="The fiscal stress source did not return a usable response." onRetry={() => refetch()} height={300} />;
+    }
+
+    if (!latest || filteredData.length === 0) {
+        return <DataStatePanel variant="empty" title="India fiscal data unavailable" description="No published fiscal-stress observation is available for this module." height={300} />;
     }
 
     return (
@@ -78,7 +87,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                     <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 max-w-6xl mx-auto">
                         <p className="text-lg text-muted-foreground/80 leading-relaxed font-medium">
                             <span className="text-blue-400 font-black uppercase mr-3 tracking-uppercase text-xs">Fiscal Thesis:</span>
-                            India's interest-to-revenue ratio remains the primary structural constraint on capital expenditure. While GST collections show formalization, the interest burden consumes over {interestRevenuePercent}% of revenue receipts, requiring a sustained "Goldilocks" growth-inflation mix for debt sustainability.
+                            India's interest-to-revenue ratio is shown from the latest published fiscal-stress observation. The current ratio is {interestRevenuePercent}%, with source date and methodology carried by the module.
                         </p>
                     </div>
 
@@ -182,7 +191,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
                         <MetricCard
                             title="Interest/Expenditure"
-                            value={latest?.interest_expenditure_pct?.toFixed(1) || '0.0'}
+                            value={latest?.interest_expenditure_pct != null ? latest.interest_expenditure_pct.toFixed(1) : '--'}
                             unit="%"
                             sub="of Total Spending"
                             icon={<DollarSign className="text-amber-500" size={18} />}
@@ -191,7 +200,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                         />
                         <MetricCard
                             title="Interest/GTR"
-                            value={latest?.interest_gtr_pct?.toFixed(1) || '0.0'}
+                            value={latest?.interest_gtr_pct != null ? latest.interest_gtr_pct.toFixed(1) : '--'}
                             unit="%"
                             sub="of Tax Revenue"
                             icon={<AlertTriangle className="text-rose-500" size={18} />}
@@ -200,7 +209,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                         />
                         <MetricCard
                             title="Fiscal Deficit/GDP"
-                            value={latest?.fiscal_deficit_gdp_pct?.toFixed(1) || '0.0'}
+                            value={latest?.fiscal_deficit_gdp_pct != null ? latest.fiscal_deficit_gdp_pct.toFixed(1) : '--'}
                             unit="%"
                             sub="Budget Gap"
                             icon={<TrendingDown className="text-rose-500" size={18} />}
@@ -209,7 +218,7 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                         />
                         <MetricCard
                             title="Debt/GDP"
-                            value={latest?.debt_gdp_pct?.toFixed(1) || '0.0'}
+                            value={latest?.debt_gdp_pct != null ? latest.debt_gdp_pct.toFixed(1) : '--'}
                             unit="%"
                             sub="Total Debt"
                             icon={<TrendingUp className="text-amber-500" size={18} />}

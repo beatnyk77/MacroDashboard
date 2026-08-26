@@ -24,7 +24,7 @@ async function doIngestIndiaInflation(supabase: any, fredApiKey: string): Promis
         cpi_headline_yoy: d.value, // Simplifying for now: headline is primary
         cpi_sticky_yoy: d.value,   // Proxy until granular MoSPI fetchers added
         cpi_flexible_yoy: d.value,
-        wpi_core_yoy: 0,
+        wpi_core_yoy: null,
         provenance: 'api_live'
     }));
 

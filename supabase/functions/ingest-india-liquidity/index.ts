@@ -17,8 +17,8 @@ async function doIngestIndiaLiquidity(supabase: any, fredApiKey: string): Promis
     const results = liveData.map((d: any) => ({
         date: d.as_of_date,
         call_rate: d.value,
-        treps_rate: d.value * 0.98, // Proxy until Treps specifically found
-        net_liquidity_bn: 0,        // Handled by M3 ingestor or separate logic
+        treps_rate: null,
+        net_liquidity_bn: null,
         provenance: 'api_live'
     }));
 

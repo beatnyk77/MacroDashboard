@@ -20,9 +20,10 @@ import {
 import { AlertTriangle, Building2, PieChart, Info, Map as MapIcon, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m, AnimatePresence } from 'framer-motion';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 export const IndiaFiscalAllocationTracker: React.FC = () => {
-    const { data, isLoading } = useIndiaFiscalAllocation();
+    const { data, isLoading, isError, refetch } = useIndiaFiscalAllocation();
     const [timeRange, setTimeRange] = useState<'5Y' | 'ALL'>('ALL');
     const [selectedState, setSelectedState] = useState<any>(null);
 
@@ -61,7 +62,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
         };
     }, [data]);
 
-    const latestCentral = useMemo(() => centralData[centralData.length - 1] || {}, [centralData]);
+    const latestCentral = useMemo(() => centralData[centralData.length - 1], [centralData]);
 
     const filteredTrends = useMemo(() => {
         if (timeRange === '5Y') return consolidatedData.slice(-5);
@@ -87,6 +88,14 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
         );
     }
 
+    if (isError) {
+        return <DataStatePanel variant="error" title="India fiscal allocation unavailable" description="The current state and central allocation source did not respond." onRetry={() => refetch()} height={300} />;
+    }
+
+    if (!latestCentral || centralData.length === 0) {
+        return <DataStatePanel variant="empty" title="India fiscal allocation unavailable" description="No published central allocation row is available." height={300} />;
+    }
+
     return (
         <section id="india-fiscal-allocation" className="py-24 relative overflow-hidden">
             <m.div
@@ -104,7 +113,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                     />
                     <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">Live Flow: FY 2024-25 Budgetary Pulse</span>
+                        <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">Published flow: FY {latestCentral.fy}</span>
                     </div>
                 </div>
 
@@ -112,7 +121,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <KPICard
                         title="Central Capex Momentum"
-                        value={`₹${latestCentral?.capex_lakh_cr?.toFixed(1) || '0'}L Cr`}
+                        value={latestCentral.capex_lakh_cr != null ? `₹${latestCentral.capex_lakh_cr.toFixed(1)}L Cr` : '--'}
                         sub="Union Budget Allocation"
                         trend="+16% YoY"
                         trendStatus="positive"
@@ -121,7 +130,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                     />
                     <KPICard
                         title="Capex % Total Spending"
-                        value={`${latestCentral?.capex_pct_total?.toFixed(1) || '0'}%`}
+                        value={latestCentral.capex_pct_total != null ? `${latestCentral.capex_pct_total.toFixed(1)}%` : '--'}
                         sub="Allocation Quality"
                         trend="Sustainable"
                         trendStatus="neutral"
@@ -130,7 +139,7 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                     />
                     <KPICard
                         title="Freebie/Committed Risk"
-                        value={`${latestCentral?.freebies_pct_receipts?.toFixed(1) || '0'}%`}
+                        value={latestCentral.freebies_pct_receipts != null ? `${latestCentral.freebies_pct_receipts.toFixed(1)}%` : '--'}
                         sub="of Revenue Receipts"
                         trend="Elevated"
                         trendStatus="warning"

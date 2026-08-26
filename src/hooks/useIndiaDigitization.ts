@@ -4,11 +4,11 @@ import { supabase } from '@/lib/supabase';
 export interface IndiaDigitizationData {
     id: number;
     date: string;
-    upi_volume_bn: number;
-    upi_value_inr_trillion: number;
-    rbi_dpi_index: number;
-    fi_index: number;
-    g20_digital_baseline: number;
+    upi_volume_bn: number | null;
+    upi_value_inr_trillion: number | null;
+    rbi_dpi_index: number | null;
+    fi_index: number | null;
+    g20_digital_baseline: number | null;
 }
 
 export function useIndiaDigitization() {

@@ -85,6 +85,10 @@ const USFiscalComparisonChart: React.FC = () => {
         };
     }, [chartData]);
 
+    const interestExceedsDefense = latestValues?.interest != null
+        && latestValues.defense != null
+        && latestValues.interest > latestValues.defense;
+
     if (isError) {
         return (
             <DataStatePanel
@@ -123,11 +127,13 @@ const USFiscalComparisonChart: React.FC = () => {
                             </span>
                         </p>
                     </div>
-                    <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-lg shrink-0">
-                        <span className="text-red-400 text-sm font-bold animate-pulse">
-                            CRITICAL INSIGHT: Interest payments now rival or exceed defense spending
-                        </span>
-                    </div>
+                    {interestExceedsDefense && (
+                        <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-lg shrink-0">
+                            <span className="text-red-400 text-sm font-bold">
+                                OBSERVED: latest overlapping interest value exceeds defense
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Current values display */}

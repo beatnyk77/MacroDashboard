@@ -6,11 +6,13 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { m } from 'framer-motion';
 import { Activity, TrendingUp, Shield, Zap, ArrowRight, BarChart2, BarChart3, MapPin, Landmark } from 'lucide-react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
-import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { useIndiaIntelligence } from '@/hooks/useIndiaIntelligence';
+import { IndiaEvidenceCockpit } from '@/features/dashboard/components/sections/IndiaEvidenceCockpit';
 import { RelatedContent } from '@/components/RelatedContent';
 import { LazyRender } from '@/components/LazyRender';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 // Lazy-load heavy sub-sections
 const IndiaMacroPulseSection = lazy(() =>
@@ -46,15 +48,6 @@ const IndiaExternalSectorPanel = lazy(() =>
 const IndiaFIIFlowsMonitor = lazy(() =>
     import('@/features/dashboard/components/rows/IndiaFIIFlowsMonitor').then(m => ({ default: m.IndiaFIIFlowsMonitor }))
 );
-const IndiaDigitizationPremiumMonitor = lazy(() =>
-    import('@/features/dashboard/components/rows/IndiaDigitizationPremiumMonitor').then(m => ({ default: m.IndiaDigitizationPremiumMonitor }))
-);
-const IndiaFiscalAllocationTracker = lazy(() =>
-    import('@/features/dashboard/components/rows/IndiaFiscalAllocationTracker').then(m => ({ default: m.IndiaFiscalAllocationTracker }))
-);
-const StateFiscalHeatmap = lazy(() =>
-    import('@/features/dashboard/components/rows/StateFiscalHeatmap').then(m => ({ default: m.StateFiscalHeatmap }))
-);
 
 // IndiaMacroDashboard removed — fabricated snapshot producer (credibility sprint)
 
@@ -69,7 +62,7 @@ const SIGNAL_CARDS = [
     { icon: Zap,        label: 'Liquidity',      desc: 'Rupee liquidity surplus/deficit & SOFR spread',     color: 'rose',    anchor: '#liquidity' },
     { icon: Shield,     label: 'Debt Wall',      desc: 'G-Sec rollover risk by coupon bucket',              color: 'purple',  anchor: '#debt' },
     { icon: BarChart3,  label: 'RBI FX Defense', desc: 'Forex reserves & RBI intervention posture',         color: 'blue',    anchor: '#monetary' },
-    { icon: MapPin,     label: 'State Fiscal',   desc: 'Capex vs revenue expenditure by state',             color: 'emerald', anchor: '#state-fiscal' },
+    { icon: MapPin,     label: 'State Fiscal',   desc: 'State fiscal coverage pending source validation',     color: 'emerald', anchor: '#state-fiscal' },
     { icon: Landmark,   label: 'Money Market',   desc: 'Daily RBI money market terminal',                   color: 'amber',   anchor: '#monetary' },
 ];
 
@@ -83,12 +76,14 @@ const colorMap: Record<string, string> = {
 
 export const IntelIndiaPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.IN_REPO_RATE);
-    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
+    const { data: intelligence } = useIndiaIntelligence();
+    const repoEvidence = intelligence?.metrics.find(metric => metric.id === MID.IN_REPO_RATE);
+    const dataFreshness = repoEvidence?.state === 'observed' ? 'fresh' : repoEvidence?.state === 'lagged' ? 'lagged' : 'no_data';
     const placeSchema = {
         "@context": "https://schema.org",
         "@type": "Place",
         "name": "India",
-        "description": "Institutional macro intelligence for India — covering RBI monetary policy, fiscal stress, sovereign debt rollover risk, credit cycle, and de-dollarization strategy.",
+        "description": "Published India macro observations covering RBI monetary policy, fiscal capacity, sovereign funding, credit, inflation, and external resilience.",
         "geo": {
             "@type": "GeoCoordinates",
             "latitude": 20.5937,
@@ -100,7 +95,7 @@ export const IntelIndiaPage: React.FC = () => {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         "name": "India Macro Intelligence Hub",
-        "description": "Institutional-grade telemetry for India's macro economy: credit cycle, fiscal stress, sovereign debt maturity, RBI liquidity, inflation pulse, and market flows.",
+        "description": "Published India macro observations with source, publication date, cadence, provenance, and a transparent daily regime classification.",
         "url": "https://graphiquestor.com/intel/india",
         "about": {
             "@type": "Place",
@@ -130,14 +125,15 @@ export const IntelIndiaPage: React.FC = () => {
         "@context": "https://schema.org",
         "@type": "Dataset",
         "name": "India Macroeconomic & Sovereign Debt Telemetry",
-        "description": "High-frequency macro dataset for India, tracking the RBI credit cycle, fiscal stress ratios, sovereign debt maturity walls, and liquidity surplus/deficit. Includes MoSPI and RBI DBIE data integration.",
+        "description": "Published India macro dataset covering RBI liquidity, inflation, growth, fiscal capacity, credit, external resilience, sovereign funding, and market flows.",
         "url": "https://graphiquestor.com/intel/india",
-        "license": "https://creativecommons.org/licenses/by/4.0/",
         "creator": {
             "@type": "Organization",
             "name": "GraphiQuestor Intelligence"
         },
-        "keywords": ["India", "RBI", "Sovereign Debt", "Fiscal Stress", "MoSPI"]
+        "keywords": ["India", "RBI", "Sovereign Debt", "Fiscal Stress", "MoSPI"],
+        "variableMeasured": ["India CPI", "IIP growth", "RBI repo rate", "FX reserves", "Debt to GDP", "Bank credit"],
+        "measurementTechnique": "Public source observations and explicitly labelled derived ratios. Each displayed value retains source, publication date, cadence, and provenance metadata."
     };
 
     return (
@@ -149,8 +145,8 @@ export const IntelIndiaPage: React.FC = () => {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
             <SEOManager
-                title="India Macro Pulse — Live RBI, Fiscal & CPI"
-                description="Live India macro dashboard: RBI credit cycle, fiscal stress ratio, sovereign debt maturity walls, CPI/WPI inflation, and FII flows. Data sourced from RBI"
+                title="India Macro Intelligence Dashboard | RBI, Fiscal, Credit & FX"
+                description="Published India macro observations for RBI liquidity, inflation, growth, fiscal capacity, credit, FX reserves, sovereign funding, and market flows."
                 keywords={[
                     'India macro dashboard', 'RBI monetary policy live', 'India fiscal deficit',
                     'India CPI inflation', 'India credit cycle', 'India sovereign debt',
@@ -190,11 +186,10 @@ export const IntelIndiaPage: React.FC = () => {
                                         Intelligence
                                     </span>
                                 </h1>
-                                <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                                <FreshnessChip status={dataFreshness} lastUpdated={repoEvidence?.asOf || primaryMetric?.lastUpdated} sourceRef={repoEvidence?.sourceRef} provenance={repoEvidence?.provenance} isProvisional={repoEvidence?.isProvisional} />
                             </div>
                             <p className="max-w-xl text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
-                                Institutional-grade telemetry for the world's fastest-growing major economy.
-                                Monitoring the RBI credit cycle, fiscal stress, and sovereign debt maturity walls in real-time.
+                                Published India macro evidence for RBI liquidity, growth, inflation, fiscal capacity, credit, external resilience, and sovereign funding.
                             </p>
                         </div>
                     </m.div>
@@ -211,7 +206,7 @@ export const IntelIndiaPage: React.FC = () => {
                             { href: '#external-sector', label: 'External Sector' },
                             { href: '#fii-flows',    label: 'FII Flows' },
                             { href: '#state-fiscal', label: 'State Fiscal' },
-                            { href: '#digital',      label: 'Digital Premium' },
+                            { href: '#digital',      label: 'Digital Context' },
                             { href: '#debt',         label: 'Debt Wall' },
                         ].map(({ href, label, active }) => (
                             <a
@@ -252,6 +247,10 @@ export const IntelIndiaPage: React.FC = () => {
                         </a>
                     ))}
                 </m.div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-16 relative z-10">
+                <IndiaEvidenceCockpit />
             </div>
 
             {/* Content Sections */}
@@ -400,16 +399,7 @@ export const IntelIndiaPage: React.FC = () => {
                         <MapPin className="text-blue-500" size={24} />
                         <h2 className="text-xl font-black uppercase tracking-heading text-white">State-Level Fiscal Intelligence</h2>
                     </div>
-                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
-                        <SectionErrorBoundary name="State Fiscal">
-                            <Suspense fallback={<SectionSkeleton />}>
-                                <div className="space-y-16">
-                                    <IndiaFiscalAllocationTracker />
-                                    <StateFiscalHeatmap />
-                                </div>
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </LazyRender>
+                    <DataStatePanel variant="empty" title="State fiscal module unavailable" description="The previous allocation feed used manually entered values. The module will return after a verified state-by-state source adapter is connected." height={260} />
                 </section>
 
                 <div className="border-t border-white/5" />
@@ -420,13 +410,7 @@ export const IntelIndiaPage: React.FC = () => {
                         <Zap className="text-blue-400" size={24} />
                         <h2 className="text-xl font-black uppercase tracking-heading text-white">India Stack — Digitization Premium</h2>
                     </div>
-                    <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
-                        <SectionErrorBoundary name="India Digitization Premium">
-                            <Suspense fallback={<SectionSkeleton />}>
-                                <IndiaDigitizationPremiumMonitor />
-                            </Suspense>
-                        </SectionErrorBoundary>
-                    </LazyRender>
+                    <DataStatePanel variant="empty" title="Digitization context unavailable" description="The previous feed synthesized values from unrelated series. Direct RBI and NPCI observations are required before this module is shown." height={260} />
                 </section>
 
                 <div className="border-t border-white/5" />
@@ -436,13 +420,13 @@ export const IntelIndiaPage: React.FC = () => {
                     <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: India's Macro Resilience &amp; Fiscal Quality</h3>
                     <div className="space-y-6 text-sm text-muted-foreground/60 leading-relaxed font-medium">
                         <p>
-                            The <strong>India Intelligence Hub</strong> monitors highly granular, state-level macroeconomic indicators to evaluate the fundamental structural transition of the Indian economy. Unlike traditional emerging market (EM) trackers that rely on lagging, aggregated national data, GraphiQuestor connects directly to the <a href="/glossary/mospi/" className="text-blue-400 hover:underline transition-colors">Ministry of Statistics and Programme Implementation (MoSPI)</a>. This zero-lag integration enables real-time observation of the Index of Industrial Production (IIP), Consumer Price Index (CPI), and capital expenditure velocities across all 28 states.
+                            The <strong>India Intelligence Hub</strong> organizes published macroeconomic observations from the <a href="/glossary/mospi/" className="text-blue-400 hover:underline transition-colors">Ministry of Statistics and Programme Implementation (MoSPI)</a>, RBI, FRED, and other recorded source contracts. The evidence cockpit separates source publication dates from pipeline freshness and shows coverage before producing a daily regime label.
                         </p>
                         <p>
-                            A critical differentiator in India's sovereign health is the quality of its fiscal expenditure. The <em>State Fiscal Heatmap</em> tracks the ratio of productive capital expenditure (Capex) against recurring revenue expenditure (subsidies and freebies). States demonstrating high Capex velocity generally command a lower structural risk premium and drive the nation's broader industrial upgrading capacity.
+                            The <em>State Fiscal Heatmap</em> remains a secondary module. It reports only the states and fiscal years returned by its current source data, with missing state-period observations excluded from ratios rather than represented as zero.
                         </p>
                         <p>
-                            Furthermore, the hub actively monitors the Reserve Bank of India's (RBI) FX defense posture. By combining Balance of Payments (BOP) pressure gauges with <a href="/glossary/stealth-qe/" className="text-blue-400 hover:underline transition-colors">liquidity stress monitors</a>, institutional investors can pinpoint precise entry and exit windows for Indian equities and sovereign debt, insulated from short-term narrative noise.
+                            The hub monitors the Reserve Bank of India's FX posture through reserves, external-sector observations, and <a href="/glossary/stealth-qe/" className="text-blue-400 hover:underline transition-colors">liquidity stress monitors</a>. Derived regime states are shown with their inputs and coverage so users can audit the evidence before forming a view.
                         </p>
                     </div>
                 </article>

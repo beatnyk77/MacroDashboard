@@ -4,14 +4,22 @@ import {
     Tooltip as RechartsTooltip, ResponsiveContainer, Legend, ReferenceLine
 } from 'recharts';
 import { Activity, AlertTriangle, Zap, Info, TrendingUp, ArrowRight } from 'lucide-react';
-import { useIndiaLiquidity } from '@/hooks/useIndiaLiquidity';
+import { useIndiaLiquidity, type IndiaLiquidityData } from '@/hooks/useIndiaLiquidity';
+import { DataStatePanel } from '@/components/DataStatePanel';
+
+type LiveLiquidityData = IndiaLiquidityData & {
+    laf_net_injection_cr: number;
+    call_rate: number;
+    msf_rate: number;
+};
 
 export const IndiaLiquidityStressMonitor: React.FC = () => {
     const { data: rawData, loading } = useIndiaLiquidity();
 
     const chartData = useMemo(() => {
         if (!rawData) return [];
-        return rawData.map(d => ({
+        const validData = rawData.filter((d): d is LiveLiquidityData => d.laf_net_injection_cr != null && d.call_rate != null && d.msf_rate != null);
+        return validData.map(d => ({
             ...d,
             formattedDate: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
             // Net LAF in ₹ Trillion for better readability in chart
@@ -24,12 +32,16 @@ export const IndiaLiquidityStressMonitor: React.FC = () => {
     const latest = useMemo(() => chartData[chartData.length - 1], [chartData]);
     const previous = useMemo(() => chartData[chartData.length - 2], [chartData]);
 
-    if (loading || !latest) {
+    if (loading) {
         return <div className="h-96 w-full bg-[#0a0f1d] border border-white/5 rounded-3xl animate-pulse" />;
     }
 
+    if (!latest) {
+        return <DataStatePanel variant="empty" title="India liquidity data unavailable" description="The module requires current call-rate, MSF, and LAF observations." height={300} />;
+    }
+
     const isStressActive = latest.call_rate > latest.msf_rate;
-    const wacrDelta = latest.call_rate - previous.call_rate;
+    const wacrDelta = previous ? latest.call_rate - previous.call_rate : null;
     const lafStatus = latest.laf_net_injection_cr > 0 ? 'DEFICIT' : 'SURPLUS';
 
     return (
@@ -58,8 +70,8 @@ export const IndiaLiquidityStressMonitor: React.FC = () => {
                 <MetricCard
                     title="Latest WACR"
                     value={`${latest.call_rate.toFixed(2)}%`}
-                    delta={`${wacrDelta > 0 ? '+' : ''}${(wacrDelta * 100).toFixed(0)} bps`}
-                    trend={wacrDelta > 0 ? 'up' : 'down'}
+                    delta={wacrDelta != null ? `${wacrDelta > 0 ? '+' : ''}${(wacrDelta * 100).toFixed(0)} bps` : undefined}
+                    trend={wacrDelta != null ? (wacrDelta > 0 ? 'up' : 'down') : undefined}
                     icon={<Activity className="w-5 h-5 text-cyan-400" />}
                     colorClass="text-cyan-400"
                 />

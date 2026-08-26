@@ -5,9 +5,10 @@ import {
 } from 'recharts';
 import { Globe, Zap, BarChart3, ShieldCheck, Info, ArrowRight } from 'lucide-react';
 import { useIndiaDigitization } from '@/hooks/useIndiaDigitization';
+import { DataStatePanel } from '@/components/DataStatePanel';
 
 export const IndiaDigitizationPremiumMonitor: React.FC = () => {
-    const { data: rawData, loading } = useIndiaDigitization();
+    const { data: rawData, loading, error } = useIndiaDigitization();
 
     const chartData = useMemo(() => {
         if (!rawData) return [];
@@ -15,23 +16,28 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
             ...d,
             formattedDate: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
             // Calculate Premium Spread
-            premium_spread: Number(d.rbi_dpi_index || 0) - Number(d.g20_digital_baseline || 0)
+            premium_spread: d.rbi_dpi_index != null && d.g20_digital_baseline != null
+                ? d.rbi_dpi_index - d.g20_digital_baseline
+                : null
         }));
     }, [rawData]);
 
     const latest = useMemo(() => chartData[chartData.length - 1], [chartData]);
     const previous = useMemo(() => chartData[chartData.length - 2], [chartData]);
 
-    if (loading || !latest) {
+    if (loading) {
         return <div className="h-[600px] w-full bg-[#0a0f1d] border border-white/5 rounded-[2.5rem] animate-pulse" />;
     }
 
-    const upiVolGrowth = previous?.upi_volume_bn
-        ? ((Number(latest.upi_volume_bn || 0) - Number(previous.upi_volume_bn || 0)) / Number(previous.upi_volume_bn || 1)) * 100
-        : 0;
-    const formalizationPremium = latest.g20_digital_baseline
-        ? ((Number(latest.rbi_dpi_index || 0) - Number(latest.g20_digital_baseline || 0)) / Number(latest.g20_digital_baseline || 1)) * 100
-        : 0;
+    if (error) return <DataStatePanel variant="error" title="India digitization data unavailable" description="The digitization source did not respond." height={300} />;
+    if (!latest) return <DataStatePanel variant="empty" title="India digitization data unavailable" description="No published digitization observation is available." height={300} />;
+
+    const upiVolGrowth = previous?.upi_volume_bn != null && latest.upi_volume_bn != null && previous.upi_volume_bn !== 0
+        ? ((latest.upi_volume_bn - previous.upi_volume_bn) / previous.upi_volume_bn) * 100
+        : null;
+    const formalizationPremium = latest.g20_digital_baseline != null && latest.rbi_dpi_index != null && latest.g20_digital_baseline !== 0
+        ? ((latest.rbi_dpi_index - latest.g20_digital_baseline) / latest.g20_digital_baseline) * 100
+        : null;
 
     return (
         <section className="w-full bg-[#0a0f1d] rounded-[2.5rem] border border-white/12 overflow-hidden shadow-2xl font-sans relative group">
@@ -44,7 +50,7 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            <span className="text-emerald-400 text-xs font-black uppercase tracking-uppercase">Alpha Signal: Formal Economy Scaling</span>
+                            <span className="text-emerald-400 text-xs font-black uppercase tracking-uppercase">Observed digitization relationship</span>
                             <span className="text-slate-500 text-xs font-black uppercase tracking-uppercase ml-2 border-l border-white/12 pl-2">Source: RBI / NPCI / IMF</span>
                         </div>
                         <h2 className="text-3xl font-black text-white tracking-heading leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
@@ -58,21 +64,21 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5 border-b border-white/5 bg-black/20">
                 <MetricCard
                     title="Latest UPI Vol"
-                    value={`${(latest.upi_volume_bn || 0).toFixed(1)}B`}
-                    subtext={`${upiVolGrowth.toFixed(1)}% MoM SURGE`}
+                    value={latest.upi_volume_bn != null ? `${latest.upi_volume_bn.toFixed(1)}B` : '--'}
+                    subtext={upiVolGrowth != null ? `${upiVolGrowth.toFixed(1)}% MoM` : 'Growth unavailable'}
                     icon={<Zap className="w-5 h-5 text-cyan-400" />}
                     colorClass="text-cyan-400"
                 />
                 <MetricCard
                     title="DPI Index Score"
-                    value={(latest.rbi_dpi_index || 0).toFixed(1)}
+                    value={latest.rbi_dpi_index != null ? latest.rbi_dpi_index.toFixed(1) : '--'}
                     subtext="BASE 2018 = 100"
                     icon={<BarChart3 className="w-5 h-5 text-emerald-400" />}
                     colorClass="text-emerald-400"
                 />
                 <MetricCard
                     title="Formalization Premium"
-                    value={`${formalizationPremium.toFixed(1)}%`}
+                    value={formalizationPremium != null ? `${formalizationPremium.toFixed(1)}%` : '--'}
                     subtext="VS G20 BASELINE"
                     icon={<Globe className="w-5 h-5 text-blue-400" />}
                     colorClass="text-blue-400"
@@ -83,10 +89,10 @@ export const IndiaDigitizationPremiumMonitor: React.FC = () => {
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2 text-emerald-500">
                             <ShieldCheck className="w-5 h-5" />
-                            <span className="text-sm font-black uppercase tracking-uppercase text-emerald-400">Premium Active</span>
+                            <span className="text-sm font-black uppercase tracking-uppercase text-emerald-400">Observed relationship</span>
                         </div>
                         <p className="text-xs text-slate-400 font-medium leading-tight">
-                            India's DPI infrastructure is driving structural nominal GDP efficiency vs EM peers. Significant FDI narrative de-risking sovereign bonds.
+                            The panel compares published digitization observations where both series are available. It does not infer a causal premium or investment outcome.
                         </p>
                     </div>
                 </div>

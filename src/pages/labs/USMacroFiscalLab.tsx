@@ -1,11 +1,9 @@
 import React, { Suspense, lazy } from 'react';
 import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Button } from '@/components/ui/button';
-import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useUSFiscalStress } from '@/hooks/useUSFiscalStress';
-import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
-import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { useFiscalCockpit } from '@/hooks/useFiscalCockpit';
 import {
     ChevronRight,
     ArrowLeft,
@@ -20,6 +18,8 @@ import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { TrailLink } from '@/components/TrailLink';
+import { FiscalCockpit } from '@/features/dashboard/components/sections/FiscalCockpit';
 
 
 // Components
@@ -38,14 +38,15 @@ const FundingPlumbingStress = lazy(() => import('@/components/labs/FundingPlumbi
 const FOMCMinutesAnalysisCard = lazy(() => import('@/components/labs/FOMCMinutesAnalysisCard').then(m => ({ default: m.FOMCMinutesAnalysisCard })));
 
 export const USMacroFiscalLab: React.FC = () => {
-    const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
+    const { data: cockpit } = useFiscalCockpit();
     const { data: fiscalStress } = useUSFiscalStress();
-    const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
+    const primaryMetric = cockpit?.metrics.find(metric => metric.id === 'US_FEDERAL_INTEREST_PAYMENTS');
+    const dataFreshness = primaryMetric?.freshness || 'no_data';
     const latestFiscalStress = fiscalStress?.[fiscalStress.length - 1];
-    const interestAsOf = primaryMetric?.lastUpdated
-        ? new Date(primaryMetric.lastUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+    const interestAsOf = primaryMetric?.asOf
+        ? new Date(primaryMetric.asOf).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         : null;
-    const interestValue = primaryMetric?.value != null ? `$${(primaryMetric.value / 1000).toFixed(2)}T` : null;
+    const interestValue = primaryMetric?.value != null ? `${primaryMetric.value.toLocaleString('en-US', { maximumFractionDigits: 2 })} ${primaryMetric.unit}` : null;
     const fiscalStressAsOf = latestFiscalStress?.date
         ? new Date(latestFiscalStress.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         : null;
@@ -65,43 +66,46 @@ export const USMacroFiscalLab: React.FC = () => {
         },
         {
             question: 'How much does the US government pay in interest on its debt?',
-            answer: interestValue && interestAsOf
-                ? `The configured ${interestSource} series reports federal current interest payments of ${interestValue} on an annualized basis as of ${interestAsOf}. The series is quarterly and expressed in billions of US dollars before display conversion; use the chart and provenance metadata for the latest revision and history.`
+                answer: interestValue && interestAsOf
+                ? `The configured ${interestSource} series reports federal current interest payments of ${interestValue} as of ${interestAsOf}. Use the chart and provenance metadata for the latest revision, frequency, and history.`
                 : 'The federal interest-payment series is temporarily unavailable. The lab displays the latest observation, source, frequency, and as-of date when the telemetry is available.'
         }
     ];
     return (
         <>
         <SEOManager
-            title="US Macro & Fiscal Lab: Debt & Auctions"
-            description="Real-time telemetry on US sovereign debt dynamics, Treasury auction demand, fiscal dominance metrics, and offshore dollar funding stress."
-            keywords={['US macro', 'fiscal dominance', 'Treasury auction demand', 'US debt maturity wall', 'offshore dollar stress', 'sovereign debt', 'Federal Reserve']}
+            title="US Treasury Liquidity & Fiscal Monitor | GraphiQuestor"
+            description="Published US Treasury, liquidity, market, and fiscal observations with source, as-of date, frequency, and provenance."
+            keywords={['US Treasury data', 'US fiscal monitor', 'Treasury liquidity', 'Treasury auction demand', 'fiscal dominance', 'TGA balance', 'reverse repo']}
             jsonLd={[
                 {
                     '@context': 'https://schema.org',
                     '@type': 'WebPage',
                     'name': 'US Macro & Fiscal Lab',
-                    'description': 'Institutional telemetry on US sovereign debt, Treasury demand, and fiscal dominance.',
+                    'description': 'Published observations for US sovereign debt, Treasury demand, liquidity, and fiscal burden metrics.',
                     'url': 'https://graphiquestor.com/labs/us-macro-fiscal',
-                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                    'breadcrumb': {
-                        '@type': 'BreadcrumbList',
-                        'itemListElement': [
-                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                            { '@type': 'ListItem', 'position': 3, 'name': 'US Macro & Fiscal Lab' }
-                        ]
-                    }
+                    'isPartOf': { '@id': 'https://graphiquestor.com/#website' }
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'US Macro & Fiscal Lab', 'item': 'https://graphiquestor.com/labs/us-macro-fiscal' }
+                    ]
                 },
                 {
                     '@context': 'https://schema.org',
                     '@type': 'Dataset',
-                    'name': 'US Macro & Fiscal Telemetry Data',
-                    'description': 'Real-time structural debt dynamics, treasury demand vectors, and fiscal policy impact of the US dollar.',
+                    'name': 'US Treasury, Liquidity & Fiscal Observations',
+                    'description': 'Published US Treasury, Federal Reserve, liquidity, market, and fiscal observations with source metadata.',
                     'url': 'https://graphiquestor.com/labs/us-macro-fiscal',
                     'isAccessibleForFree': true,
-                    'license': 'https://creativecommons.org/licenses/by/4.0/',
-                    'creator': PublisherOrganizationSchema
+                    'creator': PublisherOrganizationSchema,
+                    'temporalCoverage': '2010/..',
+                    'variableMeasured': ['Treasury General Account', 'Reverse Repo Balance', 'Treasury debt maturities', 'Federal interest payments', 'Treasury yields'],
+                    'measurementTechnique': 'Source observations and explicitly labelled derived ratios from public US Treasury, Federal Reserve, and FRED series.'
                 },
                 {
                     '@context': 'https://schema.org',
@@ -117,33 +121,34 @@ export const USMacroFiscalLab: React.FC = () => {
             ]}
         />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-            {/* Breadcrumbs */}
             <div className="mb-8">
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                    <a href="/" className="hover:text-white transition-colors">Home</a>
+                    <TrailLink to="/" className="hover:text-white transition-colors">Home</TrailLink>
                     <ChevronRight size={10} />
-                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
+                    <TrailLink to="/macro-observatory/" className="hover:text-white transition-colors">Observatory</TrailLink>
                     <ChevronRight size={10} />
                     <span className="text-blue-500">US Macro & Fiscal</span>
                 </nav>
             </div>
 
-            <div className="mb-16">
+            <div className="mb-12">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <Zap size={12} /> Core Sovereign Telemetry
                 </div>
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
                     <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
                         US Macro & Fiscal <span className="text-blue-500">Lab</span>
                     </h1>
-                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
+                    <FreshnessChip status={dataFreshness} lastUpdated={primaryMetric?.lastUpdated || undefined} sourceRef={primaryMetric?.sourceRef} provenance={primaryMetric?.provenance} isProvisional={primaryMetric?.isProvisional} />
                 </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-base md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                    Tracking the structural debt dynamics, treasury demand vectors, and fiscal policy impact of the world's reserve currency issuer.
+                    Published observations for Treasury funding, US fiscal capacity, and dollar liquidity, with source and data-state context attached to every value.
                 </p>
             </div>
 
-            <div className="space-y-32">
+            <FiscalCockpit />
+
+            <div className="mt-20 space-y-24">
                 {/* Section 0.5: FOMC Minutes Intelligence */}
                 <section>
                     <SectionErrorBoundary name="FOMC Minutes Intelligence">
@@ -168,7 +173,7 @@ export const USMacroFiscalLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-us-debt-maturity" insight="The maturity wall tracks $9.2T in rolling securities. The 2025-2027 window represents a critical refinancing regime where low-coupon pandemic-era debt is re-priced at structurally higher market yields." />
+                    <ChartInsightSummary id="lab-us-debt-maturity" insight="The maturity module reports scheduled Treasury maturities by bucket and source date. It describes the published maturity profile, while refinancing terms and future issuance remain separate observations." />
                 </section>
 
                 {/* Section 1.5: FED Debt Monetization & Yield Control Monitor */}
@@ -196,7 +201,7 @@ export const USMacroFiscalLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-us-fiscal-dominance" insight="Fiscal dominance occurs when mandatory spending (interest + entitlements) consumes over 100% of tax receipts, forcing the Treasury to issue additional debt for operations and structurally raising market dependency on central bank monetization. Historically unprecedented in peacetime — this signal defines the transition to a regime of monetary-fiscal fusion." />
+                    <ChartInsightSummary id="lab-us-fiscal-dominance" insight="This panel computes burden ratios from the latest available fiscal-stress observations. The displayed methodology and as-of dates define the scope of the comparison." />
                 </section>
 
                 {/* Government Financial Position teaser */}
@@ -281,26 +286,26 @@ export const USMacroFiscalLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-us-fiscal-comp" insight="Net interest payments on US federal debt have risen from $250B to over $1T annually, now rivaling the total national defense budget – a structural shift with profound implications for fiscal policy flexibilty." />
+                    <ChartInsightSummary id="lab-us-fiscal-comp" insight="The comparison chart retains source cadence and displays only dates where the defense and interest series overlap. Relative size is an observed relationship, not a forecast." />
                 </section>
 
             </div>
 
-            {/* SEO Structural Analysis Text Block */}
-            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of US Fiscal Trajectory">
-                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: The US Fiscal Trajectory & Sovereign Debt</h3>
+            {/* SEO methodology and discovery text block */}
+            <article className="mt-24 p-8 sm:p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="US Treasury and fiscal data methodology">
+                <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">How to read the US Treasury and fiscal monitor</h3>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
-                        The <strong>US Macro & Fiscal Lab</strong> provides high-frequency telemetry on the structural constraints facing the United States Treasury and the Federal Reserve. Over the past decade, the reliance on short-term debt issuance (Treasury Bills) has created a significant <em>maturity wall</em>, forcing the sovereign to constantly refinance obligations rather than lock in long-term capital.
+                        The <strong>US Macro & Fiscal Lab</strong> is a published-observation monitor for Treasury funding, Federal Reserve liquidity facilities, fiscal burden ratios, and Treasury market data. Each usable value carries an as-of date, source, frequency, and provenance state. The coverage register identifies metrics that are unavailable or lagged.
                     </p>
                     <p>
-                        Our predictive telemetry indicates that as interest expense on the national debt supersedes major discretionary categories (such as defense spending), the likelihood of <strong>fiscal dominance</strong> increases. Fiscal dominance occurs when the central bank is forced to subordinate its inflation target to maintain the solvency of the government, often leading to <a href="/glossary/stealth-qe/" className="text-blue-400 hover:underline">Stealth QE</a> or Yield Curve Control (YCC). By tracking <em>Treasury Auction Demand Metrics</em> natively through GraphiQuestor, institutional participants can monitor the exact inflection point of buyer exhaustion.
+                        The maturity wall reports scheduled Treasury maturities across the available windows. Auction demand reports observed bid-to-cover, yield, and bidder participation fields when the Treasury auction feed is populated. These modules answer different questions and should be read together with their source dates.
                     </p>
                     <p>
-                        Simultaneously, the <a href="/glossary/tga/" className="text-blue-400 hover:underline">Treasury General Account (TGA)</a> and the Overnight Reverse Repo Facility (RRP) act as critical hydraulic valves for global liquidity. By synthesizing direct data feeds from the Federal Reserve Economic Data (FRED) API with our custom capital flow Sankey architectures, analysts can isolate the precise velocity at which liquidity is injected or drained from risk assets.
+                        The <a href="/glossary/tga/" className="text-blue-400 hover:underline">Treasury General Account (TGA)</a> and Overnight Reverse Repo Facility (RRP) are shown as separate liquidity observations. Their levels can be compared with Standing Repo Facility usage and FX swap line balances when those feeds are available. The page preserves native units so cross-series comparisons remain explicit.
                     </p>
                     <p>
-                        The clearest historical proof of this mechanism came in 2021, when a debt-ceiling standoff forced the Treasury to draw the TGA down from roughly $1.7T to near $150B by August — mechanically injecting an estimated $1.5T of reserves into the banking system with zero change to the Fed funds rate. The mirror-image episode followed in mid-2023: once the ceiling was resolved, the TGA rebuilt to above $750B within months, draining reserves and coinciding with tighter financial conditions even as headline rates held steady. Net interest expense itself has followed an equally stark path, rising from roughly $250B a decade ago to over $1 trillion annually by 2025 — now comparable in size to the entire national defense budget, and the single fastest-growing line item in the federal budget.
+                        Fiscal burden panels use published fiscal-stress rows and explicitly labelled derived ratios. A missing or provisional upstream record is not converted into zero. Methodology links and source metadata provide the audit trail for any downstream interpretation.
                     </p>
                 </div>
 

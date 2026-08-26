@@ -1,0 +1,43 @@
+<h2>US Macro &amp; Fiscal Lab</h2>
+<p class="subtitle">Choose the information hierarchy for an evidence-first Treasury monitor.</p>
+
+<div class="section">
+  <div class="label">Observed in the public page</div>
+  <div class="pros-cons">
+    <div class="pros"><h4>Useful signals</h4><ul><li>Treasury debt maturity</li><li>Fiscal capacity</li><li>Auction demand</li><li>TGA and RRP liquidity</li></ul></div>
+    <div class="cons"><h4>Trust breaks</h4><ul><li>“All Systems Nominal” beside a lagged page</li><li>“Real-time” claims beside annual data</li><li>Empty sections without source state</li><li>Hardcoded narrative thresholds</li></ul></div>
+  </div>
+</div>
+
+<div class="split">
+  <div class="mockup" data-choice="cockpit" onclick="toggleSelect(this)">
+    <div class="mockup-header">A · Fiscal cockpit</div>
+    <div class="mockup-body">
+      <div class="mock-nav">US FISCAL / STATUS: LAGGED / AS OF: LATEST OBSERVED</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0">
+        <div class="placeholder">Net interest<br><strong>value or —</strong><small>date · source</small></div>
+        <div class="placeholder">12M maturity<br><strong>value or —</strong><small>date · source</small></div>
+        <div class="placeholder">Auction demand<br><strong>value or —</strong><small>date · source</small></div>
+        <div class="placeholder">Data coverage<br><strong>n / total</strong><small>fresh · lagged · missing</small></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.35fr .65fr;gap:10px">
+        <div class="placeholder" style="height:170px">Primary triage table<br><br>Debt service · maturity wall · auction demand · liquidity<br><br>Rows remain visible when data is unavailable.</div>
+        <div class="placeholder" style="height:170px">Driver rail<br><br>Observed<br>Lagged<br>Unavailable<br><br>Open evidence</div>
+      </div>
+    </div>
+    <div class="card-body"><h3>Fast daily monitoring</h3><p>Best for a desk that needs the current fiscal state in one viewport.</p></div>
+  </div>
+  <div class="mockup" data-choice="research" onclick="toggleSelect(this)">
+    <div class="mockup-header">B · Research board</div>
+    <div class="mockup-body">
+      <div class="mock-nav">SELECTED SERIES / HISTORY / METHODOLOGY / SOURCE</div>
+      <div style="display:grid;grid-template-columns:.7fr 1.3fr;gap:10px;margin-top:12px">
+        <div class="placeholder" style="height:250px">Metric families<br><br>Debt stock<br>Debt service<br>Rollover<br>Auctions<br>Liquidity<br>Fiscal capacity</div>
+        <div class="placeholder" style="height:250px">Selected metric timeline<br><br>Chart with observation dates<br><br>Revision markers<br><br>Source document link</div>
+      </div>
+    </div>
+    <div class="card-body"><h3>Deep analyst work</h3><p>Best for tracing a single series back to its source and definition.</p></div>
+  </div>
+</div>
+
+<p class="subtitle">A makes the page a monitor. B makes it a research notebook. Click a direction to record your preference.</p>
