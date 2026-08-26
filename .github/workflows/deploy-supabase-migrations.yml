@@ -1,10 +1,6 @@
 name: Deploy Supabase Migrations
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'supabase/migrations/**'
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +18,7 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: 2.98.2
+          version: 2.115.0
 
       - name: Apply database migrations
         run: bash scripts/deploy-db-migrations.sh

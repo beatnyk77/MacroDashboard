@@ -18,6 +18,10 @@ export interface G20MatrixPoint {
     zGrowth: number;          // Z-score of growth
     dataAvailable: boolean;   // Whether all core metrics have real data
     isStale: boolean;         // Whether data is > 30 days overdue
+    debtUpdatedAt: string | null;
+    growthUpdatedAt: string | null;
+    debtStatus: string;
+    growthStatus: string;
 }
 
 const G20_MEMBERS: Record<string, { name: string; flag: string; region: G20Region }> = {
@@ -64,7 +68,7 @@ export function useG20SovereignMatrix() {
             // Fetch sovereign metric observations (latest per metric)
             const { data: metricData, error: metricsError } = await supabase
                 .from('vw_latest_metrics')
-                .select('metric_id, value, last_updated_at')
+                .select('metric_id, value, last_updated_at, staleness_flag')
                 .or(metricFilters.map(id => `metric_id.eq.${id}`).join(','));
 
             if (metricsError) throw metricsError;
@@ -76,6 +80,7 @@ export function useG20SovereignMatrix() {
                     .from('vw_latest_metrics')
                     .select('metric_id, value')
                     .ilike('metric_id', `${cc}_GDP_NOMINAL%`)
+                    .order('last_updated_at', { ascending: false })
                     .limit(1)
                     .maybeSingle();
                 return { code: c, value: data?.value || 0 };
@@ -98,8 +103,8 @@ export function useG20SovereignMatrix() {
                 .eq('metric_id', MID.GOLD_PRICE_USD)
                 .maybeSingle();
 
-            const goldPriceUsd = goldPriceData?.value || 2650;
-            const goldPricePerTonne = goldPriceUsd * 32150.7;
+            const goldPriceUsd = goldPriceData?.value;
+            const goldPricePerTonne = goldPriceUsd ? goldPriceUsd * 32150.7 : null;
 
             // De-dup reserves (latest per country)
             const latestReserves: Record<string, { gold_tonnes: number; gold_usd: number }> = {};
@@ -119,30 +124,28 @@ export function useG20SovereignMatrix() {
                 const nomEntry = nominalGdpResults.find(n => n.code === code);
                 const res = latestReserves[code];
 
-                let debtGdpPct = Number(debtMetric?.value || 0);
-                const gdpGrowthPct = Number(growthMetric?.value || 0);
-                const nominalGdpUsd = Number(nomEntry?.value || 0);
-                const goldTonnes = Number(res?.gold_tonnes || 0);
-
-                // FALLBACKS for Top Stale Metrics
-                if (code === 'EU' && debtGdpPct === 0) debtGdpPct = 89.9;
-                if (code === 'BR' && debtGdpPct === 0) debtGdpPct = 74.4;
-                if (code === 'TR' && debtGdpPct === 0) debtGdpPct = 34.4;
+                const debtGdpPct = debtMetric?.value == null ? 0 : Number(debtMetric.value);
+                const gdpGrowthPct = growthMetric?.value == null ? 0 : Number(growthMetric.value);
+                const nominalGdpUsd = nomEntry?.value == null ? 0 : Number(nomEntry.value);
+                const goldTonnes = res?.gold_tonnes == null ? 0 : Number(res.gold_tonnes);
 
                 // Calculate Debt/Gold ratio: (Debt% * NominalGDP$) / (GoldTonnes * PricePerTonne)
                 let debtGoldRatio = 0;
-                if (goldTonnes > 0 && nominalGdpUsd > 0 && debtGdpPct > 0) {
+                if (goldPricePerTonne && goldTonnes > 0 && nominalGdpUsd > 0 && debtGdpPct > 0) {
                     const totalDebtUsd = (debtGdpPct / 100) * nominalGdpUsd;
                     const goldValueUsd = goldTonnes * goldPricePerTonne;
                     debtGoldRatio = totalDebtUsd / goldValueUsd;
                 }
 
-                const dataAvailable = debtGdpPct > 0 && gdpGrowthPct !== 0;
+                const dataAvailable = debtMetric?.value != null && growthMetric?.value != null;
 
                 // Check staleness (threshold 30 days beyond expected 365 for debt, 90 for growth)
                 const now = new Date();
                 const debtDate = debtMetric?.last_updated_at ? new Date(debtMetric.last_updated_at) : null;
-                const isStale = debtDate ? (now.getTime() - debtDate.getTime()) / (1000 * 3600 * 24) > 400 : true;
+                const growthDate = growthMetric?.last_updated_at ? new Date(growthMetric.last_updated_at) : null;
+                const isStale = !debtDate || !growthDate ||
+                    (now.getTime() - debtDate.getTime()) / (1000 * 3600 * 24) > 400 ||
+                    (now.getTime() - growthDate.getTime()) / (1000 * 3600 * 24) > 400;
 
                 return {
                     code,
@@ -157,7 +160,11 @@ export function useG20SovereignMatrix() {
                     zDebt: 0,
                     zGrowth: 0,
                     dataAvailable,
-                    isStale
+                    isStale,
+                    debtUpdatedAt: debtMetric?.last_updated_at ?? null,
+                    growthUpdatedAt: growthMetric?.last_updated_at ?? null,
+                    debtStatus: debtMetric?.staleness_flag ?? 'no_data',
+                    growthStatus: growthMetric?.staleness_flag ?? 'no_data',
                 };
             });
 

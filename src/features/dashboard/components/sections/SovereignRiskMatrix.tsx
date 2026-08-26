@@ -99,6 +99,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 export const SovereignRiskMatrix = React.memo(() => {
     const { data, isLoading } = useG20SovereignMatrix();
     const [isExpanded, setIsExpanded] = React.useState(false);
+    const [selectedCode, setSelectedCode] = React.useState<string | null>(null);
 
     const { chartData, xMedian, yMedian, availableCount, totalCount } = useMemo(() => {
         if (!data) return { chartData: [], xMedian: 0, yMedian: 0, availableCount: 0, totalCount: 0 };
@@ -125,10 +126,84 @@ export const SovereignRiskMatrix = React.memo(() => {
         };
     }, [data]);
 
-    if (isLoading || !data) return <div className="h-[200px] w-full animate-pulse bg-white/5 rounded-xl" />;
+    if (isLoading || !data) return <div className="h-[360px] w-full animate-pulse bg-white/5 rounded-xl" aria-label="Loading sovereign data" />;
+
+    const ranked = [...data].sort((a, b) => {
+        if (a.dataAvailable !== b.dataAvailable) return a.dataAvailable ? -1 : 1;
+        return (b.zDebt - b.zGrowth) - (a.zDebt - a.zGrowth);
+    });
+    const availableDebt = data.filter(point => point.debtUpdatedAt).length;
+    const freshRows = data.filter(point => point.dataAvailable && !point.isStale).length;
+    const selected = data.find(point => point.code === selectedCode) ?? ranked[0];
+    const formatDate = (date: string | null) => date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No observation';
+    const statusLabel = (status: string) => status === 'fresh' ? 'Fresh' : status === 'no_data' ? 'No data' : 'Review';
 
     return (
         <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" aria-label="Sovereign data coverage">
+                {[
+                    { label: 'Debt coverage', value: `${availableDebt}/${totalCount}`, detail: 'countries with observations', color: 'text-white' },
+                    { label: 'Usable rows', value: `${freshRows}/${totalCount}`, detail: 'debt and growth current', color: 'text-emerald-400' },
+                    { label: 'Highest screen', value: selected?.code ?? '—', detail: 'selected by debt-growth screen', color: 'text-amber-400' },
+                    { label: 'Method', value: 'Observed', detail: 'no fallback values', color: 'text-cyan-400' },
+                ].map(item => (
+                    <div key={item.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{item.label}</div>
+                        <div className={`mt-2 text-xl font-black tabular-nums ${item.color}`}>{item.value}</div>
+                        <div className="mt-1 text-[10px] text-muted-foreground/50">{item.detail}</div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4">
+                <div className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/30">
+                    <table className="w-full min-w-[720px] text-left">
+                        <caption className="sr-only">Country triage based on observed debt to GDP and GDP growth</caption>
+                        <thead className="border-b border-white/10 text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                            <tr>
+                                <th className="px-4 py-3 font-bold">Country</th>
+                                <th className="px-4 py-3 font-bold">Debt / GDP</th>
+                                <th className="px-4 py-3 font-bold">Growth</th>
+                                <th className="px-4 py-3 font-bold">Debt screen</th>
+                                <th className="px-4 py-3 font-bold">Data state</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {ranked.map(point => {
+                                const active = selected?.code === point.code;
+                                return (
+                                    <tr key={point.code} className={cn('cursor-pointer transition-colors hover:bg-white/[0.05]', active && 'bg-cyan-400/[0.08]')} onClick={() => setSelectedCode(point.code)}>
+                                        <td className="px-4 py-3">
+                                            <button type="button" className="flex items-center gap-2 text-sm font-semibold text-white" onClick={() => setSelectedCode(point.code)}>
+                                                <span aria-hidden="true">{point.flag}</span>{point.name}
+                                            </button>
+                                            <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/50">{point.region} · {point.code}</div>
+                                        </td>
+                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-white">{point.debtUpdatedAt ? `${point.debtGdpPct.toFixed(1)}%` : '—'}</td>
+                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-white">{point.growthUpdatedAt ? `${point.gdpGrowthPct.toFixed(1)}%` : '—'}</td>
+                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-amber-300">{point.dataAvailable ? `${point.zDebt > 0 ? '+' : ''}${point.zDebt.toFixed(2)}σ` : '—'}</td>
+                                        <td className="px-4 py-3"><span className={cn('rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-widest', point.dataAvailable && !point.isStale ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/20 bg-amber-400/10 text-amber-300')}>{point.dataAvailable ? statusLabel(point.debtStatus) : 'Partial'}</span></td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                <aside className="rounded-xl border border-white/10 bg-white/[0.03] p-4" aria-label="Selected country details">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Selected country</div>
+                    {selected ? <>
+                        <div className="mt-3 flex items-center gap-2 text-lg font-bold text-white"><span aria-hidden="true">{selected.flag}</span>{selected.name}</div>
+                        <div className="mt-1 text-xs text-muted-foreground/60">{selected.region} · {selected.code}</div>
+                        <dl className="mt-5 space-y-3 text-xs">
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Debt / GDP</dt><dd className="font-mono text-white">{selected.debtUpdatedAt ? `${selected.debtGdpPct.toFixed(1)}%` : 'No data'}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Growth</dt><dd className="font-mono text-white">{selected.growthUpdatedAt ? `${selected.gdpGrowthPct.toFixed(1)}%` : 'No data'}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Debt observation</dt><dd className="text-right text-white/80">{formatDate(selected.debtUpdatedAt)}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Growth observation</dt><dd className="text-right text-white/80">{formatDate(selected.growthUpdatedAt)}</dd></div>
+                        </dl>
+                        <div className="mt-5 border-t border-white/10 pt-4 text-[11px] leading-relaxed text-muted-foreground/60">This screen ranks observed debt and growth readings. CDS, refinancing, and interest-to-revenue signals require separate country-level feeds.</div>
+                    </> : <div className="mt-4 text-sm text-muted-foreground/60">No country data available.</div>}
+                </aside>
+            </div>
             <div className="flex items-center justify-between">
                 <div>
                     <h3 className="text-xl font-bold text-white uppercase tracking-heading flex items-center gap-2">

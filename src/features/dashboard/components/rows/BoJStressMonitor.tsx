@@ -342,7 +342,8 @@ export const BoJStressMonitor: React.FC = () => {
         .eq('metric_id', 'BOJ_TOTAL_ASSETS_TRJPY')
         .order('as_of_date', { ascending: false })
         .limit(104); // roughly 2 years
-      if (error || !data) return [];
+      if (error) throw error;
+      if (!data) return [];
       return data.map(d => ({ date: d.as_of_date, totalAssetsT: d.value }));
     },
     staleTime: 1000 * 60 * 60, // 1h
@@ -358,7 +359,8 @@ export const BoJStressMonitor: React.FC = () => {
         .eq('metric_id', 'BOJ_MONETARY_BASE_TRJPY')
         .order('as_of_date', { ascending: false })
         .limit(104);
-      if (error || !data) return [];
+      if (error) throw error;
+      if (!data) return [];
       return data.map(d => ({ date: d.as_of_date, monetaryBaseT: d.value })); 
     },
     staleTime: 1000 * 60 * 60,
@@ -374,7 +376,8 @@ export const BoJStressMonitor: React.FC = () => {
         .eq('metric_id', 'BOJ_JGB_HOLDINGS_TRJPY')
         .order('as_of_date', { ascending: false })
         .limit(104);
-      if (error || !data) return [];
+      if (error) throw error;
+      if (!data) return [];
       return data.map(d => ({ date: d.as_of_date, jgbHoldingsT: d.value }));
     },
     staleTime: 1000 * 60 * 60,
@@ -382,8 +385,14 @@ export const BoJStressMonitor: React.FC = () => {
 
   // Build unified chart data
   const chartData: DataPoint[] = useMemo(() => {
-    const baseMap = new Map(baseData.map(d => [d.date, d.monetaryBaseT]));
-    const jgbMap = new Map(jgbData.map(d => [d.date, d.jgbHoldingsT]));
+    const nearestValue = <T extends { date: string }>(rows: T[], date: string, value: (row: T) => number | undefined) => {
+      const target = new Date(date).getTime();
+      const nearest = rows.reduce<{ row: T | null; distance: number }>((result, row) => {
+        const distance = Math.abs(new Date(row.date).getTime() - target);
+        return distance < result.distance ? { row, distance } : result;
+      }, { row: null, distance: Number.POSITIVE_INFINITY });
+      return nearest.row && nearest.distance <= 45 * 24 * 60 * 60 * 1000 ? value(nearest.row) : undefined;
+    };
     
     // Sort assets strictly by date ascending for sequential processing
     const sortedAssets = [...assetsData].sort((a, b) => a.date.localeCompare(b.date));
@@ -396,8 +405,8 @@ export const BoJStressMonitor: React.FC = () => {
       const row = sortedAssets[i];
       const date = row.date;
       const totalAssetsT = row.totalAssetsT;
-      const monetaryBaseT = baseMap.get(date) ?? baseData[baseData.length - 1]?.monetaryBaseT;
-      const jgbHoldingsT = jgbMap.get(date) ?? jgbData[jgbData.length - 1]?.jgbHoldingsT;
+      const monetaryBaseT = nearestValue(baseData, date, row => row.monetaryBaseT);
+      const jgbHoldingsT = nearestValue(jgbData, date, row => row.jgbHoldingsT);
 
       let assetsRoc: number | undefined = undefined;
       // Calculate 3-month Rate of Change using the value from PERIOD_OFFSET steps prior
@@ -434,6 +443,16 @@ export const BoJStressMonitor: React.FC = () => {
   const isBaseGrowing = latest && previous && (latest.monetaryBaseT ?? 0) > (previous.monetaryBaseT ?? 0);
   const isJgbGrowing = latest && previous && (latest.jgbHoldingsT ?? 0) > (previous.jgbHoldingsT ?? 0);
   const isRocPositive = latest && (latest.assetsRoc ?? 0) >= 0;
+
+  if (!chartData.length) {
+    return (
+      <section className="w-full rounded-2xl border border-amber-400/20 bg-amber-400/[0.05] p-8 text-center">
+        <Database className="mx-auto mb-3 h-7 w-7 text-amber-300" />
+        <h2 className="text-lg font-bold text-white">BoJ balance-sheet data unavailable</h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-slate-400">The connected source has returned no observations for this monitor. No replacement values are displayed.</p>
+      </section>
+    );
+  }
 
   return (
     <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
@@ -477,9 +496,9 @@ export const BoJStressMonitor: React.FC = () => {
         <MetricCard
           icon={<DollarSign className="w-5 h-5 text-indigo-400" />}
           label="JGB Holdings"
-          value={latest?.jgbHoldingsT ? `¥${latest.jgbHoldingsT.toFixed(2)}T` : '—'}
-          sub="Government Debt Monetized"
-          trend={isJgbGrowing ? 'up' : 'down'}
+          value={latest?.jgbHoldingsT ? `¥${latest.jgbHoldingsT.toFixed(2)}T` : 'Unavailable'}
+          sub="Awaiting a maintained source"
+          trend={latest?.jgbHoldingsT === undefined ? undefined : (isJgbGrowing ? 'up' : 'down')}
         />
         <MetricCard
           icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
@@ -498,7 +517,11 @@ export const BoJStressMonitor: React.FC = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <LiquidityAcceleration data={chartData} />
-          <JGBCencentration data={chartData} />
+          {chartData.some(point => point.jgbConcentration !== undefined) ? <JGBCencentration data={chartData} /> : (
+            <div className="flex min-h-[280px] items-center justify-center rounded-xl border border-amber-400/15 bg-amber-400/[0.04] p-6 text-center">
+              <div><div className="text-sm font-semibold text-amber-200">JGB concentration unavailable</div><div className="mt-2 text-xs text-slate-500">The JGB holdings series is not connected to a maintained source.</div></div>
+            </div>
+          )}
         </div>
       </div>
 

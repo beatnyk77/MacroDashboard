@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { TrailLink } from '@/components/TrailLink';
 
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -35,9 +36,9 @@ export const SovereignStressLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="Sovereign Debt Risk Dashboard — Real-Time"
-            description="Real-time sovereign debt risk dashboard tracking G20 debt sustainability, interest-to-revenue ratios, yield curve stress, BoJ dominance, and geopolitical"
-            keywords={['sovereign debt risk dashboard', 'sovereign stress monitor', 'G20 debt sustainability', 'real-time sovereign risk', 'yield curve stress', 'sovereign credit risk', 'BoJ balance sheet']}
+            title="Sovereign Debt Risk Dashboard | G20 Fiscal Monitor"
+            description="G20 sovereign debt risk monitor with observed debt-to-GDP, GDP growth, gold reserves, data freshness, and BoJ balance-sheet telemetry."
+            keywords={['sovereign debt risk dashboard', 'sovereign stress monitor', 'G20 debt sustainability', 'government debt to GDP', 'sovereign refinancing risk', 'BoJ balance sheet']}
             jsonLd={[
                 {
                     '@context': 'https://schema.org',
@@ -45,23 +46,27 @@ export const SovereignStressLab: React.FC = () => {
                     'name': 'Sovereign Stress Lab',
                     'url': 'https://graphiquestor.com/labs/sovereign-stress',
                     'isPartOf': { '@id': 'https://graphiquestor.com/#website' },
-                    'breadcrumb': {
-                        '@type': 'BreadcrumbList',
-                        'itemListElement': [
-                            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
-                            { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory' },
-                            { '@type': 'ListItem', 'position': 3, 'name': 'Sovereign Stress Lab' }
-                        ]
-                    }
+                    'about': ['sovereign debt', 'fiscal sustainability', 'government bond markets']
+                },
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://graphiquestor.com/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Observatory', 'item': 'https://graphiquestor.com/macro-observatory/' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Sovereign Stress Lab' }
+                    ]
                 },
                 {
                     '@context': 'https://schema.org',
                     '@type': 'Dataset',
                     'name': 'G20 Sovereign Stress Data',
-                    'description': 'Real-time sovereign debt risk tracking G20 debt sustainability, yield curve stress, and BoJ dominance.',
-                    'url': 'https://graphiquestor.com/labs/sovereign-stress',
+                    'description': 'Observed G20 sovereign debt, growth, gold-reserve, and Bank of Japan balance-sheet observations with freshness metadata.',
+                    'url': 'https://graphiquestor.com/labs/sovereign-stress/',
                     'isAccessibleForFree': true,
-                    'license': 'https://creativecommons.org/licenses/by/4.0/',
+                    'temporalCoverage': '2020/..',
+                    'variableMeasured': ['Government debt to GDP', 'Real GDP growth', 'Official gold reserves', 'BoJ total assets', 'BoJ monetary base'],
+                    'measurementTechnique': 'Latest published observations and transparent derived ratios; coverage varies by country and series.',
                     'creator': PublisherOrganizationSchema
                 }
             ]}
@@ -70,9 +75,9 @@ export const SovereignStressLab: React.FC = () => {
             {/* Breadcrumbs */}
             <div className="mb-8">
                 <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                    <a href="/" className="hover:text-white transition-colors">Home</a>
+                    <TrailLink to="/" className="hover:text-white transition-colors">Home</TrailLink>
                     <ChevronRight size={10} />
-                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
+                    <TrailLink to="/macro-observatory/" className="hover:text-white transition-colors">Observatory</TrailLink>
                     <ChevronRight size={10} />
                     <span className="text-purple-500">Sovereign Stress</span>
                 </nav>
@@ -89,7 +94,7 @@ export const SovereignStressLab: React.FC = () => {
                     <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                 </div>
                 <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                    Monitoring G20 debt sustainability, interest-to-revenue ratios, and the structural widening of sovereign credit default swaps.
+                    A country-level screen for observed debt burden, growth, reserve coverage, and balance-sheet transmission. Each reading carries its observation date and data state.
                 </p>
             </div>
 
@@ -107,11 +112,11 @@ export const SovereignStressLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-sovereign-risk" insight="The G20 Risk Matrix scores nations on debt/GDP, CDS spreads, and refinancing pressure. Current readings highlight Japan and Italy as structural outliers in the developed market universe." />
+                    <ChartInsightSummary id="lab-sovereign-risk" insight="The current screen compares observed debt-to-GDP and real GDP growth across the covered G20 economies. It is a fiscal-vulnerability screen, not a CDS or refinancing composite." />
                 </section>
 
 
-                {/* Section 3: BoJ Monetary Dominance */}
+                {/* Section 2: BoJ Monetary Dominance */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Activity className="text-cyan-500" size={28} />
@@ -124,23 +129,23 @@ export const SovereignStressLab: React.FC = () => {
                             </Suspense>
                         </LazyRender>
                     </SectionErrorBoundary>
-                    <ChartInsightSummary id="lab-boj-stress" insight="Bank of Japan balance sheet tracking reveals divergence between Total Assets and Monetary Base. High intervention periods indicate significant policy pressure points." />
+                    <ChartInsightSummary id="lab-boj-stress" insight="Bank of Japan balance-sheet telemetry shows the level and rate of change of total assets and monetary base. Series availability and cadence are shown with the underlying chart state." />
                 </section>
 
             </div>
 
             {/* SEO Structural Analysis Text Block */}
             <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of G20 Debt Sustainability">
-                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: Sovereign Debt Sustainability & The Multipolar Yield Shift</h2>
+                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">How to read the Sovereign Stress Lab</h2>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
-                        The <strong>Sovereign Stress Lab</strong> provides institutional-grade risk monitoring for G20 debt sustainability. As the global monetary architecture fractures, the traditional risk-free rate is being re-evaluated through the lens of <strong>Monetary Dominance</strong> and <strong>Fiscal Dominance</strong>. This lab isolates the precise velocity of yield curve shifts and credit default swap (CDS) spreads to identify the next major sovereign stress event.
+                        The <strong>Sovereign Stress Lab</strong> organizes sovereign-risk evidence around fiscal burden, economic growth, reserve coverage, and central-bank balance sheets. The G20 matrix currently uses observed debt-to-GDP and real GDP growth readings, with gold reserves and nominal GDP available as supporting context.
                     </p>
                     <p>
-                        A primary focus of our surveillance is the <strong>BoJ Monetary Dominance</strong> monitor. As the last anchor of negative rates and Yield Curve Control (YCC) shifts toward normalization, the global carry trade faces an unprecedented unwinding risk. Our Z-score analysis tracks the BoJ's balance sheet relative to total Japanese government debt (JGBs), revealing the extent of central bank absorption and the potential for a liquidity vacuum in G7 treasuries.
+                        The <strong>BoJ Monetary Dominance</strong> monitor tracks total assets and monetary base in trillions of yen. Growth rates are calculated against a date-based historical observation, while unavailable JGB holdings remain visible as a coverage gap until a maintained source is connected.
                     </p>
                     <p>
-                        In the multipolar era, sovereign risk is no longer just about debt-to-GDP; it is about the <strong>Interest-to-Revenue Ratio</strong>. When a government spends more on servicing past debt than on future growth (infrastructure or R&D), the regime enters a structural decline. GraphiQuestor's <strong>Sovereign Risk Matrix</strong> synthesizes these metrics into a real-time stress coordinate, enabling capital allocators to navigate the final stages of the global debt supercycle.
+                        Debt-to-GDP is a stock measure. A fuller sovereign assessment also needs interest-to-revenue, primary balance, debt maturity, currency composition, external debt service, market pricing, and banking-system exposure. Those families should enter the cockpit only when each series has a documented source, cadence, and coverage profile.
                     </p>
                 </div>
             </article>
