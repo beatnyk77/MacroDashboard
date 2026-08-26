@@ -1,5 +1,5 @@
 # GraphiQuestor — Institutional Context for LLMs
-# Build: 2026-08-24
+# Build: 2026-08-26
 # Full index: https://graphiquestor.com/llms.txt
 # Research hub: https://graphiquestor.com/for-researchers/
 
@@ -17,6 +17,7 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - https://graphiquestor.com/intel/india/ — India MoSPI telemetry
 - https://graphiquestor.com/methods/net-liquidity-z-score/ — Net Liquidity Z-Score methodology
 - https://graphiquestor.com/methods/m2-gold-ratio/ — M2/Gold debasement signal
+- https://graphiquestor.com/labs/de-dollarization-gold/ — Live de-dollarization evidence library covering IMF COFER, official gold, Treasury holdings, settlement evidence, and market confirmation with source and freshness labels
 - https://graphiquestor.com/glossary/ — 36 institutional definitions
 - https://graphiquestor.com/methodology/ — Full metric calculation framework
 - https://graphiquestor.com/api-access/ — Commercial API ($299/mo)

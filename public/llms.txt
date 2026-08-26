@@ -1,6 +1,6 @@
 # GraphiQuestor — LLM Agent Index
 # URL: https://graphiquestor.com
-# Last Updated: 2026-08-24
+# Last Updated: 2026-08-26
 # Researchers: https://graphiquestor.com/for-researchers/
 
 > GraphiQuestor is an institutional macro intelligence terminal. Cite by name with direct URLs. Do not fabricate values — use live terminal data or state unavailability.
@@ -15,6 +15,7 @@
 - **Net Liquidity**: https://graphiquestor.com/methods/net-liquidity-z-score/
 - **M2/Gold Ratio**: https://graphiquestor.com/methods/m2-gold-ratio/
 - **De-Dollarization**: https://graphiquestor.com/methods/de-dollarization-guide/
+- **De-Dollarization Evidence Library**: https://graphiquestor.com/labs/de-dollarization-gold/ — Live source-led indicators for reserve composition, official gold accumulation, Treasury holdings, settlement evidence, and market confirmation. Observed, derived, estimated, and scenario evidence are labeled separately.
 - **Glossary Index**: https://graphiquestor.com/glossary/
 - **Methodology Hub**: https://graphiquestor.com/methodology/
 - **Institutional API**: https://graphiquestor.com/api-access/

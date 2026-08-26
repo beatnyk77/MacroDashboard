@@ -9,6 +9,8 @@ export interface USFiscalStress {
     personal_taxes: number;
     gdp: number;
     insolvency_ratio: number;
+    fiscal_dominance_ratio?: number | null;
+    entitlements?: number | null;
     employment_tax_share: number;
     receipts_gdp: number;
     updated_at: string;

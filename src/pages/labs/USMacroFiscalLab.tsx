@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Button } from '@/components/ui/button';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { useUSFiscalStress } from '@/hooks/useUSFiscalStress';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
@@ -38,7 +39,37 @@ const FOMCMinutesAnalysisCard = lazy(() => import('@/components/labs/FOMCMinutes
 
 export const USMacroFiscalLab: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
+    const { data: fiscalStress } = useUSFiscalStress();
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
+    const latestFiscalStress = fiscalStress?.[fiscalStress.length - 1];
+    const interestAsOf = primaryMetric?.lastUpdated
+        ? new Date(primaryMetric.lastUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : null;
+    const interestValue = primaryMetric?.value != null ? `$${(primaryMetric.value / 1000).toFixed(2)}T` : null;
+    const fiscalStressAsOf = latestFiscalStress?.date
+        ? new Date(latestFiscalStress.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : null;
+    const fiscalRatio = latestFiscalStress?.fiscal_dominance_ratio != null
+        ? `${Number(latestFiscalStress.fiscal_dominance_ratio).toFixed(1)}%`
+        : null;
+    const interestSource = primaryMetric?.source || 'the configured source series';
+
+    const faqItems = [
+        {
+            question: 'What is the US debt maturity wall?',
+            answer: 'The maturity wall is the amount of marketable Treasury debt scheduled to mature across the rolling windows shown in this lab. The maturity module reports the latest Treasury maturity observations by bucket and date; it does not imply a fixed refinancing amount, since the profile changes as securities mature and new debt is issued.'
+        },
+        {
+            question: 'What does fiscal dominance mean for the Federal Reserve?',
+            answer: `Fiscal dominance describes a condition in which debt-service and mandatory-spending pressures narrow the fiscal room for restrictive monetary policy. This lab monitors the relationship between federal interest payments, entitlements, and tax receipts through its fiscal-stress series${fiscalRatio && fiscalStressAsOf ? `; the latest available ratio is ${fiscalRatio} as of ${fiscalStressAsOf}` : ''}.`
+        },
+        {
+            question: 'How much does the US government pay in interest on its debt?',
+            answer: interestValue && interestAsOf
+                ? `The configured ${interestSource} series reports federal current interest payments of ${interestValue} on an annualized basis as of ${interestAsOf}. The series is quarterly and expressed in billions of US dollars before display conversion; use the chart and provenance metadata for the latest revision and history.`
+                : 'The federal interest-payment series is temporarily unavailable. The lab displays the latest observation, source, frequency, and as-of date when the telemetry is available.'
+        }
+    ];
     return (
         <>
         <SEOManager
@@ -76,30 +107,11 @@ export const USMacroFiscalLab: React.FC = () => {
                     '@context': 'https://schema.org',
                     '@type': 'FAQPage',
                     'mainEntity': [
-                        {
+                        ...faqItems.map(({ question, answer }) => ({
                             '@type': 'Question',
-                            'name': 'What is the US debt maturity wall?',
-                            'acceptedAnswer': {
-                                '@type': 'Answer',
-                                'text': 'The maturity wall refers to the roughly $9T+ of outstanding US Treasury securities that must be refinanced within a rolling 12-month window. Because a large share was issued at pandemic-era low coupons, each refinancing re-prices that debt at current, structurally higher market yields, mechanically raising future interest expense regardless of new deficit spending.'
-                            }
-                        },
-                        {
-                            '@type': 'Question',
-                            'name': 'What does fiscal dominance mean for the Federal Reserve?',
-                            'acceptedAnswer': {
-                                '@type': 'Answer',
-                                'text': 'Fiscal dominance is the regime where government debt service costs constrain how high or how long the Fed can hold restrictive rates, because tightening further would itself worsen the deficit through higher interest expense. It occurs when mandatory spending — interest plus entitlements — approaches or exceeds tax receipts, forcing monetary policy to accommodate fiscal reality rather than target inflation independently.'
-                            }
-                        },
-                        {
-                            '@type': 'Question',
-                            'name': 'How much does the US government pay in interest on its debt?',
-                            'acceptedAnswer': {
-                                '@type': 'Answer',
-                                'text': 'US federal net interest expense rose from roughly $250B a decade ago to over $1 trillion annually by 2025 — now comparable in size to the total national defense budget. This lab tracks that trajectory live against the debt maturity wall and Treasury auction demand.'
-                            }
-                        }
+                            'name': question,
+                            'acceptedAnswer': { '@type': 'Answer', 'text': answer }
+                        }))
                     ]
                 }
             ]}
@@ -295,18 +307,12 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Visible FAQ block, mirrors the FAQPage JSON-LD above */}
                 <div className="mt-10 pt-8 border-t border-white/5 space-y-5">
                     <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2">Frequently Asked Questions</h4>
-                    <div>
-                        <p className="text-sm font-bold text-white/90 mb-1">What is the US debt maturity wall?</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">The maturity wall refers to the roughly $9T+ of outstanding US Treasury securities that must be refinanced within a rolling 12-month window. Because a large share was issued at pandemic-era low coupons, each refinancing re-prices that debt at current, structurally higher market yields.</p>
-                    </div>
-                    <div>
-                        <p className="text-sm font-bold text-white/90 mb-1">What does fiscal dominance mean for the Federal Reserve?</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">Fiscal dominance is the regime where government debt service costs constrain how high or how long the Fed can hold restrictive rates, because tightening further would itself worsen the deficit through higher interest expense.</p>
-                    </div>
-                    <div>
-                        <p className="text-sm font-bold text-white/90 mb-1">How much does the US government pay in interest on its debt?</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">US federal net interest expense rose from roughly $250B a decade ago to over $1 trillion annually by 2025 — now comparable in size to the total national defense budget.</p>
-                    </div>
+                    {faqItems.map(({ question, answer }) => (
+                        <div key={question}>
+                            <p className="text-sm font-bold text-white/90 mb-1">{question}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{answer}</p>
+                        </div>
+                    ))}
                 </div>
             </article>
 

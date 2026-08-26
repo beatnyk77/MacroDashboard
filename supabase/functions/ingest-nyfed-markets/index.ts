@@ -11,24 +11,29 @@ serveIngest('ingest-nyfed-markets', async (_req: Request): Promise<IngestResult>
     const results: any[] = [];
     const errors: { metric: string; error: string }[] = [];
     const fredApiKey = Deno.env.get('FRED_API_KEY');
+    const fetchedAt = new Date().toISOString();
 
     if (!fredApiKey) throw new Error('FRED_API_KEY is missing');
 
     // Helper for FRED fetches — per-series failures are intentional skips
     const fetchFred = async (seriesId: string, metricId: string, scale = 1) => {
         try {
-            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
+            const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=250`;
             const resp = await fetch(fredUrl);
             if (!resp.ok) throw new Error(`FRED HTTP ${resp.status}`);
             const data = await resp.json();
             if (data.observations?.length > 0) {
-                const latest = data.observations[0];
-                results.push({
-                    metric_id: metricId,
-                    as_of_date: latest.date,
-                    value: parseFloat(latest.value) * scale,
-                    last_updated_at: new Date().toISOString()
-                });
+                results.push(...data.observations
+                    .map((observation: any) => ({
+                        metric_id: metricId,
+                        as_of_date: observation.date,
+                        value: parseFloat(observation.value) * scale,
+                        last_updated_at: fetchedAt,
+                        provenance: 'api_live',
+                        source_ref: 'live_api:fred',
+                        is_provisional: false,
+                    }))
+                    .filter((observation: any) => Number.isFinite(observation.value)));
             }
         } catch (e: any) {
             console.error(`Error fetching ${metricId} from FRED:`, e);
@@ -51,24 +56,26 @@ serveIngest('ingest-nyfed-markets', async (_req: Request): Promise<IngestResult>
     // 3. SOFR & EFFR for Spread (BPS)
     try {
         const [sofrResp, effrResp] = await Promise.all([
-            fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=SOFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`),
-            fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=EFFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`)
+            fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=SOFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=250`),
+            fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=EFFR&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=250`)
         ]);
 
         if (sofrResp.ok && effrResp.ok) {
             const sofrData = await sofrResp.json();
             const effrData = await effrResp.json();
-            const latestSofr = sofrData.observations?.[0];
-            const latestEffr = effrData.observations?.[0];
-
-            if (latestSofr && latestEffr) {
-                results.push({
+            const effrByDate = new Map((effrData.observations || [])
+                .map((observation: any) => [observation.date, parseFloat(observation.value)]));
+            results.push(...(sofrData.observations || [])
+                .map((observation: any) => ({
                     metric_id: 'SOFR_EFFR_SPREAD_BPS',
-                    as_of_date: latestSofr.date,
-                    value: (parseFloat(latestSofr.value) - parseFloat(latestEffr.value)) * 100,
-                    last_updated_at: new Date().toISOString()
-                });
-            }
+                    as_of_date: observation.date,
+                    value: (parseFloat(observation.value) - (effrByDate.get(observation.date) ?? NaN)) * 100,
+                    last_updated_at: fetchedAt,
+                    provenance: 'api_live',
+                    source_ref: 'live_api:fred',
+                    is_provisional: false,
+                }))
+                .filter((observation: any) => Number.isFinite(observation.value)));
         }
     } catch (e: any) {
         // Intentional skip: SOFR/EFFR spread calculation failure should not abort the batch

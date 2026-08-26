@@ -228,6 +228,11 @@ async function processMaturities(supabase: any, fredApiKey: string | undefined):
     // Step 9: Upsert summary metrics to metric_observations
     const shortTermDebt = ['<1M', '1-3M', '3-6M', '6-12M', '1-2Y']
         .reduce((sum, b) => sum + (buckets[b]?.total ?? 0), 0);
+    const maturityWindows = {
+        'US_DEBT_MATURING_3M_TN': ['<1M', '1-3M'],
+        'US_DEBT_MATURING_6M_TN': ['<1M', '1-3M', '3-6M'],
+        'US_DEBT_MATURING_12M_TN': ['<1M', '1-3M', '3-6M', '6-12M'],
+    } as const;
     const shortTermPct = totalMarketableDebt > 0 ? (shortTermDebt / totalMarketableDebt) * 100 : 0;
     const totalDebtTn = totalMarketableDebt / 1_000_000;
 
@@ -235,6 +240,11 @@ async function processMaturities(supabase: any, fredApiKey: string | undefined):
         { metric_id: 'US_DEBT_MATURING_1Y_TN', as_of_date: latestDate, value: Math.round(shortTermDebt / 10000) / 100 },
         { metric_id: 'US_DEBT_MATURING_1Y_PCT', as_of_date: latestDate, value: Math.round(shortTermPct * 100) / 100 },
         { metric_id: 'US_TOTAL_MARKETABLE_DEBT_TN', as_of_date: latestDate, value: Math.round(totalDebtTn * 100) / 100 },
+        ...Object.entries(maturityWindows).map(([metric_id, bucketsInWindow]) => ({
+            metric_id,
+            as_of_date: latestDate,
+            value: Math.round(bucketsInWindow.reduce((sum, bucket) => sum + (buckets[bucket]?.total ?? 0), 0) / 1_000_000 * 100) / 100,
+        })),
     ];
 
     for (const row of metricRows) {
@@ -247,7 +257,7 @@ async function processMaturities(supabase: any, fredApiKey: string | undefined):
         if (metricExists) {
             await supabase
                 .from('metric_observations')
-                .upsert({ ...row, provenance: 'api_live', last_updated_at: new Date().toISOString() }, { onConflict: 'metric_id, as_of_date' });
+                .upsert({ ...row, provenance: 'api_live', source_ref: 'live_api:fiscaldata', is_provisional: false, last_updated_at: new Date().toISOString() }, { onConflict: 'metric_id, as_of_date' });
         }
     }
 

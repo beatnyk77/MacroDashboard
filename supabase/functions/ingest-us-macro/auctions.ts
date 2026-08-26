@@ -19,6 +19,17 @@ interface AuctionRecord {
     demand_strength_score: number;
 }
 
+export function toTenYearAuctionMetricObservations(results: AuctionRecord[], fetchedAt: string) {
+    return results
+        .filter((auction) => auction.term === '10-Year')
+        .flatMap((auction) => [
+            ['US_TREASURY_10Y_BID_TO_COVER', auction.bid_to_cover],
+            ['US_TREASURY_10Y_INDIRECT_PCT', auction.indirect_bidder_pct],
+            ['US_TREASURY_10Y_PRIMARY_DEALER_PCT', auction.primary_dealer_pct],
+            ['US_TREASURY_10Y_DEMAND_SCORE', auction.demand_strength_score],
+        ].map(([metric_id, value]) => ({ metric_id, as_of_date: auction.auction_date, value, last_updated_at: fetchedAt })));
+}
+
 export async function processAuctions(supabase: SupabaseClient) {
     try {
         console.log('Fetching US Treasury Auctions data...');
@@ -95,6 +106,13 @@ export async function processAuctions(supabase: SupabaseClient) {
                 .upsert(results, { onConflict: 'auction_date, security_type, term' });
 
             if (upsertError) throw upsertError;
+            const metricRows = toTenYearAuctionMetricObservations(results, new Date().toISOString());
+            if (metricRows.length > 0) {
+                const { error: metricError } = await supabase
+                    .from('metric_observations')
+                    .upsert(metricRows.map((row) => ({ ...row, provenance: 'api_live', source_ref: 'live_api:fiscaldata', is_provisional: false })), { onConflict: 'metric_id, as_of_date' });
+                if (metricError) throw metricError;
+            }
             return { success: true, count: results.length };
         }
 

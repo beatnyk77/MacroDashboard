@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { SupabaseClient } from '@supabase/supabase-js';
 import { withTimeout } from '../_shared/timeout-guard.ts';
+import { upsertObservations } from '../_shared/ingest_utils.ts';
 
 async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]> {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=250`;
@@ -15,6 +16,67 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
     } catch (err: any) {
         throw new Error(`Fetch failed for ${seriesId}: ${err.message}`);
     }
+}
+
+/** Convert a FRED response into canonical quarterly metric observations. */
+export function toMetricObservations(seriesId: string, observations: any[], fetchedAt: string) {
+    const metricIdBySeries: Record<string, string> = {
+        FDEFX: 'US_DEFENSE_SPENDING',
+        A091RC1Q027SBEA: 'US_FEDERAL_INTEREST_PAYMENTS',
+        FGRECPT: 'US_TAX_RECEIPTS',
+        W068RC1Q027SBEA: 'US_MAJOR_ENTITLEMENTS',
+        A074RC1Q027SBEA: 'US_PERSONAL_TAX_RECEIPTS',
+        W780RC1Q027SBEA: 'US_PAYROLL_TAX_RECEIPTS',
+    };
+    const metricId = metricIdBySeries[seriesId];
+    if (!metricId) throw new Error(`Unsupported fiscal FRED series: ${seriesId}`);
+
+    return observations
+        .map((observation: any) => ({
+            metric_id: metricId,
+            as_of_date: observation.date,
+            value: parseFloat(observation.value),
+            last_updated_at: fetchedAt,
+        }))
+        .filter((observation) => (
+            typeof observation.as_of_date === 'string'
+            && !isNaN(observation.value)
+        ));
+}
+
+export function toFiscalCapacityObservations(rows: any[], fetchedAt: string) {
+    return rows.flatMap((row) => {
+        const interest = Number(row.interest_expense);
+        const receipts = Number(row.total_receipts);
+        const entitlements = Number(row.entitlements);
+        const gdp = Number(row.gdp);
+        const derived: Array<[string, number]> = [];
+
+        if (Number.isFinite(interest) && receipts > 0) {
+            derived.push(['US_FISCAL_INTEREST_TO_RECEIPTS_PCT', (interest / receipts) * 100]);
+        }
+        if (Number.isFinite(interest) && gdp > 0) {
+            derived.push(['US_FISCAL_INTEREST_TO_GDP_PCT', (interest / gdp) * 100]);
+        }
+        if (Number.isFinite(interest) && Number.isFinite(entitlements) && receipts > 0) {
+            derived.push(['US_FISCAL_MANDATORY_TO_RECEIPTS_PCT', ((interest + entitlements) / receipts) * 100]);
+        }
+        if (Number.isFinite(entitlements) && receipts > 0) {
+            derived.push(['US_FISCAL_ENTITLEMENTS_TO_RECEIPTS_PCT', (entitlements / receipts) * 100]);
+        }
+        const personalTaxes = Number(row.personal_taxes);
+        const payrollTaxes = Number(row.payroll_taxes);
+        if (Number.isFinite(personalTaxes) && Number.isFinite(payrollTaxes) && receipts > 0) {
+            derived.push(['US_FISCAL_EMPLOYMENT_TAX_SHARE_PCT', ((personalTaxes + payrollTaxes) / receipts) * 100]);
+        }
+
+        return derived.map(([metric_id, value]) => ({
+            metric_id,
+            as_of_date: row.date,
+            value,
+            last_updated_at: fetchedAt,
+        }));
+    });
 }
 
 /**
@@ -33,6 +95,8 @@ async function fetchFredSeries(seriesId: string, apiKey: string): Promise<any[]>
  */
 export async function processFiscal(supabase: SupabaseClient, fredApiKey: string) {
     try {
+        const fetchedAt = new Date().toISOString();
+        const defense = await fetchFredSeries('FDEFX', fredApiKey);
         const interest = await fetchFredSeries('A091RC1Q027SBEA', fredApiKey);
         const receipts = await fetchFredSeries('FGRECPT', fredApiKey);
         const entitlements = await fetchFredSeries('W068RC1Q027SBEA', fredApiKey);
@@ -109,7 +173,23 @@ export async function processFiscal(supabase: SupabaseClient, fredApiKey: string
             if (error) throw error;
         }
 
-        return { success: true, count: upsertData.length };
+        // Keep the comparison chart on the canonical time-series path. FRED
+        // publishes both source series at quarterly frequency in USD billions.
+        const fiscalCapacityObservations = [
+            ...toMetricObservations('FDEFX', defense, fetchedAt),
+            ...toMetricObservations('A091RC1Q027SBEA', interest, fetchedAt),
+            ...toMetricObservations('FGRECPT', receipts, fetchedAt),
+            ...toMetricObservations('W068RC1Q027SBEA', entitlements, fetchedAt),
+            ...toMetricObservations('A074RC1Q027SBEA', personal, fetchedAt),
+            ...toMetricObservations('W780RC1Q027SBEA', payroll, fetchedAt),
+            ...toFiscalCapacityObservations(upsertData, fetchedAt),
+        ];
+        const fiscalCapacityResult = await upsertObservations(supabase, fiscalCapacityObservations, {
+            source_ref: 'live_api:fred',
+            is_provisional: false,
+        });
+
+        return { success: true, count: upsertData.length + fiscalCapacityResult.count };
     } catch (error: any) {
         return { success: false, error: error.message };
     }
