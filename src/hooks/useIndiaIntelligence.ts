@@ -46,7 +46,7 @@ const REGISTRY = [
     { id: MID.IN_REPO_RATE, label: 'RBI repo rate', domain: 'liquidity' as const, unit: '%', direction: 'positive' as const },
     { id: MID.IN_FX_RESERVES, label: 'FX reserves', domain: 'external' as const, unit: 'USD bn', direction: 'positive' as const },
     { id: MID.IN_DEBT_GDP_PCT, label: 'Debt / GDP', domain: 'fiscal' as const, unit: '%', direction: 'negative' as const },
-    { id: MID.IN_CREDIT_TOTAL, label: 'Bank credit', domain: 'credit' as const, unit: 'INR bn', direction: 'positive' as const },
+    { id: MID.IN_BANK_CREDIT_GROWTH_YOY, label: 'Bank credit growth', domain: 'credit' as const, unit: '%', direction: 'positive' as const },
     { id: MID.USD_INR_RATE, label: 'USD / INR', domain: 'market' as const, unit: 'INR', direction: 'negative' as const },
 ] as const;
 

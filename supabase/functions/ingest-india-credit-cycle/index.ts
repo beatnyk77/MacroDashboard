@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js'
 import { serveIngest, IngestResult } from '../_shared/handler.ts'
+import { upsertObservations } from '../_shared/ingest_utils.ts'
 
 // Phase quadrant thresholds calibrated to 10-year RBI averages
 const CD_RATIO_MID = 77.0
@@ -182,6 +183,18 @@ async function doIngestIndiaCreditCycle(supabase: any): Promise<IngestResult> {
         .from('india_credit_cycle')
         .upsert(rows, { onConflict: 'date' })
     if (error) throw error
+
+    await upsertObservations(
+        supabase,
+        rows.map((row) => ({
+            metric_id: 'IN_BANK_CREDIT_GROWTH_YOY',
+            as_of_date: row.date,
+            value: row.credit_growth_yoy,
+            last_updated_at: new Date().toISOString(),
+            provenance: 'api_live',
+        })),
+        { source_ref: 'live_api:rbi:dbie:bsc1', is_provisional: false },
+    )
 
     const latest = rows[rows.length - 1]
     console.log(`Upserted ${rows.length} rows. Latest: ${latest.date} | Credit YoY: ${latest.credit_growth_yoy}% | CD Ratio: ${latest.cd_ratio}% | Phase: ${latest.phase}`)

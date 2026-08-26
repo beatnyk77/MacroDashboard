@@ -275,7 +275,9 @@ export async function doIngestFred(
               as_of_date: obs.date,
               value: parseFloat(obs.value),
               last_updated_at: new Date().toISOString(),
-              provenance: 'api_live'
+              provenance: 'api_live',
+              source_ref: `live_api:fred:${fredId}`,
+              is_provisional: false,
             }))
             .filter((obs: any) => !isNaN(obs.value));
 

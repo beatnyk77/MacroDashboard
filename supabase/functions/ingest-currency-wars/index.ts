@@ -13,6 +13,9 @@ interface MetricObservation {
     as_of_date: string;
     value: number;
     last_updated_at: string;
+    provenance: 'api_live';
+    source_ref: string;
+    is_provisional: false;
 }
 
 async function fetchFRED(seriesId: string, apiKey: string): Promise<FredObservation[]> {
@@ -67,14 +70,20 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
                 metric_id: series.metricId,
                 as_of_date: d.date,
                 value: d.value,
-                last_updated_at: new Date().toISOString()
+                last_updated_at: new Date().toISOString(),
+                provenance: 'api_live',
+                source_ref: `live_api:fred:${series.id}`,
+                is_provisional: false,
             });
             if (series.alias) {
                 observations.push({
                     metric_id: series.alias,
                     as_of_date: d.date,
                     value: d.value,
-                    last_updated_at: new Date().toISOString()
+                    last_updated_at: new Date().toISOString(),
+                    provenance: 'api_live',
+                    source_ref: `live_api:fred:${series.id}`,
+                    is_provisional: false,
                 });
             }
         });
@@ -103,7 +112,10 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
             metric_id: 'POLICY_DIVERGENCE_INDEX',
             as_of_date: f.date,
             value: (f.value - rbiValue) * 100, // bps
-            last_updated_at: new Date().toISOString()
+            last_updated_at: new Date().toISOString(),
+            provenance: 'api_live',
+            source_ref: 'live_api:fred:derived-policy-divergence',
+            is_provisional: false,
         };
     }).filter((d): d is MetricObservation => d !== null);
 
@@ -124,6 +136,9 @@ async function doIngestCurrencyWars(supabase: any, fredApiKey: string) {
                 as_of_date: row.date,
                 value: row.value / usdCnyVal,
                 last_updated_at: new Date().toISOString(),
+                provenance: 'api_live',
+                source_ref: 'live_api:fred:derived-cny-inr',
+                is_provisional: false,
             };
         })
         .filter((d): d is MetricObservation => d !== null);

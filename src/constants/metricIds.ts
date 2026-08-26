@@ -224,6 +224,7 @@ export const INDIA_METRICS = {
   IN_DEBT_GDP_PCT:                         'IN_DEBT_GDP_PCT',
   IN_DEBT_USD_TN:                          'IN_DEBT_USD_TN',
   IN_CREDIT_TOTAL:                         'IN_CREDIT_TOTAL',
+  IN_BANK_CREDIT_GROWTH_YOY:               'IN_BANK_CREDIT_GROWTH_YOY',
   IN_GFCF_GDP_PCT:                         'IN_GFCF_GDP_PCT',
   IN_UNEMPLOYMENT_RATE:                    'IN_UNEMPLOYMENT_RATE',
   IN_LFPR:                                 'IN_LFPR',
