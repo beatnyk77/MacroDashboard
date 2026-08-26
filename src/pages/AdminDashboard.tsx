@@ -34,6 +34,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { TrailLink as RouterLink } from '@/components/TrailLink';
 import { SubscriberTractionCard } from '@/components/admin/SubscriberTractionCard';
 import { TrafficIntelligencePanel } from '@/components/admin/TrafficIntelligencePanel';
+import { PIPELINE_BY_ID } from '@/lib/pipelineCatalog';
 
 // --- STYLING CONSTANTS ---
 const BLOOMBERG_ORANGE = '#f59e0b';
@@ -330,8 +331,10 @@ export const AdminDashboard = () => {
                                                 <Tooltip title="Trigger Manual Ingestion">
                                                     <IconButton
                                                         size="small"
-                                                        onClick={() => triggerJob.mutate(log.function_name)}
-                                                        disabled={triggerJob.isPending && triggerJob.variables === log.function_name}
+                                                        onClick={() => {
+                                                            if (PIPELINE_BY_ID[log.function_name]) triggerJob.mutate(log.function_name);
+                                                        }}
+                                                        disabled={!PIPELINE_BY_ID[log.function_name] || (triggerJob.isPending && triggerJob.variables === log.function_name)}
                                                         sx={{ color: BLOOMBERG_ORANGE }}
                                                     >
                                                         <RefreshCcw size={16} className={triggerJob.isPending && triggerJob.variables === log.function_name ? 'animate-spin' : ''} />

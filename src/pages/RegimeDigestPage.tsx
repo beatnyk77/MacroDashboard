@@ -23,6 +23,7 @@ import { FreshnessChip, FreshnessStatus } from '@/components/FreshnessChip';
 import { RelatedContent } from '@/components/RelatedContent';
 import { ShareButton } from '@/components/ShareButton';
 import { format } from 'date-fns';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -286,14 +287,7 @@ const LegacyDigest: React.FC<{
     isRegenerating: boolean;
 }> = ({ digest, year, month, status, onRefresh, isRegenerating }) => {
     const seo = buildEditionSeo(year, month, digest, null);
-    const cleanHtml = (digest.html_content ?? '')
-        .replace(/<!DOCTYPE html>/gi, '')
-        .replace(/<html[^>]*>/gi, '')
-        .replace(/<\/html>/gi, '')
-        .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
-        .replace(/<body[^>]*>/gi, '')
-        .replace(/<\/body>/gi, '')
-        .trim();
+    const cleanHtml = sanitizeHtml(digest.html_content ?? '');
 
     const formattedTitleDate = formatMonthYear(digest.year_month);
     const plainText = digest.plain_text ?? '';

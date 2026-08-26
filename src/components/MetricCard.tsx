@@ -10,6 +10,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from '@/lib/utils';
 import { getStaleness } from '@/hooks/useStaleness';
 import { DataStatePanel } from '@/components/DataStatePanel';
+import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
+import { DataDiagnosticsDisclosure } from '@/components/DataDiagnosticsDisclosure';
 import type { MetricData } from '@/types/metric';
 
 interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -111,6 +113,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 	// Calculate staleness if not explicitly provided
 	const staleness = getStaleness(lastUpdated, resolvedFrequency);
 	const isStaleEffective = isStale ?? (staleness.state === 'overdue' || staleness.state === 'stale');
+	const hasDelayedData = staleness.state === 'lagged' || isStaleEffective;
 
 	React.useEffect(() => {
 		const handleHighlight = (e: any) => {
@@ -186,9 +189,12 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 									{status.toUpperCase()}
 								</div>
 							)}
-							{isStaleEffective && (
-								<div className="px-1.5 py-0.5 rounded-[4px] bg-amber-500/10 text-amber-500 text-xs font-semibold tracking-heading border border-amber-500/20">
-									OFFLINE
+							{hasDelayedData && (
+								<div className={cn(
+									"px-1.5 py-0.5 rounded-[4px] text-xs font-semibold tracking-heading border",
+									staleness.state === 'lagged' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+								)} title={`Last observation ${staleness.label}`}>
+									{staleness.state === 'lagged' ? 'LAGGED' : staleness.state === 'overdue' ? 'OVERDUE' : 'STALE'}
 								</div>
 							)}
 						</div>
@@ -252,7 +258,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 															<span className="text-xs font-mono font-bold text-white">{delta.tooltip.currentValue}</span>
 														</div>
 														<div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
-															<span className="text-xs font-bold text-muted-foreground/60 uppercase">7 Days Ago</span>
+																			<span className="text-xs font-bold text-muted-foreground/60 uppercase">Previous {delta.period}</span>
 															<span className="text-xs font-mono font-bold text-white/80">{delta.tooltip.previousValue}</span>
 														</div>
 														<div className="grid grid-cols-2 gap-3 pt-0.5">
@@ -309,9 +315,9 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 									</div>
 								</div>
 							)}
-							<div className="text-xs font-medium text-muted-foreground/40 uppercase tracking-wide group-hover:text-muted-foreground/60 transition-colors">
-								{resolvedFrequency?.toUpperCase()} • {resolvedSource}
-								{lastUpdated && <span className="hidden group-hover:inline transition-opacity duration-300"> • {new Date(lastUpdated).toLocaleDateString()}</span>}
+							<div className="flex flex-wrap items-center gap-2">
+								<DataProvenanceBadge source={resolvedSource} methodology={resolvedFrequency} lastVerified={lastUpdated} size="sm" className="max-w-full" />
+								<DataDiagnosticsDisclosure source={resolvedSource} frequency={resolvedFrequency} lastUpdated={lastUpdated} status={staleness.state} sourceRef={metric?.sourceRef} provenance={metric?.provenance} />
 							</div>
 						</div>
 

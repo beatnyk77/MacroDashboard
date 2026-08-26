@@ -4,9 +4,10 @@ import { SEOManager } from '@/components/SEOManager';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle, AlertCircle, Clock, RefreshCcw, Send, Settings, RefreshCw, Download } from 'lucide-react';
+import { PIPELINE_BY_ID } from '@/lib/pipelineCatalog';
 
 
-export const DataHealthDashboard: React.FC = () => {
+const AuthenticatedDataHealthDashboard: React.FC = () => {
     // 1. Core Telemetry Queries
     const { data: staleness } = useQuery({
         queryKey: ['data-staleness'],
@@ -290,6 +291,7 @@ export const DataHealthDashboard: React.FC = () => {
     const [refreshing, setRefreshing] = useState<string | null>(null);
 
     const handleForceRefresh = async (functionName: string) => {
+        if (!PIPELINE_BY_ID[functionName]) return;
         setRefreshing(functionName);
         try {
             const { error } = await supabase.functions.invoke(functionName);
@@ -304,7 +306,8 @@ export const DataHealthDashboard: React.FC = () => {
     const handleForceTriggerCron = async (jobName: string) => {
         setRefreshing(jobName);
         try {
-            const functionName = jobName.replace('-daily', '').replace('-weekly', '').replace('-monthly', '');
+            const functionName = jobName.replace(/-(?:daily|weekly|monthly)$/, '');
+            if (!PIPELINE_BY_ID[functionName]) return;
             await handleForceRefresh(functionName);
         } catch (err) {
             console.error('Cron trigger failed:', err);
@@ -816,6 +819,24 @@ export const DataHealthDashboard: React.FC = () => {
                 </Grid>
             </Grid>
         </Box>
+        </>
+    );
+};
+
+export const DataHealthDashboard: React.FC = () => {
+    const isAuthenticated = sessionStorage.getItem('admin_auth') === 'true';
+    if (isAuthenticated) return <AuthenticatedDataHealthDashboard />;
+
+    return (
+        <>
+            <SEOManager title="Data Health | Admin" robots="noindex, nofollow" description="Internal data health monitor." />
+            <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', bgcolor: '#020617', color: 'white', p: 4 }}>
+                <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h5" sx={{ mb: 1, fontWeight: 800 }}>ADMIN ACCESS REQUIRED</Typography>
+                    <Typography sx={{ color: 'text.secondary', mb: 3 }}>Authenticate through the operations console to view this board.</Typography>
+                    <Button href="/admin/" variant="contained">Open operations console</Button>
+                </Box>
+            </Box>
         </>
     );
 };

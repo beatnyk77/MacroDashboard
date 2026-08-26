@@ -13,22 +13,23 @@ interface NavItem {
     label: string;
     path: string;
     icon: React.ReactNode;
+    group: 'CORE DESK' | 'REGIONAL' | 'STRUCTURAL';
 }
 
 const terminalNavItems: NavItem[] = [
-    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={14} /> },
-    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} /> },
-    { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} /> },
-    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} /> },
-    { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} /> },
-    { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} /> },
-    { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={14} /> },
-    { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={14} /> },
-    { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} /> },
-    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} /> },
-    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} /> },
-    { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} /> },
-    { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={14} /> },
+    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={14} />, group: 'CORE DESK' },
+    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} />, group: 'CORE DESK' },
+    { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} />, group: 'CORE DESK' },
+    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} />, group: 'CORE DESK' },
+    { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} />, group: 'STRUCTURAL' },
+    { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} />, group: 'CORE DESK' },
+    { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={14} />, group: 'CORE DESK' },
+    { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={14} />, group: 'REGIONAL' },
+    { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} />, group: 'REGIONAL' },
+    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} />, group: 'REGIONAL' },
+    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} />, group: 'STRUCTURAL' },
+    { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} />, group: 'STRUCTURAL' },
+    { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={14} />, group: 'REGIONAL' },
 ];
 
 export const TerminalSidebar: React.FC = () => {
@@ -46,8 +47,11 @@ export const TerminalSidebar: React.FC = () => {
             </div>
 
             <nav className="flex-1 px-3" aria-label="Main terminal navigation">
-                <ul className="space-y-1">
-                    {terminalNavItems.map((item) => {
+                {(['CORE DESK', 'REGIONAL', 'STRUCTURAL'] as const).map((group) => (
+                    <div key={group} className="mb-5">
+                        <h2 className="mb-2 px-4 text-[9px] font-black uppercase tracking-[0.2em] text-white/25">{group}</h2>
+                        <ul className="space-y-1">
+                    {terminalNavItems.filter((item) => item.group === group).map((item) => {
                         const normPath = withoutTrailingSlash(location.pathname);
                         const normItem = withoutTrailingSlash(item.path);
                         const isActive = normPath === normItem || (normPath.startsWith(`${normItem}/`) && normItem !== '/');
@@ -79,7 +83,9 @@ export const TerminalSidebar: React.FC = () => {
                             </li>
                         );
                     })}
-                </ul>
+                        </ul>
+                    </div>
+                ))}
             </nav>
 
             <div className="mt-auto px-4 py-4 border-t border-white/5">

@@ -20,42 +20,8 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { mapLatestMetric } from '@/lib/metricData';
 import type { MetricData } from './useLatestMetric';
-
-const STATUS_MAP: Record<string, 'safe' | 'warning' | 'danger' | 'neutral'> = {
-    fresh: 'safe',
-    lagged: 'warning',
-    very_lagged: 'danger',
-};
-
-function buildMetricData(
-    latest: Record<string, unknown>,
-    historyRows: { metric_id: string; as_of_date: string; value: number }[],
-): MetricData {
-    const history = historyRows
-        .map((h) => ({ date: String(h.as_of_date), value: Number(h.value) }))
-        .reverse();
-
-    const delta = (latest.delta_mom as number | null) ?? (latest.delta_wow as number | null) ?? 0;
-
-    return {
-        value: Number(latest.value),
-        delta,
-        deltaPeriod: latest.display_frequency === 'daily' ? 'WoW' : 'MoM',
-        trend: delta > 0 ? 'up' : 'down',
-        history,
-        status: STATUS_MAP[String(latest.staleness_flag ?? '')] ?? 'neutral',
-        lastUpdated: String(latest.as_of_date ?? ''),
-        zScore: latest.z_score != null ? Number(latest.z_score) : undefined,
-        percentile: latest.percentile != null ? Number(latest.percentile) : undefined,
-        source: String(latest.source_name ?? 'Internal Analytics'),
-        sourceRef: (latest.source_ref as string | null) ?? null,
-        provenance: (latest.provenance as string | null) ?? null,
-        isProvisional: latest.is_provisional === true,
-        frequency: (latest.native_frequency as string | undefined) ?? undefined,
-        methodology: 'Rolling 252-day Z-Score',
-    };
-}
 
 /**
  * Fetches a batch of metrics and seeds them into the TanStack Query cache.
@@ -109,7 +75,7 @@ export function useMetricsBatch(
             const result: Record<string, MetricData> = {};
             for (const row of latestRows) {
                 const mid = String(row.metric_id);
-                const metricData = buildMetricData(
+                const metricData = mapLatestMetric(
                     row as Record<string, unknown>,
                     historyByMetric[mid] ?? [],
                 );

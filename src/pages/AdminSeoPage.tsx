@@ -31,8 +31,8 @@ const AdminLogin = ({ onOk }: { onOk: () => void }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const tryLogin = () => {
-    const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
-    if (password === adminPass) {
+    const adminPass = import.meta.env.VITE_ADMIN_PASSWORD;
+    if (adminPass && password === adminPass) {
       sessionStorage.setItem('admin_auth', 'true');
       onOk();
     } else setError(true);
@@ -43,6 +43,9 @@ const AdminLogin = ({ onOk }: { onOk: () => void }) => {
         <Search className="mx-auto mb-4 text-amber-400" size={36} />
         <h1 className="mb-1 text-lg font-black text-white">SEO OPS CONSOLE</h1>
         <p className="mb-6 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Admin access</p>
+        {!import.meta.env.VITE_ADMIN_PASSWORD && (
+          <p className="mb-3 text-xs text-rose-400">Admin access is not configured.</p>
+        )}
         <input
           type="password"
           value={password}

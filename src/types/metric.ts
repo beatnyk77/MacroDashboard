@@ -40,6 +40,9 @@ export interface MetricData {
 		source: string
 		unit: string
 	}
+	/** Structured provenance fields returned by the canonical latest-metric view. */
+	sourceRef?: string | null
+	provenance?: string | null
 	/** Whether data is stale/offline */
 	isStale?: boolean
 }

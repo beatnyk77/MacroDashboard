@@ -28,6 +28,10 @@ interface WeeklyDigest {
     china_debt_section?: ChinaDebtSection;
 }
 
+function esc(s: string): string {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 const BASE_URL = "https://graphiquestor.com";
 const UTM = "utm_source=newsletter&utm_medium=email&utm_campaign=weekly-digest";
 
@@ -37,15 +41,15 @@ function buildHtml(digest: WeeklyDigest, manageToken: string): string {
     const shareUrl = encodeURIComponent(`${BASE_URL}/weekly-narrative/${digest.week_ending_date}?utm_source=share&utm_medium=email`);
     const manageBase = `${BASE_URL}/subscribe/manage/?token=${encodeURIComponent(manageToken)}`;
     const watch = (digest.what_to_watch ?? [])
-        .map((w) => `<li style="margin-bottom:8px;color:#475569;">${w}</li>`)
+        .map((w) => `<li style="margin-bottom:8px;color:#475569;">${esc(w)}</li>`)
         .join("");
     return `
         <div style="font-family:ui-sans-serif,system-ui,sans-serif;max-width:560px;margin:0 auto;">
             <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#2563eb;font-weight:900;margin-bottom:8px;">Weekly Regime Digest</div>
-            <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 16px;">Week ending ${digest.week_ending_date}</h1>
-            <p style="font-size:15px;line-height:1.6;color:#334155;">${digest.executive_summary}</p>
-            <p style="font-size:14px;line-height:1.6;color:#475569;">${digest.holistic_narrative}</p>
-            ${digest.china_debt_section?.headline ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#b45309;">China Public Sector Debt</h3><p style="font-size:14px;line-height:1.6;color:#334155;font-weight:600;">${digest.china_debt_section.headline}</p><p style="font-size:13px;line-height:1.6;color:#475569;">${digest.china_debt_section.summary ?? ""}</p>` : ""}
+            <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 16px;">Week ending ${esc(digest.week_ending_date)}</h1>
+            <p style="font-size:15px;line-height:1.6;color:#334155;">${esc(digest.executive_summary)}</p>
+            <p style="font-size:14px;line-height:1.6;color:#475569;">${esc(digest.holistic_narrative)}</p>
+            ${digest.china_debt_section?.headline ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#b45309;">China Public Sector Debt</h3><p style="font-size:14px;line-height:1.6;color:#334155;font-weight:600;">${esc(digest.china_debt_section.headline)}</p><p style="font-size:13px;line-height:1.6;color:#475569;">${esc(digest.china_debt_section.summary ?? "")}</p>` : ""}
             ${watch ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:#0f172a;">What to Watch</h3><ul style="padding-left:18px;font-size:14px;">${watch}</ul>` : ""}
             <p style="margin:24px 0;">
                 <a href="${narrativeUrl}" style="display:inline-block;background:#2563eb;color:#ffffff;font-size:13px;font-weight:800;text-decoration:none;padding:10px 20px;border-radius:8px;">Read on the terminal →</a>

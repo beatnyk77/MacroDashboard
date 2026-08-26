@@ -10,6 +10,7 @@ interface ModuleRowProps {
   href?: string;
   badge?: ReactNode;
   alternateBg?: boolean;
+  id?: string;
 }
 
 const getTextColorClass = (color?: string) => {
@@ -35,12 +36,14 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
   href,
   badge,
   alternateBg,
+  id,
 }) => {
   const textColorClass = getTextColorClass(labelColor);
   const barColorClass = getBarColorClass(labelColor);
 
   return (
     <div
+      id={id}
       className={cn(
         "w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)]",
         "-mx-4 sm:-mx-6 lg:-mx-8",

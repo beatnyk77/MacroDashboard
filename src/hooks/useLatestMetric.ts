@@ -1,23 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-
-export interface MetricData {
-    value: number;
-    delta: number | null;
-    deltaPeriod: string;
-    trend: 'up' | 'down' | 'neutral';
-    history: { date: string; value: number }[];
-    status: 'safe' | 'warning' | 'danger' | 'neutral';
-    lastUpdated: string;
-    zScore?: number;
-    percentile?: number;
-    source?: string;
-    sourceRef?: string | null;
-    provenance?: string | null;
-    isProvisional?: boolean;
-    frequency?: string;
-    methodology?: string;
-}
+import { mapLatestMetric, type MetricData } from '@/lib/metricData';
+export type { MetricData } from '@/lib/metricData';
 
 export function useLatestMetric(metricId: string) {
     return useQuery({
@@ -44,30 +28,7 @@ export function useLatestMetric(metricId: string) {
                 .order('as_of_date', { ascending: false })
                 .limit(300);
 
-            // Map staleness_flag to status
-            const statusMap: Record<string, 'safe' | 'warning' | 'danger' | 'neutral'> = {
-                'fresh': 'safe',
-                'lagged': 'warning',
-                'very_lagged': 'danger'
-            };
-
-            return {
-                value: Number(latest.value),
-                delta: latest.delta_mom || latest.delta_wow || 0,
-                deltaPeriod: latest.display_frequency === 'daily' ? 'WoW' : 'MoM',
-                trend: (latest.delta_mom || latest.delta_wow || 0) > 0 ? 'up' : 'down',
-                history: (history || []).map(h => ({ date: String(h.as_of_date), value: Number(h.value) })).reverse(),
-                status: statusMap[latest.staleness_flag ?? ''] || 'neutral',
-                lastUpdated: latest.as_of_date ?? '',
-                zScore: latest.z_score ?? undefined,
-                percentile: latest.percentile ?? undefined,
-                source: latest.source_name || 'Internal Analytics',
-                sourceRef: latest.source_ref ?? null,
-                provenance: latest.provenance ?? null,
-                isProvisional: latest.is_provisional === true,
-                frequency: latest.native_frequency ?? undefined,
-                methodology: 'Rolling 252-day Z-Score'
-            };
+            return mapLatestMetric(latest as Record<string, unknown>, history || []);
         },
         staleTime: 1000 * 60 * 5, // 5 min
         refetchOnWindowFocus: true, // Refetch when user returns to tab

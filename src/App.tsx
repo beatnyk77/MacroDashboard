@@ -81,8 +81,11 @@ const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(modu
 const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
 
 const LoadingFallback = () => (
-    <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
-        <CircularProgress color="primary" size={24} />
+    <Box role="status" aria-live="polite" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+        <CircularProgress color="primary" size={24} aria-label="Loading terminal page" />
+        <Box component="span" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+            Loading terminal
+        </Box>
     </Box>
 );
 
