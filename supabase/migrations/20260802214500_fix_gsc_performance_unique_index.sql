@@ -10,6 +10,20 @@
 
 DROP INDEX IF EXISTS public.idx_gsc_performance_unique;
 
-ALTER TABLE public.gsc_performance
-    ADD CONSTRAINT gsc_performance_unique
-    UNIQUE NULLS NOT DISTINCT (date, page, query, country, device);
+-- The schema may already contain this constraint when the migration history
+-- was repaired after an earlier manual application. Keep the migration
+-- replay-safe so CI can reconcile history without failing on 42P07.
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conrelid = 'public.gsc_performance'::regclass
+          AND conname = 'gsc_performance_unique'
+    ) THEN
+        ALTER TABLE public.gsc_performance
+            ADD CONSTRAINT gsc_performance_unique
+            UNIQUE NULLS NOT DISTINCT (date, page, query, country, device);
+    END IF;
+END
+$$;
