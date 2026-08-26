@@ -6,6 +6,7 @@
 #   migrate    Apply pending migrations (db push --include-all --yes)
 #   deploy     Deploy edge function(s). Args: slug [slug…] | --all | --seo
 #   all        migrate + deploy --seo (safe default for cathedral / brief stack)
+#   india      migrate + deploy India ingestion + invoke live India sync
 #   smoke      Invoke generate-morning-brief (service path via functions invoke)
 #
 # Env:
@@ -17,6 +18,7 @@
 #   bash scripts/automate-backend.sh deploy generate-morning-brief
 #   bash scripts/automate-backend.sh deploy --seo
 #   bash scripts/automate-backend.sh all
+#   bash scripts/automate-backend.sh india
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -37,6 +39,13 @@ SEO_FUNCS=(
   generate-monthly-regime-digest
   gsc-sync
   growth-actions
+)
+
+INDIA_FUNCS=(
+  ingest-fred
+  ingest-currency-wars
+  ingest-india-credit-cycle
+  ingest-mospi
 )
 
 die() { echo "ERROR: $*" >&2; exit 1; }
@@ -146,6 +155,51 @@ cmd_all() {
   cmd_status
 }
 
+invoke_one() {
+  local fn="$1"
+  local endpoint="https://${REF}.supabase.co/functions/v1/${fn}"
+  local headers=(-H "Content-Type: application/json")
+  if [[ -n "${CRON_SECRET:-}" ]]; then
+    headers+=(-H "x-cron-secret: ${CRON_SECRET}")
+  fi
+  if [[ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+    headers+=(-H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
+  elif [[ -n "${SUPABASE_ANON_KEY:-}" ]]; then
+    headers+=(-H "Authorization: Bearer ${SUPABASE_ANON_KEY}" -H "apikey: ${SUPABASE_ANON_KEY}")
+  else
+    die "india sync needs CRON_SECRET, SUPABASE_SERVICE_ROLE_KEY, or SUPABASE_ANON_KEY"
+  fi
+  echo "▶ Invoke ${fn}"
+  local response
+  response=$(curl --fail-with-body --silent --show-error -X POST "$endpoint" "${headers[@]}" -d '{}')
+  echo "${response:0:3000}"
+  echo ""
+}
+
+cmd_india() {
+  need_cli
+  cmd_migrate
+  for fn in "${INDIA_FUNCS[@]}"; do
+    deploy_one "$fn"
+  done
+  for fn in "${INDIA_FUNCS[@]}"; do
+    invoke_one "$fn"
+  done
+  echo "▶ Verify canonical India observations"
+  supabase db query --linked -o table "
+SELECT metric_id, COUNT(*) AS observations, MAX(as_of_date) AS latest_as_of
+FROM public.metric_observations
+WHERE metric_id IN (
+  'IN_CPI_YOY', 'IN_WPI_YOY', 'IN_IIP_GROWTH_YOY', 'IN_GDP_GROWTH_YOY',
+  'IN_REPO_RATE', 'IN_FX_RESERVES', 'IN_DEBT_GDP_PCT',
+  'IN_BANK_CREDIT_GROWTH_YOY', 'USD_INR_RATE'
+)
+GROUP BY metric_id
+ORDER BY metric_id;
+"
+  echo "✓ India backend sync complete"
+}
+
 cmd_smoke() {
   need_cli
   link_project
@@ -186,11 +240,12 @@ case "$CMD" in
   migrate) cmd_migrate ;;
   deploy)  cmd_deploy "$@" ;;
   all)     cmd_all ;;
+  india)   cmd_india ;;
   smoke)   cmd_smoke ;;
   -h|--help|help)
     sed -n '2,25p' "$0"
     ;;
   *)
-    die "Unknown command: $CMD (status|migrate|deploy|all|smoke)"
+    die "Unknown command: $CMD (status|migrate|deploy|all|india|smoke)"
     ;;
 esac

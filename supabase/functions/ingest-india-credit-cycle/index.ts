@@ -173,11 +173,27 @@ async function doIngestIndiaCreditCycle(supabase: any): Promise<IngestResult> {
     const startPeriod = threeYearsAgo.toISOString().split('T')[0]
 
     console.log(`Fetching RBI DBIE BSC1 monthly levels from ${startPeriod}...`)
-    const levels = await fetchRbiDbieMonthly(startPeriod)
-    console.log(`RBI DBIE returned ${levels.length} monthly level observations`)
+    let levels: MonthlyLevel[] = []
+    try {
+        levels = await fetchRbiDbieMonthly(startPeriod)
+        console.log(`RBI DBIE returned ${levels.length} monthly level observations`)
+    } catch (err: any) {
+        console.warn(`[ingest-india-credit-cycle] RBI DBIE SDMX unavailable: ${err?.message || err}`)
+        return {
+            ok: true,
+            counts: { upserted: 0, skipped: 0 },
+            meta: { warning: 'upstream_unavailable', error: err?.message || String(err) }
+        }
+    }
 
     const rows = computeYoY(levels)
-    if (rows.length === 0) throw new Error('No YoY rows computed — insufficient history in DBIE response')
+    if (rows.length === 0) {
+        return {
+            ok: true,
+            counts: { upserted: 0, skipped: 0 },
+            meta: { warning: 'insufficient_history' }
+        }
+    }
 
     const { error } = await supabase
         .from('india_credit_cycle')
