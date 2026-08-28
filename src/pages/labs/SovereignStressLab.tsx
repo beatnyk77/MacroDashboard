@@ -23,6 +23,8 @@ import { TrailLink } from '@/components/TrailLink';
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
 const BoJStressMonitor = lazy(() => import('@/features/dashboard/components/rows/BoJStressMonitor').then(m => ({ default: m.BoJStressMonitor })));
+const SovereignStressDeskCard = lazy(() => import('@/components/SovereignStressDeskCard').then(m => ({ default: m.SovereignStressDeskCard })));
+
 
 const LoadingFallback = () => (
     <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
@@ -98,13 +100,25 @@ export const SovereignStressLab: React.FC = () => {
                 </p>
             </div>
 
-            <div className="space-y-32">
+            <div className="space-y-24">
+                {/* Section 0: Sovereign Stress & Cross-Border Flows Desk */}
+                <section>
+                    <SectionErrorBoundary name="Sovereign Stress Desk">
+                        <LazyRender minHeight="450px" fallback={<LoadingFallback />}>
+                            <Suspense fallback={<LoadingFallback />}>
+                                <SovereignStressDeskCard />
+                            </Suspense>
+                        </LazyRender>
+                    </SectionErrorBoundary>
+                </section>
+
                 {/* Section 1: Sovereign Risk Matrix */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <TrendingUp className="text-purple-500" size={28} />
                         <h2 className="text-2xl font-black uppercase tracking-heading text-white">Sovereign Risk Matrix</h2>
                     </div>
+
                     <SectionErrorBoundary name="Sovereign Risk">
                         <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
                             <Suspense fallback={<LoadingFallback />}>

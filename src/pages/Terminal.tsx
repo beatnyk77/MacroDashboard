@@ -57,6 +57,9 @@ const ChinaMacroPulseSection = lazy(() => import('@/features/dashboard/component
 const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components/rows/IndiaCreditCycleClock').then(m => ({ default: m.IndiaCreditCycleClock })));
 // IndiaMacroDashboard removed — fabricated snapshot producer (credibility sprint)
 const AfricaMacroSnapshot = lazy(() => import('@/features/dashboard/components/sections/AfricaMacroSnapshot').then(m => ({ default: m.AfricaMacroSnapshot })));
+const COTSqueezeRadarCard = lazy(() => import('@/components/COTSqueezeRadarCard').then(m => ({ default: m.COTSqueezeRadarCard })));
+const CrossAssetRadarCard = lazy(() => import('@/components/CrossAssetRadarCard').then(m => ({ default: m.CrossAssetRadarCard })));
+
 
 export const Terminal: React.FC = () => {
     const netLiquidityRef = useRef<HTMLDivElement>(null);
@@ -115,12 +118,24 @@ export const Terminal: React.FC = () => {
             </div>
 
             <div className="flex flex-col pb-32">
+                {/* Row 0: CROSS-ASSET MACRO RADAR & REGIME PLAYBOOK */}
+                <ModuleRow id="cross-asset-radar" label="MACRO RADAR" labelColor="text-cyan-400">
+                    <LazyRender minHeight="450px" fallback={<SectionLoadingFallback minHeight={450} />}>
+                    <SectionErrorBoundary name="Cross-Asset Macro Radar">
+                        <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
+                            <CrossAssetRadarCard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    </LazyRender>
+                </ModuleRow>
+
                 {/* Row 1: DAILY REGIME SIGNAL */}
-                <ModuleRow label="REGIME SIGNAL" href="/regime-digest/">
+                <ModuleRow label="REGIME SIGNAL" href="/regime-digest/" alternateBg>
                     <SectionErrorBoundary name="Daily Macro Layer">
                         <DailyMacroPanel />
                     </SectionErrorBoundary>
                 </ModuleRow>
+
 
                 {/* Row 2: LIVE INTELLIGENCE FEED */}
                 <ModuleRow label="LIVE BRIEF" href="/regime-digest/" alternateBg>
@@ -277,11 +292,23 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
 
+                {/* Row 10b: CFTC COT POSITIONING & SQUEEZE RADAR */}
+                <ModuleRow id="cot-positioning" label="COT POSITIONING" labelColor="text-cyan-400">
+                    <LazyRender minHeight="350px" fallback={<SectionLoadingFallback minHeight={350} />}>
+                    <SectionErrorBoundary name="COT Positioning Radar">
+                        <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
+                            <COTSqueezeRadarCard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    </LazyRender>
+                </ModuleRow>
+
                 {/* Row 11: INDIA CREDIT CYCLE */}
                 <ModuleRow id="credit-cycle"
                     label="CREDIT CYCLE"
                     href="/intel/india/"
                     badge={<GQSignalBadge href="/methods/india-credit-cycle-clock/" />}
+
                     labelColor="text-amber-500/80"
                     alternateBg
                 >

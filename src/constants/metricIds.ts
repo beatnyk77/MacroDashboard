@@ -451,6 +451,18 @@ export const MARKET_METRICS = {
   OECD_CLI_IN:                             'OECD_CLI_IN',
 } as const;
 
+// ── CFTC Positioning & Squeeze Telemetry ──────────────────────────────────────
+
+export const COT_POSITIONING_METRICS = {
+  COT_UST_10Y_NET_SPEC:                    'COT_UST_10Y_NET_SPEC',
+  COT_GOLD_NET_SPEC:                       'COT_GOLD_NET_SPEC',
+  COT_OIL_WTI_NET_SPEC:                    'COT_OIL_WTI_NET_SPEC',
+  COT_DXY_NET_SPEC:                        'COT_DXY_NET_SPEC',
+  COT_SP500_NET_SPEC:                      'COT_SP500_NET_SPEC',
+  CRACK_SPREAD_321_USD:                    'CRACK_SPREAD_321_USD',
+  US_NET_LIQUIDITY_USD_BN:                 'US_NET_LIQUIDITY_USD_BN',
+} as const;
+
 // ── Flat registry — canonical import for all hook files ──────────────────────
 //
 // Usage in hooks:
@@ -481,6 +493,8 @@ export const METRIC_IDS = {
   ...CURRENCY_METRICS,
   ...SIGNAL_METRICS,
   ...MARKET_METRICS,
+  ...COT_POSITIONING_METRICS,
 } as const;
 
 export type MetricId = typeof METRIC_IDS[keyof typeof METRIC_IDS];
+
