@@ -2,16 +2,14 @@
 """
 CFTC Commitments of Traders (COT) Ingestion Engine for GraphiQuestor
 ====================================================================
-Downloads CFTC Financial & Disaggregated Futures weekly reports,
-calculates net speculative positions and rolling 3-year percentile ranks,
-and upserts into Supabase `metric_observations`.
+Downloads official CFTC Financial & Disaggregated Futures weekly reports,
+calculates net speculative positions, and upserts into Supabase `metric_observations`.
 
-Supported Futures Contracts:
-- US 10-Year Treasury Notes (CBOT) -> COT_UST_10Y_NET_SPEC
-- Gold (COMEX)                     -> COT_GOLD_NET_SPEC
-- WTI Crude Oil (NYMEX)            -> COT_OIL_WTI_NET_SPEC
-- US Dollar Index (ICE)            -> COT_DXY_NET_SPEC
-- E-Mini S&P 500 (CME)             -> COT_SP500_NET_SPEC
+Hardening Rules:
+- Never generates synthetic or fallback placeholder data
+- Strictly requires SUPABASE_SERVICE_ROLE_KEY (no anon-key fallback for write)
+- Stores metadata: provider, source_url, observed_at, retrieved_at, fallback
+- Normalizes all dates to UTC calendar dates (YYYY-MM-DD)
 """
 
 import argparse
@@ -22,16 +20,14 @@ import os
 import sys
 import urllib.request
 import zipfile
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 # ── CFTC Report Sources & Contract Matchers ────────────────────────────────────
 
 CFTC_FINANCIAL_FUTURES_URL = "https://www.cftc.gov/files/dea/history/fin_fut_txt_2026.zip"
 CFTC_COMMODITY_FUTURES_URL = "https://www.cftc.gov/files/dea/history/fut_disagg_txt_2026.zip"
-# Fallback archive URLs for historical lookbacks
-CFTC_FIN_2025_URL = "https://www.cftc.gov/files/dea/history/fin_fut_txt_2025.zip"
-CFTC_DISAGG_2025_URL = "https://www.cftc.gov/files/dea/history/fut_disagg_txt_2025.zip"
+CFTC_SOURCE_URL = "https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm"
 
 CONTRACT_TARGETS = [
     {
@@ -79,7 +75,7 @@ CONTRACT_TARGETS = [
 # ── CFTC Fetchers ─────────────────────────────────────────────────────────────
 
 def download_cftc_zip_csv(url: str) -> Optional[List[Dict[str, str]]]:
-    """Download and extract a CFTC zip file containing a CSV/TXT report."""
+    """Download and extract an official CFTC zip file containing a CSV/TXT report."""
     try:
         req = urllib.request.Request(
             url,
@@ -114,7 +110,6 @@ def parse_financial_record(row: Dict[str, str]) -> Optional[Tuple[str, str, floa
     if not date_str and "As_of_Date_in_Form_YYYY-MM-DD" in row:
         date_str = row["As_of_Date_in_Form_YYYY-MM-DD"].strip()
     
-    # Try Leveraged funds (Disaggregated Financial) or Non-Commercial (Legacy Financial)
     lev_long = float(row.get("Lev_Money_Positions_Long_All", 0) or row.get("NonComm_Positions_Long_All", 0) or 0)
     lev_short = float(row.get("Lev_Money_Positions_Short_All", 0) or row.get("NonComm_Positions_Short_All", 0) or 0)
     net_spec = lev_long - lev_short
@@ -170,25 +165,6 @@ def upsert_to_supabase(
             
     return total_upserted
 
-# ── Synthetic Fallback Generator (When CFTC server is undergoing weekend maintenance) ───
-
-def generate_fallback_series(metric_id: str, days: int = 60) -> List[Tuple[str, float]]:
-    """Generates realistic structured baseline points if direct live archive is down."""
-    base_values = {
-        "COT_UST_10Y_NET_SPEC": -842000.0,
-        "COT_GOLD_NET_SPEC": 245000.0,
-        "COT_OIL_WTI_NET_SPEC": 180000.0,
-        "COT_DXY_NET_SPEC": 38500.0,
-        "COT_SP500_NET_SPEC": -45000.0,
-    }
-    val = base_values.get(metric_id, 0.0)
-    points = []
-    now = datetime.now(timezone.utc)
-    for w in range(days // 7):
-        d = (now - timedelta(days=w * 7)).strftime("%Y-%m-%d")
-        points.append((d, val + (w * 1250.0)))
-    return sorted(points, key=lambda x: x[0])
-
 # ── Main Entrypoint ───────────────────────────────────────────────────────────
 
 def main():
@@ -197,22 +173,26 @@ def main():
     args = parser.parse_args()
 
     supabase_url = os.environ.get("SUPABASE_URL") or os.environ.get("VITE_SUPABASE_URL")
-    service_key = (
-        os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-        or os.environ.get("SUPABASE_KEY")
-        or os.environ.get("VITE_SUPABASE_ANON_KEY")
-    )
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
-    if not args.dry_run and (not supabase_url or not service_key):
-        print("ERROR: Supabase URL and Key must be set.", file=sys.stderr)
-        sys.exit(1)
+    if not args.dry_run:
+        if not supabase_url or not service_key:
+            print("ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for database writes.", file=sys.stderr)
+            print("Anon keys are strictly prohibited for ingestion.", file=sys.stderr)
+            sys.exit(1)
 
-    print("🚀 Fetching CFTC Commitments of Traders reports...")
+    print("🚀 Fetching official CFTC Commitments of Traders reports...")
     
     fin_rows = download_cftc_zip_csv(CFTC_FINANCIAL_FUTURES_URL) or []
     disagg_rows = download_cftc_zip_csv(CFTC_COMMODITY_FUTURES_URL) or []
     
+    if not fin_rows and not disagg_rows:
+        print("ERROR: Could not download or parse CFTC reports from official source.", file=sys.stderr)
+        if not args.dry_run:
+            sys.exit(1)
+
     total_observations = []
+    failed_targets = []
     now_iso = datetime.now(timezone.utc).isoformat()
 
     for target in CONTRACT_TARGETS:
@@ -227,22 +207,19 @@ def main():
                 continue
             market, date_str, net_val = parsed
             
-            # Match keywords
             if any(kw in market.upper() for kw in target["market_name_keywords"]):
                 if date_str:
                     extracted_points.append((date_str, net_val))
 
         if not extracted_points:
-            # Generate fallback points if weekly archive was inaccessible
-            extracted_points = generate_fallback_series(m_id, days=60)
-            tag = "live_api:cftc:cot_baseline"
-        else:
-            tag = "live_api:cftc:disaggregated"
+            print(f"  ✗ {m_id:<22} -> No matching rows in CFTC report (skipping, zero synthetic fallback)")
+            failed_targets.append(m_id)
+            continue
 
-        # Sort by date
+        tag = f"live_api:cftc:{rep_type}"
         extracted_points = sorted(extracted_points, key=lambda x: x[0])
-        latest_val = extracted_points[-1][1] if extracted_points else 0
-        latest_date = extracted_points[-1][0] if extracted_points else "N/A"
+        latest_val = extracted_points[-1][1]
+        latest_date = extracted_points[-1][0]
 
         print(f"  ✓ {m_id:<22} -> {len(extracted_points):>2} weeks | Latest: {latest_val:+,.0f} contracts ({latest_date}) via {tag}")
 
@@ -255,13 +232,26 @@ def main():
                 "source_ref": tag,
                 "is_provisional": False,
                 "provenance": "api_live",
+                "metadata": {
+                    "provider": "cftc",
+                    "report_type": rep_type,
+                    "contract_code": target["cftc_contract_code"],
+                    "source_url": CFTC_SOURCE_URL,
+                    "observed_at": date_str,
+                    "retrieved_at": now_iso,
+                    "fallback": False,
+                },
             })
 
-    print(f"\n📊 Total COT observation records: {len(total_observations)}")
+    print(f"\n📊 Total valid COT observation records: {len(total_observations)}")
 
     if args.dry_run:
         print("[DRY RUN] Finished without writing to database.")
         return
+
+    if not total_observations:
+        print("ERROR: No valid COT observations parsed. Aborting without inserting.", file=sys.stderr)
+        sys.exit(1)
 
     print("💾 Upserting COT observations into Supabase `metric_observations`...")
     upserted = upsert_to_supabase(supabase_url, service_key, total_observations)

@@ -2,14 +2,15 @@
 """
 OpenBB Market Data Ingestion Engine for GraphiQuestor
 ====================================================
-Fetches cross-asset daily market data (DXY, Gold, Brent, VIX, Yields, EM FX, BTC)
+Fetches canonical cross-asset daily market data (DXY, Gold, Brent, VIX, Yields, EM FX, BTC)
 and batch upserts observations into Supabase Postgres `metric_observations`.
 
-Supports:
-- Multi-provider fallback (OpenBB SDK, yfinance, direct REST)
-- Configurable lookback window
-- Dry-run mode for local validation
-- Structured provenance tagging (source_ref: live_api:openbb:<provider>)
+Hardening Rules:
+- Rejects mismatched ETF proxy instruments (GLD, UUP, etc. are NOT written under futures IDs)
+- Converts provider-specific units (e.g. Yahoo ^TNX divided by 10 for percentage yield)
+- Strictly requires SUPABASE_SERVICE_ROLE_KEY (no anon-key fallback for write)
+- Preserves provider, source_url, observed_at, retrieved_at, and fallback metadata in observations
+- Normalizes all dates to UTC calendar dates (YYYY-MM-DD)
 """
 
 import argparse
@@ -22,92 +23,104 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-# ── Metric definitions & Provider Symbol Map ───────────────────────────────────
+# ── Canonical Metric Definitions & Provider Symbols ───────────────────────────
 
 MARKET_BASKET = [
     {
         "metric_id": "DXY_INDEX",
         "name": "US Dollar Index",
         "symbol": "DX-Y.NYB",
-        "fallback_symbols": ["UUP"],
         "unit": "index",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.theice.com/products/194/US-Dollar-Index-Futures",
     },
     {
         "metric_id": "GOLD_PRICE_USD",
         "name": "Gold Continuous Futures",
         "symbol": "GC=F",
-        "fallback_symbols": ["GLD"],
         "unit": "USD/oz",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.cmegroup.com/markets/metals/precious/gold.html",
     },
     {
         "metric_id": "OIL_BRENT_PRICE_USD",
         "name": "Brent Crude Oil Futures",
         "symbol": "BZ=F",
-        "fallback_symbols": ["BNO"],
         "unit": "USD/bbl",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.theice.com/products/219/Brent-Crude-Futures",
     },
     {
         "metric_id": "VIX_INDEX",
         "name": "CBOE Volatility Index",
         "symbol": "^VIX",
-        "fallback_symbols": ["VIXY"],
         "unit": "index",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.cboe.com/tradable_products/vix/",
     },
     {
         "metric_id": "UST_10Y_YIELD",
         "name": "US 10-Year Treasury Yield",
         "symbol": "^TNX",
-        "fallback_symbols": ["IEF"],
         "unit": "%",
+        # Yahoo Finance ^TNX quotes 10x yield (e.g. 39.60 = 3.96%)
+        "unit_multiplier": 0.1,
+        "source_url": "https://www.cboe.com/tradable_products/interest_rates/",
     },
     {
         "metric_id": "BITCOIN_PRICE_USD",
         "name": "Bitcoin USD",
         "symbol": "BTC-USD",
-        "fallback_symbols": ["BITO"],
         "unit": "USD",
+        "unit_multiplier": 1.0,
+        "source_url": "https://coinmarketcap.com/currencies/bitcoin/",
     },
     {
         "metric_id": "SPX_INDEX",
         "name": "S&P 500 Index",
         "symbol": "^GSPC",
-        "fallback_symbols": ["SPY"],
         "unit": "index",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.spglobal.com/spdji/en/indices/equity/sp-500/",
     },
     {
         "metric_id": "USD_INR_RATE",
         "name": "USD/INR Exchange Rate",
         "symbol": "INR=X",
-        "fallback_symbols": [],
         "unit": "INR",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.rbi.org.in/",
     },
     {
         "metric_id": "USD_CNY_RATE",
         "name": "USD/CNY Exchange Rate",
         "symbol": "CNY=X",
-        "fallback_symbols": [],
         "unit": "CNY",
+        "unit_multiplier": 1.0,
+        "source_url": "http://www.pbc.gov.cn/",
     },
     {
         "metric_id": "USD_BRL_RATE",
         "name": "USD/BRL Exchange Rate",
         "symbol": "BRL=X",
-        "fallback_symbols": [],
         "unit": "BRL",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.bcb.gov.br/",
     },
     {
         "metric_id": "USD_MXN_RATE",
         "name": "USD/MXN Exchange Rate",
         "symbol": "MXN=X",
-        "fallback_symbols": [],
         "unit": "MXN",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.banxico.org.mx/",
     },
 ]
 
 # ── Data Fetching Providers ───────────────────────────────────────────────────
 
 def fetch_with_openbb(symbol: str, start_date: str) -> Optional[List[Tuple[str, float]]]:
-    """Attempt fetching historical daily series using OpenBB SDK."""
+    """Attempt fetching canonical historical daily series using OpenBB SDK."""
     try:
         from openbb import obb  # type: ignore
         res = obb.equity.price.historical(symbol=symbol, start_date=start_date, provider="yfinance")
@@ -126,7 +139,7 @@ def fetch_with_openbb(symbol: str, start_date: str) -> Optional[List[Tuple[str, 
         return None
 
 def fetch_with_yfinance(symbol: str, start_date: str) -> Optional[List[Tuple[str, float]]]:
-    """Attempt fetching historical daily series using yfinance library."""
+    """Attempt fetching canonical historical daily series using yfinance library."""
     try:
         import yfinance as yf  # type: ignore
         ticker = yf.Ticker(symbol)
@@ -180,8 +193,11 @@ def fetch_with_direct_query(symbol: str, start_date: str) -> Optional[List[Tuple
     except Exception:
         return None
 
-def fetch_series(symbol: str, start_date: str) -> Tuple[Optional[List[Tuple[str, float]]], str]:
-    """Tries OpenBB -> yfinance -> Direct HTTP in order of preference."""
+def fetch_canonical_series(symbol: str, start_date: str) -> Tuple[Optional[List[Tuple[str, float]]], str]:
+    """
+    Attempts OpenBB -> yfinance -> Direct HTTP on the exact canonical symbol.
+    Does NOT substitute ETFs or proxy tickers.
+    """
     # 1. OpenBB
     points = fetch_with_openbb(symbol, start_date)
     if points:
@@ -247,15 +263,12 @@ def main():
     args = parser.parse_args()
 
     supabase_url = os.environ.get("SUPABASE_URL") or os.environ.get("VITE_SUPABASE_URL")
-    service_key = (
-        os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-        or os.environ.get("SUPABASE_KEY")
-        or os.environ.get("VITE_SUPABASE_ANON_KEY")
-    )
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
     if not args.dry_run:
         if not supabase_url or not service_key:
-            print("ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or VITE_SUPABASE_URL / ANON_KEY) must be set.", file=sys.stderr)
+            print("ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for database writes.", file=sys.stderr)
+            print("Anon keys are strictly prohibited for ingestion.", file=sys.stderr)
             sys.exit(1)
 
     start_date = (datetime.now(timezone.utc) - timedelta(days=args.days)).strftime("%Y-%m-%d")
@@ -271,69 +284,64 @@ def main():
     print(f"🚀 Ingesting {len(target_basket)} market metrics (lookback: {args.days} days, start_date: {start_date})...")
     
     total_observations = []
-    summary_results = []
+    failed_metrics = []
 
     for item in target_basket:
         m_id = item["metric_id"]
         sym = item["symbol"]
-        points, provider_tag = fetch_series(sym, start_date)
-        
-        # Fallback to secondary ticker if primary had no data
-        if not points and item.get("fallback_symbols"):
-            for alt_sym in item["fallback_symbols"]:
-                points, provider_tag = fetch_series(alt_sym, start_date)
-                if points:
-                    provider_tag += f":fallback({alt_sym})"
-                    break
+        multiplier = item["unit_multiplier"]
+        source_url = item["source_url"]
+
+        points, provider_tag = fetch_canonical_series(sym, start_date)
         
         if points:
-            latest_val = points[-1][1]
+            latest_val = points[-1][1] * multiplier
             latest_date = points[-1][0]
             print(f"  ✓ {m_id:<22} [{sym:<9}] -> {len(points):>3} rows | Latest: {latest_val:,.2f} ({latest_date}) via {provider_tag}")
             
             source_ref = f"live_api:openbb:{provider_tag}"
             for date_str, val in points:
+                adjusted_val = round(val * multiplier, 6)
                 total_observations.append({
                     "metric_id": m_id,
                     "as_of_date": date_str,
-                    "value": round(val, 6),
+                    "value": adjusted_val,
                     "last_updated_at": now_iso,
                     "source_ref": source_ref,
                     "is_provisional": False,
                     "provenance": "api_live",
+                    "metadata": {
+                        "provider": provider_tag,
+                        "source_url": source_url,
+                        "observed_at": date_str,
+                        "retrieved_at": now_iso,
+                        "fallback": False,
+                    },
                 })
-            summary_results.append({
-                "metric_id": m_id,
-                "status": "success",
-                "rows": len(points),
-                "latest": latest_val,
-                "date": latest_date,
-                "provider": provider_tag
-            })
         else:
-            print(f"  ✗ {m_id:<22} [{sym:<9}] -> FAILED across all providers")
-            summary_results.append({
-                "metric_id": m_id,
-                "status": "failed",
-                "rows": 0,
-                "latest": None,
-                "date": None,
-                "provider": "none"
-            })
+            print(f"  ✗ {m_id:<22} [{sym:<9}] -> FAILED across canonical providers (no proxy substitution)")
+            failed_metrics.append(m_id)
 
     print(f"\n📊 Total observation rows collected: {len(total_observations)}")
+    print(f"⚠️ Failed metrics count: {len(failed_metrics)}")
 
     if args.dry_run:
         print("\n[DRY RUN] Skipped database upsert.")
+        if len(failed_metrics) == len(target_basket):
+            print("ERROR: All metrics failed in dry-run.", file=sys.stderr)
+            sys.exit(1)
         return
 
     if not total_observations:
-        print("ERROR: No observations collected. Aborting.", file=sys.stderr)
+        print("ERROR: No observations collected across all metrics. Aborting.", file=sys.stderr)
         sys.exit(1)
 
     print("💾 Upserting rows into Supabase `metric_observations`...")
     upserted = upsert_to_supabase(supabase_url, service_key, total_observations)
     print(f"✅ Successfully upserted {upserted} rows into Supabase Postgres.")
+
+    if failed_metrics:
+        print(f"::warning::{len(failed_metrics)} metrics failed ingestion: {', '.join(failed_metrics)}")
 
 
 if __name__ == "__main__":

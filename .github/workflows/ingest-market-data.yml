@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   ingest:
-    name: Ingest Cross-Asset Telemetry
+    name: Ingest Cross-Asset & COT Telemetry
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -43,13 +43,17 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install yfinance requests
+          pip install yfinance requests openbb-core openbb-yfinance || pip install yfinance requests
+
+      - name: Smoke test provider availability
+        run: |
+          python -c "import yfinance as yf; t = yf.Ticker('DX-Y.NYB'); h = t.history(period='5d'); assert not h.empty, 'Market data smoke test failed'"
 
       - name: Run Market Data Ingestion
         id: run_ingest
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_DB_PASSWORD || secrets.VITE_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY }}
         run: |
           set -euo pipefail
 
@@ -57,13 +61,20 @@ jobs:
           if [ -n "${{ inputs.days }}" ]; then
             ARGS+=(--days "${{ inputs.days }}")
           fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+          if [ -n "${{ inputs.metric }}" ]; then
+            ARGS+=(--metric "${{ inputs.metric }}")
+          fi
+
           python scripts/ingest_openbb_market_data.py "${ARGS[@]}"
 
       - name: Run CFTC COT Positioning Ingestion
         id: run_cftc_cot
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_DB_PASSWORD || secrets.VITE_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY }}
         run: |
           set -euo pipefail
           COT_ARGS=()

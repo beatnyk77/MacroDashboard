@@ -2,170 +2,159 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 
-export interface TICHoldingFlow {
+export interface SovereignHolderFlow {
   country: string;
-  flag: string;
   totalHeldBn: number;
-  flow1mBn: number;
-  flow12mBn: number;
-  motivation: 'Strategic De-Dollarization' | 'Tactical FX Defense' | 'Offshore Custody Re-Routing' | 'Reserve Accumulation';
-  motivationColor: 'rose' | 'amber' | 'cyan' | 'emerald';
-  trendPercentiles: number[]; // 12-month normalized points
-}
-
-export interface SovereignMaturityConcentration {
-  period: '3M' | '6M' | '12M';
-  amountTn: number;
-  pctOfTotalDebt: number;
+  momChangePct: number | null;
+  yoyChangePct: number | null;
+  pctOfTotalForeign: number | null;
+  strategicMotivation: string;
+  asOfDate: string;
 }
 
 export interface SovereignStressDeskData {
   gauges: {
-    totalForeignHoldingsTn: number;
-    totalForeignYoYPct: number;
-    chinaHoldingsBn: number;
-    china12mFlowBn: number;
-    japanHoldingsBn: number;
-    japan12mFlowBn: number;
-    usDebt12mRolloverTn: number;
-    usDebt12mRolloverPct: number;
+    totalForeignHoldingsBn: number | null;
+    totalForeignYoYPct: number | null;
+    chinaHeldBn: number | null;
+    chinaYoYPct: number | null;
+    japanHeldBn: number | null;
+    japanYoYPct: number | null;
+    asOfDate: string | null;
   };
-  ticFlows: TICHoldingFlow[];
-  maturityConcentration: SovereignMaturityConcentration[];
-  auctionMetrics: {
-    demandScore: number; // 0-100
-    bidToCover: number;
-    indirectBidderPct: number;
-    primaryDealerPct: number;
-  };
+  ticHolders: SovereignHolderFlow[];
   fundingStress: {
-    swapLineDrawsBn: number;
-    sofrEffrSpreadBps: number;
-    status: 'NORMAL' | 'ELEVATED' | 'CRITICAL';
-    headline: string;
+    swapLinesOutstandingMn: number | null;
+    swapLinesDate: string | null;
   };
-  lastUpdated: string;
+  lastUpdated: string | null;
+  hasData: boolean;
 }
 
-const DEFAULT_STRESS_DESK_DATA: SovereignStressDeskData = {
-  gauges: {
-    totalForeignHoldingsTn: 8.52,
-    totalForeignYoYPct: 4.2,
-    chinaHoldingsBn: 748.0,
-    china12mFlowBn: -112.4,
-    japanHoldingsBn: 1120.0,
-    japan12mFlowBn: -34.8,
-    usDebt12mRolloverTn: 9.42,
-    usDebt12mRolloverPct: 28.4,
-  },
-  ticFlows: [
-    {
-      country: 'Japan',
-      flag: '🇯🇵',
-      totalHeldBn: 1120.0,
-      flow1mBn: -8.4,
-      flow12mBn: -34.8,
-      motivation: 'Tactical FX Defense',
-      motivationColor: 'amber',
-      trendPercentiles: [85, 82, 80, 78, 76, 75, 74, 73, 72, 70, 68, 65],
-    },
-    {
-      country: 'China (PBoC)',
-      flag: '🇨🇳',
-      totalHeldBn: 748.0,
-      flow1mBn: -14.2,
-      flow12mBn: -112.4,
-      motivation: 'Strategic De-Dollarization',
-      motivationColor: 'rose',
-      trendPercentiles: [70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15],
-    },
-    {
-      country: 'United Kingdom',
-      flag: '🇬🇧',
-      totalHeldBn: 712.0,
-      flow1mBn: 18.5,
-      flow12mBn: 64.2,
-      motivation: 'Offshore Custody Re-Routing',
-      motivationColor: 'cyan',
-      trendPercentiles: [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 88, 92],
-    },
-    {
-      country: 'Luxembourg / Cayman',
-      flag: '🇰🇾',
-      totalHeldBn: 680.0,
-      flow1mBn: 12.1,
-      flow12mBn: 52.8,
-      motivation: 'Offshore Custody Re-Routing',
-      motivationColor: 'cyan',
-      trendPercentiles: [50, 52, 55, 58, 62, 65, 70, 74, 78, 82, 86, 90],
-    },
-    {
-      country: 'Belgium (Euroclear)',
-      flag: '🇧🇪',
-      totalHeldBn: 340.0,
-      flow1mBn: 4.8,
-      flow12mBn: 28.5,
-      motivation: 'Offshore Custody Re-Routing',
-      motivationColor: 'cyan',
-      trendPercentiles: [45, 48, 50, 53, 56, 60, 64, 68, 72, 76, 80, 84],
-    },
-    {
-      country: 'India (RBI)',
-      flag: '🇮🇳',
-      totalHeldBn: 240.0,
-      flow1mBn: 2.1,
-      flow12mBn: 18.4,
-      motivation: 'Reserve Accumulation',
-      motivationColor: 'emerald',
-      trendPercentiles: [30, 34, 38, 42, 46, 50, 55, 60, 65, 70, 75, 80],
-    },
-  ],
-  maturityConcentration: [
-    { period: '3M', amountTn: 2.45, pctOfTotalDebt: 7.4 },
-    { period: '6M', amountTn: 4.82, pctOfTotalDebt: 14.6 },
-    { period: '12M', amountTn: 9.42, pctOfTotalDebt: 28.4 },
-  ],
-  auctionMetrics: {
-    demandScore: 78,
-    bidToCover: 2.52,
-    indirectBidderPct: 68.4,
-    primaryDealerPct: 14.2,
-  },
-  fundingStress: {
-    swapLineDrawsBn: 0.42,
-    sofrEffrSpreadBps: 0.02,
-    status: 'NORMAL',
-    headline: 'GREEN: NO SYSTEMIC DOLLAR SHORTAGE DETECTED',
-  },
-  lastUpdated: new Date().toISOString(),
+const STRATEGIC_INTENTS: Record<string, string> = {
+  China: 'Strategic De-Dollarization / Gold Substitution',
+  Japan: 'Tactical FX Defense / Yield Arbitrage',
+  'United Kingdom': 'Offshore Eurodollar Custody Hub',
+  'Cayman Islands': 'Hedge Fund Treasury Cash-Futures Basis',
+  Luxembourg: 'European UCITS Institutional Custody',
+  Belgium: 'Euroclear Clearinghouse Custody',
+  India: 'FX Reserve Diversification',
 };
 
 export function useSovereignStressDesk() {
   return useQuery<SovereignStressDeskData>({
     queryKey: ['sovereign-stress-desk-telemetry'],
     queryFn: async () => {
-      if (!supabase) return DEFAULT_STRESS_DESK_DATA;
-
-      try {
-        const { data: ticData } = await supabase
-          .from('vw_tic_foreign_holders')
-          .select('*')
-          .order('as_of_date', { ascending: false })
-          .limit(10);
-
-        if (ticData && ticData.length > 0) {
-          // Enrich defaults with live observations
-          return {
-            ...DEFAULT_STRESS_DESK_DATA,
-            lastUpdated: ticData[0]?.as_of_date || new Date().toISOString(),
-          };
-        }
-      } catch (err) {
-        console.warn('Error reading live TIC view, using baseline telemetry', err);
+      if (!supabase) {
+        return {
+          gauges: {
+            totalForeignHoldingsBn: null,
+            totalForeignYoYPct: null,
+            chinaHeldBn: null,
+            chinaYoYPct: null,
+            japanHeldBn: null,
+            japanYoYPct: null,
+            asOfDate: null,
+          },
+          ticHolders: [],
+          fundingStress: {
+            swapLinesOutstandingMn: null,
+            swapLinesDate: null,
+          },
+          lastUpdated: null,
+          hasData: false,
+        };
       }
 
-      return DEFAULT_STRESS_DESK_DATA;
+      // 1. Query TIC foreign holders view
+      const { data: ticData, error: ticErr } = await supabase
+        .from('vw_tic_foreign_holders')
+        .select('*')
+        .order('as_of_date', { ascending: false });
+
+      // 2. Query FX Swap Lines from metric_observations
+      const { data: swapData } = await supabase
+        .from('metric_observations')
+        .select('as_of_date, value, last_updated_at')
+        .eq('metric_id', MID.FX_SWAP_LINES || 'FX_SWAP_LINES')
+        .order('as_of_date', { ascending: false })
+        .limit(1);
+
+      const hasTic = !ticErr && ticData && ticData.length > 0;
+
+      let totalForeignHoldingsBn: number | null = null;
+      let totalForeignYoYPct: number | null = null;
+      let chinaHeldBn: number | null = null;
+      let chinaYoYPct: number | null = null;
+      let japanHeldBn: number | null = null;
+      let japanYoYPct: number | null = null;
+      let latestAsOfDate: string | null = null;
+      const ticHolders: SovereignHolderFlow[] = [];
+
+      if (hasTic) {
+        // Group latest records by country
+        latestAsOfDate = ticData[0].as_of_date;
+        const currentPeriodRows = ticData.filter((r) => r.as_of_date === latestAsOfDate);
+
+        // Sum total foreign holdings for the latest period
+        totalForeignHoldingsBn = currentPeriodRows.reduce(
+          (acc, r) => acc + (Number(r.holdings_usd_bn) || 0),
+          0
+        );
+
+        for (const row of currentPeriodRows) {
+          const cName = row.country_name || 'Unknown';
+          const held = Number(row.holdings_usd_bn) || 0;
+          const mom = row.mom_pct_change !== null ? Number(row.mom_pct_change) : null;
+          const yoy = row.yoy_pct_change !== null ? Number(row.yoy_pct_change) : null;
+          const pctForeign = row.pct_of_total_foreign !== null ? Number(row.pct_of_total_foreign) : null;
+
+          if (cName.toLowerCase().includes('china')) {
+            chinaHeldBn = held;
+            chinaYoYPct = yoy;
+          }
+          if (cName.toLowerCase().includes('japan')) {
+            japanHeldBn = held;
+            japanYoYPct = yoy;
+          }
+
+          ticHolders.push({
+            country: cName,
+            totalHeldBn: held,
+            momChangePct: mom,
+            yoyChangePct: yoy,
+            pctOfTotalForeign: pctForeign,
+            strategicMotivation: STRATEGIC_INTENTS[cName] || 'Reserve Asset Management',
+            asOfDate: row.as_of_date || '',
+          });
+        }
+
+
+        // Sort descending by holdings
+        ticHolders.sort((a, b) => b.totalHeldBn - a.totalHeldBn);
+      }
+
+      const swapRow = swapData && swapData.length > 0 ? swapData[0] : null;
+
+      return {
+        gauges: {
+          totalForeignHoldingsBn,
+          totalForeignYoYPct,
+          chinaHeldBn,
+          chinaYoYPct,
+          japanHeldBn,
+          japanYoYPct,
+          asOfDate: latestAsOfDate,
+        },
+        ticHolders,
+        fundingStress: {
+          swapLinesOutstandingMn: swapRow ? Number(swapRow.value) : null,
+          swapLinesDate: swapRow ? swapRow.as_of_date : null,
+        },
+        lastUpdated: latestAsOfDate || swapRow?.last_updated_at || null,
+        hasData: hasTic || Boolean(swapRow),
+      };
     },
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 30, // 30 mins
   });
 }

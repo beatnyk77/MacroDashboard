@@ -14,22 +14,56 @@ export interface COTAssetPositioning {
   assetName: string;
   category: 'Rates' | 'Precious Metals' | 'Energy' | 'Currencies' | 'Equities';
   symbol: string;
-  netSpecContracts: number;
-  delta1wContracts: number;
-  percentile3y: number; // 0 to 100
-  commercialHedgeContracts: number;
-  squeezeSignal: SqueezeSignal;
-  asOfDate: string;
-  sourceRef: string;
+  netSpecContracts: number | null;
+  delta1wContracts: number | null;
+  percentile3y: number | null; // 0 to 100
+  squeezeSignal: SqueezeSignal | null;
+  asOfDate: string | null;
+  sourceRef: string | null;
+  isAvailable: boolean;
 }
 
 export interface COTPositioningData {
   items: COTAssetPositioning[];
-  lastUpdated: string;
-  stalenessFlag: 'fresh' | 'lagged' | 'very_lagged';
+  lastUpdated: string | null;
+  hasData: boolean;
 }
 
-function calculateSignal(percentile: number): SqueezeSignal {
+const COT_TARGETS = [
+  {
+    metricId: MID.COT_UST_10Y_NET_SPEC,
+    assetName: 'US 10Y Treasury Futures',
+    category: 'Rates' as const,
+    symbol: 'CBOT 10Y',
+  },
+  {
+    metricId: MID.COT_GOLD_NET_SPEC,
+    assetName: 'Gold COMEX Futures',
+    category: 'Precious Metals' as const,
+    symbol: 'COMEX GC',
+  },
+  {
+    metricId: MID.COT_OIL_WTI_NET_SPEC,
+    assetName: 'WTI Crude Oil Futures',
+    category: 'Energy' as const,
+    symbol: 'NYMEX CL',
+  },
+  {
+    metricId: MID.COT_DXY_NET_SPEC,
+    assetName: 'US Dollar Index (DXY)',
+    category: 'Currencies' as const,
+    symbol: 'ICE DX',
+  },
+  {
+    metricId: MID.COT_SP500_NET_SPEC,
+    assetName: 'E-Mini S&P 500 Futures',
+    category: 'Equities' as const,
+    symbol: 'CME ES',
+  },
+];
+
+export function calculateSqueezeSignal(percentile: number | null): SqueezeSignal | null {
+  if (percentile === null || !Number.isFinite(percentile)) return null;
   if (percentile <= 5) return 'BULL_SQUEEZE_RISK';
   if (percentile >= 95) return 'CROWDED_LONG';
   if (percentile >= 75) return 'MODERATE_LONG';
@@ -37,73 +71,11 @@ function calculateSignal(percentile: number): SqueezeSignal {
   return 'NEUTRAL_RANGE';
 }
 
-const DEFAULT_COT_DATA: COTAssetPositioning[] = [
-  {
-    metricId: MID.COT_UST_10Y_NET_SPEC,
-    assetName: 'US 10Y Treasury Futures',
-    category: 'Rates',
-    symbol: 'CBOT 10Y',
-    netSpecContracts: -842000,
-    delta1wContracts: 34200,
-    percentile3y: 2.1,
-    commercialHedgeContracts: 812000,
-    squeezeSignal: 'BULL_SQUEEZE_RISK',
-    asOfDate: '2026-08-28',
-    sourceRef: 'live_api:cftc:disaggregated',
-  },
-  {
-    metricId: MID.COT_GOLD_NET_SPEC,
-    assetName: 'Gold COMEX Futures',
-    category: 'Precious Metals',
-    symbol: 'COMEX GC',
-    netSpecContracts: 245000,
-    delta1wContracts: -12400,
-    percentile3y: 96.4,
-    commercialHedgeContracts: -260000,
-    squeezeSignal: 'CROWDED_LONG',
-    asOfDate: '2026-08-28',
-    sourceRef: 'live_api:cftc:disaggregated',
-  },
-  {
-    metricId: MID.COT_OIL_WTI_NET_SPEC,
-    assetName: 'WTI Crude Oil Futures',
-    category: 'Energy',
-    symbol: 'NYMEX CL',
-    netSpecContracts: 180000,
-    delta1wContracts: 8100,
-    percentile3y: 48.2,
-    commercialHedgeContracts: -195000,
-    squeezeSignal: 'NEUTRAL_RANGE',
-    asOfDate: '2026-08-28',
-    sourceRef: 'live_api:cftc:disaggregated',
-  },
-  {
-    metricId: MID.COT_DXY_NET_SPEC,
-    assetName: 'US Dollar Index (DXY)',
-    category: 'Currencies',
-    symbol: 'ICE DX',
-    netSpecContracts: 38500,
-    delta1wContracts: 4200,
-    percentile3y: 82.1,
-    commercialHedgeContracts: -41000,
-    squeezeSignal: 'MODERATE_LONG',
-    asOfDate: '2026-08-28',
-    sourceRef: 'live_api:cftc:disaggregated',
-  },
-  {
-    metricId: MID.COT_SP500_NET_SPEC,
-    assetName: 'E-Mini S&P 500 Futures',
-    category: 'Equities',
-    symbol: 'CME ES',
-    netSpecContracts: -45000,
-    delta1wContracts: -18900,
-    percentile3y: 24.5,
-    commercialHedgeContracts: 52000,
-    squeezeSignal: 'MODERATE_SHORT',
-    asOfDate: '2026-08-28',
-    sourceRef: 'live_api:cftc:disaggregated',
-  },
-];
+export function computePercentile(val: number, history: number[]): number {
+  if (history.length <= 1) return 50.0;
+  const countBelowOrEqual = history.filter((h) => h <= val).length;
+  return Math.round((countBelowOrEqual / history.length) * 1000) / 10;
+}
 
 export function useCOTPositioning() {
   return useQuery<COTPositioningData>({
@@ -111,19 +83,22 @@ export function useCOTPositioning() {
     queryFn: async () => {
       if (!supabase) {
         return {
-          items: DEFAULT_COT_DATA,
-          lastUpdated: new Date().toISOString(),
-          stalenessFlag: 'fresh',
+          items: COT_TARGETS.map((t) => ({
+            ...t,
+            netSpecContracts: null,
+            delta1wContracts: null,
+            percentile3y: null,
+            squeezeSignal: null,
+            asOfDate: null,
+            sourceRef: null,
+            isAvailable: false,
+          })),
+          lastUpdated: null,
+          hasData: false,
         };
       }
 
-      const metricIds = [
-        MID.COT_UST_10Y_NET_SPEC,
-        MID.COT_GOLD_NET_SPEC,
-        MID.COT_OIL_WTI_NET_SPEC,
-        MID.COT_DXY_NET_SPEC,
-        MID.COT_SP500_NET_SPEC,
-      ];
+      const metricIds = COT_TARGETS.map((t) => t.metricId);
 
       const { data, error } = await supabase
         .from('metric_observations')
@@ -133,30 +108,67 @@ export function useCOTPositioning() {
 
       if (error || !data || data.length === 0) {
         return {
-          items: DEFAULT_COT_DATA,
-          lastUpdated: new Date().toISOString(),
-          stalenessFlag: 'fresh',
+          items: COT_TARGETS.map((t) => ({
+            ...t,
+            netSpecContracts: null,
+            delta1wContracts: null,
+            percentile3y: null,
+            squeezeSignal: null,
+            asOfDate: null,
+            sourceRef: null,
+            isAvailable: false,
+          })),
+          lastUpdated: null,
+          hasData: false,
         };
       }
 
-      // Merge DB observations into items
-      const items = DEFAULT_COT_DATA.map((def) => {
-        const obs = data.find((d) => d.metric_id === def.metricId);
-        if (!obs) return def;
+      // Group observations by metric_id
+      const byMetric: Record<string, typeof data> = {};
+      for (const row of data) {
+        if (!byMetric[row.metric_id]) byMetric[row.metric_id] = [];
+        byMetric[row.metric_id].push(row);
+      }
+
+      const items: COTAssetPositioning[] = COT_TARGETS.map((target) => {
+        const rows = byMetric[target.metricId];
+        if (!rows || rows.length === 0) {
+          return {
+            ...target,
+            netSpecContracts: null,
+            delta1wContracts: null,
+            percentile3y: null,
+            squeezeSignal: null,
+            asOfDate: null,
+            sourceRef: null,
+            isAvailable: false,
+          };
+        }
+
+        const latest = rows[0];
+        const previous = rows.length > 1 ? rows[1] : null;
+        const allValues = rows.map((r) => Number(r.value));
+        const percentile = computePercentile(Number(latest.value), allValues);
+        const delta = previous !== null ? Number(latest.value) - Number(previous.value) : null;
 
         return {
-          ...def,
-          netSpecContracts: obs.value,
-          asOfDate: obs.as_of_date,
-          sourceRef: obs.source_ref || def.sourceRef,
-          squeezeSignal: calculateSignal(def.percentile3y),
+          ...target,
+          netSpecContracts: Number(latest.value),
+          delta1wContracts: delta,
+          percentile3y: percentile,
+          squeezeSignal: calculateSqueezeSignal(percentile),
+          asOfDate: latest.as_of_date,
+          sourceRef: latest.source_ref,
+          isAvailable: true,
         };
       });
 
+      const hasAnyData = items.some((i) => i.isAvailable);
+
       return {
         items,
-        lastUpdated: data[0]?.last_updated_at || new Date().toISOString(),
-        stalenessFlag: 'fresh',
+        lastUpdated: data[0]?.last_updated_at || null,
+        hasData: hasAnyData,
       };
     },
     staleTime: 1000 * 60 * 30, // 30 mins

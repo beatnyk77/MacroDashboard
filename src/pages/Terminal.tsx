@@ -399,9 +399,12 @@ export const Terminal: React.FC = () => {
             </div>
             <div className="mb-10 mt-8">
                 <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
-                    <M2GoldRatioExplorer className="mb-6" />
+                    <div className="mb-6">
+                        <M2GoldRatioExplorer />
+                    </div>
                 </Suspense>
                 <ValueProgressionPath className="mb-6" />
+
                 {/* Pre-footer subscribe — id keeps header Subscribe button scroll-anchor working */}
                 <div id="weekly-narrative">
                     <SubscribeCard source="homepage-prefooter" />
