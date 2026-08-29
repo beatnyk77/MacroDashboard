@@ -14,6 +14,9 @@ export interface CrossAssetRadarItem {
   delta30dPct: number | null;
   percentile52w: number | null; // 0 to 100
   asOfDate: string | null;
+  sourceRef: string | null;
+  lastUpdatedAt: string | null;
+  observationCount: number;
   isAvailable: boolean;
 }
 
@@ -88,6 +91,20 @@ export function computePercentile(val: number, history: number[]): number {
   return Math.round((countBelowOrEqual / history.length) * 1000) / 10;
 }
 
+const emptyRadarItem = (cfg: typeof RADAR_CONFIG[number]): CrossAssetRadarItem => ({
+  ...cfg,
+  observedValue: null,
+  delta1dPct: null,
+  delta5dPct: null,
+  delta30dPct: null,
+  percentile52w: null,
+  asOfDate: null,
+  sourceRef: null,
+  lastUpdatedAt: null,
+  observationCount: 0,
+  isAvailable: false,
+});
+
 export function computeDeltaPct(latest: number, past: number | undefined): number | null {
   if (past === undefined || past === 0) return null;
   return Math.round(((latest - past) / past) * 10000) / 100;
@@ -99,70 +116,40 @@ export function useCrossAssetRadar() {
     queryFn: async () => {
       if (!supabase) {
         return {
-          radarItems: RADAR_CONFIG.map((c) => ({
-            ...c,
-            observedValue: null,
-            delta1dPct: null,
-            delta5dPct: null,
-            delta30dPct: null,
-            percentile52w: null,
-            asOfDate: null,
-            isAvailable: false,
-          })),
+          radarItems: RADAR_CONFIG.map(emptyRadarItem),
           lastUpdated: null,
           hasData: false,
         };
       }
 
-      const metricIds = RADAR_CONFIG.map((c) => c.metricId);
+      const responses = await Promise.all(
+        RADAR_CONFIG.map(async (cfg) => {
+          const { data, error } = await supabase
+            .from('metric_observations')
+            .select('metric_id, as_of_date, value, source_ref, last_updated_at')
+            .eq('metric_id', cfg.metricId)
+            .order('as_of_date', { ascending: false })
+            .limit(320);
 
-      const { data, error } = await supabase
-        .from('metric_observations')
-        .select('metric_id, as_of_date, value, last_updated_at')
-        .in('metric_id', metricIds)
-        .order('as_of_date', { ascending: false });
+          return { cfg, data: data ?? [], error };
+        })
+      );
 
-      if (error || !data || data.length === 0) {
+      if (responses.every((res) => res.error || res.data.length === 0)) {
         return {
-          radarItems: RADAR_CONFIG.map((c) => ({
-            ...c,
-            observedValue: null,
-            delta1dPct: null,
-            delta5dPct: null,
-            delta30dPct: null,
-            percentile52w: null,
-            asOfDate: null,
-            isAvailable: false,
-          })),
+          radarItems: RADAR_CONFIG.map(emptyRadarItem),
           lastUpdated: null,
           hasData: false,
         };
       }
 
-      // Group observations by metric_id
-      const byMetric: Record<string, typeof data> = {};
-      for (const row of data) {
-        if (!byMetric[row.metric_id]) byMetric[row.metric_id] = [];
-        byMetric[row.metric_id].push(row);
-      }
-
-      const radarItems: CrossAssetRadarItem[] = RADAR_CONFIG.map((cfg) => {
-        const rows = byMetric[cfg.metricId];
-        if (!rows || rows.length === 0) {
-          return {
-            ...cfg,
-            observedValue: null,
-            delta1dPct: null,
-            delta5dPct: null,
-            delta30dPct: null,
-            percentile52w: null,
-            asOfDate: null,
-            isAvailable: false,
-          };
+      const radarItems: CrossAssetRadarItem[] = responses.map(({ cfg, data: rows, error }) => {
+        if (error || rows.length === 0) {
+          return emptyRadarItem(cfg);
         }
 
         const latestVal = Number(rows[0].value);
-        const allVals = rows.map((r) => Number(r.value));
+        const percentileWindow = rows.slice(0, 260).map((r) => Number(r.value));
         const p1d = rows.length > 1 ? Number(rows[1].value) : undefined;
         const p5d = rows.length > 5 ? Number(rows[5].value) : rows.length > 1 ? Number(rows[rows.length - 1].value) : undefined;
         const p30d = rows.length > 22 ? Number(rows[22].value) : rows.length > 1 ? Number(rows[rows.length - 1].value) : undefined;
@@ -173,17 +160,25 @@ export function useCrossAssetRadar() {
           delta1dPct: computeDeltaPct(latestVal, p1d),
           delta5dPct: computeDeltaPct(latestVal, p5d),
           delta30dPct: computeDeltaPct(latestVal, p30d),
-          percentile52w: computePercentile(latestVal, allVals),
+          percentile52w: percentileWindow.length >= 120 ? computePercentile(latestVal, percentileWindow) : null,
           asOfDate: rows[0].as_of_date,
+          sourceRef: rows[0].source_ref,
+          lastUpdatedAt: rows[0].last_updated_at,
+          observationCount: rows.length,
           isAvailable: true,
         };
       });
 
       const hasAnyData = radarItems.some((i) => i.isAvailable);
+      const updatedTimestamps = radarItems
+        .map((i) => i.lastUpdatedAt)
+        .filter((value): value is string => Boolean(value))
+        .sort();
+      const latestUpdated = updatedTimestamps.length > 0 ? updatedTimestamps[updatedTimestamps.length - 1] : null;
 
       return {
         radarItems,
-        lastUpdated: data[0]?.last_updated_at || null,
+        lastUpdated: latestUpdated,
         hasData: hasAnyData,
       };
     },

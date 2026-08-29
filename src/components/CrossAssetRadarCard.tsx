@@ -5,10 +5,7 @@ import { MetricFreshnessChip } from '@/components/MetricFreshnessChip';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 
-const VIEW_TABS = [
-  'Cross-Asset Macro Radar (Desk View)',
-  '4-Quadrant Macro Regime Playbook & Allocator',
-] as const;
+const VIEW_TABS = ['Cross-Asset Macro Radar (Desk View)', 'Regime Model Status'] as const;
 
 type ViewTab = typeof VIEW_TABS[number];
 
@@ -31,13 +28,13 @@ export const CrossAssetRadarCard: React.FC = () => {
               </CardTitle>
             </div>
             <p className="text-xs text-slate-400 font-mono mt-1">
-              Multi-asset market close observations, rolling 52-week percentiles, and tactical allocation tilts
+              Multi-asset market close observations and rolling 52-week percentiles
             </p>
           </div>
 
           <div className="flex items-center flex-wrap gap-2">
-            <span className="text-[11px] font-mono bg-amber-950/80 text-amber-300 px-2.5 py-0.5 border border-amber-600/80 shadow-[0_0_10px_rgba(251,191,36,0.2)] font-bold">
-              ⚡ QUADRANT III: STAGFLATIONARY PRESSURE (84% CONF.)
+            <span className="text-[11px] font-mono bg-slate-950/80 text-slate-300 px-2.5 py-0.5 border border-slate-700/80 font-bold">
+              REGIME MODEL AWAITING DERIVED PRODUCER
             </span>
             <MetricFreshnessChip metricId={MID.DXY_INDEX} sourceLabel="OpenBB Multi-Vendor" />
           </div>
@@ -50,7 +47,7 @@ export const CrossAssetRadarCard: React.FC = () => {
             <div className="text-[10px] font-mono text-slate-400 uppercase">Quad I: Goldilocks</div>
             <div className="flex justify-between items-baseline mt-1">
               <span className="text-xs font-mono text-slate-400">Growth ↑ Infl ↓</span>
-              <span className="font-mono text-sm font-bold text-slate-400">12%</span>
+              <span className="font-mono text-sm font-bold text-slate-500">N/A</span>
             </div>
           </div>
 
@@ -59,19 +56,18 @@ export const CrossAssetRadarCard: React.FC = () => {
             <div className="text-[10px] font-mono text-slate-400 uppercase">Quad II: Reflation</div>
             <div className="flex justify-between items-baseline mt-1">
               <span className="text-xs font-mono text-slate-400">Growth ↑ Infl ↑</span>
-              <span className="font-mono text-sm font-bold text-slate-400">18%</span>
+              <span className="font-mono text-sm font-bold text-slate-500">N/A</span>
             </div>
           </div>
 
-          {/* Quad III - Active */}
-          <div className="bg-amber-950/30 border border-amber-500/60 p-2.5 shadow-[0_0_12px_rgba(251,191,36,0.1)]">
-            <div className="text-[10px] font-mono text-amber-300 uppercase font-bold flex items-center justify-between">
+          {/* Quad III */}
+          <div className="bg-slate-950/60 border border-slate-800/60 p-2.5">
+            <div className="text-[10px] font-mono text-slate-400 uppercase flex items-center justify-between">
               <span>Quad III: Stagflation</span>
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping" />
             </div>
             <div className="flex justify-between items-baseline mt-1">
-              <span className="text-xs font-mono text-amber-400/90 font-medium">Growth ↓ Infl ↑</span>
-              <span className="font-mono text-sm font-black text-amber-300">58% ACTIVE</span>
+              <span className="text-xs font-mono text-slate-400">Growth ↓ Infl ↑</span>
+              <span className="font-mono text-sm font-bold text-slate-500">N/A</span>
             </div>
           </div>
 
@@ -80,7 +76,7 @@ export const CrossAssetRadarCard: React.FC = () => {
             <div className="text-[10px] font-mono text-slate-400 uppercase">Quad IV: Contraction</div>
             <div className="flex justify-between items-baseline mt-1">
               <span className="text-xs font-mono text-slate-400">Growth ↓ Infl ↓</span>
-              <span className="font-mono text-sm font-bold text-slate-400">12%</span>
+              <span className="font-mono text-sm font-bold text-slate-500">N/A</span>
             </div>
           </div>
         </div>
@@ -133,88 +129,23 @@ export const CrossAssetRadarCard: React.FC = () => {
           <div className="p-6 space-y-4">
             <div className="bg-slate-950/60 border border-slate-800/80 p-4">
               <div className="text-xs font-mono text-cyan-300 font-bold uppercase">
-                Active Tactical Playbook: Quadrant III (Stagflationary Pressure)
+                Regime Probability Producer Not Deployed
               </div>
               <p className="text-xs font-mono text-slate-400 mt-1">
-                Empirical asset class performance and historical tilts for slowing growth and sticky inflation regimes.
+                This panel will activate after a backend job writes observed growth, inflation, and market-implied regime probabilities into Supabase. Until then, GraphiQuestor only displays raw cross-asset telemetry.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
-                {
-                  assetClass: 'Physical Precious Metals (Gold)',
-                  tacticalTilt: 'OVERWEIGHT',
-                  tiltColor: 'emerald' as const,
-                  historicalReturnQuad: '+16.8%',
-                  sharpeRatioQuad: 1.18,
-                  recommendedVehicle: 'Physical Bullion / COMEX GC / GLD',
-                },
-                {
-                  assetClass: 'Energy & Physical Commodities',
-                  tacticalTilt: 'OVERWEIGHT',
-                  tiltColor: 'emerald' as const,
-                  historicalReturnQuad: '+12.4%',
-                  sharpeRatioQuad: 0.85,
-                  recommendedVehicle: 'Brent/WTI Futures / XLE / Commodity Index',
-                },
-                {
-                  assetClass: 'Short-Duration Fixed Income (<2Y)',
-                  tacticalTilt: 'OVERWEIGHT',
-                  tiltColor: 'emerald' as const,
-                  historicalReturnQuad: '+5.1%',
-                  sharpeRatioQuad: 1.42,
-                  recommendedVehicle: 'T-Bills / SHY / Short Repo',
-                },
-                {
-                  assetClass: 'Broad Equities (Beta)',
-                  tacticalTilt: 'UNDERWEIGHT',
-                  tiltColor: 'rose' as const,
-                  historicalReturnQuad: '-4.2%',
-                  sharpeRatioQuad: -0.22,
-                  recommendedVehicle: 'Hedge SPX / Rotate to Defensive Value',
-                },
-                {
-                  assetClass: 'Long-Duration Sovereign Bonds (10Y+)',
-                  tacticalTilt: 'NEUTRAL',
-                  tiltColor: 'cyan' as const,
-                  historicalReturnQuad: '+1.8%',
-                  sharpeRatioQuad: 0.24,
-                  recommendedVehicle: '2s10s Steepeners / Curve Spreads',
-                },
-              ].map((alloc) => (
-                <div
-                  key={alloc.assetClass}
-                  className="bg-slate-950/40 border border-slate-800/60 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 hover:bg-slate-900/30 transition-colors"
-                >
-                  <div>
-                    <div className="font-mono text-sm font-bold text-slate-100">{alloc.assetClass}</div>
-                    <div className="text-[11px] font-mono text-slate-400 mt-0.5">
-                      Recommended Vehicle: <span className="text-slate-300">{alloc.recommendedVehicle}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-end">
-                    <div className="text-right font-mono">
-                      <div className="text-xs text-slate-400">Quad III Return</div>
-                      <div className="text-sm font-bold text-emerald-400">{alloc.historicalReturnQuad}</div>
-                    </div>
-                    <div className="text-right font-mono">
-                      <div className="text-xs text-slate-400">Sharpe Ratio</div>
-                      <div className="text-sm font-semibold text-cyan-300">{alloc.sharpeRatioQuad.toFixed(2)}</div>
-                    </div>
-                    <span
-                      className={`inline-flex items-center px-3 py-1 text-xs font-mono font-bold uppercase tracking-wider ${
-                        alloc.tiltColor === 'emerald'
-                          ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/80'
-                          : alloc.tiltColor === 'rose'
-                          ? 'bg-rose-950/80 text-rose-300 border border-rose-600/80'
-                          : 'bg-cyan-950/50 text-cyan-300 border border-cyan-800/50'
-                      }`}
-                    >
-                      {alloc.tacticalTilt === 'OVERWEIGHT' ? '▲ OVERWEIGHT' : alloc.tacticalTilt === 'UNDERWEIGHT' ? '▼ UNDERWEIGHT' : '● NEUTRAL'}
-                    </span>
-                  </div>
+                ['Required Input', 'Growth impulse, inflation impulse, and market stress factors'],
+                ['Database Contract', 'Derived metric observations or a dedicated regime probability table'],
+                ['Display Rule', 'Show probabilities only when the producer has fresh source-backed data'],
+                ['Allocator Rule', 'Show tilts only when historical return samples are stored with provenance'],
+              ].map(([label, value]) => (
+                <div key={label} className="bg-slate-950/40 border border-slate-800/60 p-4">
+                  <div className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">{label}</div>
+                  <div className="text-xs font-mono text-slate-300 mt-1">{value}</div>
                 </div>
               ))}
             </div>
@@ -225,7 +156,7 @@ export const CrossAssetRadarCard: React.FC = () => {
         <div className="p-4 bg-slate-950/80 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] font-mono text-slate-400">
           <div className="flex items-center space-x-2">
             <span className="text-slate-400">NORMALIZATION:</span>
-            <span>Historical percentile calculated over 52-week rolling window of observed market closes.</span>
+            <span>Percentiles use the latest 260 stored market closes when enough observations exist.</span>
           </div>
           <DataProvenanceBadge
             source="OpenBB & Primary Market Feeds"

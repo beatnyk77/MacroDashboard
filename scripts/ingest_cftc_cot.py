@@ -25,8 +25,14 @@ from typing import Any, Dict, List, Optional, Tuple
 
 # ── CFTC Report Sources & Contract Matchers ────────────────────────────────────
 
-CFTC_FINANCIAL_FUTURES_URL = "https://www.cftc.gov/files/dea/history/fin_fut_txt_2026.zip"
-CFTC_COMMODITY_FUTURES_URL = "https://www.cftc.gov/files/dea/history/fut_disagg_txt_2026.zip"
+CFTC_FINANCIAL_FUTURES_URL_TEMPLATES = [
+    "https://www.cftc.gov/files/dea/history/fut_fin_txt_{year}.zip",
+    "https://www.cftc.gov/files/dea/history/fin_fut_txt_{year}.zip",
+]
+CFTC_COMMODITY_FUTURES_URL_TEMPLATES = [
+    "https://www.cftc.gov/files/dea/history/fut_disagg_txt_{year}.zip",
+    "https://www.cftc.gov/files/dea/history/fut_disagg_txt_hist_{year}.zip",
+]
 CFTC_SOURCE_URL = "https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm"
 
 CONTRACT_TARGETS = [
@@ -100,6 +106,48 @@ def download_cftc_zip_csv(url: str) -> Optional[List[Dict[str, str]]]:
         print(f"Warning: Failed downloading/parsing {url}: {e}", file=sys.stderr)
         return None
 
+def cftc_archive_years(year_count: int) -> List[int]:
+    current_year = datetime.now(timezone.utc).year
+    safe_count = max(1, year_count)
+    return list(range(current_year - safe_count + 1, current_year + 1))
+
+def download_cftc_archives(url_templates: List[str], years: List[int]) -> List[Dict[str, str]]:
+    rows: List[Dict[str, str]] = []
+    for year in years:
+        year_rows: List[Dict[str, str]] = []
+        for url_template in url_templates:
+            year_rows = download_cftc_zip_csv(url_template.format(year=year)) or []
+            if year_rows:
+                break
+        rows.extend(year_rows)
+    return rows
+
+def parse_number(row: Dict[str, str], *fields: str) -> float:
+    for field in fields:
+        raw = row.get(field)
+        if raw is None:
+            continue
+        value = raw.strip().replace(",", "")
+        if not value:
+            continue
+        try:
+            return float(value)
+        except ValueError:
+            continue
+    return 0.0
+
+def row_contract_code(row: Dict[str, str]) -> str:
+    for field in (
+        "CFTC_Contract_Market_Code",
+        "CFTC Contract Market Code",
+        "CFTC_Market_Code",
+        "CFTC_Mkt_Code",
+    ):
+        code = row.get(field)
+        if code:
+            return code.strip().upper()
+    return ""
+
 def parse_financial_record(row: Dict[str, str]) -> Optional[Tuple[str, str, float]]:
     """
     Parse Financial Futures format (Traders in Financial Futures).
@@ -110,8 +158,8 @@ def parse_financial_record(row: Dict[str, str]) -> Optional[Tuple[str, str, floa
     if not date_str and "As_of_Date_in_Form_YYYY-MM-DD" in row:
         date_str = row["As_of_Date_in_Form_YYYY-MM-DD"].strip()
     
-    lev_long = float(row.get("Lev_Money_Positions_Long_All", 0) or row.get("NonComm_Positions_Long_All", 0) or 0)
-    lev_short = float(row.get("Lev_Money_Positions_Short_All", 0) or row.get("NonComm_Positions_Short_All", 0) or 0)
+    lev_long = parse_number(row, "Lev_Money_Positions_Long_All", "NonComm_Positions_Long_All")
+    lev_short = parse_number(row, "Lev_Money_Positions_Short_All", "NonComm_Positions_Short_All")
     net_spec = lev_long - lev_short
     
     return market, date_str, net_spec
@@ -126,8 +174,8 @@ def parse_disaggregated_record(row: Dict[str, str]) -> Optional[Tuple[str, str, 
     if not date_str and "As_of_Date_in_Form_YYYY-MM-DD" in row:
         date_str = row["As_of_Date_in_Form_YYYY-MM-DD"].strip()
     
-    m_long = float(row.get("M_Money_Positions_Long_All", 0) or row.get("NonComm_Positions_Long_All", 0) or 0)
-    m_short = float(row.get("M_Money_Positions_Short_All", 0) or row.get("NonComm_Positions_Short_All", 0) or 0)
+    m_long = parse_number(row, "M_Money_Positions_Long_All", "NonComm_Positions_Long_All")
+    m_short = parse_number(row, "M_Money_Positions_Short_All", "NonComm_Positions_Short_All")
     net_spec = m_long - m_short
     
     return market, date_str, net_spec
@@ -165,26 +213,88 @@ def upsert_to_supabase(
             
     return total_upserted
 
+def sql_literal(value: Any) -> str:
+    if value is None:
+        return "NULL"
+    if isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
+    if isinstance(value, (int, float)):
+        return str(value)
+    return "'" + str(value).replace("'", "''") + "'"
+
+def write_observations_sql(rows: List[Dict[str, Any]], output_path: str) -> None:
+    columns = [
+        "metric_id",
+        "as_of_date",
+        "value",
+        "last_updated_at",
+        "source_ref",
+        "is_provisional",
+        "provenance",
+        "metadata",
+    ]
+    values = []
+    for row in rows:
+        values.append(
+            "("
+            + ", ".join(
+                [
+                    sql_literal(row["metric_id"]),
+                    sql_literal(row["as_of_date"]),
+                    sql_literal(row["value"]),
+                    sql_literal(row["last_updated_at"]),
+                    sql_literal(row["source_ref"]),
+                    sql_literal(row["is_provisional"]),
+                    sql_literal(row["provenance"]),
+                    sql_literal(json.dumps(row["metadata"], separators=(",", ":"))) + "::jsonb",
+                ]
+            )
+            + ")"
+        )
+
+    statement = f"""
+INSERT INTO public.metric_observations ({", ".join(columns)})
+VALUES
+{",\n".join(values)}
+ON CONFLICT (metric_id, as_of_date) DO UPDATE SET
+  value = EXCLUDED.value,
+  last_updated_at = EXCLUDED.last_updated_at,
+  source_ref = EXCLUDED.source_ref,
+  is_provisional = EXCLUDED.is_provisional,
+  provenance = EXCLUDED.provenance,
+  metadata = EXCLUDED.metadata;
+"""
+
+    with open(output_path, "w", encoding="utf-8") as handle:
+        handle.write(statement)
+
 # ── Main Entrypoint ───────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(description="CFTC COT Positioning Ingestion")
     parser.add_argument("--dry-run", action="store_true", help="Print summary without writing to database")
+    parser.add_argument("--years", type=int, default=3, help="Number of annual CFTC archives to fetch (default: 3)")
+    parser.add_argument("--sql-file", type=str, help="Write an idempotent SQL upsert file instead of using PostgREST")
     args = parser.parse_args()
 
     supabase_url = os.environ.get("SUPABASE_URL") or os.environ.get("VITE_SUPABASE_URL")
     service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    expected_project_ref = os.environ.get("SUPABASE_PROJECT_REF")
 
-    if not args.dry_run:
+    if not args.dry_run and not args.sql_file:
         if not supabase_url or not service_key:
             print("ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for database writes.", file=sys.stderr)
             print("Anon keys are strictly prohibited for ingestion.", file=sys.stderr)
             sys.exit(1)
+        if expected_project_ref and expected_project_ref not in supabase_url:
+            print("ERROR: SUPABASE_URL does not match SUPABASE_PROJECT_REF.", file=sys.stderr)
+            sys.exit(1)
 
-    print("🚀 Fetching official CFTC Commitments of Traders reports...")
+    archive_years = cftc_archive_years(args.years)
+    print(f"Fetching official CFTC Commitments of Traders reports for years: {', '.join(str(y) for y in archive_years)}")
     
-    fin_rows = download_cftc_zip_csv(CFTC_FINANCIAL_FUTURES_URL) or []
-    disagg_rows = download_cftc_zip_csv(CFTC_COMMODITY_FUTURES_URL) or []
+    fin_rows = download_cftc_archives(CFTC_FINANCIAL_FUTURES_URL_TEMPLATES, archive_years)
+    disagg_rows = download_cftc_archives(CFTC_COMMODITY_FUTURES_URL_TEMPLATES, archive_years)
     
     if not fin_rows and not disagg_rows:
         print("ERROR: Could not download or parse CFTC reports from official source.", file=sys.stderr)
@@ -207,12 +317,15 @@ def main():
                 continue
             market, date_str, net_val = parsed
             
-            if any(kw in market.upper() for kw in target["market_name_keywords"]):
+            contract_code = row_contract_code(r)
+            code_matches = contract_code == str(target["cftc_contract_code"]).upper()
+            name_matches = not contract_code and any(kw in market.upper() for kw in target["market_name_keywords"])
+            if code_matches or name_matches:
                 if date_str:
                     extracted_points.append((date_str, net_val))
 
         if not extracted_points:
-            print(f"  ✗ {m_id:<22} -> No matching rows in CFTC report (skipping, zero synthetic fallback)")
+            print(f"  FAIL {m_id:<22} -> no matching rows in official CFTC archives")
             failed_targets.append(m_id)
             continue
 
@@ -221,7 +334,7 @@ def main():
         latest_val = extracted_points[-1][1]
         latest_date = extracted_points[-1][0]
 
-        print(f"  ✓ {m_id:<22} -> {len(extracted_points):>2} weeks | Latest: {latest_val:+,.0f} contracts ({latest_date}) via {tag}")
+        print(f"  OK {m_id:<22} -> {len(extracted_points):>2} weeks | Latest: {latest_val:+,.0f} contracts ({latest_date}) via {tag}")
 
         for date_str, net_val in extracted_points:
             total_observations.append({
@@ -232,20 +345,24 @@ def main():
                 "source_ref": tag,
                 "is_provisional": False,
                 "provenance": "api_live",
-                "metadata": {
-                    "provider": "cftc",
-                    "report_type": rep_type,
-                    "contract_code": target["cftc_contract_code"],
-                    "source_url": CFTC_SOURCE_URL,
+                    "metadata": {
+                        "provider": "cftc",
+                        "report_type": rep_type,
+                        "contract_code": target["cftc_contract_code"],
+                        "archive_years": archive_years,
+                        "source_url": CFTC_SOURCE_URL,
                     "observed_at": date_str,
                     "retrieved_at": now_iso,
                     "fallback": False,
                 },
             })
 
-    print(f"\n📊 Total valid COT observation records: {len(total_observations)}")
+    print(f"\nTotal valid COT observation records: {len(total_observations)}")
 
     if args.dry_run:
+        if not total_observations:
+            print("ERROR: No valid COT observations parsed in dry-run.", file=sys.stderr)
+            sys.exit(1)
         print("[DRY RUN] Finished without writing to database.")
         return
 
@@ -253,9 +370,14 @@ def main():
         print("ERROR: No valid COT observations parsed. Aborting without inserting.", file=sys.stderr)
         sys.exit(1)
 
-    print("💾 Upserting COT observations into Supabase `metric_observations`...")
+    if args.sql_file:
+        write_observations_sql(total_observations, args.sql_file)
+        print(f"Wrote SQL upsert file: {args.sql_file}")
+        return
+
+    print("Upserting COT observations into Supabase `metric_observations`...")
     upserted = upsert_to_supabase(supabase_url, service_key, total_observations)
-    print(f"✅ Successfully upserted {upserted} rows into Supabase Postgres.")
+    print(f"Successfully upserted {upserted} rows into Supabase Postgres.")
 
 
 if __name__ == "__main__":

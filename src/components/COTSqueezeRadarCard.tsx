@@ -33,12 +33,12 @@ export const COTSqueezeRadarCard: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2.5">
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <CardTitle className="font-mono text-base md:text-lg font-bold text-slate-100 uppercase tracking-tight">
+            <CardTitle className="font-mono text-base md:text-lg font-bold text-slate-100 uppercase tracking-tight">
                 CFTC Commitments of Traders (COT) Positioning
               </CardTitle>
             </div>
             <p className="text-xs text-slate-400 font-mono mt-1">
-              Speculator net positioning & 3-year squeeze risk telemetry
+              Speculator net positioning and stored-window squeeze telemetry
             </p>
           </div>
 
@@ -77,13 +77,13 @@ export const COTSqueezeRadarCard: React.FC = () => {
         ) : (
           <div className="divide-y divide-slate-800/50">
             {/* Desktop Table Header */}
-            <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-2.5 bg-slate-950/40 text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-              <div className="col-span-3">Asset & Exchange</div>
-              <div className="col-span-2 text-right">Net Speculator</div>
-              <div className="col-span-2 text-right">1W Delta</div>
-              <div className="col-span-3 text-center">3Y Percentile Rank</div>
-              <div className="col-span-2 text-right">Squeeze Risk</div>
-            </div>
+              <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-2.5 bg-slate-950/40 text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                <div className="col-span-3">Asset & Exchange</div>
+                <div className="col-span-2 text-right">Net Speculator</div>
+                <div className="col-span-2 text-right">1W Delta</div>
+                <div className="col-span-3 text-center">Stored Percentile Rank</div>
+                <div className="col-span-2 text-right">Squeeze Risk</div>
+              </div>
 
             {/* Rows */}
             {filteredItems.map((item) => (
@@ -96,7 +96,7 @@ export const COTSqueezeRadarCard: React.FC = () => {
         <div className="p-4 bg-slate-950/70 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] font-mono text-slate-400">
           <div className="flex items-center space-x-2">
             <span className="text-slate-400">METHODOLOGY:</span>
-            <span>Rolling percentile rank of leveraged money net exposure across stored observations.</span>
+            <span>Signals require at least 52 official weekly observations per contract.</span>
           </div>
           <DataProvenanceBadge
             source="CFTC Financial & Disaggregated Futures"
@@ -130,7 +130,7 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
             {item.asOfDate ? (
               <span className="text-[10px] font-mono text-slate-400">As of {item.asOfDate}</span>
             ) : (
-              <span className="text-[10px] font-mono text-slate-400">Weekly Series</span>
+          <span className="text-[10px] font-mono text-slate-400">Awaiting CFTC ingest</span>
             )}
           </div>
         </div>
@@ -173,7 +173,7 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
         {/* 3Y Percentile Bar */}
         <div className="col-span-3">
           <div className="flex justify-between text-[11px] font-mono mb-1">
-            <span className="text-slate-400">3Y Percentile:</span>
+            <span className="text-slate-400">Percentile:</span>
             <span className="font-bold text-slate-200">
               {item.percentile3y !== null ? `${item.percentile3y.toFixed(1)}%` : '—'}
             </span>
@@ -214,13 +214,13 @@ const SignalPill: React.FC<{ signal: COTAssetPositioning['squeezeSignal'] }> = (
     case 'BULL_SQUEEZE_RISK':
       return (
         <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-rose-950/80 text-rose-300 border border-rose-600/80 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse">
-          ⚡ BULL SQUEEZE RISK
+          BULL SQUEEZE RISK
         </span>
       );
     case 'CROWDED_LONG':
       return (
         <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-950/80 text-amber-300 border border-amber-500/80 shadow-[0_0_10px_rgba(251,191,36,0.25)]">
-          ⚠️ CROWDED LONG
+          CROWDED LONG
         </span>
       );
     case 'MODERATE_LONG':
@@ -243,8 +243,8 @@ const SignalPill: React.FC<{ signal: COTAssetPositioning['squeezeSignal'] }> = (
       );
     default:
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-900 border border-slate-800">
-          ● NEUTRAL
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-950 border border-slate-800">
+          DATA UNAVAILABLE
         </span>
       );
   }

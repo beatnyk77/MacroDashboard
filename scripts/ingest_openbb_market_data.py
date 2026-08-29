@@ -63,8 +63,7 @@ MARKET_BASKET = [
         "name": "US 10-Year Treasury Yield",
         "symbol": "^TNX",
         "unit": "%",
-        # Yahoo Finance ^TNX quotes 10x yield (e.g. 39.60 = 3.96%)
-        "unit_multiplier": 0.1,
+        "unit_multiplier": 1.0,
         "source_url": "https://www.cboe.com/tradable_products/interest_rates/",
     },
     {
@@ -193,7 +192,7 @@ def fetch_with_direct_query(symbol: str, start_date: str) -> Optional[List[Tuple
     except Exception:
         return None
 
-def fetch_canonical_series(symbol: str, start_date: str) -> Tuple[Optional[List[Tuple[str, float]]], str]:
+def fetch_canonical_series(symbol: str, start_date: str) -> Tuple[Optional[List[Tuple[str, float]]], str, bool]:
     """
     Attempts OpenBB -> yfinance -> Direct HTTP on the exact canonical symbol.
     Does NOT substitute ETFs or proxy tickers.
@@ -201,19 +200,19 @@ def fetch_canonical_series(symbol: str, start_date: str) -> Tuple[Optional[List[
     # 1. OpenBB
     points = fetch_with_openbb(symbol, start_date)
     if points:
-        return points, "openbb:yfinance"
+        return points, "openbb:yfinance", False
     
     # 2. yfinance library
     points = fetch_with_yfinance(symbol, start_date)
     if points:
-        return points, "yfinance"
+        return points, "yfinance", True
     
     # 3. Direct HTTP
     points = fetch_with_direct_query(symbol, start_date)
     if points:
-        return points, "direct:yahoo"
+        return points, "direct:yahoo", True
     
-    return None, "failed"
+    return None, "failed", True
 
 # ── Supabase Database Upsert ──────────────────────────────────────────────────
 
@@ -253,22 +252,82 @@ def upsert_to_supabase(
             
     return total_upserted
 
+def sql_literal(value: Any) -> str:
+    if value is None:
+        return "NULL"
+    if isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
+    if isinstance(value, (int, float)):
+        return str(value)
+    return "'" + str(value).replace("'", "''") + "'"
+
+def write_observations_sql(rows: List[Dict[str, Any]], output_path: str) -> None:
+    columns = [
+        "metric_id",
+        "as_of_date",
+        "value",
+        "last_updated_at",
+        "source_ref",
+        "is_provisional",
+        "provenance",
+        "metadata",
+    ]
+    values = []
+    for row in rows:
+        values.append(
+            "("
+            + ", ".join(
+                [
+                    sql_literal(row["metric_id"]),
+                    sql_literal(row["as_of_date"]),
+                    sql_literal(row["value"]),
+                    sql_literal(row["last_updated_at"]),
+                    sql_literal(row["source_ref"]),
+                    sql_literal(row["is_provisional"]),
+                    sql_literal(row["provenance"]),
+                    sql_literal(json.dumps(row["metadata"], separators=(",", ":"))) + "::jsonb",
+                ]
+            )
+            + ")"
+        )
+
+    statement = f"""
+INSERT INTO public.metric_observations ({", ".join(columns)})
+VALUES
+{",\n".join(values)}
+ON CONFLICT (metric_id, as_of_date) DO UPDATE SET
+  value = EXCLUDED.value,
+  last_updated_at = EXCLUDED.last_updated_at,
+  source_ref = EXCLUDED.source_ref,
+  is_provisional = EXCLUDED.is_provisional,
+  provenance = EXCLUDED.provenance,
+  metadata = EXCLUDED.metadata;
+"""
+
+    with open(output_path, "w", encoding="utf-8") as handle:
+        handle.write(statement)
+
 # ── Main Entrypoint ───────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(description="GraphiQuestor Market Data Ingestion via OpenBB")
-    parser.add_argument("--days", type=int, default=60, help="Lookback window in days (default: 60)")
+    parser.add_argument("--days", type=int, default=420, help="Lookback window in days (default: 420)")
     parser.add_argument("--dry-run", action="store_true", help="Fetch data and print summary without writing to database")
     parser.add_argument("--metric", type=str, help="Ingest only a specific metric_id")
+    parser.add_argument("--sql-file", type=str, help="Write an idempotent SQL upsert file instead of using PostgREST")
     args = parser.parse_args()
 
     supabase_url = os.environ.get("SUPABASE_URL") or os.environ.get("VITE_SUPABASE_URL")
     service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    expected_project_ref = os.environ.get("SUPABASE_PROJECT_REF")
 
-    if not args.dry_run:
+    if not args.dry_run and not args.sql_file:
         if not supabase_url or not service_key:
             print("ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for database writes.", file=sys.stderr)
             print("Anon keys are strictly prohibited for ingestion.", file=sys.stderr)
+            sys.exit(1)
+        if expected_project_ref and expected_project_ref not in supabase_url:
+            print("ERROR: SUPABASE_URL does not match SUPABASE_PROJECT_REF.", file=sys.stderr)
             sys.exit(1)
 
     start_date = (datetime.now(timezone.utc) - timedelta(days=args.days)).strftime("%Y-%m-%d")
@@ -292,14 +351,14 @@ def main():
         multiplier = item["unit_multiplier"]
         source_url = item["source_url"]
 
-        points, provider_tag = fetch_canonical_series(sym, start_date)
+        points, provider_tag, used_fallback = fetch_canonical_series(sym, start_date)
         
         if points:
             latest_val = points[-1][1] * multiplier
             latest_date = points[-1][0]
             print(f"  ✓ {m_id:<22} [{sym:<9}] -> {len(points):>3} rows | Latest: {latest_val:,.2f} ({latest_date}) via {provider_tag}")
             
-            source_ref = f"live_api:openbb:{provider_tag}"
+            source_ref = f"live_api:{provider_tag}"
             for date_str, val in points:
                 adjusted_val = round(val * multiplier, 6)
                 total_observations.append({
@@ -315,7 +374,7 @@ def main():
                         "source_url": source_url,
                         "observed_at": date_str,
                         "retrieved_at": now_iso,
-                        "fallback": False,
+                        "fallback": used_fallback,
                     },
                 })
         else:
@@ -335,6 +394,11 @@ def main():
     if not total_observations:
         print("ERROR: No observations collected across all metrics. Aborting.", file=sys.stderr)
         sys.exit(1)
+
+    if args.sql_file:
+        write_observations_sql(total_observations, args.sql_file)
+        print(f"Wrote SQL upsert file: {args.sql_file}")
+        return
 
     print("💾 Upserting rows into Supabase `metric_observations`...")
     upserted = upsert_to_supabase(supabase_url, service_key, total_observations)

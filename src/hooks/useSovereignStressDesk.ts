@@ -31,72 +31,6 @@ export interface SovereignStressDeskData {
   hasData: boolean;
 }
 
-const DEFAULT_HOLDERS: SovereignHolderFlow[] = [
-  {
-    country: 'Japan',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'Tactical FX Defense / Yield Arbitrage',
-    asOfDate: null,
-  },
-  {
-    country: 'China',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'Strategic De-Dollarization / Gold Substitution',
-    asOfDate: null,
-  },
-  {
-    country: 'United Kingdom',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'Offshore Eurodollar Custody Hub',
-    asOfDate: null,
-  },
-  {
-    country: 'Cayman Islands',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'Hedge Fund Treasury Cash-Futures Basis',
-    asOfDate: null,
-  },
-  {
-    country: 'Luxembourg',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'European UCITS Institutional Custody',
-    asOfDate: null,
-  },
-  {
-    country: 'Belgium',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'Euroclear Clearinghouse Custody',
-    asOfDate: null,
-  },
-  {
-    country: 'India',
-    totalHeldBn: null,
-    momChangePct: null,
-    yoyChangePct: null,
-    pctOfTotalForeign: null,
-    strategicMotivation: 'FX Reserve Diversification',
-    asOfDate: null,
-  },
-];
-
 const STRATEGIC_INTENTS: Record<string, string> = {
   China: 'Strategic De-Dollarization / Gold Substitution',
   Japan: 'Tactical FX Defense / Yield Arbitrage',
@@ -122,7 +56,7 @@ export function useSovereignStressDesk() {
             japanYoYPct: null,
             asOfDate: null,
           },
-          ticHolders: DEFAULT_HOLDERS,
+          ticHolders: [],
           fundingStress: {
             swapLinesOutstandingMn: null,
             swapLinesDate: null,
@@ -208,7 +142,7 @@ export function useSovereignStressDesk() {
           japanYoYPct,
           asOfDate: latestAsOfDate,
         },
-        ticHolders: ticHolders.length > 0 ? ticHolders : DEFAULT_HOLDERS,
+        ticHolders,
         fundingStress: {
           swapLinesOutstandingMn: swapRow ? Number(swapRow.value) : null,
           swapLinesDate: swapRow ? swapRow.as_of_date : null,

@@ -20,6 +20,7 @@ export interface COTAssetPositioning {
   squeezeSignal: SqueezeSignal | null;
   asOfDate: string | null;
   sourceRef: string | null;
+  observationCount: number;
   isAvailable: boolean;
 }
 
@@ -77,78 +78,64 @@ export function computePercentile(val: number, history: number[]): number {
   return Math.round((countBelowOrEqual / history.length) * 1000) / 10;
 }
 
+const MIN_SIGNAL_OBSERVATIONS = 52;
+
+const emptyCOTItem = (target: typeof COT_TARGETS[number]): COTAssetPositioning => ({
+  ...target,
+  netSpecContracts: null,
+  delta1wContracts: null,
+  percentile3y: null,
+  squeezeSignal: null,
+  asOfDate: null,
+  sourceRef: null,
+  observationCount: 0,
+  isAvailable: false,
+});
+
 export function useCOTPositioning() {
   return useQuery<COTPositioningData>({
     queryKey: ['cftc-cot-positioning'],
     queryFn: async () => {
       if (!supabase) {
         return {
-          items: COT_TARGETS.map((t) => ({
-            ...t,
-            netSpecContracts: null,
-            delta1wContracts: null,
-            percentile3y: null,
-            squeezeSignal: null,
-            asOfDate: null,
-            sourceRef: null,
-            isAvailable: false,
-          })),
+          items: COT_TARGETS.map(emptyCOTItem),
           lastUpdated: null,
           hasData: false,
         };
       }
 
-      const metricIds = COT_TARGETS.map((t) => t.metricId);
+      const responses = await Promise.all(
+        COT_TARGETS.map(async (target) => {
+          const { data, error } = await supabase
+            .from('metric_observations')
+            .select('metric_id, as_of_date, value, source_ref, last_updated_at')
+            .eq('metric_id', target.metricId)
+            .order('as_of_date', { ascending: false })
+            .limit(180);
 
-      const { data, error } = await supabase
-        .from('metric_observations')
-        .select('metric_id, as_of_date, value, source_ref, last_updated_at')
-        .in('metric_id', metricIds)
-        .order('as_of_date', { ascending: false });
+          return { target, data: data ?? [], error };
+        })
+      );
 
-      if (error || !data || data.length === 0) {
+      if (responses.every((res) => res.error || res.data.length === 0)) {
         return {
-          items: COT_TARGETS.map((t) => ({
-            ...t,
-            netSpecContracts: null,
-            delta1wContracts: null,
-            percentile3y: null,
-            squeezeSignal: null,
-            asOfDate: null,
-            sourceRef: null,
-            isAvailable: false,
-          })),
+          items: COT_TARGETS.map(emptyCOTItem),
           lastUpdated: null,
           hasData: false,
         };
       }
 
-      // Group observations by metric_id
-      const byMetric: Record<string, typeof data> = {};
-      for (const row of data) {
-        if (!byMetric[row.metric_id]) byMetric[row.metric_id] = [];
-        byMetric[row.metric_id].push(row);
-      }
-
-      const items: COTAssetPositioning[] = COT_TARGETS.map((target) => {
-        const rows = byMetric[target.metricId];
-        if (!rows || rows.length === 0) {
-          return {
-            ...target,
-            netSpecContracts: null,
-            delta1wContracts: null,
-            percentile3y: null,
-            squeezeSignal: null,
-            asOfDate: null,
-            sourceRef: null,
-            isAvailable: false,
-          };
+      const items: COTAssetPositioning[] = responses.map(({ target, data: rows, error }) => {
+        if (error || rows.length === 0) {
+          return emptyCOTItem(target);
         }
 
         const latest = rows[0];
         const previous = rows.length > 1 ? rows[1] : null;
         const allValues = rows.map((r) => Number(r.value));
-        const percentile = computePercentile(Number(latest.value), allValues);
+        const percentile = rows.length >= MIN_SIGNAL_OBSERVATIONS
+          ? computePercentile(Number(latest.value), allValues)
+          : null;
         const delta = previous !== null ? Number(latest.value) - Number(previous.value) : null;
 
         return {
@@ -159,15 +146,21 @@ export function useCOTPositioning() {
           squeezeSignal: calculateSqueezeSignal(percentile),
           asOfDate: latest.as_of_date,
           sourceRef: latest.source_ref,
+          observationCount: rows.length,
           isAvailable: true,
         };
       });
 
       const hasAnyData = items.some((i) => i.isAvailable);
+      const updatedTimestamps = responses
+        .flatMap((res) => res.data.map((row) => row.last_updated_at))
+        .filter((value): value is string => Boolean(value))
+        .sort();
+      const latestUpdated = updatedTimestamps.length > 0 ? updatedTimestamps[updatedTimestamps.length - 1] : null;
 
       return {
         items,
-        lastUpdated: data[0]?.last_updated_at || null,
+        lastUpdated: latestUpdated,
         hasData: hasAnyData,
       };
     },

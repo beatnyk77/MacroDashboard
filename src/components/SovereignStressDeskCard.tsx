@@ -160,9 +160,15 @@ export const SovereignStressDeskCard: React.FC = () => {
             </div>
 
             {/* Rows */}
-            {ticHolders.map((row) => (
-              <TICRow key={row.country} row={row} />
-            ))}
+            {ticHolders.length > 0 ? (
+              ticHolders.map((row) => (
+                <TICRow key={row.country} row={row} />
+              ))
+            ) : (
+              <div className="p-8 text-center text-xs font-mono text-slate-500">
+                TIC holder matrix unavailable. Awaiting source-backed Treasury International Capital observations.
+              </div>
+            )}
           </div>
         ) : (
           <div className="p-6 space-y-4">
