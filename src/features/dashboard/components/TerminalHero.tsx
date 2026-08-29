@@ -6,6 +6,7 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { GlassDock } from '@/components/ui/liquid-glass';
 
 const pillars = [
     {
@@ -100,6 +101,18 @@ export const TerminalHero: React.FC = () => {
                         Official Sources · Zero Mock Data
                     </div>
                 </div>
+            </div>
+
+            <div className="relative mt-6 border-t border-white/[0.08] pt-5">
+                <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">Quick views</div>
+                <GlassDock
+                    items={[
+                        { label: 'Liquidity', detail: 'Net liquidity proxy', href: '#net-liquidity' },
+                        { label: 'Sovereign risk', detail: 'Stress matrix', href: '#sovereign-risk' },
+                        { label: 'Energy', detail: 'Security telemetry', href: '#energy-markets' },
+                    ]}
+                    className="max-w-3xl"
+                />
             </div>
 
             <div className="relative mt-8 grid grid-cols-1 gap-4 border-t border-white/5 pt-6 sm:grid-cols-3">
