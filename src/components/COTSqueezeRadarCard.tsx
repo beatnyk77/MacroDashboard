@@ -74,13 +74,6 @@ export const COTSqueezeRadarCard: React.FC = () => {
           <div className="p-8 text-center text-xs font-mono text-slate-500 animate-pulse">
             LOADING COT TELEMETRY MATRIX...
           </div>
-        ) : !data?.hasData ? (
-          <div className="p-12 text-center text-xs font-mono text-slate-500">
-            <div className="text-slate-400 uppercase font-bold mb-1">COT Telemetry Awaiting Ingestion</div>
-            <p className="text-slate-600 max-w-md mx-auto">
-              Weekly CFTC Commitments of Traders reports are scheduled for ingestion on Friday post-release (21:30 UTC).
-            </p>
-          </div>
         ) : (
           <div className="divide-y divide-slate-800/50">
             {/* Desktop Table Header */}
@@ -121,23 +114,7 @@ interface COTRowItemProps {
 }
 
 const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
-  if (!item.isAvailable || item.netSpecContracts === null) {
-    return (
-      <div className="px-5 py-4 hover:bg-slate-900/40 transition-colors opacity-60">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
-          <div className="col-span-3">
-            <span className="font-mono text-sm font-semibold text-slate-300">{item.assetName}</span>
-            <div className="text-[10px] font-mono text-slate-500 mt-0.5">{item.symbol}</div>
-          </div>
-          <div className="col-span-9 text-right font-mono text-xs text-slate-500 italic">
-            Observation pending next weekly CFTC report
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const isNetLong = item.netSpecContracts >= 0;
+  const isNetLong = item.netSpecContracts !== null && item.netSpecContracts >= 0;
   const isDeltaPositive = item.delta1wContracts !== null && item.delta1wContracts >= 0;
 
   return (
@@ -150,8 +127,10 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
             <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.2 border border-cyan-900/40">
               {item.symbol}
             </span>
-            {item.asOfDate && (
+            {item.asOfDate ? (
               <span className="text-[10px] font-mono text-slate-400">As of {item.asOfDate}</span>
+            ) : (
+              <span className="text-[10px] font-mono text-slate-400">Weekly Series</span>
             )}
           </div>
         </div>
@@ -159,15 +138,19 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
         {/* Net Speculator */}
         <div className="col-span-2 lg:text-right flex lg:block justify-between items-center">
           <span className="text-[11px] font-mono text-slate-400 lg:hidden">Net Spec:</span>
-          <span
-            className={`font-mono text-sm font-bold ${
-              isNetLong ? 'text-emerald-400' : 'text-rose-400'
-            }`}
-          >
-            {isNetLong ? '+' : ''}
-            {item.netSpecContracts.toLocaleString()}
-            <span className="text-[10px] font-normal text-slate-400 ml-1">ctr</span>
-          </span>
+          {item.netSpecContracts !== null ? (
+            <span
+              className={`font-mono text-sm font-bold ${
+                isNetLong ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              {isNetLong ? '+' : ''}
+              {item.netSpecContracts.toLocaleString()}
+              <span className="text-[10px] font-normal text-slate-400 ml-1">ctr</span>
+            </span>
+          ) : (
+            <span className="font-mono text-xs text-slate-400">Awaiting Ingest</span>
+          )}
         </div>
 
         {/* 1W Delta */}
@@ -183,7 +166,7 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
               {item.delta1wContracts.toLocaleString()}
             </span>
           ) : (
-            <span className="font-mono text-xs text-slate-500">—</span>
+            <span className="font-mono text-xs text-slate-400">—</span>
           )}
         </div>
 
@@ -260,8 +243,8 @@ const SignalPill: React.FC<{ signal: COTAssetPositioning['squeezeSignal'] }> = (
       );
     default:
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-950 border border-slate-850">
-          PENDING DATA
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-900 border border-slate-800">
+          ● NEUTRAL
         </span>
       );
   }

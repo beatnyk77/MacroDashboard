@@ -4,12 +4,12 @@ import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface SovereignHolderFlow {
   country: string;
-  totalHeldBn: number;
+  totalHeldBn: number | null;
   momChangePct: number | null;
   yoyChangePct: number | null;
   pctOfTotalForeign: number | null;
   strategicMotivation: string;
-  asOfDate: string;
+  asOfDate: string | null;
 }
 
 export interface SovereignStressDeskData {
@@ -30,6 +30,72 @@ export interface SovereignStressDeskData {
   lastUpdated: string | null;
   hasData: boolean;
 }
+
+const DEFAULT_HOLDERS: SovereignHolderFlow[] = [
+  {
+    country: 'Japan',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'Tactical FX Defense / Yield Arbitrage',
+    asOfDate: null,
+  },
+  {
+    country: 'China',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'Strategic De-Dollarization / Gold Substitution',
+    asOfDate: null,
+  },
+  {
+    country: 'United Kingdom',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'Offshore Eurodollar Custody Hub',
+    asOfDate: null,
+  },
+  {
+    country: 'Cayman Islands',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'Hedge Fund Treasury Cash-Futures Basis',
+    asOfDate: null,
+  },
+  {
+    country: 'Luxembourg',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'European UCITS Institutional Custody',
+    asOfDate: null,
+  },
+  {
+    country: 'Belgium',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'Euroclear Clearinghouse Custody',
+    asOfDate: null,
+  },
+  {
+    country: 'India',
+    totalHeldBn: null,
+    momChangePct: null,
+    yoyChangePct: null,
+    pctOfTotalForeign: null,
+    strategicMotivation: 'FX Reserve Diversification',
+    asOfDate: null,
+  },
+];
 
 const STRATEGIC_INTENTS: Record<string, string> = {
   China: 'Strategic De-Dollarization / Gold Substitution',
@@ -56,7 +122,7 @@ export function useSovereignStressDesk() {
             japanYoYPct: null,
             asOfDate: null,
           },
-          ticHolders: [],
+          ticHolders: DEFAULT_HOLDERS,
           fundingStress: {
             swapLinesOutstandingMn: null,
             swapLinesDate: null,
@@ -92,11 +158,9 @@ export function useSovereignStressDesk() {
       const ticHolders: SovereignHolderFlow[] = [];
 
       if (hasTic) {
-        // Group latest records by country
         latestAsOfDate = ticData[0].as_of_date;
         const currentPeriodRows = ticData.filter((r) => r.as_of_date === latestAsOfDate);
 
-        // Sum total foreign holdings for the latest period
         totalForeignHoldingsBn = currentPeriodRows.reduce(
           (acc, r) => acc + (Number(r.holdings_usd_bn) || 0),
           0
@@ -129,9 +193,7 @@ export function useSovereignStressDesk() {
           });
         }
 
-
-        // Sort descending by holdings
-        ticHolders.sort((a, b) => b.totalHeldBn - a.totalHeldBn);
+        ticHolders.sort((a, b) => (b.totalHeldBn || 0) - (a.totalHeldBn || 0));
       }
 
       const swapRow = swapData && swapData.length > 0 ? swapData[0] : null;
@@ -146,7 +208,7 @@ export function useSovereignStressDesk() {
           japanYoYPct,
           asOfDate: latestAsOfDate,
         },
-        ticHolders,
+        ticHolders: ticHolders.length > 0 ? ticHolders : DEFAULT_HOLDERS,
         fundingStress: {
           swapLinesOutstandingMn: swapRow ? Number(swapRow.value) : null,
           swapLinesDate: swapRow ? swapRow.as_of_date : null,

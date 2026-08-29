@@ -16,7 +16,7 @@ export const SovereignStressDeskCard: React.FC = () => {
   const { data, isLoading } = useSovereignStressDesk();
   const [activeTab, setActiveTab] = useState<DeskTab>('TIC Foreign Treasury Flows Matrix');
 
-  const { gauges, ticHolders, fundingStress, lastUpdated, hasData } = data || {
+  const { gauges, ticHolders, fundingStress, lastUpdated } = data || {
     gauges: {
       totalForeignHoldingsBn: null,
       totalForeignYoYPct: null,
@@ -148,13 +148,6 @@ export const SovereignStressDeskCard: React.FC = () => {
           <div className="p-8 text-center text-xs font-mono text-slate-500 animate-pulse">
             LOADING SOVEREIGN CAPITAL FLOWS DESK...
           </div>
-        ) : !hasData ? (
-          <div className="p-12 text-center text-xs font-mono text-slate-500">
-            <div className="text-slate-400 uppercase font-bold mb-1">TIC Data Awaiting Ingestion</div>
-            <p className="text-slate-600 max-w-md mx-auto">
-              Monthly US Treasury International Capital records will populate upon scheduled ingestion.
-            </p>
-          </div>
         ) : activeTab === 'TIC Foreign Treasury Flows Matrix' ? (
           <div className="divide-y divide-slate-800/50">
             {/* Header */}
@@ -236,9 +229,13 @@ const TICRow: React.FC<{ row: SovereignHolderFlow }> = ({ row }) => {
         {/* Total Held */}
         <div className="col-span-2 lg:text-right flex lg:block justify-between items-center font-mono">
           <span className="text-[11px] text-slate-400 lg:hidden">Held:</span>
-          <span className="text-sm font-bold text-slate-100">
-            ${row.totalHeldBn.toFixed(1)}B
-          </span>
+          {row.totalHeldBn !== null ? (
+            <span className="text-sm font-bold text-slate-100">
+              ${row.totalHeldBn.toFixed(1)}B
+            </span>
+          ) : (
+            <span className="text-xs font-mono text-slate-500 italic">Awaiting Ingest</span>
+          )}
         </div>
 
         {/* MoM Change */}
