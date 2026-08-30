@@ -3304,6 +3304,162 @@ export type Database = {
         }
         Relationships: []
       }
+      india_institutional_observation_revisions: {
+        Row: {
+          as_of_date: string
+          id: number
+          metadata: Json
+          metric_id: string
+          source_hash: string
+          source_ref: string | null
+          superseded_at: string
+          value: number | null
+        }
+        Insert: {
+          as_of_date: string
+          id?: number
+          metadata?: Json
+          metric_id: string
+          source_hash: string
+          source_ref?: string | null
+          superseded_at?: string
+          value?: number | null
+        }
+        Update: {
+          as_of_date?: string
+          id?: number
+          metadata?: Json
+          metric_id?: string
+          source_hash?: string
+          source_ref?: string | null
+          superseded_at?: string
+          value?: number | null
+        }
+        Relationships: []
+      }
+      india_institutional_positioning_snapshots: {
+        Row: {
+          as_of_date: string
+          calculation_version: string
+          components: Json
+          confidence: number
+          coverage_mask: Json
+          created_at: string
+          input_dates: Json
+          regime: string
+          score: number | null
+        }
+        Insert: {
+          as_of_date: string
+          calculation_version: string
+          components?: Json
+          confidence: number
+          coverage_mask?: Json
+          created_at?: string
+          input_dates?: Json
+          regime: string
+          score?: number | null
+        }
+        Update: {
+          as_of_date?: string
+          calculation_version?: string
+          components?: Json
+          confidence?: number
+          coverage_mask?: Json
+          created_at?: string
+          input_dates?: Json
+          regime?: string
+          score?: number | null
+        }
+        Relationships: []
+      }
+      india_institutional_sector_observations: {
+        Row: {
+          equity_aum_inr_crore: number | null
+          equity_flow_inr_crore: number | null
+          ingested_at: string
+          is_provisional: boolean
+          native_frequency: string
+          parser_version: string
+          provenance: string
+          report_period_end: string
+          sector_key: string
+          source_hash: string
+          source_name: string
+          source_sector_label: string
+          source_url: string
+          total_aum_inr_crore: number | null
+          total_flow_inr_crore: number | null
+        }
+        Insert: {
+          equity_aum_inr_crore?: number | null
+          equity_flow_inr_crore?: number | null
+          ingested_at?: string
+          is_provisional?: boolean
+          native_frequency?: string
+          parser_version: string
+          provenance: string
+          report_period_end: string
+          sector_key: string
+          source_hash: string
+          source_name?: string
+          source_sector_label: string
+          source_url: string
+          total_aum_inr_crore?: number | null
+          total_flow_inr_crore?: number | null
+        }
+        Update: {
+          equity_aum_inr_crore?: number | null
+          equity_flow_inr_crore?: number | null
+          ingested_at?: string
+          is_provisional?: boolean
+          native_frequency?: string
+          parser_version?: string
+          provenance?: string
+          report_period_end?: string
+          sector_key?: string
+          source_hash?: string
+          source_name?: string
+          source_sector_label?: string
+          source_url?: string
+          total_aum_inr_crore?: number | null
+          total_flow_inr_crore?: number | null
+        }
+        Relationships: []
+      }
+      india_institutional_sector_revisions: {
+        Row: {
+          equity_aum_inr_crore: number | null
+          equity_flow_inr_crore: number | null
+          id: number
+          report_period_end: string
+          sector_key: string
+          source_hash: string
+          source_url: string | null
+          superseded_at: string
+        }
+        Insert: {
+          equity_aum_inr_crore?: number | null
+          equity_flow_inr_crore?: number | null
+          id?: number
+          report_period_end: string
+          sector_key: string
+          source_hash: string
+          source_url?: string | null
+          superseded_at?: string
+        }
+        Update: {
+          equity_aum_inr_crore?: number | null
+          equity_flow_inr_crore?: number | null
+          id?: number
+          report_period_end?: string
+          sector_key?: string
+          source_hash?: string
+          source_url?: string | null
+          superseded_at?: string
+        }
+        Relationships: []
+      }
       india_liquidity_stress: {
         Row: {
           call_rate: number | null
@@ -3370,90 +3526,6 @@ export type Database = {
           metrics_data?: Json
           snapshot_date?: string
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      india_institutional_sector_observations: {
-        Row: {
-          equity_aum_inr_crore: number | null
-          equity_flow_inr_crore: number | null
-          ingested_at: string
-          is_provisional: boolean
-          parser_version: string
-          provenance: string
-          report_period_end: string
-          sector_key: string
-          source_hash: string
-          source_sector_label: string
-          source_url: string
-          total_aum_inr_crore: number | null
-          total_flow_inr_crore: number | null
-        }
-        Insert: {
-          equity_aum_inr_crore?: number | null
-          equity_flow_inr_crore?: number | null
-          ingested_at?: string
-          is_provisional?: boolean
-          parser_version: string
-          provenance: string
-          report_period_end: string
-          sector_key: string
-          source_hash: string
-          source_sector_label: string
-          source_url: string
-          total_aum_inr_crore?: number | null
-          total_flow_inr_crore?: number | null
-        }
-        Update: {
-          equity_aum_inr_crore?: number | null
-          equity_flow_inr_crore?: number | null
-          ingested_at?: string
-          is_provisional?: boolean
-          parser_version?: string
-          provenance?: string
-          report_period_end?: string
-          sector_key?: string
-          source_hash?: string
-          source_sector_label?: string
-          source_url?: string
-          total_aum_inr_crore?: number | null
-          total_flow_inr_crore?: number | null
-        }
-        Relationships: []
-      }
-      india_institutional_positioning_snapshots: {
-        Row: {
-          as_of_date: string
-          score: number | null
-          regime: string
-          confidence: number
-          coverage_mask: Json
-          components: Json
-          input_dates: Json
-          calculation_version: string
-          created_at: string
-        }
-        Insert: {
-          as_of_date: string
-          score?: number | null
-          regime: string
-          confidence: number
-          coverage_mask?: Json
-          components?: Json
-          input_dates?: Json
-          calculation_version: string
-          created_at?: string
-        }
-        Update: {
-          as_of_date?: string
-          score?: number | null
-          regime?: string
-          confidence?: number
-          coverage_mask?: Json
-          components?: Json
-          input_dates?: Json
-          calculation_version?: string
-          created_at?: string
         }
         Relationships: []
       }
@@ -4259,6 +4331,13 @@ export type Database = {
             referencedRelation: "metric_publication_snapshots"
             referencedColumns: ["snapshot_id"]
           },
+          {
+            foreignKeyName: "metric_publication_snapshots_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "vw_metric_publication_snapshots_public"
+            referencedColumns: ["snapshot_id"]
+          },
         ]
       }
       metrics: {
@@ -4346,6 +4425,7 @@ export type Database = {
           metrics_snapshot: Json | null
           notebook_payload: Json | null
           plain_text: string
+          snapshot_ids: Json | null
           subject_line: string
           year_month: string
         }
@@ -4356,6 +4436,7 @@ export type Database = {
           metrics_snapshot?: Json | null
           notebook_payload?: Json | null
           plain_text: string
+          snapshot_ids?: Json | null
           subject_line: string
           year_month: string
         }
@@ -4366,6 +4447,7 @@ export type Database = {
           metrics_snapshot?: Json | null
           notebook_payload?: Json | null
           plain_text?: string
+          snapshot_ids?: Json | null
           subject_line?: string
           year_month?: string
         }
@@ -4842,6 +4924,181 @@ export type Database = {
           timestamp?: string | null
         }
         Relationships: []
+      }
+      sec_corporate_issuers: {
+        Row: {
+          cik: string
+          created_at: string
+          exchange: string | null
+          id: string
+          is_active: boolean
+          issuer_name: string
+          relevance_rationale: string | null
+          relevance_tags: string[]
+          sector: string | null
+          sic: string | null
+          ticker: string | null
+          updated_at: string
+        }
+        Insert: {
+          cik: string
+          created_at?: string
+          exchange?: string | null
+          id?: string
+          is_active?: boolean
+          issuer_name: string
+          relevance_rationale?: string | null
+          relevance_tags?: string[]
+          sector?: string | null
+          sic?: string | null
+          ticker?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cik?: string
+          created_at?: string
+          exchange?: string | null
+          id?: string
+          is_active?: boolean
+          issuer_name?: string
+          relevance_rationale?: string | null
+          relevance_tags?: string[]
+          sector?: string | null
+          sic?: string | null
+          ticker?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sec_corporate_signals: {
+        Row: {
+          baseline_value: number | null
+          comparison_window: string
+          confidence: number
+          created_at: string
+          evidence_ids: string[]
+          id: string
+          issuer_id: string
+          macro_theme: string
+          methodology_version: string
+          numeric_value: number | null
+          observed_at: string
+          severity: string
+          signal_family: string
+          signal_id: string
+          state: string
+          unit: string | null
+        }
+        Insert: {
+          baseline_value?: number | null
+          comparison_window: string
+          confidence: number
+          created_at?: string
+          evidence_ids?: string[]
+          id?: string
+          issuer_id: string
+          macro_theme: string
+          methodology_version: string
+          numeric_value?: number | null
+          observed_at: string
+          severity: string
+          signal_family: string
+          signal_id: string
+          state: string
+          unit?: string | null
+        }
+        Update: {
+          baseline_value?: number | null
+          comparison_window?: string
+          confidence?: number
+          created_at?: string
+          evidence_ids?: string[]
+          id?: string
+          issuer_id?: string
+          macro_theme?: string
+          methodology_version?: string
+          numeric_value?: number | null
+          observed_at?: string
+          severity?: string
+          signal_family?: string
+          signal_id?: string
+          state?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sec_corporate_signals_issuer_id_fkey"
+            columns: ["issuer_id"]
+            isOneToOne: false
+            referencedRelation: "sec_corporate_issuers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sec_filing_evidence: {
+        Row: {
+          acceptance_timestamp: string | null
+          accession_number: string
+          cik: string
+          created_at: string
+          document_url: string
+          evidence_kind: string
+          evidence_text: string | null
+          filing_date: string
+          form_type: string
+          freshness_status: string
+          id: string
+          issuer_id: string
+          parser_version: string
+          section_name: string
+          source_hash: string | null
+          structured_payload: Json
+        }
+        Insert: {
+          acceptance_timestamp?: string | null
+          accession_number: string
+          cik: string
+          created_at?: string
+          document_url: string
+          evidence_kind: string
+          evidence_text?: string | null
+          filing_date: string
+          form_type: string
+          freshness_status?: string
+          id?: string
+          issuer_id: string
+          parser_version: string
+          section_name: string
+          source_hash?: string | null
+          structured_payload?: Json
+        }
+        Update: {
+          acceptance_timestamp?: string | null
+          accession_number?: string
+          cik?: string
+          created_at?: string
+          document_url?: string
+          evidence_kind?: string
+          evidence_text?: string | null
+          filing_date?: string
+          form_type?: string
+          freshness_status?: string
+          id?: string
+          issuer_id?: string
+          parser_version?: string
+          section_name?: string
+          source_hash?: string | null
+          structured_payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sec_filing_evidence_issuer_id_fkey"
+            columns: ["issuer_id"]
+            isOneToOne: false
+            referencedRelation: "sec_corporate_issuers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shadow_trade_anomalies: {
         Row: {
@@ -6058,6 +6315,7 @@ export type Database = {
           holistic_narrative: string
           id: string
           regime_shifts: Json
+          snapshot_ids: Json | null
           updated_at: string | null
           week_ending_date: string
           what_changed: Json
@@ -6070,6 +6328,7 @@ export type Database = {
           holistic_narrative: string
           id?: string
           regime_shifts?: Json
+          snapshot_ids?: Json | null
           updated_at?: string | null
           week_ending_date: string
           what_changed?: Json
@@ -6082,6 +6341,7 @@ export type Database = {
           holistic_narrative?: string
           id?: string
           regime_shifts?: Json
+          snapshot_ids?: Json | null
           updated_at?: string | null
           week_ending_date?: string
           what_changed?: Json
@@ -6122,181 +6382,6 @@ export type Database = {
         }
         Relationships: []
       }
-      sec_corporate_issuers: {
-        Row: {
-          cik: string
-          created_at: string
-          exchange: string | null
-          id: string
-          is_active: boolean
-          issuer_name: string
-          relevance_rationale: string | null
-          relevance_tags: string[]
-          sector: string | null
-          sic: string | null
-          ticker: string | null
-          updated_at: string
-        }
-        Insert: {
-          cik: string
-          created_at?: string
-          exchange?: string | null
-          id?: string
-          is_active?: boolean
-          issuer_name: string
-          relevance_rationale?: string | null
-          relevance_tags?: string[]
-          sector?: string | null
-          sic?: string | null
-          ticker?: string | null
-          updated_at?: string
-        }
-        Update: {
-          cik?: string
-          created_at?: string
-          exchange?: string | null
-          id?: string
-          is_active?: boolean
-          issuer_name?: string
-          relevance_rationale?: string | null
-          relevance_tags?: string[]
-          sector?: string | null
-          sic?: string | null
-          ticker?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      sec_corporate_signals: {
-        Row: {
-          baseline_value: number | null
-          comparison_window: string
-          confidence: number
-          created_at: string
-          evidence_ids: string[]
-          id: string
-          issuer_id: string
-          macro_theme: string
-          methodology_version: string
-          numeric_value: number | null
-          observed_at: string
-          severity: string
-          signal_family: string
-          signal_id: string
-          state: string
-          unit: string | null
-        }
-        Insert: {
-          baseline_value?: number | null
-          comparison_window: string
-          confidence: number
-          created_at?: string
-          evidence_ids?: string[]
-          id?: string
-          issuer_id: string
-          macro_theme: string
-          methodology_version: string
-          numeric_value?: number | null
-          observed_at: string
-          severity: string
-          signal_family: string
-          signal_id: string
-          state: string
-          unit?: string | null
-        }
-        Update: {
-          baseline_value?: number | null
-          comparison_window?: string
-          confidence?: number
-          created_at?: string
-          evidence_ids?: string[]
-          id?: string
-          issuer_id?: string
-          macro_theme?: string
-          methodology_version?: string
-          numeric_value?: number | null
-          observed_at?: string
-          severity?: string
-          signal_family?: string
-          signal_id?: string
-          state?: string
-          unit?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sec_corporate_signals_issuer_id_fkey"
-            columns: ["issuer_id"]
-            isOneToOne: false
-            referencedRelation: "sec_corporate_issuers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sec_filing_evidence: {
-        Row: {
-          acceptance_timestamp: string | null
-          accession_number: string
-          cik: string
-          created_at: string
-          document_url: string
-          evidence_kind: string
-          evidence_text: string | null
-          filing_date: string
-          freshness_status: string
-          form_type: string
-          id: string
-          issuer_id: string
-          parser_version: string
-          section_name: string
-          source_hash: string | null
-          structured_payload: Json
-        }
-        Insert: {
-          acceptance_timestamp?: string | null
-          accession_number: string
-          cik: string
-          created_at?: string
-          document_url: string
-          evidence_kind: string
-          evidence_text?: string | null
-          filing_date: string
-          freshness_status?: string
-          form_type: string
-          id?: string
-          issuer_id: string
-          parser_version: string
-          section_name: string
-          source_hash?: string | null
-          structured_payload?: Json
-        }
-        Update: {
-          acceptance_timestamp?: string | null
-          accession_number?: string
-          cik?: string
-          created_at?: string
-          document_url?: string
-          evidence_kind?: string
-          evidence_text?: string | null
-          filing_date?: string
-          freshness_status?: string
-          form_type?: string
-          id?: string
-          issuer_id?: string
-          parser_version?: string
-          section_name?: string
-          source_hash?: string | null
-          structured_payload?: Json
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sec_filing_evidence_issuer_id_fkey"
-            columns: ["issuer_id"]
-            isOneToOne: false
-            referencedRelation: "sec_corporate_issuers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       fuel_geopolitical_aggregated_score: {
@@ -6319,32 +6404,6 @@ export type Database = {
           total_severity: number | null
         }
         Relationships: []
-      }
-      vw_metric_publication_snapshots_public: {
-        Row: {
-          created_at: string | null
-          data_status: string | null
-          is_current: boolean | null
-          is_superseded: boolean | null
-          methodology_version: string | null
-          metric_id: string | null
-          observed_at: string | null
-          payload: Json | null
-          published_at: string | null
-          revision_of: string | null
-          slug: string | null
-          snapshot_id: string | null
-          source_snapshot_hash: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "metric_publication_snapshots_revision_of_fkey"
-            columns: ["revision_of"]
-            isOneToOne: false
-            referencedRelation: "metric_publication_snapshots"
-            referencedColumns: ["snapshot_id"]
-          },
-        ]
       }
       market_pulse_stats: {
         Row: {
@@ -6407,77 +6466,6 @@ export type Database = {
         }
         Relationships: []
       }
-      vw_corporate_transmission_summary: {
-        Row: {
-          active_issuers: number | null
-          changed_signals: number | null
-          confirmed_signals: number | null
-          covered_issuers: number | null
-          elevated_signals: number | null
-          freshness_counts: Json | null
-          high_signals: number | null
-          info_signals: number | null
-          latest_observed_at: string | null
-          macro_theme_counts: Json | null
-          measured_signals: number | null
-          observed_signals: number | null
-          signal_family_count: number | null
-          signal_family_counts: Json | null
-          total_issuers: number | null
-          total_signals: number | null
-          watch_signals: number | null
-        }
-        Relationships: []
-      }
-      vw_latest_corporate_signals: {
-        Row: {
-          acceptance_timestamp: string | null
-          accession_number: string | null
-          baseline_value: number | null
-          cik: string | null
-          comparison_window: string | null
-          confidence: number | null
-          created_at: string | null
-          evidence_count: number | null
-          evidence_acceptance_timestamps: string[] | null
-          evidence_accession_numbers: string[] | null
-          evidence_document_urls: string[] | null
-          evidence_filing_dates: string[] | null
-          evidence_form_types: string[] | null
-          evidence_freshness_statuses: string[] | null
-          evidence_kind: string | null
-          evidence_kinds: string[] | null
-          evidence_section_names: string[] | null
-          evidence_text: string | null
-          evidence_texts: string[] | null
-          evidence_ids: string[] | null
-          exchange: string | null
-          document_url: string | null
-          filing_date: string | null
-          form_type: string | null
-          freshness_status: string | null
-          id: string | null
-          is_active: boolean | null
-          issuer_id: string | null
-          issuer_name: string | null
-          macro_theme: string | null
-          methodology_version: string | null
-          numeric_value: number | null
-          observed_at: string | null
-          relevance_rationale: string | null
-          relevance_tags: string[] | null
-          section_name: string | null
-          sector: string | null
-          severity: string | null
-          sic: string | null
-          signal_family: string | null
-          signal_id: string | null
-          state: string | null
-          ticker: string | null
-          unit: string | null
-        }
-        Relationships: []
-      }
       vw_authenticity_percentage: {
         Row: {
           authenticity_score: number | null
@@ -6509,6 +6497,28 @@ export type Database = {
           unit_label: string | null
           value: number | null
           z_score: number | null
+        }
+        Relationships: []
+      }
+      vw_corporate_transmission_summary: {
+        Row: {
+          active_issuers: number | null
+          changed_signals: number | null
+          confirmed_signals: number | null
+          covered_issuers: number | null
+          elevated_signals: number | null
+          freshness_counts: Json | null
+          high_signals: number | null
+          info_signals: number | null
+          latest_observed_at: string | null
+          macro_theme_counts: Json | null
+          measured_signals: number | null
+          observed_signals: number | null
+          signal_family_count: number | null
+          signal_family_counts: Json | null
+          total_issuers: number | null
+          total_signals: number | null
+          watch_signals: number | null
         }
         Relationships: []
       }
@@ -7061,6 +7071,63 @@ export type Database = {
         }
         Relationships: []
       }
+      vw_latest_corporate_signals: {
+        Row: {
+          acceptance_timestamp: string | null
+          accession_number: string | null
+          baseline_value: number | null
+          cik: string | null
+          comparison_window: string | null
+          confidence: number | null
+          created_at: string | null
+          document_url: string | null
+          evidence_acceptance_timestamps: string[] | null
+          evidence_accession_numbers: string[] | null
+          evidence_count: number | null
+          evidence_document_urls: string[] | null
+          evidence_filing_dates: string[] | null
+          evidence_form_types: string[] | null
+          evidence_freshness_statuses: string[] | null
+          evidence_ids: string[] | null
+          evidence_kind: string | null
+          evidence_kinds: string[] | null
+          evidence_section_names: string[] | null
+          evidence_text: string | null
+          evidence_texts: string[] | null
+          exchange: string | null
+          filing_date: string | null
+          form_type: string | null
+          freshness_status: string | null
+          id: string | null
+          is_active: boolean | null
+          issuer_id: string | null
+          issuer_name: string | null
+          macro_theme: string | null
+          methodology_version: string | null
+          numeric_value: number | null
+          observed_at: string | null
+          relevance_rationale: string | null
+          relevance_tags: string[] | null
+          section_name: string | null
+          sector: string | null
+          severity: string | null
+          sic: string | null
+          signal_family: string | null
+          signal_id: string | null
+          state: string | null
+          ticker: string | null
+          unit: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sec_corporate_signals_issuer_id_fkey"
+            columns: ["issuer_id"]
+            isOneToOne: false
+            referencedRelation: "sec_corporate_issuers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vw_latest_daily_signal: {
         Row: {
           component_scores: Json | null
@@ -7145,6 +7212,69 @@ export type Database = {
           value_gbp: number | null
         }
         Relationships: []
+      }
+      vw_metric_publication_snapshots_public: {
+        Row: {
+          created_at: string | null
+          data_status: string | null
+          is_current: boolean | null
+          is_superseded: boolean | null
+          methodology_version: string | null
+          metric_id: string | null
+          observed_at: string | null
+          payload: Json | null
+          published_at: string | null
+          revision_of: string | null
+          slug: string | null
+          snapshot_id: string | null
+          source_snapshot_hash: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_status?: string | null
+          is_current?: never
+          is_superseded?: never
+          methodology_version?: string | null
+          metric_id?: string | null
+          observed_at?: string | null
+          payload?: Json | null
+          published_at?: string | null
+          revision_of?: string | null
+          slug?: string | null
+          snapshot_id?: string | null
+          source_snapshot_hash?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_status?: string | null
+          is_current?: never
+          is_superseded?: never
+          methodology_version?: string | null
+          metric_id?: string | null
+          observed_at?: string | null
+          payload?: Json | null
+          published_at?: string | null
+          revision_of?: string | null
+          slug?: string | null
+          snapshot_id?: string | null
+          source_snapshot_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metric_publication_snapshots_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "metric_publication_snapshots"
+            referencedColumns: ["snapshot_id"]
+          },
+          {
+            foreignKeyName: "metric_publication_snapshots_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "vw_metric_publication_snapshots_public"
+            referencedColumns: ["snapshot_id"]
+          },
+        ]
       }
       vw_mts_agency_outlays_monthly: {
         Row: {
@@ -7567,3 +7697,4 @@ export const Constants = {
     },
   },
 } as const
+
