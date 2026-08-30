@@ -9,6 +9,7 @@ export interface IndiaPositioningSnapshot {
   confidence: number;
   coverage_mask: string[];
   components: Record<string, { score: number | null; available: boolean; inputs: string[] }>;
+  input_dates: { daily?: string[]; sector?: string[] };
   calculation_version: string;
 }
 
