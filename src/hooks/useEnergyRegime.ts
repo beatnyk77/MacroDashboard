@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useLatestOilSpread } from './useOilSpread';
-import { useState } from 'react';
+import { getStaleness } from './useStaleness';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export interface EnergyRegime {
@@ -41,8 +41,6 @@ const REGIME_METRICS = [
     MID.EU_GAS_STORAGE_PCT,
 ] as const;
 
-const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days — weekly ingestion cadence
-
 export const useEnergyRegime = (): EnergyRegime => {
     const { data: spread } = useLatestOilSpread();
 
@@ -80,19 +78,22 @@ export const useEnergyRegime = (): EnergyRegime => {
     const wtiSpread = spread?.spread ?? 0;
     const wtiRegime = spread?.regime ?? 'NORMAL';
 
-    // Staleness: spread is stale OR any observation metric is older than the weekly threshold
-    const oldestObsDate = metrics && metrics.length > 0
-        ? new Date(metrics[metrics.length - 1].as_of_date as string).getTime()
-        : null;
-    const [now] = useState(() => Date.now());
-    const obsIsStale = oldestObsDate !== null
-        ? now - oldestObsDate > STALE_THRESHOLD_MS
-        : false;
+    // Staleness: check latest observation for each individual metric against its native cadence
+    const brentLatest = brentRows[0]?.as_of_date;
+    const utilLatest = utilRows[0]?.as_of_date;
+    const gasLatest = gasRows[0]?.as_of_date;
+
+    const brentStale = brentLatest ? getStaleness(brentLatest, 'daily').state !== 'fresh' : false;
+    const utilStale = utilLatest ? getStaleness(utilLatest, 'weekly').state !== 'fresh' : false;
+    const gasStale = gasLatest ? getStaleness(gasLatest, 'monthly').state !== 'fresh' : false;
+    const obsIsStale = brentStale || utilStale || gasStale;
+
     const isAnyStale = (spread?.is_stale ?? false) || obsIsStale;
 
-    // lastUpdated: the oldest as_of_date across all metrics (weakest link)
-    const lastUpdated = oldestObsDate
-        ? new Date(oldestObsDate).toISOString()
+    // lastUpdated: the most recent price observation or spread compute date
+    const latestDate = brentLatest || utilLatest || spread?.date || null;
+    const lastUpdated = latestDate
+        ? new Date(latestDate).toISOString()
         : (spread?.computed_at ?? null);
 
     return {

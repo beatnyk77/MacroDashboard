@@ -62,6 +62,51 @@ async function fetchEIAWeeklyStatus(): Promise<{
     }
 }
 
+async function fetchEIASPR(): Promise<{ sprMbbl: number; reportDate: string } | null> {
+    try {
+        const res = await fetch('https://ir.eia.gov/wpsr/table1.csv', {
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' },
+            signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) throw new Error(`EIA Table1 CSV HTTP ${res.status}`);
+        const text = await res.text();
+        const lines = text.split('\n').map(l => l.trim());
+
+        const header = lines[0];
+        const headerCols = header.split(',').map(c => c.replace(/"/g, '').trim());
+
+        const rawDate = headerCols[1]; // e.g. "8/21/26"
+        let reportDate = '';
+        if (rawDate) {
+            const parts = rawDate.split('/');
+            if (parts.length === 3) {
+                const month = parts[0].padStart(2, '0');
+                const day = parts[1].padStart(2, '0');
+                const year = `20${parts[2]}`;
+                reportDate = `${year}-${month}-${day}`;
+            }
+        }
+
+        let sprMbbl: number | null = null;
+        for (const line of lines) {
+            if (!line) continue;
+            const cols = line.split(',').map(c => c.replace(/"/g, '').trim());
+            if (cols[0]?.toLowerCase().includes('strategic petroleum reserve') && cols[1]) {
+                const val = parseFloat(cols[1].replace(/,/g, ''));
+                if (!isNaN(val)) sprMbbl = val;
+                break;
+            }
+        }
+
+        if (sprMbbl === null || !reportDate) return null;
+        console.log(`[ingest-oil-eia] EIA SPR CSV: date=${reportDate} spr=${sprMbbl} Mbbl`);
+        return { sprMbbl, reportDate };
+    } catch (e: any) {
+        console.error('[ingest-oil-eia] EIA SPR CSV fetch error:', e.message);
+        return null;
+    }
+}
+
 async function safeYahoo(ticker: string, range = '3mo'): Promise<Array<{ date: string; close: number }>> {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=${range}`;
     try {
@@ -87,7 +132,7 @@ serveIngest('ingest-oil-eia', async (_req: Request): Promise<IngestResult> => {
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    const counts: Record<string, number> = { capacity: 0, utilization: 0, brent: 0 };
+    const counts: Record<string, number> = { capacity: 0, utilization: 0, brent: 0, spr: 0 };
     let skipped = 0;
     const now = new Date().toISOString();
 
@@ -133,7 +178,31 @@ serveIngest('ingest-oil-eia', async (_req: Request): Promise<IngestResult> => {
         skipped++;
     }
 
-    // ── B. Brent Crude Price via Yahoo Finance (BZ=F) — 3 months
+    // ── B. US SPR Level via EIA Table1 CSV
+    console.log('[ingest-oil-eia] Fetching EIA SPR from table1.csv...');
+    const sprStatus = await fetchEIASPR();
+    if (sprStatus) {
+        const { sprMbbl, reportDate } = sprStatus;
+        const { error: sprErr } = await supabase.from('metric_observations').upsert({
+            metric_id: 'OIL_SPR_LEVEL_US',
+            as_of_date: reportDate,
+            value: sprMbbl,
+            last_updated_at: now,
+            provenance: 'api_live',
+            source_ref: 'live_api:eia:wpsr_table1'
+        }, { onConflict: 'metric_id, as_of_date' });
+        if (sprErr) {
+            console.error('[ingest-oil-eia] SPR upsert error:', sprErr.message);
+            skipped++;
+        } else {
+            counts.spr = 1;
+            console.log(`[ingest-oil-eia] Stored SPR: ${sprMbbl} Mbbl for ${reportDate}`);
+        }
+    } else {
+        skipped++;
+    }
+
+    // ── C. Brent Crude Price via Yahoo Finance (BZ=F) — 3 months
     console.log('[ingest-oil-eia] Fetching Brent from Yahoo Finance (BZ=F)...');
     const brentData = await safeYahoo('BZ=F', '3mo');
     if (brentData.length > 0) {
@@ -154,7 +223,7 @@ serveIngest('ingest-oil-eia', async (_req: Request): Promise<IngestResult> => {
         skipped++;
     }
 
-    const totalUpserted = counts.utilization + counts.capacity + counts.brent;
+    const totalUpserted = counts.utilization + counts.capacity + counts.brent + counts.spr;
     console.log('[ingest-oil-eia] Done:', JSON.stringify(counts));
 
     return {
