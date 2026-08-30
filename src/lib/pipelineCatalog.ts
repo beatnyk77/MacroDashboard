@@ -92,6 +92,30 @@ export const PIPELINES: PipelineEntry[] = [
 
   // Sovereign India / China
   {
+    id: 'ingest-india-institutional-flows',
+    title: 'India Institutional Flows',
+    tier: 'sovereign',
+    sources: ['NSE', 'FII/FPI', 'DII'],
+    surfaces: ['/intel/india'],
+    cadence: 'Daily after NSE close',
+  },
+  {
+    id: 'ingest-india-institutional-market',
+    title: 'India Institutional Market Confirmation',
+    tier: 'sovereign',
+    sources: ['NSE', 'RBI/FRED'],
+    surfaces: ['/intel/india'],
+    cadence: 'Daily after NSE close',
+  },
+  {
+    id: 'ingest-india-sector-positioning',
+    title: 'India Sector Positioning',
+    tier: 'sovereign',
+    sources: ['NSDL FPI sector reports'],
+    surfaces: ['/intel/india'],
+    cadence: 'Fortnightly',
+  },
+  {
     id: 'ingest-india-fiscal-stress',
     title: 'India Fiscal Stress',
     tier: 'sovereign',

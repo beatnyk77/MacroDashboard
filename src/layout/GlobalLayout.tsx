@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -27,6 +27,7 @@ const terminalNavItems = [
     { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={18} />, group: 'INTELLIGENCE' },
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
+    { id: 'corporate-transmission', label: 'Corporate Transmission', path: '/corporate-transmission', icon: <FileSearch size={18} />, group: 'INTELLIGENCE' },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={18} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },

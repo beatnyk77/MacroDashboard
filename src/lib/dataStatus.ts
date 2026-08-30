@@ -6,6 +6,23 @@
  */
 export type DataStatus = 'safe' | 'warning' | 'no-data';
 
+export type AuthorityMetricStatus =
+    | 'verified'
+    | 'provisional'
+    | 'revised'
+    | 'corrected'
+    | 'unavailable'
+    | 'superseded';
+
+export const AUTHORITY_METRIC_STATUS_VALUES = [
+    'verified',
+    'provisional',
+    'revised',
+    'corrected',
+    'unavailable',
+    'superseded',
+] as const satisfies readonly AuthorityMetricStatus[];
+
 export function statusFromThreshold(
     value: number | null | undefined,
     isSafe: (v: number) => boolean,

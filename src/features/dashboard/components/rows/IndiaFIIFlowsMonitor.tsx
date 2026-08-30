@@ -26,14 +26,14 @@ const parseDateSafe = (dateStr: string) => {
     return new Date(dateStr);
 };
 
-const formatValueUSD = (val: number) => {
-    if (val === 0) return '$0mn';
+const formatValue = (val: number) => {
+    if (val === 0) return '₹0cr';
     const sign = val > 0 ? '+' : '-';
     const absVal = Math.abs(val);
     const formatted = new Intl.NumberFormat('en-US', {
         maximumFractionDigits: 0
     }).format(absVal);
-    return `${sign}$${formatted}mn`;
+    return `${sign}₹${formatted}cr`;
 };
 
 const formatYtd = (val: number) => {
@@ -42,7 +42,7 @@ const formatYtd = (val: number) => {
     const formatted = new Intl.NumberFormat('en-US', {
         maximumFractionDigits: 0
     }).format(absVal);
-    return `YTD: ${sign}$${formatted}mn`;
+    return `YTD: ${sign}₹${formatted}cr`;
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -58,7 +58,7 @@ const CustomTooltip = ({ active, payload }: any) => {
                 <div className="flex justify-between items-center gap-6">
                     <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">Net Flow</span>
                     <span className={cn("font-black font-mono text-xs", val >= 0 ? "text-emerald-400" : "text-rose-400")}>
-                        {formatValueUSD(val)}
+                        {formatValue(val)}
                     </span>
                 </div>
             </div>
@@ -68,8 +68,8 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const IndiaFIIFlowsMonitor: React.FC = () => {
-    const { data: latest, isLoading: latestLoading } = useLatestMetric('india_fii_equity_net_usd_mn');
-    const { data: history, isLoading: historyLoading } = useMetricHistory('india_fii_equity_net_usd_mn', 12);
+    const { data: latest, isLoading: latestLoading } = useLatestMetric('IN_FII_CASH_NET');
+    const { data: history, isLoading: historyLoading } = useMetricHistory('IN_FII_CASH_NET', 12);
 
     const isLoading = latestLoading || historyLoading;
 
@@ -146,7 +146,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
                     <SectionHeader
                         title="FII Equity Net Flow Monitor"
-                        subtitle="Monthly Foreign Institutional Investor (FII) net equity inflows & outflows"
+                        subtitle="Daily NSE Foreign Institutional Investor (FII) net cash equity flow"
                     />
                 </div>
 
@@ -199,7 +199,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                                         "px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 font-black text-xs font-mono uppercase tracking-wider flex items-center gap-1",
                                         latestVal >= 0 ? "text-emerald-400" : "text-rose-400"
                                     )}>
-                                        Current: {formatValueUSD(latestVal)} {latestVal >= 0 ? '↑' : '↓'}
+                                    Current: {formatValue(latestVal)} {latestVal >= 0 ? '↑' : '↓'}
                                     </div>
                                 )}
                             </div>

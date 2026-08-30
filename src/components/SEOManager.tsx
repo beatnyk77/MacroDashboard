@@ -20,6 +20,7 @@ interface SEOManagerProps {
     /** @deprecated Use `canonical` */
     canonicalUrl?: string;
     publishedTime?: string;
+    lastModified?: string;
     jsonLd?: Record<string, any> | any[];
     robots?: string;
     isApp?: boolean;
@@ -38,6 +39,7 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
     canonical,
     canonicalUrl,
     publishedTime,
+    lastModified,
     jsonLd,
     robots = 'index, follow',
     isApp = false,
@@ -151,6 +153,13 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
 
             {ogType === 'article' && publishedTime && (
                 <meta property="article:published_time" content={publishedTime} />
+            )}
+            
+            {lastModified && (
+                <>
+                    <meta name="last-modified" content={lastModified} />
+                    <meta property="article:modified_time" content={lastModified} />
+                </>
             )}
 
             <meta name="geo.region" content={geoRegion} />

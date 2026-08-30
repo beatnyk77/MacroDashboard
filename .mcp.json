@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "google-search-console": {
+      "command": "/Users/kartikaysharma/.local/bin/uvx",
+      "args": ["mcp-search-console"],
+      "env": {
+        "GSC_OAUTH_CLIENT_SECRETS_FILE": "/Users/kartikaysharma/Documents/Codex/mcp-gsc-desktop-client.json"
+      }
+    }
+  }
+}

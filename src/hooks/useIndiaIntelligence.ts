@@ -39,7 +39,7 @@ const SOURCE_TOKENS = [
 ];
 
 const REGISTRY = [
-    { id: MID.IN_IIP_GROWTH_YOY, label: 'IIP growth', domain: 'growth' as const, unit: '%', direction: 'positive' as const },
+    { id: 'IN_IIP_YOY', label: 'IIP growth', domain: 'growth' as const, unit: '%', direction: 'positive' as const },
     { id: MID.IN_GDP_GROWTH_YOY, label: 'GDP growth', domain: 'growth' as const, unit: '%', direction: 'positive' as const },
     { id: MID.IN_CPI_YOY, label: 'CPI inflation', domain: 'inflation' as const, unit: '%', direction: 'negative' as const },
     { id: MID.IN_WPI_YOY, label: 'WPI inflation', domain: 'inflation' as const, unit: '%', direction: 'negative' as const },

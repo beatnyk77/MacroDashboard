@@ -12,11 +12,17 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
+import { useAuthoritySnapshot, useAuthorityHistory } from '@/hooks/useAuthoritySnapshot';
+import { DataProvenanceBadge } from '@/components/authority/DataProvenanceBadge';
+import { SnapshotBanner } from '@/components/authority/SnapshotBanner';
+import { SnapshotTimeline } from '@/components/authority/SnapshotTimeline';
+import { AuthorityCitationBlock } from '@/components/authority/AuthorityCitationBlock';
+import { trackAuthoritySnapshotView, trackAuthorityDownload } from '@/lib/authority/authorityEvents';
 import { METRICS_CATALOG, type MetricEntry } from '@/features/metrics/metricsCatalog';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { getConceptByMetricId } from '@/lib/conceptHub';
 import { ConceptHierarchyBanner } from '@/components/seo/ConceptHierarchyBanner';
-import { metricPrimaryMeta } from '@/lib/seoTemplates';
+import { metricPrimaryMeta, metricSnapshotMeta } from '@/lib/seoTemplates';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 
 /**
@@ -49,6 +55,12 @@ const SERIES_SOURCES: Record<string, { kind: 'view-net-liquidity' } | { kind: 'o
     'brent-crude-oil': { kind: 'observations', metricId: MID.BRENT_CRUDE_PRICE },
     'china-lgfv-stress': { kind: 'observations', metricId: MID.CN_LGFV_STRESS_INDEX },
     'india-gdp-growth': { kind: 'observations', metricId: MID.IN_GDP_GROWTH_YOY },
+    'treasury-auction-demand': { kind: 'observations', metricId: MID.US_TREASURY_10Y_DEMAND_SCORE },
+    'us-debt-maturity-wall': { kind: 'observations', metricId: MID.US_DEBT_MATURING_12M_TN },
+    'wti-physical-stress': { kind: 'observations', metricId: MID.WTI_CRUDE_PRICE },
+    'cftc-cot-positioning': { kind: 'observations', metricId: MID.COT_UST_10Y_NET_SPEC },
+    'g20-fiscal-vulnerability': { kind: 'observations', metricId: MID.G20_DEBT_GDP_PCT },
+    'china-monetization-pressure': { kind: 'observations', metricId: MID.CN_MONETIZATION_PRESSURE },
 };
 
 function seriesMetricId(entryId: string | undefined): string | undefined {
@@ -93,8 +105,10 @@ function useMetricSeries(entryId: string | undefined) {
     });
 }
 
-function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string) {
-    const url = `https://graphiquestor.com/metrics/${entry.id}`;
+function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string, snapshotId?: string) {
+    const url = snapshotId 
+        ? `https://graphiquestor.com/metrics/${entry.id}/history/${snapshotId}`
+        : `https://graphiquestor.com/metrics/${entry.id}`;
     const org = {
         '@type': 'Organization',
         name: 'GraphiQuestor',
@@ -162,22 +176,33 @@ function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string
 }
 
 export const MetricPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const { id, snapshotId } = useParams<{ id: string; snapshotId?: string }>();
     const entry = METRICS_CATALOG.find(m => m.id === id);
     const { data: series } = useMetricSeries(entry?.id);
     const liveMetricId = seriesMetricId(entry?.id);
     const { data: liveMetric } = useLatestMetric(liveMetricId ?? '');
+    const { data: snapshot } = useAuthoritySnapshot(id, snapshotId);
+    const { data: history } = useAuthorityHistory(id);
+    
     const freshness = liveMetric
         ? getStaleness(liveMetric.lastUpdated, liveMetric.frequency)
         : null;
     const shareRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        if (entry) {
+            trackAuthoritySnapshotView(entry.id, snapshotId, !!snapshotId);
+        }
+    }, [entry?.id, snapshotId]);
 
     if (!entry) {
         return <Navigate to="/methodology" replace />;
     }
 
     const latest = series && series.length > 0 ? series[series.length - 1] : undefined;
-    const meta = metricPrimaryMeta(entry.name, entry.id);
+    const meta = snapshotId && snapshot 
+        ? metricSnapshotMeta(entry.name, entry.id, snapshot.observed_at?.split('T')[0] ?? '')
+        : metricPrimaryMeta(entry.name, entry.id);
     const concept = getConceptByMetricId(entry.id);
 
     return (
@@ -186,8 +211,8 @@ export const MetricPage: React.FC = () => {
                 title={meta.title}
                 description={meta.description}
                 keywords={[entry.name, entry.category, 'macro metric', 'methodology', ...entry.sources]}
-                canonical={`https://graphiquestor.com/metrics/${entry.id}`}
-                jsonLd={buildJsonLd(entry, !!latest, latest?.date)}
+                canonical={snapshotId ? `https://graphiquestor.com/metrics/${entry.id}/history/${snapshotId}` : `https://graphiquestor.com/metrics/${entry.id}`}
+                jsonLd={buildJsonLd(entry, !!latest, latest?.date, snapshotId)}
             />
 
             {/* Breadcrumb */}
@@ -213,21 +238,28 @@ export const MetricPage: React.FC = () => {
                 <header className="space-y-3 border-b border-white/10 pb-6">
                     <div className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">{entry.category}</div>
                     <h1 className="text-3xl font-black tracking-tight text-white">
-                        Live terminal: {entry.name}
+                        {snapshotId ? `Snapshot: ${entry.name}` : `Live terminal: ${entry.name}`}
                     </h1>
-                    {(latest || liveMetric) && (
+                    
+                    {snapshot && snapshotId && (
+                        <SnapshotBanner snapshot={snapshot} className="mb-4" />
+                    )}
+
+                    {(latest || liveMetric || (snapshot && snapshotId)) && (
                         <div className="flex flex-wrap items-center gap-3 text-[12px] font-bold text-white/50">
                             <span className="text-white text-lg font-black">
                                 {(() => {
-                                    const v = liveMetric?.value ?? latest?.value;
+                                    const v = snapshotId && snapshot ? snapshot.value : (liveMetric?.value ?? latest?.value);
                                     if (v == null) return '—';
                                     return Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2);
                                 })()}
                             </span>
                             <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 uppercase tracking-widest text-[10px]">
-                                Last observation {liveMetric?.lastUpdated ?? latest?.date}
+                                Last observation {snapshotId && snapshot ? snapshot.observed_at?.split('T')[0] : (liveMetric?.lastUpdated ?? latest?.date)}
                             </span>
-                            {freshness && (
+                            {snapshotId && snapshot ? (
+                                <DataProvenanceBadge snapshot={snapshot} />
+                            ) : freshness && (
                                 <FreshnessChip
                                     status={freshness.state}
                                     lastUpdated={liveMetric?.lastUpdated}
@@ -246,7 +278,9 @@ export const MetricPage: React.FC = () => {
                     <section className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
                         <div className="mb-3 flex items-center justify-between">
                             <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Time Series</h2>
-                            <ExportCSVButton data={series} filename={`graphiquestor-${entry.id}`} />
+                            <div onClick={() => trackAuthorityDownload(entry.id, 'csv', snapshotId)}>
+                                <ExportCSVButton data={series} filename={`graphiquestor-${entry.id}`} />
+                            </div>
                         </div>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
@@ -304,6 +338,13 @@ export const MetricPage: React.FC = () => {
                     </div>
                 </section>
 
+                {/* Publication History */}
+                {history && history.length > 0 && (
+                    <section className="pt-4 pb-4">
+                        <SnapshotTimeline snapshots={history} currentSnapshotId={snapshotId} />
+                    </section>
+                )}
+
                 {/* Sources + EEAT */}
                 <section className="space-y-3 border-t border-white/10 pt-6 text-[12px]">
                     <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Data provenance</h2>
@@ -330,6 +371,16 @@ export const MetricPage: React.FC = () => {
                             Pull via API →
                         </Link>
                     </div>
+                </section>
+
+                {/* Citation Kit */}
+                <section className="pt-2">
+                    <AuthorityCitationBlock
+                        metricName={entry.name}
+                        metricId={entry.id}
+                        snapshotId={snapshotId}
+                        observedAt={snapshot?.observed_at ?? liveMetric?.lastUpdated ?? latest?.date}
+                    />
                 </section>
             </div>
 

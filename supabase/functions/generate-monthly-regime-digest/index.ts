@@ -515,6 +515,31 @@ async function doGenerateDigest(
 
   if (dbError) throw dbError;
 
+  // Publish snapshots for all metrics in the board
+  const snapshotIds: Record<string, string> = {};
+  for (const metric of payload.board) {
+    if (metric.asOf) {
+      const { data: result, error: invokeError } = await supabaseClient.functions.invoke('publish-metric-snapshot', {
+        body: {
+          metricId: metric.id,
+          slug: metric.id.toLowerCase().replace(/_/g, '-'),
+          methodologyVersion: '1.0.0', // Standard baseline version
+          publishedAt: new Date().toISOString(),
+        }
+      });
+      if (invokeError) {
+        console.warn(`[monthly-digest] Failed to publish snapshot for ${metric.id}:`, invokeError);
+      } else if (result?.meta?.snapshotId) {
+        snapshotIds[metric.id] = result.meta.snapshotId;
+      }
+    }
+  }
+
+  // Save the snapshot IDs to the digest
+  await supabaseClient.from('monthly_regime_digests').update({
+    snapshot_ids: snapshotIds
+  }).eq('year_month', year_month);
+
   return {
     ok: true,
     year_month,

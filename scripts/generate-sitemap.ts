@@ -148,6 +148,8 @@ async function generateSitemap() {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 
+  let snapshotRoutes: SitemapRoute[] = [];
+
   if (supabaseUrl && supabaseKey) {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -202,6 +204,18 @@ async function generateSitemap() {
       changefreq: 'never' as const,
       lastmod: `${ym.replace('/', '-')}-01`,
     }));
+    // Dynamic: Metric snapshots
+    const { data: allSnapshots } = await supabase
+      .from('metric_publication_snapshots')
+      .select('slug, snapshot_id, published_at')
+      .order('published_at', { ascending: false });
+
+    snapshotRoutes = (allSnapshots ?? []).map(s => ({
+      url: `/metrics/${s.slug}/history/${s.snapshot_id}`,
+      priority: routePriority(`/metrics/${s.slug}/history/${s.snapshot_id}`), // probably '0.6' or '0.7'
+      changefreq: 'never' as const,
+      lastmod: s.published_at,
+    }));
   } else {
     console.warn('⚠ VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set — generating sitemap with static routes only.');
   }
@@ -214,6 +228,7 @@ async function generateSitemap() {
     ...briefRoutes,
     ...narrativeRoutes,
     ...digestRoutes,
+    ...snapshotRoutes,
   ]);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

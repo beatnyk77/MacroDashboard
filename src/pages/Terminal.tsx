@@ -109,6 +109,17 @@ export const Terminal: React.FC = () => {
 
             <DeskContextStrip />
 
+            {/* ── FEATURED RESEARCH SILO ── */}
+            <div className="px-4 sm:px-6 lg:px-8 py-4 flex gap-4 bg-white/5 border-y border-white/10 mb-6">
+                <Link to="/methods/m2-gold-ratio" className="text-sm font-semibold text-amber-400 hover:underline">
+                    Featured: Global M2 to Gold Ratio Tracker
+                </Link>
+                <span className="text-white/20">|</span>
+                <Link to="/labs/central-bank-gold-purchases" className="text-sm font-semibold text-amber-400 hover:underline">
+                    Central Bank Gold Purchases
+                </Link>
+            </div>
+
             {/* ── REGIME ANCHOR — position 1, first data above-fold ── */}
             {/* Full-bleed: uses negative margins to break out of px-4 sm:px-6 lg:px-8 */}
             <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] -mx-4 sm:-mx-6 lg:-mx-8 mb-0">

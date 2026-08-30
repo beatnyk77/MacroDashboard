@@ -81,7 +81,6 @@
     "npm:ts-morph@28": "28.0.0",
     "npm:tsx@^4.19.0": "4.22.4",
     "npm:typescript@^5.2.0": "5.9.3",
-    "npm:vite-prerender-plugin@~0.5.13": "0.5.13_vite@8.0.16__tsx@4.22.4_tsx@4.22.4",
     "npm:vite@^8.0.8": "8.0.16_tsx@4.22.4",
     "npm:vitest@^4.1.4": "4.1.9_jsdom@27.4.0_vite@8.0.16__tsx@4.22.4_tsx@4.22.4",
     "npm:yahoo-finance2@^3.14.0": "3.14.0"
@@ -6188,7 +6187,6 @@
         "npm:ts-morph@28",
         "npm:tsx@^4.19.0",
         "npm:typescript@^5.2.0",
-        "npm:vite-prerender-plugin@~0.5.13",
         "npm:vite@^8.0.8",
         "npm:vitest@^4.1.4",
         "npm:yahoo-finance2@^3.14.0"

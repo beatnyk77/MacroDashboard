@@ -1,10 +1,11 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { AuthorPersonSchema, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Box, Container, Typography, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, Database, BookOpen, FlaskConical, Activity, Lightbulb, Link2, TrendingUp } from 'lucide-react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { useQueryClient } from '@tanstack/react-query';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
@@ -68,10 +69,35 @@ const interpretationRows = [
     { signal: 'Ratio flat, M2 contracting', regime: 'QT / Deflationary Risk', implication: 'Gold may underperform; monitor for demand signals from central banks', color: '#3b82f6' },
 ];
 
+const faqItems = [
+    {
+        question: 'What is the M2 to gold ratio?',
+        answer: 'The M2 to gold ratio compares global broad money supply with the market value of above-ground gold. A rising ratio means money supply is expanding faster than gold is being repriced; a falling ratio means gold is gaining ground relative to M2.',
+    },
+    {
+        question: 'How is global money supply measured against gold?',
+        answer: 'GraphiQuestor aggregates reported M2 for major economies, translates the series into US dollars, and divides it by estimated above-ground gold ounces multiplied by the XAU/USD spot price. The methodology records each input source and its publication cadence.',
+    },
+    {
+        question: 'How should investors use the M2 to gold ratio?',
+        answer: 'Use the ratio as a long-horizon regime and valuation reference. It can frame structural gold exposure alongside real rates, central-bank demand, positioning, and other macro evidence; it does not provide a short-term entry or exit signal.',
+    },
+];
+
 export const M2GoldRatioPage: React.FC = () => {
+    const queryClient = useQueryClient();
     const { data: primaryMetric } = useLatestMetric(MID.RATIO_M2_GOLD);
+
+    // Prefetch for LCP
+    useEffect(() => {
+        queryClient.prefetchQuery({
+            queryKey: ['latest-metric', MID.RATIO_M2_GOLD],
+            queryFn: () => fetch(`/api/metric/${MID.RATIO_M2_GOLD}`).then(r => r.json()) // fallback prefetch pattern
+        });
+    }, [queryClient]);
+
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
-    const jsonLd = {
+    const articleJsonLd = {
         "@context": "https://schema.org",
         "@type": "TechArticle",
         "@id": "https://graphiquestor.com/methods/m2-gold-ratio",
@@ -84,17 +110,30 @@ export const M2GoldRatioPage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["M2 Gold Ratio", "Gold Valuation", "Monetary Debasement", "Global Liquidity", "Hard Assets", "Gold M2"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="M2/Gold Ratio — Methodology, History &"
-                description="Complete guide to the M2/Gold Ratio: formula, historical episodes from 2001–2026, interpretation framework, and how institutional allocators use it as a"
+                title="Global M2 to Gold Ratio Tracker (Updated Daily) | GraphiQuestor"
+                description="Understand the M2 to gold ratio with GraphiQuestor's formula, live reading, historical episodes, data sources, and institutional interpretation."
                 keywords={['M2 gold ratio', 'gold M2 ratio', 'monetary debasement signal', 'gold valuation metric', 'global M2 money supply', 'hard assets macro', 'm2 to gold ratio']}
                 canonicalUrl="https://graphiquestor.com/methods/m2-gold-ratio"
                 ogType="article"
                 publishedTime="2026-05-30"
-                jsonLd={jsonLd}
+                lastModified={primaryMetric?.lastUpdated}
+                jsonLd={[articleJsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -164,6 +203,25 @@ export const M2GoldRatioPage: React.FC = () => {
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
                         Unlike price-to-earnings or yield-based valuation models, the M2/Gold Ratio has no earnings cycle distortion, no duration risk, and no issuer credit risk. It measures a simple mechanical relationship: the claims on value created by printing vs. the hard asset intended to constrain it.
                     </Typography>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        M2 to Gold Ratio FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#f59e0b', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
                 </Paper>
 
                 {/* Formula */}

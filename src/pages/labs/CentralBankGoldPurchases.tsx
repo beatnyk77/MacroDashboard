@@ -34,7 +34,13 @@ export const CentralBankGoldPurchases: React.FC = () => {
                         '@type': 'Dataset',
                         'name': 'Global Central Bank Gold Purchases Data',
                         'description': 'Real-time monitoring of sovereign gold purchases globally.',
-                        'url': 'https://graphiquestor.com/labs/central-bank-gold-purchases'
+                        'url': 'https://graphiquestor.com/labs/central-bank-gold-purchases',
+                        'isAccessibleForFree': true,
+                        'dateModified': primaryMetric?.lastUpdated || new Date().toISOString().split('T')[0],
+                        'creator': {
+                            '@type': 'Organization',
+                            'name': 'GraphiQuestor'
+                        }
                     }
                 ]}
             />

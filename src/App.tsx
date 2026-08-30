@@ -62,6 +62,7 @@ const MacroBriefPage = lazy(() => import('@/pages/MacroBriefPage').then(module =
 const MacroBriefArchivePage = lazy(() => import('@/pages/MacroBriefArchivePage').then(module => ({ default: module.MacroBriefArchivePage })));
 const OgCardPage = lazy(() => import('@/pages/OgCardPage').then(module => ({ default: module.OgCardPage })));
 const MetricPage = lazy(() => import('@/pages/MetricPage').then(module => ({ default: module.MetricPage })));
+const CorporateTransmissionPage = lazy(() => import('@/pages/CorporateTransmissionPage').then(module => ({ default: module.CorporateTransmissionPage })));
 
 const ThematicLabsIndexPage = lazy(() => import('@/pages/labs/ThematicLabsIndexPage').then(module => ({ default: module.ThematicLabsIndexPage })));
 const USMacroFiscalLab = lazy(() => import('@/pages/labs/USMacroFiscalLab').then(module => ({ default: module.USMacroFiscalLab })));
@@ -109,6 +110,8 @@ function App() {
                                         <Route path={trailRoute('/')} element={<Terminal />} />
                                         <Route path={trailRoute('/methodology')} element={<MetricsMethodologyPage />} />
                                         <Route path={trailRoute('/metrics/:id')} element={<MetricPage />} />
+                                        <Route path={trailRoute('/metrics/:id/history/:snapshotId')} element={<MetricPage />} />
+                                        <Route path={trailRoute('/corporate-transmission')} element={<CorporateTransmissionPage />} />
                                         <Route path={trailRoute('/data-sources')} element={<DataSourcesPage />} />
                                         <Route path={trailRoute('/blog')} element={<BlogPage />} />
                                         <Route path={trailRoute('/blog/:slug')} element={<ArticlePage />} />

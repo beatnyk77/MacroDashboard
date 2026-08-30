@@ -50,6 +50,10 @@
   status = 301
   force = true
 
+[[edge_functions]]
+  path = "/api/v1/metrics/*/export"
+  function = "export-metric"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -66,6 +70,12 @@
 # auth, no user sessions, and no state-changing forms, so framing carries no
 # credential/action risk. Revisit if auth is ever added (use a Netlify Edge
 # Function to inject frame-ancestors 'none' on non-/tools paths).
+[[headers]]
+  for = "/api/v1/metrics/*/export"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400"
+    Access-Control-Allow-Origin = "*"
+
 [[headers]]
   for = "/*"
   [headers.values]
