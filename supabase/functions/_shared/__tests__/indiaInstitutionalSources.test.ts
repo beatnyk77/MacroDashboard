@@ -32,6 +32,8 @@ describe('India institutional source parsers', () => {
     const unavailable = parseParticipantOiCsv(readFileSync(join(process.cwd(), 'supabase/functions/_shared/__tests__/fixtures/participant-oi-missing-fields.csv'), 'utf8'), '2026-08-29');
     expect(unavailable.coverage).toBe('unavailable');
     expect(unavailable.coverageReason).toBe('missing_required_fields');
+    const noRows = parseParticipantOiCsv(readFileSync(join(process.cwd(), 'supabase/functions/_shared/__tests__/fixtures/participant-oi-header-only.csv'), 'utf8'), '2026-08-29');
+    expect(noRows.coverageReason).toBe('missing_participant_rows');
   });
 
   it('parses NSDL sectors and rejects duplicate sector keys', () => {
