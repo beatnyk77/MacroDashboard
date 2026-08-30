@@ -86,7 +86,7 @@ BEGIN
     CREATE POLICY "Allow public read access on india_institutional_sector_observations"
       ON public.india_institutional_sector_observations
       FOR SELECT
-      TO public
+      TO anon, authenticated
       USING (true);
   END IF;
 
@@ -105,6 +105,9 @@ BEGIN
       WITH CHECK (true);
   END IF;
 END $$;
+
+GRANT SELECT ON public.india_institutional_sector_observations TO anon, authenticated;
+GRANT ALL ON public.india_institutional_sector_observations TO service_role;
 
 CREATE INDEX IF NOT EXISTS idx_india_institutional_sector_observations_report_period_end
   ON public.india_institutional_sector_observations (report_period_end DESC);

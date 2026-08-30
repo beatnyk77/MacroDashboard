@@ -57,6 +57,12 @@ describe('India institutional positioning schema', () => {
     expect(migrationSql).toContain(
       'CREATE POLICY "Service role write access on india_institutional_sector_observations"',
     );
+    expect(migrationSql).toContain(
+      'GRANT SELECT ON public.india_institutional_sector_observations TO anon, authenticated;',
+    );
+    expect(migrationSql).toContain(
+      'GRANT ALL ON public.india_institutional_sector_observations TO service_role;',
+    );
   });
 
   it('includes the required public columns and excludes fabricated F&O coverage fields', () => {
@@ -107,3 +113,4 @@ describe('India institutional positioning schema', () => {
     expect(databaseTypes).toContain('is_provisional: boolean');
   });
 });
+
