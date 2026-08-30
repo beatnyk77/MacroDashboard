@@ -304,6 +304,33 @@ serveIngest('generate-weekly-regime-digest', async (req) => {
 
         if (dbError) throw dbError;
 
+        const metricIds = [
+            "BIS_GLOBAL_LIQUIDITY_USD_BN", "VIX_INDEX", "DXY_INDEX", "GOLD_PRICE_USD",
+            "BRENT_CRUDE_PRICE", "RATIO_DEBT_GOLD", "US_CPI_YOY", "IN_GDP_GROWTH_YOY",
+            "IN_CPI_YOY", "CN_GDP_GROWTH_YOY"
+        ];
+        
+        const snapshotIds: Record<string, string> = {};
+        for (const metricId of metricIds) {
+            const { data: result, error: invokeError } = await supabaseClient.functions.invoke('publish-metric-snapshot', {
+                body: {
+                    metricId: metricId,
+                    slug: metricId.toLowerCase().replace(/_/g, '-'),
+                    methodologyVersion: '1.0.0',
+                    publishedAt: new Date().toISOString(),
+                }
+            });
+            if (invokeError) {
+                console.warn(`[weekly-digest] Failed to publish snapshot for ${metricId}:`, invokeError);
+            } else if (result?.meta?.snapshotId) {
+                snapshotIds[metricId] = result.meta.snapshotId;
+            }
+        }
+
+        await supabaseClient.from('weekly_regime_digests').update({
+            snapshot_ids: snapshotIds
+        }).eq('week_ending_date', weekEndingDate);
+
         return { ok: true, counts: { upserted: 1 }, meta: { week_ending_date: weekEndingDate } };
 
     } catch (error: unknown) {

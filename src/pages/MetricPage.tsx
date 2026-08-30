@@ -97,8 +97,10 @@ function useMetricSeries(entryId: string | undefined) {
     });
 }
 
-function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string) {
-    const url = `https://graphiquestor.com/metrics/${entry.id}`;
+function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string, snapshotId?: string) {
+    const url = snapshotId 
+        ? `https://graphiquestor.com/metrics/${entry.id}/history/${snapshotId}`
+        : `https://graphiquestor.com/metrics/${entry.id}`;
     const org = {
         '@type': 'Organization',
         name: 'GraphiQuestor',
@@ -195,8 +197,8 @@ export const MetricPage: React.FC = () => {
                 title={meta.title}
                 description={meta.description}
                 keywords={[entry.name, entry.category, 'macro metric', 'methodology', ...entry.sources]}
-                canonical={`https://graphiquestor.com/metrics/${entry.id}`}
-                jsonLd={buildJsonLd(entry, !!latest, latest?.date)}
+                canonical={snapshotId ? `https://graphiquestor.com/metrics/${entry.id}/history/${snapshotId}` : `https://graphiquestor.com/metrics/${entry.id}`}
+                jsonLd={buildJsonLd(entry, !!latest, latest?.date, snapshotId)}
             />
 
             {/* Breadcrumb */}
