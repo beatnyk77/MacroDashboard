@@ -48,6 +48,9 @@ const IndiaExternalSectorPanel = lazy(() =>
 const IndiaFIIFlowsMonitor = lazy(() =>
     import('@/features/dashboard/components/rows/IndiaFIIFlowsMonitor').then(m => ({ default: m.IndiaFIIFlowsMonitor }))
 );
+const IndiaInstitutionalPositioningSection = lazy(() =>
+    import('@/features/dashboard/components/sections/IndiaInstitutionalPositioningSection').then(m => ({ default: m.IndiaInstitutionalPositioningSection }))
+);
 
 // IndiaMacroDashboard removed — fabricated snapshot producer (credibility sprint)
 
@@ -205,6 +208,7 @@ export const IntelIndiaPage: React.FC = () => {
                             { href: '#monetary',     label: 'RBI & FX' },
                             { href: '#external-sector', label: 'External Sector' },
                             { href: '#fii-flows',    label: 'FII Flows' },
+                            { href: '#institutional-positioning', label: 'Institutional Positioning' },
                             { href: '#state-fiscal', label: 'State Fiscal' },
                             { href: '#digital',      label: 'Digital Context' },
                             { href: '#debt',         label: 'Debt Wall' },
@@ -386,6 +390,18 @@ export const IntelIndiaPage: React.FC = () => {
                         <SectionErrorBoundary name="India FII Flows">
                             <Suspense fallback={<SectionSkeleton />}>
                                 <IndiaFIIFlowsMonitor />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
+                </section>
+
+                <div className="border-t border-white/5" />
+
+                <section id="institutional-positioning">
+                    <LazyRender minHeight="420px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Institutional Positioning">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaInstitutionalPositioningSection />
                             </Suspense>
                         </SectionErrorBoundary>
                     </LazyRender>

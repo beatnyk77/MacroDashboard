@@ -3421,6 +3421,42 @@ export type Database = {
         }
         Relationships: []
       }
+      india_institutional_positioning_snapshots: {
+        Row: {
+          as_of_date: string
+          score: number | null
+          regime: string
+          confidence: number
+          coverage_mask: Json
+          components: Json
+          input_dates: Json
+          calculation_version: string
+          created_at: string
+        }
+        Insert: {
+          as_of_date: string
+          score?: number | null
+          regime: string
+          confidence: number
+          coverage_mask?: Json
+          components?: Json
+          input_dates?: Json
+          calculation_version: string
+          created_at?: string
+        }
+        Update: {
+          as_of_date?: string
+          score?: number | null
+          regime?: string
+          confidence?: number
+          coverage_mask?: Json
+          components?: Json
+          input_dates?: Json
+          calculation_version?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       india_state_fiscal_health: {
         Row: {
           date: string
