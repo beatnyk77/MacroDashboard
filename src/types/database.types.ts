@@ -4211,6 +4211,56 @@ export type Database = {
           },
         ]
       }
+      metric_publication_snapshots: {
+        Row: {
+          created_at: string
+          data_status: string
+          methodology_version: string
+          metric_id: string
+          observed_at: string | null
+          payload: Json
+          published_at: string
+          revision_of: string | null
+          slug: string
+          snapshot_id: string
+          source_snapshot_hash: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_status: string
+          methodology_version: string
+          metric_id: string
+          observed_at?: string | null
+          payload: Json
+          published_at?: string
+          revision_of?: string | null
+          slug: string
+          snapshot_id?: string
+          source_snapshot_hash?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_status?: string
+          methodology_version?: string
+          metric_id?: string
+          observed_at?: string | null
+          payload?: Json
+          published_at?: string
+          revision_of?: string | null
+          slug?: string
+          snapshot_id?: string
+          source_snapshot_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metric_publication_snapshots_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "metric_publication_snapshots"
+            referencedColumns: ["snapshot_id"]
+          },
+        ]
+      }
       metrics: {
         Row: {
           category: string
