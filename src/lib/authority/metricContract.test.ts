@@ -49,8 +49,34 @@ describe('authority metric contract', () => {
     });
 
     it('emits the documented CSV contract header', () => {
-        expect(toAuthorityMetricCsv([]).split('\n')[0]).toBe(
+        expect(toAuthorityMetricCsv([])).toBe(
             'metric_id,slug,label,value,unit,observed_at,published_at,source_name,source_ref,native_frequency,staleness_flag,data_status,methodology_version,revision_of',
+        );
+    });
+
+    it('preserves nulls in csv output with a stable literal representation', () => {
+        expect(toAuthorityMetricCsv([
+            {
+                metric_id: 'example',
+                slug: 'example',
+                label: 'Example',
+                value: null,
+                unit: 'index',
+                observed_at: null,
+                published_at: null,
+                source_name: 'Example Source',
+                source_ref: null,
+                native_frequency: 'monthly',
+                staleness_flag: 'fresh',
+                data_status: 'verified',
+                methodology_version: null,
+                revision_of: null,
+            },
+        ])).toBe(
+            [
+                'metric_id,slug,label,value,unit,observed_at,published_at,source_name,source_ref,native_frequency,staleness_flag,data_status,methodology_version,revision_of',
+                'example,example,Example,null,index,null,null,Example Source,null,monthly,fresh,verified,null,null',
+            ].join('\n'),
         );
     });
 

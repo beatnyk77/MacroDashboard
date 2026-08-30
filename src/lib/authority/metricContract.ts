@@ -117,7 +117,7 @@ function compareRecords(left: AuthorityMetricInput, right: AuthorityMetricInput)
 }
 
 function toCsvCell(value: unknown): string {
-    if (value === null || value === undefined) return '';
+    if (value === null || value === undefined) return 'null';
     const text = String(value);
     if (/["\n,]/.test(text)) {
         return `"${text.replace(/"/g, '""')}"`;
