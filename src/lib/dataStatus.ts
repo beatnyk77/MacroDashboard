@@ -6,6 +6,14 @@
  */
 export type DataStatus = 'safe' | 'warning' | 'no-data';
 
+export type AuthorityMetricStatus =
+    | 'verified'
+    | 'provisional'
+    | 'revised'
+    | 'corrected'
+    | 'unavailable'
+    | 'superseded';
+
 export function statusFromThreshold(
     value: number | null | undefined,
     isSafe: (v: number) => boolean,
