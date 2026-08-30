@@ -13,6 +13,7 @@ CREATE INDEX IF NOT EXISTS idx_india_institutional_observation_revisions_metric_
   ON public.india_institutional_observation_revisions (metric_id, as_of_date);
 
 ALTER TABLE public.india_institutional_observation_revisions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Service role read access on india institutional revisions" ON public.india_institutional_observation_revisions;
 CREATE POLICY "Service role read access on india institutional revisions"
   ON public.india_institutional_observation_revisions FOR SELECT TO service_role USING (true);
 GRANT SELECT, INSERT ON public.india_institutional_observation_revisions TO service_role;
@@ -33,6 +34,7 @@ CREATE INDEX IF NOT EXISTS idx_india_institutional_sector_revisions_key_date
   ON public.india_institutional_sector_revisions (sector_key, report_period_end);
 
 ALTER TABLE public.india_institutional_sector_revisions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Service role read access on india institutional sector revisions" ON public.india_institutional_sector_revisions;
 CREATE POLICY "Service role read access on india institutional sector revisions"
   ON public.india_institutional_sector_revisions FOR SELECT TO service_role USING (true);
 GRANT SELECT, INSERT ON public.india_institutional_sector_revisions TO service_role;

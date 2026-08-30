@@ -4,6 +4,21 @@
 CREATE UNIQUE INDEX IF NOT EXISTS idx_india_metric_observations_metric_date
   ON public.metric_observations (metric_id, as_of_date);
 
+-- The existing metrics contract predates fortnightly sources. NSDL publishes
+-- sector allocation on a fortnightly cadence, so the registry must represent
+-- that native frequency explicitly rather than coercing it to weekly.
+DO $$
+BEGIN
+  ALTER TABLE public.metrics DROP CONSTRAINT IF EXISTS metrics_native_frequency_check;
+  ALTER TABLE public.metrics
+    ADD CONSTRAINT metrics_native_frequency_check
+    CHECK (native_frequency = ANY (ARRAY['daily', 'weekly', 'fortnightly', 'monthly', 'quarterly', 'annual']));
+  ALTER TABLE public.metrics DROP CONSTRAINT IF EXISTS metrics_display_frequency_check;
+  ALTER TABLE public.metrics
+    ADD CONSTRAINT metrics_display_frequency_check
+    CHECK (display_frequency = ANY (ARRAY['daily', 'weekly', 'fortnightly', 'monthly', 'quarterly', 'annual']));
+END $$;
+
 DO $$
 BEGIN
   INSERT INTO public.metrics (

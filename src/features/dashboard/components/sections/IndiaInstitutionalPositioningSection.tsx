@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Activity, ArrowDownRight, ArrowUpRight, ShieldAlert } from 'lucide-react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useIndiaInstitutionalPositioning } from '@/hooks/useIndiaInstitutionalPositioning';
+import { useIndiaInstitutionalPositioning, type IndiaPositioningData } from '@/hooks/useIndiaInstitutionalPositioning';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { FreshnessChip } from '@/components/FreshnessChip';
@@ -10,11 +10,37 @@ import { indiaInstitutionalFreshness } from '@/lib/indiaInstitutionalFreshness';
 const labels: Record<string, string> = { foreign_exit: 'Foreign exit pressure', absorption: 'Domestic absorption', flow_price: 'Flow / price divergence', sector_rotation: 'Sector rotation', market_confirmation: 'Market confirmation' };
 const tone = (regime: string) => regime === 'Foreign Accumulation' ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' : regime === 'Synchronized Risk' ? 'text-rose-400 border-rose-500/30 bg-rose-500/10' : regime === 'Distribution' ? 'text-amber-400 border-amber-500/30 bg-amber-500/10' : 'text-blue-300 border-blue-500/30 bg-blue-500/10';
 
+const RawIndiaEvidence: React.FC<{ data: IndiaPositioningData }> = ({ data }) => {
+  const latest = data.marketHistory[data.marketHistory.length - 1];
+  const latestFor = (key: keyof Omit<NonNullable<typeof latest>, 'date'>) => [...data.marketHistory].reverse().find((point) => point[key] !== null);
+  const latestFii = latestFor('fii');
+  const latestDii = latestFor('dii');
+  const latestNifty = latestFor('nifty');
+  const latestVix = latestFor('vix');
+  const acceptedDailyObservations = data.marketHistory.filter((point) => point.fii !== null && point.dii !== null).length;
+  const latestSectorDate = data.sectors[0]?.report_period_end;
+  const latestSectors = data.sectors.filter((row) => row.report_period_end === latestSectorDate).slice(0, 8);
+  const value = (number: number | null | undefined, suffix = '') => number == null ? 'Unavailable' : `${number.toLocaleString(undefined, { maximumFractionDigits: 2 })}${suffix}`;
+  return <div className="space-y-6 rounded-3xl border border-amber-400/20 bg-amber-400/[0.04] p-6">
+    <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div><div className="text-xs font-black uppercase tracking-[0.18em] text-amber-300">India Institutional Positioning</div><h2 className="mt-2 text-2xl font-black text-white">Regime withheld pending history</h2><p className="mt-2 max-w-2xl text-sm text-muted-foreground/70">Live source observations are available. The composite remains unpublished until the engine has 252 accepted daily FII/DII observations.</p></div>
+      <FreshnessChip status={latest ? 'fresh' : 'no_data'} lastUpdated={latest?.date} label={latest ? 'OBSERVED' : 'NO DATA'} sourceRef="NSE · NSDL" />
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {[['FII cash net', value(latestFii?.fii, ' ₹cr'), latestFii?.date], ['DII cash net', value(latestDii?.dii, ' ₹cr'), latestDii?.date], ['Nifty return', value(latestNifty?.nifty, '%'), latestNifty?.date], ['India VIX', value(latestVix?.vix), latestVix?.date]].map(([label, amount, date]) => <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4"><div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">{label}</div><div className="mt-2 text-xl font-black text-white">{amount}</div><div className="mt-1 text-[10px] text-muted-foreground/50">{date ?? 'Awaiting observation'}</div></div>)}
+    </div>
+    <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground/60"><span>Accepted daily history: {acceptedDailyObservations}/252</span><DataProvenanceBadge source="NSE · NSDL" methodology="Raw validated observations" lastVerified={latest?.date ?? latestSectorDate} size="sm" /></div>
+    <div className="rounded-2xl border border-white/10 overflow-hidden"><div className="px-5 py-4 border-b border-white/10 flex items-center justify-between"><span className="text-xs font-black uppercase tracking-[0.16em] text-white/70">Latest NSDL sector allocation</span><span className="text-[10px] text-muted-foreground/50">{latestSectorDate ?? 'Unavailable'}</span></div>{latestSectors.length ? <div className="divide-y divide-white/5">{latestSectors.map((row) => <div key={row.sector_key} className="grid grid-cols-3 px-5 py-3 text-xs"><span className="text-white/75">{row.source_sector_label}</span><span className="text-right text-white/60">{row.equity_flow_inr_crore == null ? '—' : `${Number(row.equity_flow_inr_crore).toLocaleString()} ₹cr`}</span><span className="text-right text-muted-foreground/50">{row.equity_aum_inr_crore == null ? '—' : `${Number(row.equity_aum_inr_crore).toLocaleString()} AUM`}</span></div>)}</div> : <div className="px-5 py-6 text-xs text-muted-foreground/50">Sector history unavailable</div>}</div>
+  </div>;
+};
+
 export const IndiaInstitutionalPositioningSection: React.FC = () => {
   const { data, isLoading, error } = useIndiaInstitutionalPositioning();
   const [overlay, setOverlay] = useState<'fii' | 'dii' | 'usdInr' | 'vix'>('fii');
   if (isLoading) return <div className="h-[420px] rounded-3xl bg-white/[0.02] animate-pulse" />;
-  if (error || !data?.latest) return <DataStatePanel variant="empty" title="Institutional positioning unavailable" description="Validated NSE and NSDL observations are required before the India positioning regime can be published." height={260} />;
+  if (error) return <DataStatePanel variant="empty" title="Institutional positioning unavailable" description="The India evidence query failed. Check Supabase API access and ingestion health." height={260} />;
+  if (!data) return <DataStatePanel variant="empty" title="Institutional positioning unavailable" description="Validated NSE and NSDL observations are required before the India positioning regime can be published." height={260} />;
+  if (!data.latest) return <RawIndiaEvidence data={data} />;
   const snapshot = data.latest;
   const freshness = indiaInstitutionalFreshness(snapshot.as_of_date, 'daily');
   const freshnessStatus = freshness === 'observed' ? 'fresh' : freshness === 'lagged' ? 'lagged' : freshness === 'historical' ? 'stale' : 'no_data';

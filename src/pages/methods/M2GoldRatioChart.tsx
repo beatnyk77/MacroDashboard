@@ -47,6 +47,27 @@ function RatioTooltip({ active, payload, label }: { active?: boolean; payload?: 
 
 export const M2GoldRatioChart: React.FC = () => (
     <>
+        {/* SEO & Accessibility Fallback Data */}
+        <table className="sr-only">
+            <caption>Historical M2 to Gold Ratio Data</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Year</th>
+                    <th scope="col">Ratio Index</th>
+                    <th scope="col">Historical Event</th>
+                </tr>
+            </thead>
+            <tbody>
+                {ratioData.map((row) => (
+                    <tr key={row.year}>
+                        <td>{row.year}</td>
+                        <td>{row.ratio}</td>
+                        <td>{row.label || ''}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+
         <ResponsiveContainer width="100%" height={280}>
             <LineChart data={ratioData} margin={{ top: 5, right: 15, left: -15, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />

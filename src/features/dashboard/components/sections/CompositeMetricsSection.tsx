@@ -34,7 +34,7 @@ export const CompositeMetricsSection: React.FC = () => {
     // Formula: IIP Growth (Output Volume) - WPI Mfg (Input Price)
     // Interpretation: Positive spread = Output growing faster than Input Costs = Margin Expansion
     const iipGrowth = findValue('IN_IIP_YOY');
-    const wpiMfg = findValue('IN_WPI_MFG_YOY');
+    const wpiMfg = findValue('IN_WPI_MFG_YOY') ?? findValue('IN_WPI_YOY');
 
     let wholesaleEfficiency: number | null = null;
     let wholesaleStatus: 'safe' | 'warning' | 'danger' | 'neutral' = 'neutral';
@@ -177,8 +177,8 @@ export const CompositeMetricsSection: React.FC = () => {
                     <CompositeIndexCard
                         title="Wholesale Cost Efficiency"
                         value={wholesaleEfficiency}
-                        formula="IIP Growth - WPI Mfg"
-                        sources={['IIP', 'WPI (Fred)']}
+                        formula="IIP Growth - WPI"
+                        sources={['IIP', 'WPI']}
                         status={wholesaleStatus}
                         description="Spread between industrial output volume growth and manufacturing input cost inflation. Positive spread implies margin expansion."
                         icon={<Factory size={14} />}

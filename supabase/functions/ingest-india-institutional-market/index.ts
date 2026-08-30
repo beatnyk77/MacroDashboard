@@ -18,9 +18,17 @@ export async function ingestIndiaInstitutionalMarket(supabase: ReturnType<typeof
   const index = (name: string) => indices.find((row) => String((row as Record<string, unknown>).index ?? '').toUpperCase() === name);
   const nifty = index('NIFTY 50') as Record<string, unknown> | undefined;
   const vix = index('INDIA VIX') as Record<string, unknown> | undefined;
-  const stocksPayload = await fetchJson(NSE_STOCK_INDEX, cookie);
-  const stocks = Array.isArray(stocksPayload) ? stocksPayload : (stocksPayload as { data?: unknown[] }).data ?? [];
-  const changes = stocks.map((row) => numeric((row as Record<string, unknown>).pChange)).filter((value): value is number => value !== null);
+  let changes: number[] = [];
+  try {
+    const stocksPayload = await fetchJson(NSE_STOCK_INDEX, cookie);
+    const stocks = Array.isArray(stocksPayload) ? stocksPayload : (stocksPayload as { data?: unknown[] }).data ?? [];
+    changes = stocks.map((row) => numeric((row as Record<string, unknown>).pChange)).filter((value): value is number => value !== null);
+  } catch (error) {
+    // NSE can retire or region-block the constituent endpoint independently of
+    // the index endpoint. Preserve Nifty/VIX observations and mark breadth as
+    // unavailable rather than dropping the whole market confirmation batch.
+    console.warn(`[ingest-india-institutional-market] breadth unavailable: ${error instanceof Error ? error.message : String(error)}`);
+  }
   const advances = changes.filter((value) => value > 0).length;
   const declines = changes.filter((value) => value < 0).length;
   const date = isoDate();

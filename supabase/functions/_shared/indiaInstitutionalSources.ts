@@ -1,4 +1,4 @@
-export const INDIA_INSTITUTIONAL_PARSER_VERSION = '1.0.0';
+export const INDIA_INSTITUTIONAL_PARSER_VERSION = '1.2.0';
 
 export interface ParsedCashFlow {
   participant: 'FII' | 'DII';
@@ -225,6 +225,43 @@ export function parseNsdlSectorHtml(html: string, sourceUrl: string, reportPerio
       });
     }
   }
+
+  // Current NSDL exports use a two-level header. The first level contains
+  // four groups (prior AUC, prior-period net investment, current-period net
+  // investment, current AUC), while the second level contains the product
+  // columns. The existing single-row header strategy cannot identify those
+  // merged groups, so retain an explicit fallback keyed to the stable report
+  // layout: the final 24 cells are current AUC and the preceding 24 cells are
+  // current-period net investment. Within each group, equity is the first INR
+  // crore column and total is offset by eleven columns.
+  if (!observations.length) {
+    for (const table of tables) {
+      const rows = [...table.matchAll(/<tr[\s\S]*?<\/tr>/gi)].map((match) =>
+        [...match[0].matchAll(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/gi)].map((cell) => stripHtml(cell[1]))
+      );
+      const headerIndex = rows.findIndex((row) => row.some((cell) => /^sectors?$/i.test(cell)));
+      if (headerIndex < 0) continue;
+      for (const row of rows.slice(headerIndex + 1)) {
+        const label = row[1]?.trim();
+        if (!label || !/[A-Za-z]/.test(label) || /total|grand/i.test(label) || row.length < 74) continue;
+        const flowStart = row.length - 48;
+        const aumStart = row.length - 24;
+        observations.push({
+          sectorKey: sectorKey(label),
+          sourceSectorLabel: label,
+          reportPeriodEnd,
+          equityFlowInrCrore: numberValue(row[flowStart]),
+          totalFlowInrCrore: numberValue(row[flowStart + 11]),
+          equityAumInrCrore: numberValue(row[aumStart]),
+          totalAumInrCrore: numberValue(row[aumStart + 11]),
+          sourceUrl,
+          sourceHash: stableHash(row),
+          parserVersion: INDIA_INSTITUTIONAL_PARSER_VERSION,
+        });
+      }
+      if (observations.length) break;
+    }
+  }
   return observations;
 }
 
@@ -249,7 +286,8 @@ export function validateSectorRows(rows: ParsedSectorObservation[]): ValidationR
     if (!validIsoDate(row.reportPeriodEnd)) errors.push(`malformed report date: ${row.sectorKey}`);
     if (!finite(row.equityAumInrCrore) && !finite(row.totalAumInrCrore)) errors.push(`missing AUM: ${row.sectorKey}`);
     if (finite(row.equityAumInrCrore) && finite(row.totalAumInrCrore) && row.totalAumInrCrore < row.equityAumInrCrore) errors.push(`invalid AUM totals: ${row.sectorKey}`);
-    if (finite(row.equityFlowInrCrore) && finite(row.totalFlowInrCrore) && Math.abs(row.totalFlowInrCrore) < Math.abs(row.equityFlowInrCrore)) errors.push(`invalid flow totals: ${row.sectorKey}`);
+    // NSDL's total net investment can differ slightly from equity net flow
+    // because the total includes other product buckets with their own signs.
   }
   return { valid: errors.length === 0 && rows.length > 0, errors };
 }

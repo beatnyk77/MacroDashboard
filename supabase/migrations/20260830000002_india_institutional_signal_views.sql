@@ -11,7 +11,11 @@ CREATE TABLE IF NOT EXISTS public.india_institutional_positioning_snapshots (
 );
 
 ALTER TABLE public.india_institutional_positioning_snapshots ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public read access on india institutional snapshots" ON public.india_institutional_positioning_snapshots;
 CREATE POLICY "Allow public read access on india institutional snapshots" ON public.india_institutional_positioning_snapshots FOR SELECT TO anon, authenticated USING (true);
+
+DROP POLICY IF EXISTS "Service role write access on india institutional snapshots" ON public.india_institutional_positioning_snapshots;
 CREATE POLICY "Service role write access on india institutional snapshots" ON public.india_institutional_positioning_snapshots FOR ALL TO service_role USING (true) WITH CHECK (true);
+
 GRANT SELECT ON public.india_institutional_positioning_snapshots TO anon, authenticated;
 GRANT ALL ON public.india_institutional_positioning_snapshots TO service_role;

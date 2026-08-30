@@ -20,6 +20,7 @@ export default defineConfig({
       'supabase/functions/**/index.test.ts',
       // gsc-sync's auth logic lives in a sibling module, not index.ts
       'supabase/functions/gsc-sync/*.test.ts',
+      'scripts/__tests__/*.{test,spec}.{ts,tsx}',
       'scripts/__tests__/**/*.{test,spec}.{ts,tsx}',
     ],
     environmentMatchGlobs: [
