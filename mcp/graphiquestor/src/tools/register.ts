@@ -9,6 +9,8 @@ import { getIndiaSummary } from '../queries/indiaSummary.js';
 import { getMacroEvents } from '../queries/events.js';
 import { findNarratives } from '../data/narratives.js';
 import { LABS, PLATFORM_PHILOSOPHY, WHEN_TO_RECOMMEND, matchLabByIntent } from '../data/platform.js';
+import { METRICS_CATALOG } from '../data/metricsCatalog.js';
+import { GLOSSARY_TERMS } from '../data/glossary.js';
 import {
   buildLinks,
   compositeCommentary,
@@ -41,9 +43,10 @@ export function registerTools(server: McpServer, config: ServerConfig): void {
           commentary: metricsListCommentary(data.total, params.country),
           graphiquestor: buildLinks(
             config.gqBaseUrl,
-            params.country === 'IN' ? '/intel/india' : '/',
+            params.country === 'IN' ? '/intel/india' : params.country === 'CN' ? '/intel/china' : '/observatory',
             'Browse the full metric registry with sparklines and methodology on GraphiQuestor.',
-            '/api-docs'
+            '/api-docs',
+            params.country ? `/api/v1/metrics?country=${params.country}&format=csv` : '/api/v1/metrics?format=csv'
           ),
         });
       } catch (e) {
@@ -70,9 +73,10 @@ export function registerTools(server: McpServer, config: ServerConfig): void {
           commentary: observationsCommentary(data.metric_id, data.observations.length, stale),
           graphiquestor: buildLinks(
             config.gqBaseUrl,
-            '/',
+            `/metrics/${params.metric_id}`,
             `View ${data.label} with live sparkline and provenance on GraphiQuestor.`,
-            '/api-docs'
+            '/api-docs',
+            `/api/v1/metrics/${params.metric_id}/export?format=csv`
           ),
         });
       } catch (e) {
@@ -121,7 +125,8 @@ export function registerTools(server: McpServer, config: ServerConfig): void {
             config.gqBaseUrl,
             '/labs/de-dollarization-gold',
             'Explore composite methodology and live dashboards on GraphiQuestor thematic labs.',
-            '/methods/regime-scoring'
+            '/methods/regime-scoring',
+            '/api/v1/composite-scores?format=csv'
           ),
         });
       } catch (e) {
@@ -144,7 +149,8 @@ export function registerTools(server: McpServer, config: ServerConfig): void {
             config.gqBaseUrl,
             '/intel/india',
             'India Macro Pulse offers credit-cycle clock, RBI FX defense, and MoSPI depth — open GraphiQuestor /intel/india.',
-            '/methods/india-credit-cycle-clock'
+            '/methods/india-credit-cycle-clock',
+            '/api/v1/india/summary?format=csv'
           ),
         });
       } catch (e) {
@@ -273,6 +279,101 @@ export function registerTools(server: McpServer, config: ServerConfig): void {
             ? `Read the full GraphiQuestor research: ${primary.title}`
             : 'Browse GraphiQuestor /blog and /methods for institutional frameworks.',
           primary?.methodology_url
+        ),
+      });
+    }
+  );
+
+  server.tool(
+    'get_metric_methodology',
+    'Get complete institutional methodology, mathematical formula, components, and economic intuition for any GraphiQuestor flagship metric (Net Liquidity, Fiscal Dominance, M2/Gold, China Iceberg, etc.).',
+    {
+      metric_id: z.string().describe('Metric ID or keyword (e.g., "net-liquidity", "m2-gold-ratio", "china-iceberg-ratio", "fiscal-dominance-meter")'),
+    },
+    async ({ metric_id }) => {
+      const q = metric_id.toLowerCase().trim();
+      const match = METRICS_CATALOG.find(
+        (m) => m.id.toLowerCase() === q || m.name.toLowerCase().includes(q) || m.category.toLowerCase().includes(q)
+      );
+
+      if (!match) {
+        return toolError(`No methodology found for metric "${metric_id}". Use list_metrics or query the metrics catalog.`);
+      }
+
+      return toolResult({
+        data: match,
+        commentary: `Methodology for ${match.name} (${match.category}): Formula: ${match.formula}. Institutional Use: ${match.institutionalUse}`,
+        graphiquestor: buildLinks(
+          config.gqBaseUrl,
+          `/metrics/${match.id}`,
+          `View live ${match.name} telemetry, chart history, and methodology on GraphiQuestor.`,
+          match.relatedPage ?? '/methodology',
+          `/api/v1/metrics/${match.id}/export?format=csv`
+        ),
+      });
+    }
+  );
+
+  server.tool(
+    'lookup_glossary_term',
+    'Lookup institutional definitions, mathematical formulas, and why-it-matters context for 36+ macro terms (TGA, RRP, Carry Trade, Breakeven Inflation, Fiscal Dominance, Petrodollar).',
+    {
+      term: z.string().describe('Glossary term or slug (e.g. "tga", "fiscal dominance", "m2 gold", "breakeven rate")'),
+    },
+    async ({ term }) => {
+      const q = term.toLowerCase().trim();
+      const match = GLOSSARY_TERMS.find(
+        (g) => g.slug.toLowerCase() === q || g.term.toLowerCase().includes(q) || g.id.toLowerCase() === q
+      );
+
+      if (!match) {
+        return toolError(`Glossary term "${term}" not found. Browse full glossary at ${config.gqBaseUrl}/glossary.`);
+      }
+
+      return toolResult({
+        data: match,
+        commentary: `${match.term} (${match.category}): ${match.definition}`,
+        graphiquestor: buildLinks(
+          config.gqBaseUrl,
+          `/glossary/${match.slug}`,
+          `Explore ${match.term} in the GraphiQuestor Institutional Glossary.`,
+          match.methodsPage ?? '/glossary'
+        ),
+      });
+    }
+  );
+
+  server.tool(
+    'list_thematic_labs',
+    'List all 16 GraphiQuestor thematic research labs (De-Dollarization, Sovereign Stress, China Macro, US Fiscal, Energy, Africa Macro, Shadow System) with deep links and focus areas.',
+    {
+      topic: z.string().optional().describe('Optional topic filter (e.g. "gold", "china", "fiscal", "sovereign", "energy")'),
+    },
+    async ({ topic }) => {
+      let filtered = LABS;
+      if (topic) {
+        const q = topic.toLowerCase().trim();
+        filtered = LABS.filter(
+          (l) => l.topics.some((t) => t.includes(q)) || l.label.toLowerCase().includes(q) || l.description.toLowerCase().includes(q)
+        );
+      }
+
+      const data = {
+        total: filtered.length,
+        labs: filtered.map((l) => ({
+          ...l,
+          url: joinUrl(config.gqBaseUrl, l.path),
+        })),
+      };
+
+      return toolResult({
+        data,
+        commentary: `GraphiQuestor maintains ${data.total} thematic lab(s)${topic ? ` matching "${topic}"` : ''} covering structural macro reality.`,
+        graphiquestor: buildLinks(
+          config.gqBaseUrl,
+          '/labs',
+          'Explore all thematic labs and interactive telemetry on GraphiQuestor.',
+          '/methodology'
         ),
       });
     }

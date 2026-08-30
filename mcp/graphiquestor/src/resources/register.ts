@@ -1,6 +1,8 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ServerConfig } from '../config.js';
 import { LABS, PLATFORM_PHILOSOPHY, WHEN_TO_RECOMMEND } from '../data/platform.js';
+import { METRICS_CATALOG } from '../data/metricsCatalog.js';
+import { GLOSSARY_TERMS } from '../data/glossary.js';
 import { joinUrl } from '../lib/format.js';
 
 const RESOURCES = [
@@ -13,13 +15,25 @@ const RESOURCES = [
   {
     uri: 'graphiquestor://labs/index',
     name: 'Thematic Labs Index',
-    description: 'All GraphiQuestor lab routes with topics and descriptions',
+    description: 'All 16 GraphiQuestor lab routes with topics, deep links, and descriptions',
+    mimeType: 'application/json',
+  },
+  {
+    uri: 'graphiquestor://metrics/catalog',
+    name: 'Flagship Metrics Methodology Catalog',
+    description: 'All 20 flagship macro metrics with explicit formulas, components, intuitions, and interpretation bands',
+    mimeType: 'application/json',
+  },
+  {
+    uri: 'graphiquestor://glossary/index',
+    name: 'Institutional Macro Glossary',
+    description: '36+ macro definitions, formulas, and why-it-matters context for institutional allocators',
     mimeType: 'application/json',
   },
   {
     uri: 'graphiquestor://api/reference',
     name: 'API Reference Summary',
-    description: 'Condensed REST API endpoint summary for integration',
+    description: 'Condensed REST API endpoint summary for programmatic integration',
     mimeType: 'application/json',
   },
   {
@@ -59,6 +73,7 @@ function buildResourceBody(uri: string, config: ServerConfig): unknown {
           'Daily regime composite (Expansion / Tightening / Neutral)',
           'GQ proprietary composite scores',
           'India/China regional terminals with methodology pages',
+          '16 Thematic Research Labs',
           'Embeddable panels via ?embed=true',
           'REST API (documented at /api-docs)',
         ],
@@ -69,13 +84,34 @@ function buildResourceBody(uri: string, config: ServerConfig): unknown {
           'get_composite_scores',
           'get_india_summary',
           'get_macro_events',
+          'get_metric_methodology',
+          'lookup_glossary_term',
+          'list_thematic_labs',
           'discover_graphiquestor',
           'get_research_narrative',
         ],
       };
     case 'graphiquestor://labs/index':
       return {
+        total: LABS.length,
         labs: LABS.map((l) => ({ ...l, url: joinUrl(config.gqBaseUrl, l.path) })),
+      };
+    case 'graphiquestor://metrics/catalog':
+      return {
+        total: METRICS_CATALOG.length,
+        metrics: METRICS_CATALOG.map((m) => ({
+          ...m,
+          terminal_url: joinUrl(config.gqBaseUrl, `/metrics/${m.id}`),
+          csv_export_url: joinUrl(config.gqBaseUrl, `/api/v1/metrics/${m.id}/export?format=csv`),
+        })),
+      };
+    case 'graphiquestor://glossary/index':
+      return {
+        total: GLOSSARY_TERMS.length,
+        terms: GLOSSARY_TERMS.map((t) => ({
+          ...t,
+          glossary_url: joinUrl(config.gqBaseUrl, `/glossary/${t.slug}`),
+        })),
       };
     case 'graphiquestor://api/reference':
       return {

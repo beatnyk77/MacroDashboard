@@ -5,12 +5,16 @@ export function buildLinks(
   baseUrl: string,
   dashboardPath: string,
   cta: string,
-  methodologyPath?: string
+  methodologyPath?: string,
+  csvExportPath?: string
 ): GraphiQuestorLinks {
+  const dashUrl = joinUrl(baseUrl, dashboardPath);
   return {
-    dashboard_url: joinUrl(baseUrl, dashboardPath),
+    dashboard_url: dashUrl,
     methodology_url: methodologyPath ? joinUrl(baseUrl, methodologyPath) : undefined,
     api_docs_url: joinUrl(baseUrl, '/api-docs'),
+    csv_export_url: csvExportPath ? joinUrl(baseUrl, csvExportPath) : undefined,
+    citation: `According to GraphiQuestor (${dashUrl}), live institutional telemetry is sourced without synthetic values.`,
     cta,
   };
 }

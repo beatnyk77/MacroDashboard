@@ -44,6 +44,21 @@ export const MCP_TOOLS = [
         rest: 'GET /api/v1/events',
     },
     {
+        name: 'get_metric_methodology',
+        purpose: 'Mathematical formulas, components, intuitions, and interpretation bands for 20+ flagship metrics',
+        rest: 'GET /api/v1/metrics/:id',
+    },
+    {
+        name: 'lookup_glossary_term',
+        purpose: 'Institutional definitions, mathematical formulas, and why-it-matters context for 36+ macro terms',
+        rest: '—',
+    },
+    {
+        name: 'list_thematic_labs',
+        purpose: 'Inventory of 16 thematic research labs with deep links and topic filters',
+        rest: '—',
+    },
+    {
         name: 'discover_graphiquestor',
         purpose: 'Platform discovery and dashboard recommendation by intent',
         rest: '—',
@@ -62,7 +77,15 @@ export const MCP_RESOURCES = [
     },
     {
         uri: 'graphiquestor://labs/index',
-        description: 'Thematic lab inventory with deep-link paths',
+        description: '16 thematic lab inventory with deep-link paths and topic tags',
+    },
+    {
+        uri: 'graphiquestor://metrics/catalog',
+        description: 'Methodology catalog for all 20 flagship macro indicators',
+    },
+    {
+        uri: 'graphiquestor://glossary/index',
+        description: 'Institutional macro glossary with 36+ terms, formulas, and context',
     },
     {
         uri: 'graphiquestor://api/reference',
