@@ -3,7 +3,7 @@
  * string used in frontend queries.
  *
  * Source of truth: SELECT DISTINCT metric_id FROM metric_observations;
- * Last synced: 2026-06-13
+ * Last synced: 2026-08-30
  *
  * Rules:
  *  - All frontend hooks MUST reference IDs through this registry.
@@ -249,6 +249,24 @@ export const INDIA_METRICS = {
   RUPEE_PRESSURE_SCORE:                    'RUPEE_PRESSURE_SCORE',
 } as const;
 
+// ── India Institutional Positioning ──────────────────────────────────────────
+
+export const INDIA_INSTITUTIONAL_POSITIONING_METRICS = {
+  IN_FII_CASH_NET:                         'IN_FII_CASH_NET',
+  IN_DII_CASH_NET:                         'IN_DII_CASH_NET',
+  IN_FII_INDEX_FUTURE_NET:                 'IN_FII_INDEX_FUTURE_NET',
+  IN_FII_INDEX_FUTURE_LONG_SHORT_RATIO:    'IN_FII_INDEX_FUTURE_LONG_SHORT_RATIO',
+  IN_FII_PUT_CALL_POSITIONING:             'IN_FII_PUT_CALL_POSITIONING',
+  IN_INDIA_VIX:                            'IN_INDIA_VIX',
+  IN_NSDL_SECTOR_FLOW:                     'IN_NSDL_SECTOR_FLOW',
+  IN_NSDL_SECTOR_AUM:                      'IN_NSDL_SECTOR_AUM',
+  IN_MARKET_BREADTH:                       'IN_MARKET_BREADTH',
+  IN_NIFTY_RETURN:                         'IN_NIFTY_RETURN',
+  IN_USD_INR_RETURN:                       'IN_USD_INR_RETURN',
+  IN_RBI_LIQUIDITY_IMPULSE:                'IN_RBI_LIQUIDITY_IMPULSE',
+  IN_BANK_CREDIT_GROWTH_YOY:               'IN_BANK_CREDIT_GROWTH_YOY',
+} as const;
+
 // ── China Macro ───────────────────────────────────────────────────────────────
 
 export const CHINA_METRICS = {
@@ -484,6 +502,7 @@ export const METRIC_IDS = {
   ...GOLD_METRICS,
   ...OIL_METRICS,
   ...INDIA_METRICS,
+  ...INDIA_INSTITUTIONAL_POSITIONING_METRICS,
   ...CHINA_METRICS,
   ...JAPAN_METRICS,
   ...EUROPE_METRICS,
@@ -497,4 +516,3 @@ export const METRIC_IDS = {
 } as const;
 
 export type MetricId = typeof METRIC_IDS[keyof typeof METRIC_IDS];
-
