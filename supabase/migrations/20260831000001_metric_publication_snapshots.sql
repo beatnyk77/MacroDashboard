@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.metric_publication_snapshots (
   source_snapshot_hash text,
   data_status text NOT NULL,
   revision_of uuid,
+  superseded_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT metric_publication_snapshots_revision_of_self_check
     CHECK (revision_of IS NULL OR revision_of <> snapshot_id),
@@ -56,6 +57,24 @@ RETURNS trigger
 LANGUAGE plpgsql
 AS $$
 BEGIN
+  IF TG_OP = 'UPDATE'
+     AND current_setting('app.metric_publication_snapshots_allow_supersede', true) = 'on'
+     AND OLD.snapshot_id = NEW.snapshot_id
+     AND OLD.metric_id = NEW.metric_id
+     AND OLD.slug = NEW.slug
+     AND OLD.payload = NEW.payload
+     AND OLD.observed_at IS NOT DISTINCT FROM NEW.observed_at
+     AND OLD.published_at = NEW.published_at
+     AND OLD.methodology_version = NEW.methodology_version
+     AND OLD.source_snapshot_hash IS NOT DISTINCT FROM NEW.source_snapshot_hash
+     AND OLD.data_status = NEW.data_status
+     AND OLD.revision_of IS NOT DISTINCT FROM NEW.revision_of
+     AND OLD.created_at = NEW.created_at
+     AND OLD.superseded_at IS NULL
+     AND NEW.superseded_at IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
+
   RAISE EXCEPTION 'metric_publication_snapshots is append-only';
 END;
 $$;
@@ -81,8 +100,20 @@ AS $$
 DECLARE
   prior_snapshot public.metric_publication_snapshots%ROWTYPE;
 BEGIN
+  IF NEW.data_status = 'superseded' THEN
+    RAISE EXCEPTION 'superseded snapshots must be represented by superseded_at on the prior row';
+  END IF;
+
   IF NEW.revision_of IS NULL THEN
+    IF NEW.data_status IN ('revised', 'corrected') THEN
+      RAISE EXCEPTION 'revised and corrected snapshots must set revision_of';
+    END IF;
+
     RETURN NEW;
+  END IF;
+
+  IF NEW.data_status NOT IN ('revised', 'corrected') THEN
+    RAISE EXCEPTION 'revision_of requires data_status revised or corrected';
   END IF;
 
   SELECT *
@@ -102,6 +133,18 @@ BEGIN
     RAISE EXCEPTION 'revision_of must reference an older snapshot';
   END IF;
 
+  IF prior_snapshot.superseded_at IS NOT NULL THEN
+    RAISE EXCEPTION 'revision_of must reference the current active snapshot';
+  END IF;
+
+  PERFORM set_config('app.metric_publication_snapshots_allow_supersede', 'on', true);
+
+  UPDATE public.metric_publication_snapshots
+     SET superseded_at = NEW.published_at
+   WHERE snapshot_id = prior_snapshot.snapshot_id;
+
+  PERFORM set_config('app.metric_publication_snapshots_allow_supersede', 'off', true);
+
   RETURN NEW;
 END;
 $$;
@@ -114,10 +157,13 @@ CREATE TRIGGER metric_publication_snapshots_validate_revision
   EXECUTE FUNCTION public.metric_publication_snapshots_validate_revision();
 
 COMMENT ON TABLE public.metric_publication_snapshots IS
-  'Append-only publication snapshots for public metric records. New snapshots point backward through revision_of. Revised and corrected snapshots preserve the prior payload; superseded stays in the accepted AuthorityMetricStatus contract for ledger visibility.';
+  'Append-only publication snapshots for public metric records. New snapshots point backward through revision_of. Revised and corrected snapshots preserve the prior payload while superseded_at marks the prior row as no longer current.';
 
 COMMENT ON COLUMN public.metric_publication_snapshots.data_status IS
   'AuthorityMetricStatus contract: verified, provisional, revised, corrected, unavailable, superseded.';
 
 COMMENT ON COLUMN public.metric_publication_snapshots.revision_of IS
   'References the older snapshot for the same metric. Snapshots are immutable once written.';
+
+COMMENT ON COLUMN public.metric_publication_snapshots.superseded_at IS
+  'Timestamp when a later revised or corrected snapshot superseded this row. Payload stays immutable.';

@@ -4224,6 +4224,7 @@ export type Database = {
           slug: string
           snapshot_id: string
           source_snapshot_hash: string | null
+          superseded_at: string | null
         }
         Insert: {
           created_at?: string
@@ -4237,6 +4238,7 @@ export type Database = {
           slug: string
           snapshot_id?: string
           source_snapshot_hash?: string | null
+          superseded_at?: string | null
         }
         Update: {
           created_at?: string
@@ -4250,6 +4252,7 @@ export type Database = {
           slug?: string
           snapshot_id?: string
           source_snapshot_hash?: string | null
+          superseded_at?: string | null
         }
         Relationships: [
           {
