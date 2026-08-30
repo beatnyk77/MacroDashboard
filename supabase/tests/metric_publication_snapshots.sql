@@ -18,6 +18,8 @@ DO $$
   index_count integer;
   rel_row_security boolean;
   policy_count integer;
+  current_flag boolean;
+  superseded_flag boolean;
 BEGIN
   SELECT data_type, udt_name
     INTO column_record
@@ -52,15 +54,14 @@ BEGIN
     RAISE EXCEPTION 'expected revision_of to be uuid, got %', column_record.data_type;
   END IF;
 
-  SELECT data_type, udt_name
-    INTO column_record
-    FROM information_schema.columns
-   WHERE table_schema = 'public'
-     AND table_name = 'metric_publication_snapshots'
-     AND column_name = 'superseded_at';
-
-  IF column_record.data_type <> 'timestamp with time zone' THEN
-    RAISE EXCEPTION 'expected superseded_at to be timestamptz, got %', column_record.data_type;
+  IF EXISTS (
+    SELECT 1
+      FROM information_schema.columns
+     WHERE table_schema = 'public'
+       AND table_name = 'metric_publication_snapshots'
+       AND column_name = 'superseded_at'
+  ) THEN
+    RAISE EXCEPTION 'did not expect mutable superseded_at column on metric_publication_snapshots';
   END IF;
 
   SELECT COUNT(*)
@@ -85,6 +86,18 @@ BEGIN
 
   IF index_count <> 1 THEN
     RAISE EXCEPTION 'expected metric_id/observed_at index';
+  END IF;
+
+  SELECT COUNT(*)
+    INTO index_count
+    FROM pg_indexes
+   WHERE schemaname = 'public'
+     AND tablename = 'metric_publication_snapshots'
+     AND indexname = 'idx_metric_publication_snapshots_revision_of'
+     AND indexdef ILIKE '%(revision_of)%';
+
+  IF index_count <> 1 THEN
+    RAISE EXCEPTION 'expected revision_of index';
   END IF;
 
   SELECT c.relrowsecurity
@@ -211,7 +224,7 @@ BEGIN
     );
     RAISE EXCEPTION 'standalone superseded snapshot unexpectedly succeeded';
   EXCEPTION
-    WHEN raise_exception THEN
+    WHEN check_violation OR raise_exception THEN
       NULL;
   END;
 
@@ -446,11 +459,10 @@ BEGIN
     FROM public.metric_publication_snapshots
    WHERE snapshot_id = base_snapshot_id
      AND payload = '{"value":123,"unit":"index"}'::jsonb
-     AND data_status = 'verified'
-     AND superseded_at = '2026-08-31T12:00:00Z'::timestamptz;
+     AND data_status = 'verified';
 
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'expected base snapshot to stay immutable and be superseded by revised snapshot';
+    RAISE EXCEPTION 'expected base snapshot to stay immutable after revised snapshot';
   END IF;
 
   PERFORM 1
@@ -458,20 +470,37 @@ BEGIN
    WHERE snapshot_id = revised_snapshot_id
      AND payload = '{"value":124,"unit":"index"}'::jsonb
      AND data_status = 'revised'
-     AND revision_of = base_snapshot_id
-     AND superseded_at = '2026-08-31T13:00:00Z'::timestamptz;
+     AND revision_of = base_snapshot_id;
 
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'expected revised snapshot to stay immutable and be superseded by corrected snapshot';
+    RAISE EXCEPTION 'expected revised snapshot to stay immutable after corrected snapshot';
   END IF;
 
-  PERFORM 1
-    FROM public.metric_publication_snapshots
-   WHERE snapshot_id = corrected_snapshot_id
-     AND superseded_at IS NULL;
+  SELECT is_current, is_superseded
+    INTO current_flag, superseded_flag
+    FROM public.vw_metric_publication_snapshots_public
+   WHERE snapshot_id = base_snapshot_id;
 
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'expected corrected snapshot to remain current';
+  IF current_flag IS DISTINCT FROM false OR superseded_flag IS DISTINCT FROM true THEN
+    RAISE EXCEPTION 'expected base snapshot to be derived as superseded';
+  END IF;
+
+  SELECT is_current, is_superseded
+    INTO current_flag, superseded_flag
+    FROM public.vw_metric_publication_snapshots_public
+   WHERE snapshot_id = revised_snapshot_id;
+
+  IF current_flag IS DISTINCT FROM false OR superseded_flag IS DISTINCT FROM true THEN
+    RAISE EXCEPTION 'expected revised snapshot to be derived as superseded';
+  END IF;
+
+  SELECT is_current, is_superseded
+    INTO current_flag, superseded_flag
+    FROM public.vw_metric_publication_snapshots_public
+   WHERE snapshot_id = corrected_snapshot_id;
+
+  IF current_flag IS DISTINCT FROM true OR superseded_flag IS DISTINCT FROM false THEN
+    RAISE EXCEPTION 'expected corrected snapshot to remain current in public view';
   END IF;
 END $$;
 
@@ -510,6 +539,33 @@ BEGIN
     RAISE EXCEPTION 'anon delete unexpectedly succeeded';
   EXCEPTION
     WHEN insufficient_privilege OR raise_exception THEN
+      NULL;
+  END;
+END $$;
+
+RESET ROLE;
+SET ROLE service_role;
+
+DO $$
+BEGIN
+  PERFORM set_config('app.metric_publication_snapshots_allow_supersede', 'on', true);
+
+  BEGIN
+    UPDATE public.metric_publication_snapshots
+       SET payload = jsonb_set(payload, '{value}', '1001'::jsonb, true)
+     WHERE snapshot_id = '22222222-2222-2222-2222-222222222222'::uuid;
+    RAISE EXCEPTION 'service_role update unexpectedly succeeded after setting legacy GUC';
+  EXCEPTION
+    WHEN raise_exception THEN
+      NULL;
+  END;
+
+  BEGIN
+    DELETE FROM public.metric_publication_snapshots
+     WHERE snapshot_id = '22222222-2222-2222-2222-222222222222'::uuid;
+    RAISE EXCEPTION 'service_role delete unexpectedly succeeded after setting legacy GUC';
+  EXCEPTION
+    WHEN raise_exception THEN
       NULL;
   END;
 END $$;

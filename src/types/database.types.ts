@@ -4224,7 +4224,6 @@ export type Database = {
           slug: string
           snapshot_id: string
           source_snapshot_hash: string | null
-          superseded_at: string | null
         }
         Insert: {
           created_at?: string
@@ -4238,7 +4237,6 @@ export type Database = {
           slug: string
           snapshot_id?: string
           source_snapshot_hash?: string | null
-          superseded_at?: string | null
         }
         Update: {
           created_at?: string
@@ -4252,7 +4250,6 @@ export type Database = {
           slug?: string
           snapshot_id?: string
           source_snapshot_hash?: string | null
-          superseded_at?: string | null
         }
         Relationships: [
           {
@@ -6322,6 +6319,32 @@ export type Database = {
           total_severity: number | null
         }
         Relationships: []
+      }
+      vw_metric_publication_snapshots_public: {
+        Row: {
+          created_at: string | null
+          data_status: string | null
+          is_current: boolean | null
+          is_superseded: boolean | null
+          methodology_version: string | null
+          metric_id: string | null
+          observed_at: string | null
+          payload: Json | null
+          published_at: string | null
+          revision_of: string | null
+          slug: string | null
+          snapshot_id: string | null
+          source_snapshot_hash: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metric_publication_snapshots_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "metric_publication_snapshots"
+            referencedColumns: ["snapshot_id"]
+          },
+        ]
       }
       market_pulse_stats: {
         Row: {
