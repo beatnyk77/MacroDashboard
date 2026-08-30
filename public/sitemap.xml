@@ -912,4 +912,40 @@
     <priority>0.7</priority>
     <lastmod>2026-07-03</lastmod>
   </url>
+  <url>
+    <loc>https://graphiquestor.com/metrics/treasury-auction-demand/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-07-03</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/metrics/us-debt-maturity-wall/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-07-03</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/metrics/wti-physical-stress/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-07-03</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/metrics/cftc-cot-positioning/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-07-03</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/metrics/g20-fiscal-vulnerability/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-07-03</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/metrics/china-monetization-pressure/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-07-03</lastmod>
+  </url>
 </urlset>

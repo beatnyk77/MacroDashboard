@@ -610,4 +610,158 @@ export const METRICS_CATALOG: MetricEntry[] = [
         relatedPageLabel: 'India Intel Terminal',
         sources: ['MoSPI', 'RBI', 'IMF WEO'],
     },
+    {
+        id: 'treasury-auction-demand',
+        name: 'US Treasury Auction Demand Telemetry',
+        category: 'Fiscal Health',
+        formula: 'Demand Score = 0.4×(Bid-to-Cover Z) + 0.35×(Indirect Bidder % Z) − 0.25×(Primary Dealer Allotment % Z)',
+        components: [
+            'Bid-to-Cover Ratio – Total tenders received divided by total accepted volume at Treasury auctions',
+            'Indirect Bidder % – Foreign central banks and institutional allocators bidding via New York Fed / dealers',
+            'Primary Dealer Allotment – Unabsorbed tail inventory forced onto dealer balance sheets',
+        ],
+        intuition: `Headline Treasury yields only tell half the story. Auction demand metrics measure whether private 
+        capital and foreign central banks are willing to absorb trillion-dollar US debt issuance at current yields. 
+        When Indirect Bidders retreat and Primary Dealers are forced to absorb larger allotments (>20%), dealer balance 
+        sheet capacity becomes constrained, causing auction "tails" and sharp repo rate spikes.`,
+        institutionalUse: `Tracked in real time by Treasury primary dealers, fixed income arbitrage funds, and rate strategists. 
+        An auction demand score below −1.5 signals primary dealer indigestion and precedes higher term premiums.`,
+        interpretation: [
+            { label: 'Strong Auction Bid', condition: 'Score > 1.0 (High indirect absorption)', color: 'text-terminal-emerald' },
+            { label: 'Normal Absorption', condition: '−0.5 ≤ Score ≤ 1.0', color: 'text-terminal-muted' },
+            { label: 'Auction Tail Risk', condition: '−1.5 ≤ Score < −0.5', color: 'text-orange-400' },
+            { label: 'Dealer Indigestion', condition: 'Score < −1.5 (High dealer concession)', color: 'text-terminal-rose' },
+        ],
+        relatedPage: '/labs/us-macro-fiscal',
+        relatedPageLabel: 'US Macro Fiscal Lab',
+        sources: ['US Treasury FiscalData', 'Federal Reserve Board H.4.1', 'New York Fed'],
+    },
+    {
+        id: 'us-debt-maturity-wall',
+        name: 'US Debt Maturity Wall & Refinancing Schedule',
+        category: 'Fiscal Health',
+        formula: 'Maturity Burden % = (Treasury Debt Maturing in ≤12M / Total Marketable Public Debt) × 100',
+        components: [
+            'Debt Maturing ≤12M – Total Treasury bills, notes, and bonds expiring within 365 calendar days',
+            'Total Marketable Debt – Gross marketable Treasury debt held by public and central banks',
+            'Weighted Average Maturity (WAM) – Average duration of outstanding sovereign liabilities',
+        ],
+        intuition: `When the Treasury finances deficits heavily with short-term T-bills rather than long-term coupon bonds, 
+        the effective maturity profile collapses. A high maturity wall (>30% maturing in 12 months) transforms the federal 
+        government into a variable-rate borrower, making interest expense hypersensitive to Fed policy rates. Every 100 bps 
+        hike transmits directly into hundreds of billions in additional annual deficit financing within 4 quarters.`,
+        institutionalUse: `Central bank policy desks and sovereign bond allocators monitor the maturity schedule 
+        to evaluate fiscal dominance and term premium vulnerability. Used by IMF fiscal monitoring teams in annual Debt Sustainability Analyses.`,
+        interpretation: [
+            { label: 'Acute Refinancing Pressure', condition: 'Maturity Burden > 35%', color: 'text-terminal-rose' },
+            { label: 'Elevated Rollover Wall', condition: '25% < Burden ≤ 35%', color: 'text-orange-400' },
+            { label: 'Balanced Term Profile', condition: '15% ≤ Burden ≤ 25%', color: 'text-terminal-muted' },
+            { label: 'Termed Out', condition: 'Burden < 15%', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/labs/us-macro-fiscal',
+        relatedPageLabel: 'US Macro Fiscal Lab',
+        sources: ['US Treasury Monthly Statement of the Public Debt (MSPD)', 'FRED (GFDEBTN)'],
+    },
+    {
+        id: 'wti-physical-stress',
+        name: 'WTI Physical Market & Cushing Storage Stress',
+        category: 'Energy & Commodities',
+        formula: 'Prompt Spread = Front-Month WTI (M1) − Second-Month WTI (M2) (USD/bbl)',
+        components: [
+            'Prompt Spread (M1−M2) – Front-to-second month calendar spread indicating immediate physical tightness',
+            'Cushing Inventory Capacity – Working storage utilization at Cushing, Oklahoma hub (EIA)',
+            'Crack Spread 3:2:1 – Refinery margin incentive proxy for crude consumption demand',
+        ],
+        intuition: `Paper futures prices can diverge from physical crude reality. The prompt calendar spread reveals 
+        immediate physical delivery bottlenecks: steep backwardation (M1 > M2) signals immediate physical scarcity and 
+        depleted commercial storage, while steep contango (M1 < M2) indicates acute physical oversupply and storage saturation.`,
+        institutionalUse: `Commodity trading desks, physical oil refiners, and global macro funds use prompt calendar 
+        spreads as the pure leading signal for inventory cycles before EIA weekly inventory numbers are reported.`,
+        interpretation: [
+            { label: 'Super Backwardation (Extreme Scarcity)', condition: 'Prompt Spread > $1.50/bbl', color: 'text-terminal-emerald' },
+            { label: 'Physical Tightness', condition: '$0.25 < Spread ≤ $1.50/bbl', color: 'text-terminal-blue' },
+            { label: 'Balanced Supply', condition: '−$0.25 ≤ Spread ≤ $0.25/bbl', color: 'text-terminal-muted' },
+            { label: 'Contango (Physical Glut)', condition: 'Spread < −$0.25/bbl', color: 'text-terminal-rose' },
+        ],
+        relatedPage: '/labs/energy-commodities',
+        relatedPageLabel: 'Energy Commodities Lab',
+        sources: ['NYMEX WTI', 'EIA Petroleum Status Report', 'CME Group'],
+    },
+    {
+        id: 'cftc-cot-positioning',
+        name: 'CFTC Speculative Net Positioning & Squeeze Telemetry',
+        category: 'Market Positioning',
+        formula: 'Spec Net % = (Non-Commercial Longs − Non-Commercial Shorts) / Total Open Interest × 100',
+        components: [
+            'Non-Commercial Longs/Shorts – Speculative positioning from hedge funds, CTAs, and asset managers',
+            'Commercial Hedgers – Physical producers and merchant consumers hedging real commodity exposure',
+            '3-Year Percentile Rank – Historical context of current net positioning crowding',
+        ],
+        intuition: `Extreme speculative consensus is the primary precursor to violent market squeezes. When speculative 
+        net length reaches the 95th percentile, marginal buyers are exhausted; any bearish catalyst forces cascade liquidations. 
+        Conversely, extreme speculative short positioning provides the fuel for short squeezes when macro conditions stabilize.`,
+        institutionalUse: `Macro positioning desks and systematic trend-following funds incorporate COT z-scores 
+        and percentile rankings to size risk and set reversal stop-loss levels across crude, gold, currencies, and 10Y Treasuries.`,
+        interpretation: [
+            { label: 'Extreme Long Crowding (Squeeze Risk)', condition: 'Percentile > 90%', color: 'text-terminal-rose' },
+            { label: 'Long Bias', condition: '60% < Percentile ≤ 90%', color: 'text-orange-400' },
+            { label: 'Balanced Positioning', condition: '40% ≤ Percentile ≤ 60%', color: 'text-terminal-muted' },
+            { label: 'Extreme Short Crowding (Rebound Fuel)', condition: 'Percentile < 10%', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/labs/energy-commodities',
+        relatedPageLabel: 'Energy & Positioning Lab',
+        sources: ['CFTC Commitments of Traders (Disaggregated & Legacy)', 'CME', 'ICE'],
+    },
+    {
+        id: 'g20-fiscal-vulnerability',
+        name: 'G20 Fiscal Vulnerability vs Vitality Matrix',
+        category: 'Sovereign Risk',
+        formula: 'Vulnerability Index = (Debt/GDP %) × (Interest Expense / Revenue %) / (Nominal GDP Growth %)',
+        components: [
+            'Debt/GDP Ratio – Gross general government debt as % of national nominal GDP (IMF WEO)',
+            'Interest Expense Burden – Net interest payments as percentage of total sovereign revenue',
+            'Nominal GDP Growth (g) – Nominal GDP growth rate acting as the sovereign denominator growth engine',
+        ],
+        intuition: `A high debt ratio is sustainable if the sovereign's nominal economic growth (g) exceeds the effective 
+        interest rate on debt (r) — the classic r−g differential. The G20 Fiscal Matrix maps 20 major economies across 
+        four distinct quadrants: Fiscal Vitality (low debt, high growth), Complacent Buffer (high debt, high growth), 
+        Stagnant Burden (low debt, low growth), and Structural Trap (high debt, low growth, elevated interest).`,
+        institutionalUse: `Sovereign credit rating analysts, EM debt managers, and global capital allocators use this matrix 
+        to evaluate sovereign spread divergence and sovereign CDS risk across developed and emerging nations.`,
+        interpretation: [
+            { label: 'Fiscal Vitality (Resilient)', condition: 'Low Debt/GDP + High Nominal Growth', color: 'text-terminal-emerald' },
+            { label: 'Refinancing Risk (Warning)', condition: 'High Debt/GDP + Moderate Growth', color: 'text-orange-400' },
+            { label: 'Fiscal Trap (Severe Risk)', condition: 'Debt/GDP > 110% & r > g', color: 'text-terminal-rose' },
+            { label: 'Fiscal Repair', condition: 'Primary balance surplus & expanding growth', color: 'text-terminal-blue' },
+        ],
+        relatedPage: '/labs/sovereign-stress',
+        relatedPageLabel: 'Sovereign Stress Lab',
+        sources: ['IMF World Economic Outlook (WEO)', 'BIS Debt Statistics', 'OECD'],
+    },
+    {
+        id: 'china-monetization-pressure',
+        name: 'China Quasi-Fiscal Monetization Pressure',
+        category: 'Sovereign Risk',
+        formula: 'Monetization Pressure = (PSL + Policy Bank Lending + Central Bank Claims on Gov) / Nominal GDP × 100',
+        components: [
+            'Pledged Supplementary Lending (PSL) – PBOC direct funding facility to policy banks (CDB, ADBC)',
+            'Special Refinancing Bond Quota – Central sovereign quota allocated to swap off-budget LGFV debt',
+            'PBOC Balance Sheet Claims on Depository Corporations – Core liquidity injection conduit',
+        ],
+        intuition: `China rarely conducts conventional Western quantitative easing with open market purchases of central government bonds. 
+        Instead, quasi-fiscal monetization happens through policy bank credit (CDB/ADBC) funded by the PBOC via Pledged Supplementary 
+        Lending (PSL) and relending quotas. When local debt maturity stress peaks, this index surges, revealing the actual pace 
+        of debt socialization and currency debasement pressure.`,
+        institutionalUse: `EM macro funds and China sovereign risk specialists use this indicator to forecast PBOC reserve requirement 
+        ratio (RRR) cuts, LPR adjustments, and RMB currency pressure before official communique releases.`,
+        interpretation: [
+            { label: 'Aggressive Quasi-QE', condition: 'Pressure > 15% GDP', color: 'text-terminal-rose' },
+            { label: 'Targeted Easing', condition: '8% < Pressure ≤ 15%', color: 'text-orange-400' },
+            { label: 'Normal Transmission', condition: 'Pressure ≤ 8%', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/intel/china',
+        relatedPageLabel: 'China Intel Terminal',
+        sources: ['PBOC Statistical Bulletin', 'Ministry of Finance PRC', 'IMF Article IV'],
+    },
 ];
+

@@ -55,6 +55,12 @@ const SERIES_SOURCES: Record<string, { kind: 'view-net-liquidity' } | { kind: 'o
     'brent-crude-oil': { kind: 'observations', metricId: MID.BRENT_CRUDE_PRICE },
     'china-lgfv-stress': { kind: 'observations', metricId: MID.CN_LGFV_STRESS_INDEX },
     'india-gdp-growth': { kind: 'observations', metricId: MID.IN_GDP_GROWTH_YOY },
+    'treasury-auction-demand': { kind: 'observations', metricId: MID.US_TREASURY_10Y_DEMAND_SCORE },
+    'us-debt-maturity-wall': { kind: 'observations', metricId: MID.US_DEBT_MATURING_12M_TN },
+    'wti-physical-stress': { kind: 'observations', metricId: MID.WTI_CRUDE_PRICE },
+    'cftc-cot-positioning': { kind: 'observations', metricId: MID.COT_UST_10Y_NET_SPEC },
+    'g20-fiscal-vulnerability': { kind: 'observations', metricId: MID.G20_DEBT_GDP_PCT },
+    'china-monetization-pressure': { kind: 'observations', metricId: MID.CN_MONETIZATION_PRESSURE },
 };
 
 function seriesMetricId(entryId: string | undefined): string | undefined {

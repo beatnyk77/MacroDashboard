@@ -58,6 +58,12 @@ const METRIC_TO_GLOSSARY: Record<string, string> = {
     'fed-monetization-ratio': 'fed-monetization-ratio',
     'india-credit-cycle': 'india-credit-cycle-clock',
     'china-iceberg-ratio': 'china-debt-iceberg',
+    'treasury-auction-demand': 'treasury-auction-demand',
+    'us-debt-maturity-wall': 'us-debt-maturity-wall',
+    'wti-physical-stress': 'wti-physical-stress',
+    'cftc-cot-positioning': 'cftc-cot-positioning',
+    'g20-fiscal-vulnerability': 'g20-fiscal-vulnerability',
+    'china-monetization-pressure': 'china-monetization-pressure',
 };
 
 function normalizePath(path: string): string {
