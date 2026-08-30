@@ -173,6 +173,7 @@ export const GOLD_METRICS = {
   GOLD_SHANGHAI_USD:                       'GOLD_SHANGHAI_USD',
   GOLD_COMEX_SHANGHAI_SPREAD_PCT:          'GOLD_COMEX_SHANGHAI_SPREAD_PCT',
   GOLD_MONTHLY_RETURN:                     'GOLD_MONTHLY_RETURN',
+  CB_GOLD_NET:                             'CB_GOLD_NET',
   SILVER_PRICE_USD:                        'SILVER_PRICE_USD',
   SILVER_COMEX_USD:                        'SILVER_COMEX_USD',
   SILVER_SHANGHAI_USD:                     'SILVER_SHANGHAI_USD',

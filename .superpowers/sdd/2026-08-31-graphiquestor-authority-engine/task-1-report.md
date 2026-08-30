@@ -9,6 +9,7 @@ Files changed:
 - `authorityMetricMapping.ts`
 - `docs/ops/authority-metric-mapping.md`
 - `scripts/__tests__/authorityMetricMapping.test.ts`
+- `src/constants/metricIds.ts`
 
 Commands run:
 
@@ -56,15 +57,24 @@ Commands run:
 - `git add authorityMetricMapping.ts docs/ops/authority-metric-mapping.md scripts/__tests__/authorityMetricMapping.test.ts`
 - `git add -f .superpowers/sdd/2026-08-31-graphiquestor-authority-engine/task-1-report.md`
 - `git rev-parse HEAD`
+- `sed -n '1,240p' src/hooks/useG20Sovereign.ts`
+- `sed -n '1,280p' src/features/dashboard/components/sections/SovereignRiskMatrix.tsx`
+- `sed -n '1,260p' src/hooks/useG20SovereignMatrix.ts`
+- `sed -n '1,220p' supabase/functions/ingest-imf/index.ts`
+- `sed -n '1,220p' supabase/migrations/013_g20_sovereign_metrics.sql`
+- `sed -n '840,900p' supabase/migrations/20260613000000_canonical_crons.sql`
+- `sed -n '1,140p' supabase/migrations/20260829010000_register_openbb_cot_market_metrics.sql`
+- `npx vitest run scripts/__tests__/authorityMetricMapping.test.ts`
+- `git diff -- authorityMetricMapping.ts docs/ops/authority-metric-mapping.md scripts/__tests__/authorityMetricMapping.test.ts src/constants/metricIds.ts .superpowers/sdd/2026-08-31-graphiquestor-authority-engine/task-1-report.md`
 
 Commit hash:
 
 - `TO_BE_FILLED_AFTER_COMMIT`
-- `696de110b76dd320d9893280f8815134ebebe0bf`
+- `4e9fef7c8fb9da077cbdde3a0ff755633a528919`
 
 Concerns:
 
 - `public.vw_net_liquidity` is referenced by product code and security migrations, yet no checked-in SQL definition was found in the inspected migrations.
-- `BIS_GLOBAL_LIQUIDITY_USD_BN` is still referenced in registries and digest code, while `20260801000002_deactivate_unsourced_metrics.sql` deactivates it as unsourced.
-- `sovereign-stress-index` has no checked-in producer or migration that writes `BOP_VULNERABILITY_SCORE`. The report maps the nearest live sovereign surface and marks the row unresolved.
+- `US_NET_LIQUIDITY_USD_BN` is now the active registry-backed authority id in the mapping, while checked-in product consumers still read `public.vw_net_liquidity` and some digest code still references the older deactivated `BIS_GLOBAL_LIQUIDITY_USD_BN` id.
+- The live sovereign screen resolves to `G20_DEBT_GDP_PCT` via `ingest-imf` and `public.vw_g20_sovereign`, while the methodology copy for `sovereign-stress-index` still describes a different CDS and FX-vol composite that is not what the current product renders.
 - `ingest-cofer` contains simulated data in checked-in code. The mapping records the active producer path, and the source-quality issue remains open.

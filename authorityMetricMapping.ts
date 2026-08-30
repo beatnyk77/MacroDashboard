@@ -12,13 +12,13 @@ export interface AuthorityMetricMapping {
 export const EXPECTED_AUTHORITY_METRICS: AuthorityMetricMapping[] = [
   {
     publicSlug: 'net-liquidity',
-    metricId: 'BIS_GLOBAL_LIQUIDITY_USD_BN',
-    producer: 'ingest-nyfed-markets',
+    metricId: 'US_NET_LIQUIDITY_USD_BN',
+    producer: 'ingest-nyfed-markets + ingest-fred',
     storagePath: 'public.vw_net_liquidity',
     observationGrain: 'daily',
     unit: 'USD bn',
     sourceLedger: ['FRED WALCL', 'FRED WTREGEN', 'FRED RRPONTSYD', 'NY Fed H.4.1'],
-    calculationPath: 'The terminal reads public.vw_net_liquidity directly. The checked-in producer evidence is ingest-nyfed-markets writing TGA_BALANCE_BN and RRP_BALANCE_BN into metric_observations, with FED_BALANCE_SHEET supplied by the FRED ingestion path. BIS_GLOBAL_LIQUIDITY_USD_BN remains a downstream mirror id used by digest code even though migration 20260801000002 deactivates it as unsourced.',
+    calculationPath: 'Migration 20260829010000 registers US_NET_LIQUIDITY_USD_BN as the active canonical net-liquidity metric. The live terminal still reads public.vw_net_liquidity, whose checked-in upstream legs come from ingest-nyfed-markets writing TGA_BALANCE_BN and RRP_BALANCE_BN plus the FRED ingestion path writing FED_BALANCE_SHEET/WALCL-backed observations.',
   },
   {
     publicSlug: 'fiscal-dominance-meter',
@@ -32,13 +32,13 @@ export const EXPECTED_AUTHORITY_METRICS: AuthorityMetricMapping[] = [
   },
   {
     publicSlug: 'sovereign-stress-index',
-    metricId: 'BOP_VULNERABILITY_SCORE',
-    producer: 'UNRESOLVED_NO_ACTIVE_PRODUCER',
+    metricId: 'G20_DEBT_GDP_PCT',
+    producer: 'ingest-imf',
     storagePath: 'public.vw_g20_sovereign',
-    observationGrain: 'mixed',
-    unit: 'index',
-    sourceLedger: ['BIS Statistics Portal', 'Bloomberg CDS/FX vol', 'IMF WEO'],
-    calculationPath: 'The methodology slug exists in src/features/metrics/metricsCatalog.ts and BOP_VULNERABILITY_SCORE exists in src/constants/metricIds.ts, but no current migration or producer function writes that metric_id. The nearest checked-in sovereign surface is public.vw_g20_sovereign, which exposes debt, inflation, real-rate proxy, and interest-burden aggregates without a dedicated SSI row.',
+    observationGrain: 'annual',
+    unit: '%',
+    sourceLedger: ['IMF DataMapper FAD_G20', 'US FRED proxies for real-rate leg'],
+    calculationPath: 'The live sovereign screen is backed by public.vw_g20_sovereign, not by BOP_VULNERABILITY_SCORE. Migration 013_g20_sovereign_metrics.sql registers G20_DEBT_GDP_PCT, G20_INFLATION_YOY, and G20_INTEREST_BURDEN_PCT. supabase/functions/ingest-imf/index.ts writes those aggregate rows into metric_observations, and vw_g20_sovereign derives the displayed debt, inflation, interest-burden, and real-rate proxy fields from them.',
   },
   {
     publicSlug: 'm2-gold-ratio',

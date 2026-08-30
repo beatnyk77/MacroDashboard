@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EXPECTED_AUTHORITY_METRICS } from '../../authorityMetricMapping';
 import { METRIC_IDS } from '../../src/constants/metricIds';
-import { METRICS_CATALOG } from '../../src/features/metrics/metricsCatalog';
 
 const flagshipSlugs = [
   'net-liquidity',
@@ -15,11 +14,7 @@ const flagshipSlugs = [
 ];
 
 const knownMetricIds = new Set(Object.values(METRIC_IDS));
-const knownCatalogEntries = new Set([
-  ...METRICS_CATALOG.map((metric) => metric.id),
-  'CB_GOLD_NET',
-]);
-const knownMetricIdExceptions = new Set(['CB_GOLD_NET']);
+const sentinelFragments = ['UNRESOLVED', 'SENTINEL', 'TODO', 'UNKNOWN', 'PLACEHOLDER'];
 
 describe('authority metric mapping', () => {
   it('maps every flagship metric to a database id, producer, storage path, and unit', () => {
@@ -31,11 +26,15 @@ describe('authority metric mapping', () => {
       expect(metric.producer).toBeTruthy();
       expect(metric.storagePath).toBeTruthy();
       expect(metric.unit).toBeTruthy();
-      expect(knownCatalogEntries.has(metric.publicSlug)).toBe(true);
+      expect(flagshipSlugs).toContain(metric.publicSlug);
+      expect(metric.storagePath.startsWith('public.')).toBe(true);
+      expect(knownMetricIds.has(metric.metricId)).toBe(true);
       expect(
-        knownMetricIds.has(metric.metricId)
-          || knownMetricIdExceptions.has(metric.metricId),
-      ).toBe(true);
+        sentinelFragments.some((fragment) =>
+          metric.producer.toUpperCase().includes(fragment)
+          || metric.calculationPath.toUpperCase().includes(fragment),
+        ),
+      ).toBe(false);
     }
 
     expect(
