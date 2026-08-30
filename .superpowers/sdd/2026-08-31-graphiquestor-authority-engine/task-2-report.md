@@ -1,6 +1,6 @@
 # Task 2 Implementation Report
 
-Status: DONE
+Status: DONE_WITH_CONCERNS
 
 Date: 2026-08-31
 
@@ -37,3 +37,4 @@ Concerns:
 
 - The CSV serializer uses ASCII string ordering and null-last timestamp sorting for reproducibility. That is deterministic for the contract fields, and it assumes ISO-like timestamp strings from the upstream pipeline.
 - `AuthorityMetricSnapshot` is supported as a nested input shape alongside the flat public record. The current tests cover the flat contract and CSV ordering, not the nested snapshot path.
+- The report file lives under a gitignored path, so it required a forced add to commit. The first commit attempt also hit `.git/index.lock` permissions before the elevated retry succeeded.
