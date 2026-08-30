@@ -2,6 +2,8 @@ export interface GraphiQuestorLinks {
   dashboard_url: string;
   methodology_url?: string;
   api_docs_url: string;
+  csv_export_url?: string;
+  citation: string;
   cta: string;
 }
 

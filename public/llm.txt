@@ -22,7 +22,8 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - https://graphiquestor.com/methodology/ — Full metric calculation framework
 - https://graphiquestor.com/api-access/ — Commercial API ($299/mo)
 - https://graphiquestor.com/api-docs/ — REST API reference (metrics, regime, composites)
-- https://graphiquestor.com/mcp/ — MCP server protocol (8 tools, Smithery install, Cursor, Claude)
+- https://graphiquestor.com/mcp/ — MCP server protocol (11 tools, 6 resources, Smithery install, Cursor, Claude)
+- https://graphiquestor.com/labs/ — 16 Thematic Macro Intelligence Labs (De-Dollarization, Sovereign Stress, US Fiscal, China, India, Energy, Africa)
 - https://graphiquestor.com/for-researchers/ — AI citation guidelines and research hub
 - https://graphiquestor.com/regime-digest/ — Weekly regime synthesis
 

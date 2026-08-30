@@ -1,6 +1,11 @@
 name: Deploy Supabase Migrations
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/deploy-db-migrations.sh'
   workflow_dispatch:
 
 concurrency:

@@ -1,0 +1,136 @@
+export interface GlossaryEntry {
+  id: string;
+  term: string;
+  slug: string;
+  category: string;
+  definition: string;
+  formula?: string;
+  whyItMatters?: string;
+  relatedMetrics?: string[];
+  methodsPage?: string;
+}
+
+export const GLOSSARY_TERMS: GlossaryEntry[] = [
+  {
+    id: 'net-liquidity-z-score',
+    term: 'Net Liquidity Z-Score',
+    slug: 'net-liquidity-z-score',
+    category: 'Liquidity',
+    definition: 'Statistical normalisation of Fed effective liquidity (Balance Sheet minus TGA minus ONRRP) against a 25-year rolling mean.',
+    formula: 'Z = (Net Liquidity − μ₂₅ᵧ) / σ₂₅ᵧ',
+    whyItMatters: 'Correlates with equity risk appetite; Z > +1.5 signals expansion, Z < −1.5 precedes risk-off drawdowns.',
+    relatedMetrics: ['WALCL', 'WTREGEN', 'RRPONTSYD'],
+    methodsPage: '/methods/net-liquidity-z-score',
+  },
+  {
+    id: 'tga',
+    term: 'Treasury General Account (TGA)',
+    slug: 'tga',
+    category: 'Liquidity',
+    definition: 'Operating cash account held by US Treasury at NY Fed. Injections/drawdowns directly alter bank reserve liquidity.',
+    formula: 'Δ Reserves ≈ −Δ TGA',
+    whyItMatters: 'TGA drawdowns mimic QE; TGA rebuilds drain market liquidity mechanically.',
+    relatedMetrics: ['Net Liquidity', 'WALCL', 'WTREGEN'],
+  },
+  {
+    id: 'reverse-repo-facility-rrp',
+    term: 'Overnight Reverse Repo Facility (ON RRP)',
+    slug: 'reverse-repo-facility-rrp',
+    category: 'Liquidity',
+    definition: 'Facility where money market funds park excess liquidity overnight with the Fed in exchange for Treasury collateral.',
+    whyItMatters: 'RRP draining provides structural liquidity injection into market assets without Fed balance sheet growth.',
+    relatedMetrics: ['Net Liquidity', 'SOFR', 'WALCL'],
+  },
+  {
+    id: 'fiscal-dominance',
+    term: 'Fiscal Dominance',
+    slug: 'fiscal-dominance',
+    category: 'Sovereign Debt',
+    definition: 'A macroeconomic regime where government debt service requirements constrain central bank interest rate independence.',
+    formula: 'Interest Expense / Federal Revenue > 20%',
+    whyItMatters: 'Forces central banks into financial repression or debt monetization to preserve sovereign solvency.',
+    relatedMetrics: ['Fiscal Dominance Meter', 'Federal Deficit'],
+    methodsPage: '/methods/fiscal-dominance-meter',
+  },
+  {
+    id: 'de-dollarization',
+    term: 'De-Dollarization',
+    slug: 'de-dollarization',
+    category: 'Geopolitics',
+    definition: 'Structural shift reducing reliance on the US dollar for central bank reserves, trade settlement, and commodity invoicing.',
+    whyItMatters: 'USD allocated reserve share has declined from ~73% (2001) to ~58% (2024), shifting demand into gold and bilateral clearing.',
+    relatedMetrics: ['IMF COFER', 'Central Bank Gold Purchases', 'USD Reserve Share'],
+    methodsPage: '/methods/de-dollarization-guide',
+  },
+  {
+    id: 'm2-gold-ratio',
+    term: 'M2/Gold Ratio',
+    slug: 'm2-gold-ratio',
+    category: 'Hard Assets',
+    definition: 'Ratio comparing global M2 broad money supply to total market value of above-ground gold reserves.',
+    formula: 'M2 / (Above-ground gold oz × Spot Gold Price)',
+    whyItMatters: 'Captures monetary debasement; extreme ratio spikes historically precede multi-year gold re-rating cycles.',
+    relatedMetrics: ['Global M2', 'Gold Spot Price', 'Debt/Gold Ratio'],
+    methodsPage: '/methods/m2-gold-ratio',
+  },
+  {
+    id: 'debt-gold-z-score',
+    term: 'Debt/Gold Z-Score',
+    slug: 'debt-gold-z-score',
+    category: 'Hard Assets',
+    definition: 'Ratio comparing US Federal Debt to dollar value of official gold reserves, normalised via 25-year rolling Z-score.',
+    formula: 'Z = (Debt/Gold − μ₂₅ᵧ) / σ₂₅ᵧ',
+    whyItMatters: 'Extreme positive Z-scores indicate sovereign debt growth far outpacing hard monetary anchor pricing.',
+    relatedMetrics: ['GFDEBTN', 'Gold Spot Price'],
+    methodsPage: '/methods/debt-gold-z-score',
+  },
+  {
+    id: 'china-debt-iceberg',
+    term: 'China Debt Iceberg',
+    slug: 'china-debt-iceberg',
+    category: 'Sovereign Debt',
+    definition: 'Five-layer framework tracking China consolidated public debt across central, local government, LGFV bonds, policy banks, and SOE guarantees.',
+    whyItMatters: 'Consolidated public debt reaches ~110-120% of GDP versus official headline central debt of ~25%.',
+    relatedMetrics: ['China Iceberg Ratio', 'LGFV Stress Index', 'Monetization Pressure'],
+    methodsPage: '/methods/china-debt-iceberg',
+  },
+  {
+    id: 'india-credit-cycle',
+    term: 'India Credit Cycle Clock',
+    slug: 'india-credit-cycle',
+    category: 'Macro Indicators',
+    definition: 'Two-axis diagnostic plotting scheduled commercial bank credit growth against credit-to-deposit ratios.',
+    whyItMatters: 'Maps economic transition between Expansion, Late Cycle, Downturn, and Balance Sheet Repair for RBI policy timing.',
+    relatedMetrics: ['RBI SCB Credit', 'Credit-Deposit Ratio', 'Repo Rate'],
+    methodsPage: '/methods/india-credit-cycle-clock',
+  },
+  {
+    id: 'loan-to-job-efficiency',
+    term: 'Loan-to-Job Efficiency Ratio',
+    slug: 'loan-to-job-efficiency',
+    category: 'Macro Indicators',
+    definition: 'Measures bank credit growth required per unit of formal employment addition (EPFO proxy).',
+    whyItMatters: 'Detects whether bank credit is funding productive real economy expansion or speculative asset inflation.',
+    relatedMetrics: ['RBI Credit', 'EPFO Net Payroll Additions'],
+    methodsPage: '/methods/loan-to-job-efficiency',
+  },
+  {
+    id: 'energy-dependency-ratio',
+    term: 'Energy Dependency Ratio',
+    slug: 'energy-dependency-ratio',
+    category: 'Macro Indicators',
+    definition: 'Percentage of gross inland energy consumption met through net foreign energy imports.',
+    whyItMatters: 'High dependency (>70%) creates immediate currency and current account vulnerability during crude oil price spikes.',
+    relatedMetrics: ['Net Energy Imports', 'Current Account Deficit', 'Brent Crude'],
+    methodsPage: '/methods/energy-dependency-ratio',
+  },
+  {
+    id: 'central-bank-gold-purchases',
+    term: 'Central Bank Gold Purchases',
+    slug: 'central-bank-gold-purchases',
+    category: 'Hard Assets',
+    definition: 'Net volume of official sector gold accumulation tracked via World Gold Council and IMF statistics.',
+    whyItMatters: 'Central bank gold buying hit multi-decade highs post-2022, creating a structural non-Western floor under gold.',
+    relatedMetrics: ['Foreign Exchange Reserves', 'IMF COFER', 'De-Dollarization'],
+  },
+];
