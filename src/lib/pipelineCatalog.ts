@@ -100,6 +100,14 @@ export const PIPELINES: PipelineEntry[] = [
     cadence: 'Daily after NSE close',
   },
   {
+    id: 'ingest-india-institutional-market',
+    title: 'India Institutional Market Confirmation',
+    tier: 'sovereign',
+    sources: ['NSE', 'RBI/FRED'],
+    surfaces: ['/intel/india'],
+    cadence: 'Daily after NSE close',
+  },
+  {
     id: 'ingest-india-sector-positioning',
     title: 'India Sector Positioning',
     tier: 'sovereign',

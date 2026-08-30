@@ -294,8 +294,12 @@ const JOBS = [
     schedule: '0 16 * * 1-5',
     fn: 'ingest-india-institutional-flows' },
 
-  { name: 'ingest-india-sector-positioning-daily',
-    schedule: '30 16 * * 1-5',
+  { name: 'ingest-india-institutional-market-daily',
+    schedule: '30 15 * * 1-5',
+    fn: 'ingest-india-institutional-market' },
+
+  { name: 'ingest-india-sector-positioning-fortnightly',
+    schedule: '30 16 1,15 * *',
     fn: 'ingest-india-sector-positioning' },
 
   { name: 'ingest-india-macro-snapshot-job',
