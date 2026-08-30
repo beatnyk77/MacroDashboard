@@ -4972,9 +4972,12 @@ export type Database = {
       }
       sec_corporate_signals: {
         Row: {
+          availability_status: string
           baseline_value: number | null
+          calculation_inputs: Json
           comparison_window: string
           confidence: number
+          confidence_reason: string | null
           created_at: string
           evidence_ids: string[]
           id: string
@@ -4990,9 +4993,12 @@ export type Database = {
           unit: string | null
         }
         Insert: {
+          availability_status?: string
           baseline_value?: number | null
+          calculation_inputs?: Json
           comparison_window: string
           confidence: number
+          confidence_reason?: string | null
           created_at?: string
           evidence_ids?: string[]
           id?: string
@@ -5008,9 +5014,12 @@ export type Database = {
           unit?: string | null
         }
         Update: {
+          availability_status?: string
           baseline_value?: number | null
+          calculation_inputs?: Json
           comparison_window?: string
           confidence?: number
+          confidence_reason?: string | null
           created_at?: string
           evidence_ids?: string[]
           id?: string
@@ -7075,10 +7084,13 @@ export type Database = {
         Row: {
           acceptance_timestamp: string | null
           accession_number: string | null
+          availability_status: string | null
           baseline_value: number | null
+          calculation_inputs: Json | null
           cik: string | null
           comparison_window: string | null
           confidence: number | null
+          confidence_reason: string | null
           created_at: string | null
           document_url: string | null
           evidence_acceptance_timestamps: string[] | null
@@ -7091,6 +7103,7 @@ export type Database = {
           evidence_ids: string[] | null
           evidence_kind: string | null
           evidence_kinds: string[] | null
+          evidence_parser_versions: string[] | null
           evidence_section_names: string[] | null
           evidence_text: string | null
           evidence_texts: string[] | null
@@ -7697,4 +7710,3 @@ export const Constants = {
     },
   },
 } as const
-

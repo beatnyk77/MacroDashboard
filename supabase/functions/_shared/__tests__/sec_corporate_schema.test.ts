@@ -2,20 +2,27 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const migrationSql = readFileSync(
+const baseMigrationSql = readFileSync(
   join(process.cwd(), 'supabase/migrations/20260830000000_sec_corporate_transmission.sql'),
   'utf8',
 );
 
-function expectContainsAll(snippets: string[]) {
+const contractMigrationSql = readFileSync(
+  join(process.cwd(), 'supabase/migrations/20260831000004_corporate_stress_signal_contract.sql'),
+  'utf8',
+);
+
+const databaseTypes = readFileSync(join(process.cwd(), 'src/types/database.types.ts'), 'utf8');
+
+function expectContainsAll(source: string, snippets: string[]) {
   for (const snippet of snippets) {
-    expect(migrationSql).toContain(snippet);
+    expect(source).toContain(snippet);
   }
 }
 
 describe('sec corporate transmission schema migration', () => {
   it('defines the issuer, evidence, and signal tables with the exact task 1 columns', () => {
-    expectContainsAll([
+    expectContainsAll(baseMigrationSql, [
       'CREATE TABLE IF NOT EXISTS public.sec_corporate_issuers (',
       'id uuid PRIMARY KEY DEFAULT gen_random_uuid(),',
       'cik text NOT NULL UNIQUE,',
@@ -64,7 +71,7 @@ describe('sec corporate transmission schema migration', () => {
   });
 
   it('defines the required indexes, RLS, and read grants', () => {
-    expectContainsAll([
+    expectContainsAll(baseMigrationSql, [
       'CREATE INDEX IF NOT EXISTS sec_corporate_issuers_ticker_idx',
       'CREATE INDEX IF NOT EXISTS sec_corporate_issuers_is_active_idx',
       'CREATE INDEX IF NOT EXISTS sec_filing_evidence_issuer_id_idx',
@@ -93,7 +100,7 @@ describe('sec corporate transmission schema migration', () => {
   });
 
   it('guards freshness, state, and severity values from the plan', () => {
-    expectContainsAll([
+    expectContainsAll(baseMigrationSql, [
       "freshness_status IN ('fresh', 'lagged', 'very_lagged', 'unavailable')",
       "state IN ('observed', 'measured', 'changed', 'confirmed')",
       "severity IN ('info', 'watch', 'elevated', 'high')",
@@ -101,7 +108,7 @@ describe('sec corporate transmission schema migration', () => {
   });
 
   it('publishes a latest-signals view with deterministic evidence-chain fields', () => {
-    expectContainsAll([
+    expectContainsAll(baseMigrationSql, [
       'CREATE OR REPLACE VIEW public.vw_latest_corporate_signals AS',
       'LEFT JOIN LATERAL unnest(ls.evidence_ids) WITH ORDINALITY AS le(evidence_id, ord)',
       'LEFT JOIN public.sec_filing_evidence e',
@@ -132,7 +139,7 @@ describe('sec corporate transmission schema migration', () => {
   });
 
   it('builds the transmission summary from latest-state signals rather than full history', () => {
-    expectContainsAll([
+    expectContainsAll(baseMigrationSql, [
       'CREATE OR REPLACE VIEW public.vw_corporate_transmission_summary AS',
       'latest_signals AS (',
       'SELECT DISTINCT ON (issuer_id, signal_id)',
@@ -140,6 +147,35 @@ describe('sec corporate transmission schema migration', () => {
       'SELECT signal_family, COUNT(*) AS signal_family_total',
       'SELECT macro_theme, COUNT(*) AS macro_theme_total',
       'ALTER VIEW public.vw_corporate_transmission_summary SET (security_invoker = true);',
+    ]);
+  });
+
+  it('adds the corporate stress signal metadata contract without widening state values', () => {
+    expectContainsAll(contractMigrationSql, [
+      'ADD COLUMN IF NOT EXISTS calculation_inputs jsonb NOT NULL DEFAULT \'{}\'::jsonb',
+      'ADD COLUMN IF NOT EXISTS confidence_reason text',
+      'ADD COLUMN IF NOT EXISTS availability_status text NOT NULL DEFAULT \'available\'',
+      "conname = 'sec_corporate_signals_availability_status_check'",
+      "availability_status IN ('available', 'insufficient_evidence', 'unavailable')",
+      'ls.confidence_reason,',
+      'ls.availability_status,',
+      'ls.calculation_inputs,',
+      'se.evidence_parser_versions,',
+      'array_agg(e.parser_version ORDER BY le.ord)',
+    ]);
+
+    expect(baseMigrationSql).toContain("state IN ('observed', 'measured', 'changed', 'confirmed')");
+  });
+
+  it('extends the generated database types for signal metadata and latest-signal evidence parser versions', () => {
+    expectContainsAll(databaseTypes, [
+      'calculation_inputs: Json',
+      'confidence_reason: string | null',
+      'availability_status: string',
+      'calculation_inputs?: Json',
+      'confidence_reason?: string | null',
+      'availability_status?: string',
+      'evidence_parser_versions: string[] | null',
     ]);
   });
 });
