@@ -81,6 +81,7 @@ SELECT
 FROM public.metric_publication_snapshots s;
 
 GRANT SELECT ON public.vw_metric_publication_snapshots_public TO anon, authenticated;
+ALTER VIEW public.vw_metric_publication_snapshots_public SET (security_invoker = true);
 
 CREATE OR REPLACE FUNCTION public.metric_publication_snapshots_block_mutation()
 RETURNS trigger

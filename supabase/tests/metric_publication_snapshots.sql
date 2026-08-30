@@ -18,6 +18,7 @@ DO $$
   index_count integer;
   rel_row_security boolean;
   policy_count integer;
+  view_security_invoker_count integer;
   current_flag boolean;
   superseded_flag boolean;
 BEGIN
@@ -120,6 +121,21 @@ BEGIN
 
   IF policy_count < 2 THEN
     RAISE EXCEPTION 'expected read and service policies on metric_publication_snapshots';
+  END IF;
+
+  SELECT COUNT(*)
+    INTO view_security_invoker_count
+    FROM pg_class c
+    JOIN pg_namespace n
+      ON n.oid = c.relnamespace
+    CROSS JOIN LATERAL pg_options_to_table(c.reloptions) AS opt
+   WHERE n.nspname = 'public'
+     AND c.relname = 'vw_metric_publication_snapshots_public'
+     AND opt.option_name = 'security_invoker'
+     AND opt.option_value = 'true';
+
+  IF view_security_invoker_count <> 1 THEN
+    RAISE EXCEPTION 'expected security_invoker on vw_metric_publication_snapshots_public';
   END IF;
 
   INSERT INTO public.metric_publication_snapshots (
@@ -510,6 +526,14 @@ SET ROLE anon;
 DO $$
 BEGIN
   PERFORM 1
+    FROM public.vw_metric_publication_snapshots_public
+   WHERE snapshot_id = '22222222-2222-2222-2222-222222222222'::uuid;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'published snapshot is not readable through public view by anon';
+  END IF;
+
+  PERFORM 1
     FROM public.metric_publication_snapshots
    WHERE snapshot_id = '22222222-2222-2222-2222-222222222222'::uuid;
 
@@ -575,6 +599,14 @@ SET ROLE authenticated;
 
 DO $$
 BEGIN
+  PERFORM 1
+    FROM public.vw_metric_publication_snapshots_public
+   WHERE snapshot_id = '22222222-2222-2222-2222-222222222222'::uuid;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'published snapshot is not readable through public view by authenticated';
+  END IF;
+
   BEGIN
     UPDATE public.metric_publication_snapshots
        SET payload = jsonb_set(payload, '{value}', '1000'::jsonb, true)
