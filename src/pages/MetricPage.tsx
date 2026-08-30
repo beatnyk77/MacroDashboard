@@ -16,6 +16,8 @@ import { useAuthoritySnapshot, useAuthorityHistory } from '@/hooks/useAuthorityS
 import { DataProvenanceBadge } from '@/components/authority/DataProvenanceBadge';
 import { SnapshotBanner } from '@/components/authority/SnapshotBanner';
 import { SnapshotTimeline } from '@/components/authority/SnapshotTimeline';
+import { AuthorityCitationBlock } from '@/components/authority/AuthorityCitationBlock';
+import { trackAuthoritySnapshotView, trackAuthorityDownload } from '@/lib/authority/authorityEvents';
 import { METRICS_CATALOG, type MetricEntry } from '@/features/metrics/metricsCatalog';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { getConceptByMetricId } from '@/lib/conceptHub';
@@ -181,6 +183,12 @@ export const MetricPage: React.FC = () => {
         : null;
     const shareRef = React.useRef<HTMLDivElement>(null);
 
+    React.useEffect(() => {
+        if (entry) {
+            trackAuthoritySnapshotView(entry.id, snapshotId, !!snapshotId);
+        }
+    }, [entry?.id, snapshotId]);
+
     if (!entry) {
         return <Navigate to="/methodology" replace />;
     }
@@ -264,7 +272,9 @@ export const MetricPage: React.FC = () => {
                     <section className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
                         <div className="mb-3 flex items-center justify-between">
                             <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Time Series</h2>
-                            <ExportCSVButton data={series} filename={`graphiquestor-${entry.id}`} />
+                            <div onClick={() => trackAuthorityDownload(entry.id, 'csv', snapshotId)}>
+                                <ExportCSVButton data={series} filename={`graphiquestor-${entry.id}`} />
+                            </div>
                         </div>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
@@ -355,6 +365,14 @@ export const MetricPage: React.FC = () => {
                             Pull via API →
                         </Link>
                     </div>
+                {/* Citation Kit */}
+                <section className="pt-2">
+                    <AuthorityCitationBlock
+                        metricName={entry.name}
+                        metricId={entry.id}
+                        snapshotId={snapshotId}
+                        observedAt={snapshot?.observed_at ?? liveMetric?.lastUpdated ?? latest?.date}
+                    />
                 </section>
             </div>
 
