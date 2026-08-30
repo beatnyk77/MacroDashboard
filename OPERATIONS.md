@@ -14,6 +14,7 @@ GraphiQuestor is an institutional macro-intelligence terminal served as a static
 between scheduled runs.
 
 ```
+
 External APIs (FRED, RBI, EIA, UN Comtrade, IMF, ECB, AlphaVantage, Ember, Finnhub…)
   │
   ▼ HTTP fetch (authenticated)
@@ -38,6 +39,14 @@ Scheduling layer:
   pg_cron (101 active jobs) ──net.http_post──▶ Edge Functions
   check-data-health-daily (07:00 UTC) ──Resend──▶ alerts@graphiquestor.com (on ≥3 issues)
 ```
+
+### SEC corporate transmission
+
+The SEC corporate pipeline uses `SEC_USER_AGENT` together with the Supabase service-role
+key and `CRON_SECRET`. `ingest-sec-corporate` runs before
+`compute-corporate-signals`. Evidence is keyed by accession number and parser failures
+are retained as `freshness_status = 'unavailable'`. The terminal surface is
+`/corporate-transmission`.
 
 The only human-operated path is:
 - weekly GSC check (Google Search Console performance) and alert-inbox scan
