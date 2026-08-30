@@ -53,6 +53,10 @@ const JOBS = [
     schedule: '30 6 * * *',
     fn: 'compute-daily-macro-signal' },
 
+  { name: 'compute-india-institutional-positioning-daily',
+    schedule: '30 17 * * 1-5',
+    fn: 'compute-india-institutional-positioning' },
+
   // PATTERN 3 — SQL-direct (no HTTP, no headers)
   { name: 'compute-zscores-daily',
     schedule: '0 6 * * *',
@@ -285,6 +289,14 @@ const JOBS = [
   { name: 'ingest-india-liquidity-daily',
     schedule: '0 15 * * 1-5',
     fn: 'ingest-india-liquidity' },
+
+  { name: 'ingest-india-institutional-flows-daily',
+    schedule: '0 16 * * 1-5',
+    fn: 'ingest-india-institutional-flows' },
+
+  { name: 'ingest-india-sector-positioning-daily',
+    schedule: '30 16 * * 1-5',
+    fn: 'ingest-india-sector-positioning' },
 
   { name: 'ingest-india-macro-snapshot-job',
     schedule: '0 0 4 * *',

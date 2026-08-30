@@ -4,6 +4,15 @@ This document outlines the update frequencies for all data points in GraphiQuest
 
 ## Daily Updates (Updated via Cron Every Day @ 00:00 UTC)
 
+### India Institutional Positioning
+- **FII/FPI and DII cash flow** - NSE post-close activity, weekdays after the reporting window
+- **Positioning regime** - Computed after accepted cash-flow observations; published only after coverage gates pass
+- **Nifty, breadth, VIX, and USD/INR confirmation** - Daily market observations with source-date freshness
+- **RBI liquidity and bank credit context** - Native weekly and monthly cadence, carried forward until freshness expires
+
+### Fortnightly Updates
+- **NSDL sector positioning** - Sector flow and AUM observations with report-date deduplication
+
 ### Gold & Precious Metals
 - **Gold Price (USD/oz)** - LBMA AM fix
 - **Silver Price (USD/oz)** - LBMA fix

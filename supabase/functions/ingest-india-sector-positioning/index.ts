@@ -17,7 +17,11 @@ export async function ingestIndiaSectorPositioning(supabase: ReturnType<typeof c
 serveIngest('ingest-india-sector-positioning', async (req) => {
   const body = await req.json().catch(() => ({}));
   const reportPeriodEnd = String(body.report_period_end ?? new Date().toISOString().slice(0, 10));
-  const sourceUrl = String(body.source_url ?? '');
-  if (!sourceUrl) throw new Error('source_url is required for NSDL sector ingestion');
+  const sourceUrl = String(body.source_url ?? '') || (() => {
+    const [year, month, day] = reportPeriodEnd.split('-');
+    const monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(month) - 1];
+    if (!monthName || !year || !day) throw new Error('report_period_end must be YYYY-MM-DD');
+    return `https://www.fpi.nsdl.co.in/web/StaticReports/Fortnightly_Sector_wise_FII_Investment_Data/FIIInvestSector_${monthName}${Number(day)}${year}.html`;
+  })();
   return ingestIndiaSectorPositioning(createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''), reportPeriodEnd, sourceUrl);
 }, { timeoutMs: 20 * 60 * 1000, retries: 3 });
