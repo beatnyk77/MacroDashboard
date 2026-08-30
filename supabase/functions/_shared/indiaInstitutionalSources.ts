@@ -9,6 +9,7 @@ export interface ParsedCashFlow {
   sourceRef: string;
   sourceHash: string;
   parserVersion: string;
+  sourceFields: Record<string, unknown>;
 }
 
 export interface ParsedParticipantOi {
@@ -16,6 +17,7 @@ export interface ParsedParticipantOi {
   fii: ParticipantOi | null;
   dii: ParticipantOi | null;
   coverage: 'observed' | 'unavailable';
+  coverageReason: 'observed' | 'missing_participant_rows' | 'missing_required_fields';
   sourceHash: string;
   parserVersion: string;
 }
@@ -28,6 +30,7 @@ export interface ParticipantOi {
   indexCallShort: number;
   indexPutShort: number;
   putCallPositioning: number | null;
+  sourceFields: Record<string, string>;
 }
 
 export interface ParsedSectorObservation {
@@ -98,6 +101,7 @@ export function parseNseCashPayload(payload: unknown): ParsedCashFlow[] {
       sourceRef: `live_api:nse:${SOURCE_NSE_CASH}`,
       sourceHash: stableHash(record),
       parserVersion: INDIA_INSTITUTIONAL_PARSER_VERSION,
+      sourceFields: record,
     }];
   });
 }
@@ -141,6 +145,7 @@ function buildOi(row: string[], headers: string[]): ParticipantOi | null {
     indexCallShort: callShort,
     indexPutShort: putShort,
     putCallPositioning: callShort === 0 ? null : putShort / callShort,
+    sourceFields: Object.fromEntries(headers.map((header, index) => [header, row[index] ?? ''])),
   };
 }
 
@@ -150,16 +155,23 @@ export function parseParticipantOiCsv(csv: string, reportDate = ''): ParsedParti
   const clientIndex = headers.findIndex((header) => header.toLowerCase() === 'client type');
   let fii: ParticipantOi | null = null;
   let dii: ParticipantOi | null = null;
+  let sawFii = false;
+  let sawDii = false;
   for (const row of rows.slice(1)) {
     const participant = participantFromCategory(row[clientIndex]);
-    if (participant === 'FII') fii = buildOi(row, headers);
-    if (participant === 'DII') dii = buildOi(row, headers);
+    if (participant === 'FII') { sawFii = true; fii = buildOi(row, headers); }
+    if (participant === 'DII') { sawDii = true; dii = buildOi(row, headers); }
   }
+  const coverage = fii || dii ? 'observed' : 'unavailable';
+  const coverageReason = coverage === 'observed'
+    ? 'observed'
+    : (sawFii || sawDii ? 'missing_required_fields' : 'missing_participant_rows');
   return {
     reportDate,
     fii,
     dii,
-    coverage: fii || dii ? 'observed' : 'unavailable',
+    coverage,
+    coverageReason,
     sourceHash: stableHash(csv),
     parserVersion: INDIA_INSTITUTIONAL_PARSER_VERSION,
   };
@@ -171,6 +183,12 @@ function stripHtml(value: string): string {
 
 function sectorKey(label: string): string {
   return label.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+
+function validIsoDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
 function findColumn(headers: string[], terms: string[]): number {
@@ -228,7 +246,10 @@ export function validateSectorRows(rows: ParsedSectorObservation[]): ValidationR
     if (keys.has(row.sectorKey)) errors.push(`duplicate sector: ${row.sectorKey}`);
     keys.add(row.sectorKey);
     if (!row.sourceUrl || !row.reportPeriodEnd) errors.push(`missing source metadata: ${row.sectorKey}`);
+    if (!validIsoDate(row.reportPeriodEnd)) errors.push(`malformed report date: ${row.sectorKey}`);
     if (!finite(row.equityAumInrCrore) && !finite(row.totalAumInrCrore)) errors.push(`missing AUM: ${row.sectorKey}`);
+    if (finite(row.equityAumInrCrore) && finite(row.totalAumInrCrore) && row.totalAumInrCrore < row.equityAumInrCrore) errors.push(`invalid AUM totals: ${row.sectorKey}`);
+    if (finite(row.equityFlowInrCrore) && finite(row.totalFlowInrCrore) && Math.abs(row.totalFlowInrCrore) < Math.abs(row.equityFlowInrCrore)) errors.push(`invalid flow totals: ${row.sectorKey}`);
   }
   return { valid: errors.length === 0 && rows.length > 0, errors };
 }
