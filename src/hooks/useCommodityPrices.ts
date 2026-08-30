@@ -36,7 +36,7 @@ export const useCommodityPrices = () => {
                 .select('metric_id, as_of_date, value')
                 .in('metric_id', COMMODITY_IDS)
                 .order('as_of_date', { ascending: false })
-                .limit(80);
+                .limit(400);
 
             if (error) throw error;
 

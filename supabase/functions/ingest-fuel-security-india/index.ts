@@ -48,20 +48,21 @@ async function doIngestFuelSecurityIndia(supabase: SupabaseClient, eiaApiKey: st
       const json = await consRes.json() as Record<string, any>;
       const latest = json.response?.data?.[0];
       if (latest && latest.value) {
-        consumptionMbpd = Number(latest.value); 
+        const raw = Number(latest.value);
+        consumptionMbpd = raw > 100 ? raw / 1000 : raw;
       }
     }
     
     if (!consumptionMbpd) {
-      console.warn('India oil consumption missing from EIA, using fallback 5300.0');
-      consumptionMbpd = 5300.0;
+      console.warn('India oil consumption missing from EIA, using fallback 5.3');
+      consumptionMbpd = 5.3;
     }
     
     stepLogs.push({ step: 'india_consumption', status: 'success', value: consumptionMbpd });
   } catch (e: unknown) {
     const error = e as Error;
     console.error('India EIA consumption error:', error.message);
-    consumptionMbpd = 5300.0;
+    consumptionMbpd = 5.3;
     stepLogs.push({ step: 'india_consumption', status: 'fallback', value: consumptionMbpd, error: error.message });
   }
 

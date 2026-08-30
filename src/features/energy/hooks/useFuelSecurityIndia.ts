@@ -39,21 +39,22 @@ export const useFuelSecurityIndia = () => {
       try {
         const { data, error } = await supabase
           .from('fuel_security_clock_india')
-          .select('*')
+          .select('id, as_of_date, reserves_days_coverage, reserves_days_official, reserves_days_actual, deviation_pct, daily_consumption_mbpd, brent_price_usd, inr_per_barrel, active_tankers_count, geopolitical_risk_score, scenario_baseline_days, scenario_disruption_days, scenario_rationing_days, last_updated_at, metadata')
           .order('as_of_date', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         if (error) {
-          // PGRST116 = no rows found — handled as a valid "no data" state
-          if (error.code === 'PGRST116') {
-            return null;
-          }
           console.error('Fuel Security Query error:', error);
           return null;
         }
 
-        return data as unknown as FuelSecurityIndia; // TODO(types): tanker_pipeline_json is Json — shape validated at runtime
+        if (!data) return null;
+
+        return {
+          ...data,
+          tanker_pipeline_json: [],
+        } as unknown as FuelSecurityIndia;
       } catch (err) {
         console.error('Unexpected Fuel Security error:', err);
         return null;
