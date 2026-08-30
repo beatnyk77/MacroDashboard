@@ -281,6 +281,29 @@ async function doIngestRbiMoneyMarket(supabase: any) {
     throw liqError;
   }
 
+  const { data: liquidityHistory, error: liquidityHistoryError } = await supabase
+    .from('rbi_liquidity_ops')
+    .select('date, net_liquidity_total')
+    .not('net_liquidity_total', 'is', null)
+    .order('date', { ascending: false })
+    .limit(2);
+  if (liquidityHistoryError) throw liquidityHistoryError;
+  const currentLiquidity = Number(liquidityHistory?.[0]?.net_liquidity_total);
+  const previousLiquidity = Number(liquidityHistory?.[1]?.net_liquidity_total);
+  if (Number.isFinite(currentLiquidity) && Number.isFinite(previousLiquidity)) {
+    const { error: impulseError } = await supabase.from('metric_observations').upsert({
+      metric_id: 'IN_RBI_LIQUIDITY_IMPULSE',
+      as_of_date: isoDate,
+      value: currentLiquidity - previousLiquidity,
+      last_updated_at: new Date().toISOString(),
+      source_ref: 'live_api:rbi:money_market_operations',
+      provenance: 'api_live',
+      is_provisional: false,
+      metadata: { source_name: 'RBI', native_frequency: 'weekly', source_fields: { current: currentLiquidity, previous: previousLiquidity }, parser_version: 'rbi-money-market-v1' },
+    }, { onConflict: 'metric_id,as_of_date' });
+    if (impulseError) throw impulseError;
+  }
+
   console.log(`RBI Money Market data upserted for ${isoDate}`);
   console.log('Final opsData:', JSON.stringify(opsData));
   console.log('Final liqData:', JSON.stringify(liqData));
