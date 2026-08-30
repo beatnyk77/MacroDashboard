@@ -365,6 +365,8 @@ export const MetricPage: React.FC = () => {
                             Pull via API →
                         </Link>
                     </div>
+                </section>
+
                 {/* Citation Kit */}
                 <section className="pt-2">
                     <AuthorityCitationBlock

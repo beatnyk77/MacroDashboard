@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { trackAuthorityEvent, trackAuthorityCitationCopy, trackAuthorityDownload } from './authorityEvents';
-import * as analytics from '@/lib/analytics';
-import * as siteAnalytics from '@/lib/siteAnalytics';
+import * as analytics from '../analytics';
+import * as siteAnalytics from '../siteAnalytics';
 
-vi.mock('@/lib/analytics', () => ({
+vi.mock('../analytics', () => ({
     trackEvent: vi.fn(),
 }));
 
-vi.mock('@/lib/siteAnalytics', () => ({
+vi.mock('../siteAnalytics', () => ({
     recordSiteEvent: vi.fn(),
 }));
 
