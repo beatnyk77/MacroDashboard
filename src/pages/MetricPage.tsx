@@ -193,7 +193,7 @@ export const MetricPage: React.FC = () => {
         if (entry) {
             trackAuthoritySnapshotView(entry.id, snapshotId, !!snapshotId);
         }
-    }, [entry?.id, snapshotId]);
+    }, [entry, snapshotId]);
 
     if (!entry) {
         return <Navigate to="/methodology" replace />;
