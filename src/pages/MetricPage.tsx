@@ -12,11 +12,15 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
+import { useAuthoritySnapshot, useAuthorityHistory } from '@/hooks/useAuthoritySnapshot';
+import { DataProvenanceBadge } from '@/components/authority/DataProvenanceBadge';
+import { SnapshotBanner } from '@/components/authority/SnapshotBanner';
+import { SnapshotTimeline } from '@/components/authority/SnapshotTimeline';
 import { METRICS_CATALOG, type MetricEntry } from '@/features/metrics/metricsCatalog';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { getConceptByMetricId } from '@/lib/conceptHub';
 import { ConceptHierarchyBanner } from '@/components/seo/ConceptHierarchyBanner';
-import { metricPrimaryMeta } from '@/lib/seoTemplates';
+import { metricPrimaryMeta, metricSnapshotMeta } from '@/lib/seoTemplates';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 
 /**
@@ -162,11 +166,14 @@ function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string
 }
 
 export const MetricPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const { id, snapshotId } = useParams<{ id: string; snapshotId?: string }>();
     const entry = METRICS_CATALOG.find(m => m.id === id);
     const { data: series } = useMetricSeries(entry?.id);
     const liveMetricId = seriesMetricId(entry?.id);
     const { data: liveMetric } = useLatestMetric(liveMetricId ?? '');
+    const { data: snapshot } = useAuthoritySnapshot(id, snapshotId);
+    const { data: history } = useAuthorityHistory(id);
+    
     const freshness = liveMetric
         ? getStaleness(liveMetric.lastUpdated, liveMetric.frequency)
         : null;
@@ -177,7 +184,9 @@ export const MetricPage: React.FC = () => {
     }
 
     const latest = series && series.length > 0 ? series[series.length - 1] : undefined;
-    const meta = metricPrimaryMeta(entry.name, entry.id);
+    const meta = snapshotId && snapshot 
+        ? metricSnapshotMeta(entry.name, entry.id, snapshot.observed_at?.split('T')[0] ?? '')
+        : metricPrimaryMeta(entry.name, entry.id);
     const concept = getConceptByMetricId(entry.id);
 
     return (
@@ -213,21 +222,28 @@ export const MetricPage: React.FC = () => {
                 <header className="space-y-3 border-b border-white/10 pb-6">
                     <div className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">{entry.category}</div>
                     <h1 className="text-3xl font-black tracking-tight text-white">
-                        Live terminal: {entry.name}
+                        {snapshotId ? `Snapshot: ${entry.name}` : `Live terminal: ${entry.name}`}
                     </h1>
-                    {(latest || liveMetric) && (
+                    
+                    {snapshot && snapshotId && (
+                        <SnapshotBanner snapshot={snapshot} className="mb-4" />
+                    )}
+
+                    {(latest || liveMetric || (snapshot && snapshotId)) && (
                         <div className="flex flex-wrap items-center gap-3 text-[12px] font-bold text-white/50">
                             <span className="text-white text-lg font-black">
                                 {(() => {
-                                    const v = liveMetric?.value ?? latest?.value;
+                                    const v = snapshotId && snapshot ? snapshot.value : (liveMetric?.value ?? latest?.value);
                                     if (v == null) return '—';
                                     return Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2);
                                 })()}
                             </span>
                             <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 uppercase tracking-widest text-[10px]">
-                                Last observation {liveMetric?.lastUpdated ?? latest?.date}
+                                Last observation {snapshotId && snapshot ? snapshot.observed_at?.split('T')[0] : (liveMetric?.lastUpdated ?? latest?.date)}
                             </span>
-                            {freshness && (
+                            {snapshotId && snapshot ? (
+                                <DataProvenanceBadge snapshot={snapshot} />
+                            ) : freshness && (
                                 <FreshnessChip
                                     status={freshness.state}
                                     lastUpdated={liveMetric?.lastUpdated}
@@ -303,6 +319,13 @@ export const MetricPage: React.FC = () => {
                         ))}
                     </div>
                 </section>
+
+                {/* Publication History */}
+                {history && history.length > 0 && (
+                    <section className="pt-4 pb-4">
+                        <SnapshotTimeline snapshots={history} currentSnapshotId={snapshotId} />
+                    </section>
+                )}
 
                 {/* Sources + EEAT */}
                 <section className="space-y-3 border-t border-white/10 pt-6 text-[12px]">

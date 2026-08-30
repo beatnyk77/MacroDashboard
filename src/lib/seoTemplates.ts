@@ -57,6 +57,16 @@ export function metricPrimaryMeta(label: string, slug: string): {
   };
 }
 
+export function metricSnapshotMeta(label: string, slug: string, dateStr: string): {
+  title: string;
+  description: string;
+} {
+  return {
+    title: `${label} Snapshot (${dateStr}) | ${BRAND}`,
+    description: `Historical snapshot for ${label} recorded on ${dateStr}. Immutable authority record for ${slug} on ${BRAND}.`,
+  };
+}
+
 export function methodSpokeMeta(label: string): { title: string; description: string } {
   return {
     title: `${label} Methodology | ${BRAND}`,

@@ -110,6 +110,7 @@ function App() {
                                         <Route path={trailRoute('/')} element={<Terminal />} />
                                         <Route path={trailRoute('/methodology')} element={<MetricsMethodologyPage />} />
                                         <Route path={trailRoute('/metrics/:id')} element={<MetricPage />} />
+                                        <Route path={trailRoute('/metrics/:id/history/:snapshotId')} element={<MetricPage />} />
                                         <Route path={trailRoute('/corporate-transmission')} element={<CorporateTransmissionPage />} />
                                         <Route path={trailRoute('/data-sources')} element={<DataSourcesPage />} />
                                         <Route path={trailRoute('/blog')} element={<BlogPage />} />

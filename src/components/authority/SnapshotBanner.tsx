@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Info, AlertTriangle, FileText, CheckCircle2 } from 'lucide-react';
+import { Info, AlertTriangle, FileText } from 'lucide-react';
 import type { AuthorityMetricSnapshot } from '@/lib/authority/metricContract';
 
 interface SnapshotBannerProps {
