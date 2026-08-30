@@ -1,7 +1,28 @@
 import { describe, expect, it } from 'vitest';
+import { AUTHORITY_METRIC_STATUS_VALUES } from '@/lib/dataStatus';
 import { serializeAuthorityMetric, toAuthorityMetricCsv } from './metricContract';
+import { AUTHORITY_METRIC_STALENESS_VALUES } from './metricContract';
 
 describe('authority metric contract', () => {
+    it('exposes the allowed authority metric status values', () => {
+        expect(AUTHORITY_METRIC_STATUS_VALUES).toEqual([
+            'verified',
+            'provisional',
+            'revised',
+            'corrected',
+            'unavailable',
+            'superseded',
+        ]);
+    });
+
+    it('exposes the allowed staleness values', () => {
+        expect(AUTHORITY_METRIC_STALENESS_VALUES).toEqual([
+            'fresh',
+            'lagged',
+            'very_lagged',
+        ]);
+    });
+
     it('serializes missing values as explicit nulls', () => {
         const json = JSON.parse(serializeAuthorityMetric({
             metric_id: 'example',
@@ -23,6 +44,8 @@ describe('authority metric contract', () => {
         expect(json.value).toBeNull();
         expect(json.revision_of).toBeNull();
         expect(json.source_ref).toBeNull();
+        expect(json.native_frequency).toBe('monthly');
+        expect(json.staleness_flag).toBe('very_lagged');
     });
 
     it('emits the documented CSV contract header', () => {

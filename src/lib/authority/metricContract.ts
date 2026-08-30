@@ -1,6 +1,12 @@
 import type { AuthorityMetricStatus } from '@/lib/dataStatus';
 
-export type AuthorityMetricStalenessFlag = 'fresh' | 'lagged' | 'very_lagged' | 'no_data';
+export type AuthorityMetricStalenessFlag = 'fresh' | 'lagged' | 'very_lagged';
+
+export const AUTHORITY_METRIC_STALENESS_VALUES = [
+    'fresh',
+    'lagged',
+    'very_lagged',
+] as const satisfies readonly AuthorityMetricStalenessFlag[];
 
 export interface AuthorityMetricSource {
     source_name: string | null;
@@ -69,7 +75,7 @@ function normalizeValue(value: unknown): unknown {
 
     if (typeof value === 'object') {
         const entries = Object.entries(value as Record<string, unknown>)
-            .sort(([left], [right]) => left.localeCompare(right))
+            .sort(([left], [right]) => compareStrings(left, right))
             .map(([key, entry]) => [key, normalizeValue(entry)] as const);
 
         return entries.reduce<Record<string, unknown>>((accumulator, [key, entry]) => {

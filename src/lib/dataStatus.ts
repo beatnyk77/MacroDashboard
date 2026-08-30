@@ -14,6 +14,15 @@ export type AuthorityMetricStatus =
     | 'unavailable'
     | 'superseded';
 
+export const AUTHORITY_METRIC_STATUS_VALUES = [
+    'verified',
+    'provisional',
+    'revised',
+    'corrected',
+    'unavailable',
+    'superseded',
+] as const satisfies readonly AuthorityMetricStatus[];
+
 export function statusFromThreshold(
     value: number | null | undefined,
     isSafe: (v: number) => boolean,
