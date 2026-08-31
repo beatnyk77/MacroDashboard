@@ -61,7 +61,7 @@ async function fetchYahooHistory(ticker: string): Promise<Array<{ date: string; 
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-async function ingestOilSpreads(supabase: any, fredKey?: string): Promise<number> {
+async function ingestOilSpreads(supabase: any, _fredKey?: string): Promise<number> {
   const cl1Url = `https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=3mo`;
   const cl1Res = await fetch(cl1Url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' } });
   if (!cl1Res.ok) return 0;
@@ -158,7 +158,7 @@ async function ingestOilSpreads(supabase: any, fredKey?: string): Promise<number
   return rows.length + spotObs.length;
 }
 
-async function ingestEIAWeekly(supabase: any, eiaApiKey?: string): Promise<number> {
+async function ingestEIAWeekly(supabase: any, _eiaApiKey?: string): Promise<number> {
   let count = 0;
   try {
     const res = await fetch('https://ir.eia.gov/wpsr/table2.csv', {
