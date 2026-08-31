@@ -27,11 +27,6 @@ function withoutTrailingSlash(route) {
 function normalizeVisitedRoute(route) {
     let clean = route.split('#')[0].split('?')[0];
     if (clean === '/') return '/';
-    // Lowercase /countries/{iso}/ for crawl + sitemap consistency
-    const countryMatch = clean.match(/^(\/countries\/)([^/]+)(\/?)$/i);
-    if (countryMatch) {
-        clean = `${countryMatch[1]}${countryMatch[2].toLowerCase()}${countryMatch[3] || ''}`;
-    }
     return clean.endsWith('/') ? clean : `${clean}/`;
 }
 
@@ -94,16 +89,13 @@ if (fs.existsSync(rssPath)) {
 seedRoutes.add('/subscribe/confirm/');
 seedRoutes.add('/subscribe/manage/');
 
-// North Star conversion surfaces + sample country pages — always prerender even if
+// North Star conversion surfaces — always prerender even if
 // crawl misses them (validate-prerender-seo hard-fails without unique meta).
 for (const money of [
     '/api-docs/',
     '/mcp/',
     '/for-researchers/',
     '/api-access/',
-    '/countries/us/',
-    '/countries/in/',
-    '/countries/cn/',
 ]) {
     seedRoutes.add(money);
 }
@@ -124,8 +116,8 @@ app.use((req, res) => {
 // Routes to completely ignore from crawling and sitemap
 // /og-card is the internal 1200×630 social-card render target (screenshotted below)
 // /subscribe/* is seeded intentionally (email deep-links) but not crawled from other pages.
-// Keep /admin, /api, /og-card out of sitemap discovery.
-const ignorePrefixes = ['/admin', '/api', '/og-card'];
+// Keep /admin, /api, /og-card, /countries out of sitemap discovery.
+const ignorePrefixes = ['/admin', '/api', '/og-card', '/countries'];
 
 function isRoutable(href) {
     if (!href) return false;
@@ -482,16 +474,6 @@ function resolveForcedDescription(cleanRoute, html) {
     const path = withoutTrailingSlash(cleanRoute);
     if (path === '/') return null;
 
-    const country = path.match(/^\/countries\/([a-z]{2})$/i);
-    if (country) {
-        const iso = country[1].toUpperCase();
-        // Prefer title-derived country name when present
-        const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-        const title = (titleMatch?.[1] || '').replace(/\s*\|\s*GraphiQuestor.*$/i, '').trim();
-        const name = title.replace(/\s*\([A-Z]{2}\).*$/, '').trim() || iso;
-        return `${name} macro terminal: GDP growth, inflation, sovereign debt, FX reserves, and policy rates. Live institutional telemetry for ${iso} on GraphiQuestor.`;
-    }
-
     const ROUTE_DESC = {
         '/api-docs':
             'REST API reference for GraphiQuestor: 270+ institutional macro metrics, time-series history, regime signals, and composites for quant and agent integrations.',
@@ -519,8 +501,6 @@ function resolveForcedDescription(cleanRoute, html) {
             'India macro intelligence hub — RBI, fiscal, external sector, and sovereign stress telemetry on GraphiQuestor.',
         '/intel/china':
             'China macro intelligence hub — credit, property, FX, and policy telemetry on GraphiQuestor.',
-        '/countries':
-            'Sovereign country macro terminals — GDP, inflation, debt, FX reserves, and policy rates for G20 and EM on GraphiQuestor.',
     };
 
     if (ROUTE_DESC[path]) return ROUTE_DESC[path];

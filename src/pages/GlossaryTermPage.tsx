@@ -289,7 +289,7 @@ export const GlossaryTermPage: React.FC = () => {
                     <PremiumActionBar
                         className="mb-6"
                         latestDataHref={concept?.primaryPath ?? '/'}
-                        compareHref="/countries"
+                        compareHref="/labs/sovereign-stress"
                     />
 
                     <GlossaryInteractiveTools slug={slug ?? ''} className="mb-6" />

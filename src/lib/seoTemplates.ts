@@ -5,20 +5,6 @@
 
 const BRAND = 'GraphiQuestor';
 
-export function countryMeta(countryName: string, iso: string): {
-  title: string;
-  description: string;
-  keywords: string[];
-} {
-  const code = iso.toUpperCase();
-  return {
-    // Keep ≤60 chars with SEOManager's " | GraphiQuestor" suffix (longest: United Arab Emirates).
-    title: `${countryName} (${code}) Sovereign Risk`,
-    description: `${countryName} macro terminal: GDP growth, inflation, sovereign debt, FX reserves, and policy rates. Live institutional telemetry for ${code} on ${BRAND}.`,
-    keywords: [countryName, code, 'Macro Data', 'Sovereign Risk', 'Yield Curve', BRAND],
-  };
-}
-
 export function apiDocsMeta(): { title: string; description: string } {
   return {
     title: `Macro Data REST API Docs | ${BRAND}`,

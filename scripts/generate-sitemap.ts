@@ -5,7 +5,6 @@ import { blogArticles } from '../src/features/blog/blogData';
 import { glossaryData } from '../src/features/glossary/glossaryData';
 import { METRICS_CATALOG } from '../src/features/metrics/metricsCatalog';
 import { seoTrackerPages } from '../src/data/seoTrackers';
-import { ALL_COUNTRIES } from '../src/lib/countries';
 import { dedupeSitemapRoutes, sitemapLoc } from '../src/lib/sitemapHelpers';
 
 /**
@@ -66,13 +65,6 @@ async function generateSitemap() {
     { url: '/regime-digest',       changefreq: 'monthly', lastmod: BUILD_DATE },
     { url: '/intel/india',         changefreq: 'daily',   lastmod: BUILD_DATE },
     { url: '/intel/china',         changefreq: 'daily',   lastmod: BUILD_DATE },
-    { url: '/countries',           changefreq: 'weekly',  lastmod: BUILD_DATE },
-    // Country profiles — lowercase ISO forever (canonical + Netlify/CF case rules)
-    ...ALL_COUNTRIES.map((c) => ({
-      url: `/countries/${c.code.toLowerCase()}`,
-      changefreq: 'weekly' as const,
-      lastmod: BUILD_DATE,
-    })),
     // Static/editorial pages — lastmod = git log date of owning component
     { url: '/blog',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/BlogPage.tsx') },
     { url: '/labs',                changefreq: 'weekly',  lastmod: gitLastmod('src/pages/labs/ThematicLabsIndexPage.tsx') },

@@ -13,7 +13,6 @@ const MONEY_URLS = [
   'https://graphiquestor.com/mcp/',
   'https://graphiquestor.com/for-researchers/',
   'https://graphiquestor.com/api-access/',
-  'https://graphiquestor.com/countries/us/',
   'https://graphiquestor.com/',
 ];
 
@@ -21,7 +20,6 @@ const CHECKLIST = [
   { id: 'cf-robots', label: 'Cloudflare AI crawl policy matches answer-yes / train-no', href: '/docs/ops/cloudflare-ai-crawlers.md' },
   { id: 'sitemap', label: 'GSC sitemap submitted: https://graphiquestor.com/sitemap.xml', href: GSC_BASE },
   { id: 'money-index', label: 'Request indexing for API/MCP/researchers/api-access', href: GSC_BASE },
-  { id: 'countries', label: 'Confirm country URLs consolidate to lowercase in GSC', href: GSC_BASE },
   { id: 'noindex', label: 'Verify grit-index / india-equities / regime-scoring stay out of sitemap', href: 'https://graphiquestor.com/sitemap.xml' },
   { id: 'briefs', label: 'Weekday deep briefs only (no weekend generation)', href: '/macro-brief/archive/' },
   { id: 'snapshot', label: 'Homepage key telemetry strip present after Netlify deploy', href: '/' },
@@ -70,7 +68,6 @@ const AdminLogin = ({ onOk }: { onOk: () => void }) => {
 export const AdminSeoPage: React.FC = () => {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem('admin_auth') === 'true');
   const [sitemapCount, setSitemapCount] = useState<number | null>(null);
-  const [sitemapUpper, setSitemapUpper] = useState<number | null>(null);
   const [robotsHasProduct, setRobotsHasProduct] = useState<boolean | null>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>(() => {
     try {
@@ -93,7 +90,6 @@ export const AdminSeoPage: React.FC = () => {
       .then((xml) => {
         const locs = xml.match(/<loc>/g);
         setSitemapCount(locs?.length ?? 0);
-        setSitemapUpper((xml.match(/countries\/[A-Z]{2}\//g) || []).length);
       })
       .catch(() => setSitemapCount(null));
     fetch('/robots.txt')
@@ -155,9 +151,7 @@ export const AdminSeoPage: React.FC = () => {
             <Map size={14} /> Sitemap
           </div>
           <div className="text-3xl font-black tabular-nums">{sitemapCount ?? '—'}</div>
-          <p className="mt-1 text-[11px] text-white/40">
-            Uppercase country paths: {sitemapUpper === null ? '—' : sitemapUpper === 0 ? '0 (ok)' : `${sitemapUpper} (fix)`}
-          </p>
+          <p className="mt-1 text-[11px] text-white/40">URLs in sitemap.xml</p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
           <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/40">

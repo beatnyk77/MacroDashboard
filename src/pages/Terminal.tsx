@@ -359,7 +359,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 16: SOVEREIGN RISK MATRIX */}
-                <ModuleRow id="sovereign-risk" label="SOVEREIGN RISK" href="/countries/" labelColor="text-blue-500/80" alternateBg>
+                <ModuleRow id="sovereign-risk" label="SOVEREIGN RISK" href="/labs/sovereign-stress" labelColor="text-blue-500/80" alternateBg>
                     <LazyRender minHeight="400px" fallback={<SectionLoadingFallback minHeight={400} />}>
                     <SectionErrorBoundary name="Sovereign Risk Matrix">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -369,35 +369,35 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
 
-                {/* Row 17: COUNTRY PORTALS */}
-                <ModuleRow label="COUNTRY PORTALS" href="/countries/" labelColor="text-blue-500/80">
+                {/* Row 17: REGIONAL HUBS */}
+                <ModuleRow label="REGIONAL HUBS" href="/labs" labelColor="text-blue-500/80">
                     <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
-                    <SectionErrorBoundary name="Country Intelligence">
+                    <SectionErrorBoundary name="Regional Intelligence">
                         <Card variant="elevated" className="relative overflow-hidden">
                             <CardHeader>
-                                <CardTitle className="text-lg uppercase font-black">Country Intelligence Terminals</CardTitle>
-                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Deep-dive macro profiles for 40+ sovereigns</p>
+                                <CardTitle className="text-lg uppercase font-black">Regional Intelligence Hubs</CardTitle>
+                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Deep-dive macroeconomic telemetry & sovereign stress labs</p>
                             </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                                     {[
-                                        { code: 'US', name: 'United States', flag: '🇺🇸' },
-                                        { code: 'CN', name: 'China', flag: '🇨🇳' },
-                                        { code: 'IN', name: 'India', flag: '🇮🇳' },
-                                        { code: 'DE', name: 'Germany', flag: '🇩🇪' },
-                                        { code: 'JP', name: 'Japan', flag: '🇯🇵' },
-                                    ].map(country => (
+                                        { label: 'United States', flag: '🇺🇸', href: '/labs/us-macro-fiscal' },
+                                        { label: 'China Macro', flag: '🇨🇳', href: '/intel/china' },
+                                        { label: 'India Macro', flag: '🇮🇳', href: '/intel/india' },
+                                        { label: 'Africa Pulse', flag: '🌍', href: '/labs/africa-macro' },
+                                        { label: 'Sovereign Stress', flag: '🛡️', href: '/labs/sovereign-stress' },
+                                    ].map(item => (
                                         <Link
-                                            key={country.code}
-                                            to={`/countries/${country.code.toLowerCase()}`}
+                                            key={item.href}
+                                            to={item.href}
                                             className="group p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/30 transition-all duration-200"
                                         >
-                                            <div className="text-2xl mb-2">{country.flag}</div>
+                                            <div className="text-2xl mb-2">{item.flag}</div>
                                             <div className="font-bold text-sm group-hover:text-blue-400 transition-colors">
-                                                {country.name}
+                                                {item.label}
                                             </div>
                                             <div className="text-xs text-muted-foreground/50 mt-1">
-                                                Full Profile →
+                                                Explore Hub →
                                             </div>
                                         </Link>
                                     ))}

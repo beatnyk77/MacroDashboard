@@ -13,13 +13,13 @@ interface PremiumActionBarProps {
 export const PremiumActionBar: React.FC<PremiumActionBarProps> = ({
     className,
     latestDataHref = '/',
-    compareHref = '/countries',
+    compareHref = '/labs/sovereign-stress',
 }) => {
     return (
         <div className={cn('flex flex-col gap-3 sm:flex-row', className)}>
             <TrailLink
                 to={compareHref}
-                onClick={() => trackClick('compare_countries', 'premium_action_bar')}
+                onClick={() => trackClick('sovereign_stress_lab', 'premium_action_bar')}
                 className="group flex flex-1 items-center justify-between gap-3 rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/[0.08] to-transparent px-5 py-4 no-underline backdrop-blur-xl transition-all hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5"
             >
                 <div className="flex items-center gap-3">
@@ -28,10 +28,10 @@ export const PremiumActionBar: React.FC<PremiumActionBarProps> = ({
                     </div>
                     <div>
                         <div className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-400/70">
-                            Sovereign Compass
+                            Sovereign Stress
                         </div>
                         <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
-                            Compare Countries
+                            Stress Telemetry
                         </div>
                     </div>
                 </div>

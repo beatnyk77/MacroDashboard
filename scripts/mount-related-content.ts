@@ -29,8 +29,6 @@ const SKIP_FILES = new Set([
   'APIDocsPage.tsx',
   'ArticlePage.tsx',
   'BlogPage.tsx',
-  'CountriesIndexPage.tsx',
-  'CountryProfilePage.tsx',
   'Dashboard.tsx',
   'DataHealthDashboard.tsx',
   'DataHealthPublic.tsx',

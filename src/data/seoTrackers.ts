@@ -68,7 +68,7 @@ export const seoTrackerPages: SeoTrackerPage[] = [
     canonicalTargetLabel: 'India Intelligence',
     relatedUrls: [
       { label: 'India Credit Cycle Clock', href: '/methods/india-credit-cycle-clock' },
-      { label: 'India Sovereign Risk', href: '/countries/in' },
+      { label: 'India Macro Pulse', href: '/intel/india' },
       { label: 'Methodology Hub', href: '/methodology' },
     ],
     keywords: ['rbi liquidity monitor', 'rbi liquidity dashboard', 'india repo rate monitor', 'rbi money market operations'],
@@ -216,8 +216,8 @@ export const seoTrackerPages: SeoTrackerPage[] = [
     h1: 'Sovereign Risk Dashboard',
     dek: 'A country-level macro risk destination for tracking debt burden, inflation, FX reserves, fiscal stress, current-account pressure, and funding resilience.',
     sourceLine: 'World Bank, IMF, BIS, national statistical agencies, central banks, and GraphiQuestor country risk telemetry.',
-    canonicalTarget: '/countries',
-    canonicalTargetLabel: 'Sovereign Compass',
+    canonicalTarget: '/labs/sovereign-stress',
+    canonicalTargetLabel: 'Sovereign Stress Lab',
     relatedUrls: [
       { label: 'Sovereign Stress Lab', href: '/labs/sovereign-stress' },
       { label: 'Debt Gold Z-Score', href: '/methods/debt-gold-z-score' },

@@ -1,6 +1,5 @@
 import React from 'react';
 import { m } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 const countries = [
@@ -25,8 +24,7 @@ export const CountryDeepDiveGrid: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="group relative p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer"
-                    onClick={() => window.location.href = `/countries/${String(c.iso).toLowerCase()}/`}
+                    className="group relative p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all"
                 >
                     <div className="flex justify-between items-start mb-6">
                         <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-white/40">
@@ -65,10 +63,6 @@ export const CountryDeepDiveGrid: React.FC = () => {
                                 )}
                             />
                         </div>
-                    </div>
-
-                    <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ExternalLink size={14} className="text-white/20" />
                     </div>
                 </m.div>
             ))}

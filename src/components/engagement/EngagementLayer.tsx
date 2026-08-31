@@ -21,8 +21,6 @@ const DATA_ROUTE_PREFIXES = [
     '/methods',
     '/labs',
     '/intel',
-
-    '/countries',
     '/regime-digest',
 ];
 

@@ -26,8 +26,6 @@ const CHECKS = [
     { file: 'mcp/index.html', label: 'mcp', expectCanonicalIncludes: '/mcp' },
     { file: 'for-researchers/index.html', label: 'for-researchers', expectCanonicalIncludes: '/for-researchers' },
     { file: 'api-access/index.html', label: 'api-access', expectCanonicalIncludes: '/api-access' },
-    { file: 'countries/us/index.html', label: 'countries/us', expectCanonicalIncludes: '/countries/us' },
-    { file: 'countries/in/index.html', label: 'countries/in', expectCanonicalIncludes: '/countries/in' },
 ];
 
 // Dynamically add the LATEST dated-content page of each type from the
@@ -175,12 +173,6 @@ if (fs.existsSync(sitemapPath)) {
             console.error(`✗ sitemap.xml lists noindex path containing "${needle}"`);
             failed++;
         }
-    }
-    // Country URLs in sitemap must be lowercase
-    const upperCountry = sitemapXml.match(/countries\/[A-Z]{2}\//g);
-    if (upperCountry?.length) {
-        console.error(`✗ sitemap.xml has uppercase country ISO paths: ${upperCountry.slice(0, 5).join(', ')}`);
-        failed++;
     }
 } else {
     console.warn('⚠ dist/sitemap.xml missing — skipping sitemap noindex checks.');

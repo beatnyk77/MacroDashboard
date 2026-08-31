@@ -14,17 +14,17 @@ describe('sitemap SEO helpers', () => {
         expect(isSitemapNoindexPath('/api-docs/')).toBe(false);
     });
 
-    it('lowercases country paths', () => {
-        expect(normalizeSitemapPath('/countries/US/')).toBe('/countries/us/');
-        expect(sitemapLoc('/countries/IN')).toBe('https://graphiquestor.com/countries/in/');
+    it('normalizes path locs and trailing slashes', () => {
+        expect(normalizeSitemapPath('/intel/india/')).toBe('/intel/india/');
+        expect(sitemapLoc('/intel/india')).toBe('https://graphiquestor.com/intel/india/');
     });
 
-    it('dedupe drops noindex and normalizes countries', () => {
+    it('dedupe drops noindex and normalizes paths', () => {
         const out = dedupeSitemapRoutes([
-            { url: '/countries/US', priority: '0.7', changefreq: 'weekly' },
+            { url: '/intel/india', priority: '0.9', changefreq: 'daily' },
             { url: '/labs/grit-index/', priority: '0.5', changefreq: 'monthly' },
             { url: '/api-docs', priority: '0.8', changefreq: 'monthly' },
         ]);
-        expect(out.map((r) => r.url)).toEqual(['/countries/us', '/api-docs']);
+        expect(out.map((r) => r.url)).toEqual(['/intel/india', '/api-docs']);
     });
 });

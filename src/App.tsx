@@ -40,8 +40,6 @@ const ForResearchersPage = lazy(() => import('@/pages/ForResearchersPage').then(
 const MCPIntelligencePage = lazy(() => import('@/pages/MCPIntelligencePage').then(module => ({ default: module.MCPIntelligencePage })));
 const WeeklyNarrativeArchive = lazy(() => import('@/pages/WeeklyNarrativeArchive').then(module => ({ default: module.WeeklyNarrativeArchive })));
 const WeeklyNarrativePage = lazy(() => import('@/pages/WeeklyNarrativePage').then(module => ({ default: module.WeeklyNarrativePage })));
-const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
-const CountriesIndexPage = lazy(() => import('@/pages/CountriesIndexPage').then(module => ({ default: module.CountriesIndexPage })));
 const DataSourcesPage = lazy(() => import('@/pages/DataSourcesPage').then(module => ({ default: module.DataSourcesPage })));
 const TrackerSeoIndexPage = lazy(() => import('@/pages/TrackerSeoPage').then(module => ({ default: module.TrackerSeoIndexPage })));
 const TrackerSeoPage = lazy(() => import('@/pages/TrackerSeoPage').then(module => ({ default: module.TrackerSeoPage })));
@@ -158,9 +156,9 @@ function App() {
                                         <Route path={trailRoute('/tools/daily-regime-signal')} element={<DailyRegimeSignal />} />
                                         <Route path={trailRoute('/tools/gold-ratios')} element={<GoldRatiosWidget />} />
 
-                                        {/* Countries */}
-                                        <Route path={trailRoute('/countries')} element={<CountriesIndexPage />} />
-                                        <Route path={trailRoute('/countries/:iso')} element={<CountryProfilePage />} />
+                                        {/* Countries redirect to Sovereign Stress Lab */}
+                                        <Route path={trailRoute('/countries')} element={<Navigate to={trailRoute('/labs/sovereign-stress')} replace />} />
+                                        <Route path={trailRoute('/countries/:iso')} element={<Navigate to={trailRoute('/labs/sovereign-stress')} replace />} />
                                         <Route path={trailRoute('/trackers')} element={<TrackerSeoIndexPage />} />
                                         <Route path={trailRoute('/trackers/:slug')} element={<TrackerSeoPage />} />
 

@@ -136,7 +136,7 @@ export const PIPELINES: PipelineEntry[] = [
     title: 'Cross-Country Metrics',
     tier: 'sovereign',
     sources: ['IMF', 'World Bank', 'BIS'],
-    surfaces: ['/countries'],
+    surfaces: ['/labs/sovereign-stress'],
     cadence: 'Monthly',
   },
   {
