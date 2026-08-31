@@ -4,6 +4,7 @@ import { execSync } from 'child_process';
 import { blogArticles } from '../src/features/blog/blogData';
 import { glossaryData } from '../src/features/glossary/glossaryData';
 import { METRICS_CATALOG } from '../src/features/metrics/metricsCatalog';
+import { seoTrackerPages } from '../src/data/seoTrackers';
 import { ALL_COUNTRIES } from '../src/lib/countries';
 import { dedupeSitemapRoutes, sitemapLoc } from '../src/lib/sitemapHelpers';
 
@@ -88,6 +89,12 @@ async function generateSitemap() {
     { url: '/terms',               changefreq: 'yearly',  lastmod: gitLastmod('src/pages/TermsOfService.tsx') },
     { url: '/data-sources',        changefreq: 'monthly', lastmod: gitLastmod('src/pages/DataSourcesPage.tsx') },
     { url: '/macro-observatory',   changefreq: 'weekly',  lastmod: gitLastmod('src/pages/MacroObservatory.tsx') },
+    { url: '/trackers',            changefreq: 'weekly',  lastmod: gitLastmod('src/pages/TrackerSeoPage.tsx') },
+    ...seoTrackerPages.map((page) => ({
+      url: `/trackers/${page.slug}`,
+      changefreq: 'weekly' as const,
+      lastmod: gitLastmod('src/pages/TrackerSeoPage.tsx'),
+    })),
     // Additional static pages (labs, methods, tools) — lastmod = build date (data refreshes daily via crons)
     { url: '/labs/us-macro-fiscal', changefreq: 'weekly', lastmod: BUILD_DATE },
     { url: '/labs/de-dollarization-gold', changefreq: 'weekly', lastmod: BUILD_DATE },

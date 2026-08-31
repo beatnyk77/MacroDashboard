@@ -34,17 +34,22 @@ export const MobileNav: React.FC = () => {
                     bgcolor: 'rgba(15, 23, 42, 0.8)',
                     backdropFilter: 'blur(16px)',
                     borderTop: '1px solid rgba(255,255,255,0.05)',
+                    width: '100%',
+                    minWidth: 0,
                     '& .MuiBottomNavigationAction-root': {
                         color: 'rgba(255,255,255,0.4)',
-                        padding: '6px 0',
-                        minWidth: 'auto',
+                        flex: '1 1 0',
+                        minWidth: 0,
+                        maxWidth: 'none',
+                        padding: '6px 2px',
                         '&.Mui-selected': {
                             color: '#3b82f6',
                         },
                         '& .MuiBottomNavigationAction-label': {
-                            fontSize: '0.875rem',
+                            fontSize: '0.65rem',
+                            whiteSpace: 'nowrap',
                             '&.Mui-selected': {
-                                fontSize: '0.875rem',
+                                fontSize: '0.65rem',
                             }
                         }
                     }

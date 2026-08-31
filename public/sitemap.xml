@@ -367,6 +367,48 @@
     <lastmod>2026-08-01</lastmod>
   </url>
   <url>
+    <loc>https://graphiquestor.com/trackers/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trackers/india-liquidity-dashboard/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trackers/rbi-liquidity-monitor/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trackers/global-dollar-liquidity-dashboard/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trackers/china-credit-impulse-dashboard/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trackers/de-dollarization-dashboard/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://graphiquestor.com/trackers/sovereign-risk-dashboard/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-08-30</lastmod>
+  </url>
+  <url>
     <loc>https://graphiquestor.com/labs/us-macro-fiscal/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>

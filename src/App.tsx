@@ -43,6 +43,8 @@ const WeeklyNarrativePage = lazy(() => import('@/pages/WeeklyNarrativePage').the
 const CountryProfilePage = lazy(() => import('@/pages/CountryProfilePage').then(module => ({ default: module.CountryProfilePage })));
 const CountriesIndexPage = lazy(() => import('@/pages/CountriesIndexPage').then(module => ({ default: module.CountriesIndexPage })));
 const DataSourcesPage = lazy(() => import('@/pages/DataSourcesPage').then(module => ({ default: module.DataSourcesPage })));
+const TrackerSeoIndexPage = lazy(() => import('@/pages/TrackerSeoPage').then(module => ({ default: module.TrackerSeoIndexPage })));
+const TrackerSeoPage = lazy(() => import('@/pages/TrackerSeoPage').then(module => ({ default: module.TrackerSeoPage })));
 const NetLiquidityZScorePage = lazy(() => import('@/pages/methods/NetLiquidityZScorePage').then(module => ({ default: module.NetLiquidityZScorePage })));
 const DebtGoldZScorePage = lazy(() => import('@/pages/methods/DebtGoldZScorePage').then(module => ({ default: module.DebtGoldZScorePage })));
 const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEfficiencyPage').then(module => ({ default: module.LoanToJobEfficiencyPage })));
@@ -159,6 +161,8 @@ function App() {
                                         {/* Countries */}
                                         <Route path={trailRoute('/countries')} element={<CountriesIndexPage />} />
                                         <Route path={trailRoute('/countries/:iso')} element={<CountryProfilePage />} />
+                                        <Route path={trailRoute('/trackers')} element={<TrackerSeoIndexPage />} />
+                                        <Route path={trailRoute('/trackers/:slug')} element={<TrackerSeoPage />} />
 
                                         {/* Labs */}
                                         <Route path={trailRoute('/labs/us-macro-fiscal')} element={<USMacroFiscalLab />} />

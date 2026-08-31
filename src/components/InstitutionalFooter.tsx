@@ -76,19 +76,19 @@ export const InstitutionalFooter: React.FC = () => {
                     </div>
                 </nav>
 
-                <div className="mt-12 pt-8 border-t border-white/[0.03] flex justify-between items-center">
+                <div className="mt-12 pt-8 border-t border-white/[0.03] flex flex-col gap-6 xl:flex-row xl:justify-between xl:items-center">
                     <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
                         © 2026 FounderHQ LLP. {BrandConfig.name} PRO-SERIES TERMINAL.
                     </span>
-                    <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-4 border-r border-white/5 pr-6">
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 xl:border-r xl:border-white/5 xl:pr-6">
                             <Link to="/tools" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-emerald-400/80 transition-colors">Widgets</Link>
                             <Link to="/api-access" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Access</Link>
                             <Link to="/api-docs" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-blue-400/80 transition-colors">API Docs</Link>
                             <Link to="/mcp" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-cyan-400/80 transition-colors">MCP Server</Link>
                             <Link to="/for-researchers" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-violet-400/80 transition-colors">AI &amp; Research</Link>
                         </div>
-                        <div className="flex items-center gap-4 border-r border-white/5 pr-6">
+                        <div className="flex items-center gap-4 xl:border-r xl:border-white/5 xl:pr-6">
                             <Link to="/terms" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Terms</Link>
                             <Link to="/privacy" className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 hover:text-blue-400/80 transition-colors">Privacy</Link>
                         </div>
@@ -100,28 +100,28 @@ export const InstitutionalFooter: React.FC = () => {
                         </Link>
                         <Link
                             to="/blog"
-                            className="text-xs font-black uppercase tracking-uppercase text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-uppercase text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 xl:border-l xl:border-white/5 xl:pl-6"
                         >
                             <BookOpen size={12} />
                             Intelligence Journal
                         </Link>
                         <Link
                             to="/glossary"
-                            className="text-xs font-black uppercase tracking-uppercase text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-uppercase text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-2 xl:border-l xl:border-white/5 xl:pl-6"
                         >
                             <BookOpen size={12} />
                             Glossary
                         </Link>
                         <Link
                             to="/intel/india"
-                            className="text-xs font-black uppercase tracking-uppercase text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-uppercase text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 xl:border-l xl:border-white/5 xl:pl-6"
                         >
                             <Globe size={12} />
                             🇮🇳 India Intel
                         </Link>
                         <Link
                             to="/intel/china"
-                            className="text-xs font-black uppercase tracking-uppercase text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 border-l border-white/5 pl-6"
+                            className="text-xs font-black uppercase tracking-uppercase text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 xl:border-l xl:border-white/5 xl:pl-6"
                         >
                             <Globe size={12} />
                             🇨🇳 China Intel

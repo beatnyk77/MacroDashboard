@@ -19,8 +19,8 @@
 - **Glossary Index**: https://graphiquestor.com/glossary/
 - **Methodology Hub**: https://graphiquestor.com/methodology/
 - **Institutional API**: https://graphiquestor.com/api-access/
-- **MCP Server**: graphiquestor/macro-intelligence (Smithery) — 11 tools & 6 resources. Install: `npx @smithery/cli mcp add graphiquestor/macro-intelligence --client cursor`. Remote SSE: `https://graphiquestor-mcp.graphiquestor.workers.dev/mcp`. Docs: https://graphiquestor.com/mcp/
-- **Thematic Research Labs**: https://graphiquestor.com/labs/ — 16 institutional labs (De-Dollarization, Sovereign Stress, US Fiscal, Energy, China Debt Iceberg, India Macro Pulse, Africa Pulse, Shadow System)
+- **API Docs**: https://graphiquestor.com/api-docs/
+- **MCP Server**: graphiquestor/macro-intelligence (Smithery) — 8 tools. Install: npx @smithery/cli mcp add graphiquestor/macro-intelligence --client cursor. Docs: https://graphiquestor.com/mcp/
 - **Regime Digest**: https://graphiquestor.com/regime-digest/
 
 ## Flagship Metrics (26 indicators with CSV exports)

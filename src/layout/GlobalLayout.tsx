@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -29,6 +29,7 @@ const terminalNavItems = [
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
     { id: 'corporate-transmission', label: 'Corporate Transmission', path: '/corporate-transmission', icon: <FileSearch size={18} />, group: 'INTELLIGENCE' },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
+    { id: 'trackers', label: 'Macro Trackers', path: '/trackers', icon: <Search size={18} /> },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={18} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },
     { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={18} /> },
@@ -137,7 +138,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                             <Menu size={24} />
                         </button>
 
-                        <div className="hidden md:block">
+                        <div className="hidden lg:block">
                             <DataHealthHeaderChip />
                         </div>
 
@@ -160,7 +161,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                                 else window.location.href = '/#weekly-narrative';
                             }}
-                            className="hidden sm:flex bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-wider text-sm px-3 py-2 min-h-11"
+                            className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-wider text-sm px-3 py-2 min-h-11"
                         >
                             Subscribe
                         </Button>

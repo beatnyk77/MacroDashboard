@@ -48,6 +48,14 @@ key and `CRON_SECRET`. `ingest-sec-corporate` runs before
 are retained as `freshness_status = 'unavailable'`. The terminal surface is
 `/corporate-transmission`.
 
+Deploy the SEC functions with the shared Deno import map. This resolves the
+`@supabase/supabase-js` npm mapping during remote bundling:
+
+```bash
+supabase functions deploy ingest-sec-corporate --project-ref debdriyzfcwvgrhzzzre --import-map supabase/functions/deno.json --use-api --no-verify-jwt
+supabase functions deploy compute-corporate-signals --project-ref debdriyzfcwvgrhzzzre --import-map supabase/functions/deno.json --use-api --no-verify-jwt
+```
+
 The only human-operated path is:
 - weekly GSC check (Google Search Console performance) and alert-inbox scan
 - monthly newsletter curation (Google Apps Script trigger → `generate-weekly-regime-digest`)

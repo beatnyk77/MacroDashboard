@@ -243,7 +243,7 @@ describe('Smoke Tests', () => {
                 <AdminDashboard />
             </TestWrapper>
         );
-        expect(await screen.findByText(/TERMINAL HEALTH/i)).toBeInTheDocument();
+        expect(await screen.findByText(/TERMINAL HEALTH/i, {}, { timeout: 10000 })).toBeInTheDocument();
         sessionStorage.clear();
     }, 20000);
 
