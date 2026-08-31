@@ -7,11 +7,11 @@ import { TrailLink as Link } from '@/components/TrailLink';
 import { AuthorPersonSchema, BrandConfig, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { findSeoTracker, seoTrackerHub, seoTrackerPages, type SeoTrackerPage } from '@/data/seoTrackers';
 
-const publishedDate = '2026-08-31';
+const publishedDate = '2026-09-01';
 
 function trackerSchemas(page: SeoTrackerPage) {
-  const pageUrl = `${BrandConfig.baseUrl}/trackers/${page.slug}`;
-  const canonicalTarget = `${BrandConfig.baseUrl}${page.canonicalTarget}`;
+  const pageUrl = `${BrandConfig.baseUrl}/trackers/${page.slug}/`;
+  const canonicalTarget = `${BrandConfig.baseUrl}${page.canonicalTarget.replace(/\/?$/, '/')}`;
 
   return [
     {
@@ -29,7 +29,7 @@ function trackerSchemas(page: SeoTrackerPage) {
       keywords: page.keywords,
       about: page.keyword,
       isPartOf: {
-        '@id': `${BrandConfig.baseUrl}/trackers#collection`,
+        '@id': `${BrandConfig.baseUrl}/trackers/#collection`,
       },
     },
     {
@@ -61,7 +61,7 @@ function trackerSchemas(page: SeoTrackerPage) {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: `${BrandConfig.baseUrl}/` },
-        { '@type': 'ListItem', position: 2, name: 'Trackers', item: `${BrandConfig.baseUrl}/trackers` },
+        { '@type': 'ListItem', position: 2, name: 'Trackers', item: `${BrandConfig.baseUrl}/trackers/` },
         { '@type': 'ListItem', position: 3, name: page.h1, item: pageUrl },
       ],
     },
@@ -113,7 +113,7 @@ export const TrackerSeoIndexPage: React.FC = () => {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `${BrandConfig.baseUrl}/trackers#collection`,
+    '@id': `${BrandConfig.baseUrl}/trackers/#collection`,
     name: seoTrackerHub.title,
     description: seoTrackerHub.description,
     url: `${BrandConfig.baseUrl}/trackers`,
@@ -121,7 +121,7 @@ export const TrackerSeoIndexPage: React.FC = () => {
     hasPart: seoTrackerPages.map((page) => ({
       '@type': 'WebPage',
       name: page.h1,
-      url: `${BrandConfig.baseUrl}/trackers/${page.slug}`,
+      url: `${BrandConfig.baseUrl}/trackers/${page.slug}/`,
       about: page.keyword,
     })),
   };

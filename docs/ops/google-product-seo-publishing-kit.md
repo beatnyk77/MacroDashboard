@@ -72,7 +72,7 @@ Measured Variables
 Last Reviewed
 ```
 
-Use `2026-08-31` as the first `Last Reviewed` date. Update only when the page text or source map changes.
+Use `2026-09-01` as the first `Last Reviewed` date. Update only when the page text or source map changes.
 
 ## Google Slides
 
