@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
 import { serveIngest, IngestResult } from '../_shared/handler.ts';
