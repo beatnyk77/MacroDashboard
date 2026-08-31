@@ -19,6 +19,8 @@ BEGIN
 END
 $$;
 
+DROP VIEW IF EXISTS public.vw_latest_corporate_signals CASCADE;
+
 CREATE OR REPLACE VIEW public.vw_latest_corporate_signals AS
 WITH latest_signals AS (
   SELECT DISTINCT ON (issuer_id, signal_id)
