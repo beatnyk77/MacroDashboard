@@ -4,7 +4,10 @@ import {
     History,
     TrendingUp,
     Info,
-    CheckCircle2
+    CheckCircle2,
+    Coins,
+    Scale,
+    ShieldAlert
 } from 'lucide-react';
 import {
     ResponsiveContainer,
@@ -48,11 +51,14 @@ export const MacroPrecedentsLab: React.FC = () => {
     // Chart Mode: Indexed (Base 100) vs Nominal Level
     const [isIndexed, setIsIndexed] = useState<boolean>(true);
 
+    // Active Cycle Anchor State
+    const [currentCycleAnchor, setCurrentCycleAnchor] = useState<'2022-03-16' | '2020-03-23'>('2022-03-16');
+
     // Data Hooks
     const { data: comparisonData, isLoading: isComparisonLoading } = useHistoricalPrecedents(
         selectedMetricId,
         selectedPrecedent.id,
-        '2022-03-16' // Fed Tightening Cycle Anchor
+        currentCycleAnchor
     );
 
     const { distributions, isLoading: isBenchmarkLoading } = useMacroBenchmarks(selectedCohort);
@@ -194,14 +200,22 @@ export const MacroPrecedentsLab: React.FC = () => {
                                         Normalized comparison from shock onset (<code className="font-mono text-white/80">T=0</code>) across elapsed calendar days.
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-4 text-xs font-mono">
-                                    <div className="flex items-center gap-1.5">
-                                        <div className="w-3 h-0.5 bg-blue-400 rounded-full" />
-                                        <span className="text-white">Active Cycle (T=0: 2022-03-16)</span>
+                                <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
+                                    <div className="flex items-center gap-1.5 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">
+                                        <div className="w-2.5 h-2.5 bg-blue-400 rounded-full" />
+                                        <span className="text-white">Active Cycle:</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCurrentCycleAnchor(currentCycleAnchor === '2022-03-16' ? '2020-03-23' : '2022-03-16')}
+                                            className="underline text-blue-300 hover:text-white font-bold"
+                                        >
+                                            {currentCycleAnchor === '2022-03-16' ? '2022 Fed Tightening (T=0: 2022-03-16)' : '2020 COVID Shock (T=0: 2020-03-23)'}
+                                        </button>
                                     </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <div className="w-3 h-0.5 bg-amber-400 border-dashed rounded-full" />
-                                        <span className="text-amber-300">{selectedPrecedent.shortLabel} (T=0: {selectedPrecedent.tZeroDate})</span>
+                                    <div className="flex items-center gap-1.5 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+                                        <div className="w-2.5 h-0.5 bg-amber-400 border-dashed rounded-full" />
+                                        <span className="text-amber-300 font-bold">{selectedPrecedent.shortLabel}</span>
+                                        <span className="text-muted-foreground/80">(T=0: {selectedPrecedent.tZeroDate})</span>
                                     </div>
                                 </div>
                             </div>
@@ -304,6 +318,100 @@ export const MacroPrecedentsLab: React.FC = () => {
                                         {selectedPrecedent.structuralDivergence}
                                     </p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </SectionErrorBoundary>
+
+            {/* Section 1.5: Structural Macro Telemetry vs Precedents */}
+            <SectionErrorBoundary title="Structural Macro Benchmarks vs Historical Regimes">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                        <Scale size={16} className="text-amber-400" />
+                        <h2 className="text-xl font-bold text-white tracking-heading">
+                            Structural Macro Coordinates vs Historical Baselines
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        {/* Card 1: Debt to GDP Benchmark */}
+                        <div className="bg-card/40 border border-border/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                    <ShieldAlert size={16} className="text-rose-400" />
+                                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sovereign Debt / GDP</span>
+                                </div>
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                    92nd Percentile
+                                </span>
+                            </div>
+                            <div className="text-2xl font-black font-mono text-white mb-1">
+                                122.4% <span className="text-xs text-muted-foreground font-normal">(US) / 81.3% (IN)</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground leading-relaxed mt-2 mb-3">
+                                <strong>Historical Precedent (2008 GFC):</strong> US Debt/GDP was only <strong>64.8%</strong>; Post-WWII peak was 118% (1946). Today represents peacetime record leverage.
+                            </div>
+                            <div className="w-full bg-secondary/60 rounded-full h-1.5 overflow-hidden">
+                                <div className="bg-rose-500 h-full rounded-full" style={{ width: '92%' }} />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-muted-foreground/60 font-mono mt-1">
+                                <span>2008: 64%</span>
+                                <span>2019: 106%</span>
+                                <span className="text-rose-400 font-bold">Now: 122%</span>
+                            </div>
+                        </div>
+
+                        {/* Card 2: M2 to Gold Ratio */}
+                        <div className="bg-card/40 border border-border/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                    <Coins size={16} className="text-amber-400" />
+                                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">M2 / Gold Fair Value</span>
+                                </div>
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    Compressing
+                                </span>
+                            </div>
+                            <div className="text-2xl font-black font-mono text-amber-300 mb-1">
+                                108.2 <span className="text-xs text-muted-foreground font-normal">(Historical Mean: 100)</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground leading-relaxed mt-2 mb-3">
+                                <strong>Historical Precedent (2020 COVID):</strong> Spiked to <strong>148.0</strong> (+48% over fair value). Compressing back toward 100 as gold structurally outpaces M2 expansion.
+                            </div>
+                            <div className="w-full bg-secondary/60 rounded-full h-1.5 overflow-hidden">
+                                <div className="bg-amber-400 h-full rounded-full" style={{ width: '60%' }} />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-muted-foreground/60 font-mono mt-1">
+                                <span>2011 Low: 72</span>
+                                <span className="text-amber-300 font-bold">Now: ~108</span>
+                                <span>2020 Peak: 148</span>
+                            </div>
+                        </div>
+
+                        {/* Card 3: External Liquidity & FX Defense */}
+                        <div className="bg-card/40 border border-border/60 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                    <History size={16} className="text-blue-400" />
+                                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">EM FX Reserve Cover</span>
+                                </div>
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    Safe Buffer
+                                </span>
+                            </div>
+                            <div className="text-2xl font-black font-mono text-emerald-400 mb-1">
+                                11.2 Mo <span className="text-xs text-muted-foreground font-normal">(India RBI Import Cover)</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground leading-relaxed mt-2 mb-3">
+                                <strong>Historical Precedent (2013 Taper Tantrum):</strong> Stood at just <strong>6.5 months</strong> cover with 4.8% CAD. Today external balance sheets provide ~1.7x stronger cushion.
+                            </div>
+                            <div className="w-full bg-secondary/60 rounded-full h-1.5 overflow-hidden">
+                                <div className="bg-emerald-500 h-full rounded-full" style={{ width: '85%' }} />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-muted-foreground/60 font-mono mt-1">
+                                <span>2013: 6.5 Mo</span>
+                                <span>Min Threshold: 3.0 Mo</span>
+                                <span className="text-emerald-400 font-bold">Now: 11.2 Mo</span>
                             </div>
                         </div>
                     </div>

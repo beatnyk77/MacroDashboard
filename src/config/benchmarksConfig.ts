@@ -41,6 +41,13 @@ export const BENCHMARK_METRICS: CohortBenchmarkMetric[] = [
         unit: 'Tonnes',
         lowerIsBetter: false,
         description: 'Sovereign central bank officially declared gold holdings in metric tonnes.'
+    },
+    {
+        id: 'debtGoldRatio',
+        label: 'Sovereign Debt / Gold Backing',
+        unit: 'Ratio',
+        lowerIsBetter: true,
+        description: 'Gross sovereign debt relative to the market valuation of official central bank gold reserves.'
     }
 ];
 

@@ -132,6 +132,40 @@ export const MACRO_PRECEDENTS: MacroPrecedent[] = [
                 metricId: 'GOLD_PRICE_USD',
                 label: 'Spot Gold Price',
                 relevanceDescription: 'Initial margin-call liquidation followed by historic monetary debasement hedge rally.'
+            },
+            {
+                metricId: 'US_DEBT_GDP_PCT',
+                label: 'US Public Debt / GDP',
+                relevanceDescription: 'Surged from 64% in 2007 to over 85% by 2009 as fiscal stabilizers and TARP deployed.'
+            }
+        ]
+    },
+    {
+        id: '2020-covid-monetary-shock',
+        name: '2020 COVID M2 Expansion & Debasement',
+        shortLabel: '2020 COVID M2 Surge',
+        tZeroDate: '2020-03-23', // Fed announces unlimited QE and emergency liquidity facilities
+        startDate: '2020-01-01',
+        endDate: '2021-06-30',
+        shockEvent: 'Federal Reserve unleashes unlimited open-ended asset purchases; US Treasury injects $5T+ in fiscal stimulus.',
+        summary: 'US M2 expanded by +27% YoY, the fastest rate in post-WWII history, causing the M2-to-Gold index to spike to 148 before initiating a multi-year structural gold catch-up cycle.',
+        structuralDivergence: 'In 2020, fiscal transfers directly funded household bank accounts, driving immediate velocity and M2 surge. Today, M2 is constrained by high real policy rates and quantitative tightening runoff.',
+        tags: ['liquidity-shock', 'inflation-surge'],
+        applicableMetrics: [
+            {
+                metricId: 'US_M2',
+                label: 'US M2 Money Supply',
+                relevanceDescription: 'Exploded from $15.4T to over $21.5T within 18 months.'
+            },
+            {
+                metricId: 'GOLD_PRICE_USD',
+                label: 'Spot Gold Price',
+                relevanceDescription: 'Broke all-time highs ($2,075/oz in Aug 2020) reflecting fiat currency debasement hedges.'
+            },
+            {
+                metricId: 'US_DEBT_GDP_PCT',
+                label: 'US Public Debt / GDP',
+                relevanceDescription: 'Spiked to historic peak of ~132% of GDP in Q2 2020.'
             }
         ]
     }
