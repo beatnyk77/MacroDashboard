@@ -1,0 +1,44 @@
+<h2>Historical Analogs & Peer Benchmarking: Feasibility & Scope</h2>
+<p class="subtitle">Exploring how to implement B & C without violating the core philosophy: "Observe structural reality. Do not forecast."</p>
+
+<div class="section">
+  <div class="cards">
+    <div class="card" data-choice="episodes" onclick="toggleSelect(this)">
+      <div class="card-body">
+        <span class="label" style="color:#38bdf8;">Approach 1</span>
+        <h3 style="margin: 0.5rem 0;">Curated Historical Episodes + Tagged Precedents</h3>
+        <p style="color:#94a3b8; font-size: 0.9rem; line-height: 1.5;">
+          <strong>How it works:</strong> Define canonical macro episodes (e.g., <em>1997 Asian Financial Crisis, 2008 GFC Liquidity Drain, 2013 Taper Tantrum, 2022 Fed Aggressive Tightening</em>). When key indicators cross specific structural thresholds, the terminal highlights the closest historical episode and overlays that episode's trajectory on current charts.
+        </p>
+        <div style="margin-top: 0.75rem; font-size: 0.82rem; color: #22c55e;">
+          ✔ <strong>Feasibility: Extremely High.</strong> Fast to query, 100% deterministic, institutional credibility, zero black-box ML risk.
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-choice="vector" onclick="toggleSelect(this)">
+      <div class="card-body">
+        <span class="label" style="color:#a855f7;">Approach 2</span>
+        <h3 style="margin: 0.5rem 0;">Algorithmic Distance / Dynamic Pattern Matcher</h3>
+        <p style="color:#94a3b8; font-size: 0.9rem; line-height: 1.5;">
+          <strong>How it works:</strong> Takes a normalized vector of current macro metrics (e.g. 10Y-2Y spread, Real Fed Funds, Global M2 YoY, Oil/Gold, FX Vol) and computes cosine similarity / Euclidean distance against every historical 30-day window since 1970 to find the top 3 mathematical nearest neighbors.
+        </p>
+        <div style="margin-top: 0.75rem; font-size: 0.82rem; color: #f59e0b;">
+          ⚠ <strong>Feasibility: Moderate.</strong> Requires regular background computation or Deno Edge function batch vector indexing. Can produce false-equivalence if data series lengths vary across sources.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p class="label">Feasibility Assessment for Cross-Country Benchmarks (Option C)</p>
+  <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid #334155; border-radius: 8px; padding: 1rem; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;">
+    <p style="margin: 0 0 0.5rem 0;">
+      <strong>Data Feasibility:</strong> You already have <code>useG20SovereignMatrix</code>, <code>useIndiaMacro</code>, <code>useChinaDebt</code>, and <code>useCrossAssetRadar</code>.
+    </p>
+    <p style="margin: 0;">
+      We can introduce a <strong>Relative Macro Matrix</strong> (e.g. India Real Rate vs EM Average, Debt-to-GDP acceleration vs G20 median, FX Reserve import cover vs peer deciles).
+    </p>
+  </div>
+</div>

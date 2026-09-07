@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -36,6 +36,7 @@ const terminalNavItems = [
     { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={18} /> },
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
+    { id: 'macro-precedents', label: 'Precedents & Benchmarks', path: '/labs/macro-precedents', icon: <GitCompare size={18} /> },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
     { id: 'de-dollarization-guide', label: 'De-Dollarization Guide', path: '/methods/de-dollarization-guide', icon: <FileText size={18} /> },
     { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={18} /> },

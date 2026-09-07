@@ -1,0 +1,44 @@
+<h2>Curated Precedents & Peer Benchmarks: User Experience & Placement</h2>
+<p class="subtitle">Where and how should analysts interact with this data?</p>
+
+<div class="options">
+  <div class="option" data-choice="integrated" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>In-Situ Integration (Directly on Existing Charts & Labs)</h3>
+      <p>
+        Add a <strong>"Precedent Overlay"</strong> toggle on existing charts (e.g. on Global Liquidity, Energy Regime, India Macro). 
+        Clicking "Compare vs 2008 GFC" or "Peer Benchmark: G20 Median" directly overlays the normalized historical path onto the current chart.
+      </p>
+      <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #38bdf8;">
+        Best for seamless workflow without leaving the current dashboard view.
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="dedicated_lab" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Dedicated "Macro Precedent & Benchmarks" Lab (/labs/precedents)</h3>
+      <p>
+        A dedicated workspace where analysts can pick a current indicator (e.g. US Net Liquidity, India RBI FX reserves) and select a benchmark peer group or historical analog library (1970s Stagflation, 1997 AFC, 2013 Taper Tantrum) with a normalized T=0 timeline.
+      </p>
+      <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #a855f7;">
+        Best for deep-dive regime research and institutional report generation.
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid (Quick Glance Chips in Terminal + Full Dedicated Lab)</h3>
+      <p>
+        On Metric Cards/Charts, show a small badge like <em>"Analog: 2013 Taper Tantrum (84% correlation)"</em> or <em>"Vs G20: 88th percentile"</em> that links out to the dedicated deep-dive Lab.
+      </p>
+      <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #22c55e;">
+        Recommended: Preserves terminal cleanliness while offering institutional depth.
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,6 +12,7 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { DataDiagnosticsDisclosure } from '@/components/DataDiagnosticsDisclosure';
+import { PrecedentBadge } from '@/components/PrecedentBadge';
 import type { MetricData } from '@/types/metric';
 
 interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -52,6 +53,11 @@ interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	zScore?: number;
 	percentile?: number;
 	isStale?: boolean;
+	precedentId?: string;
+	cohortRank?: {
+		cohort: string;
+		percentile: number;
+	};
 }
 
 const MetricCardInner: React.FC<MetricCardProps> = (props) => {
@@ -68,6 +74,8 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 		prefix = '',
 		lastUpdated: propLastUpdated,
 		isLoading: propIsLoading,
+		precedentId,
+		cohortRank,
 		className,
 		source = 'FRED',
 		frequency = 'Daily',
@@ -318,6 +326,9 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 							<div className="flex flex-wrap items-center gap-2">
 								<DataProvenanceBadge source={resolvedSource} methodology={resolvedFrequency} lastVerified={lastUpdated} size="sm" className="max-w-full" />
 								<DataDiagnosticsDisclosure source={resolvedSource} frequency={resolvedFrequency} lastUpdated={lastUpdated} status={staleness.state} sourceRef={metric?.sourceRef} provenance={metric?.provenance} />
+								{(precedentId || cohortRank) && (
+									<PrecedentBadge precedentId={precedentId} metricId={resolvedMetricId} cohortRank={cohortRank} />
+								)}
 							</div>
 						</div>
 

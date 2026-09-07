@@ -80,6 +80,7 @@ const SovereignStressLab = lazy(() => import('@/pages/labs/SovereignStressLab').
 const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(module => ({ default: module.ShadowSystemLab })));
 const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(module => ({ default: module.China15thFYPLab })));
 const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
+const MacroPrecedentsLab = lazy(() => import('@/pages/labs/MacroPrecedentsLab').then(module => ({ default: module.MacroPrecedentsLab })));
 
 const LoadingFallback = () => (
     <Box role="status" aria-live="polite" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -177,6 +178,7 @@ function App() {
                                         <Route path={trailRoute('/labs/shadow-system')} element={<ShadowSystemLab />} />
                                         <Route path={trailRoute('/labs/china-15th-fyp')} element={<China15thFYPLab />} />
                                         <Route path={trailRoute('/labs/africa-macro')} element={<AfricaMacroPulseLab />} />
+                                        <Route path={trailRoute('/labs/macro-precedents')} element={<MacroPrecedentsLab />} />
                                         {/* Labs Index & Thematic redirects */}
                                         <Route path={trailRoute('/labs')} element={<ThematicLabsIndexPage />} />
                                         <Route path={trailRoute('/thematics')} element={<Navigate to={trailRoute('/labs')} replace />} />
