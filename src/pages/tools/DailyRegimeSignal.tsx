@@ -49,7 +49,7 @@ export const DailyRegimeSignal: React.FC = () => {
                 title="Daily Macro Regime Signal — Risk On / Risk Off Gauge"
                 description="Live daily macro regime signal (Risk On / Neutral / Risk Off) computed from global liquidity, rates, dollar, volatility, and metals. Free embeddable widget."
                 keywords={['macro regime signal', 'risk on risk off indicator', 'daily macro signal', 'liquidity regime']}
-                canonical="https://graphiquestor.com/tools/daily-regime-signal"
+                canonical="https://graphiquestor.com/tools/daily-regime-signal/"
             />
 
             <Container maxWidth="sm">

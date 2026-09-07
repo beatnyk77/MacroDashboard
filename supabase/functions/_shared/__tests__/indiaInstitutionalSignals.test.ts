@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRegimeHysteresis, computeIndiaInstitutionalSignals, hasSufficientDailyHistory, percentileRank, toSignedScore, winsorizedPercentile } from '../indiaInstitutionalSignals';
+import { applyRegimeHysteresis, computeIndiaInstitutionalSignals, hasSufficientDailyHistory, percentileRank, toSignedScore, winsorizedPercentile } from '../indiaInstitutionalSignals.ts';
 
 describe('India institutional signals', () => {
   it('uses average-rank ties and signed percentile conversion', () => {
@@ -20,6 +20,29 @@ describe('India institutional signals', () => {
     expect(result.score).toBeNull();
     expect(result.confidence).toBe(0);
     expect(hasSufficientDailyHistory([{ date: '2026-08-29', fii: -100, dii: 80 }])).toBe(false);
+  });
+
+  it('opens the publication gate at exactly 252 accepted FII/DII sessions', () => {
+    const points = Array.from({ length: 252 }, (_, i) => ({
+      date: new Date(Date.UTC(2025, 0, i + 1)).toISOString().slice(0, 10),
+      fii: 100 + i,
+      dii: 80 + i,
+      nifty: 0.2,
+      breadth: 100,
+      vix: 12,
+      usdInr: -0.05,
+      liquidity: 0.4,
+      liquidityDate: new Date(Date.UTC(2025, 0, i + 1)).toISOString().slice(0, 10),
+      credit: 12,
+      creditDate: new Date(Date.UTC(2025, 0, i + 1)).toISOString().slice(0, 10),
+    }));
+
+    expect(hasSufficientDailyHistory(points.slice(0, 251))).toBe(false);
+    expect(hasSufficientDailyHistory(points)).toBe(true);
+    const snapshot = computeIndiaInstitutionalSignals(points);
+    expect(snapshot.asOf).toBe(points[251].date);
+    expect(snapshot.score).not.toBeNull();
+    expect(snapshot.coverageMask).toEqual(expect.arrayContaining(['foreign_exit', 'absorption', 'flow_price', 'market_confirmation']));
   });
 
   it('produces a reproducible snapshot with explicit component coverage', () => {

@@ -47,7 +47,7 @@ export const ToolsIndexPage: React.FC = () => (
             title="Free Embeddable Macro Widgets & Tools"
             description="Free embeddable macro widgets for blogs and newsletters: net liquidity gauge, daily risk-on/risk-off regime signal, and gold ratio monitors. Live"
             keywords={['embeddable macro widgets', 'net liquidity widget', 'macro regime indicator embed', 'gold ratio widget', 'free financial widgets']}
-            canonical="https://graphiquestor.com/tools"
+            canonical="https://graphiquestor.com/tools/"
         />
 
         <Container maxWidth="md">

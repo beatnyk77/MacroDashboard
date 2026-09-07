@@ -41,7 +41,7 @@ export const GoldRatiosWidget: React.FC = () => {
                 title="Gold Ratios Monitor — M2/Gold, Debt/Gold, SPX/Gold"
                 description="Live monetary-debasement gauges: M2/Gold, US Debt/Gold, SPX/Gold, and Gold/Silver ratios with z-scores against history. Free embeddable widget."
                 keywords={['M2 gold ratio', 'debt to gold ratio', 'SPX gold ratio', 'gold silver ratio', 'monetary debasement']}
-                canonical="https://graphiquestor.com/tools/gold-ratios"
+                canonical="https://graphiquestor.com/tools/gold-ratios/"
             />
 
             <Container maxWidth="sm">

@@ -20,6 +20,7 @@ import {
 } from '@/constants/chartDefaults';
 import { cn } from '@/lib/utils';
 import { ArrowDown, ShieldAlert, TrendingUp, Anchor, Activity, Info } from 'lucide-react';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 const REGION_COLORS: Record<G20Region, string> = {
     'G7': '#3b82f6',     // Blue
@@ -374,6 +375,26 @@ export const SovereignRiskMatrix = React.memo(() => {
                     </ResponsiveContainer>
                 </div>
             </div>
+
+            <ChartAccessibleTranscript
+                takeaway={`The G20 Sovereign Risk Matrix cross-evaluates fiscal leverage (Debt-to-GDP %) against economic vitality (GDP Growth %). Sovereigns clustered in the Fiscal Trap quadrant (high debt, low growth) face rising interest coverage vulnerabilities, while Dynamic Anchors (low debt, resilient growth) maintain balance sheet capacity to absorb external financial shocks.`}
+                readingGuide="Quad I (Top-Left): Dynamic Anchors (Low Debt, High Growth). Quad II (Top-Right): Growth at Risk (High Debt, High Growth). Quad III (Bottom-Right): Fiscal Trap (High Debt, Low Growth). Quad IV (Bottom-Left): Stagnant Stability (Low Debt, Low Growth). Bubble size indicates nominal GDP in USD billions."
+                searchKeywords={[
+                    'Sovereign Risk Matrix',
+                    'G20 Debt to GDP',
+                    'Sovereign Debt Spiral',
+                    'GDP Growth vs Debt Burden',
+                    'Fiscal Fragility Quad',
+                    'G7 vs BRICS Sovereign Vulnerability',
+                    'Sovereign CDS Risk'
+                ]}
+                dataRows={[
+                    { label: 'Observed Debt Coverage', value: `${availableDebt}/${totalCount} Nations` },
+                    { label: 'Usable Current Rows', value: `${freshRows}/${totalCount} Fresh` },
+                    { label: 'Highest Risk Screen', value: selected?.code ?? '—', note: selected?.name },
+                    { label: 'Selected Debt/GDP', value: selected?.debtUpdatedAt ? `${selected.debtGdpPct.toFixed(1)}%` : 'No data' },
+                ]}
+            />
         </div>
     );
 });

@@ -50,6 +50,34 @@ const TAB_CONFIG: Array<{ id: EnergyTab; label: string; icon: LucideIcon }> = [
     { id: 'metals', label: 'Metals', icon: Activity },
 ];
 
+const faqItems = [
+    {
+        question: "What is the WTI Calendar Spread and what does it indicate about physical oil markets?",
+        answer: "The WTI Calendar Spread (prompt month vs. second month futures) measures the slope of the crude oil term structure. Backwardation (positive spread) signals immediate physical inventory depletion and supply tightness, while contango (negative spread) signals surplus supply and commercial storage buildup."
+    },
+    {
+        question: "How is India's Fuel Security Clock measured?",
+        answer: "India's Fuel Security Clock computes coverage days by aggregating strategic petroleum reserves (ISPRL) and commercial refinery stockpiles divided by average daily national consumption (~5.4M bpd). Readings below 30 days flag acute sovereign vulnerability to supply interruptions through maritime chokepoints."
+    },
+    {
+        question: "Why do refining crack spreads matter for macroeconomic surveillance?",
+        answer: "Refinery crack spreads measure the processing margin between crude input costs and refined petroleum product prices (gasoline and middle distillates). Widening crack spreads reflect structural refining bottlenecks, driving pump prices higher and feeding into core headline inflation even if headline crude prices remain rangebound."
+    }
+];
+
+const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(({ question, answer }) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: answer,
+        },
+    })),
+};
+
 const metricFreshnessStatus = (metric?: MetricData | null): FreshnessStatus => {
     if (!metric?.lastUpdated) return 'no_data';
     if (metric.status === 'safe') return 'fresh';
@@ -215,7 +243,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         'license': 'https://creativecommons.org/licenses/by/4.0/',
                         'creator': PublisherOrganizationSchema,
                         'author': PublisherOrganizationSchema
-                    }
+                    },
+                    faqJsonLd
                 ]}
             />
             <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 py-8">
@@ -444,6 +473,17 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     <p className="max-w-5xl text-xs text-muted-foreground/60 leading-relaxed font-medium uppercase tracking-wide">
                         Energy stress transmits through prices, refining capacity, reserves, FX, and industrial inputs. This lab now prioritizes the stress board first, then lets desks inspect the relevant transmission channel.
                     </p>
+
+                    {/* Visible FAQ block */}
+                    <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
+                        <h3 className="text-xs font-black text-white uppercase tracking-widest">Frequently Asked Questions</h3>
+                        {faqItems.map(({ question, answer }) => (
+                            <div key={question} className="space-y-1">
+                                <p className="text-xs font-bold text-blue-400">{question}</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">{answer}</p>
+                            </div>
+                        ))}
+                    </div>
                 </article>
 
                 <div className="mt-12 pt-8 border-t border-white/5 text-center">

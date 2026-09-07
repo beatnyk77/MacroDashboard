@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Calculator, TrendingUp } from 'lucide-react';
 import { trackExplorerUse } from '@/lib/analytics';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 /** WGC above-ground gold stock — tonnes */
 const GOLD_STOCK_TONNES = 212_582;
@@ -109,6 +110,26 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
                     </p>
                 </div>
             )}
+
+            <ChartAccessibleTranscript
+                takeaway={`The M2-to-Gold Ratio measures global fiat currency dilution against total above-ground gold reserves (${GOLD_STOCK_TONNES.toLocaleString()} metric tonnes). Elevated ratios (>90) historically indicate that money supply growth has outpaced monetary metal valuation, preceding long-term commodity and gold repricing cycles.`}
+                readingGuide="Formula: Global M2 (USD) ÷ [Above-Ground Gold Tonnes × 32,150.7 oz/t × Gold Spot Price]. Ratios above 90 represent elevated fiat debasement. Ratios below 70 indicate high relative gold backing."
+                searchKeywords={[
+                    'M2 to Gold Ratio',
+                    'Fiat Debasement Model',
+                    'Global M2 Money Supply',
+                    'Gold Monetary Backing',
+                    'World Gold Council WGC Stock',
+                    'Bretton Woods Gold Backing',
+                    'Currency Debasement Protection'
+                ]}
+                dataRows={[
+                    { label: 'Model M2 Level', value: `$${m2T} Trillion` },
+                    { label: 'Spot Gold Price', value: `$${gold}/oz` },
+                    { label: 'Computed Ratio', value: result?.ratio.toFixed(1) || '—' },
+                    { label: 'Debasement Regime', value: result?.label || 'Within historical band' },
+                ]}
+            />
         </section>
     );
 };

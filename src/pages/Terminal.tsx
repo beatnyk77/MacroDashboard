@@ -98,6 +98,57 @@ export const Terminal: React.FC = () => {
                         "publisher": {
                             "@id": `${BrandConfig.baseUrl}/#organization`
                         }
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "DataCatalog",
+                        "@id": `${BrandConfig.baseUrl}/#datacatalog`,
+                        "name": `${BrandConfig.name} Macro Intelligence Data Catalog`,
+                        "url": BrandConfig.baseUrl,
+                        "description": "Institutional repository of real-time macroeconomic time-series, sovereign solvency indicators, and central bank balance sheet telemetry.",
+                        "publisher": { "@id": `${BrandConfig.baseUrl}/#organization` },
+                        "dataset": [
+                            {
+                                "@type": "Dataset",
+                                "name": "US Net Liquidity Proxy",
+                                "description": "Federal Reserve Balance Sheet (WALCL) minus Treasury General Account (TGA) and Overnight Reverse Repo (RRP) facility.",
+                                "url": `${BrandConfig.baseUrl}/methods/net-liquidity-z-score/`,
+                                "isAccessibleForFree": true,
+                                "variableMeasured": ["WALCL", "WTREGEN", "RRPONTSYD", "Net Liquidity Proxy"]
+                            },
+                            {
+                                "@type": "Dataset",
+                                "name": "US Debt Maturity Wall & Treasury Auction Absorption",
+                                "description": "Schedule of marketable US Treasury maturities by tenor and primary dealer auction absorption scores.",
+                                "url": `${BrandConfig.baseUrl}/labs/us-macro-fiscal`,
+                                "isAccessibleForFree": true,
+                                "variableMeasured": ["Treasury Debt Maturities", "Bid-to-Cover Ratio", "Dealer Absorption"]
+                            },
+                            {
+                                "@type": "Dataset",
+                                "name": "Global M2 to Gold Valuation Model",
+                                "description": "Cross-border broad money supply vs. physical gold stock valuation and monetary dilution ratios.",
+                                "url": `${BrandConfig.baseUrl}/methods/m2-gold-ratio/`,
+                                "isAccessibleForFree": true,
+                                "variableMeasured": ["Global M2", "Gold Spot Price", "M2/Gold Ratio"]
+                            },
+                            {
+                                "@type": "Dataset",
+                                "name": "India Credit Cycle & Banking CD Ratio",
+                                "description": "Bank credit growth YoY, aggregate deposit growth YoY, and system credit-to-deposit ratio telemetry.",
+                                "url": `${BrandConfig.baseUrl}/intel/india/`,
+                                "isAccessibleForFree": true,
+                                "variableMeasured": ["Bank Credit Growth", "Deposit Growth", "CD Ratio", "RBI Liquidity"]
+                            },
+                            {
+                                "@type": "Dataset",
+                                "name": "China Macro Pulse & PBOC Telemetry",
+                                "description": "High-frequency real economy indicators, credit impulse, 1Y LPR, and foreign exchange reserves.",
+                                "url": `${BrandConfig.baseUrl}/intel/china/`,
+                                "isAccessibleForFree": true,
+                                "variableMeasured": ["China GDP", "Credit Impulse", "1Y LPR", "FX Reserves"]
+                            }
+                        ]
                     }
                 ]}
             />

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Building2, Calendar, DollarSign, AlertTriangle, Activity, Percent, TrendingUp } from 'lucide-react';
 import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 /** Format maturity amounts already stored in USD trillions as institutional USD presentation. */
 function formatUsdTrillions(t: number): string {
@@ -439,6 +440,30 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <ChartAccessibleTranscript
+                            takeaway={`Non-financial corporate debt totals ${formatUsdTrillions(stats.total)}, with ${formatUsdTrillions(stats.yr1Total)} (${((stats.yr1Total / (stats.total || 1)) * 100).toFixed(1)}%) maturing within 12 months. Legacy corporate paper issued at low historical coupons (~${stats.avgCpn.toFixed(1)}%) must be refinanced at prevailing corporate yields, putting downward pressure on corporate interest coverage ratios.`}
+                            readingGuide="Buckets aggregate non-financial corporate debt securities by maturity horizon. Red (<1Y) represents imminent rollover risk. Long-dated (>5Y) provides funding stability."
+                            searchKeywords={[
+                                'Corporate Debt Maturity Wall',
+                                'Nonfinancial Corporate Debt',
+                                'Corporate Rollover Risk',
+                                'High Yield Refinancing Cliff',
+                                'Corporate Bond Spreads',
+                                'Weighted Average Coupon WAC',
+                                'Debt Service Interest Coverage'
+                            ]}
+                            tableData={{
+                                caption: 'Corporate Debt Maturity Distribution by Bucket',
+                                headers: ['Maturity Horizon', 'Amount ($T)', 'Share (%)', 'Weighted Avg Coupon'],
+                                rows: data.map(d => [
+                                    d.bucket,
+                                    `$${d.amount.toFixed(2)}T`,
+                                    `${d.percent.toFixed(1)}%`,
+                                    d.coupon ? `${d.coupon.toFixed(2)}%` : '—'
+                                ])
+                            }}
+                        />
                     </div>
 
                     {/* Insights Sidebar */}

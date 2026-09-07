@@ -19,6 +19,34 @@ const LoadingFallback = () => (
     </div>
 );
 
+const faqItems = [
+    {
+        question: "Which central banks are the largest buyers of gold in 2024–2026?",
+        answer: "The People's Bank of China (PBoC), Reserve Bank of India (RBI), National Bank of Poland, Central Bank of Turkey, and monetary authorities in the GCC represent the largest official buyers, sustaining gross annual central bank demand above 1,000 metric tonnes."
+    },
+    {
+        question: "Why are central banks accumulating physical gold over US Treasuries?",
+        answer: "Physical gold is the premier tier-1 reserve asset free from external sanctions, custodial freeze, and counterparty defaults. As US sovereign debt exceeds $36T, central banks are rebalancing reserves from duration-sensitive fiat debt into unencumbered physical bullion."
+    },
+    {
+        question: "How does GraphiQuestor track sovereign gold accumulation?",
+        answer: "GraphiQuestor tracks official monthly IMF International Financial Statistics (IFS) filings, World Gold Council quarterly audits, and global physical customs export flows from major bullion refining hubs (Switzerland, UK) to detect institutional sovereign accumulation."
+    }
+];
+
+const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(({ question, answer }) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: answer,
+        },
+    })),
+};
+
 export const CentralBankGoldPurchases: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.BRICS_GOLD_HOLDINGS_TONNES);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -41,7 +69,8 @@ export const CentralBankGoldPurchases: React.FC = () => {
                             '@type': 'Organization',
                             'name': 'GraphiQuestor'
                         }
-                    }
+                    },
+                    faqJsonLd
                 ]}
             />
             <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
@@ -96,6 +125,18 @@ export const CentralBankGoldPurchases: React.FC = () => {
                         </p>
                     </section>
                     
+                    {/* FAQ Section */}
+                    <section className="p-8 bg-white/[0.02] border border-white/5 rounded-2xl">
+                        <h2 className="text-xl font-black uppercase tracking-tight text-white mb-6">Frequently Asked Questions</h2>
+                        <div className="space-y-6">
+                            {faqItems.map(({ question, answer }) => (
+                                <div key={question} className="space-y-1">
+                                    <h3 className="text-sm font-bold text-amber-400">{question}</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{answer}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
                 </div>
 
                 <div className="mt-24 pt-12 border-t border-white/5 text-center">

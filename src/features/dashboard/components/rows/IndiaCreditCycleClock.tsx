@@ -10,6 +10,7 @@ import {
 import { useIndiaCreditCycle } from '@/hooks/useIndiaCreditCycle';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 // Defining quadrant bounds for historical perspective
 const Y_AXIS_MID = 14.5; // Credit Growth Midpoint
@@ -240,6 +241,33 @@ export const IndiaCreditCycleClock: React.FC = () => {
                             <span className="text-xs font-black text-white/50 uppercase tracking-uppercase">{name}</span>
                         </div>
                     ))}
+                </div>
+
+                <div className="p-8 md:p-12 pt-0">
+                    <ChartAccessibleTranscript
+                        takeaway={`The Indian commercial banking system is positioned in the ${phase} regime (Credit Growth: ${credit_growth_yoy}% YoY, Deposit Growth: ${deposit_growth_yoy}% YoY, CD Ratio: ${cd_ratio}%). ${phase === 'Expansion' ? 'Lending growth is self-funding with healthy banking liquidity, providing an expansionary backdrop for Indian equities.' : phase === 'Downturn' ? 'Credit growth is straining deposit mobilization, pushing systemic CD ratios to elevated boundaries.' : phase === 'Repair' ? 'Commercial banks are actively rebuilding funding reserves via aggressive deposit mobilization.' : 'Banking system liquidity is regenerating, laying the foundation for an emerging credit upcycle.'}`}
+                        readingGuide="Quadrant thresholds calibrated to 10-year RBI trends (14.5% YoY Credit Growth, 77.0% CD Ratio). Quad I (Top-Right): Expansion; Quad II (Bottom-Right): Downturn; Quad III (Bottom-Left): Repair; Quad IV (Top-Left): Recovery."
+                        searchKeywords={[
+                            'India Credit Cycle Clock',
+                            'Reserve Bank of India RBI',
+                            'Credit-Deposit CD Ratio',
+                            'Indian Banking System Liquidity',
+                            'Non-Food Bank Credit Growth',
+                            'Deposit Mobilization Pace',
+                            'Indian Monetary Policy Transmission'
+                        ]}
+                        tableData={{
+                            caption: 'RBI Credit Cycle Trajectory Recent Observations',
+                            headers: ['Observation Period', 'Cycle Regime', 'Credit Growth (% YoY)', 'Deposit Growth (% YoY)', 'CD Ratio (%)'],
+                            rows: cycleData.slice(-6).reverse().map(d => [
+                                new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                                d.phase,
+                                `${d.credit_growth_yoy}%`,
+                                `${d.deposit_growth_yoy}%`,
+                                `${d.cd_ratio}%`
+                            ])
+                        }}
+                    />
                 </div>
             </div>
         </section>

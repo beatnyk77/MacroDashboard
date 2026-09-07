@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 import {
     CHART_HEIGHTS,
     DEFAULT_CARTESIAN_GRID_PROPS,
@@ -237,7 +238,27 @@ const WTICalendarSpreadInner: React.FC = () => {
 
                         {/* Chart Area */}
                         <div className="lg:col-span-3 relative">
-                            <MacroChartContainer height={CHART_HEIGHTS.tall}>
+                            <MacroChartContainer
+                                height={CHART_HEIGHTS.tall}
+                                ariaLabel="WTI Physical Oil Calendar Spread CL1 minus CL2 Chart"
+                                transcript={
+                                    <ChartAccessibleTranscript
+                                        takeaway={`The front-to-second month WTI calendar spread trades at ${latest ? (latest.spread >= 0 ? `+$${latest.spread.toFixed(2)}` : `-$${Math.abs(latest.spread).toFixed(2)}`) : 'neutral'}/bbl. ${latest && latest.spread > 0 ? 'Backwardation indicates prompt delivery premiums and tight physical inventory at Cushing, Oklahoma.' : 'Contango indicates storage absorption incentives and prompt crude oversupply.'}`}
+                                        readingGuide="Positive spread (> $0) indicates backwardation (immediate delivery premium, tight spot inventories). Negative spread (< $0) indicates contango (glut, storage cost drag, inventory accumulation)."
+                                        searchKeywords={['WTI Physical Stress', 'CL1-CL2 Calendar Spread', 'Cushing Oklahoma Storage', 'Backwardation vs Contango', 'NYMEX Crude Futures']}
+                                        tableData={{
+                                            caption: 'Recent WTI Calendar Spreads & Futures Settlement Prices',
+                                            headers: ['Period', 'Spread (USD/bbl)', 'Front Month (CL1)', 'Next Month (CL2)'],
+                                            rows: chartData.slice(-8).map(d => [
+                                                d.displayDate || d.formattedDate,
+                                                `${d.spread >= 0 ? '+' : ''}${d.spread.toFixed(2)}`,
+                                                `$${d.front_price.toFixed(2)}`,
+                                                `$${d.next_price.toFixed(2)}`
+                                            ])
+                                        }}
+                                    />
+                                }
+                            >
                                 <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                                     <defs>
                                         <linearGradient id="spreadGradient" x1="0" y1="0" x2="0" y2="1">

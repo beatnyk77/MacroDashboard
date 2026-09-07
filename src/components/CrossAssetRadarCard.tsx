@@ -4,6 +4,7 @@ import { useCrossAssetRadar, CrossAssetRadarItem } from '@/hooks/useCrossAssetRa
 import { MetricFreshnessChip } from '@/components/MetricFreshnessChip';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 const VIEW_TABS = ['Cross-Asset Macro Radar (Desk View)', 'Regime Model Status'] as const;
 
@@ -151,6 +152,38 @@ export const CrossAssetRadarCard: React.FC = () => {
             </div>
           </div>
         )}
+
+        <div className="px-6 pb-4">
+          <ChartAccessibleTranscript
+            takeaway="Cross-Asset Macro Radar evaluates 52-week percentile rankings across multi-asset benchmarks to detect regime shifts across Equities, Sovereign Rates, US Dollar Index, Commodities, and Credit Spreads."
+            readingGuide="Percentiles normalize the latest settlement close against trailing 260 sessions (0% = 52W low, 100% = 52W high). 4-Quadrant mapping: Quad I (Goldilocks: Growth ↑, Infl ↓); Quad II (Reflation: Growth ↑, Infl ↑); Quad III (Stagflation: Growth ↓, Infl ↑); Quad IV (Contraction: Growth ↓, Infl ↓)."
+            searchKeywords={[
+              'Cross-Asset Macro Radar',
+              'Regime Playbook',
+              '4-Quadrant Macro Model',
+              '52-Week Percentile Rank',
+              'S&P 500 SPX',
+              'Nasdaq 100 NDX',
+              'US Dollar Index DXY',
+              '10Y Treasury Yield',
+              'Gold XAU USD',
+              'Brent Crude Oil',
+              'High Yield Credit Spreads'
+            ]}
+            tableData={{
+              caption: 'Cross-Asset Market Close Observations and Percentile Matrix',
+              headers: ['Asset & Benchmark', 'Observed Close', '1D Δ', '5D Δ', '30D Δ', '52W Percentile'],
+              rows: radarItems.map(item => [
+                `${item.assetName} (${item.benchmark})`,
+                item.observedValue != null ? `${item.unit || ''}${item.observedValue > 1000 ? item.observedValue.toLocaleString() : item.observedValue.toFixed(2)}` : 'Pending',
+                item.delta1dPct != null ? `${item.delta1dPct >= 0 ? '+' : ''}${item.delta1dPct.toFixed(1)}%` : '—',
+                item.delta5dPct != null ? `${item.delta5dPct >= 0 ? '+' : ''}${item.delta5dPct.toFixed(1)}%` : '—',
+                item.delta30dPct != null ? `${item.delta30dPct >= 0 ? '+' : ''}${item.delta30dPct.toFixed(1)}%` : '—',
+                item.percentile52w != null ? `${Math.round(item.percentile52w)}%` : '—'
+              ])
+            }}
+          />
+        </div>
 
         {/* Footer */}
         <div className="p-4 bg-slate-950/80 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] font-mono text-slate-400">

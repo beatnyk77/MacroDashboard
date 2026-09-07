@@ -19,12 +19,40 @@ const LoadingFallback = () => (
     </div>
 );
 
+const faqItems = [
+    {
+        question: "What is de-dollarization and how is it quantified?",
+        answer: "De-dollarization is the structural reduction in the US dollar's dominance across global foreign exchange reserves, bilateral trade settlement, and financial messaging. It is tracked using IMF COFER data (where the USD share of global FX reserves has declined from >70% in 2000 to ~58% in 2024–2026), bilateral trade currency invoicing, and central bank gold accumulation rates."
+    },
+    {
+        question: "Why are sovereign central banks accumulating gold at record rates?",
+        answer: "Following the 2022 G7 immobilization of Russian sovereign reserve assets, central banks in emerging and non-aligned economies recognized the jurisdictional risks of fiat reserve custody. Physical gold is the sole tier-1 sovereign reserve asset free of counterparty risk, external sanctions, and issuer debasement."
+    },
+    {
+        question: "Is the Petrodollar being replaced by the Petroyuan?",
+        answer: "Rather than an overnight replacement of the dollar, the global energy architecture is undergoing managed fragmentation. Bilateral hydrocarbon transactions settled in RMB, INR, and AED are carving out non-dollar settlement corridors, gradually decoupling physical energy pricing from exclusive US currency intermediation."
+    }
+];
+
 export const DeDollarizationGuide: React.FC = () => {
+    const faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map(({ question, answer }) => ({
+            '@type': 'Question',
+            name: question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: answer,
+            },
+        })),
+    };
+
     return (
         <>
             <SEOManager
                 title="Global De-Dollarization Guide (2026)"
-                description="An institutional-grade analysis of global de-dollarization, central bank gold purchases, petrodollar decay, and the structural fragmentation of"
+                description="An institutional-grade analysis of global de-dollarization, central bank gold purchases, petrodollar decay, and the structural fragmentation of global monetary reserves."
                 keywords={['de-dollarization', 'BRICS currency', 'reserve currency shift', 'central bank gold', 'petrodollar', 'US fiscal dominance']}
                 jsonLd={[
                     {
@@ -40,7 +68,8 @@ export const DeDollarizationGuide: React.FC = () => {
                             'name': 'GraphiQuestor'
                         },
                         'url': 'https://graphiquestor.com/methods/de-dollarization-guide'
-                    }
+                    },
+                    faqJsonLd
                 ]}
             />
 
@@ -176,6 +205,17 @@ export const DeDollarizationGuide: React.FC = () => {
                         <li><a href="/labs/central-bank-gold-purchases/">Gold Purchases Tracker</a>: Deep dive into sovereign gold flows.</li>
                         <li><a href="/labs/us-treasury-foreign-holdings/">US Treasury Foreign Holdings</a>: Track the shifting buyer base for US sovereign debt.</li>
                     </ul>
+
+                    {/* Frequently Asked Questions */}
+                    <div className="mt-12 pt-8 border-t border-white/10 space-y-6">
+                        <h3 className="text-xl font-black text-white tracking-wide">Frequently Asked Questions</h3>
+                        {faqItems.map(({ question, answer }) => (
+                            <div key={question} className="space-y-1">
+                                <h4 className="text-sm font-bold text-amber-400">{question}</h4>
+                                <p className="text-sm text-muted-foreground leading-relaxed">{answer}</p>
+                            </div>
+                        ))}
+                    </div>
                 </article>
 
                 <div className="mt-24 pt-12 border-t border-white/10 text-center">

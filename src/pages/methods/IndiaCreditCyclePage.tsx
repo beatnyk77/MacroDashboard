@@ -15,6 +15,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const IndiaCreditCycleChart = lazy(() => import('./IndiaCreditCycleChart').then(m => ({ default: m.IndiaCreditCycleChart })));
 
+const faqItems = [
+    {
+        question: "What is the India Credit Cycle Clock and how does it function?",
+        answer: "The India Credit Cycle Clock is a 4-quadrant macroeconomic framework that plots bank Credit Growth YoY (X-axis) against the Credit-Deposit (CD) Ratio (Y-axis) using bi-weekly Reserve Bank of India (RBI) Form X data. It classifies India's banking system into Expansion, Overheating/Downturn, Repair, and Recovery phases."
+    },
+    {
+        question: "Why is the Credit-Deposit (CD) Ratio critical for Indian monetary policy?",
+        answer: "The CD ratio measures the proportion of bank deposits extended as loans. When the CD ratio crosses 78%–80%, bank liquidity tightens, forcing institutions to raise deposit rates or borrow in wholesale call money markets. This constraint prompts RBI macroprudential action (such as risk weight increases or higher incremental CRR) to prevent credit overheating."
+    },
+    {
+        question: "How do institutional allocators use India's credit cycle quadrant?",
+        answer: "Macro fund managers and equity strategists track quadrant transitions to rotate between cyclical banking equities, credit spreads, and duration. Moving from Repair to Recovery historically produces outsized returns in bank equities, while crossing into Overheating signals impending regulatory tightening and margin compression."
+    }
+];
+
 export const IndiaCreditCyclePage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.IN_REPO_RATE);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -31,15 +46,27 @@ export const IndiaCreditCyclePage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["India credit cycle tracker", "RBI lending cycle indicator", "India CD ratio monitor", "India credit growth", "RBI monetary policy signal", "credit deposit ratio India"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="India Credit Cycle Clock — RBI Policy"
-                description="India credit cycle tracker methodology: how Credit Growth YoY vs the Credit-Deposit ratio maps to four cycle phases (Expansion/Recovery/Downturn/Repair)"
+                title="India Credit Cycle Clock — RBI Policy Signal Methodology"
+                description="India credit cycle tracker methodology: how Credit Growth YoY vs the Credit-Deposit ratio maps to four cycle phases (Expansion/Recovery/Downturn/Repair) to forecast RBI liquidity and interest rate decisions."
                 keywords={["India credit cycle tracker", "RBI lending cycle indicator", "India CD ratio monitor", "India credit growth YoY", "RBI policy signal"]}
                 canonicalUrl="https://graphiquestor.com/methods/india-credit-cycle-clock"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -201,6 +228,25 @@ export const IndiaCreditCyclePage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(34,197,94,0.04)', borderRadius: 2, border: '1px solid rgba(34,197,94,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#22c55e' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        India Credit Cycle FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#22c55e', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

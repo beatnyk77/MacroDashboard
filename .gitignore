@@ -116,6 +116,7 @@ dist-ssr
 # OS
 .DS_Store
 .agent/
+.agents/mcp_config.json
 .claude/worktrees/
 .gitmodules
 

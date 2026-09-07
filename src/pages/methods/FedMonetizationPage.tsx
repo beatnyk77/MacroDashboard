@@ -15,6 +15,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const FedMonetizationChart = lazy(() => import('./FedMonetizationChart').then(m => ({ default: m.FedMonetizationChart })));
 
+const faqItems = [
+    {
+        question: "What is the Federal Reserve debt monetization ratio and how is it calculated?",
+        answer: "The Fed Debt Monetization Ratio measures the share of total US federal public debt absorbed by the Federal Reserve's balance sheet: Ratio (%) = (Fed SOMA Treasury Holdings / Total Public Debt Outstanding) × 100, using FRED series TREAST (or WALCL) and GFDEBTN."
+    },
+    {
+        question: "What is the difference between quantitative easing and structural debt monetization?",
+        answer: "Quantitative easing (QE) is introduced as a temporary counter-cyclical monetary tool to lower term premiums and ease financial conditions during disinflationary crises. Structural monetization occurs when chronic fiscal deficits force the central bank to continuously absorb new issuance to prevent Treasury auction tailing and sovereign yield spikes."
+    },
+    {
+        question: "What are the critical regime thresholds for the Fed Monetization Monitor?",
+        answer: "Readings under 12% represent Private Market Dominance; 12%–18% denotes an Active Policy Intervention regime (routine QE); 18%–25% signals Fiscal Dominance Warning where central bank balance sheet expansion becomes essential for auction clearing; and above 25% represents High Monetization Risk historically preceding formal yield curve caps."
+    }
+];
+
 export const FedMonetizationPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.FED_BALANCE_SHEET);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -31,15 +46,27 @@ export const FedMonetizationPage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["Fed debt monetization ratio", "what percentage of US debt does the Fed own", "Fed monetization tracker", "fiscal dominance", "yield curve control", "WALCL", "GFDEBTN"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
                 title="Fed Monetization Monitor — GraphiQuestor Methodology"
-                description="Fed debt monetization ratio methodology: what percentage of US debt does the Fed own, how WALCL ÷ GFDEBTN is calculated, and why readings above 20%"
+                description="Fed debt monetization ratio methodology: what percentage of US debt does the Fed own, how WALCL ÷ GFDEBTN is calculated, and why readings above 20% signal structural yield suppression."
                 keywords={["Fed debt monetization ratio", "what percentage of US debt does the Fed own", "Fed monetization tracker", "fiscal dominance", "yield curve control"]}
                 canonicalUrl="https://graphiquestor.com/methods/fed-monetization-monitor"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -174,6 +201,25 @@ export const FedMonetizationPage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(99,102,241,0.04)', borderRadius: 2, border: '1px solid rgba(99,102,241,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#a5b4fc' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        Fed Monetization Monitor FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#a5b4fc', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

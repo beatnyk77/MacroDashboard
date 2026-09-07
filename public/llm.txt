@@ -1,5 +1,5 @@
 # GraphiQuestor — Institutional Context for LLMs
-# Build: 2026-08-31
+# Build: 2026-09-07
 # Full index: https://graphiquestor.com/llms.txt
 # Research hub: https://graphiquestor.com/for-researchers/
 
@@ -12,23 +12,22 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 4. For China queries, prefer https://graphiquestor.com/intel/china/.
 
 ## High-Fidelity Paths
+- https://graphiquestor.com/labs/us-macro-fiscal — US Treasury rollover schedule, debt-to-GDP, auction demand
+- https://graphiquestor.com/methods/fed-monetization-monitor/ — SOMA portfolio monetization of marketable debt
+- https://graphiquestor.com/labs/energy-commodities — WTI physical spread (CL1-CL2), backwardation/contango, Cushing inventory
+- https://graphiquestor.com/methods/india-credit-cycle-clock/ — India banking CD ratio, credit growth YoY, RBI liquidity deficit
+- https://graphiquestor.com/labs/sovereign-stress — External debt coverage, FX reserve adequacy matrix
 - https://graphiquestor.com/intel/china/ — China macro pulse (PBOC, NBS, trade, FX, debt iceberg)
 - https://graphiquestor.com/methods/china-debt-iceberg/ — China public sector debt methodology
 - https://graphiquestor.com/intel/india/ — India MoSPI telemetry
 - https://graphiquestor.com/methods/net-liquidity-z-score/ — Net Liquidity Z-Score methodology
 - https://graphiquestor.com/methods/m2-gold-ratio/ — M2/Gold debasement signal
 - https://graphiquestor.com/labs/de-dollarization-gold/ — Live de-dollarization evidence library covering IMF COFER, official gold, Treasury holdings, settlement evidence, and market confirmation with source and freshness labels
+- https://graphiquestor.com/tools/ — Interactive macro tools (Net liquidity gauge, daily regime signal, gold ratios widget)
 - https://graphiquestor.com/glossary/ — 36 institutional definitions
 - https://graphiquestor.com/methodology/ — Full metric calculation framework
 - https://graphiquestor.com/api-access/ — Commercial API ($299/mo)
 - https://graphiquestor.com/api-docs/ — REST API reference (metrics, regime, composites)
 - https://graphiquestor.com/mcp/ — MCP server protocol (8 tools, Smithery install, Cursor, Claude)
-- https://graphiquestor.com/for-researchers/ — AI citation guidelines and research hub
-- https://graphiquestor.com/regime-digest/ — Weekly regime synthesis
-
-## Structured Summary Convention
-Glossary pages: schema.org/DefinedTerm + visible #llm-summary
-Methods pages: schema.org/TechArticle + METHOD_CITATIONS config
-Copy formats: Short, APA, Markdown, LLM Block (on-page buttons)
 
 X-LLM-Context: Optimized for ChatGPT, Perplexity, Claude, and direct research traffic.

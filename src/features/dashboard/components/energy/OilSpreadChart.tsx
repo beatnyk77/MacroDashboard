@@ -14,6 +14,8 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
+
 export const OilSpreadChart: React.FC = () => {
     const { data, isLoading, error } = useOilSpread();
 
@@ -48,6 +50,12 @@ export const OilSpreadChart: React.FC = () => {
     const latestSpread = data[0]?.spread || 0;
     const isBackwardation = latestSpread > 0;
 
+    const recentObservations = chartData.slice(-6).reverse().map(d => [
+        d.date,
+        `$${d.spread.toFixed(2)}`,
+        d.spread > 0 ? 'Backwardation (Tight)' : 'Contango (Loose)',
+    ]);
+
     return (
         <Card className="bg-card/40 backdrop-blur-md border-white/12 overflow-hidden shadow-2xl">
             <CardHeader className="pb-2 border-b border-white/5">
@@ -70,57 +78,82 @@ export const OilSpreadChart: React.FC = () => {
                 </div>
             </CardHeader>
             <CardContent className="pt-6">
-                <div className="h-[300px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                            <XAxis 
-                                dataKey="formattedDate" 
-                                stroke="rgba(255,255,255,0.4)" 
-                                fontSize={10}
-                                tickLine={false}
-                                axisLine={false}
-                                dy={10}
-                                minTickGap={30}
-                            />
-                            <YAxis 
-                                stroke="rgba(255,255,255,0.4)" 
-                                fontSize={10}
-                                tickLine={false}
-                                axisLine={false}
-                                tickFormatter={(val) => `$${val}`}
-                                dx={-10}
-                            />
-                            <Tooltip 
-                                contentStyle={{ 
-                                    backgroundColor: 'rgba(10, 10, 10, 0.9)', 
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)'
-                                }}
-                                itemStyle={{ color: '#f59e0b', fontWeight: 'bold' }}
-                                labelStyle={{ color: '#a1a1aa', fontSize: '12px', marginBottom: '4px' }}
-                                formatter={(value: number) => [`$${value.toFixed(2)}`, 'Spread']}
-                            />
-                            
-                            {/* Regime Bands */}
-                            <ReferenceLine y={16} stroke="#9f1239" strokeDasharray="3 3" strokeOpacity={0.6} label={{ position: 'insideTopLeft', value: 'EXTREME STRESS', fill: '#9f1239', fontSize: 10, fontWeight: 'bold' }} />
-                            <ReferenceLine y={10} stroke="#e11d48" strokeDasharray="3 3" strokeOpacity={0.5} label={{ position: 'insideTopLeft', value: 'STRESSED', fill: '#e11d48', fontSize: 10, fontWeight: 'bold' }} />
-                            <ReferenceLine y={5} stroke="#f59e0b" strokeDasharray="3 3" strokeOpacity={0.4} label={{ position: 'insideTopLeft', value: 'TIGHTENING', fill: '#f59e0b', fontSize: 10, fontWeight: 'bold' }} />
-                            <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" strokeWidth={2} label={{ position: 'insideTopLeft', value: 'PARITY', fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 'bold' }} />
-                            <ReferenceLine y={-5} stroke="#3b82f6" strokeDasharray="3 3" strokeOpacity={0.4} label={{ position: 'insideBottomLeft', value: 'OVERSUPPLY', fill: '#3b82f6', fontSize: 10, fontWeight: 'bold' }} />
+                <figure role="region" aria-label="WTI Crude Oil Calendar Spread Physical Stress Chart" className="m-0 p-0">
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <XAxis 
+                                    dataKey="formattedDate" 
+                                    stroke="rgba(255,255,255,0.4)" 
+                                    fontSize={10}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    dy={10}
+                                    minTickGap={30}
+                                />
+                                <YAxis 
+                                    stroke="rgba(255,255,255,0.4)" 
+                                    fontSize={10}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickFormatter={(val) => `$${val}`}
+                                    dx={-10}
+                                />
+                                <Tooltip 
+                                    contentStyle={{ 
+                                        backgroundColor: 'rgba(10, 10, 10, 0.9)', 
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)'
+                                    }}
+                                    itemStyle={{ color: '#f59e0b', fontWeight: 'bold' }}
+                                    labelStyle={{ color: '#a1a1aa', fontSize: '12px', marginBottom: '4px' }}
+                                    formatter={(value: number) => [`$${value.toFixed(2)}`, 'Spread']}
+                                />
+                                
+                                {/* Regime Bands */}
+                                <ReferenceLine y={16} stroke="#9f1239" strokeDasharray="3 3" strokeOpacity={0.6} label={{ position: 'insideTopLeft', value: 'EXTREME STRESS', fill: '#9f1239', fontSize: 10, fontWeight: 'bold' }} />
+                                <ReferenceLine y={10} stroke="#e11d48" strokeDasharray="3 3" strokeOpacity={0.5} label={{ position: 'insideTopLeft', value: 'STRESSED', fill: '#e11d48', fontSize: 10, fontWeight: 'bold' }} />
+                                <ReferenceLine y={5} stroke="#f59e0b" strokeDasharray="3 3" strokeOpacity={0.4} label={{ position: 'insideTopLeft', value: 'TIGHTENING', fill: '#f59e0b', fontSize: 10, fontWeight: 'bold' }} />
+                                <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" strokeWidth={2} label={{ position: 'insideTopLeft', value: 'PARITY', fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 'bold' }} />
+                                <ReferenceLine y={-5} stroke="#3b82f6" strokeDasharray="3 3" strokeOpacity={0.4} label={{ position: 'insideBottomLeft', value: 'OVERSUPPLY', fill: '#3b82f6', fontSize: 10, fontWeight: 'bold' }} />
 
-                            <Line 
-                                type="monotone" 
-                                dataKey="spread" 
-                                stroke="#f59e0b" 
-                                strokeWidth={3}
-                                dot={false}
-                                activeDot={{ r: 6, fill: "#f59e0b", stroke: "#fff", strokeWidth: 2 }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="spread" 
+                                    stroke="#f59e0b" 
+                                    strokeWidth={3}
+                                    dot={false}
+                                    activeDot={{ r: 6, fill: "#f59e0b", stroke: "#fff", strokeWidth: 2 }}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <ChartAccessibleTranscript
+                        takeaway={
+                            isBackwardation
+                                ? `WTI Crude 1-month calendar spread (CL1−CL2) is in backwardation at +$${latestSpread.toFixed(2)}/bbl. Prompt month premium signals physical supply tightness and active inventory draws at the Cushing, Oklahoma storage hub.`
+                                : `WTI Crude 1-month calendar spread (CL1−CL2) is in contango at $${latestSpread.toFixed(2)}/bbl. Deferred month premium indicates ample crude storage availability and loose immediate physical supply.`
+                        }
+                        readingGuide="Positive spread (> $0) = Backwardation (tight immediate supply). Negative spread (< $0) = Contango (oversupply/storage surplus). Spreads > $5.00/bbl reflect severe delivery bottlenecks."
+                        searchKeywords={[
+                            'WTI Crude Oil',
+                            'CL1-CL2 Calendar Spread',
+                            'Crude Backwardation',
+                            'Contango',
+                            'Cushing Oklahoma Storage',
+                            'Physical Energy Delivery',
+                            'NYMEX Light Sweet Crude'
+                        ]}
+                        tableData={{
+                            caption: 'WTI CL1-CL2 Calendar Spread Recent Observations',
+                            headers: ['Observation Date', 'Spread ($/bbl)', 'Market Regime'],
+                            rows: recentObservations,
+                        }}
+                    />
+                </figure>
             </CardContent>
         </Card>
     );

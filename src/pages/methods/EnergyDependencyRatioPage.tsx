@@ -24,6 +24,21 @@ const oilSensData = [
     { oil: '$140', cadIndia: '-5.3%', inrImpact: '-8.2%', rbiRoom: 'Critical' },
 ];
 
+const faqItems = [
+    {
+        question: "What is the Energy Dependency Ratio (EDR) and how is it calculated?",
+        answer: "The Energy Dependency Ratio (EDR) measures a sovereign's net energy imports as a percentage of total domestic energy consumption: EDR = (Net Energy Imports / Gross Inland Energy Consumption) × 100. For countries like India where crude oil dependency exceeds 85%, EDR quantifies macroeconomic exposure to international energy supply disruptions."
+    },
+    {
+        question: "How do oil price changes transmit to India's Current Account Deficit (CAD)?",
+        answer: "Because India imports approximately 88% of its crude petroleum requirements, every sustained $10/barrel increase in Brent crude expands India's annual Current Account Deficit by roughly $14 billion (~0.4%–0.5% of GDP), intensifying imported inflation and INR depreciation pressure."
+    },
+    {
+        question: "How do institutional investors apply the Energy Dependency Ratio in sovereign risk models?",
+        answer: "EM bond investors and macro funds monitor EDR as an early indicator of balance of payments stress. High EDR combined with oil prices above $90/bbl flags shrinking central bank FX reserves, tighter domestic liquidity conditions, and narrowing scope for monetary easing."
+    }
+];
+
 export const EnergyDependencyRatioPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -40,15 +55,27 @@ export const EnergyDependencyRatioPage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["Energy Dependency Ratio", "India Energy Import", "Oil Price Impact", "Current Account Deficit", "Sovereign Macro Risk"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Energy Dependency Ratio — Methodology &"
-                description="How the Energy Dependency Ratio measures sovereign vulnerability to energy price shocks, with oil/CAD sensitivity analysis for India. Formula, data, and"
+                title="Energy Dependency Ratio — Methodology & Sovereign Risk Analysis"
+                description="How the Energy Dependency Ratio measures sovereign vulnerability to energy price shocks, with oil/CAD sensitivity analysis for India. Formula, data, and policy implications."
                 keywords={["Energy Dependency Ratio", "India Oil Imports", "CAD Oil Sensitivity", "Energy Security Macro"]}
                 canonicalUrl="https://graphiquestor.com/methods/energy-dependency-ratio"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -192,6 +219,25 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(16,185,129,0.04)', borderRadius: 2, border: '1px solid rgba(16,185,129,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        Energy Dependency Ratio FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#10b981', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

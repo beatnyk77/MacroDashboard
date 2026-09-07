@@ -11,6 +11,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const LoanToJobEfficiencyChart = lazy(() => import('./LoanToJobEfficiencyChart').then(m => ({ default: m.LoanToJobEfficiencyChart })));
 
+const faqItems = [
+    {
+        question: "What is the Loan-to-Job Efficiency Ratio and how is it defined?",
+        answer: "The Loan-to-Job Efficiency Ratio calculates the incremental amount of commercial bank credit required to generate one net new formal job: Ratio = Δ Bank Credit Outstanding (₹ Crore) / Net New EPFO Payroll Additions. It evaluates whether systemic credit expansion is translating into broad-based employment generation."
+    },
+    {
+        question: "Why does an elevated Loan-to-Job ratio signal a K-shaped recovery?",
+        answer: "When bank credit expands at double-digit rates (>14% YoY) while formal job additions plateau, credit is predominantly flowing into retail consumption, financial engineering, or automated capex rather than labor-absorbing sectors, highlighting asymmetric economic growth across income strata."
+    },
+    {
+        question: "What primary datasets are utilized in the Loan-to-Job model?",
+        answer: "The metric integrates monthly Employees' Provident Fund Organisation (EPFO) formal payroll filings with Reserve Bank of India (RBI) Sectoral Deployment of Bank Credit data, cross-validated against CMIE labor participation series."
+    }
+];
+
 export const LoanToJobEfficiencyPage: React.FC = () => {
     const jsonLd = {
         "@context": "https://schema.org",
@@ -25,15 +40,27 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["India Employment", "EPFO", "Bank Credit Growth", "Loan to Job Ratio", "India Macro"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Loan-to-Job Efficiency Ratio — India"
-                description="How the Loan-to-Job Efficiency Ratio measures the productivity of India bank credit in generating formal employment. Formula, data sources, and"
+                title="Loan-to-Job Efficiency Ratio — India Credit & Employment Methodology"
+                description="How the Loan-to-Job Efficiency Ratio measures the productivity of India bank credit in generating formal employment. Formula, data sources, and macro implications."
                 keywords={["India Loan To Job", "EPFO Employment", "India Credit Growth", "K-Shaped Economy"]}
                 canonicalUrl="https://graphiquestor.com/methods/loan-to-job-efficiency"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -134,6 +161,25 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(129,140,248,0.04)', borderRadius: 2, border: '1px solid rgba(129,140,248,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#818cf8' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        Loan-to-Job Efficiency FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#818cf8', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

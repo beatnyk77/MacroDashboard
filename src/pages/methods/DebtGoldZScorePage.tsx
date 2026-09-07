@@ -15,6 +15,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const DebtGoldZScoreChart = lazy(() => import('./DebtGoldZScoreChart').then(m => ({ default: m.DebtGoldZScoreChart })));
 
+const faqItems = [
+    {
+        question: "What is the US Federal Debt to Gold Ratio and what does it measure?",
+        answer: "The Debt to Gold Ratio divides total US public debt outstanding (GFDEBTN) by the market value of the US Treasury's official gold reserves (261.5 million troy ounces × spot gold price). It quantifies the degree of monetary and debt expansion relative to official hard asset backing."
+    },
+    {
+        question: "How is the Debt/Gold Z-Score calculated?",
+        answer: "The Z-Score standardizes the quarterly Debt/Gold ratio against a 20-year rolling window: Z = (Ratio − μ₂₀) / σ₂₀. This removes slow secular growth in nominal debt and isolates acute debt-expansion spikes relative to gold price movements."
+    },
+    {
+        question: "What does a Debt/Gold Z-Score above +2.0σ indicate for investors?",
+        answer: "Historically, a Z-score above +2.0σ signals extreme sovereign debt dilution relative to gold reserves. Macro hedge funds and institutional allocators treat +2.0σ readings as high-conviction structural long gold signals, as seen prior to multi-year gold re-rating cycles in 1971, 2002, and 2020."
+    }
+];
+
 export const DebtGoldZScorePage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.RATIO_DEBT_GOLD);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -31,6 +46,18 @@ export const DebtGoldZScorePage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["Debt Gold Ratio", "Gold Valuation", "Sovereign Debt", "Z-Score", "Federal Reserve Gold"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -39,7 +66,7 @@ export const DebtGoldZScorePage: React.FC = () => {
                 description="The complete methodology for the Debt/Gold Z-Score: how it measures the implied gold backing of US Federal Debt and signals structural gold undervaluation."
                 keywords={["Debt Gold Ratio", "Gold Valuation Z-Score", "Federal Debt", "Gold Bull Signal"]}
                 canonicalUrl="https://graphiquestor.com/methods/debt-gold-z-score"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -144,6 +171,25 @@ export const DebtGoldZScorePage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        Debt/Gold Z-Score FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#f59e0b', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

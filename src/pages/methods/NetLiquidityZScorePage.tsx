@@ -15,6 +15,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const NetLiquidityZScoreChart = lazy(() => import('./NetLiquidityZScoreChart').then(m => ({ default: m.NetLiquidityZScoreChart })));
 
+const faqItems = [
+    {
+        question: "What is the Net Liquidity formula and why is it superior to Fed balance sheet alone?",
+        answer: "Net Liquidity is calculated as Fed Total Assets (WALCL) minus the Treasury General Account (TGA) minus the Overnight Reverse Repo facility (RRPONTSYD). The gross Fed balance sheet is misleading because cash held in the TGA or locked in the RRP facility is inert and does not circulate in commercial banking reserves. Net Liquidity isolates active reserve balances that fuel asset prices."
+    },
+    {
+        question: "How is the Net Liquidity Z-Score calculated?",
+        answer: "The Z-Score standardizes weekly Net Liquidity against a 52-week rolling moving average and standard deviation: Z = (Net Liquidity − μ₅₂) / σ₅₂. This removes slow structural trends and isolates acute monetary policy liquidity expansions or drains."
+    },
+    {
+        question: "What are the market implications of Net Liquidity Z-Score regimes?",
+        answer: "A Z-score > +1.5 denotes Abundant Liquidity, historically corresponding to multiple expansion in equities, tight credit spreads, and risk-on momentum. A Z-score < −1.5 flags a Severe Liquidity Drain, which historically precedes volatility surges (VIX), credit spread widening, and equity multiple compression."
+    }
+];
+
 export const NetLiquidityZScorePage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.RRP_BALANCE_BN);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -32,6 +47,18 @@ export const NetLiquidityZScorePage: React.FC = () => {
         "proficiencyLevel": "Intermediate",
         "keywords": ["Net Liquidity", "Z-Score", "Federal Reserve", "TGA", "Reverse Repo", "Macro Liquidity"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -40,7 +67,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
                 description="Methodology for GraphiQuestor Net Liquidity Z-Score: Fed balance sheet, TGA, and RRP formula, regime interpretation, and link to the live metric terminal."
                 keywords={["Net Liquidity Z-Score", "Federal Reserve Liquidity", "Macro Regime", "RRP", "TGA"]}
                 canonicalUrl="https://graphiquestor.com/methods/net-liquidity-z-score"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -189,6 +216,25 @@ export const NetLiquidityZScorePage: React.FC = () => {
                                 ))}
                             </Box>
                         </Box>
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        Net Liquidity Z-Score FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#3b82f6', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
+                            </Box>
+                        ))}
                     </Box>
                 </Paper>
 

@@ -82,9 +82,9 @@ describe('CorporateDebtMaturityWall', () => {
         expect(screen.getByText('$10.00T')).toBeInTheDocument();
         
         // <1 Year sum
-        expect(screen.getByText('$1.50T')).toBeInTheDocument();
+        expect(screen.getAllByText('$1.50T').length).toBeGreaterThanOrEqual(1);
         
-        expect(screen.getByText('Corporate Debt Maturity Wall')).toBeInTheDocument();
+        expect(screen.getAllByText('Corporate Debt Maturity Wall').length).toBeGreaterThanOrEqual(1);
         expect(screen.getAllByText(/USD/).length).toBeGreaterThan(0);
     });
 

@@ -18,6 +18,34 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 
+const faqItems = [
+    {
+        question: "What are the core strategic priorities of China's 15th Five-Year Plan (2026–2030)?",
+        answer: "The 15th FYP focuses on 'High-Quality Development' and comprehensive national security resilience. Priorities include achieving self-reliance in semiconductor fabrication and critical software, industrial upgrading through new productive forces, energy transition self-sufficiency, and reducing reliance on Western financial networks."
+    },
+    {
+        question: "How does the 15th FYP shift from the 14th Five-Year Plan?",
+        answer: "The 15th FYP transitions from dual-circulation recovery to structural de-risking and technological fortress building. Property-led growth is permanently replaced with advanced manufacturing, R&D intensity, and supply chain sovereignty."
+    },
+    {
+        question: "Which quantitative metrics track China's 15th FYP execution?",
+        answer: "Key telemetry indicators include national gross R&D expenditure as a percentage of GDP (>2.8%), domestic semiconductor self-sufficiency rates, strategic petroleum and grain reserve levels, and digital economy contribution to total output."
+    }
+];
+
+const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(({ question, answer }) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: answer,
+        },
+    })),
+};
+
 export const China15thFYPLab: React.FC = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -28,8 +56,8 @@ export const China15thFYPLab: React.FC = () => {
     return (
         <>
         <SEOManager
-            title="China 15th Five-Year Plan Lab — 2026–2030"
-            description="Institutional-grade telemetry tracking China's 15th Five-Year Plan (2026–2030): high-quality development targets, technological self-reliance, R&D"
+            title="China 15th Five-Year Plan Lab — 2026–2030 Strategic Telemetry"
+            description="Institutional-grade telemetry tracking China's 15th Five-Year Plan (2026–2030): high-quality development targets, technological self-reliance, R&D intensity, and supply chain sovereignty."
             keywords={['China five-year plan', '15th FYP', 'China 2026-2030', 'technological self-reliance', 'China macro', 'CPC policy', 'semiconductor independence']}
             jsonLd={[
                 {
@@ -58,7 +86,8 @@ export const China15thFYPLab: React.FC = () => {
                         '@type': 'Organization',
                         'name': 'GraphiQuestor'
                     }
-                }
+                },
+                faqJsonLd
             ]}
         />
         <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-red-500/30">
@@ -165,6 +194,19 @@ export const China15thFYPLab: React.FC = () => {
                 <div className="space-y-16">
                     <ComparisonToggle14v15 />
                     <FYP_ImpactHeatmap />
+                </div>
+
+                {/* FAQ Section */}
+                <div className="mt-16 p-8 bg-white/[0.02] border border-white/5 rounded-2xl">
+                    <h2 className="text-xl font-black uppercase tracking-tight text-white mb-6">Frequently Asked Questions</h2>
+                    <div className="space-y-6">
+                        {faqItems.map(({ question, answer }) => (
+                            <div key={question} className="space-y-1">
+                                <h3 className="text-sm font-bold text-red-400">{question}</h3>
+                                <p className="text-sm text-slate-400 leading-relaxed font-medium">{answer}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Footer Insight */}

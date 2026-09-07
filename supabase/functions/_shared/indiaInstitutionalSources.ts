@@ -1,4 +1,4 @@
-export const INDIA_INSTITUTIONAL_PARSER_VERSION = '1.2.0';
+export const INDIA_INSTITUTIONAL_PARSER_VERSION = '1.3.0';
 
 export interface ParsedCashFlow {
   participant: 'FII' | 'DII';
@@ -106,6 +106,71 @@ export function parseNseCashPayload(payload: unknown): ParsedCashFlow[] {
   });
 }
 
+const NSE_DII_CATEGORIES = new Set(['bank', 'insurance companies', 'mutual funds', 'aif', 'pms']);
+
+function workbookDate(value: unknown): string | null {
+  const text = String(value ?? '').trim();
+  const slash = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const named = text.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{2}|\d{4})$/);
+  let iso = '';
+  if (slash) {
+    iso = `${slash[3]}-${slash[1].padStart(2, '0')}-${slash[2].padStart(2, '0')}`;
+  } else if (named) {
+    const month = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].indexOf(named[2].toLowerCase());
+    if (month < 0) return null;
+    const year = named[3].length === 2 ? `20${named[3]}` : named[3];
+    iso = `${year}-${String(month + 1).padStart(2, '0')}-${named[1].padStart(2, '0')}`;
+  } else {
+    return null;
+  }
+  return validIsoDate(iso) ? iso : null;
+}
+
+/**
+ * Parse the first sheet from NSE's dated category-turnover workbook.
+ * The official sheet reports FPI directly and DII through its five named
+ * institutional categories. Requiring the complete category set prevents a
+ * partly published workbook from becoming accepted evidence.
+ */
+export function parseNseCategoryTurnoverRows(rows: unknown[][], sourceUrl: string): ParsedCashFlow[] {
+  const accepted = rows.flatMap((row) => {
+    const date = workbookDate(row[0]);
+    const category = String(row[1] ?? '').trim();
+    const buyValue = numberValue(row[2]);
+    const sellValue = numberValue(row[3]);
+    if (!date || !category || !finite(buyValue) || !finite(sellValue)) return [];
+    return [{ date, category, normalizedCategory: category.toLowerCase(), buyValue, sellValue, sourceFields: row }];
+  });
+  const fpi = accepted.find((row) => row.normalizedCategory === 'fpi');
+  if (!fpi) return [];
+  const domestic = accepted.filter((row) => row.date === fpi.date && NSE_DII_CATEGORIES.has(row.normalizedCategory));
+  if (new Set(domestic.map((row) => row.normalizedCategory)).size !== NSE_DII_CATEGORIES.size) return [];
+  const money = (value: number) => Math.round(value * 100) / 100;
+  const build = (
+    participant: 'FII' | 'DII',
+    date: string,
+    buyValue: number,
+    sellValue: number,
+    sourceFields: unknown,
+  ): ParsedCashFlow => ({
+    participant,
+    date,
+    buyValue: money(buyValue),
+    sellValue: money(sellValue),
+    netValue: money(buyValue - sellValue),
+    sourceRef: `official_archive:nse:${sourceUrl}`,
+    sourceHash: stableHash(sourceFields),
+    parserVersion: INDIA_INSTITUTIONAL_PARSER_VERSION,
+    sourceFields: { workbook_rows: sourceFields },
+  });
+  const domesticBuy = domestic.reduce((sum, row) => sum + row.buyValue, 0);
+  const domesticSell = domestic.reduce((sum, row) => sum + row.sellValue, 0);
+  return [
+    build('FII', fpi.date, fpi.buyValue, fpi.sellValue, fpi.sourceFields),
+    build('DII', fpi.date, domesticBuy, domesticSell, domestic.map((row) => row.sourceFields)),
+  ];
+}
+
 function csvRows(csv: string): string[][] {
   return csv.split(/\r?\n/).filter((line) => line.trim()).map((line) => {
     const cells: string[] = [];
@@ -136,7 +201,7 @@ function buildOi(row: string[], headers: string[]): ParticipantOi | null {
   const short = oiValue(row, headers, 'Future Index Short');
   const callShort = oiValue(row, headers, 'Option Index Call Short');
   const putShort = oiValue(row, headers, 'Option Index Put Short');
-  if (![long, short, callShort, putShort].every(finite)) return null;
+  if (!finite(long) || !finite(short) || !finite(callShort) || !finite(putShort)) return null;
   return {
     indexFutureLong: long,
     indexFutureShort: short,

@@ -12,6 +12,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } 
 import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity, BookOpen } from 'lucide-react';
 import { m } from 'framer-motion';
 import { TrailLink as Link } from '@/components/TrailLink';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 interface MaturityBucket {
     bucket: string;
     amount: number;
@@ -514,6 +515,30 @@ export const USDebtMaturityWall: React.FC = () => {
                             ? 'Segregates T-Bills from coupon marketable (Notes, Bonds, TIPS, FRN). Amounts from Treasury MSPD Table 3.'
                             : 'Low-cost = effective yield at issuance (<2%). T-bills use discount yield; cost stacks exclude bills (no double-count).'}
                     </p>
+
+                    <ChartAccessibleTranscript
+                        takeaway={`$${shortTermTrillions}T (${((Number(shortTermTrillions) / (Number(totalDebtTrillions) || 1)) * 100).toFixed(1)}% of total marketable debt) matures within 12 months. An estimated $${rolloverRiskTrillions}T of legacy low- and medium-cost debt faces refinancing at current ~4-5% yields, directly accelerating annual federal debt-service interest expense.`}
+                        readingGuide="T-Bills represent short-term debt maturing under 1 year. Low-cost debt was issued at <2% coupons during ZIRP. When this debt rolls over into higher yields, Treasury interest expense rises sharply."
+                        searchKeywords={[
+                            'US Debt Maturity Wall',
+                            'Treasury Rollover Cliff',
+                            'T-Bill Refinancing Concentration',
+                            'Short-Term Sovereign Debt',
+                            'Federal Debt Service Burden',
+                            'Treasury MSPD Table 3',
+                            'Weighted Average Maturity WAM'
+                        ]}
+                        tableData={{
+                            caption: 'US Treasury Debt Maturity Distribution by Tenor Bucket',
+                            headers: ['Tenor Bucket', 'Total Debt ($T)', 'T-Bills ($T)', 'Coupon Marketable ($T)'],
+                            rows: chartData.map(d => [
+                                d.bucket,
+                                `$${d.amount.toFixed(2)}T`,
+                                `$${d.tbill.toFixed(2)}T`,
+                                `$${d.couponMarketable.toFixed(2)}T`
+                            ])
+                        }}
+                    />
                 </div>
 
                 {/* Impacts of Rising Yield Curve - Educational Section */}

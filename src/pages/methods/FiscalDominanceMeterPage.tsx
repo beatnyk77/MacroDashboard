@@ -15,6 +15,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const FiscalDominanceMeterChart = lazy(() => import('./FiscalDominanceMeterChart').then(m => ({ default: m.FiscalDominanceMeterChart })));
 
+const faqItems = [
+    {
+        question: "What is fiscal dominance and how does it affect the Federal Reserve?",
+        answer: "Fiscal dominance occurs when sovereign debt levels and annual interest expenses reach a scale where central bank rate hikes become counterproductive or destabilizing to the federal budget. When debt service costs absorb over 20% of federal tax receipts, interest expense adds directly to aggregate deficits, forcing monetary authorities to prioritize debt sustainability over inflation targeting."
+    },
+    {
+        question: "What is the formula for the Fiscal Dominance Meter?",
+        answer: "The Fiscal Dominance Meter is calculated as (Federal Interest Payments / Federal Tax Receipts) × 100 using quarterly data from FRED (FYOINT and FYFR). A rolling 25-year Z-score is applied to classify regime transitions across economic and interest rate cycles."
+    },
+    {
+        question: "What are the critical regime thresholds for the Fiscal Dominance Meter?",
+        answer: "Below 15% denotes Monetary Dominance where the central bank retains complete policy independence; 15%–20% represents a Transition Zone with emerging fiscal sensitivity; above 20% triggers a Fiscal Dominance Warning where rate hikes accelerate deficit expansion; and above 30% indicates Full Fiscal Dominance historically associated with yield curve control or explicit debt monetization."
+    }
+];
+
 export const FiscalDominanceMeterPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.US_FEDERAL_INTEREST_PAYMENTS);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -31,15 +46,27 @@ export const FiscalDominanceMeterPage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["Fiscal Dominance", "Central Bank Independence", "Interest Expense", "Tax Revenue", "US Debt Crisis"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
             <SEOManager
-                title="Fiscal Dominance Meter — Methodology &"
-                description="The full methodology for the Fiscal Dominance Meter: when interest expense/tax revenue constrains the Fed's ability to raise rates. Formulas, historical"
+                title="Fiscal Dominance Meter — Methodology & Historical Interpretation"
+                description="The full methodology for the Fiscal Dominance Meter: when interest expense/tax revenue constrains the Fed's ability to raise rates. Formulas, historical analysis, and policy implications."
                 keywords={["Fiscal Dominance Meter", "Fed Independence", "US Debt Service", "Interest Tax Ratio", "Central Bank Constraint"]}
                 canonicalUrl="https://graphiquestor.com/methods/fiscal-dominance-meter"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -189,6 +216,25 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(239,68,68,0.04)', borderRadius: 2, border: '1px solid rgba(239,68,68,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#ef4444' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        Fiscal Dominance Meter FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#ef4444', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

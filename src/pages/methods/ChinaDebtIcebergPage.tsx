@@ -15,6 +15,21 @@ import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 
 const ChinaDebtIcebergChart = lazy(() => import('./ChinaDebtIcebergChart').then(m => ({ default: m.ChinaDebtIcebergChart })));
 
+const faqItems = [
+    {
+        question: "What is China's debt iceberg and how is it measured?",
+        answer: "China's debt iceberg is a five-layer public sector balance sheet framework decomposing visible MoF central government debt (~25% of GDP) from off-budget obligations including explicit local debt, Local Government Financing Vehicle (LGFV) liabilities, policy bank bonds, and State-Owned Enterprise (SOE) contingent liabilities, which together exceed 250%–300% of GDP in IMF estimates."
+    },
+    {
+        question: "What is the Iceberg Ratio and what does it indicate?",
+        answer: "The Iceberg Ratio divides consolidated public sector liabilities (upper bound) by official central government debt. An Iceberg Ratio above 2.5× signals substantial quasi-fiscal leverage and heightened rollover risk in local debt markets."
+    },
+    {
+        question: "Why are LGFV obligations considered contingent sovereign liabilities?",
+        answer: "Although LGFVs are legally independent corporate entities, their debt financed municipal public infrastructure and land development. Because provincial governments implicitly backstop systemic LGFVs to prevent regional banking contagion, markets and multilateral institutions evaluate them as sovereign contingent debt."
+    }
+];
+
 export const ChinaDebtIcebergPage: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.CN_ICEBERG_RATIO);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -31,6 +46,18 @@ export const ChinaDebtIcebergPage: React.FC = () => {
         "publisher": PublisherOrganizationSchema,
         "keywords": ["China debt iceberg", "LGFV stress", "China public sector debt", "IMF Article IV China", "China monetization pressure"]
     };
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": answer,
+            },
+        })),
+    };
 
     return (
         <Box sx={{ py: 8, minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -39,7 +66,7 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 description="The full methodology for GraphiQuestor's China Debt Iceberg: five layers of public sector leverage from MoF-reported central debt through LGFV, policy banks, and SOE contingent liabilities. Formulas, data provenance, and composite indices."
                 keywords={["China debt iceberg", "LGFV stress index", "China shadow debt", "IMF Article IV China", "China monetization pressure", "Iceberg ratio"]}
                 canonicalUrl="https://graphiquestor.com/methods/china-debt-iceberg"
-                jsonLd={jsonLd}
+                jsonLd={[jsonLd, faqJsonLd]}
             />
 
             <Container maxWidth="md">
@@ -162,6 +189,25 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                             <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+
+                {/* FAQ */}
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                        China Debt Iceberg FAQ
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
+                        {faqItems.map(({ question, answer }) => (
+                            <Box key={question}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#f59e0b', mb: 1 }}>
+                                    {question}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                                    {answer}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>

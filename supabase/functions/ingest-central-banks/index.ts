@@ -22,8 +22,15 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
       const response = await fetch(url, defaultOptions);
       if (response.ok) return response;
       const text = await response.text();
-      throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+      const err = new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+      if (response.status >= 400 && response.status < 500) {
+        throw err;
+      }
+      lastError = err;
     } catch (error: any) {
+      if (error.message?.startsWith('HTTP 4')) {
+        throw error;
+      }
       lastError = error;
     }
   }
@@ -70,7 +77,7 @@ async function ingestECB(supabase: any, fredApiKey: string): Promise<number> {
     { id: 'ECB_TOTAL_ASSETS_MEUR', fredId: 'ECBASSETSW' },
     { id: 'ECB_DF_OUTSTANDING_MEUR', fredId: 'ECBDFR' },
     { id: 'ECB_MRO_OUTSTANDING_MEUR', fredId: 'ECBMRRFR' },
-    { id: 'EU_DEBT_GDP_PCT', fredId: 'DEBTGDP' },
+    { id: 'EU_DEBT_GDP_PCT', fredId: 'GGGDTAEZA188N' },
   ];
   const results: any[] = [];
   for (const item of metricsMap) {

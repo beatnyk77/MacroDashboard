@@ -19,9 +19,9 @@ async function fetchFRED(seriesId: string, fredKey: string, limit = 5): Promise<
 
 async function ingestIndiaFred(supabase: any, fredKey: string): Promise<number> {
   const metrics = [
-    { id: 'INDIA_CPI_YOY', fredId: 'INDCPIALLMINMEI' },
-    { id: 'INDIA_FX_RESERVES', fredId: 'TRESEGINM052N' },
-    { id: 'INDIA_POLICY_REPO_RATE', fredId: 'IRSTCB01INM156N' },
+    { id: 'IN_CPI_YOY', fredId: 'INDCPIALLMINMEI' },
+    { id: 'IN_FX_RESERVES', fredId: 'TRESEGINM052N' },
+    { id: 'IN_REPO_RATE', fredId: 'IRSTCB01INM156N' },
   ];
   const now = new Date().toISOString();
   const upserts: any[] = [];
@@ -35,6 +35,7 @@ async function ingestIndiaFred(supabase: any, fredKey: string): Promise<number> 
         value: o.value,
         last_updated_at: now,
         source_ref: 'live_api:fred',
+        provenance: 'api_live',
       });
     }
   }

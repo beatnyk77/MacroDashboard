@@ -32,6 +32,34 @@ const LoadingFallback = () => (
     </div>
 );
 
+const faqItems = [
+    {
+        question: "What metrics determine sovereign debt sustainability across G20 economies?",
+        answer: "Sovereign debt sustainability is assessed through gross debt-to-GDP ratios, interest-expense-to-tax-revenue ratios, real GDP growth relative to borrowing yields (r − g differential), debt maturity profiles, and central bank balance sheet absorption capacity."
+    },
+    {
+        question: "Why is the Bank of Japan (BoJ) balance sheet a focal point for sovereign stress?",
+        answer: "With Japan's public debt exceeding 260% of GDP, the BoJ was forced to absorb over 50% of the sovereign bond market (JGBs) to suppress yields. Monitoring BoJ total assets and monetary base provides an empirical benchmark for the ultimate trajectory of advanced economy fiscal dominance."
+    },
+    {
+        question: "How does sovereign debt stress transmit into domestic banking and currency markets?",
+        answer: "Sovereign stress transmits through the domestic banking sector via extensive government bond holdings on commercial bank balance sheets. Rising yields induce mark-to-market portfolio losses, restricting private credit creation and forcing central bank reserve creation, which devalues the domestic currency."
+    }
+];
+
+const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(({ question, answer }) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: answer,
+        },
+    })),
+};
+
 export const SovereignStressLab: React.FC = () => {
     const { data: primaryMetric } = useLatestMetric(MID.US_DEBT_GDP_PCT);
     const dataFreshness = getStaleness(primaryMetric?.lastUpdated, primaryMetric?.frequency);
@@ -70,7 +98,8 @@ export const SovereignStressLab: React.FC = () => {
                     'variableMeasured': ['Government debt to GDP', 'Real GDP growth', 'Official gold reserves', 'BoJ total assets', 'BoJ monetary base'],
                     'measurementTechnique': 'Latest published observations and transparent derived ratios; coverage varies by country and series.',
                     'creator': PublisherOrganizationSchema
-                }
+                },
+                faqJsonLd
             ]}
         />
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
@@ -161,6 +190,17 @@ export const SovereignStressLab: React.FC = () => {
                     <p>
                         Debt-to-GDP is a stock measure. A fuller sovereign assessment also needs interest-to-revenue, primary balance, debt maturity, currency composition, external debt service, market pricing, and banking-system exposure. Those families should enter the cockpit only when each series has a documented source, cadence, and coverage profile.
                     </p>
+                </div>
+
+                {/* Visible FAQ block */}
+                <div className="mt-10 pt-8 border-t border-white/5 space-y-5">
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Frequently Asked Questions</h3>
+                    {faqItems.map(({ question, answer }) => (
+                        <div key={question}>
+                            <p className="text-sm font-bold text-white/90 mb-1">{question}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{answer}</p>
+                        </div>
+                    ))}
                 </div>
             </article>
 

@@ -12,6 +12,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 // ── Constants & Helpers ─────────────────────────────────────────────
 
@@ -445,6 +446,31 @@ export const USTreasuryDemandGauge: React.FC = () => {
             ))}
           </div>
         </div>
+
+        <ChartAccessibleTranscript
+          takeaway={`US Treasury auction absorption score sits at ${currentScore.toFixed(2)} (${regime.label}). ${hasTailAlert ? 'Tail risk alert is ACTIVE: primary dealers absorbed an elevated share of the offering, reflecting hesitant end-investor demand.' : 'Benchmark issuance is clearing with orderly dealer absorption and healthy indirect (foreign central bank and asset manager) bidding.'}`}
+          readingGuide="Scores > 1.6 indicate Strong Demand; 1.0 to 1.6 indicate Neutral; < 1.0 indicate Weak. Tail alerts trigger when Primary Dealer absorption exceeds 12.5% on benchmark notes/bonds."
+          searchKeywords={[
+            'US Treasury Auction Demand',
+            'Bid-to-Cover Ratio',
+            'Primary Dealer Takedown',
+            'Auction Tail Spread',
+            'Indirect Bidder Allotment',
+            'Foreign Central Bank Bidding',
+            'Treasury FiscalData API'
+          ]}
+          tableData={{
+            caption: 'Recent US Treasury Benchmark Auction Telemetry by Tenor',
+            headers: ['Tenor Term', 'Demand Score', 'Bid-to-Cover', 'Dealer Absorption', 'Indirect Allotment'],
+            rows: processedData.others.map(item => [
+              item.term,
+              item.latest?.demand_strength_score != null ? item.latest.demand_strength_score.toFixed(2) : '—',
+              item.latest?.bid_to_cover != null ? `${item.latest.bid_to_cover.toFixed(2)}x` : '—',
+              item.latest?.primary_dealer_pct != null ? `${item.latest.primary_dealer_pct.toFixed(1)}%` : '—',
+              item.latest?.indirect_bidder_pct != null ? `${item.latest.indirect_bidder_pct.toFixed(1)}%` : '—'
+            ])
+          }}
+        />
 
         {/* FOOTER & MACRO LINKAGE */}
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">

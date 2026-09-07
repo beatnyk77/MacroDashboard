@@ -17,6 +17,7 @@ import { m } from 'framer-motion';
 import { Activity, TrendingUp, BarChart3, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -707,6 +708,27 @@ export const FedMonetizationMonitor: React.FC = () => {
           <InflationTransmission data={chartData} />
           <RealYieldMonitor data={chartData} />
         </div>
+
+        <ChartAccessibleTranscript
+          takeaway={`The Federal Reserve holds $${latest?.fedBalanceT?.toFixed(2) || '—'}T in total assets, absorbing approximately ${latest?.ratioPct?.toFixed(1) || '—'}% of total marketable US sovereign debt through the SOMA portfolio. Real 10-year yields stand at ${latest?.realYield !== undefined ? `${latest.realYield >= 0 ? '+' : ''}${latest.realYield.toFixed(2)}%` : '—'}, demonstrating how balance sheet size and Quantitative Tightening (QT) calibration directly influence long-duration financing conditions.`}
+          readingGuide="Monetization Ratio = (Fed SOMA Treasury Holdings / Total Marketable US Debt) × 100. High ratios (>25%) signal fiscal dominance where central bank policy options are conditioned by sovereign refinancing requirements."
+          searchKeywords={[
+            'Fed Debt Monetization',
+            'Fiscal Dominance Meter',
+            'Fed SOMA Portfolio WALCL',
+            'US Marketable Sovereign Debt',
+            'Real 10Y Treasury Yield',
+            'M2 vs CPI Inflation Spread',
+            'Quantitative Tightening QT Runoff'
+          ]}
+          dataRows={[
+            { label: 'Fed Balance Sheet (WALCL)', value: latest?.fedBalanceT ? `$${latest.fedBalanceT.toFixed(2)}T` : '—' },
+            { label: 'Monetization Ratio', value: latest?.ratioPct ? `${latest.ratioPct.toFixed(2)}%` : '—', note: 'of US debt' },
+            { label: '10Y Real Yield', value: latest?.realYield !== undefined ? `${latest.realYield >= 0 ? '+' : ''}${latest.realYield.toFixed(2)}%` : '—' },
+            { label: 'M2 Money Growth (YoY)', value: latest?.m2GrowthYoY !== undefined ? `${latest.m2GrowthYoY.toFixed(1)}%` : '—' },
+            { label: 'CPI Inflation (YoY)', value: latest?.cpiYoY !== undefined ? `${latest.cpiYoY.toFixed(1)}%` : '—' },
+          ]}
+        />
       </div>
 
       {/* Source footer */}

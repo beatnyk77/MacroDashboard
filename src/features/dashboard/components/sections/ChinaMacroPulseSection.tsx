@@ -4,6 +4,7 @@ import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useMajorEconomies } from '@/hooks/useMajorEconomies';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, ChevronDown, ChevronUp, Globe } from 'lucide-react';
+import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
 const CompactPulseMetric: React.FC<{
     label: string,
@@ -104,25 +105,37 @@ export const ChinaMacroPulseSection: React.FC = () => {
                 </button>
             </div>
 
-            {/* Fallback Table for AI Crawlers (GEO) */}
-            <div className="sr-only" aria-hidden="true">
-                <table>
-                    <caption>China Macro Pulse - High Frequency Indicators</caption>
-                    <thead>
-                        <tr>
-                            <th>Indicator</th>
-                            <th>Value</th>
-                            <th>Unit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>GDP Growth (YoY)</td><td>{gdp?.value ?? '--'}</td><td>%</td></tr>
-                        <tr><td>Credit Impulse</td><td>{credit?.value ?? '--'}</td><td>%</td></tr>
-                        <tr><td>CPI Inflation</td><td>{cpi?.value ?? '--'}</td><td>%</td></tr>
-                        <tr><td>Gold Reserves</td><td>{chinaReserves?.gold_reserves ?? '--'}</td><td>t</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <ChartAccessibleTranscript
+                takeaway={`China Macro Pulse tracks real-time high-frequency momentum across credit, production, and external accounts. GDP growth (${gdp?.value ?? '--'}% YoY) and Credit Impulse (${credit?.value ?? '--'}%) highlight ongoing stimulus transmission against property sector headwinds. Meanwhile, official PBoC gold reserves (${chinaReserves?.gold_reserves ?? '--'} metric tonnes) and FX reserves ($${chinaReserves?.fx_reserves ? (chinaReserves.fx_reserves / 1000).toFixed(2) : '--'}T) underscore strategic reserve diversification.`}
+                readingGuide="Credit impulse leads real economic activity by approximately two quarters. Negative PPI indicates upstream industrial price contraction. The 1Y Loan Prime Rate (LPR) serves as the primary benchmark for corporate lending costs."
+                searchKeywords={[
+                    'China Macro Pulse',
+                    'China Credit Impulse',
+                    'PBoC Loan Prime Rate LPR',
+                    'China GDP Growth YoY',
+                    'M1 M2 Scissors China',
+                    'China PPI Deflation',
+                    'China FX Reserves USD',
+                    'PBoC Gold Reserves Tonnes',
+                    'LGFV Debt Restructuring'
+                ]}
+                tableData={{
+                    caption: 'China Macro Pulse High-Frequency Economic Telemetry',
+                    headers: ['Macro Indicator', 'Latest Value', 'Unit', 'Economic Signal'],
+                    rows: [
+                        ['GDP Growth (YoY)', gdp?.value != null ? `${gdp.value}%` : '—', '%', 'Real Economic Expansion'],
+                        ['Credit Impulse', credit?.value != null ? `${credit.value}%` : '—', '%', 'Leading Lending Velocity'],
+                        ['CPI Inflation', cpi?.value != null ? `${cpi.value}%` : '—', '%', 'Consumer Price Pressure'],
+                        ['PPI Inflation', ppi?.value != null ? `${ppi.value}%` : '—', '%', 'Factory Gate Prices'],
+                        ['Industrial Production', ip?.value != null ? `${ip.value}%` : '—', '%', 'Manufacturing Output'],
+                        ['Retail Sales (YoY)', retail?.value != null ? `${retail.value}%` : '—', '%', 'Consumer Demand'],
+                        ['Fixed Asset Investment', fai?.value != null ? `${fai.value}%` : '—', '%', 'Capital Formation'],
+                        ['PBoC 1Y LPR Rate', policy?.value != null ? `${policy.value}%` : '—', '%', 'Policy Benchmark'],
+                        ['Official FX Reserves', chinaReserves?.fx_reserves ? `$${(chinaReserves.fx_reserves / 1000).toFixed(2)}T` : '—', 'USD', 'Currency Defense Buffer'],
+                        ['PBoC Gold Reserves', chinaReserves?.gold_reserves ? `${chinaReserves.gold_reserves}t` : '—', 'Tonnes', 'Sovereign De-dollarization']
+                    ]
+                }}
+            />
 
             <div className="grid grid-cols-1 gap-12">
                 {/* Core Activity Grid */}

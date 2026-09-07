@@ -12,6 +12,7 @@
         "@std/assert": "https://deno.land/std@0.211.0/assert/mod.ts",
         "@shared/": "./_shared/",
         "openai": "npm:openai@^4.104.0",
+        "xlsx": "npm:xlsx@0.18.5",
         "unpdf": "https://esm.sh/unpdf@0.12.1"
     }
 }
