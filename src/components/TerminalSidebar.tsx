@@ -4,7 +4,7 @@ import { TrailNavLink } from '@/components/TrailLink';
 import { withoutTrailingSlash } from '@/lib/urlPath';
 import {
     Activity, Globe, TrendingUp, Anchor,
-    ShieldAlert, Database, Radio, FileText, Library, Newspaper
+    ShieldAlert, Database, Radio, FileText, Library, Newspaper, GitCompare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +28,7 @@ const terminalNavItems: NavItem[] = [
     { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} />, group: 'REGIONAL' },
     { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} />, group: 'REGIONAL' },
     { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} />, group: 'STRUCTURAL' },
+    { id: 'macro-precedents', label: 'Precedents & Benchmarks', path: '/labs/macro-precedents', icon: <GitCompare size={14} />, group: 'STRUCTURAL' },
     { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} />, group: 'STRUCTURAL' },
     { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={14} />, group: 'REGIONAL' },
 ];

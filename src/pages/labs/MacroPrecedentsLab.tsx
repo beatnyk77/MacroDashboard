@@ -128,7 +128,7 @@ export const MacroPrecedentsLab: React.FC = () => {
             </div>
 
             {/* Section 1: Precedents Selector & T=0 Overlay */}
-            <SectionErrorBoundary title="Historical Precedents Overlay">
+            <SectionErrorBoundary name="Historical Precedents Overlay">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     {/* Left Column: Precedents Catalog */}
                     <div className="lg:col-span-1 space-y-3">
@@ -325,7 +325,7 @@ export const MacroPrecedentsLab: React.FC = () => {
             </SectionErrorBoundary>
 
             {/* Section 1.5: Structural Macro Telemetry vs Precedents */}
-            <SectionErrorBoundary title="Structural Macro Benchmarks vs Historical Regimes">
+            <SectionErrorBoundary name="Structural Macro Benchmarks vs Historical Regimes">
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Scale size={16} className="text-amber-400" />
@@ -419,7 +419,7 @@ export const MacroPrecedentsLab: React.FC = () => {
             </SectionErrorBoundary>
 
             {/* Section 2: G20 Sovereign & Macro Peer Benchmarking */}
-            <SectionErrorBoundary title="G20 Sovereign Cohort Benchmarks">
+            <SectionErrorBoundary name="G20 Sovereign Cohort Benchmarks">
                 <div className="bg-card/30 border border-border/60 rounded-2xl p-6 shadow-xl space-y-6">
                     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-4">
                         <div>

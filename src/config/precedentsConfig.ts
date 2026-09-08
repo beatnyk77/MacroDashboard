@@ -47,9 +47,9 @@ export const MACRO_PRECEDENTS: MacroPrecedent[] = [
                 relevanceDescription: 'Rapid drawdowns to defend the rupee before emergency NRI deposit schemes.'
             },
             {
-                metricId: 'DXY_INDEX',
-                label: 'US Dollar Index (DXY)',
-                relevanceDescription: 'Broad-based dollar rally squeezing dollar-denominated EM corporate debt.'
+                metricId: 'USD_INR_RATE',
+                label: 'USD/INR Exchange Rate',
+                relevanceDescription: 'Plunged from 54.0 to over 68.8 as external financing stress hit the Fragile Five currencies.'
             }
         ]
     },
@@ -71,9 +71,9 @@ export const MACRO_PRECEDENTS: MacroPrecedent[] = [
                 relevanceDescription: 'Runoff compressed bank reserves below structural minimum operating levels (LCLoR).'
             },
             {
-                metricId: 'SOFR_EFFR_SPREAD_BPS',
-                label: 'SOFR vs EFFR Spread',
-                relevanceDescription: 'Severe funding market dislocation culminating in the September 2019 repo spike.'
+                metricId: 'UST_10Y_2Y_SPREAD',
+                label: 'US 10Y-2Y Yield Curve Spread',
+                relevanceDescription: 'Flattened from +50 bps to near-inversion as QT drained liquidity and markets priced restrictive policy.'
             },
             {
                 metricId: 'SPX_INDEX',
@@ -100,9 +100,9 @@ export const MACRO_PRECEDENTS: MacroPrecedent[] = [
                 relevanceDescription: 'Deepest inversion since 1981, signaling aggressive policy restriction.'
             },
             {
-                metricId: 'OIL_BRENT_PRICE_USD',
-                label: 'Brent Crude Oil Price',
-                relevanceDescription: 'Geopolitical energy supply dislocation driving headline inflation transmission.'
+                metricId: 'UST_10Y_YIELD',
+                label: 'US 10-Year Benchmark Yield',
+                relevanceDescription: 'Violent sovereign rate shock surging from 1.5% to >4.2%, driving cross-asset repricing.'
             },
             {
                 metricId: 'US_CPI_YOY',
@@ -124,9 +124,9 @@ export const MACRO_PRECEDENTS: MacroPrecedent[] = [
         tags: ['liquidity-shock', 'sovereign-stress'],
         applicableMetrics: [
             {
-                metricId: 'TED_SPREAD',
-                label: 'TED Spread (3M LIBOR - 3M T-Bill)',
-                relevanceDescription: 'Reached historic record >450 bps reflecting extreme interbank lending freeze.'
+                metricId: 'FED_BALANCE_SHEET',
+                label: 'Federal Reserve Total Assets',
+                relevanceDescription: 'Emergency balance sheet expansion more than doubling from $900B to $2.2T to backstop insolvent bank funding.'
             },
             {
                 metricId: 'GOLD_PRICE_USD',

@@ -327,7 +327,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 								<DataProvenanceBadge source={resolvedSource} methodology={resolvedFrequency} lastVerified={lastUpdated} size="sm" className="max-w-full" />
 								<DataDiagnosticsDisclosure source={resolvedSource} frequency={resolvedFrequency} lastUpdated={lastUpdated} status={staleness.state} sourceRef={metric?.sourceRef} provenance={metric?.provenance} />
 								{(precedentId || cohortRank) && (
-									<PrecedentBadge precedentId={precedentId} metricId={resolvedMetricId} cohortRank={cohortRank} />
+									<PrecedentBadge precedentId={precedentId} metricId={metricId} cohortRank={cohortRank} />
 								)}
 							</div>
 						</div>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useG20SovereignMatrix, G20MatrixPoint } from '@/hooks/useG20SovereignMatrix';
+import { useG20SovereignMatrix } from '@/hooks/useG20SovereignMatrix';
 import { CohortGroup, BENCHMARK_METRICS, calculatePercentile, BenchmarkDistribution } from '@/config/benchmarksConfig';
 
 export interface MacroBenchmarkResult {
@@ -76,11 +76,11 @@ export function useMacroBenchmarks(activeCohort: CohortGroup = 'G20') {
         return distMap;
     }, [matrixData, activeCohort]);
 
-    const getMetricCohortData = (metricId: string, cohort: CohortGroup = activeCohort): BenchmarkDistribution | null => {
+    const getMetricCohortData = (metricId: string, _cohort: CohortGroup = activeCohort): BenchmarkDistribution | null => {
         return distributions[metricId] || null;
     };
 
-    const getCountryRelativeRank = (countryCode: string, metricId: string, cohort: CohortGroup = activeCohort) => {
+    const getCountryRelativeRank = (countryCode: string, metricId: string, _cohort: CohortGroup = activeCohort) => {
         const dist = distributions[metricId];
         if (!dist) return null;
 

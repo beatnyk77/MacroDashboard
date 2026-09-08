@@ -19,7 +19,7 @@ import {
     AlertTriangle,
     FileText,
     Terminal,
-
+    GitCompare
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './command-palette.css';
@@ -166,6 +166,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             icon={<Zap className="h-4 w-4 text-orange-500" />}
                         >
                             Energy Security Matrix
+                        </Item>
+                        <Item
+                            onSelect={() => runCommand(() => navigate('/labs/macro-precedents'))}
+                            icon={<GitCompare className="h-4 w-4 text-blue-400" />}
+                        >
+                            Macro Precedents & Benchmarks
                         </Item>
                     </Command.Group>
 

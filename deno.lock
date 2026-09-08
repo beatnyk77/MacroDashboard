@@ -6205,7 +6205,8 @@
       "supabase/functions": {
         "dependencies": [
           "npm:@supabase/supabase-js@2.39.8",
-          "npm:openai@^4.104.0"
+          "npm:openai@^4.104.0",
+          "npm:xlsx@0.18.5"
         ]
       }
     }

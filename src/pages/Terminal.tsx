@@ -161,13 +161,18 @@ export const Terminal: React.FC = () => {
             <DeskContextStrip />
 
             {/* ── FEATURED RESEARCH SILO ── */}
-            <div className="px-4 sm:px-6 lg:px-8 py-4 flex gap-4 bg-white/5 border-y border-white/10 mb-6">
+            <div className="px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-4 bg-white/5 border-y border-white/10 mb-6">
                 <Link to="/methods/m2-gold-ratio" className="text-sm font-semibold text-amber-400 hover:underline">
                     Featured: Global M2 to Gold Ratio Tracker
                 </Link>
                 <span className="text-white/20">|</span>
                 <Link to="/labs/central-bank-gold-purchases" className="text-sm font-semibold text-amber-400 hover:underline">
                     Central Bank Gold Purchases
+                </Link>
+                <span className="text-white/20">|</span>
+                <Link to="/labs/macro-precedents" className="text-sm font-semibold text-blue-400 hover:underline flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                    Macro Precedents & Benchmarks
                 </Link>
             </div>
 

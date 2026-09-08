@@ -3,7 +3,7 @@ import React from 'react';
 import { 
     Globe, TrendingUp, Anchor,
     ShieldAlert, Database,
-    Zap, Cpu, BarChart3, Compass, Library
+    Zap, Cpu, BarChart3, Compass, Library, GitCompare
 } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
@@ -95,6 +95,18 @@ const labsList: LabItem[] = [
         methodology: 'Debt service cost ratios vs. fiscal revenue capacities with real-time volatility thresholds.',
         primaryIndicators: ['Sovereign CDS Spreads', 'Interest Service-to-Revenue Ratio', 'Yield Curve Divergence Index', 'Debt-to-GDP Real Thresholds'],
         dataSource: 'BIS / IMF Sovereign Database',
+        status: 'Active'
+    },
+    {
+        id: 'macro-precedents',
+        name: 'Macro Precedents & Benchmarks Lab',
+        path: '/labs/macro-precedents',
+        icon: <GitCompare className="w-6 h-6 text-blue-400" />,
+        color: 'from-blue-500/10 to-cyan-500/5 hover:border-blue-500/30',
+        description: 'T=0 trajectory relativization against canonical historical stress regimes (2013 Taper Tantrum, 2018 QT, 2020 COVID M2, 2022 Tightening) and G20 sovereign cohort distributions.',
+        methodology: 'Normalized elapsed calendar day alignment (Base 100) anchored at historical shock dates without forward extrapolation.',
+        primaryIndicators: ['T=0 Precedent Trajectory', 'Sovereign Debt / GDP Percentile', 'M2 / Gold Fair Value Compression', 'EM FX Reserve Import Cover'],
+        dataSource: 'FRED / RBI / Federal Reserve / US Treasury',
         status: 'Active'
     },
     {

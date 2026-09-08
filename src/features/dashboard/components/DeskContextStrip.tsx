@@ -1,5 +1,4 @@
-import React from 'react';
-import { Activity, ArrowUpRight, Database, Gauge, Radio, Star } from 'lucide-react';
+import { Activity, ArrowUpRight, Database, Gauge, Radio, Star, GitCompare } from 'lucide-react';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { useDataIntegrity } from '@/hooks/useDataIntegrity';
@@ -112,6 +111,13 @@ export const DeskContextStrip: React.FC = () => {
                         {view.label}
                     </button>
                 ))}
+                <Link
+                    to="/labs/macro-precedents"
+                    className="flex items-center gap-1 rounded-md border border-blue-400/30 bg-blue-500/10 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-wider text-blue-300 hover:border-blue-400 hover:text-white transition-colors"
+                >
+                    <GitCompare size={11} className="text-blue-400" />
+                    Precedents Lab
+                </Link>
                 {activeView && <span className="text-[9px] font-bold uppercase tracking-wider text-white/25">Shareable URL view</span>}
                 <span className="ml-auto text-[9px] font-bold uppercase tracking-wider text-white/25">Watchlist {watchlist.length}</span>
             </div>
