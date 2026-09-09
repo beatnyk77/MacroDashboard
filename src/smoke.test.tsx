@@ -162,6 +162,7 @@ import { China15thFYPLab } from '@/pages/labs/China15thFYP';
 import SovereignStressLab from '@/pages/labs/SovereignStressLab';
 import { GovFinancialPositionLab } from '@/pages/labs/GovFinancialPositionLab';
 
+import { ViewProvider } from '@/context/ViewContext';
 import { About } from '@/pages/About';
 import { BricsTradeSettlement } from '@/pages/labs/BricsTradeSettlement';
 import InterbankFundingLab from '@/pages/labs/InterbankFundingLab';
@@ -179,17 +180,19 @@ const queryClient = new QueryClient({
     },
 });
 
-const TestWrapper: React.FC<{ children: React.ReactNode; route?: string }> = ({ children }) => (
+const TestWrapper: React.FC<{ children: React.ReactNode; route?: string }> = ({ children, route = '/' }) => (
     <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-            <HelmetProvider>
-                <MemoryRouter>
-                    <Suspense fallback={<div>Loading...</div>}>
-                        {children}
-                    </Suspense>
-                </MemoryRouter>
-            </HelmetProvider>
-        </ThemeProvider>
+        <ViewProvider>
+            <ThemeProvider theme={theme}>
+                <HelmetProvider>
+                    <MemoryRouter initialEntries={[route]}>
+                        <Suspense fallback={<div>Loading...</div>}>
+                            {children}
+                        </Suspense>
+                    </MemoryRouter>
+                </HelmetProvider>
+            </ThemeProvider>
+        </ViewProvider>
     </QueryClientProvider>
 );
 
