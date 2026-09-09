@@ -152,6 +152,59 @@ async function ingestOilSpreads(supabase: any, _fredKey?: string): Promise<numbe
     // Non-fatal fallback
   }
 
+  // Ingest RBOB Gasoline (RB=F) and Heating Oil / Diesel (HO=F) to compute 3:2:1 Crack Spread
+  try {
+    const [rbSeries, hoSeries] = await Promise.all([
+      fetchYahooHistory('RB=F').catch(() => []),
+      fetchYahooHistory('HO=F').catch(() => []),
+    ]);
+
+    for (const r of rbSeries.slice(0, 10)) {
+      spotObs.push({
+        metric_id: 'RBOB_GASOLINE_PRICE',
+        as_of_date: r.date,
+        value: Math.round(r.close * 1000) / 1000,
+        last_updated_at: now,
+        metadata: { source: 'Yahoo', ticker: 'RB=F', unit: 'USD/gal' },
+      });
+    }
+
+    for (const r of hoSeries.slice(0, 10)) {
+      spotObs.push({
+        metric_id: 'HEATING_OIL_PRICE',
+        as_of_date: r.date,
+        value: Math.round(r.close * 1000) / 1000,
+        last_updated_at: now,
+        metadata: { source: 'Yahoo', ticker: 'HO=F', unit: 'USD/gal' },
+      });
+    }
+
+    // Compute 3:2:1 crack spread: [(2 * RB * 42) + (1 * HO * 42) - (3 * WTI)] / 3
+    const rbMap = new Map(rbSeries.map((r) => [r.date, r.close]));
+    const hoMap = new Map(hoSeries.map((r) => [r.date, r.close]));
+
+    for (const wti of cl1Series.slice(0, 30)) {
+      const rb = rbMap.get(wti.date);
+      const ho = hoMap.get(wti.date);
+      if (rb && ho && wti.close > 0) {
+        const crack = ((2 * rb * 42) + (1 * ho * 42) - (3 * wti.close)) / 3;
+        spotObs.push({
+          metric_id: 'US_REFINERY_CRACK_321',
+          as_of_date: wti.date,
+          value: Math.round(crack * 100) / 100,
+          last_updated_at: now,
+          metadata: {
+            source: 'Yahoo Derived',
+            formula: '[(2 * RB * 42) + (1 * HO * 42) - (3 * WTI)] / 3',
+            unit: 'USD/bbl',
+          },
+        });
+      }
+    }
+  } catch (err: any) {
+    console.warn('[EnergyOil/CrackSpread] Error computing crack spread:', err.message);
+  }
+
   if (spotObs.length > 0) {
     await supabase.from('metric_observations').upsert(spotObs, { onConflict: 'metric_id, as_of_date' });
   }

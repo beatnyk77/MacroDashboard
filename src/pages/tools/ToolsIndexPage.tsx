@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Container, Paper } from '@mui/material';
 import { TrailLink as Link } from '@/components/TrailLink';
-import { Gauge, Activity, Coins, Code } from 'lucide-react';
+import { Gauge, Activity, Coins, Code, Factory } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
 
 interface ToolEntry {
@@ -15,10 +15,17 @@ interface ToolEntry {
 const TOOLS: ToolEntry[] = [
     {
         path: '/tools/net-liquidity-gauge',
-        title: 'US Net Liquidity Gauge',
-        description: 'Fed net liquidity z-score with regime classification — the single most-watched liquidity dial.',
+        title: 'Global & US Net Liquidity Engine',
+        description: 'Big-5 Central Bank and Fed net liquidity z-score with regime classification and FX adjustments.',
         icon: <Gauge size={22} />,
         accent: '#3b82f6',
+    },
+    {
+        path: '/tools/refinery-crack-spread',
+        title: '3:2:1 Refinery Crack Spread',
+        description: 'Gulf Coast/Cushing refiner margin gauge across WTI crude, RBOB gasoline, and heating oil / diesel.',
+        icon: <Factory size={22} />,
+        accent: '#06b6d4',
     },
     {
         path: '/tools/daily-regime-signal',

@@ -54,6 +54,7 @@ const FedMonetizationPage = lazy(() => import('@/pages/methods/FedMonetizationPa
 const IndiaCreditCyclePage = lazy(() => import('@/pages/methods/IndiaCreditCyclePage').then(module => ({ default: module.IndiaCreditCyclePage })));
 const ChinaDebtIcebergPage = lazy(() => import('@/pages/methods/ChinaDebtIcebergPage').then(module => ({ default: module.ChinaDebtIcebergPage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
+const CrackSpreadWidget = lazy(() => import('@/pages/tools/CrackSpreadWidget').then(module => ({ default: module.CrackSpreadWidget })));
 const DailyRegimeSignal = lazy(() => import('@/pages/tools/DailyRegimeSignal').then(module => ({ default: module.DailyRegimeSignal })));
 const GoldRatiosWidget = lazy(() => import('@/pages/tools/GoldRatiosWidget').then(module => ({ default: module.GoldRatiosWidget })));
 const ToolsIndexPage = lazy(() => import('@/pages/tools/ToolsIndexPage').then(module => ({ default: module.ToolsIndexPage })));
@@ -154,6 +155,7 @@ function App() {
                                         {/* Tools & Embeds */}
                                         <Route path={trailRoute('/tools')} element={<ToolsIndexPage />} />
                                         <Route path={trailRoute('/tools/net-liquidity-gauge')} element={<NetLiquidityGauge />} />
+                                        <Route path={trailRoute('/tools/refinery-crack-spread')} element={<CrackSpreadWidget />} />
                                         <Route path={trailRoute('/tools/daily-regime-signal')} element={<DailyRegimeSignal />} />
                                         <Route path={trailRoute('/tools/gold-ratios')} element={<GoldRatiosWidget />} />
 

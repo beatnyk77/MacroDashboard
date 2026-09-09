@@ -29,6 +29,7 @@ import { CurrentEnergyRegimeCard } from '@/features/energy/components/CurrentEne
 import { useEnergyRegime } from '@/hooks/useEnergyRegime';
 import { useFuelSecurityIndia } from '@/features/energy/hooks/useFuelSecurityIndia';
 import { cn } from '@/lib/utils';
+import { TrailLink } from '@/components/TrailLink';
 import type { FreshnessStatus } from '@/components/FreshnessChip';
 import type { MetricData } from '@/hooks/useLatestMetric';
 
@@ -386,6 +387,15 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                         Capacity elasticity, utilization ceiling, and regional bottlenecks.
                                     </p>
                                 </div>
+                            </div>
+                            <div className="flex items-center justify-between p-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                                <div className="flex items-center gap-2.5">
+                                    <Factory size={16} className="text-cyan-400" />
+                                    <span className="text-xs font-black uppercase tracking-wider text-cyan-300">Live 3:2:1 Crack Spread Tool</span>
+                                </div>
+                                <TrailLink to="/tools/refinery-crack-spread" className="text-xs font-bold uppercase tracking-wider text-white hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                    Open Interactive Tool <ChevronRight size={14} />
+                                </TrailLink>
                             </div>
                             <SectionErrorBoundary name="Global Refining Monitor">
                                 <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>

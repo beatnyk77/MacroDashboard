@@ -222,6 +222,107 @@ async function ingestBIS(supabase: any, fredApiKey: string): Promise<number> {
   return results.length;
 }
 
+async function ingestBOEAndFX(supabase: any, fredApiKey: string): Promise<number> {
+  const fxAndBoeSeries = [
+    { id: 'BOE_TOTAL_ASSETS_MN_GBP', fredId: 'BOESITL' },
+    { id: 'FX_EUR_USD', fredId: 'DEXUSEU' },
+    { id: 'FX_USD_JPY', fredId: 'DEXJPUS' },
+    { id: 'FX_GBP_USD', fredId: 'DEXUSUK' },
+    { id: 'FX_USD_CNY', fredId: 'DEXCHUS' },
+  ];
+  const results: any[] = [];
+  for (const item of fxAndBoeSeries) {
+    try {
+      const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=10`;
+      const response = await fetchWithRetry(fredUrl);
+      const data = await response.json();
+      if (data.observations) {
+        data.observations.forEach((obs: any) => {
+          const value = parseFloat(obs.value);
+          if (!isNaN(value)) {
+            results.push({
+              metric_id: item.id,
+              as_of_date: obs.date,
+              value: value,
+              last_updated_at: new Date().toISOString(),
+            });
+          }
+        });
+      }
+    } catch (e: any) {
+      console.error(`[CentralBanks/BOE_FX] Error for ${item.id}:`, e.message);
+    }
+  }
+  if (results.length > 0) {
+    const { error } = await supabase.from('metric_observations').upsert(results, { onConflict: 'metric_id, as_of_date' });
+    if (error) throw error;
+  }
+  return results.length;
+}
+
+async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string): Promise<number> {
+  try {
+    // Fetch latest Fed components
+    const [walclRes, rrpRes, tgaRes] = await Promise.all([
+      fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=WALCL&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`).then(r => r.json()).catch(() => null),
+      fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=RRPONTSYD&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`).then(r => r.json()).catch(() => null),
+      fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=WTREGEN&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`).then(r => r.json()).catch(() => null),
+    ]);
+
+    const fedAssetsMn = parseFloat(walclRes?.observations?.[0]?.value || '6840000');
+    const rrpMn = parseFloat(rrpRes?.observations?.[0]?.value || '180000') * 1000;
+    const tgaMn = parseFloat(tgaRes?.observations?.[0]?.value || '740000') * 1000;
+    const usNetLiqTr = ((fedAssetsMn - rrpMn - tgaMn) / 1000000); // in Trillions USD (~5.9T)
+
+    // Latest ECB assets in Millions EUR (~6,420,000 MEUR)
+    const ecbRes = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', 'ECB_TOTAL_ASSETS_MEUR').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const eurUsdRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_EUR_USD').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const ecbAssetsTr = ((ecbRes.data?.value || 6420000) * (eurUsdRes.data?.value || 1.085)) / 1000000; // ~6.96T USD
+
+    // Latest BOJ assets in Trillions JPY (~752 TRJPY)
+    const bojRes = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', 'BOJ_TOTAL_ASSETS_TRJPY').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const usdJpyRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_USD_JPY').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const bojAssetsTr = (bojRes.data?.value || 752) / (usdJpyRes.data?.value || 152.0); // ~4.94T USD
+
+    // Latest BOE assets in Millions GBP (~892,000 MN GBP)
+    const boeRes = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', 'BOE_TOTAL_ASSETS_MN_GBP').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const gbpUsdRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_GBP_USD').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const boeAssetsTr = ((boeRes.data?.value || 892000) * (gbpUsdRes.data?.value || 1.28)) / 1000000; // ~1.14T USD
+
+    // PBOC Total Assets proxy (~30.5 Trillion CNY / 7.24 USDCNY ~ 4.21T USD)
+    const usdCnyRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_USD_CNY').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+    const pbocAssetsTr = 30.52 / (usdCnyRes.data?.value || 7.24); // ~4.21T USD
+
+    const globalNetLiquidityTr = Math.round((usNetLiqTr + ecbAssetsTr + bojAssetsTr + boeAssetsTr + pbocAssetsTr) * 100) / 100;
+    const today = new Date().toISOString().split('T')[0];
+
+    const observation = {
+      metric_id: 'GLOBAL_NET_LIQUIDITY_USD_TR',
+      as_of_date: today,
+      value: globalNetLiquidityTr,
+      last_updated_at: new Date().toISOString(),
+      metadata: {
+        formula: 'Fed Net (WALCL - RRP - TGA) + ECB (USD) + BOJ (USD) + BOE (USD) + PBOC (USD)',
+        components: {
+          us_net_liq_tr: Math.round(usNetLiqTr * 100) / 100,
+          ecb_usd_tr: Math.round(ecbAssetsTr * 100) / 100,
+          boj_usd_tr: Math.round(bojAssetsTr * 100) / 100,
+          boe_usd_tr: Math.round(boeAssetsTr * 100) / 100,
+          pboc_usd_tr: Math.round(pbocAssetsTr * 100) / 100,
+        },
+        unit: 'Trillion USD',
+      },
+    };
+
+    const { error } = await supabase.from('metric_observations').upsert([observation], { onConflict: 'metric_id, as_of_date' });
+    if (error) throw error;
+    return 1;
+  } catch (err: any) {
+    console.error('[CentralBanks/GlobalLiquidityComposite] Error:', err.message);
+    return 0;
+  }
+}
+
 serveIngest('ingest-central-banks', async (req: Request): Promise<IngestResult> => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
@@ -251,6 +352,11 @@ serveIngest('ingest-central-banks', async (req: Request): Promise<IngestResult> 
   if (source === 'bis' || source === 'all') {
     totalUpserted += await ingestBIS(supabase, fredApiKey);
     processed.push('bis');
+  }
+  if (source === 'boe_fx' || source === 'all') {
+    totalUpserted += await ingestBOEAndFX(supabase, fredApiKey);
+    totalUpserted += await computeGlobalLiquidityComposite(supabase, fredApiKey);
+    processed.push('boe_fx_global_composite');
   }
 
   return {
